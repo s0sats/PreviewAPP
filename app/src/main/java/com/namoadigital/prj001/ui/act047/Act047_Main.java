@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act047;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -24,8 +26,11 @@ import com.namoadigital.prj001.adapter.Act047_SO_Next_Orders_Adapter;
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_SO_Next_Orders;
+import com.namoadigital.prj001.service.WS_SO_Search;
+import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -43,6 +48,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     private String requestingAct = "";
     private Act047_Main_Contract.I_Presenter mPresenter;
     private String wsProcess ="";
+    private SO_Next_Orders_Obj wsTmpItem = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -165,6 +171,22 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     }
 
     @Override
+    public void showAlert(String ttl, String msg) {
+        showAlert(ttl, msg,null);
+    }
+
+    @Override
+    public void showAlert(String ttl, String msg, DialogInterface.OnClickListener listener) {
+        ToolBox.alertMSG(
+            context,
+            ttl,
+            msg,
+            listener,
+            0
+        );
+    }
+
+    @Override
     public void showPD(String title, String msg) {
         enableProgressDialog(
                 title,
@@ -206,23 +228,24 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         );
     }
 
-    private void showDetailsDialog(SO_Next_Orders_Obj item) {
+    private void showDetailsDialog(final SO_Next_Orders_Obj item) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AlertDialogTheme);
         //
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.act047_so_next_orders_dialog,null);
         //IniVars
-        LinearLayout ll_title = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_title);
-        TextView tv_title = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_title);
-        LinearLayout ll_so_desc = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_desc);
-        TextView tv_so_desc_lbl = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_desc_lbl);
-        TextView tv_so_desc_val = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_desc_val);
-        LinearLayout ll_services = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_services);
-        TextView tv_services_lbl = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_services_lbl);
-        TextView tv_services_val = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_services_val);
-        LinearLayout ll_so_comments = (LinearLayout) view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_comment);
-        TextView tv_so_comment_lbl = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_lbl);
-        TextView tv_so_comment_val = (TextView) view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_val);
+        LinearLayout ll_title =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_title);
+        TextView tv_title =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_title);
+        LinearLayout ll_so_desc =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_desc);
+        TextView tv_so_desc_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_desc_lbl);
+        TextView tv_so_desc_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_desc_val);
+        LinearLayout ll_services =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_services);
+        TextView tv_services_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_services_lbl);
+        TextView tv_services_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_services_val);
+        LinearLayout ll_so_comments =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_comment);
+        TextView tv_so_comment_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_lbl);
+        TextView tv_so_comment_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_val);
+        final MKEditTextNM mket_serial =  view.findViewById(R.id.act047_so_next_orders_dialog_mket_serial_confirm);
         //Seta data
         //ll_title.setVisibility(View.GONE);
         tv_title.setText((hmAux_Trans.get("dialog_so_details_ttl")+" "+ item.getSo_prefix()+"."+item.getSo_code()));
@@ -232,17 +255,75 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         tv_services_val.setText(item.getService());
         tv_so_comment_lbl.setText(hmAux_Trans.get("dialog_so_comment_lbl"));
         tv_so_comment_val.setText(item.getComments());
+        //Config mket
+        configDialogMket(mket_serial,item);
         //
         builder
-                //.setTitle(hmAux_Trans.get("dialog_so_details_ttl")+" "+ item.getSo_prefix()+"."+item.getSo_code())
                 .setView(view)
                 .setPositiveButton(
-                        hmAux_Trans.get("sys_alert_btn_ok"),
-                        null
+                    hmAux_Trans.get("sys_alert_btn_ok"),
+                    null
                 );
         //
-        AlertDialog dialog =  builder.create();
+        final AlertDialog dialog =  builder.create();
         dialog.show();
+        //
+        dialog.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkDialogFlow(dialog,mket_serial,item);
+            }
+        });
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                controls_sta.remove(mket_serial);
+            }
+        });
+    }
+
+    private void checkDialogFlow(AlertDialog dialog, MKEditTextNM mket_serial, SO_Next_Orders_Obj item) {
+        String mketVal = mket_serial.getText().toString().trim();
+        //
+        if(mket_serial.length() > 0){
+            if(mketVal.equalsIgnoreCase(item.getSerial_id())) {
+                wsTmpItem = item;
+                mPresenter.executeSerialDownload(item.getProduct_id(), item.getSerial_id());
+                //mPresenter.executeSoDownload(item.getSo_prefix(), item.getSo_code());
+            }else{
+                mket_serial.getText().clear();
+            }
+        }else{
+            if(dialog != null) {
+                dialog.dismiss();
+            }
+        }
+    }
+
+    private void configDialogMket(final MKEditTextNM mket_serial, final SO_Next_Orders_Obj item) {
+        mket_serial.setmBARCODE(
+            ToolBox_Inf.profileExists(
+                context,
+                Constant.PROFILE_MENU_PROFILE,
+                Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+            )
+        );
+        //
+        mket_serial.setmOCR(ToolBox_Inf.profileExists(
+            context,
+            Constant.PROFILE_MENU_PROFILE,
+            Constant.PROFILE_MENU_PROFILE_SERIAL_OCR_MOSOLF
+        ));
+        mket_serial.setmNFC(false);
+        //
+        mket_serial.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
+            @Override
+            public void reportTextBySpecialist(String s) {
+                checkDialogFlow(null,mket_serial,item);
+            }
+        });
+        //
+        controls_sta.add(mket_serial);
     }
 
     private void iniUIFooter() {
@@ -280,14 +361,24 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     }
 
     @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired,new HMAux());
+    }
+
+    @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         //
         if (wsProcess.equals(WS_SO_Next_Orders.class.getName())) {
             mPresenter.processNextOrderList(hmAux.get(WS_SO_Next_Orders.SO_NEXT_SERVICES));
             disableProgressDialog();
+        }else if(wsProcess.equals(WS_Serial_Search.class.getName())){
+            disableProgressDialog();
+            mPresenter.extractSearchResult(mLink, wsTmpItem.getProduct_id(),wsTmpItem.getSerial_id());
+        }else if(wsProcess.equals(WS_SO_Search.class.getName())){
+            mPresenter.processSoDownloadResult(hmAux);
+            disableProgressDialog();
         }
-
     }
 
     @Override
@@ -302,6 +393,15 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     public void callAct021(Context context) {
         Intent mIntent = new Intent(context, Act021_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct027(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act027_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

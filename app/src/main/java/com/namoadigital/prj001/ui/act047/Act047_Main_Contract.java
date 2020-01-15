@@ -1,7 +1,11 @@
 package com.namoadigital.prj001.ui.act047;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj;
 
 import java.util.ArrayList;
@@ -23,6 +27,12 @@ public interface Act047_Main_Contract {
         void callAct021(Context context);
 
         void callAct005(Context context);
+
+        void showAlert(String ttl, String msg);
+
+        void showAlert(String ttl, String msg,@Nullable DialogInterface.OnClickListener listener);
+
+        void callAct027(Bundle bundle);
     }
 
     interface I_Presenter {
@@ -33,6 +43,13 @@ public interface Act047_Main_Contract {
 
         void onBackPressedClicked();
 
+        void executeSoDownload(String soPrefix, String soCode);
+
+        void processSoDownloadResult(HMAux hmAux);
+
+        void executeSerialDownload(String productId, String serialCode);
+
+        void extractSearchResult(String result, String productId, String serialID);
     }
 
 }

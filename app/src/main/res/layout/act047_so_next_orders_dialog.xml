@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="15dp">
 
@@ -18,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="O.S - Trad"
+            tools:text="O.S - Trad"
             android:textSize="@dimen/font_size_title_dialog"
             android:textStyle="bold" />
     </LinearLayout>
@@ -45,7 +47,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="start|center_vertical"
-                    android:text="O.S Desc - Trad"
+                    tools:text="O.S Desc - Trad"
                     android:textSize="@dimen/font_size_title"
                     android:textStyle="bold" />
 
@@ -55,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:gravity="start|center_vertical"
-                    android:text="O.S Desc - Trad" />
+                    tools:text="O.S Desc - Trad" />
 
             </LinearLayout>
 
@@ -71,7 +73,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="start|center_vertical"
-                    android:text="Service List - Trad"
+                    tools:text="Service List - Trad"
                     android:textSize="@dimen/font_size_title"
                     android:textStyle="bold" />
 
@@ -81,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:gravity="start|center_vertical"
-                    android:text="Service 666 - Trad" />
+                    tools:text="Service 666 - Trad" />
 
             </LinearLayout>
 
@@ -97,7 +99,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="start|center_vertical"
-                    android:text="SO Comments - Trad"
+                    tools:text="SO Comments - Trad"
                     android:textSize="@dimen/font_size_title"
                     android:textStyle="bold" />
 
@@ -107,9 +109,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:gravity="start|center_vertical"
-                    android:text="Comment here - Trad" />
+                    tools:text="Comment here - Trad" />
 
             </LinearLayout>
+
+            <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                android:id="@+id/act047_so_next_orders_dialog_mket_serial_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="BTT00051"
+                />
         </LinearLayout>
 
     </ScrollView>
