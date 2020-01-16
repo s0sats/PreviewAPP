@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="15dp">
 
@@ -20,9 +20,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            tools:text="O.S - Trad"
             android:textSize="@dimen/font_size_title_dialog"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="O.S - Trad" />
     </LinearLayout>
 
     <ScrollView
@@ -47,9 +47,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="start|center_vertical"
-                    tools:text="O.S Desc - Trad"
                     android:textSize="@dimen/font_size_title"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:text="O.S Desc - Trad" />
 
                 <TextView
                     android:id="@+id/act047_so_next_orders_dialog_tv_so_desc_val"
@@ -73,9 +73,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="start|center_vertical"
-                    tools:text="Service List - Trad"
                     android:textSize="@dimen/font_size_title"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:text="Service List - Trad" />
 
                 <TextView
                     android:id="@+id/act047_so_next_orders_dialog_tv_services_val"
@@ -99,9 +99,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="start|center_vertical"
-                    tools:text="SO Comments - Trad"
                     android:textSize="@dimen/font_size_title"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:text="SO Comments - Trad" />
 
                 <TextView
                     android:id="@+id/act047_so_next_orders_dialog_tv_so_comment_val"
@@ -117,8 +117,20 @@
                 android:id="@+id/act047_so_next_orders_dialog_mket_serial_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="BTT00051"
+                tools:text="BTT00051" />
+
+            <TextView
+                android:id="@+id/act047_so_next_orders_dialog_tv_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/namoa_color_danger_red"
+                android:textStyle="bold"
+                tools:text="Serial errado"
+                android:padding="2dp"
+                android:textSize="@dimen/font_size_item_md"
+                android:visibility="gone"
                 />
+
         </LinearLayout>
 
     </ScrollView>

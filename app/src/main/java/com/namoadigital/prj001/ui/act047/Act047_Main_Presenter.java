@@ -9,9 +9,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Next_Orders;
@@ -20,6 +21,7 @@ import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.service.WS_SO_Next_Orders;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -33,7 +35,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
     private HMAux hmAux_Trans;
     private String requestingAct;
 
-    public Act047_Main_Presenter(Context context, Act047_Main_Contract.I_View mView,String requestingAct, HMAux hmAux_Trans) {
+    public Act047_Main_Presenter(Context context, Act047_Main_Contract.I_View mView, String requestingAct, HMAux hmAux_Trans) {
         this.context = context;
         this.mView = mView;
         this.requestingAct = requestingAct;
@@ -42,12 +44,12 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
 
     @Override
     public void executeNextOrdersSearch() {
-        if(ToolBox_Con.isOnline(context)){
+        if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_SO_Next_Orders.class.getName());
             //
             mView.showPD(
-                    hmAux_Trans.get("dialog_next_orders_search_ttl"),
-                    hmAux_Trans.get("dialog_next_orders_search_msg")
+                hmAux_Trans.get("dialog_next_orders_search_ttl"),
+                hmAux_Trans.get("dialog_next_orders_search_msg")
             );
             //
             Intent mIntent = new Intent(context, WBR_SO_Next_Orders.class);
@@ -62,19 +64,19 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
             //
             context.sendBroadcast(mIntent);
 
-        }else{
+        } else {
             mView.showNoConnecionMsg();
         }
     }
 
     @Override
     public void executeSoDownload(String soPrefix, String soCode) {
-        if(ToolBox_Con.isOnline(context)){
+        if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_SO_Search.class.getName());
             //
             mView.showPD(
-                hmAux_Trans.get("progress_so_search_ttl"),
-                hmAux_Trans.get("progress_so_search_msg")
+                    hmAux_Trans.get("dialog_so_download_ttl"),
+                hmAux_Trans.get("dialog_so_download_start")
             );
             //
             Intent mIntent = new Intent(context, WBR_SO_Search.class);
@@ -84,7 +86,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-        }else{
+        } else {
             mView.showNoConnecionMsg();
         }
     }
@@ -94,8 +96,8 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
         mView.setWsProcess(WS_Serial_Search.class.getName());
         //
         mView.showPD(
-            hmAux_Trans.get("dialog_serial_search_ttl"),
-            hmAux_Trans.get("dialog_serial_search_start")
+            hmAux_Trans.get("dialog_serial_download_ttl"),
+            hmAux_Trans.get("dialog_serial_download_start")
         );
         //
         Intent mIntent = new Intent(context, WBR_Serial_Search.class);
@@ -116,25 +118,23 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
     public void processNextOrderList(String nextOrderJson) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         //
-        if(nextOrderJson == null || nextOrderJson.trim().length() == 0){
-            ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_no_orders_found_ttl"),
-                    hmAux_Trans.get("alert_no_orders_found_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            onBackPressedClicked();
-                        }
-                    },
-                    0
+        if (nextOrderJson == null || nextOrderJson.trim().length() == 0) {
+            mView.showAlert(
+                hmAux_Trans.get("alert_no_orders_found_ttl"),
+                hmAux_Trans.get("alert_no_orders_found_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onBackPressedClicked();
+                    }
+                }
             );
-        }else{
-            try{
-                ArrayList<SO_Next_Orders_Obj> nextOrderList =  gson.fromJson(
-                        nextOrderJson,
-                        new TypeToken<ArrayList<SO_Next_Orders_Obj>>() {
-                        }.getType()
+        } else {
+            try {
+                ArrayList<SO_Next_Orders_Obj> nextOrderList = gson.fromJson(
+                    nextOrderJson,
+                    new TypeToken<ArrayList<SO_Next_Orders_Obj>>() {
+                    }.getType()
                 );
                 //
                 if (nextOrderList != null && nextOrderList.size() > 0) {
@@ -143,7 +143,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
                     mView.showEmptyLogMsg();
                 }
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 ToolBox_Inf.registerException(getClass().getName(), e);
                 //
                 mView.showEmptyLogMsg();
@@ -151,8 +151,17 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
         }
     }
 
+    /**
+     * LUCHE - 16/01/2020
+     *
+     * Trata retorno do WS de Download de O.S
+     *
+     * @param soDownloadResult - HmAux com as chaves de qty de itens e o.s concatenadas
+     * @param soPrefix
+     * @param soCode
+     */
     @Override
-    public void processSoDownloadResult(HMAux soDownloadResult) {
+    public void processSoDownloadResult(HMAux soDownloadResult, String soPrefix, String soCode) {
         if (soDownloadResult.containsKey(WS_SO_Search.SO_PREFIX_CODE)
             && soDownloadResult.containsKey(WS_SO_Search.SO_LIST_QTY)
         ) {
@@ -161,27 +170,26 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
                     hmAux_Trans.get("alert_no_so_returned_ttl"),
                     hmAux_Trans.get("alert_no_so_returned_msg")
                 );
-            } else if (Integer.parseInt(soDownloadResult.get(WS_SO_Search.SO_LIST_QTY)) == 1) {
+            } else {
                 if (soDownloadResult.get(WS_SO_Search.SO_PREFIX_CODE).contains(Constant.MAIN_CONCAT_STRING)) {
-                    String[] so_prefix_code = soDownloadResult.get(WS_SO_Search.SO_PREFIX_CODE).split(Constant.MAIN_CONCAT_STRING);
-                    Bundle bundle = new Bundle();
-                    //
-                    bundle.putString(SM_SODao.SO_PREFIX, so_prefix_code[0]);
-                    bundle.putString(SM_SODao.SO_CODE, so_prefix_code[1]);
-                    //
-                    mView.callAct027(bundle);
+                    String searchedSo = soPrefix + Constant.MAIN_CONCAT_STRING + soCode;
+                    if(soDownloadResult.get(WS_SO_Search.SO_PREFIX_CODE).contains(searchedSo)){
+                        //
+                        mView.callAct027(
+                            getAct027Bundle(soPrefix,soCode)
+                        );
+                    }else{
+                        mView.showAlert(
+                            hmAux_Trans.get("alert_so_not_returned_ttl"),
+                            hmAux_Trans.get("alert_so_not_returned_msg")
+                        );
+                    }
                 } else {
                     mView.showAlert(
                         hmAux_Trans.get("alert_so_download_param_error_ttl"),
                         hmAux_Trans.get("alert_so_download_param_error_msg")
                     );
                 }
-            } else {
-                //
-                mView.showAlert(
-                    hmAux_Trans.get("alert_so_download_ok_ttl"),
-                    hmAux_Trans.get("alert_so_download_ok_msg")
-                );
             }
         } else {
             mView.showAlert(
@@ -191,43 +199,158 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
         }
     }
 
+    /**
+     * LUCHE - 16/01/2020
+     *
+     * Gera o bundle necessario para inicialização da act027
+     *
+     * @param soPrefix
+     * @param soCode
+     * @return
+     */
     @Override
-    public void extractSearchResult(String result, String productId, String serialID) {
-        if(result != null && !result.isEmpty()){
+    public Bundle getAct027Bundle(String soPrefix, String soCode) {
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(SM_SODao.SO_PREFIX, soPrefix);
+        bundle.putString(SM_SODao.SO_CODE, soCode);
+        //
+        return bundle;
+    }
+
+    /**
+     * LUCHE - 16/01/2020
+     *
+     * Trata retorno do ws do serial.
+     * @param result - Json enviado pelo WS
+     * @param wsTmpItem - Item da lista.
+     */
+    @Override
+    public void extractSearchResult(String result, SO_Next_Orders_Obj wsTmpItem) {
+        if (result != null && !result.isEmpty()) {
             ArrayList<MD_Product_Serial> serial_list;
             try {
                 Gson gson = new GsonBuilder().serializeNulls().create();
                 TSerial_Search_Rec rec = gson.fromJson(
-                    serialID,
+                    result,
                     TSerial_Search_Rec.class);
                 //
                 serial_list = rec.getRecord();
-            }catch (Exception e){
+            } catch (Exception e) {
                 serial_list = new ArrayList<>();
             }
             //
-            if(serial_list != null && serial_list.size() > 0){
-
-            }else{
+            boolean serialInList = false;
+            //
+            if (serial_list != null && serial_list.size() > 0) {
+                //
+                for (MD_Product_Serial serial : serial_list) {
+                    if (
+                        serial.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                        && serial.getProduct_id().equalsIgnoreCase(wsTmpItem.getProduct_id())
+                        && serial.getSerial_id().equalsIgnoreCase(wsTmpItem.getSerial_id())
+                    ) {
+                        serialInList = true;
+                        saveSerialInDb(serial);
+                        break;
+                    }
+                }
+                //
+                if(serialInList){
+                    executeSoDownload(
+                        wsTmpItem.getSo_prefix(),
+                        wsTmpItem.getSo_code()
+                    );
+                }else{
+                    mView.showAlert(
+                        hmAux_Trans.get("alert_serial_not_returned_ttl"),
+                        hmAux_Trans.get("alert_serial_not_returned_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mView.cleanWsTmpItem();
+                            }
+                        }
+                    );
+                }
+                //
+            } else {
                 mView.showAlert(
                     hmAux_Trans.get("alert_no_serial_returned_ttl"),
-                    hmAux_Trans.get("alert_no_serial_returned_msg")
+                    hmAux_Trans.get("alert_no_serial_returned_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.cleanWsTmpItem();
+                        }
+                    }
                 );
             }
-        }else{
+        } else {
             mView.showAlert(
                 hmAux_Trans.get("alert_no_serial_returned_ttl"),
-                hmAux_Trans.get("alert_no_serial_returned_msg")
+                hmAux_Trans.get("alert_no_serial_returned_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mView.cleanWsTmpItem();
+                    }
+                }
             );
         }
+    }
 
+    /**
+     * LUCHE - 16/01/2020
+     *
+     * Salva Serial retornado no banco de dados.
+     *
+     * @param serial
+     */
+    private void saveSerialInDb(MD_Product_Serial serial) {
+        MD_Product_SerialDao serialDao =
+                                        new MD_Product_SerialDao(
+                                            context,
+                                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                                            Constant.DB_VERSION_CUSTOM
+                                        );
+        //
+        serialDao.addUpdateTmp(serial);
+    }
 
-
+    /**
+     * LUCHE - 16/01/2020
+     *
+     * Checa se a O.S selecionada ja esta baixada
+     *
+     * @param soPrefix
+     * @param soCode
+     * @return
+     */
+    @Override
+    public boolean checkSoExits(String soPrefix, String soCode) {
+        int intSoPrefix = ToolBox_Inf.convertStringToInt(soPrefix);
+        int intSoCode = ToolBox_Inf.convertStringToInt(soCode);
+        SM_SODao soDao = new SM_SODao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        SM_SO smSo = soDao.getByString(
+            new SM_SO_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                intSoPrefix,
+                intSoCode
+            ).toSqlQuery()
+        );
+        //
+        return smSo != null && smSo.getSo_prefix() == intSoPrefix && smSo.getSo_code() == intSoCode;
     }
 
     @Override
     public void onBackPressedClicked() {
-        switch (requestingAct){
+        switch (requestingAct) {
             case Constant.ACT021:
                 mView.callAct021(context);
                 break;

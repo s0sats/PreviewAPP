@@ -48,6 +48,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     private String requestingAct = "";
     private Act047_Main_Contract.I_Presenter mPresenter;
     private String wsProcess ="";
+    //Var tmp que armazena o item da lista clicado.
     private SO_Next_Orders_Obj wsTmpItem = null;
 
     @Override
@@ -92,6 +93,24 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("dialog_services_lbl");
         transList.add("dialog_so_comment_lbl");
         transList.add("dialog_so_details_ttl");
+        //
+        transList.add("dialog_so_download_ttl");
+        transList.add("dialog_so_download_start");
+        transList.add("dialog_serial_download_ttl");
+        transList.add("dialog_serial_download_start");
+        transList.add("alert_no_so_returned_ttl");
+        transList.add("alert_no_so_returned_msg");
+        transList.add("alert_so_download_param_error_ttl");
+        transList.add("alert_so_download_param_error_msg");
+        transList.add("alert_so_not_returned_ttl");
+        transList.add("alert_so_not_returned_msg");
+        transList.add("alert_serial_not_returned_ttl");
+        transList.add("alert_serial_not_returned_msg");
+        transList.add("alert_no_serial_returned_ttl");
+        transList.add("alert_no_serial_returned_msg");
+        transList.add("serial_hint");
+        transList.add("serial_no_match_hint");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -137,6 +156,18 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     @Override
     public void setWsProcess(String wsProcess) {
         this.wsProcess = wsProcess;
+    }
+
+    /**
+     * LUCHE - 16/01/2020
+     *
+     * Metodo que reseta as variaveis relativas a chamada de WS e fecha o dialog.
+     */
+    @Override
+    public void cleanWsTmpItem() {
+       wsProcess ="";
+       wsTmpItem = null;
+       disableProgressDialog();
     }
 
     private void setLocationInfo() {
@@ -186,14 +217,39 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         );
     }
 
+    /**
+     * LUCHE - 16/01/2020
+     *
+     * Alterado metodo para verificar se o progressDialog ja esta instanciado e, caso esteja, atualiza
+     * title, msg e exibe o dialog ao inves de criar uma nova instancia.
+     *
+     * Teste feito para tentar resolver problemas que acontecem em algumas telas que tem chamadas de
+     * ws encadeadas. Como cada chamada do enableProgressDialog, gera uma nova instancia do progressDialog,
+     * era possivel empilhar dialogs e não conseguir fechar los ja que o se houvessem 2 aberto,
+     * não existe mais referencia do primeiro tornando impossivel fechar o dialog.     *
+     *
+     * O teste mostrou ser efetivo e talvez fosse interessando aplicar esse conceito direto na BaseACt
+     *
+     * @param title - Titulo
+     * @param msg - Msg
+     */
     @Override
     public void showPD(String title, String msg) {
-        enableProgressDialog(
+        if(progressDialog == null) {
+            enableProgressDialog(
                 title,
                 msg,
                 hmAux_Trans.get("sys_alert_btn_cancel"),
                 hmAux_Trans.get("sys_alert_btn_ok")
-        );
+            );
+        }else{
+            progressDialog.setTitle(title);
+            progressDialog.setMessage(msg);
+            //
+            if(!progressDialog.isShowing()) {
+                progressDialog.show();
+            }
+        }
     }
 
     @Override
@@ -245,6 +301,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         LinearLayout ll_so_comments =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_comment);
         TextView tv_so_comment_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_lbl);
         TextView tv_so_comment_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_val);
+        final TextView tv_error =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_error);
         final MKEditTextNM mket_serial =  view.findViewById(R.id.act047_so_next_orders_dialog_mket_serial_confirm);
         //Seta data
         //ll_title.setVisibility(View.GONE);
@@ -255,25 +312,33 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         tv_services_val.setText(item.getService());
         tv_so_comment_lbl.setText(hmAux_Trans.get("dialog_so_comment_lbl"));
         tv_so_comment_val.setText(item.getComments());
-        //Config mket
-        configDialogMket(mket_serial,item);
+        mket_serial.setHint(hmAux_Trans.get("serial_hint"));
+        tv_error.setText(hmAux_Trans.get("serial_no_match_hint"));
+        //Config TIl e Mket do seria
+        configSerialViews(tv_error,mket_serial,item);
         //
         builder
                 .setView(view)
                 .setPositiveButton(
                     hmAux_Trans.get("sys_alert_btn_ok"),
                     null
+                )
+                .setNegativeButton(
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    null
                 );
         //
         final AlertDialog dialog =  builder.create();
         dialog.show();
-        //
+        //Setado listner do botão positivo nesse momento, pois era necessaria a passagem do dialog
+        //como parametro do metodo checkDialogFlow
         dialog.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkDialogFlow(dialog,mket_serial,item);
+                checkDialogFlow(dialog,tv_error,mket_serial,item);
             }
         });
+        //Listener para remover o mket_serial da lista de componentes
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
@@ -282,16 +347,47 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         });
     }
 
-    private void checkDialogFlow(AlertDialog dialog, MKEditTextNM mket_serial, SO_Next_Orders_Obj item) {
+    /**
+     * LUCHE - 16/01/2020
+     *
+     * Metodo que define qual fluxo seguir apos a digitação do serial.
+     *
+     * Se nenhum texto digitado, fecha o dialog
+     * Se texto digitado diferente do serial, exibe tv com msg de erro
+     * Se texto igual serial, verifica se o.s existe, e se existir, navega para act027.
+     * Caso não exista, inicia a sequencia de download do serial e ana sequencia da o.s.
+     *
+     * Dialog pode ser nulo e quando nulo, identifica que a chamada do metodo foi disparada pelos
+     * leitores de Barcode ou OCR
+     *
+     * @param dialog - Instancia do dialog para fecha-lo caso o campos serial seja vazio.
+     * @param tv_error - TextView que exibe o msg de erro caso o serial digitado seja diferente
+     * @param mket_serial - Mket do serial
+     * @param item - Item da lista
+     */
+    private void checkDialogFlow(@Nullable AlertDialog dialog, TextView tv_error, MKEditTextNM mket_serial, SO_Next_Orders_Obj item) {
         String mketVal = mket_serial.getText().toString().trim();
         //
-        if(mket_serial.length() > 0){
+        if(mketVal.length() > 0){
             if(mketVal.equalsIgnoreCase(item.getSerial_id())) {
-                wsTmpItem = item;
-                mPresenter.executeSerialDownload(item.getProduct_id(), item.getSerial_id());
-                //mPresenter.executeSoDownload(item.getSo_prefix(), item.getSo_code());
+                if(mPresenter.checkSoExits(item.getSo_prefix(),item.getSo_code())){
+                    callAct027(
+                        mPresenter.getAct027Bundle(
+                            item.getSo_prefix(),
+                            item.getSo_code()
+                        )
+                    );
+                }else {
+                    wsTmpItem = item;
+                    mPresenter.executeSerialDownload(item.getProduct_id(), item.getSerial_id());
+                }
             }else{
-                mket_serial.getText().clear();
+                if(dialog == null){
+                    mket_serial.getText().clear();
+                }
+                //
+                tv_error.setVisibility(View.VISIBLE);
+                tv_error.setError(hmAux_Trans.get("serial_no_match_hint"));
             }
         }else{
             if(dialog != null) {
@@ -300,7 +396,18 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         }
     }
 
-    private void configDialogMket(final MKEditTextNM mket_serial, final SO_Next_Orders_Obj item) {
+    /**
+     * LUCHE - 16/01/2020
+     *
+     * Metodo que configura as views relativas ao serial e seus listeners.
+     *
+     * Configura os tipos de leitura do mket
+     *
+     * @param tv_error - TextView que exibe o msg de erro caso o serial digitado seja diferente
+     * @param mket_serial - Mket do serial
+     * @param item - Item da lista
+     */
+    private void configSerialViews(final TextView tv_error, final MKEditTextNM mket_serial, final SO_Next_Orders_Obj item) {
         mket_serial.setmBARCODE(
             ToolBox_Inf.profileExists(
                 context,
@@ -319,9 +426,22 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         mket_serial.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
             @Override
             public void reportTextBySpecialist(String s) {
-                checkDialogFlow(null,mket_serial,item);
+                checkDialogFlow(null, tv_error, mket_serial,item);
             }
         });
+        //
+        mket_serial.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                tv_error.setVisibility(View.GONE);
+            }
+        });
+
         //
         controls_sta.add(mket_serial);
     }
@@ -362,7 +482,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
-        super.processCloseACT(mLink, mRequired,new HMAux());
+       processCloseACT(mLink, mRequired,new HMAux());
     }
 
     @Override
@@ -373,11 +493,13 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
             mPresenter.processNextOrderList(hmAux.get(WS_SO_Next_Orders.SO_NEXT_SERVICES));
             disableProgressDialog();
         }else if(wsProcess.equals(WS_Serial_Search.class.getName())){
-            disableProgressDialog();
-            mPresenter.extractSearchResult(mLink, wsTmpItem.getProduct_id(),wsTmpItem.getSerial_id());
+            //Não fecha o dialog, pois o mesmo será usado na sequencia para o download a S.O
+            //em caso de erro, dialog pé fechado pelo metodo  cleanWsTmpItem();
+            //disableProgressDialog();
+            mPresenter.extractSearchResult(mLink, wsTmpItem);
         }else if(wsProcess.equals(WS_SO_Search.class.getName())){
-            mPresenter.processSoDownloadResult(hmAux);
-            disableProgressDialog();
+            mPresenter.processSoDownloadResult(hmAux,wsTmpItem.getSo_prefix(),wsTmpItem.getSo_code());
+            cleanWsTmpItem();
         }
     }
 
@@ -410,18 +532,28 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
-        disableProgressDialog();
-        //
-        onBackPressed();
+        if( wsProcess.equals(WS_Serial_Search.class.getName())
+            || wsProcess.equals(WS_SO_Search.class.getName()))
+        {
+            cleanWsTmpItem();
+        }else{
+            disableProgressDialog();
+            onBackPressed();
+        }
     }
 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         //
-        disableProgressDialog();
-        //
-        onBackPressed();
+        if( wsProcess.equals(WS_Serial_Search.class.getName())
+            || wsProcess.equals(WS_SO_Search.class.getName())
+        ){
+            cleanWsTmpItem();
+        }else{
+            disableProgressDialog();
+            onBackPressed();
+        }
     }
 
 

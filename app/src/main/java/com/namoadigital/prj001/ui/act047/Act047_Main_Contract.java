@@ -33,6 +33,9 @@ public interface Act047_Main_Contract {
         void showAlert(String ttl, String msg,@Nullable DialogInterface.OnClickListener listener);
 
         void callAct027(Bundle bundle);
+
+        void cleanWsTmpItem();
+
     }
 
     interface I_Presenter {
@@ -45,11 +48,15 @@ public interface Act047_Main_Contract {
 
         void executeSoDownload(String soPrefix, String soCode);
 
-        void processSoDownloadResult(HMAux hmAux);
+        void processSoDownloadResult(HMAux hmAux, String so_prefix, String so_code);
 
         void executeSerialDownload(String productId, String serialCode);
 
-        void extractSearchResult(String result, String productId, String serialID);
+        void extractSearchResult(String mLink, SO_Next_Orders_Obj wsTmpItem);
+
+        boolean checkSoExits(String soPrefix, String soCode);
+
+        Bundle getAct027Bundle(String soPrefix, String soCode);
     }
 
 }

@@ -162,6 +162,9 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         transList.add("alert_local_product_not_found_msg");
         transList.add("btn_so_next_orders");
         //
+        transList.add("alert_serial_or_so_to_send_title");
+        transList.add("alert_serial_or_so_to_send_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -345,9 +348,31 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         }
     }
 
+    /**
+     * LUCHE - 16/01/2020
+     *
+     *  Modificado metodo para verificar se existe pendencia de envio de serial ou s.o.
+     *  Caso exista, exibe msg de necessidade de sincronia e volta para o menu principal.
+     *
+     * @param optionsInfo
+     */
     private void processServiceList(HMAux optionsInfo) {
         if (ToolBox_Con.isOnline(context)) {
-            callAct047(context);
+
+            if(ToolBox_Inf.checkSerialTokenURStatus(context) || mPresenter.checkForSoToSend()){
+                showMsg(
+                    hmAux_Trans.get("alert_serial_or_so_to_send_title"),
+                    hmAux_Trans.get("alert_serial_or_so_to_send_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onBackPressed();
+                        }
+                    }
+                );
+            } else{
+                callAct047(context);
+            }
         } else {
             ToolBox_Inf.showNoConnectionDialog(Act021_Main.this);
         }
@@ -368,12 +393,16 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
 
     @Override
     public void showMsg(String ttl, String msg) {
+        showMsg(ttl, msg,null);
+    }
+
+    private void showMsg(String ttl, String msg,@Nullable DialogInterface.OnClickListener listener) {
         ToolBox.alertMSG(
-                context,
-                ttl,
-                msg,
-                null,
-                0
+            context,
+            ttl,
+            msg,
+            listener,
+            0
         );
     }
 
@@ -403,12 +432,8 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
                     1
             );
         } else {
-            ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("no_connection_ttl"),
-                    hmAux_Trans.get("no_so_pendencies_msg"),
-                    null,
-                    0
+            showMsg(hmAux_Trans.get("no_connection_ttl"),
+                    hmAux_Trans.get("no_so_pendencies_msg")
             );
         }
     }
