@@ -73,6 +73,7 @@ import com.namoadigital.prj001.receiver_chat.WBR_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
 import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.service.WS_AP_Search;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service_chat.WS_Room_AP;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_005;
@@ -2779,9 +2780,16 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     null,
                     0
             );
-        } else {
+        } else if(ws_process.equalsIgnoreCase(WS_Room_AP.class.getSimpleName())) {
             setWSProcess("");
 
+            bundle.putString(CH_RoomDao.ROOM_CODE, hmAux.get(CH_RoomDao.ROOM_CODE));
+            bundle.putString(Constant.CHAT_RELOAD, "1");
+            //
+            callAct034(context);
+        } else if(ws_process.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName()))  {
+            setWSProcess("");
+            //
             bundle.putString(CH_RoomDao.ROOM_CODE, hmAux.get(CH_RoomDao.ROOM_CODE));
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT035);
             if(hmAux.hasConsistentValue(TK_TicketDao.TICKET_PREFIX)
@@ -2789,9 +2797,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 bundle.putInt(TK_TicketDao.TICKET_PREFIX, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)));
                 bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
             }
-//            bundle.putString(Constant.CHAT_RELOAD, "1");
             //
             callAct070(bundle);
+        } else{
+            setWSProcess("");
         }
 
         progressDialog.dismiss();
