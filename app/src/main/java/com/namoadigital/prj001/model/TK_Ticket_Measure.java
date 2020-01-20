@@ -15,6 +15,7 @@ public class TK_Ticket_Measure {
     private String measure_tp_id;
     private String measure_tp_desc;
     private float measure_value;
+    private String value_sufix;
     private String measure_date;
     private String measure_info;
 
@@ -92,8 +93,16 @@ public class TK_Ticket_Measure {
         return measure_value;
     }
 
-    public void setMeasure_value(int measure_value) {
+    public void setMeasure_value(float measure_value) {
         this.measure_value = measure_value;
+    }
+
+    public String getValue_sufix() {
+        return value_sufix;
+    }
+
+    public void setValue_sufix(String value_sufix) {
+        this.value_sufix = value_sufix;
     }
 
     public String getMeasure_date() {

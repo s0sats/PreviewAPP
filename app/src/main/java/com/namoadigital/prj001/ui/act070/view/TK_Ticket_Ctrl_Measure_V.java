@@ -107,7 +107,9 @@ public class TK_Ticket_Ctrl_Measure_V extends TK_Ticket_Ctrl_Super {
      */
     private String getFormattedValue(float measure_value) {
         //return (new DecimalFormat("###0.00").format(measure_value)).replace(",", ".");
-        return (new DecimalFormat("###0").format(measure_value));
+        return
+            (new DecimalFormat("###0").format(measure_value))
+                + (getmTicketCtrl().getMeasure().getValue_sufix() != null ? " " + getmTicketCtrl().getMeasure().getValue_sufix()  : "");
     }
 
     private String getFormattedDesc(TK_Ticket_Ctrl ctrl) {

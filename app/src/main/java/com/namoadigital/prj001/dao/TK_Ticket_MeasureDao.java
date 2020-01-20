@@ -33,6 +33,7 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
     public static final String MEASURE_TP_ID = "measure_tp_id";
     public static final String MEASURE_TP_DESC = "measure_tp_desc";
     public static final String MEASURE_VALUE = "measure_value";
+    public static final String VALUE_SUFIX = "value_sufix";
     public static final String MEASURE_DATE = "measure_date";
     public static final String MEASURE_INFO = "measure_info";
 
@@ -373,6 +374,11 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
             tk_ticket_measure.setMeasure_tp_id(cursor.getString(cursor.getColumnIndex(MEASURE_TP_ID)));
             tk_ticket_measure.setMeasure_tp_desc(cursor.getString(cursor.getColumnIndex(MEASURE_TP_DESC)));
             tk_ticket_measure.setMeasure_value(cursor.getInt(cursor.getColumnIndex(MEASURE_VALUE)));
+            if(cursor.isNull(cursor.getColumnIndex(VALUE_SUFIX))) {
+                tk_ticket_measure.setValue_sufix(null);
+            }else{
+                tk_ticket_measure.setValue_sufix(cursor.getString(cursor.getColumnIndex(VALUE_SUFIX)));
+            }
             tk_ticket_measure.setMeasure_date(cursor.getString(cursor.getColumnIndex(MEASURE_DATE)));
             if(cursor.isNull(cursor.getColumnIndex(MEASURE_INFO))) {
                 tk_ticket_measure.setMeasure_info(null);
@@ -414,6 +420,7 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
             if(tk_ticket_measure.getMeasure_value() > -1){
                 contentValues.put(MEASURE_VALUE, tk_ticket_measure.getMeasure_value());
             }
+            contentValues.put(VALUE_SUFIX, tk_ticket_measure.getValue_sufix());
             if(tk_ticket_measure.getMeasure_date()!= null){
                 contentValues.put(MEASURE_DATE, tk_ticket_measure.getMeasure_date());
             }
