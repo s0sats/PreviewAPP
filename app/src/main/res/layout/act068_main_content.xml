@@ -25,12 +25,12 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-<!--        <fragment-->
-<!--            android:id="@+id/act068_frg_serial_search"-->
-<!--            android:name="com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            tools:layout="@layout/frg_serial_search" />-->
+        <fragment
+            android:id="@+id/act068_frg_serial_search"
+            android:name="com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/frg_serial_search" />
 
     </LinearLayout>
 
