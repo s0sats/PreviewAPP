@@ -1394,6 +1394,15 @@ public class ToolBox_Inf {
      * Foi solicitado a exibição de uma nova mensagem informando que atualização só poderá ser feita
      * após os dados serem enviados e exbição de em quais customers existem dados pendentes.
      *
+     * LUCHE - 22/01/2020
+     *
+     * Modificado chamada do metodo hasPendingDataV2, passando como segundo parametro lista de bancos
+     * de dados locais referente a mesma versão do app instalado.
+     * Em resumo, sera retornada a lista de banco dos customer que terminam com a versão atual do banco,
+     * Constant.DB_VERSION_CUSTOM. Dessa forma, os bancos antigos com pendencia de envio,
+     * não serão listados
+     * 
+     *
      * @param context - Contexto
      * @param db_version - Versão do banco de dados enviada pelo server.
      * @return - HmAux com msg e lista de customer.
@@ -1402,7 +1411,7 @@ public class ToolBox_Inf {
         HMAux aux = new HMAux();
         if(db_version != null && db_version > Constant.DB_VERSION_CUSTOM){
             //
-            String customerPendencieList = hasPendingDataV2(context, getListDB("C_", true));
+            String customerPendencieList = hasPendingDataV2(context,getCurrentDbVersionDbList("C_"));
             //
             if( customerPendencieList != null) {
                 //aux.put(Constant.LIB_DB_VERSION_MSG, context.getString(R.string.msg_not_sent_data_will_be_lost));
@@ -5376,6 +5385,35 @@ public class ToolBox_Inf {
             @Override
             public boolean accept(File dir, String filename) {
                 if (filename.startsWith(prefix) && (!excludeJournal || filename.endsWith(suffix))) {
+                    return true;
+                }
+                return false;
+            }
+        });
+        //
+        if (files != null) {
+            Arrays.sort(files);
+        }
+        //
+        return files;
+    }
+
+    /**
+     * LUCHE - 22/01/2020
+     * Metodo que lista todos os banco na mesma versão de banco do app (DB_VERSION_CUSTOM).
+     *
+     * Metodo usado na identificação de itens pendentes no processo de atualização de App com troca
+     * de banco de dados.
+     * @param prefix - "c_"
+     * @return - Lista de banco de dados com versão DB_VERSION_CUSTOM
+     */
+    public static File[] getCurrentDbVersionDbList(final String prefix) {
+        final String suffix = Constant.DB_VERSION_CUSTOM+ ".db3";
+        File fileList = new File(Constant.DB_PATH);
+        File[] files = fileList.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                if (filename.startsWith(prefix) && filename.endsWith(suffix)) {
                     return true;
                 }
                 return false;
