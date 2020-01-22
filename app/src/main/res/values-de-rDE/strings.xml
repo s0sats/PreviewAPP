@@ -102,7 +102,7 @@
     <string name="notification_messages_lbl">Nachrichten</string>
     <string name="chat_fcm_offline_ttl">Offline Nachrichten</string>
     <string name="chat_fcm_offline_msg">Sie haben neue Nachrichten erhalten!\nBitte die Namoa App öffnen.</string>
-    <string name="install_app_error_msg"> Error on trying app update !\nPlease try again !</string>
-    <string name="msg_customer_pendencies_list">Kunde :\n</string>
-    <string name="msg_update_required_warning">New version available!\nTo update, please submit pending data.</string>
+    <string name="install_app_error_msg"> Fehler bei der Aktualisierung der App!\nBitte erneut über die Synchronisation versuchen.</string>
+    <string name="msg_customer_pendencies_list">Account :\n</string>
+    <string name="msg_update_required_warning">Neue Version verfügbar!\nSenden Sie bitte die aussehende Daten, um aktualisieren zu können.</string>
 </resources>
