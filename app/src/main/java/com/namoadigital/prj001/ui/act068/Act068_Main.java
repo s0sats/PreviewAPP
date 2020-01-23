@@ -27,6 +27,7 @@ import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
+import com.namoadigital.prj001.ui.act072.Act072_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -94,6 +95,26 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
         transList.add("act068_title");
+        transList.add("btn_pendencies");
+        transList.add("btn_check_exists");
+        transList.add("btn_graphics");
+        transList.add("alert_no_pendencies_ttl");
+        transList.add("alert_no_pendencies_msg");
+        transList.add("alert_no_value_filled_ttl");
+        transList.add("alert_no_value_filled_msg");
+        transList.add("alert_no_serial_found_ttl");
+        transList.add("alert_no_serial_found_msg");
+        transList.add("dialog_serial_search_ttl");
+        transList.add("dialog_serial_search_start");
+        transList.add("alert_no_connection_try_pendencies_msg");
+        transList.add("dialog_ticket_save_ttl");
+        transList.add("dialog_ticket_save_start");
+        transList.add("ticket_lbl");
+        transList.add("alert_none_ticket_returned_ttl");
+        transList.add("alert_none_ticket_returned_msg");
+        transList.add("alert_local_product_not_found_ttl");
+        transList.add("alert_local_product_not_found_msg");
+        transList.add("alert_ticket_results_ttl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -187,7 +208,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     private void checkFlow(HMAux optionsInfo) {
-        if(ToolBox_Con.isOnline(context) || mPresenter.hasItensToSend()){
+        if(mPresenter.hasItensToSend()){
             mPresenter.executeWSTicketSave();
         }else{
             processSerialSearch(optionsInfo);
@@ -349,7 +370,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 
     @Override
     public void callAct072(Bundle bundle) {
-        Intent intent = new Intent(context, Act069_Main.class);
+        Intent intent = new Intent(context, Act072_Main.class);
         intent.putExtras(bundle);
         startActivity(intent);
         finish();
@@ -377,12 +398,9 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             mPresenter.extractSearchResult(result);
         } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             progressDialog.dismiss();
-            progressDialog.dismiss();
             mPresenter.processSaveReturn(result);
-
         } else{
             //
-            progressDialog.dismiss();
             progressDialog.dismiss();
         }
     }
@@ -398,7 +416,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
         Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
         //trad
-        tv_title.setText(hmAux_Trans.get("alert_checkin_results_ttl"));
+        tv_title.setText(hmAux_Trans.get("alert_ticket_results_ttl"));
         btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
         //
         lv_results.setAdapter(

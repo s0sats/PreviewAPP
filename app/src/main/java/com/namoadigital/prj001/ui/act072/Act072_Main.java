@@ -19,6 +19,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
+import com.namoadigital.prj001.ui.act073.Act073_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -250,6 +251,15 @@ public class Act072_Main extends Base_Activity implements Act072_Main_Contract.I
         bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);
         bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, fragSerial_ID);
         bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, fragTracking);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct073(Bundle bundle) {
+        Intent intent = new Intent(context, Act073_Main.class);
+        intent.putExtras(bundle);
         startActivity(intent);
         finish();
     }

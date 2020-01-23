@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -136,7 +135,6 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-            ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
         } else {
             //LUCHE - 21/01/2020
             //Enquanto não houver o processo de criaçãode ticket via App, não haverá lista offline.
