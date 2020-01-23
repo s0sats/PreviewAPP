@@ -105,7 +105,7 @@
     <string name="msg_not_sent_data_will_be_lost">WARNING: DATA NOT YET TRANSMITTED WILL BE LOST!</string>
     <string name="alert_move_unsent_data_error_ttl">Unsent data</string>
     <string name="alert_move_unsent_data_error_msg">Error on trying to copy unsent data ! Try to login again !</string>
-    <string name="install_app_error_msg">Error on trying app update !\n Please try again !</string>
+    <string name="install_app_error_msg">Error on trying app update !\nPlease try again !</string>
     <string name="msg_customer_pendencies_list">Customer :\n</string>
     <string name="msg_update_required_warning">New version available!\nTo update, please submit pending data.</string>
 

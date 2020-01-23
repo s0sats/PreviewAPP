@@ -271,13 +271,24 @@ public class WS_IO_Blind_Move_Save extends IntentService {
     }
 
     private boolean hasBlindMoveToken(ArrayList<IO_Blind_Move> blindList, int pending) {
-        blindList = (ArrayList<IO_Blind_Move>) blindMoveDao.query(
-            new IO_Blind_Move_Sql_001(
-                ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                pending
-            ).toSqlQuery()
+        //Limpa lista - acho desnecessario, mas...
+        blindList.clear();
+        //LUCHE - 22/01/2020 - Happy Birthday Mr.Potato
+        //Correção do bug que gerava loop infinito no caso de envio de itens com token.
+        //Antes, apesar d alista ser enviada como parametro, era gerada um nova instancia dneste metodo
+        //Essa nova instancia fazia a validação de  lista > 0, porem, a nova list não era atualizada
+        //na instancia "original" sendo assim, esse metodo retornva verdadeiro, mas a lista enviada
+        //era de 0 posições.
+        //Como o retorno TRUE desse metodo seta a var reRun , iniciava um loop infinito, onde esse metodo
+        //sempre retonornava true e o item nunca era enviado.
+        blindList.addAll( blindMoveDao.query(
+                new IO_Blind_Move_Sql_001(
+                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                    pending
+                ).toSqlQuery()
+            )
         );
-
+        //
         if (blindList != null && blindList.size() > 0) {
             //Atualiza valor do token em todos os cabeçalhos
             try {
