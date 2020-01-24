@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -20,6 +21,7 @@ import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -43,6 +45,7 @@ public class Act073_Main_Presenter implements Act073_Main_Contract.I_Presenter {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
+        this.product_code = product_code;
         //
         initDaos();
     }
@@ -105,6 +108,28 @@ public class Act073_Main_Presenter implements Act073_Main_Contract.I_Presenter {
 
     @Override
     public void executeTicketDownload(long productCode, long serialCode, String serialId) {
+        mView.setWsProcess(WS_TK_Ticket_Download.class.getName());
+
+        mView.showPD(
+            hmAux_Trans.get("dialog_download_ticket_ttl"),
+            hmAux_Trans.get("dialog_download_ticket_start")
+        );
+        //
+        /*
+        Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(productCode));
+        bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(serialCode));
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);*/
+        ToolBox.sendBCStatus(context,
+            "CLOSE_ACT",
+            hmAux_Trans.get("generic_process_finalized_msg"),
+            new HMAux() , "", "0");
 
     }
 
@@ -306,7 +331,7 @@ public class Act073_Main_Presenter implements Act073_Main_Contract.I_Presenter {
             //FUDEU 2
         }
     }
-
+    //region InterfacesSemAcao
     @Override
     public void searchLocalSerial(long product_code, String serial_id) {
         //Não existe busca offline nesse caso.
@@ -321,4 +346,5 @@ public class Act073_Main_Presenter implements Act073_Main_Contract.I_Presenter {
     public void processAddresSuggestionResult(String result) {
         //Não existe nesse caso.
     }
+    //endregion
 }
