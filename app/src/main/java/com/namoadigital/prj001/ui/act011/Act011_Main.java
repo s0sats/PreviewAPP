@@ -134,7 +134,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     private List<HMAux> tabsAndFields;
     private ArrayList<Fragment> screens;
-    private ArrayList<CustomFF> customFFs;
+    private transient ArrayList<CustomFF> customFFs;
     private ArrayList<GE_File> geFiles;
 
     private ArrayList<HMAux> pdfs_local;
