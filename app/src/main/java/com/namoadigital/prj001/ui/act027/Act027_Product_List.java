@@ -25,6 +25,7 @@ import com.namoadigital.prj001.sql.Act027_Product_List_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -84,10 +85,33 @@ public class Act027_Product_List extends BaseFragment {
         //
         View view = inflater.inflate(R.layout.act027_product_list_content, container, false);
         //
+        recoverBundleInfo();
         iniVar(view);
         iniAction();
         //
         return view;
+    }
+
+    private void recoverBundleInfo() {
+        if(getArguments() != null){
+            this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String, String>) getArguments().getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
+        }
+    }
+
+    @Override
+    public void setHmAux_Trans(HMAux hmAux_Trans) {
+        super.setHmAux_Trans(hmAux_Trans);
+        updateFragArgs();
+    }
+
+    private void updateFragArgs() {
+        Bundle args = getArguments();
+        if(args == null){
+            args = new Bundle();
+        }
+        args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
+        //
+        this.setArguments(args);
     }
 
     private void iniVar(View view) {
@@ -115,33 +139,35 @@ public class Act027_Product_List extends BaseFragment {
     }
 
     private void iniAction() {
-
-        mket_product_search.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
-            @Override
-            public void reportTextChange(String s) {
-                if(mSm_so != null) {
-                    loadEventList();
-                }else{
-                    delegate.callAct005();
+        if(mSm_so == null || hmAux_Trans == null){
+            delegate.callAct005();
+        } else{
+            mket_product_search.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+                @Override
+                public void reportTextChange(String s) {
+                    if (mSm_so != null) {
+                        loadEventList();
+                    } else {
+                        delegate.callAct005();
+                    }
                 }
+
+                @Override
+                public void reportTextChange(String s, boolean b) {
+
+                }
+            });
+
+            if (mSm_so.getStatus().equals(Constant.SYS_STATUS_EDIT)
+                || mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP)) {
+                iv_new_event.setEnabled(false);
             }
 
-            @Override
-            public void reportTextChange(String s, boolean b) {
+            iv_new_event.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-            }
-        });
-
-        if(mSm_so.getStatus().equals(Constant.SYS_STATUS_EDIT)
-        || mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP)){
-            iv_new_event.setEnabled(false);
-        }
-
-        iv_new_event.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                ToolBox.alertMSG(
+                    ToolBox.alertMSG(
                         context,
                         hmAux_Trans.get("new_product_event_ttl"),
                         hmAux_Trans.get("new_product_event_msg"),
@@ -154,21 +180,21 @@ public class Act027_Product_List extends BaseFragment {
                             }
                         },
                         1
-                );
-            }
-        });
-        //
-        lv_events.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (onItemEventClickListner != null) {
-                    HMAux item = (HMAux) parent.getItemAtPosition(position);
-                    //chamar fragment de edição.
-                    onItemEventClickListner.onItemEventClick(item);
+                    );
                 }
-            }
-        });
-
+            });
+            //
+            lv_events.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    if (onItemEventClickListner != null) {
+                        HMAux item = (HMAux) parent.getItemAtPosition(position);
+                        //chamar fragment de edição.
+                        onItemEventClickListner.onItemEventClick(item);
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -190,6 +216,7 @@ public class Act027_Product_List extends BaseFragment {
         super.onPause();
         //
         loadScreenToData();
+        updateFragArgs();
     }
 
     @Override

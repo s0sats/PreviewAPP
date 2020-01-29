@@ -49,6 +49,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by neomatrix on 31/10/17.
@@ -135,10 +136,33 @@ public class Act027_Product_Edit extends BaseFragment {
         //
         View view = inflater.inflate(R.layout.act027_product_edit_content, container, false);
         //
+        recoverBundleInfo();
         iniVar(view);
         iniAction();
         //
         return view;
+    }
+
+    private void recoverBundleInfo() {
+        if(getArguments() != null){
+            this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String, String>) getArguments().getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
+        }
+    }
+
+    @Override
+    public void setHmAux_Trans(HMAux hmAux_Trans) {
+        super.setHmAux_Trans(hmAux_Trans);
+        updateFragArgs();
+    }
+
+    private void updateFragArgs() {
+        Bundle args = getArguments();
+        if(args == null){
+            args = new Bundle();
+        }
+        args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY,hmAux_Trans);
+        //
+        this.setArguments(args);
     }
 
     @Override
@@ -176,184 +200,186 @@ public class Act027_Product_Edit extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-
         loadScreenToData();
+        updateFragArgs();
     }
 
     private void iniVar(View view) {
-
-        context = getActivity();
-
-        hideSoftKeyboard(getActivity());
-
-        tv_tmp_ref_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_seq_tmp_ttl);
-        tv_tmp_ref_val = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_seq_tmp_val);
-
-        tv_prod_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_prod_ttl);
-        tv_desc_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_prod_desc);
-        arff_applyrepair = (ApplyRepairImageFF) view.findViewById(R.id.act027_product_edit_content_arff_applyrepair);
-        cb_inspection = (CheckBox) view.findViewById(R.id.act027_product_edit_content_cb_inspection);
-        cb_inspection.setText(hmAux_Trans.get("event_inspection_lbl"));
-        ll_qty = (LinearLayout) view.findViewById(R.id.act027_product_edit_content_ll_qty_apply);
-        tv_unit = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_unit);
-        mk_qty = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_qty);
-
-        pff_sketch = (PictureFF) view.findViewById(R.id.act027_product_edit_content_pff_sketch);
-
-        tv_comments_lbl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_comments_lbl);
-        tv_comments_lbl.setText(hmAux_Trans.get("event_comments_lbl"));
-        mk_comments = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_comments);
-        iv_gallery = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_gallery);
-        ll_save = (LinearLayout) view.findViewById(R.id.act027_product_edit_content_ll_save);
-        iv_save = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_save);
-
-        ll_log = (LinearLayout) view.findViewById(R.id.act027_product_edit_content_ll_log);
-        tv_nick = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_nick);
-        tv_date = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_date);
-
-        md_all_productDao = new MD_All_ProductDao(context);
-
-        sm_so_product_eventDao = new SM_SO_Product_EventDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
-        sm_so_product_event_fileDao = new SM_SO_Product_Event_FileDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
-        sm_so_product_event_sketchDao = new SM_SO_Product_Event_SketchDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-        );
-
-        if (mProductCode != -1 && mSeqTmp != -1) {
-            mSm_so_product_event = sm_so_product_eventDao.getByString(
-                    new SM_SO_Product_Event_Sql_003(
-                            mSm_so.getCustomer_code(),
-                            mSm_so.getSo_prefix(),
-                            mSm_so.getSo_code(),
-                            mSeqTmp
-                    ).toSqlQuery()
-            );
-
+        if(mSm_so == null || hmAux_Trans == null){
+            delegate.callAct005();
         } else {
-            md_all_product = md_all_productDao.getByString(
+            context = getActivity();
+
+            hideSoftKeyboard(getActivity());
+
+            tv_tmp_ref_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_seq_tmp_ttl);
+            tv_tmp_ref_val = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_seq_tmp_val);
+
+            tv_prod_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_prod_ttl);
+            tv_desc_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_prod_desc);
+            arff_applyrepair = (ApplyRepairImageFF) view.findViewById(R.id.act027_product_edit_content_arff_applyrepair);
+            cb_inspection = (CheckBox) view.findViewById(R.id.act027_product_edit_content_cb_inspection);
+            cb_inspection.setText(hmAux_Trans.get("event_inspection_lbl"));
+            ll_qty = (LinearLayout) view.findViewById(R.id.act027_product_edit_content_ll_qty_apply);
+            tv_unit = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_unit);
+            mk_qty = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_qty);
+
+            pff_sketch = (PictureFF) view.findViewById(R.id.act027_product_edit_content_pff_sketch);
+
+            tv_comments_lbl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_comments_lbl);
+            tv_comments_lbl.setText(hmAux_Trans.get("event_comments_lbl"));
+            mk_comments = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_comments);
+            iv_gallery = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_gallery);
+            ll_save = (LinearLayout) view.findViewById(R.id.act027_product_edit_content_ll_save);
+            iv_save = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_save);
+
+            ll_log = (LinearLayout) view.findViewById(R.id.act027_product_edit_content_ll_log);
+            tv_nick = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_nick);
+            tv_date = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_date);
+
+            md_all_productDao = new MD_All_ProductDao(context);
+
+            sm_so_product_eventDao = new SM_SO_Product_EventDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            );
+
+            sm_so_product_event_fileDao = new SM_SO_Product_Event_FileDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            );
+
+            sm_so_product_event_sketchDao = new SM_SO_Product_Event_SketchDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            );
+
+            if (mProductCode != -1 && mSeqTmp != -1) {
+                mSm_so_product_event = sm_so_product_eventDao.getByString(
+                    new SM_SO_Product_Event_Sql_003(
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code(),
+                        mSeqTmp
+                    ).toSqlQuery()
+                );
+
+            } else {
+                md_all_product = md_all_productDao.getByString(
                     new MD_All_Product_Sql_001(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            (long) mProductCode
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        (long) mProductCode
 
                     ).toSqlQuery()
-            );
+                );
 
 
-            HMAux hmTmp = sm_so_product_eventDao.getByStringHM(
+                HMAux hmTmp = sm_so_product_eventDao.getByStringHM(
                     new SM_SO_Product_Event_Sql_002(
-                            mSm_so.getCustomer_code(),
-                            mSm_so.getSo_prefix(),
-                            mSm_so.getSo_code()
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code()
                     ).toSqlQuery()
-            );
+                );
 
-            int seq_tmp = ToolBox_Inf.convertStringToInt(hmTmp.get(SM_SO_Product_Event_Sql_002.NEXT_TMP));
+                int seq_tmp = ToolBox_Inf.convertStringToInt(hmTmp.get(SM_SO_Product_Event_Sql_002.NEXT_TMP));
 
-            mSm_so_product_event = new SM_SO_Product_Event();
-            mSm_so_product_event.setCustomer_code(mSm_so.getCustomer_code());
-            mSm_so_product_event.setSo_prefix(mSm_so.getSo_prefix());
-            mSm_so_product_event.setSo_code(mSm_so.getSo_code());
-            mSm_so_product_event.setSeq(0);
-            mSm_so_product_event.setSeq_tmp(seq_tmp);
-            mSm_so_product_event.setProduct_code((int) md_all_product.getProduct_code());
-            mSm_so_product_event.setProduct_id(md_all_product.getProduct_id());
-            mSm_so_product_event.setProduct_desc(md_all_product.getProduct_desc());
-            mSm_so_product_event.setUn(md_all_product.getUn());
-            mSm_so_product_event.setFlag_apply(0);
-            mSm_so_product_event.setFlag_repair(0);
-            mSm_so_product_event.setFlag_inspection(0);
-            mSm_so_product_event.setQty_apply("");
-            mSm_so_product_event.setSketch_code(md_all_product.getSketch_code());
-            mSm_so_product_event.setSketch_name(md_all_product.getSketch_url_local());
-            mSm_so_product_event.setSketch_url(md_all_product.getSketch_url());
-            mSm_so_product_event.setSketch_url_local(md_all_product.getSketch_url_local());
-            mSm_so_product_event.setSketch_lines(md_all_product.getSketch_lines());
-            mSm_so_product_event.setSketch_columns(md_all_product.getSketch_columns());
-            mSm_so_product_event.setSketch_color(md_all_product.getSketch_color());
-            mSm_so_product_event.setComments("");
-            mSm_so_product_event.setStatus("");
-            mSm_so_product_event.setCreate_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-            mSm_so_product_event.setCreate_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
-            mSm_so_product_event.setCreate_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
-            mSm_so_product_event.setDone_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-            mSm_so_product_event.setDone_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
-            mSm_so_product_event.setDone_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
-            mSm_so_product_event.setIntegrated(0);
-        }
+                mSm_so_product_event = new SM_SO_Product_Event();
+                mSm_so_product_event.setCustomer_code(mSm_so.getCustomer_code());
+                mSm_so_product_event.setSo_prefix(mSm_so.getSo_prefix());
+                mSm_so_product_event.setSo_code(mSm_so.getSo_code());
+                mSm_so_product_event.setSeq(0);
+                mSm_so_product_event.setSeq_tmp(seq_tmp);
+                mSm_so_product_event.setProduct_code((int) md_all_product.getProduct_code());
+                mSm_so_product_event.setProduct_id(md_all_product.getProduct_id());
+                mSm_so_product_event.setProduct_desc(md_all_product.getProduct_desc());
+                mSm_so_product_event.setUn(md_all_product.getUn());
+                mSm_so_product_event.setFlag_apply(0);
+                mSm_so_product_event.setFlag_repair(0);
+                mSm_so_product_event.setFlag_inspection(0);
+                mSm_so_product_event.setQty_apply("");
+                mSm_so_product_event.setSketch_code(md_all_product.getSketch_code());
+                mSm_so_product_event.setSketch_name(md_all_product.getSketch_url_local());
+                mSm_so_product_event.setSketch_url(md_all_product.getSketch_url());
+                mSm_so_product_event.setSketch_url_local(md_all_product.getSketch_url_local());
+                mSm_so_product_event.setSketch_lines(md_all_product.getSketch_lines());
+                mSm_so_product_event.setSketch_columns(md_all_product.getSketch_columns());
+                mSm_so_product_event.setSketch_color(md_all_product.getSketch_color());
+                mSm_so_product_event.setComments("");
+                mSm_so_product_event.setStatus("");
+                mSm_so_product_event.setCreate_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                mSm_so_product_event.setCreate_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+                mSm_so_product_event.setCreate_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+                mSm_so_product_event.setDone_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                mSm_so_product_event.setDone_user(Integer.parseInt(ToolBox_Con.getPreference_User_Code(context)));
+                mSm_so_product_event.setDone_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+                mSm_so_product_event.setIntegrated(0);
+            }
 
-        if (mSm_so_product_event.getQty_apply() != null) {
-            mSm_so_product_event.setQty_apply(mSm_so_product_event.getQty_apply().replace(",", "."));
-        }
+            if (mSm_so_product_event.getQty_apply() != null) {
+                mSm_so_product_event.setQty_apply(mSm_so_product_event.getQty_apply().replace(",", "."));
+            }
 
-        controls_iv.add(iv_gallery);
-        controls_sta.add(mk_comments);
-        controls_dyn.add(pff_sketch);
+            controls_iv.add(iv_gallery);
+            controls_sta.add(mk_comments);
+            controls_dyn.add(pff_sketch);
 
-        sFiles = new StringBuilder();
-        sSketchs = new StringBuilder();
+            sFiles = new StringBuilder();
+            sSketchs = new StringBuilder();
 
-        boolean bFirst = true;
+            boolean bFirst = true;
 
-        for (SM_SO_Product_Event_File sm_so_product_event_file : mSm_so_product_event.getFile()) {
+            for (SM_SO_Product_Event_File sm_so_product_event_file : mSm_so_product_event.getFile()) {
 
-            if (!sm_so_product_event_file.getFile_name().isEmpty()) {
+                if (!sm_so_product_event_file.getFile_name().isEmpty()) {
+
+                    if (bFirst) {
+                        sFiles.append(sm_so_product_event_file.getFile_name());
+                        bFirst = false;
+                    } else {
+                        sFiles.append("#");
+                        sFiles.append(sm_so_product_event_file.getFile_name());
+                    }
+
+                }
+            }
+
+            mk_comments.setText(mSm_so_product_event.getComments());
+
+            tv_unit.setText(mSm_so_product_event.getUn());
+
+            mk_qty.setText(mSm_so_product_event.getQty_apply());
+
+            iv_gallery.setTag(sFiles.toString());
+
+            bFirst = true;
+
+            for (SM_SO_Product_Event_Sketch sm_so_product_event_sketch : mSm_so_product_event.getSketch()) {
 
                 if (bFirst) {
-                    sFiles.append(sm_so_product_event_file.getFile_name());
+                    sSketchs.append(sm_so_product_event_sketch.getLine())
+                        .append(",")
+                        .append(sm_so_product_event_sketch.getCol());
                     bFirst = false;
                 } else {
-                    sFiles.append("#");
-                    sFiles.append(sm_so_product_event_file.getFile_name());
+                    sSketchs.append("#");
+                    sSketchs.append(sm_so_product_event_sketch.getLine())
+                        .append(",")
+                        .append(sm_so_product_event_sketch.getCol());
                 }
-
             }
-        }
 
-        mk_comments.setText(mSm_so_product_event.getComments());
-
-        tv_unit.setText(mSm_so_product_event.getUn());
-
-        mk_qty.setText(mSm_so_product_event.getQty_apply());
-
-        iv_gallery.setTag(sFiles.toString());
-
-        bFirst = true;
-
-        for (SM_SO_Product_Event_Sketch sm_so_product_event_sketch : mSm_so_product_event.getSketch()) {
-
-            if (bFirst) {
-                sSketchs.append(sm_so_product_event_sketch.getLine())
-                        .append(",")
-                        .append(sm_so_product_event_sketch.getCol());
-                bFirst = false;
+            if (mSm_so_product_event.getSketch_code() == null) {
+                pff_sketch.setVisibility(View.GONE);
             } else {
-                sSketchs.append("#");
-                sSketchs.append(sm_so_product_event_sketch.getLine())
-                        .append(",")
-                        .append(sm_so_product_event_sketch.getCol());
-            }
-        }
+                StringBuilder sbOptions = new StringBuilder();
+                pff_sketch.setVisibility(View.VISIBLE);
+                pff_sketch.setmFName(mSm_so_product_event.getSketch_url_local());
 
-        if (mSm_so_product_event.getSketch_code() == null) {
-            pff_sketch.setVisibility(View.GONE);
-        } else {
-            StringBuilder sbOptions = new StringBuilder();
-            pff_sketch.setVisibility(View.VISIBLE);
-            pff_sketch.setmFName(mSm_so_product_event.getSketch_url_local());
-
-            sbOptions.append("{\"CONTENT\":[{\"LINES\":")
+                sbOptions.append("{\"CONTENT\":[{\"LINES\":")
                     .append(mSm_so_product_event.getSketch_lines())
                     .append(" ,\"COLUMNS\":")
                     .append(mSm_so_product_event.getSketch_columns())
@@ -361,93 +387,94 @@ public class Act027_Product_Edit extends BaseFragment {
                     .append(mSm_so_product_event.getSketch_color())
                     .append("\"}]}");
 
-            pff_sketch.setmOption(sbOptions.toString());
+                pff_sketch.setmOption(sbOptions.toString());
 
-            pff_sketch.setmValue(
+                pff_sketch.setmValue(
                     ToolBox.converterToJson(sSketchs.toString())
-            );
+                );
 
-        }
+            }
 
-        pff_sketch.setmIv_Dots(0);
-        pff_sketch.setmV_Line(0);
+            pff_sketch.setmIv_Dots(0);
+            pff_sketch.setmV_Line(0);
 
-        if (mSm_so_product_event.getFlag_apply() == 1) {
-            arff_applyrepair.setmValue("10");
-            mk_qty.setText(mSm_so_product_event.getQty_apply());
-            mk_qty.setmRequired(true);
-            //
-            ll_qty.setVisibility(View.VISIBLE);
+            if (mSm_so_product_event.getFlag_apply() == 1) {
+                arff_applyrepair.setmValue("10");
+                mk_qty.setText(mSm_so_product_event.getQty_apply());
+                mk_qty.setmRequired(true);
+                //
+                ll_qty.setVisibility(View.VISIBLE);
 //            mk_qty.setVisibility(View.VISIBLE);
 //            tv_unit.setVisibility(View.VISIBLE);
-        } else if (mSm_so_product_event.getFlag_repair() == 1) {
-            arff_applyrepair.setmValue("01");
-            mk_qty.setmRequired(false);
-            ll_qty.setVisibility(View.GONE);
+            } else if (mSm_so_product_event.getFlag_repair() == 1) {
+                arff_applyrepair.setmValue("01");
+                mk_qty.setmRequired(false);
+                ll_qty.setVisibility(View.GONE);
 //            mk_qty.setVisibility(View.INVISIBLE);
 //            tv_unit.setVisibility(View.INVISIBLE);
-        } else {
-            arff_applyrepair.setmValue("00");
-            mk_qty.setmRequired(true);
-            ll_qty.setVisibility(View.GONE);
-//            mk_qty.setVisibility(View.INVISIBLE);
-//            tv_unit.setVisibility(View.INVISIBLE);
-        }
-
-        if (mSm_so_product_event.getFlag_inspection() == 1) {
-            cb_inspection.setChecked(true);
-        } else {
-            cb_inspection.setChecked(false);
-        }
-
-        arff_applyrepair.setmIv_Dots(0);
-        arff_applyrepair.setmV_Line(0);
-
-        if (mSm_so_product_event.getStatus().equalsIgnoreCase("") || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)) {
-            bStatusNew = true;
-        } else {
-            bStatusNew = false;
-        }
-
-        if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE)) {
-            ll_log.setVisibility(View.VISIBLE);
-            //
-            tv_nick.setText(mSm_so_product_event.getDone_user_nick());
-            tv_date.setText(
-                    ToolBox_Inf.millisecondsToString(
-                            ToolBox_Inf.dateToMilliseconds(mSm_so_product_event.getDone_date() != null ? mSm_so_product_event.getDone_date() : "", ""),
-                            ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
-                    )
-            );
-        } else {
-            if (mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
-                ll_log.setVisibility(View.GONE);
-                //
-                tv_nick.setText("");
-                tv_date.setText("");
             } else {
+                arff_applyrepair.setmValue("00");
+                mk_qty.setmRequired(true);
+                ll_qty.setVisibility(View.GONE);
+//            mk_qty.setVisibility(View.INVISIBLE);
+//            tv_unit.setVisibility(View.INVISIBLE);
+            }
+
+            if (mSm_so_product_event.getFlag_inspection() == 1) {
+                cb_inspection.setChecked(true);
+            } else {
+                cb_inspection.setChecked(false);
+            }
+
+            arff_applyrepair.setmIv_Dots(0);
+            arff_applyrepair.setmV_Line(0);
+
+            if (mSm_so_product_event.getStatus().equalsIgnoreCase("") || mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)) {
+                bStatusNew = true;
+            } else {
+                bStatusNew = false;
+            }
+
+            if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE)) {
                 ll_log.setVisibility(View.VISIBLE);
                 //
-                tv_nick.setText(mSm_so_product_event.getCreate_user_nick());
+                tv_nick.setText(mSm_so_product_event.getDone_user_nick());
                 tv_date.setText(
-                        ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(mSm_so_product_event.getCreate_date() != null ? mSm_so_product_event.getCreate_date() : "", ""),
-                                ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
-                        )
+                    ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(mSm_so_product_event.getDone_date() != null ? mSm_so_product_event.getDone_date() : "", ""),
+                        ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                    )
                 );
+            } else {
+                if (mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
+                    ll_log.setVisibility(View.GONE);
+                    //
+                    tv_nick.setText("");
+                    tv_date.setText("");
+                } else {
+                    ll_log.setVisibility(View.VISIBLE);
+                    //
+                    tv_nick.setText(mSm_so_product_event.getCreate_user_nick());
+                    tv_date.setText(
+                        ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(mSm_so_product_event.getCreate_date() != null ? mSm_so_product_event.getCreate_date() : "", ""),
+                            ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                        )
+                    );
+                }
             }
+
+            tempValues.put("arff_applyrepair", arff_applyrepair.getmValue());
+            tempValues.put("cb_inspection", cb_inspection.isChecked() ? "1" : "0");
+
+            tempValues.put("mk_comments", mk_comments.getText().toString());
+            tempValues.put("mk_qty", mk_qty.getText().toString());
+            tempValues.put("img", (String) iv_gallery.getTag());
+
+            tempValues.put("sketch_fname", pff_sketch.getmFName());
+            tempValues.put("sketch_options", pff_sketch.getmOption());
+            tempValues.put("sketch_mvalue", pff_sketch.getmValue());
         }
-
-        tempValues.put("arff_applyrepair", arff_applyrepair.getmValue());
-        tempValues.put("cb_inspection", cb_inspection.isChecked() ? "1" : "0");
-
-        tempValues.put("mk_comments", mk_comments.getText().toString());
-        tempValues.put("mk_qty", mk_qty.getText().toString());
-        tempValues.put("img", (String) iv_gallery.getTag());
-
-        tempValues.put("sketch_fname", pff_sketch.getmFName());
-        tempValues.put("sketch_options", pff_sketch.getmOption());
-        tempValues.put("sketch_mvalue", pff_sketch.getmValue());
     }
 
     private void iniAction() {
