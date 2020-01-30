@@ -217,6 +217,24 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
+        /**
+         * LUCHE - 30/01/2020
+         *
+         * Implementado metodo para recuperar CUSTOM_FORM_DATA quando o app se recupera do fechamento
+         * por falta de memoria evitando a msg de form aberto a cada evento de "fechamento por falta de memoria"
+         */
+         if(savedInstanceState != null) {
+            //Se tiver os savedInstanceState e a chave CUSTOM_FORM_DATA,
+            //seta o CUSTOM_FORM_DATA no bundle da intent que por sua vez será resgatado no metodo
+            //recoverGetIntents
+            if(savedInstanceState.containsKey(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA)) {
+                getIntent().putExtra(
+                    GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
+                    savedInstanceState.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA)
+                );
+            }
+        }
+        //
         iniSetup();
         //
         initVars();
@@ -1041,6 +1059,20 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             mSite_Code = null;
             mOperation_Code = null;
         }
+
+    }
+
+    /**
+     * LUCHE - 30/01/2020
+     *
+     * Implmentado metodo para salvar o form_data no bundle
+     *
+     * @param outState
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,form_data);
     }
 
     private void iniUIFooter() {
