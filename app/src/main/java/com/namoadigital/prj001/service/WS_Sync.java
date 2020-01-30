@@ -513,6 +513,7 @@ public class WS_Sync extends IntentService {
             MD_Product_Category_PriceDao productCategoryPriceDao = new MD_Product_Category_PriceDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MD_ClassDao classDao = new MD_ClassDao(getApplicationContext());
             IO_Move_ReasonDao io_move_reasonDao = new IO_Move_ReasonDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MD_PartnerDao partnerDao = new MD_PartnerDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
@@ -538,6 +539,7 @@ public class WS_Sync extends IntentService {
             productCategoryPriceDao.remove(new MD_Product_Category_Price_Sql_Truncate().toSqlQuery());
             classDao.remove(new MD_Class_Sql_Truncate().toSqlQuery());
             io_move_reasonDao.remove(new IO_Move_Reason_Sql_Truncate().toSqlQuery());
+            partnerDao.remove(new MD_Partner_Sql_Truncate().toSqlQuery());
 
             //
             // Processamento Operation
@@ -1257,6 +1259,24 @@ public class WS_Sync extends IntentService {
 
                 io_move_reasonDao.addUpdate(io_move_reasons, false);
             }
+
+            //
+            // Processamento Partner
+            //
+            File[] files_partner = ToolBox_Inf.getListOfFiles_v2("md_partner-");
+
+            for (File _file : files_partner) {
+
+                ArrayList<MD_Partner> mdPartners = gson.fromJson(
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(_file)
+                    ),
+                    new TypeToken<ArrayList<MD_Partner>>() {
+                    }.getType()
+                );
+
+                partnerDao.addUpdate(mdPartners, false);
+            }
         }
         //endregion
         //region Processamento das tabelas do Checklist
@@ -1700,28 +1720,9 @@ public class WS_Sync extends IntentService {
         //Processamento das tabelas do SO
         //
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_SO)) {
-            MD_PartnerDao partnerDao = new MD_PartnerDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             SO_Pack_ExpressDao so_pack_expressDao = new SO_Pack_ExpressDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //apaga tabelas
-            partnerDao.remove(new MD_Partner_Sql_Truncate().toSqlQuery());
             so_pack_expressDao.remove(new SO_Pack_Express_Sql_Truncate().toSqlQuery());
-            //
-            // Processamento Partner
-            //
-            File[] files_partner = ToolBox_Inf.getListOfFiles_v2("md_partner-");
-
-            for (File _file : files_partner) {
-
-                ArrayList<MD_Partner> mdPartners = gson.fromJson(
-                        ToolBox.jsonFromOracle(
-                                ToolBox_Inf.getContents(_file)
-                        ),
-                        new TypeToken<ArrayList<MD_Partner>>() {
-                        }.getType()
-                );
-
-                partnerDao.addUpdate(mdPartners, false);
-            }
             //
             // Processamento SO_Pack_Express
             //
