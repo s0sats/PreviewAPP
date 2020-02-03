@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -83,7 +84,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private ImageView ivOpenPhoto;
     private Button btnCheckIn;
     private ConstraintLayout clCheckinInfo;
-    private ImageView ivCheckinCancel;
+    private FrameLayout ivCheckinCancel;
     private TextView tvCheckinInfoLbl;
     private TextView tvCheckinInfoVal;
     private TextView tvDoneInfoLbl;
@@ -141,6 +142,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("open_date_lbl");
         transList.add("forecast_date_lbl");
         transList.add("btn_checkin");
+        transList.add("btn_checkin_cancel");
         transList.add("checkin_info_lbl");
         transList.add("done_info_lbl");
         transList.add("filter_lbl");
@@ -343,16 +345,16 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         tvTypeDesc.setText(mTicket.getType_desc());
         defineOpenComment();
         tvOpenDate_val.setText(
-            ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(mTicket.getOpen_date()),
-                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-            )
+                ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(mTicket.getOpen_date()),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                )
         );
         tvForecastDate_val.setText(
-            ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(mTicket.getForecast_date()),
-                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-            )
+                ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(mTicket.getForecast_date()),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                )
         );
         //
         tvProduct.setText(mTicket.getCurrent_product_desc());
@@ -380,8 +382,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             Drawable rightDraw = null;
             Drawable background = getResources().getDrawable(R.drawable.stroke_blue2_states);
             if (mTicket.getUpdate_required() == 1
-                || mTicket.getSync_required() == 1
-                || mPresenter.isTicketInTokenFile(mTicket.getTicket_prefix(), mTicket.getTicket_code())
+                    || mTicket.getSync_required() == 1
+                    || mPresenter.isTicketInTokenFile(mTicket.getTicket_prefix(), mTicket.getTicket_code())
             ) {
                 rightDraw = getResources().getDrawable(R.drawable.ic_sync_black_24dp);
                 rightDraw.setColorFilter(getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
@@ -395,15 +397,15 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
 
     private void loadActionList() {
         actionList = mPresenter.generateCtrlActions(
-            mTicket,
-            llActions,
-            swFilter.isChecked()
+                mTicket,
+                llActions,
+                swFilter.isChecked()
         );
     }
 
     private void defineFilterVisility() {
         if ( mPresenter.isReadOnlyStatus(mTicket.getTicket_status())
-             || mPresenter.checkFilterDisable(mTicket.getCtrl()))
+                || mPresenter.checkFilterDisable(mTicket.getCtrl()))
         {
             swFilter.setChecked(false);
             grFilter.setVisibility(View.GONE);
@@ -414,7 +416,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
 
     private void configDoneInfo() {
         if (mPresenter.isReadOnlyStatus(mTicket.getTicket_status())
-            && mTicket.getClose_date() != null && mTicket.getClose_user() != null) {
+                && mTicket.getClose_date() != null && mTicket.getClose_user() != null) {
             grDone.setVisibility(View.VISIBLE);
             tvDoneInfoVal.setText(mPresenter.getFormattedDoneInfo(mTicket.getClose_date(), mTicket.getClose_user_name()));
         } else {
@@ -436,6 +438,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             ivCheckinCancel.setVisibility(View.GONE);
         } else {
             ivCheckinCancel.setVisibility(View.VISIBLE);
+            //todo tratar conteudo de variavel
+//            ivCheckinCancel.setText(hmAux_Trans.get("btn_checkin_cancel"));
         }
     }
 

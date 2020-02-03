@@ -74,6 +74,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private MKEditTextNM mketComments;
     private TextView tvDoneInfoLbl;
     private TextView tvDoneInfoVal;
+    private TextView tvCheckinNeeded;
     private Group grDone;
     private Bundle requestingBundle;
     private int mActionPrefix;
@@ -133,6 +134,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("photo_lbl");
         transList.add("done_info_lbl");
         transList.add("comments_lbl");
+        transList.add("checkin_needed_alert_lbl");
         transList.add("alert_action_parameter_error_ttl");
         transList.add("alert_action_parameter_error_msg");
         transList.add("alert_unsaved_data_will_be_lost_ttl");
@@ -226,6 +228,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         tilComment = findViewById(R.id.act071_til_comment);
         tvDoneInfoLbl = findViewById(R.id.act071_tv_done_info_lbl);
         tvDoneInfoVal = findViewById(R.id.act071_tv_done_info_val);
+        tvCheckinNeeded = findViewById(R.id.act071_tv_checkin_needed);
         grDone = findViewById(R.id.act071_gr_done);
         //
         setLabels();
@@ -563,7 +566,17 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         defineActionPhotoMetrics();
         defineActionPhoto();
         defineDoneInfo();
+        defineCheckinAlert();
 
+    }
+
+    private void defineCheckinAlert() {
+        if(bDisableByCheckin) {
+            tvCheckinNeeded.setVisibility(View.VISIBLE);
+            tvCheckinNeeded.setText(hmAux_Trans.get("checkin_needed_alert_lbl"));
+        }else{
+            tvCheckinNeeded.setVisibility(View.GONE);
+        }
     }
 
     private void definePartner() {
