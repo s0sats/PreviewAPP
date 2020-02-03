@@ -164,7 +164,19 @@ public class Act072_Main extends Base_Activity implements Act072_Main_Contract.I
             serialList
         );
         mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));
+        initializeListView();
+    }
+
+    private void initializeListView() {
         lv_prod_serial_list.setAdapter(mAdapter);
+        lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
+                //
+                mPresenter.defineFlow(productSerial);
+            }
+        });
     }
 
     private void setSerialListSize() {
@@ -222,14 +234,6 @@ public class Act072_Main extends Base_Activity implements Act072_Main_Contract.I
     }
 
     private void initAction() {
-        lv_prod_serial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
-                //
-                mPresenter.defineFlow(productSerial);
-            }
-        });
     }
 
 

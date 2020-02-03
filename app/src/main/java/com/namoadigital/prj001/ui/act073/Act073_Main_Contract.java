@@ -1,5 +1,8 @@
 package com.namoadigital.prj001.ui.act073;
 
+import android.os.Bundle;
+
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit_Presenter;
@@ -18,6 +21,10 @@ public interface Act073_Main_Contract {
         void showAlert(String ttl, String msg);
 
         void callAct068();
+
+        void callAct069();
+
+        void callAct070(Bundle buildAct070Bundle);
     }
 
     interface I_Presenter extends Frg_Serial_Edit_Presenter {
@@ -30,5 +37,7 @@ public interface Act073_Main_Contract {
         void saveSerialInfo(MD_Product_Serial md_product_serial);
 
         void executeTicketDownload(long productCode, long serialCode, String serialId);
+
+        void processTicketDownload(HMAux hmAux);
     }
 }

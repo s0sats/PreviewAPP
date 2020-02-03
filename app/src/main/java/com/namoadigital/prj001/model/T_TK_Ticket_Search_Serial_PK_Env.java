@@ -4,17 +4,26 @@ package com.namoadigital.prj001.model;
  * Created by d.luche on 29/11/2019.
  */
 
-public class T_TK_Ticket_Download_Serial_PK_Env {
+public class T_TK_Ticket_Search_Serial_PK_Env {
 
-    private String customer_code;
+    private long customer_code;
     private String product_code;
     private String serial_code;
 
-    public String getCustomer_code() {
+    public T_TK_Ticket_Search_Serial_PK_Env() {
+    }
+
+    public T_TK_Ticket_Search_Serial_PK_Env(long customer_code, String product_code, String serial_code) {
+        this.customer_code = customer_code;
+        this.product_code = product_code;
+        this.serial_code = serial_code;
+    }
+
+    public long getCustomer_code() {
         return customer_code;
     }
 
-    public void setCustomer_code(String customer_code) {
+    public void setCustomer_code(long customer_code) {
         this.customer_code = customer_code;
     }
 

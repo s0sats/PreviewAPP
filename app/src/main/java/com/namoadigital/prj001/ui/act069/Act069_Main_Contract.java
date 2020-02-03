@@ -21,6 +21,8 @@ public interface Act069_Main_Contract {
         void callAct012();
 
         void callAct014();
+
+        void callAct068();
     }
 
     interface I_Presenter{

@@ -31,8 +31,10 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
-import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Search;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
+import com.namoadigital.prj001.ui.act069.Act069_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -86,7 +88,7 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
         mResource_Code = ToolBox_Inf.getResourceCode(
             context,
             mModule_Code,
-            Constant.ACT023
+            Constant.ACT073
         );
         mResource_Code_Frag = ToolBox_Inf.getResourceCode(
             context,
@@ -118,7 +120,18 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
         transList.add("dialog_result_serial_lbl");
         transList.add("dialog_result_msg_lbl");
         transList.add("dialog_results_ttl");
-        transList.add("btn_create");
+        transList.add("btn_search");
+        //
+        transList.add("alert_no_ticket_found_ttl");
+        transList.add("alert_no_ticket_found_msg");
+        transList.add("alert_ticket_params_not_found_ttl");
+        transList.add("alert_ticket_params_not_found_msg");
+        transList.add("alert_invalid_ticket_return_ttl");
+        transList.add("alert_invalid_ticket_return_msg");
+        transList.add("dialog_download_ticket_ttl");
+        transList.add("dialog_download_ticket_start");
+        transList.add("dialog_search_ticket_ttl");
+        transList.add("dialog_search_ticket_start");
 
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -190,7 +203,7 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
         controls_sta.addAll(frgSerialEdit.getControlsSta());
         frgSerialEdit.setMdProduct(mdProduct);
         frgSerialEdit.setMdProductSerial(mdProductSerial);
-        frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_create"));
+        frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_search"));
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
         //Interfaces
@@ -513,6 +526,28 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
     }
 
     @Override
+    public void callAct069() {
+        Intent intent = new Intent(context, Act069_Main.class);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT073);
+        bundle.putString(Act069_Main.FILTER_TEXT,mdProductSerial.getSerial_id());
+        //
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
+
+    }
+
+    @Override
+    public void callAct070(Bundle buildAct070Bundle) {
+        Intent intent = new Intent(context, Act070_Main.class);
+        intent.putExtras(buildAct070Bundle);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
     protected void processCloseACT(String mLink, String mRequired) {
         processCloseACT(mLink, mRequired, new HMAux());
     }
@@ -523,8 +558,10 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
         //
         if(wsProcess.equals(WS_Serial_Tracking_Search.class.getName())){
             frgSerialEdit.processTrackingResult(hmAux);
+            disableProgressDialog();
         } else if(wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())){
             mPresenter.extractSearchResult(mLink);
+            disableProgressDialog();
         }else if(wsProcess.equalsIgnoreCase(WS_Serial_Save.class.getName())){
             frgSerialEdit.setNew_serial(false);
             if (hmAux.size() > 0) {
@@ -535,8 +572,9 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
                     hmAux_Trans.get("alert_no_serial_return_msg"),
                     false);
             }
-        } else if(wsProcess.equals(WS_TK_Ticket_Download.class.getName())){
+        } else if(wsProcess.equals(WS_TK_Ticket_Search.class.getName())){
             disableProgressDialog();
+            mPresenter.processTicketDownload(hmAux);
         }
     }
 

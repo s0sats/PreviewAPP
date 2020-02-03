@@ -4,6 +4,11 @@ import java.util.ArrayList;
 
 /**
  * Created by d.luche on 29/11/2019.
+ *
+ * LUCHE - 03/02/2020
+ * Esse modelo também é utilizado pelo WS_TK_Ticket_Search, que é o mesmo retorno do Download
+ * do ticket pela pk.
+ *
  */
 
 public class T_TK_Ticket_Download_Rec {

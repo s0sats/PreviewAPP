@@ -30,6 +30,7 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
+import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -436,6 +437,14 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
     @Override
     public void callAct014() {
         Intent intent = new Intent(context, Act014_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct068() {
+        Intent intent = new Intent(context, Act068_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();

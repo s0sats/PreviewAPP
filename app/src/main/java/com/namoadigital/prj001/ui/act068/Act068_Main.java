@@ -29,6 +29,7 @@ import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act072.Act072_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
@@ -178,10 +179,12 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             context,this,hmAux_Trans
         );
         //
-        applyBundleSearchParams();
         //
         mPresenter.getPendencies();
         mPresenter.getMD_Products();
+        //
+        applyBundleSearchParams();
+
     }
 
     private void applyBundleSearchParams() {
@@ -364,6 +367,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     @Override
     public void callAct069(Bundle bundle){
         Intent intent = new Intent(context, Act069_Main.class);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
+        intent.putExtras(bundle);
         startActivity(intent);
         finish();
     }

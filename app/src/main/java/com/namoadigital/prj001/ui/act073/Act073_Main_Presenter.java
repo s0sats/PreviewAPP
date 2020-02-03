@@ -7,25 +7,27 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Search;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
-import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -108,29 +110,24 @@ public class Act073_Main_Presenter implements Act073_Main_Contract.I_Presenter {
 
     @Override
     public void executeTicketDownload(long productCode, long serialCode, String serialId) {
-        mView.setWsProcess(WS_TK_Ticket_Download.class.getName());
+        mView.setWsProcess(WS_TK_Ticket_Search.class.getName());
 
         mView.showPD(
-            hmAux_Trans.get("dialog_download_ticket_ttl"),
-            hmAux_Trans.get("dialog_download_ticket_start")
+            hmAux_Trans.get("dialog_search_ticket_ttl"),
+            hmAux_Trans.get("dialog_search_ticket_start")
         );
         //
-        /*
-        Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
+
+        Intent mIntent = new Intent(context, WBR_TK_Ticket_Search.class);
         Bundle bundle = new Bundle();
         //
         bundle.putString(MD_Product_SerialDao.PRODUCT_CODE, String.valueOf(productCode));
         bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(serialCode));
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
+        //bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
         //
         mIntent.putExtras(bundle);
         //
-        context.sendBroadcast(mIntent);*/
-        ToolBox.sendBCStatus(context,
-            "CLOSE_ACT",
-            hmAux_Trans.get("generic_process_finalized_msg"),
-            new HMAux() , "", "0");
-
+        context.sendBroadcast(mIntent);
     }
 
     @Override
@@ -235,6 +232,51 @@ public class Act073_Main_Presenter implements Act073_Main_Contract.I_Presenter {
         }
     }
 
+    @Override
+    public void processTicketDownload(HMAux hmAux) {
+        if(hmAux != null && hmAux.size() > 0 ){
+            int qtyReturned =
+                hmAux.hasConsistentValue(WS_TK_Ticket_Search.RETURNED_TICKET_QTY)
+                    ? ToolBox_Inf.convertStringToInt(hmAux.get(WS_TK_Ticket_Search.RETURNED_TICKET_QTY))
+                    : 0 ;
+            if(qtyReturned == 0){
+                mView.showAlert(
+                    hmAux_Trans.get("alert_no_ticket_found_ttl"),
+                    hmAux_Trans.get("alert_no_ticket_found_msg")
+                );
+            }else if(qtyReturned == 1){
+                if(hmAux.hasConsistentValue(TK_TicketDao.TICKET_PREFIX)
+                    && hmAux.hasConsistentValue(TK_TicketDao.TICKET_CODE)
+                ) {
+                    //Chama Act com a pk do ticket.
+                    mView.callAct070(
+                        buildAct070Bundle(hmAux)
+                    );
+                }else{
+                    mView.showAlert(
+                        hmAux_Trans.get("alert_ticket_params_not_found_ttl"),
+                        hmAux_Trans.get("alert_ticket_params_not_found_msg")
+                    );
+                }
+            }else{
+                mView.callAct069();
+            }
+        }else{
+            mView.showAlert(
+                hmAux_Trans.get("alert_invalid_ticket_return_ttl"),
+                hmAux_Trans.get("alert_invalid_ticket_return_msg")
+            );
+        }
+    }
+
+    private Bundle buildAct070Bundle(HMAux hmAux) {
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT073);
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)));
+        bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
+        return bundle;
+    }
+
     private void refreshMdProductSerialReference(long product_code, String serial_id) {
         mView.updateProductSerialValues(
             getSerialInfo(
@@ -331,6 +373,8 @@ public class Act073_Main_Presenter implements Act073_Main_Contract.I_Presenter {
             //FUDEU 2
         }
     }
+
+
     //region InterfacesSemAcao
     @Override
     public void searchLocalSerial(long product_code, String serial_id) {
