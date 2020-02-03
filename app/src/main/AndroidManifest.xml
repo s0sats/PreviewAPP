@@ -478,6 +478,21 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
+            android:name=".ui.act072.Act072_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+
+        <activity
+            android:name=".ui.act073.Act073_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
             android:name=".view.act.product_selection.Act_Product_Selection"
             android:label="@string/app_name"
             android:launchMode="singleTask"
