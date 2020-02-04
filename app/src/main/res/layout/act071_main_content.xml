@@ -97,6 +97,17 @@
                 app:layout_constraintTop_toBottomOf="@id/act071_tv_type_path"
                 tools:text="Vaso" />
 
+            <TextView
+                android:id="@+id/act071_tv_checkin_needed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_item_md"
+                app:layout_constraintEnd_toStartOf="@id/act071_guide_end"
+                app:layout_constraintStart_toStartOf="@id/act071_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act071_tv_type_desc"
+                android:text="Necessario fazer checkin"
+                android:textColor="@color/namoa_color_red"/>
+
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/act071_cl_action"
                 android:layout_width="0dp"
@@ -109,7 +120,7 @@
                 app:layout_constraintHeight_percent="0.6"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="@id/act071_guide_start"
-                app:layout_constraintTop_toBottomOf="@id/act071_tv_type_desc"
+                app:layout_constraintTop_toBottomOf="@id/act071_tv_checkin_needed"
                 app:layout_constraintVertical_bias="0.0">
 
                 <TextView
@@ -185,8 +196,8 @@
 
                 <ImageView
                     android:id="@+id/act071_iv_exec"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_ok_ns_states" />

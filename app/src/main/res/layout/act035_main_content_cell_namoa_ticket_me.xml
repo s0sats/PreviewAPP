@@ -91,18 +91,6 @@
                 android:textStyle="bold"
                 tools:text="Falta Copo Plástico" />
 
-
-            <TextView
-                android:id="@+id/act035_main_content_cell_namoa_ticket_tv_comment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:maxLines="3"
-                android:textColor="@color/namoa_light_blue"
-                tools:text="Comnetario usado na abertura para que  ajudar  a identificar o problemas " />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -148,6 +136,17 @@
                     android:src="@drawable/ic_file_download_black_24dp"
                     android:tint="@color/padrao_WHITE" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/act035_main_content_cell_namoa_ticket_tv_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:maxLines="3"
+                android:textColor="@color/namoa_light_blue"
+                tools:text="Comnetario usado na abertura para que  ajudar  a identificar o problemas " />
 
             <TextView
                 android:id="@+id/act035_main_content_cell_ticket_tv_warning_msg"
