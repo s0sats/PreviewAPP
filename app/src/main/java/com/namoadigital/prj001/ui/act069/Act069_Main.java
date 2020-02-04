@@ -61,6 +61,9 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
     private boolean bParterProfile;
     private String requestingAct;
     private String wsProcess;
+    //
+    private long ticketProductCode = -1;
+    private long ticketSerialCode = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,7 +139,16 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         //
         updateIvFilterState();
         //
-        mPresenter.getTicketList(bStatusPending,bStatusProcess,bStatusWaitingSync,bStatusDone,bParterEmpty, bParterProfile);
+        mPresenter.getTicketList(
+            bStatusPending,
+            bStatusProcess,
+            bStatusWaitingSync,
+            bStatusDone,
+            bParterEmpty,
+            bParterProfile,
+            ticketProductCode,
+            ticketSerialCode
+        );
         //
         setBtnSyncVisibility();
     }
@@ -158,6 +170,9 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
             bParterEmpty = bundle.getBoolean(FILTER_PARTNER_EMPTY,true);
             bParterProfile= bundle.getBoolean(FILTER_PARTNER_PROFILE,true);
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
+            //
+            ticketProductCode = bundle.getLong(TK_TicketDao.CURRENT_PRODUCT_CODE, -1);
+            ticketSerialCode = bundle.getLong(TK_TicketDao.CURRENT_SERIAL_CODE, -1);
             //
             if(ConstantBaseApp.ACT014 .equalsIgnoreCase(requestingAct)){
                 bStatusPending = false;
@@ -386,7 +401,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
                         //
                         updateIvFilterState();
                         //
-                        mPresenter.getTicketList(bStatusPending,bStatusProcess,bStatusWaitingSync , bStatusDone, bParterEmpty, bParterProfile);
+                        mPresenter.getTicketList(bStatusPending,bStatusProcess,bStatusWaitingSync, bStatusDone, bParterEmpty, bParterProfile, ticketProductCode, ticketSerialCode);
                     }
                 }
             )

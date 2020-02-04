@@ -25,6 +25,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -531,7 +532,8 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
         //
         Bundle bundle = new Bundle();
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT073);
-        bundle.putString(Act069_Main.FILTER_TEXT,mdProductSerial.getSerial_id());
+        bundle.putLong(TK_TicketDao.CURRENT_PRODUCT_CODE,mdProductSerial.getProduct_code());
+        bundle.putLong(TK_TicketDao.CURRENT_SERIAL_CODE,mdProductSerial.getSerial_code());
         //
         intent.putExtras(bundle);
         startActivity(intent);

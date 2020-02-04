@@ -10,8 +10,9 @@ public class Sql_Act069_001 implements Specification {
     private String site_logged;
     private String statusFilter ="";
     private String partnerFilter ="";
+    private String serialFilter = "";
 
-    public Sql_Act069_001(long customer_code, String site_logged, boolean bStatusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile) {
+    public Sql_Act069_001(long customer_code, String site_logged, boolean bStatusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile, long ticketProductCode, long ticketSerialCode) {
         this.customer_code = customer_code;
         this.site_logged = site_logged;
         //
@@ -35,9 +36,22 @@ public class Sql_Act069_001 implements Specification {
                 statusFilter = statusFilter.substring(0,statusFilter.length() - ", ".length());
                 statusFilter += " )\n";
 
-
             }else{
                 statusFilter = "   and t.ticket_status <> '"+ ConstantBaseApp.SYS_STATUS_DONE +"'\n";
+            }
+            //LUCHE - 04/02/2020
+            //Após implementação da busca de ticket por serial, foi necessario criar o filtro de prod/serial
+            //para que na lista pós download sejam exibidos somente os ticket relacionados ao serial.
+            if(ticketProductCode > 0 && ticketSerialCode > 0){
+                serialFilter = "     and exists (SELECT 1\n" +
+                               "                 FROM "+ TK_Ticket_CtrlDao.TABLE +" c\n" +
+                               "                 WHERE c.customer_code = t.customer_code\n" +
+                               "                       and c.ticket_prefix = t.ticket_prefix\n" +
+                               "                       and c.ticket_code = t.ticket_code\n" +
+                               "                       and c.product_code = '"+ticketProductCode+"'\n" +
+                               "                       and c.serial_code = '"+ticketSerialCode+"'\n" +
+                               "                )\n";
+
             }
             //
             String partnerCondition = "";
@@ -69,7 +83,7 @@ public class Sql_Act069_001 implements Specification {
                                     "            c.customer_code,\n" +
                                     "            c.ticket_prefix,\n" +
                                     "            c.ticket_code) > 0\n" +
-                                    "        )";
+                                    "        )\n";
         }
     }
 
@@ -95,11 +109,16 @@ public class Sql_Act069_001 implements Specification {
                     "       t.current_serial_id,\n" +
                     "       t.sync_required\n" +
                     " FROM\n" +
-                    "     "+ TK_TicketDao.TABLE +" t "+
+                    "     "+ TK_TicketDao.TABLE +" t \n"+
                     " WHERE\n" +
                     " t.customer_code = '"+customer_code+"'\n" +
                     statusFilter +
+                    serialFilter +
                     partnerFilter +
+                    " GROUP BY\n" +
+                    "  T.customer_code,\n" +
+                    "  t.ticket_prefix,\n" +
+                    "  t.ticket_code \n" +
                     " ORDER BY \n" +
                     "  t.forecast_date desc,\n" +
                     "  t.ticket_prefix,\n" +

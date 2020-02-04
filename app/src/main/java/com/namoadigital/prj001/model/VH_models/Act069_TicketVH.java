@@ -5,6 +5,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class Act069_TicketVH {
+    public static final String CTRLS_SERIAL_LIST = "CTRLS_SERIAL_LIST";
 
     private int ticket_prefix;
     private int ticket_code;
@@ -19,11 +20,12 @@ public class Act069_TicketVH {
     private String current_product_desc;
     private String current_serial_id;
     private int sync_required;
+    private String ctrls_serial_list;
 
     public Act069_TicketVH() {
     }
 
-    public Act069_TicketVH(int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String type_path, String type_desc, String open_comments, String open_date, String forecast_date, String current_site_desc, String current_product_desc, String current_serial_id,int sync_required) {
+    public Act069_TicketVH(int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String type_path, String type_desc, String open_comments, String open_date, String forecast_date, String current_site_desc, String current_product_desc, String current_serial_id,int sync_required,String ctrls_serial_list) {
         this.ticket_prefix = ticket_prefix;
         this.ticket_code = ticket_code;
         this.ticket_id = ticket_id;
@@ -37,6 +39,7 @@ public class Act069_TicketVH {
         this.current_product_desc = current_product_desc;
         this.current_serial_id = current_serial_id;
         this.sync_required = sync_required;
+        this.ctrls_serial_list = ctrls_serial_list;
     }
 
     public int getTicket_prefix() {
@@ -158,7 +161,8 @@ public class Act069_TicketVH {
             hmAux.get(TK_TicketDao.CURRENT_SITE_DESC),
             hmAux.get(TK_TicketDao.CURRENT_PRODUCT_DESC),
             hmAux.get(TK_TicketDao.CURRENT_SERIAL_ID),
-            ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SYNC_REQUIRED))
+            ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SYNC_REQUIRED)),
+            hmAux.get(CTRLS_SERIAL_LIST)
         );
     }
     //
@@ -175,7 +179,8 @@ public class Act069_TicketVH {
                 forecast_date+ "|" +
                 current_site_desc+ "|" +
                 current_product_desc + "|" +
-                current_serial_id)
+                current_serial_id+"|" +
+                ctrls_serial_list)
             .replace("null|","")
             .replace("null","")
             ;

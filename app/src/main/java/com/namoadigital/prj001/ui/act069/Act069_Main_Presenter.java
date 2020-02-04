@@ -6,17 +6,20 @@ import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.VH_models.Act069_TicketVH;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.sql.Sql_Act069_001;
 import com.namoadigital.prj001.sql.Sql_Act069_002;
+import com.namoadigital.prj001.sql.Sql_Act069_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
 
@@ -38,7 +41,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void getTicketList(boolean statusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile) {
+    public void getTicketList(boolean statusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile, long ticketProductCode, long ticketSerialCode) {
         ArrayList<HMAux> auxTickets = new ArrayList<>();
         //
         auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
@@ -50,7 +53,9 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
                 bStatusWaitingSync,
                 bStatusDone,
                 bParterEmpty,
-                bParterProfile
+                bParterProfile,
+                ticketProductCode,
+                ticketSerialCode
             ).toSqlQuery()
         );
         //
@@ -62,6 +67,8 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
         if (auxTickets != null && auxTickets.size() > 0) {
             try {
                 for (HMAux aux : auxTickets) {
+                    getCtrlsSerialsList(aux);
+                    //
                     tickets.add(
                         Act069_TicketVH.getTicketVHObj(aux)
                     );
@@ -77,6 +84,26 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
         }
         //
         return tickets;
+    }
+
+    private void getCtrlsSerialsList(HMAux auxTicket) {
+        List<HMAux> serialList = ticketDao.query_HM(
+            new Sql_Act069_003(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                auxTicket.get(TK_TicketDao.TICKET_PREFIX),
+                auxTicket.get(TK_TicketDao.TICKET_CODE)
+            ).toSqlQuery()
+        );
+        //
+        String seriais = "";
+        if(serialList != null && serialList.size() > 0){
+            for (HMAux auxSerial : serialList) {
+                seriais = seriais.isEmpty()? auxSerial.get(TK_Ticket_CtrlDao.SERIAL_ID) :  seriais +"|" + auxSerial.get(TK_Ticket_CtrlDao.SERIAL_ID);
+            }
+            //
+        }
+        //
+        auxTicket.put(Act069_TicketVH.CTRLS_SERIAL_LIST,seriais);
     }
 
     @Override
