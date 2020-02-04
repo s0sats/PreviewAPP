@@ -115,8 +115,8 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
         transList.add("dialog_serial_search_start");
         transList.add("alert_product_not_found_title");
         transList.add("alert_product_not_found_msg");
-        transList.add("progress_serial_search_ttl");
-        transList.add("progress_serial_search_msg");
+        transList.add("dialog_serial_save_ttl");
+        transList.add("dialog_serial_save_start");
         transList.add("dialog_result_product_lbl");
         transList.add("dialog_result_serial_lbl");
         transList.add("dialog_result_msg_lbl");
@@ -390,7 +390,12 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
                         if(frgSerialEdit != null){
                             frgSerialEdit.setForceSaveAgain(false);
                         }
-                        //checkFlow();
+                        //
+                        mPresenter.executeTicketDownload(
+                            mdProductSerial.getProduct_code(),
+                            mdProductSerial.getSerial_code(),
+                            mdProductSerial.getSerial_id()
+                        );
                         //
                         dialog.dismiss();
                     }else{

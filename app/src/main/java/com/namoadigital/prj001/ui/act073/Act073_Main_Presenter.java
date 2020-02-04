@@ -340,8 +340,8 @@ public class Act073_Main_Presenter implements Act073_Main_Contract.I_Presenter {
         mView.setWsProcess(WS_Serial_Save.class.getName());
         //
         mView.showPD(
-            hmAux_Trans.get("progress_serial_search_ttl"),
-            hmAux_Trans.get("progress_serial_search_msg")
+            hmAux_Trans.get("dialog_serial_save_ttl"),
+            hmAux_Trans.get("dialog_serial_save_start")
         );
         //
         Intent mIntent = new Intent(context, WBR_Serial_Save.class);
