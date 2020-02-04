@@ -146,7 +146,7 @@
     <color name="grid_line_over"> #4192a8 </color>
     <color name="grid_line_selected"> #e2edcb </color>
     <color name="font_required"> #ffa500 </color>
-
+    <color name="namoa_cancel_red">#e30613</color>
 
 
 </resources>

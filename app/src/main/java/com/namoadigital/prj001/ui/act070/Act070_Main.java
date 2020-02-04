@@ -84,7 +84,6 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private ImageView ivOpenPhoto;
     private Button btnCheckIn;
     private ConstraintLayout clCheckinInfo;
-    private FrameLayout ivCheckinCancel;
     private TextView tvCheckinInfoLbl;
     private TextView tvCheckinInfoVal;
     private TextView tvDoneInfoLbl;
@@ -105,6 +104,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private String room_code;
     private FCMReceiver fcmReceiver;
     private View.OnClickListener photoListener;
+    private Button btnCheckinCancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +142,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("open_date_lbl");
         transList.add("forecast_date_lbl");
         transList.add("btn_checkin");
-        transList.add("btn_checkin_cancel");
+        transList.add("btn_check_in_cancel");
         transList.add("checkin_info_lbl");
         transList.add("done_info_lbl");
         transList.add("filter_lbl");
@@ -264,7 +264,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         ivOpenPhoto = findViewById(R.id.act070_iv_open_photo);
         btnCheckIn = findViewById(R.id.act070_btn_check_in);
         clCheckinInfo = findViewById(R.id.act070_cl_checkin_info);
-        ivCheckinCancel = findViewById(R.id.act070_iv_checkin_cancel);
+        btnCheckinCancel = findViewById(R.id.act070_btn_checkin_cancel);
         tvCheckinInfoLbl = findViewById(R.id.act070_tv_checkin_info_lbl);
         tvCheckinInfoVal = findViewById(R.id.act070_tv_checkin_info_val);
         tvDoneInfoLbl = findViewById(R.id.act070_tv_done_info_lbl);
@@ -435,11 +435,10 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         }
         //
         if (mPresenter.hideCancelCheckin(mTicket)) {
-            ivCheckinCancel.setVisibility(View.GONE);
+            btnCheckinCancel.setVisibility(View.GONE);
         } else {
-            ivCheckinCancel.setVisibility(View.VISIBLE);
-            //todo tratar conteudo de variavel
-//            ivCheckinCancel.setText(hmAux_Trans.get("btn_checkin_cancel"));
+            btnCheckinCancel.setVisibility(View.VISIBLE);
+            btnCheckinCancel.setText(hmAux_Trans.get("btn_check_in_cancel"));
         }
     }
 
@@ -684,7 +683,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             }
         });
         //
-        ivCheckinCancel.setOnClickListener(
+        btnCheckinCancel.setOnClickListener(
             new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
