@@ -172,6 +172,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies"));
         mFrgSerialSearch.setBtn_Option_03_BackGround(R.drawable.namoa_cell_2_states);
         mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_graphics"));
+        mFrgSerialSearch.setBtn_Option_03_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
         //

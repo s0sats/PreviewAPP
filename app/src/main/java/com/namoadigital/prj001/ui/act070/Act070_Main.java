@@ -24,7 +24,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -350,12 +349,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                         ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                 )
         );
-        tvForecastDate_val.setText(
-                ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(mTicket.getForecast_date()),
-                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                )
-        );
+        defineForecastDate();
+
         //
         tvProduct.setText(mTicket.getCurrent_product_desc());
         tvSerial.setText(mTicket.getCurrent_serial_id());
@@ -365,6 +360,21 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         configDoneInfo();
         defineFilterVisility();
         loadActionList();
+    }
+
+    private void defineForecastDate() {
+        if(mTicket.getForecast_date() != null){
+            tvForecastDate_val.setVisibility(View.VISIBLE);
+            tvForecastDate_val.setText(
+                ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds( mTicket.getForecast_date()),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                )
+            );
+        }else{
+            tvForecastDate_val.setVisibility(View.GONE);
+        }
+
     }
 
     private void defineOpenComment() {
