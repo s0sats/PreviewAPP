@@ -90,7 +90,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     }
 
     @Override
-    public String getFormattedDoneInfo(String ctrl_end_date, String ctrl_end_user_name) {
+    public String getFormattedInfo(String ctrl_end_date, String ctrl_end_user_name) {
         String sFormatted = ToolBox_Inf.millisecondsToString(
             ToolBox_Inf.dateToMilliseconds(ctrl_end_date),
             ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
@@ -133,6 +133,10 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             ConstantBaseApp.PROFILE_MENU_TICKET,
             ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_ACTION_EXEC
         );
+    }
+
+    public boolean hasCheckinAlertByStatus(String ticketStatus) {
+        return isReadOnlyStatus(ticketStatus);
     }
 
     private boolean isReadOnlyStatus(String ticketStatus) {
@@ -350,6 +354,19 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 null
             );
         }
+    }
+
+    @Override
+    public String hasCheckinBlockBy(int ticket_prefix, int ticket_code) {
+        TK_Ticket ticket = getTicket(ticket_prefix, ticket_code);
+        String preference_user_code = ToolBox_Con.getPreference_User_Code(context);
+        if(preference_user_code!= null){
+            if(!preference_user_code.equals(ticket.getCheckin_user()) && ticket.getCheckin_date() != null) {
+
+                return getFormattedInfo(ticket.getCheckin_date(), ticket.getCheckin_user_name());
+            }
+        }
+        return "";
     }
 
     private String getResultMsgFormmated(WS_TK_Ticket_Save.TicketSaveActReturn actReturn) {

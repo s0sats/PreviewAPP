@@ -134,6 +134,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("photo_lbl");
         transList.add("done_info_lbl");
         transList.add("comments_lbl");
+        transList.add("checkin_info_lbl");
         transList.add("checkin_needed_alert_lbl");
         transList.add("alert_action_parameter_error_ttl");
         transList.add("alert_action_parameter_error_msg");
@@ -570,10 +571,19 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     }
 
+    /*
+        BARRIONUEVO 05-02-2020
+        Adicao de informacao referentes ao checkin caso seja feito por outro usuario
+     */
     private void defineCheckinAlert() {
-        if(bDisableByCheckin) {
+        if(bDisableByCheckin && !mPresenter.hasCheckinAlertByStatus(mTicketCtrl.getCtrl_status())) {
             tvCheckinNeeded.setVisibility(View.VISIBLE);
-            tvCheckinNeeded.setText(hmAux_Trans.get("checkin_needed_alert_lbl"));
+            String checkin_user = mPresenter.hasCheckinBlockBy(mActionPrefix, mActionCode);
+            if (checkin_user != null && !checkin_user.isEmpty()) {
+                tvCheckinNeeded.setText(hmAux_Trans.get("checkin_info_lbl") + " " + checkin_user);
+            } else {
+                tvCheckinNeeded.setText(hmAux_Trans.get("checkin_needed_alert_lbl"));
+            }
         }else{
             tvCheckinNeeded.setVisibility(View.GONE);
         }
@@ -737,7 +747,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //
         if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicketCtrl.getCtrl_status())) {
             grDone.setVisibility(View.VISIBLE);
-            tvDoneInfoVal.setText(mPresenter.getFormattedDoneInfo(mTicketCtrl.getCtrl_end_date(),mTicketCtrl.getCtrl_end_user_name()));
+            tvDoneInfoVal.setText(mPresenter.getFormattedInfo(mTicketCtrl.getCtrl_end_date(),mTicketCtrl.getCtrl_end_user_name()));
         }
     }
 

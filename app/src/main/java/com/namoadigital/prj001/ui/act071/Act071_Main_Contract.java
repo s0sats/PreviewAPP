@@ -41,7 +41,7 @@ public interface Act071_Main_Contract {
 
         TK_Ticket_Ctrl getTicketCtrlObj(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq);
 
-        String getFormattedDoneInfo(String ctrl_end_date, String ctrl_end_user_name);
+        String getFormattedInfo(String ctrl_end_date, String ctrl_end_user_name);
 
         boolean getReadOnlyDefinition(TK_Ticket_Ctrl mTicketCtrl);
 
@@ -58,6 +58,10 @@ public interface Act071_Main_Contract {
         void definePostTicketSaveFlow(int ticket_prefix, int ticket_code);
 
         void processSaveReturn(int ticket_prefix, int ticket_code, String mLink);
+
+        String hasCheckinBlockBy(int ticket_prefix, int ticket_code);
+
+        boolean hasCheckinAlertByStatus(String ticketStatus);
 
         /*boolean hasPartnerProfile(Integer partner_code);
 
