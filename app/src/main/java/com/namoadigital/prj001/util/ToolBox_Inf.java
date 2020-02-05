@@ -398,6 +398,48 @@ public class ToolBox_Inf {
         return phone_uuid_code;
     }
 
+    private static String getPhoneUUID(Context context) throws IOException {
+        String androidId = Settings.Secure.getString(context.getContentResolver(),
+            Settings.Secure.ANDROID_ID);
+        //
+        UUID androidId_UUID = UUID
+            .nameUUIDFromBytes(androidId.getBytes("utf8"));
+        //
+        return androidId_UUID.toString();
+    }
+
+    public static String uniqueIDv2(Context context){
+        String phone_uuid_code = ToolBox_Con.getPreference_PHONE_UUID_CODE(context);
+        //Se preferencia setada, a retorna
+        if(phone_uuid_code.trim().length() != 0){
+            return phone_uuid_code;
+        }else{
+            //Se não tem preferencia, pegar IMEI
+            try {
+                phone_uuid_code = CarrierInfo(context);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //Se não IMEI não retornado, tenta gerar UUID
+            if(phone_uuid_code == null || phone_uuid_code.trim().isEmpty() ){
+                try{
+                    phone_uuid_code = getPhoneUUID(context);
+                } catch (Exception e) {
+                    /**
+                     *O QUE FAZER SE EXCEPTION AQUI ?!
+                     *
+                     */
+                    e.printStackTrace();
+                    phone_uuid_code = "";
+                }
+            }
+            //Grava valor na preferencia
+            ToolBox_Con.setPreference_PHONE_UUID_CODE(context, phone_uuid_code);
+            //Retorna preferencia.
+            return ToolBox_Con.getPreference_PHONE_UUID_CODE(context);
+        }
+    }
+
     public static String uniqueID(Context context) {
         String carrierID = null;
         String nocarrierID = null;
