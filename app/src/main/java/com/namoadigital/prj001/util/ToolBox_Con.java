@@ -968,24 +968,24 @@ public class ToolBox_Con {
     }
     //endregion
 
-    //region PHONE_UUID_CODE
-    public static void setPreference_PHONE_UUID_CODE(Context context, String phone_uuid_code) {
+    //region PHONE_UNIQUE_ID
+    public static void setPreference_PHONE_UNIQUE_ID(Context context, String phone_uuid_code) {
         SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context);
+            PreferenceManager.getDefaultSharedPreferences(context);
 
         sharedPreferences.edit().putString(
-                Constant.PHONE_UUID_CODE,
-                phone_uuid_code
+            Constant.PHONE_UNIQUE_ID,
+            phone_uuid_code
         ).apply();
     }
 
-    public static String getPreference_PHONE_UUID_CODE(Context context) {
+    public static String getPreference_PHONE_UNIQUE_ID(Context context) {
         SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context);
+            PreferenceManager.getDefaultSharedPreferences(context);
 
         return sharedPreferences.getString(
-                Constant.PHONE_UUID_CODE,
-                ""
+            Constant.PHONE_UNIQUE_ID,
+            ""
         );
     }
     //endregion
