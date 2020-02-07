@@ -27,6 +27,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
+
 /**
  * Created by neomatrix on 23/01/17.
  */
@@ -140,13 +142,13 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(mProduct_id, mSerial_id, mTracking);
         //
         if (serial_list.size() > 0) {
-            defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
+            defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), true);
         } else {
             if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1 )) {
                 // mudar mensagem
                 ToolBox_Inf.showNoConnectionDialog(context);
             } else {
-                defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size());
+                defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), true);
             }
         }
     }
@@ -175,11 +177,11 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         //
         ArrayList<MD_Product_Serial> serial_list = rec.getRecord();
         //
-        defineSearchResultFlow(serial_list, rec.getRecord_count(), rec.getRecord_page());
+        defineSearchResultFlow(serial_list, rec.getRecord_count(), rec.getRecord_page(), false);
     }
 
     @Override
-    public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page) {
+    public void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page, boolean from_offline_source) {
         if ((serial_list == null || serial_list.size() == 0) && mdProduct == null) {
             mView.showMsg(
                     hmAux_Trans.get("alert_no_serial_found_ttl"),
@@ -190,6 +192,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             ArrayList<MD_Product_Serial> results = processEqualCheck(serial_list);
 
             Bundle bundle = new Bundle();
+            bundle.putBoolean(FROM_OFFLINE_SOURCE, from_offline_source);
             bundle.putString(MD_ProductDao.PRODUCT_ID, mdProduct != null ? mdProduct.getProduct_id() : "");
 
             if (results.size() != 0) {

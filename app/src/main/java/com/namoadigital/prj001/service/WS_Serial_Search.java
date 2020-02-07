@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -14,6 +15,7 @@ import com.namoadigital.prj001.model.TSerial_Search_Env;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -59,8 +61,13 @@ public class WS_Serial_Search extends IntentService {
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(), e);
 
             ToolBox_Inf.registerException(getClass().getName(), e);
-
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
+            if(ConstantBaseApp.WS_EXCEPTION_HTTP_STATUS_ERROR.equals(e.getMessage())){
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), ConstantBase.PD_TYPE_ERROR_HTTP, sb.toString(), "", "0");
+            }else if(ConstantBaseApp.WS_TIMEOUT_EXCEPTION.equals(e.getMessage())){
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), ConstantBase.PD_TYPE_ERROR_HTTP, sb.toString(), "", "0");
+            }else {
+                ToolBox_Inf.sendBCStatus(getApplicationContext(), ConstantBase.PD_TYPE_ERROR_1, sb.toString(), "", "0");
+            }
 
         } finally {
 
@@ -86,7 +93,7 @@ public class WS_Serial_Search extends IntentService {
         env.setSite_code(ToolBox_Con.getPreference_Site_Code(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
 
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receving_data"), "", "0");
+        ToolBox_Inf.sendBCStatus(getApplicationContext(), ConstantBase.PD_TYPE_STATUS, hmAux_Trans.get("msg_receving_data"), "", "0");
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SERIAL_SEARCH,
@@ -115,7 +122,7 @@ public class WS_Serial_Search extends IntentService {
             return;
         }
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_processing_list"), resultado, "0");
+        ToolBox.sendBCStatus(getApplicationContext(), ConstantBase.PD_TYPE_CLOSE_ACT, hmAux_Trans.get("msg_processing_list"), resultado, "0");
 
     }
 

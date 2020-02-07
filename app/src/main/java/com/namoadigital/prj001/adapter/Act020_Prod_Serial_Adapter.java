@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,6 +34,7 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
     private String mResource_Name = "act020_prod_serial_adapter";
     private long site_id_preference = -1L;
 
+    private boolean fromOfflineSource = false;
     public long getSite_id_preference() {
         return site_id_preference;
     }
@@ -51,6 +53,15 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
         this.context = context;
         this.resource = resource;
         this.source = source;
+        fromOfflineSource = false;
+        loadTranslation();
+    }
+
+    public Act020_Prod_Serial_Adapter(Context context, int resource, List<MD_Product_Serial> source, boolean fromOfflineSource) {
+        this.context = context;
+        this.resource = resource;
+        this.source = source;
+        this.fromOfflineSource = fromOfflineSource;
         loadTranslation();
     }
 
@@ -86,6 +97,8 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
         TextView tv_rec_num = (TextView) convertView.findViewById(R.id.act020_cell_tv_rec_num);
         //
         TextView tv_prod_ttl = (TextView) convertView.findViewById(R.id.act020_cell_tv_prod_ttl);
+        ImageView iv_offline = convertView.findViewById(R.id.act020_cell_iv_offline);
+        iv_offline.setVisibility(View.GONE);
         TextView tv_prod_code = (TextView) convertView.findViewById(R.id.act020_cell_tv_prod_code);
         TextView tv_prod_id = (TextView) convertView.findViewById(R.id.act020_cell_tv_prod_id);
         TextView tv_prod_desc = (TextView) convertView.findViewById(R.id.act020_cell_tv_prod_desc);
@@ -98,6 +111,9 @@ public class Act020_Prod_Serial_Adapter extends BaseAdapter {
             ll_background.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
         } else {
             ll_background.setBackground(context.getDrawable(R.drawable.act013_cell_in_processing_states));
+        }
+        if(fromOfflineSource){
+            iv_offline.setVisibility(View.VISIBLE);
         }
         //
         tv_rec_num.setText(String.valueOf(position + 1));

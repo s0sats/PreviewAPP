@@ -25,7 +25,7 @@ public interface Act006_Main_Presenter {
 
     void extractSearchResult(String result);
 
-    void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page);
+    void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page, boolean from_offline_source);
 
     //String searchProductInfo(String product_code, String product_id);
 

@@ -452,6 +452,7 @@ public class ConstantBaseApp extends ConstantBase {
     //
     public static final String N_FORM_PDF_PREFIX = "form_";
     public static final String WS_CONNECTION_TIMEOUT = "WS_CONNECTION_TIMEOUT";
+    public static final String WS_TIMEOUT_EXCEPTION = "timeout";
     public static final String HMAUX_PROCESS_KEY = "HMAUX_PROCESS_KEY";
     public static final String HMAUX_PREFIX_KEY = "HMAUX_PREFIX_KEY";
     public static final String HMAUX_CODE_KEY = "HMAUX_CODE_KEY";
@@ -584,6 +585,7 @@ public class ConstantBaseApp extends ConstantBase {
 
 
     public static final String WS_EXCEPTION_HTTP_STATUS_ERROR = "HTTP_STATUS_ERROR";
+    public static final String FROM_OFFLINE_SOURCE = "FROM_OFFLINE_SOURCE";
     public static final String EXCEPTION_DATABASE_NO_CUSTOMER_PREFERENCE = "EXCEPTION_DATABASE_CUSTOMER_-1";
 
     //FCM
