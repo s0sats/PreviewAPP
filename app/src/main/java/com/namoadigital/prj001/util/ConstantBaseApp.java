@@ -265,6 +265,7 @@ public class ConstantBaseApp extends ConstantBase {
      * Translation params
      */
     public static final String APP_MODULE = "APP_PRJ001";
+    public static final String EV_MODULE_CUST_FORM = "CUST_FORM";
     public static final String LIB_RESOURCE_NAME = "lib";
 
     /**

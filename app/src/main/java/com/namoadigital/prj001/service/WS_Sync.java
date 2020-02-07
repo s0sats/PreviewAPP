@@ -57,6 +57,7 @@ import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.MD_UserDao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.model.EV_Module_Res_Txt;
@@ -143,6 +144,7 @@ import com.namoadigital.prj001.sql.MD_User_Sql_Truncate;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_Truncate;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -390,6 +392,14 @@ public class WS_Sync extends IntentService {
 
         //Processa traduções
         File[] files_module_res = ToolBox_Inf.getListOfFiles_v2("ev_module_res-");
+        //LUCHE - 07/02/2020
+        //Define metodo de delete das tabelas de tradução baseado se é sincronismos full ou de form.
+        DaoObjReturn daoObjReturn;
+        if(product_code == -1L){
+            daoObjReturn = moduleResDao.truncateModuleResTables();
+        }else{
+            daoObjReturn = moduleResDao.deleteModuleTrans(ConstantBaseApp.EV_MODULE_CUST_FORM);
+        }
 
         for (File _file : files_module_res) {
 
@@ -400,10 +410,6 @@ public class WS_Sync extends IntentService {
                     new TypeToken<ArrayList<EV_Module_Res>>() {
                     }.getType()
             );
-
-            for (EV_Module_Res item : moduleRes) {
-                moduleResDao.deleteModuleTrans(item.getModule_code());
-            }
 
             moduleResDao.addUpdate(moduleRes, false);
         }
