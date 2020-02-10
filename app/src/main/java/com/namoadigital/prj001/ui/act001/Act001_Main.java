@@ -90,11 +90,19 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
      *
      * Criado metodo para remover as preferencias obsoletas.
      *
+     * LUCHE - 06/02/2020
+     * Add remove da preferencia PHONE_UUID_CODE
+     *
      */
     private void removeDeprecatedPreferences() {
         ToolBox_Con.removePreference(
             context,
             ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL_FORCE_NOT_SHOW_SERIAL_INFO
+        );
+        //
+        ToolBox_Con.removePreference(
+            context,
+            ConstantBaseApp.PHONE_UUID_CODE
         );
     }
 

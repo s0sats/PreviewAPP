@@ -3,12 +3,16 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
+import android.support.annotation.NonNull;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.EV_Module_Res;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
@@ -220,28 +224,117 @@ public class EV_Module_ResDao extends BaseDao implements Dao<EV_Module_Res> {
         return module_ress;
     }
 
-    public boolean deleteModuleTrans(String module_code) {
+    /**
+     * LUCHE - 07/02/2020
+     *
+     * Metodo que LIMPA TODOS OS REGISTROS DAS TABELAS:
+     *  - EV_Module_Res
+     *  - EV_Module_Res_Txt
+     *  - EV_Module_Res_Txt_Trans
+     *
+     * Só deve ser usado no sincronismo geral, quando as traduções serão recontruidas do 0.
+     *
+     * @return - DaoObj com qtd de itens removidos e se deu ou não erro.
+     */
+    public DaoObjReturn truncateModuleResTables(){
         openDB();
-
+        //
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.DELETE;
+        //
         try {
-
             db.beginTransaction();
-
-            db.delete(EV_Module_ResDao.TABLE,EV_Module_ResDao.MODULE_CODE +" = '"+module_code+"'",null);
-            db.delete(EV_Module_Res_TxtDao.TABLE,EV_Module_Res_TxtDao.MODULE_CODE +" = '"+module_code+"'",null);
-            db.delete(EV_Module_Res_Txt_TransDao.TABLE,EV_Module_Res_Txt_TransDao.MODULE_CODE +" = '"+module_code+"'",null);
-
+            //
+            addUpdateRet += db.delete(EV_Module_ResDao.TABLE, null,null);
+            addUpdateRet += db.delete(EV_Module_Res_TxtDao.TABLE, null,null);
+            addUpdateRet += db.delete(EV_Module_Res_Txt_TransDao.TABLE, null,null);
+            //
             db.setTransactionSuccessful();
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
-            return false;
-        } finally {
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+
+        }catch (Exception e){
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }finally {
             db.endTransaction();
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
         }
 
         closeDB();
 
-        return true;
+        return daoObjReturn;
+    }
+
+    /**
+     * LUCHE - 07/02/2020
+     *
+     * Metodo que apaga todos as traduções de um MODULO espeficico
+     *
+     * Utilizado quando o WS_Sync é chamado para baixar forms de um produto que ainda não possui forms
+     * baixados.
+     *
+     * @param module_code - Modulo que deve ser apagado. Se null, não apaga nada
+     * @return - DaoObj com qtd de itens removidos e se deu ou não erro.
+     */
+    public DaoObjReturn deleteModuleTrans(@NonNull String module_code) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        daoObjReturn.setAction(DaoObjReturn.DELETE);
+        daoObjReturn.setActionReturn(addUpdateRet);
+        //Se só tenta o dele se o modulo for diferente de null
+        if(module_code != null) {
+            openDB();
+            String moduleResWhere = EV_Module_ResDao.MODULE_CODE + " = '" + module_code + "'";
+            //
+            try {
+                db.beginTransaction();
+                //
+                addUpdateRet += db.delete(EV_Module_ResDao.TABLE, moduleResWhere, null);
+                addUpdateRet += db.delete(EV_Module_Res_TxtDao.TABLE, moduleResWhere, null);
+                addUpdateRet += db.delete(EV_Module_Res_Txt_TransDao.TABLE, moduleResWhere, null);
+                //
+                db.setTransactionSuccessful();
+            } catch (SQLiteException e) {
+                //Chama metodo que baseado na exception gera obj de retorno setado como erro
+                //e contendo msg de erro tratada.
+                daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+                //Gera arquivo de exception usando dados da exception e do obj de retorno
+                ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                        e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+                );
+
+            } catch (Exception e) {
+                //Seta obj de retorno com flag de erro e gera arquivo de exception
+                daoObjReturn.setError(true);
+                ToolBox_Inf.registerException(getClass().getName(), e);
+            } finally {
+                db.endTransaction();
+                //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+                //ou rowId do ultimo insert.
+                daoObjReturn.setActionReturn(addUpdateRet);
+            }
+
+            closeDB();
+        }
+        return daoObjReturn;
     }
 
     private class CursorEV_Module_ResMapper implements Mapper<Cursor, EV_Module_Res> {

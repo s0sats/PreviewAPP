@@ -203,6 +203,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -372,34 +373,99 @@ public class ToolBox_Inf {
         return "";
     }
 
-    public static String CarrierInfo(Context context) {
-        TelephonyManager tm = (TelephonyManager) context
+    /**
+     * LUCHE - 06/02/2020
+     *
+     * Modificado metodo que pega IMEI, adicionando try /catch e retornando NULL em caso de exception
+     *
+     * @param context
+     * @return - String com IMEI ou NULL em caso de exception
+     */
+    @Nullable
+    private static String CarrierInfo(Context context) {
+        try {
+            TelephonyManager tm = (TelephonyManager) context
                 .getSystemService(Context.TELEPHONY_SERVICE);
-        //
-        return tm.getDeviceId();
+            //
+            return tm.getDeviceId();
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    public static String get_phone_uuid(Context context) throws IOException {
-        String androidId = Settings.Secure.getString(context.getContentResolver(),
+    /**
+     * LUCHE - 06/02/2020
+     *
+     * Novo metodo para geração do UUID.
+     * Gera UUID baseado no Settings.Secure.ANDROID_ID (SSAI)
+     *
+     * @param context
+     * @return - String com UUID ou NULL em caso de exception
+     */
+    @Nullable
+    private static String getPhoneUUID(Context context) {
+        try {
+            String androidId = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-
-        UUID androidId_UUID = UUID
-                .nameUUIDFromBytes(androidId.getBytes("utf8"));
-
-        String phone_uuid_code = ToolBox_Con.getPreference_PHONE_UUID_CODE(context);
-
-        if (phone_uuid_code.trim().length() == 0) {
-            phone_uuid_code = androidId_UUID.toString();
-
-            ToolBox_Con.setPreference_PHONE_UUID_CODE(context, phone_uuid_code);
-
+            //
+            UUID androidId_UUID = UUID
+                .nameUUIDFromBytes(androidId.getBytes(StandardCharsets.UTF_8));
+            //
+            return androidId_UUID.toString();
+        }catch (Exception e){
+            /**
+             *O QUE FAZER SE EXCEPTION AQUI ?!
+             */
+            e.printStackTrace();
+            registerException(CLASS_NAME, e);
+            return null;
         }
 
-        return phone_uuid_code;
     }
 
+    /**
+     * LUCHE - 06/02/2020
+     *
+     * Nova implementação do metodo uniqueID que retorna a preferencia PHONE_UNIQUE_ID caso "exista"
+     * Se não houver valor no PHONE_UNIQUE_ID, tenta pegar IMEI e , em caso de falha, gera UUID.
+     * O valor gerado é salvo na preferencia PHONE_UNIQUE_ID.
+     *
+     * @param context
+     * @return - Preferencia PHONE_UNIQUE_ID
+     */
+    @Nullable
+    public static String uniqueIDv2(Context context){
+        String phone_uuid_code = ToolBox_Con.getPreference_PHONE_UNIQUE_ID(context);
+        //Se preferencia setada, a retorna
+        if(phone_uuid_code.trim().length() != 0){
+            return phone_uuid_code;
+        }else{
+            //Se não tem preferencia, pegar IMEI
+            phone_uuid_code = CarrierInfo(context);
+            //Se não IMEI não retornado, tenta gerar UUID
+            if(phone_uuid_code == null || phone_uuid_code.trim().isEmpty() ){
+                phone_uuid_code = getPhoneUUID(context);
+            }
+            //Grava valor na preferencia
+            ToolBox_Con.setPreference_PHONE_UNIQUE_ID(context, phone_uuid_code != null ? phone_uuid_code : "");
+            //Retorna preferencia.
+            return ToolBox_Con.getPreference_PHONE_UNIQUE_ID(context);
+        }
+    }
+
+    /**
+     * LUCHE - 06/02/2020
+     *
+     * Modificado metodo , comentando a implementação original e retornando a implementação o valor
+     * de uniqueIDv2.
+     *
+     * @param context
+     * @return - Retorna valor da preferencia PHONE_UNIQUE_ID OU null.
+     */
+    @Nullable
     public static String uniqueID(Context context) {
-        String carrierID = null;
+        /*String carrierID = null;
         String nocarrierID = null;
 
         try {
@@ -413,7 +479,8 @@ public class ToolBox_Inf {
             return carrierID;
         } else {
             return nocarrierID;
-        }
+        }*/
+        return uniqueIDv2(context);
     }
 
     public static String getToken(Context context) {
