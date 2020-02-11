@@ -77,6 +77,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
     public static final String SERIAL_MIN_LENGTH = "serial_min_length";
     public static final String SERIAL_MAX_LENGTH = "serial_max_length";
     public static final String SCHEDULE_COMMENTS = "schedule_comments";
+    public static final String SCHEDULE_PREFIX = "schedule_prefix";
+    public static final String SCHEDULE_CODE = "schedule_code";
+    public static final String SCHEDULE_EXEC = "schedule_exec";
 
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -542,6 +545,24 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             }else{
                 custom_form_local.setSchedule_comments(cursor.getString(cursor.getColumnIndex(SCHEDULE_COMMENTS)));
             }
+
+            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_PREFIX))){
+                custom_form_local.setSchedule_prefix(null);
+            }else{
+                custom_form_local.setSchedule_prefix(cursor.getInt(cursor.getColumnIndex(SCHEDULE_PREFIX)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_CODE))){
+                custom_form_local.setSchedule_code(null);
+            }else{
+                custom_form_local.setSchedule_code(cursor.getInt(cursor.getColumnIndex(SCHEDULE_CODE)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_EXEC))){
+                custom_form_local.setSchedule_exec(null);
+            }else{
+                custom_form_local.setSchedule_exec(cursor.getInt(cursor.getColumnIndex(SCHEDULE_EXEC)));
+            }
             //
             return custom_form_local;
         }
@@ -689,6 +710,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             }
             //
             contentValues.put(SCHEDULE_COMMENTS, custom_form_local.getSchedule_comments());
+            contentValues.put(SCHEDULE_PREFIX, custom_form_local.getSchedule_prefix());
+            contentValues.put(SCHEDULE_CODE, custom_form_local.getSchedule_code());
+            contentValues.put(SCHEDULE_EXEC, custom_form_local.getSchedule_exec());
             //
             return contentValues;
         }

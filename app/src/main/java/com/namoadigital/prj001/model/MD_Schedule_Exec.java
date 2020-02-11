@@ -22,6 +22,8 @@ public class MD_Schedule_Exec {
     private String date_end;
     @Nullable
     private String comments;
+    private String status;
+    private int sync_process;
 
     public long getCustomer_code() {
         return customer_code;
@@ -152,5 +154,21 @@ public class MD_Schedule_Exec {
 
     public void setComments(@Nullable String comments) {
         this.comments = comments;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getSync_process() {
+        return sync_process;
+    }
+
+    public void setSync_process(int sync_process) {
+        this.sync_process = sync_process;
     }
 }

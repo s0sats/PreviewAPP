@@ -50,6 +50,7 @@ import com.namoadigital.prj001.dao.MD_Product_Group_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SegmentDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SegmentDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
@@ -94,6 +95,7 @@ import com.namoadigital.prj001.model.MD_Product_Group;
 import com.namoadigital.prj001.model.MD_Product_Group_Product;
 import com.namoadigital.prj001.model.MD_Product_Segment;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Segment;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
@@ -136,6 +138,7 @@ import com.namoadigital.prj001.sql.MD_Product_Group_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Segment_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_010;
 import com.namoadigital.prj001.sql.MD_Product_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_004;
 import com.namoadigital.prj001.sql.MD_Segment_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_Truncate;
@@ -1487,6 +1490,9 @@ public class WS_Sync extends IntentService {
             GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             GE_Custom_Form_Field_LocalDao formFieldLocalDao = new GE_Custom_Form_Field_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             GE_Custom_Form_Blob_LocalDao blobLocalDao = new GE_Custom_Form_Blob_LocalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            //LUCHE - 11/02/2020
+            //NOVO PROCESSO DE AGENDAMENTO
+            MD_Schedule_ExecDao mdScheduleExecDao = new MD_Schedule_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
 
             /*
              *
@@ -1718,6 +1724,38 @@ public class WS_Sync extends IntentService {
                     }
                     blobLocalDao.addUpdate(finalBlobs, false);
                 }
+            }
+            /**
+             * Novo Agendamento
+             */
+            /*
+            *   Processamento  MD_Schedule_Exec
+            */
+            //Seta flag sync_process para 0 nos agendamento não iniciados
+            mdScheduleExecDao.addUpdate(
+                new MD_Schedule_Exec_Sql_004(
+                    ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                ).toSqlQuery()
+            );
+            //
+            File[] files_md_schedule_exec = ToolBox_Inf.getListOfFiles_v2("md_schedule_exec-");
+            if(files_md_schedule_exec.length > 0) {
+                ArrayList<MD_Schedule_Exec> scheduleExecs = new ArrayList<>();
+                ArrayList<MD_Schedule_Exec> scheduleToDel = new ArrayList<>();
+                //Loop nos arquivos extraindo todos os agendamentos para uma unica lista.
+                for (File _file : files_md_schedule_exec) {
+                    ArrayList<MD_Schedule_Exec> tempScheduleExecs = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MD_Schedule_Exec>>() {
+                        }.getType()
+                    );
+                    //
+                    scheduleExecs.addAll(tempScheduleExecs);
+                }
+                //
+                mdScheduleExecDao.processConciliation(scheduleExecs);
             }
         }
         //endregion

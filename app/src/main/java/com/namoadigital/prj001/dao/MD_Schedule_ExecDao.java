@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -10,7 +11,10 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_003;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -21,23 +25,25 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     private final Mapper <MD_Schedule_Exec, ContentValues> toContentValuesMapper;
     private final Mapper <Cursor, MD_Schedule_Exec> toMD_Schedule_ExecMapper;
 
-    private final String TABLE = "md_schedule_exec";
-    private final String CUSTOMER_CODE = "customer_code";
-    private final String SCHEDULE_PREFIX = "schedule_prefix";
-    private final String SCHEDULE_CODE = "schedule_code";
-    private final String SCHEDULE_EXEC = "schedule_exec";
-    private final String SCHEDULE_DESC = "schedule_desc";
-    private final String SITE_CODE = "site_code";
-    private final String OPERATION_CODE  = "operation_code";
-    private final String PRODUCT_CODE  = "product_code";
-    private final String SERIAL_CODE   = "serial_code";
-    private final String SERIAL_ID = "serial_id";
-    private final String CUSTOM_FORM_TYPE = "custom_form_type";
-    private final String CUSTOM_FORM_CODE = "custom_form_code";
-    private final String CUSTOM_FORM_VERSION  = "custom_form_version";
-    private final String DATE_START = "date_start";
-    private final String DATE_END  = "date_end";
-    private final String COMMENTS  = "comments";
+    public static final String TABLE = "md_schedule_exec";
+    public static final String CUSTOMER_CODE = "customer_code";
+    public static final String SCHEDULE_PREFIX = "schedule_prefix";
+    public static final String SCHEDULE_CODE = "schedule_code";
+    public static final String SCHEDULE_EXEC = "schedule_exec";
+    public static final String SCHEDULE_DESC = "schedule_desc";
+    public static final String SITE_CODE = "site_code";
+    public static final String OPERATION_CODE  = "operation_code";
+    public static final String PRODUCT_CODE  = "product_code";
+    public static final String SERIAL_CODE   = "serial_code";
+    public static final String SERIAL_ID = "serial_id";
+    public static final String CUSTOM_FORM_TYPE = "custom_form_type";
+    public static final String CUSTOM_FORM_CODE = "custom_form_code";
+    public static final String CUSTOM_FORM_VERSION  = "custom_form_version";
+    public static final String DATE_START = "date_start";
+    public static final String DATE_END  = "date_end";
+    public static final String COMMENTS  = "comments";
+    public static final String STATUS  = "status";
+    public static final String SYNC_PROCESS  = "sync_process";
 
     public MD_Schedule_ExecDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -102,14 +108,25 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
 
     @Override
     public DaoObjReturn addUpdate(List<MD_Schedule_Exec> md_schedule_execs, boolean status) {
+        return addUpdate(md_schedule_execs,status,null);
+    }
+
+    public DaoObjReturn addUpdate(List<MD_Schedule_Exec> md_schedule_execs, boolean status, SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //
-        openDB();
+        if (dbInstance == null) {
+            openDB();
+        } else {
+            this.db = dbInstance;
+        }
 
         try {
-            db.beginTransaction();
+            //Se db não foi passado, inicializa transaction
+            if (dbInstance == null) {
+                db.beginTransaction();
+            }
 
             if (status) {
                 db.delete(TABLE, null, null);
@@ -134,8 +151,11 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(md_schedule_exec));
                 }
             }
-            //
-            db.setTransactionSuccessful();
+            //Se db não foi passado, finaliza transaction com sucesso
+            if (dbInstance == null) {
+                db.setTransactionSuccessful();
+            }
+
         } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -155,13 +175,17 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         } finally {
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
-            db.endTransaction();
+            if (dbInstance == null) {
+                db.endTransaction();
+            }
             //
             daoObjReturn.setAction(curAction);
             daoObjReturn.setActionReturn(addUpdateRet);
         }
         //
-        closeDB();
+        if (dbInstance == null) {
+            closeDB();
+        }
         //
         return daoObjReturn;
     }
@@ -194,10 +218,17 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
 
     @Override
     public MD_Schedule_Exec getByString(String sQuery) {
+        return getByString(sQuery,null);
+    }
+
+    public MD_Schedule_Exec getByString(String sQuery,SQLiteDatabase dbInstance) {
         MD_Schedule_Exec md_schedule_exec = null;
         //
-        openDB();
-
+        if (dbInstance == null) {
+            openDB();
+        } else {
+            this.db = dbInstance;
+        }
         try {
             Cursor cursor = db.rawQuery(sQuery, null);
 
@@ -210,7 +241,9 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         } finally {
         }
         //
-        closeDB();
+        if (dbInstance == null) {
+            closeDB();
+        }
         //
         return md_schedule_exec;
     }
@@ -289,6 +322,174 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         return tk_tickets;
     }
 
+    /**
+     * LUCHE - 11/02/2020
+     *
+     * Metodo responsavel pela conciliação dos agendamentos durante o sincronismo.
+     *
+     *  - Inclui novos agendamentos
+     *  - Atualiza agendamentos ja existentes e que NÃO foram iniciados ou executados
+     *  - Exclui agendamentos que NÃO foram recebidos no sincronismo e que NÃO foram iniciados ou executados
+     * @param receivedScheduleExecs - Agendamentos recebidos no sincronismo.
+     * @return
+     */
+    public DaoObjReturn processConciliation(ArrayList<MD_Schedule_Exec> receivedScheduleExecs) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.DELETE;
+        //
+        openDB();
+        //
+        try {
+            db.beginTransaction();
+            //
+            for (int i = 0; i < receivedScheduleExecs.size(); i++) {
+                MD_Schedule_Exec scheduleExec = receivedScheduleExecs.get(i);
+                //
+                MD_Schedule_Exec dbSchedule = getByString(new MD_Schedule_Exec_Sql_001(
+                        scheduleExec.getCustomer_code(),
+                        scheduleExec.getSchedule_prefix(),
+                        scheduleExec.getSchedule_code(),
+                        scheduleExec.getSchedule_exec()
+                    ).toSqlQuery(),db
+                );
+                //Se existir o agendamento e ele ja tiver sido iniciado, seta sync_process para 1 e
+                // substitui o agendamento do server pelo do banco de dados, evitando a substituição.
+                if( dbSchedule != null
+                    && !dbSchedule.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PENDING)
+                ){
+                    dbSchedule.setSync_process(1);
+                    receivedScheduleExecs.set(i,dbSchedule);
+                }else{
+                    //Se agendamento não existia ou existia com status pending, seta sync_process e
+                    //mantem o agendamento do server para atualização.
+                    scheduleExec.setSync_process(1);
+                    receivedScheduleExecs.set(i,scheduleExec);
+                }
+            }
+            //Atualiza/ Insere lista no banco
+            daoObjReturn = addUpdate(receivedScheduleExecs, false,db);
+            //Se erro ao inserir, dispara exception que por sua vez executa rollback
+            if (daoObjReturn.hasError()) {
+                throw new Exception(daoObjReturn.getRawMessage());
+            }
+            //Se sucesso ao inserir  / atualizar , deleta agedamentos que não foram enviados.
+            ArrayList<MD_Schedule_Exec> scheduleToDell = (ArrayList<MD_Schedule_Exec>)
+                query(
+                    new MD_Schedule_Exec_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                    ).toSqlQuery()
+                );
+            //Se existem itens para delete, tenta o delete.
+            if(scheduleToDell!= null && scheduleToDell.size() > 0){
+                //Deleta agendamentos que não foram processados.
+                daoObjReturn = delete(scheduleToDell, db);
+                //
+                //Se erro ao deletar, dispara exception que por sua vez executa rollback
+                if (daoObjReturn.hasError()) {
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
+            }
+            //
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            db.endTransaction();
+            //
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+        //
+        closeDB();
+        //
+        return daoObjReturn;
+    }
+
+    private DaoObjReturn delete(ArrayList<MD_Schedule_Exec> md_schedule_execs, SQLiteDatabase dbInstance) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.DELETE;
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+
+        try {
+            //Se db não foi passado, inicializa transaction
+            if (dbInstance == null) {
+                db.beginTransaction();
+            }
+            //
+            for (MD_Schedule_Exec md_schedule_exec : md_schedule_execs) {
+                //Where para update
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(md_schedule_exec.getCustomer_code()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(SCHEDULE_PREFIX).append(" = '").append(md_schedule_exec.getSchedule_prefix()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(SCHEDULE_CODE).append(" = '").append(md_schedule_exec.getSchedule_code()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(SCHEDULE_EXEC).append(" = '").append(md_schedule_exec.getSchedule_exec()).append("'");
+                //Tenta update e armazena retorno
+                addUpdateRet = this.db.delete(TABLE, sbWhere.toString(), null);
+            }
+            //Se db não foi passado, finaliza transaction com sucesso
+            if (dbInstance == null) {
+                db.setTransactionSuccessful();
+            }
+        } catch (SQLiteException e) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            if (dbInstance == null) {
+                db.endTransaction();
+            }
+            //
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+        //
+        if (dbInstance == null) {
+            closeDB();
+        }
+        //
+        return daoObjReturn;
+    }
+
     private class CursorToMD_Schedule_ExecMapper implements Mapper<Cursor, MD_Schedule_Exec> {
         @Override
         public MD_Schedule_Exec map(Cursor cursor) {
@@ -322,6 +523,8 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             }else{
                 md_schedule_exec.setComments(cursor.getString(cursor.getColumnIndex(COMMENTS)));
             }
+            md_schedule_exec.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
+            md_schedule_exec.setSync_process(cursor.getInt(cursor.getColumnIndex(SYNC_PROCESS)));
             //
             return md_schedule_exec;
         }
@@ -332,8 +535,8 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         public ContentValues map(MD_Schedule_Exec md_schedule_exec) {
             ContentValues contentValues = new ContentValues();
             //
-            if(md_schedule_exec.getCustom_form_code() > -1){
-                contentValues.put(CUSTOMER_CODE,md_schedule_exec.getCustom_form_code());
+            if(md_schedule_exec.getCustomer_code() > -1){
+                contentValues.put(CUSTOMER_CODE,md_schedule_exec.getCustomer_code());
             }
             if(md_schedule_exec.getSchedule_prefix() > -1){
                 contentValues.put(SCHEDULE_PREFIX,md_schedule_exec.getSchedule_prefix());
@@ -374,6 +577,12 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                 contentValues.put(DATE_END,md_schedule_exec.getDate_end());
             }
             contentValues.put(COMMENTS,md_schedule_exec.getComments());
+            if(md_schedule_exec.getStatus() != null){
+                contentValues.put(STATUS,md_schedule_exec.getStatus().toUpperCase());
+            }
+            if(md_schedule_exec.getSync_process() > -1){
+                contentValues.put(SYNC_PROCESS,md_schedule_exec.getSync_process());
+            }
             //
             return contentValues;
         }

@@ -82,6 +82,13 @@ public class GE_Custom_Form_Data {
     private Integer local_code;
 
     private List<GE_Custom_Form_Data_Field> dataFields;
+    //Campos novo agendamento
+    @Expose
+    private Integer schedule_prefix;
+    @Expose
+    private Integer schedule_code;
+    @Expose
+    private Integer schedule_exec;
 
     public GE_Custom_Form_Data() {
         this.customer_code = -1L;
@@ -109,6 +116,9 @@ public class GE_Custom_Form_Data {
         this.so_code = null;
         this.zone_code = null;
         this.local_code = null;
+        this.schedule_prefix = null;
+        this.schedule_code = null;
+        this.schedule_exec = null;
     }
 
     public long getCustomer_code() {
@@ -309,5 +319,29 @@ public class GE_Custom_Form_Data {
 
     public void setDataFields(List<GE_Custom_Form_Data_Field> dataFields) {
         this.dataFields = dataFields;
+    }
+
+    public Integer getSchedule_prefix() {
+        return schedule_prefix;
+    }
+
+    public void setSchedule_prefix(Integer schedule_prefix) {
+        this.schedule_prefix = schedule_prefix;
+    }
+
+    public Integer getSchedule_code() {
+        return schedule_code;
+    }
+
+    public void setSchedule_code(Integer schedule_code) {
+        this.schedule_code = schedule_code;
+    }
+
+    public Integer getSchedule_exec() {
+        return schedule_exec;
+    }
+
+    public void setSchedule_exec(Integer schedule_exec) {
+        this.schedule_exec = schedule_exec;
     }
 }

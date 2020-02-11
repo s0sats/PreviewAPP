@@ -52,6 +52,10 @@ public class GE_Custom_Form_Local {
     private Integer serial_min_length;
     private Integer serial_max_length;
     private String schedule_comments;
+    //Campos novo agendamento
+    private Integer schedule_prefix;
+    private Integer schedule_code;
+    private Integer schedule_exec;
 
     public long getCustomer_code() {
         return customer_code;
@@ -411,5 +415,29 @@ public class GE_Custom_Form_Local {
 
     public void setSchedule_comments(String schedule_comments) {
         this.schedule_comments = schedule_comments;
+    }
+
+    public Integer getSchedule_prefix() {
+        return schedule_prefix;
+    }
+
+    public void setSchedule_prefix(Integer schedule_prefix) {
+        this.schedule_prefix = schedule_prefix;
+    }
+
+    public Integer getSchedule_code() {
+        return schedule_code;
+    }
+
+    public void setSchedule_code(Integer schedule_code) {
+        this.schedule_code = schedule_code;
+    }
+
+    public Integer getSchedule_exec() {
+        return schedule_exec;
+    }
+
+    public void setSchedule_exec(Integer schedule_exec) {
+        this.schedule_exec = schedule_exec;
     }
 }
