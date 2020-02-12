@@ -5,7 +5,7 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.ctls.CalendarView;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -29,6 +29,10 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  * Antes era usado o localtime, porem como ele apresentou problemas quando o device esta em horario de verão,
  * assim como a propria classe Calendar do Java, o parametro foi substituido pelo novo retorno do novo
  * metodo getDeviceGMT().
+ *
+ * LUCHE - 12/02/2020
+ *
+ * Modificado query de form para usar a nova tabela de agendamento dm_schedule_exec
  */
 
 public class Sql_Act016_001 implements Specification {
@@ -51,19 +55,18 @@ public class Sql_Act016_001 implements Specification {
     private void buildFinalSql(boolean filter_form, boolean filter_form_ap) {
         sql_form =  UNION_ALL +
                     "   \nSELECT\n" +
-                    "      strftime('%Y-%m-%d',l.schedule_date_start_format,'"+deviceGMT+"') schedule_date_start,\n" +
-                    "      (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ) and l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"' ) delayed_count,\n" +
-                    "      (l.custom_form_status = '"+ Constant.SYS_STATUS_IN_PROCESSING+"') inprocessing_count,\n" +
-                    "      (l.schedule_date_start_format_ms >= (strftime('%s', 'now')  * 1000 ) AND l.custom_form_status = '"+ Constant.SYS_STATUS_SCHEDULE+"') scheduled_count,    \n" +
-                    "      (l.custom_form_status = '"+ Constant.SYS_STATUS_FINALIZED+"') finalized_count,\n" +
-                    "      (l.custom_form_status = '"+ Constant.SYS_STATUS_SENT+"') sent_count\n" +
+                    "      strftime('%Y-%m-%d',s.date_start,'"+deviceGMT+"') schedule_date_start,\n" +
+                    "      ((strftime('%s',s.date_start) *1000) < (strftime('%s', 'now')  * 1000 ) and s.status = '"+ Constant.SYS_STATUS_PENDING+"' ) delayed_count,\n" +
+                    "      (s.status = '"+ Constant.SYS_STATUS_IN_PROCESSING+"') inprocessing_count,\n" +
+                    "      ((strftime('%s',s.date_start) *1000) >= (strftime('%s', 'now')  * 1000 ) AND s.status = '"+ Constant.SYS_STATUS_PENDING+"') scheduled_count,    \n" +
+                    "      (s.status = '"+ Constant.SYS_STATUS_FINALIZED+"') finalized_count,\n" +
+                    "      (s.status = '"+ Constant.SYS_STATUS_SENT+"') sent_count\n" +
                     "     \n" +
-                    "  FROM "+ GE_Custom_Form_LocalDao.TABLE+" l\n" +
+                    "  FROM "+ MD_Schedule_ExecDao.TABLE+" s\n" +
                     "  \n" +
                     "  WHERE \n" +
-                    "        l.customer_code= '"+customer_code+"'     \n" +
-                    "        AND l.custom_form_data_serv is not null\n"+
-                    "        AND ('"+site_logged+"' is null or l.site_code = '"+site_logged+"') ";
+                    "        s.customer_code= '"+customer_code+"'     \n" +
+                    "        AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') ";
         //Remove , caso exista, o text 'null'
         sql_form = sql_form.replace("'null'","null");
         //
