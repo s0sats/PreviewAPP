@@ -29,6 +29,8 @@ import java.util.List;
 public class WS_Serial_Search extends IntentService {
 
 
+    public static final String SOCKET_TIMEOUT_EXCEPTION = "SocketTimeoutException";
+    public static final String UNKNOWN_HOST_EXCEPTION = "UnknownHostException";
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
@@ -61,9 +63,8 @@ public class WS_Serial_Search extends IntentService {
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(), e);
 
             ToolBox_Inf.registerException(getClass().getName(), e);
-            if(ConstantBaseApp.WS_EXCEPTION_HTTP_STATUS_ERROR.equals(e.getMessage())){
-                ToolBox_Inf.sendBCStatus(getApplicationContext(), ConstantBase.PD_TYPE_ERROR_HTTP, sb.toString(), "", "0");
-            }else if(ConstantBaseApp.WS_TIMEOUT_EXCEPTION.equals(e.getMessage())){
+
+            if(isHttpError(e)){
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), ConstantBase.PD_TYPE_ERROR_HTTP, sb.toString(), "", "0");
             }else {
                 ToolBox_Inf.sendBCStatus(getApplicationContext(), ConstantBase.PD_TYPE_ERROR_1, sb.toString(), "", "0");
@@ -73,6 +74,23 @@ public class WS_Serial_Search extends IntentService {
 
             WBR_Serial_Search.completeWakefulIntent(intent);
         }
+
+    }
+    /*
+        BARRIONUEVO - 12-02-2020
+        Avalia exception para induzir a pesquisa offline de serial utilizando ate entao os tipos
+        de exception conhecidos via arquivos de support.
+     */
+    private boolean isHttpError(Exception e) {
+        if (e != null) {
+            return e.toString().contains(ConstantBaseApp.WS_TIMEOUT_EXCEPTION)
+                    || e.toString().contains(ConstantBaseApp.WS_EXCEPTION_HTTP_STATUS_ERROR)
+                    || e.toString().contains(SOCKET_TIMEOUT_EXCEPTION)
+                    || e.toString().contains(UNKNOWN_HOST_EXCEPTION);
+        }else{
+            return false;
+        }
+
 
     }
 
