@@ -27,7 +27,7 @@ public class MD_Schedule_Exec_Sql_004 implements Specification {
                         "      sync_process = 0\n" +
                         " WHERE \n" +
                         "      customer_code = '"+customer_code+"'\n" +
-                        "      AND status = '"+ ConstantBaseApp.SYS_STATUS_PENDING +"'\n")
+                        "      AND status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"'\n")
                 .toString();
     }
 }

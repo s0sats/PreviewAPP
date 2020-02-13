@@ -13,6 +13,7 @@ import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_003;
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -32,18 +33,32 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public static final String SCHEDULE_EXEC = "schedule_exec";
     public static final String SCHEDULE_DESC = "schedule_desc";
     public static final String SITE_CODE = "site_code";
+    public static final String SITE_ID = "site_id";
+    public static final String SITE_DESC = "site_desc";
     public static final String OPERATION_CODE  = "operation_code";
+    public static final String OPERATION_ID  = "operation_id";
+    public static final String OPERATION_DESC  = "operation_desc";
     public static final String PRODUCT_CODE  = "product_code";
+    public static final String PRODUCT_ID = "product_id";
+    public static final String PRODUCT_DESC = "product_desc";
     public static final String SERIAL_CODE   = "serial_code";
     public static final String SERIAL_ID = "serial_id";
     public static final String CUSTOM_FORM_TYPE = "custom_form_type";
+    public static final String CUSTOM_FORM_TYPE_DESC = "custom_form_type_desc";
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
     public static final String CUSTOM_FORM_VERSION  = "custom_form_version";
+    public static final String CUSTOM_FORM_DESC = "custom_form_desc";
     public static final String DATE_START = "date_start";
     public static final String DATE_END  = "date_end";
     public static final String COMMENTS  = "comments";
     public static final String STATUS  = "status";
     public static final String SYNC_PROCESS  = "sync_process";
+    public static final String REQUIRE_SERIAL = "require_serial";
+    public static final String ALLOW_NEW_SERIAL_CL = "allow_new_serial_cl";
+    public static final String REQUIRE_SERIAL_DONE = "require_serial_done";
+    //NÃO SÃO CAMPOS DA TABELA, mas são usados em queries
+    public static final String SCHEDULE_DATE_START_FORMAT = "schedule_date_start_format";
+    public static final String SCHEDULE_DATE_END_FORMAT = "schedule_date_end_format";
 
     public MD_Schedule_ExecDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -250,9 +265,16 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
 
     @Override
     public HMAux getByStringHM(String sQuery) {
+        return getByStringHM(sQuery,null);
+    }
+    public HMAux getByStringHM(String sQuery, SQLiteDatabase dbInstance) {
         HMAux hmAux = null;
-        openDB();
-
+        if (dbInstance == null) {
+            openDB();
+        } else {
+            this.db = dbInstance;
+        }
+        //
         try {
 
             Cursor cursor = db.rawQuery(sQuery, null);
@@ -266,8 +288,10 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
-
-        closeDB();
+        //
+        if(dbInstance == null) {
+            closeDB();
+        }
 
         return hmAux;
     }
@@ -356,7 +380,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                 //Se existir o agendamento e ele ja tiver sido iniciado, seta sync_process para 1 e
                 // substitui o agendamento do server pelo do banco de dados, evitando a substituição.
                 if( dbSchedule != null
-                    && !dbSchedule.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PENDING)
+                    && !dbSchedule.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_SCHEDULE)
                 ){
                     dbSchedule.setSync_process(1);
                     receivedScheduleExecs.set(i,dbSchedule);
@@ -364,7 +388,38 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                     //Se agendamento não existia ou existia com status pending, seta sync_process e
                     //mantem o agendamento do server para atualização.
                     scheduleExec.setSync_process(1);
-                    receivedScheduleExecs.set(i,scheduleExec);
+                    //Se não existe no banco de dados, ou seja insert, seta status e dados do MD
+                    if(dbSchedule == null) {
+                        scheduleExec.setStatus(ConstantBaseApp.SYS_STATUS_SCHEDULE);
+                        //Tenta setar os dados do master data na tabela.
+                        HMAux mdAux = getByStringHM(
+                            new MD_Schedule_Exec_Sql_005(
+                                scheduleExec.getCustomer_code(),
+                                scheduleExec.getSite_code(),
+                                scheduleExec.getOperation_code(),
+                                scheduleExec.getProduct_code(),
+                                scheduleExec.getCustom_form_type(),
+                                scheduleExec.getCustom_form_code(),
+                                scheduleExec.getCustom_form_version()
+                            ).toSqlQuery(), db
+                        );
+                        //
+                        if (mdAux != null && mdAux.size() > 0) {
+                            scheduleExec.setSite_id(mdAux.get(SITE_ID));
+                            scheduleExec.setSite_desc(mdAux.get(SITE_DESC));
+                            scheduleExec.setOperation_id(mdAux.get(OPERATION_ID));
+                            scheduleExec.setOperation_desc(mdAux.get(OPERATION_DESC));
+                            scheduleExec.setProduct_id(mdAux.get(PRODUCT_ID));
+                            scheduleExec.setProduct_desc(mdAux.get(PRODUCT_DESC));
+                            scheduleExec.setRequire_serial(ToolBox_Inf.convertStringToInt(mdAux.get(REQUIRE_SERIAL)));
+                            scheduleExec.setAllow_new_serial_cl(ToolBox_Inf.convertStringToInt(mdAux.get(ALLOW_NEW_SERIAL_CL)));
+                            scheduleExec.setRequire_serial_done(ToolBox_Inf.convertStringToInt(mdAux.get(REQUIRE_SERIAL_DONE)));
+                            scheduleExec.setCustom_form_type_desc(mdAux.get(CUSTOM_FORM_TYPE_DESC));
+                            scheduleExec.setCustom_form_desc(mdAux.get(CUSTOM_FORM_DESC));
+                        }
+                    }
+                    //
+                    //receivedScheduleExecs.set(i,scheduleExec);
                 }
             }
             //Atualiza/ Insere lista no banco
@@ -500,9 +555,40 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             md_schedule_exec.setSchedule_code(cursor.getInt(cursor.getColumnIndex(SCHEDULE_CODE)));
             md_schedule_exec.setSchedule_exec(cursor.getInt(cursor.getColumnIndex(SCHEDULE_EXEC)));
             md_schedule_exec.setSchedule_desc(cursor.getString(cursor.getColumnIndex(SCHEDULE_DESC)));
+            md_schedule_exec.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
             md_schedule_exec.setSite_code(cursor.getInt(cursor.getColumnIndex(SITE_CODE)));
+            if(cursor.isNull(cursor.getColumnIndex(SITE_ID))){
+                md_schedule_exec.setSite_id(null);
+            }else {
+                md_schedule_exec.setSite_id(cursor.getString(cursor.getColumnIndex(SITE_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(SITE_DESC))){
+                md_schedule_exec.setSite_desc(null);
+            }else {
+                md_schedule_exec.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
+            }
             md_schedule_exec.setOperation_code(cursor.getInt(cursor.getColumnIndex(OPERATION_CODE)));
+            if(cursor.isNull(cursor.getColumnIndex(OPERATION_ID))){
+                md_schedule_exec.setOperation_id(null);
+            }else {
+                md_schedule_exec.setOperation_id(cursor.getString(cursor.getColumnIndex(OPERATION_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(OPERATION_DESC))){
+                md_schedule_exec.setOperation_desc(null);
+            }else {
+                md_schedule_exec.setOperation_desc(cursor.getString(cursor.getColumnIndex(OPERATION_DESC)));
+            }
             md_schedule_exec.setProduct_code(cursor.getInt(cursor.getColumnIndex(PRODUCT_CODE)));
+            if(cursor.isNull(cursor.getColumnIndex(PRODUCT_ID))){
+                md_schedule_exec.setProduct_id(null);
+            }else {
+                md_schedule_exec.setProduct_id(cursor.getString(cursor.getColumnIndex(PRODUCT_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(PRODUCT_DESC))){
+                md_schedule_exec.setProduct_desc(null);
+            }else {
+                md_schedule_exec.setProduct_desc(cursor.getString(cursor.getColumnIndex(PRODUCT_DESC)));
+            }
             if(cursor.isNull(cursor.getColumnIndex(SERIAL_CODE))){
                 md_schedule_exec.setSerial_code(null);
             }else{
@@ -514,8 +600,10 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                 md_schedule_exec.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
             }
             md_schedule_exec.setCustom_form_type(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_TYPE)));
+            md_schedule_exec.setCustom_form_type_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_TYPE_DESC)));
             md_schedule_exec.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             md_schedule_exec.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
+            md_schedule_exec.setCustom_form_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DESC)));
             md_schedule_exec.setDate_start(cursor.getString(cursor.getColumnIndex(DATE_START)));
             md_schedule_exec.setDate_end(cursor.getString(cursor.getColumnIndex(DATE_END)));
             if(cursor.isNull(cursor.getColumnIndex(COMMENTS))){
@@ -523,7 +611,9 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             }else{
                 md_schedule_exec.setComments(cursor.getString(cursor.getColumnIndex(COMMENTS)));
             }
-            md_schedule_exec.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
+            md_schedule_exec.setRequire_serial(cursor.getInt(cursor.getColumnIndex(REQUIRE_SERIAL)));
+            md_schedule_exec.setAllow_new_serial_cl(cursor.getInt(cursor.getColumnIndex(ALLOW_NEW_SERIAL_CL)));
+            md_schedule_exec.setRequire_serial_done(cursor.getInt(cursor.getColumnIndex(REQUIRE_SERIAL_DONE)));
             md_schedule_exec.setSync_process(cursor.getInt(cursor.getColumnIndex(SYNC_PROCESS)));
             //
             return md_schedule_exec;
@@ -550,25 +640,40 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             if(md_schedule_exec.getSchedule_desc() != null){
                 contentValues.put(SCHEDULE_DESC,md_schedule_exec.getSchedule_desc());
             }
+            if(md_schedule_exec.getStatus() != null){
+                contentValues.put(STATUS,md_schedule_exec.getStatus().toUpperCase());
+            }
             if(md_schedule_exec.getSite_code() > -1){
                 contentValues.put(SITE_CODE,md_schedule_exec.getSite_code());
             }
+            contentValues.put(SITE_ID,md_schedule_exec.getSite_id());
+            contentValues.put(SITE_DESC,md_schedule_exec.getSite_desc());
             if(md_schedule_exec.getOperation_code() > -1){
                 contentValues.put(OPERATION_CODE,md_schedule_exec.getOperation_code());
             }
+            contentValues.put(OPERATION_ID,md_schedule_exec.getOperation_id());
+            contentValues.put(OPERATION_DESC,md_schedule_exec.getOperation_desc());
             if(md_schedule_exec.getProduct_code() > -1){
                 contentValues.put(PRODUCT_CODE,md_schedule_exec.getProduct_code());
             }
+            contentValues.put(PRODUCT_ID,md_schedule_exec.getProduct_id());
+            contentValues.put(PRODUCT_DESC,md_schedule_exec.getProduct_desc());
             contentValues.put(SERIAL_CODE,md_schedule_exec.getSerial_code());
             contentValues.put(SERIAL_ID,md_schedule_exec.getSerial_id());
             if(md_schedule_exec.getCustom_form_type() > -1){
                 contentValues.put(CUSTOM_FORM_TYPE,md_schedule_exec.getCustom_form_type());
+            }
+            if(md_schedule_exec.getCustom_form_type_desc() != null){
+                contentValues.put(CUSTOM_FORM_TYPE_DESC,md_schedule_exec.getCustom_form_type_desc());
             }
             if(md_schedule_exec.getCustom_form_code() > -1){
                 contentValues.put(CUSTOM_FORM_CODE,md_schedule_exec.getCustom_form_code());
             }
             if(md_schedule_exec.getCustom_form_version() > -1){
                 contentValues.put(CUSTOM_FORM_VERSION,md_schedule_exec.getCustom_form_version());
+            }
+            if(md_schedule_exec.getCustom_form_desc() != null){
+                contentValues.put(CUSTOM_FORM_DESC,md_schedule_exec.getCustom_form_desc());
             }
             if(md_schedule_exec.getDate_start() != null){
                 contentValues.put(DATE_START,md_schedule_exec.getDate_start());
@@ -577,8 +682,14 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                 contentValues.put(DATE_END,md_schedule_exec.getDate_end());
             }
             contentValues.put(COMMENTS,md_schedule_exec.getComments());
-            if(md_schedule_exec.getStatus() != null){
-                contentValues.put(STATUS,md_schedule_exec.getStatus().toUpperCase());
+            if(md_schedule_exec.getRequire_serial() > -1){
+                contentValues.put(REQUIRE_SERIAL,md_schedule_exec.getRequire_serial());
+            }
+            if(md_schedule_exec.getAllow_new_serial_cl() > -1){
+                contentValues.put(ALLOW_NEW_SERIAL_CL,md_schedule_exec.getAllow_new_serial_cl());
+            }
+            if(md_schedule_exec.getRequire_serial_done() > -1){
+                contentValues.put(REQUIRE_SERIAL_DONE,md_schedule_exec.getRequire_serial_done());
             }
             if(md_schedule_exec.getSync_process() > -1){
                 contentValues.put(SYNC_PROCESS,md_schedule_exec.getSync_process());

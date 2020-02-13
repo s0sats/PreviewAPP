@@ -24,6 +24,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Module_Schedules_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
@@ -61,6 +62,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public static final String MODULE_CHECKLIST_FORM_IN_PROCESSING = "checklist_form_in_processing";
     public static final String MODULE_CHECKLIST_START_FORM = "checklist_start_form";
     public static final String MODULE_SCHEDULE_DATE_REF = "module_schedule_date_ref";
+    public static final String MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR = "module_schedule_form_data_creation_error";
 
     private ListView lv_schedules;
     private Bundle bundle;
@@ -409,13 +411,17 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        boolean hasSerial = item.get(GE_Custom_Form_LocalDao.SERIAL_ID).length() > 0;
+                        boolean hasSerial = item.get(MD_Schedule_ExecDao.SERIAL_ID).length() > 0;
 
                         mPresenter.prepareOpenForm(item, hasSerial);
                     }
                 };
                 break;
-
+            case MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR:
+                title = hmAux_Trans.get("alert_error_on_create_form_ttl");
+                msg = hmAux_Trans.get("alert_error_on_create_form_msg");
+                btnNegative = 0;
+                break;
         }
 
         if (btnNegative != null) {

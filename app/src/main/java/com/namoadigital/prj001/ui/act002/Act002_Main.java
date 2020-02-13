@@ -179,6 +179,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                 ToolBox_Con.setPreference_Session_App(getApplicationContext(), item.get(EV_User_CustomerDao.SESSION_APP));
                 ToolBox_Con.setPreference_Status_Login(getApplicationContext(),Constant.LOGIN_STATUS_OK);
                 ToolBox_Con.setPreference_Customer_Uses_Tracking(getApplicationContext(), Integer.parseInt(item.get(EV_User_CustomerDao.TRACKING)));
+                ToolBox_Con.setPreference_Customer_TMZ(getApplicationContext(), item.get(EV_User_CustomerDao.TIMEZONE));
                 callAct003(context);
             }
         } else {

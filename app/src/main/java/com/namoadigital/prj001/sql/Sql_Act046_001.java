@@ -1,11 +1,14 @@
 package com.namoadigital.prj001.sql;
 
+import android.content.Context;
+
 import com.namoa_digital.namoa_library.ctls.CalendarView;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
  * Created by DANIEL.LUCHE on 13/04/2017.
@@ -21,6 +24,9 @@ import com.namoadigital.prj001.util.Constant;
  *
  * Modificado query de form para usar a nova tabela de agendamento dm_schedule_exec
  *
+ * LUCHE - 13/02/2020
+ * Como os agendamentos não possuem timezone, será usado a nova preferencia Customer_TMZ,
+ *
  */
 
 public class Sql_Act046_001 implements Specification {
@@ -31,9 +37,11 @@ public class Sql_Act046_001 implements Specification {
     private String sql_form = "";
     private String sql_form_ap = "";
     private String deviceGMT = ToolBox.getDeviceGMT(false);
+    private String customerGMT;
 
-    public Sql_Act046_001(String customer_code, boolean filter_form, boolean filter_form_ap) {
+    public Sql_Act046_001(Context context, String customer_code, boolean filter_form, boolean filter_form_ap) {
         this.customer_code = customer_code;
+        this.customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
         //
         buildFinalSql(filter_form, filter_form_ap);
     }
@@ -42,8 +50,8 @@ public class Sql_Act046_001 implements Specification {
         sql_form =
                 UNION_ALL +
                 "   \nSELECT\n" +
-                "      strftime('%Y-%m-%d',s.date_start,'"+deviceGMT+"') schedule_date_start,\n" +
-                "      ((strftime('%Y-%m-%d',s.date_start ,'"+deviceGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"')) and s.status = '" + Constant.SYS_STATUS_PENDING + "' ) delayed_count\n" +
+                "      strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"') schedule_date_start,\n" +
+                "      ((strftime('%Y-%m-%d',s.date_start ,'"+customerGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"')) and s.status = '" + Constant.SYS_STATUS_SCHEDULE + "' ) delayed_count\n" +
                 "     \n" +
                 "  FROM " + MD_Schedule_ExecDao.TABLE + " s\n" +
                 "  \n" +

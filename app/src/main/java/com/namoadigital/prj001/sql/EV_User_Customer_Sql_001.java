@@ -5,6 +5,8 @@ import com.namoadigital.prj001.database.Specification;
 
 /**
  * Created by neomatrix on 7/13/16.
+ *Luche 13/02/2020
+ * - Modificado query colocando *  para selecionar todos so campos
  */
 
 public class EV_User_Customer_Sql_001 implements Specification {
@@ -21,7 +23,7 @@ public class EV_User_Customer_Sql_001 implements Specification {
 
         return sb
                 .append(" SELECT " +
-                        "      customer_code,\n " +
+                        /*"      customer_code,\n " +
                         "      customer_name,\n " +
                         "      translate_code,\n " +
                         "      blocked,\n " +
@@ -29,7 +31,8 @@ public class EV_User_Customer_Sql_001 implements Specification {
                         "      pending ,\n " +
                         "      translate_code ,\n " +
                         "      nls_date_format,\n " +
-                        "      tracking" +
+                        "      tracking" +*/
+                        "   *   \n"+
                         " FROM \n ")
                 .append(EV_User_CustomerDao.TABLE)
                 .append(" WHERE \n " +

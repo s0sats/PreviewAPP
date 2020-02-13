@@ -32,6 +32,7 @@ public class Act046_Main_Presenter implements Act046_Main_Contract.I_Presenter {
 
         ArrayList<HMAux> results = (ArrayList<HMAux>) mdProductDao.query_HM(
                 new Sql_Act046_001(
+                        context,
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         filter_form,
                         filter_form_ap

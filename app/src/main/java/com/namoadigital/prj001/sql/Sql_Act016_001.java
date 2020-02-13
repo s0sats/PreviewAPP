@@ -33,6 +33,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  * LUCHE - 12/02/2020
  *
  * Modificado query de form para usar a nova tabela de agendamento dm_schedule_exec
+ *
+ * LUCHE - 13/02/2020
+ * Como os agendamentos não possuem timezone, será usado a nova preferencia Customer_TMZ,
  */
 
 public class Sql_Act016_001 implements Specification {
@@ -44,10 +47,12 @@ public class Sql_Act016_001 implements Specification {
     private String sql_form_ap = "";
     private String site_logged;
     private String deviceGMT = ToolBox.getDeviceGMT(false);
+    private String customerGMT;
 
     public Sql_Act016_001(Context context, String customer_code, boolean filter_form, boolean filter_form_ap, boolean filter_site) {
         this.customer_code = customer_code;
         this.site_logged = filter_site ? ToolBox_Con.getPreference_Site_Code(context) : null;
+        this.customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
         //
         buildFinalSql(filter_form,filter_form_ap);
     }
@@ -55,10 +60,10 @@ public class Sql_Act016_001 implements Specification {
     private void buildFinalSql(boolean filter_form, boolean filter_form_ap) {
         sql_form =  UNION_ALL +
                     "   \nSELECT\n" +
-                    "      strftime('%Y-%m-%d',s.date_start,'"+deviceGMT+"') schedule_date_start,\n" +
-                    "      ((strftime('%s',s.date_start) *1000) < (strftime('%s', 'now')  * 1000 ) and s.status = '"+ Constant.SYS_STATUS_PENDING+"' ) delayed_count,\n" +
+                    "      strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"') schedule_date_start,\n" +
+                    "      ((strftime('%s',s.date_start,'"+customerGMT+"') *1000) < (strftime('%s', 'now')  * 1000 ) and s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"' ) delayed_count,\n" +
                     "      (s.status = '"+ Constant.SYS_STATUS_IN_PROCESSING+"') inprocessing_count,\n" +
-                    "      ((strftime('%s',s.date_start) *1000) >= (strftime('%s', 'now')  * 1000 ) AND s.status = '"+ Constant.SYS_STATUS_PENDING+"') scheduled_count,    \n" +
+                    "      ((strftime('%s',s.date_start,'"+customerGMT+"') *1000) >= (strftime('%s', 'now')  * 1000 ) AND s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"') scheduled_count,    \n" +
                     "      (s.status = '"+ Constant.SYS_STATUS_FINALIZED+"') finalized_count,\n" +
                     "      (s.status = '"+ Constant.SYS_STATUS_SENT+"') sent_count\n" +
                     "     \n" +

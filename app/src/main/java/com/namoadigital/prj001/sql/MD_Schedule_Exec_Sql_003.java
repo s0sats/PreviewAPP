@@ -33,7 +33,7 @@ public class MD_Schedule_Exec_Sql_003 implements Specification {
                         " WHERE \n" +
                         "      s.customer_code = '"+customer_code+"'\n" +
                         "      AND s.sync_process = 0\n" +
-                        "      AND s.status = '"+ ConstantBaseApp.SYS_STATUS_PENDING +"'\n" +
+                        "      AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"'\n" +
                         " ORDER BY\n" +
                         "    s.customer_code,\n" +
                         "    s.schedule_prefix,\n" +

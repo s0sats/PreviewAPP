@@ -575,6 +575,28 @@ public class ToolBox_Con {
 
     //endregion
 
+    //region CUSTOMER_TIMEZONE
+    public static void setPreference_Customer_TMZ(Context context, String timezone) {
+        SharedPreferences sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putString(
+            Constant.LOGIN_CUSTOMER_TMZ,
+            timezone
+        ).apply();
+    }
+
+    public static String getPreference_Customer_TMZ(Context context) {
+        SharedPreferences sharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+            Constant.LOGIN_CUSTOMER_TMZ,
+            ""
+        );
+    }
+    //endregion
+
     //region Chat_Msg_Code
     public static void setPreference_Chat_Msg_Code(Context context, long chat_msg_code) {
         SharedPreferences sharedPreferences =
