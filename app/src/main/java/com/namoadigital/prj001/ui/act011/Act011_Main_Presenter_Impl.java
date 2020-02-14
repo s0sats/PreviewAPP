@@ -3,15 +3,51 @@ package com.namoadigital.prj001.ui.act011;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoadigital.prj001.dao.*;
-import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
+import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_FileDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.GE_Custom_Form;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
-import com.namoadigital.prj001.sql.*;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_005;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_MULTI_SqlSpecification;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Fields_Local_Sql_001;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_005;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
+import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -48,8 +84,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     private boolean bAgendado;
 
+    private MD_Schedule_ExecDao scheduleExecDao;
 
-    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans) {
+
+    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans,MD_Schedule_ExecDao scheduleExecDao) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
@@ -64,6 +102,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         this.md_product_serialDao = md_product_serialDao;
         this.md_productDao = md_productDao;
         this.hmAux_Trans = hmAux_Trans;
+        this.scheduleExecDao = scheduleExecDao;
     }
 
     @Override
@@ -91,7 +130,13 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
         if (customFormLocal != null) {
             //Se Form vem do agendamento, muda status para in processing
-            if (customFormLocal.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)) {
+            //if (customFormLocal.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)) {
+            //LUCHE - 14/02/2020
+            //A identificação de se um form é agendamento agora verifica a pk do agendamento e não o status
+            if ( customFormLocal.getSchedule_prefix() > 0
+                 && customFormLocal.getSchedule_code() > 0
+                 && customFormLocal.getSchedule_exec() > 0
+            ) {
                 //
                 customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
                 customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
@@ -233,13 +278,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             );
         }else{
             GE_Custom_Form_Data formData = loadAnswer(
-                    customFormLocal.getCustomer_code(),
-                    Long.parseLong(product_code),
-                    customFormLocal.getCustom_form_type(),
-                    customFormLocal.getCustom_form_code(),
-                    customFormLocal.getCustom_form_version(),
-                    customFormLocal.getCustom_form_data(),
-                    customFormLocal.getCustom_form_data_serv(),
+                    customFormLocal,
                     so_prefix,
                     so_code,
                     so_site_code,
@@ -304,7 +343,104 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
     }
 
-    private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data, Long custom_form_data_serv, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, String serial_id) {
+    /**
+     * LUCHE - 14/02/2020
+     *
+     * Modificado assinatura do metodo, substituido os parametro de form e produto pelo obj GE_Custom_Form_Local
+     *
+     * @param formLocal - Obj Form local
+     * @param so_prefix - Prefixo da O.S
+     * @param so_code - Code da O.S
+     * @param so_site_code - Site da O.S
+     * @param so_operation_code - Operacao da O.S
+     * @param serial_id - ID do Serial
+     * @return - Respostas form_data
+     */
+    private GE_Custom_Form_Data loadAnswer(GE_Custom_Form_Local formLocal,Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, String serial_id){
+        GE_Custom_Form_Data form_data = custom_form_dataDao
+
+            .getByString(
+
+                new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
+                    String.valueOf(formLocal.getCustomer_code()),
+                    String.valueOf(formLocal.getCustom_form_type()),
+                    String.valueOf(formLocal.getCustom_form_code()),
+                    String.valueOf(formLocal.getCustom_form_version()),
+                    String.valueOf(formLocal.getCustom_form_data())
+                ).toSqlQuery().toLowerCase()
+
+            );
+
+        if (form_data != null) {
+            form_data.setDataFields(
+
+                custom_form_data_fieldDao.query(
+                    new GE_Custom_Form_Data_Field_MULTI_SqlSpecification(
+                        String.valueOf(formLocal.getCustomer_code()),
+                        String.valueOf(formLocal.getCustom_form_type()),
+                        String.valueOf(formLocal.getCustom_form_code()),
+                        String.valueOf(formLocal.getCustom_form_version()),
+                        String.valueOf(form_data.getCustom_form_data())
+                    ).toSqlQuery().toLowerCase()
+                )
+            );
+        } else {
+            form_data = new GE_Custom_Form_Data();
+            //
+            form_data.setCustomer_code(formLocal.getCustomer_code());
+            form_data.setCustom_form_type(formLocal.getCustom_form_type());
+            form_data.setCustom_form_code(formLocal.getCustom_form_code());
+            form_data.setCustom_form_version(formLocal.getCustom_form_version());
+            form_data.setCustom_form_data(formLocal.getCustom_form_data());
+            form_data.setCustom_form_data_serv(formLocal.getCustom_form_data_serv());
+            form_data.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
+            form_data.setProduct_code(formLocal.getCustom_product_code());
+            form_data.setSerial_id("");
+            form_data.setDate_start(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            form_data.setDate_end("1900-01-01 00:00:00 +00:00");
+            form_data.setUser_code(Long.parseLong(ToolBox_Con.getPreference_User_Code(context)));
+            //LUCHE - 14/02/2020
+            form_data.setSchedule_prefix(formLocal.getSchedule_prefix());
+            form_data.setSchedule_code(formLocal.getSchedule_code());
+            form_data.setSchedule_exec(formLocal.getSchedule_exec());
+
+            if (serial_id == null || serial_id.isEmpty()) {
+                form_data.setSite_code(ToolBox_Con.getPreference_Site_Code(context));
+                form_data.setZone_code(null);
+                form_data.setLocal_code(null);
+            } else {
+                MD_Product_Serial md_product_serialAux = md_product_serialDao.getByString(
+                    new MD_Product_Serial_Sql_002(
+                        formLocal.getCustomer_code(),
+                        formLocal.getCustom_product_code(),
+                        serial_id
+                    ).toSqlQuery()
+                );
+
+                if (md_product_serialAux != null) {
+                    form_data.setSite_code(md_product_serialAux.getSite_code() != null ? String.valueOf(md_product_serialAux.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
+                    form_data.setZone_code(md_product_serialAux.getZone_code());
+                    form_data.setLocal_code(md_product_serialAux.getLocal_code());
+                } else {
+                    // Erro Nao deve Acontecer
+                    form_data.setSite_code(ToolBox_Con.getPreference_Site_Code(context));
+                    form_data.setZone_code(null);
+                    form_data.setLocal_code(null);
+                }
+            }
+
+            form_data.setOperation_code(so_operation_code != null ? so_operation_code : ToolBox_Con.getPreference_Operation_Code(context));
+            form_data.setSignature("");
+            form_data.setToken("");
+            form_data.setSo_prefix(so_prefix);
+            form_data.setSo_code(so_code);
+        }
+
+        return form_data;
+
+    }
+
+    /*private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data, Long custom_form_data_serv, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, String serial_id) {
 
         GE_Custom_Form_Data form_data = custom_form_dataDao
 
@@ -382,7 +518,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
 
         return form_data;
-    }
+    }*/
 
     @Override
     public void saveData(GE_Custom_Form_Data formData, boolean bMsg) {
@@ -415,6 +551,13 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         Constant.SYS_STATUS_FINALIZED
                 ).toSqlQuery().toString()
         );
+        //LUCHE - 14/02/2020
+        updateScheduleStatus(
+            formData.getSchedule_prefix(),
+            formData.getSchedule_code(),
+            formData.getSchedule_exec(),
+            ConstantBaseApp.SYS_STATUS_FINALIZED
+        );
         //
         formData.setCustom_form_status(Constant.SYS_STATUS_FINALIZED);
         formData.setDate_end(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -444,6 +587,37 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 2);
 
 
+    }
+
+    /**
+     * LUCHE - 14/02/2020
+     *
+     * Atualiza status da tabela de agendamentos.
+     *
+     * @param schedule_prefix
+     * @param schedule_code
+     * @param schedule_exec
+     * @param status
+     * @return
+     */
+    private boolean updateScheduleStatus(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec, String status) {
+        MD_Schedule_Exec scheduleExec = scheduleExecDao.getByString(
+            new MD_Schedule_Exec_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedule_prefix,
+                schedule_code,
+                schedule_exec
+            ).toSqlQuery()
+        );
+        //
+        if(MD_Schedule_Exec.isValidScheduleExec(scheduleExec)){
+            scheduleExec.setStatus(status);
+            DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
+            //Retorna verdadeiro se não teve erro.
+            return !daoObjReturn.hasError();
+        }
+        //
+        return false;
     }
 
     @Override

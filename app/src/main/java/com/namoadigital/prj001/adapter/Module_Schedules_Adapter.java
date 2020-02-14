@@ -442,9 +442,9 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 tv_item_06_lbl.setText(hmAux_Trans.get("lbl_form") + " " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
 
                 //if (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).trim().length() > 0) {
-                if (item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC).trim().length() > 0) {
+                if (item.get("schedule_pk").trim().length() > 0) {
                     tv_item_07_lbl.setVisibility(View.VISIBLE);
-                    tv_item_07_lbl.setText(hmAux_Trans.get("lbl_data_serv") + " " + item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC));
+                    tv_item_07_lbl.setText(hmAux_Trans.get("lbl_data_serv") + " " + item.get("schedule_pk"));
                     tv_item_71_lbl.setText(hmAux_Trans.get("lbl_site_id") + " " + item.get(MD_Schedule_ExecDao.SITE_ID) + " - " + item.get(MD_Schedule_ExecDao.SITE_DESC));
                     //
                     tv_item_08_lbl.setVisibility(View.VISIBLE);

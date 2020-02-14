@@ -171,6 +171,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         //
         translateList.add("lbl_site");
         translateList.add("alert_schedule_comment_ttl");
+        translateList.add("alert_error_on_create_form_ttl");
+        translateList.add("alert_error_on_create_form_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
