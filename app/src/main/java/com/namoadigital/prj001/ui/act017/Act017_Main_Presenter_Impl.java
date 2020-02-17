@@ -405,17 +405,20 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 customFormLocal.setSerial_id(item.get(MD_Schedule_ExecDao.SERIAL_ID));
                 customFormLocal.setRequire_signature(customForm.getRequire_signature());
                 customFormLocal.setAutomatic_fill(customForm.getAutomatic_fill());
-                customFormLocal.setSchedule_date_start_format("1900-01-01 00:00:00 +00:00");
-                customFormLocal.setSchedule_date_end_format("1900-01-01 00:00:00 +00:00");
-                customFormLocal.setSchedule_date_start_format_ms(0);
-                customFormLocal.setSchedule_date_end_format_ms(0);
+                customFormLocal.setSchedule_date_start_format(item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT));
+                customFormLocal.setSchedule_date_end_format(item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT));
+                customFormLocal.setSchedule_date_start_format_ms(ToolBox_Inf.dateToMilliseconds(item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT)));
+                customFormLocal.setSchedule_date_end_format_ms(ToolBox_Inf.dateToMilliseconds(item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT)));
                 customFormLocal.setRequire_location(customForm.getRequire_location());
                 customFormLocal.setRequire_serial_done(customForm.getRequire_serial_done());
                 customFormLocal.setSchedule_comments(item.get(MD_Schedule_ExecDao.COMMENTS));
                 customFormLocal.setSchedule_prefix(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX)));
                 customFormLocal.setSchedule_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_CODE)));
                 customFormLocal.setSchedule_exec(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)));
-
+                customFormLocal.setSite_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SITE_CODE)));
+                customFormLocal.setSite_id(item.get(MD_Schedule_ExecDao.SITE_ID));
+                customFormLocal.setSite_desc(item.get(MD_Schedule_ExecDao.SITE_DESC));
+                //
                 //LUCHE -  14/03/2019
                 //Alteração Dao de insert com exception NOVO METODO DAO
                 //custom_form_LocalDao.addUpdate(customFormLocal);

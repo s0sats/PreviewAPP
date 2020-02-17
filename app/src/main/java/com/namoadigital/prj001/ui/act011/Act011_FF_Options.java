@@ -39,7 +39,7 @@ public class Act011_FF_Options extends Fragment {
 
     private int activateAutoAnswer;
 
-    private Long data_serv;
+    private boolean isSchedule;
 
     //private SimpleAdapter adapter_tabs;
 
@@ -237,8 +237,8 @@ public class Act011_FF_Options extends Fragment {
 
     }
 
-    public void enableScheduled(Long data_serv) {
-        this.data_serv = data_serv;
+    public void enableScheduled(boolean isSchedule) {
+        this.isSchedule = isSchedule;
     }
 
     public void enableTab(String status, int nserv) {
@@ -293,7 +293,8 @@ public class Act011_FF_Options extends Fragment {
             ff_options_ll_a.setVisibility(View.GONE);
         }
 
-        if (data_serv == null
+        //if (data_serv == null
+        if (!isSchedule
             && !status.toUpperCase().equals(Constant.SYS_STATUS_SENT)
             && !status.toUpperCase().equals(Constant.SYS_STATUS_DELETED)) {
             ff_options_ll_e.setVisibility(View.VISIBLE);

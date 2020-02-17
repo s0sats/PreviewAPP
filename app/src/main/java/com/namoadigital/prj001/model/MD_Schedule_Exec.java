@@ -38,16 +38,17 @@ public class MD_Schedule_Exec {
 
     /**
      * LUCHE - 14/02/2020
-     * Valida se o agendamento passado é valid , ou seja, é um obj com valores preenchidos.
+     *
+     * Valida se o agendamento passado é valido, ou seja, se obj com valores de pk preenchidos.
      * @param md_schedule_exec
      * @return
      */
     public static boolean isValidScheduleExec(MD_Schedule_Exec md_schedule_exec){
         return  md_schedule_exec != null
-                && md_schedule_exec.getCustomer_code() > -1
-                && md_schedule_exec.getSchedule_prefix() > -1
-                && md_schedule_exec.getSchedule_code() > -1
-                && md_schedule_exec.getSchedule_exec() > -1;
+                && md_schedule_exec.getCustomer_code() > 0
+                && md_schedule_exec.getSchedule_prefix() > 0
+                && md_schedule_exec.getSchedule_code() > 0
+                && md_schedule_exec.getSchedule_exec() > 0;
     }
 
     public long getCustomer_code() {

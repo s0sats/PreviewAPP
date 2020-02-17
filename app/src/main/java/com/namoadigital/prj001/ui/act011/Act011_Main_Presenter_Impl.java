@@ -51,6 +51,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,10 +134,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             //if (customFormLocal.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)) {
             //LUCHE - 14/02/2020
             //A identificação de se um form é agendamento agora verifica a pk do agendamento e não o status
-            if ( customFormLocal.getSchedule_prefix() > 0
-                 && customFormLocal.getSchedule_code() > 0
-                 && customFormLocal.getSchedule_exec() > 0
-            ) {
+            if (isScheduleForm(customFormLocal)) {
                 //
                 customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
                 customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
@@ -343,6 +341,45 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
     }
 
+    /**
+     * LUCHE - 17/02/2020
+     *
+     * Metodo que avalia se form pe um agendado.Considera agendado se a pk do agendamento estiver preenchida
+     * @param customFormLocal
+     * @return
+     */
+    public boolean isScheduleForm(GE_Custom_Form_Local customFormLocal) {
+        return customFormLocal != null
+                 && customFormLocal.getSchedule_prefix() > 0
+                 && customFormLocal.getSchedule_code() > 0
+                 && customFormLocal.getSchedule_exec() > 0;
+    }
+
+    /**
+     * LUCHE - 17/02/2020
+     *
+     * Formata a data do agedamento SEM APLICAR GMT.(Pedido do backend)
+     * @param date
+     * @return
+     */
+    public String formatScheduleDate(String date) {
+        SimpleDateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+        SimpleDateFormat dateFormatOut;
+        String format = ToolBox_Inf.nlsDateFormat(context);
+        try{
+            if( format == null || format.equalsIgnoreCase("")){
+                format = "dd-MM-yyyy";
+            }
+            //
+            format += " HH:mm";
+            dateFormatOut = new SimpleDateFormat(format);
+            //
+            return dateFormatOut.format(dateFormatIn.parse(date));
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return "01-01-1900";
+        }
+    }
     /**
      * LUCHE - 14/02/2020
      *
