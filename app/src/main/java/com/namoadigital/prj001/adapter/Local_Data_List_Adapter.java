@@ -266,29 +266,44 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
 
         tv_list.add(tv_date_schedule_start_lbl);
         tv_list.add(tv_date_schedule_start_val);
-
-        if (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).trim().length() > 0) {
+        //LUCHE - 17/02/2020
+        //Exibição dos dados  do NOVO AGENDAMENTO
+        String scheduelPk = "";
+        //
+        if( item.hasConsistentValue(GE_Custom_Form_LocalDao.SCHEDULE_PREFIX)
+            && item.hasConsistentValue(GE_Custom_Form_LocalDao.SCHEDULE_CODE)
+            && item.hasConsistentValue(GE_Custom_Form_LocalDao.SCHEDULE_EXEC)
+        ) {
+            scheduelPk = ToolBox_Inf.formatSchedulePk(
+                item.get(GE_Custom_Form_LocalDao.SCHEDULE_PREFIX),
+                item.get(GE_Custom_Form_LocalDao.SCHEDULE_CODE),
+                item.get(GE_Custom_Form_LocalDao.SCHEDULE_EXEC)
+            );
+        }
+        //
+        if (scheduelPk.length() > 0) {
             tv_data_serv_lbl.setVisibility(View.VISIBLE);
-            tv_data_serv_lbl.setText(hmAux_Trans.get("lbl_data_serv") + " " + item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
+            tv_data_serv_lbl.setText(hmAux_Trans.get("lbl_data_serv") + " " + scheduelPk);
             //
             tv_date_schedule_start_lbl.setVisibility(View.VISIBLE);
-            //tv_date_schedule_start_lbl.setText(hmAux_Trans.get("lbl_date_schedule_start") + " " + item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
             tv_date_schedule_start_lbl.setText(
-                    hmAux_Trans.get("lbl_date_schedule_start") + " " +
-                    ToolBox_Inf.millisecondsToString(
-                            ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT)),
-                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                    )
+                hmAux_Trans.get("lbl_date_schedule_start") + " " +
+                   /* ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT)),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )*/
+                   ToolBox_Inf.formatScheduleDate(context,item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT))
             );
 
             tv_date_schedule_end_lbl.setVisibility(View.VISIBLE);
             //tv_date_schedule_end_lbl.setText(hmAux_Trans.get("lbl_date_schedule_end") + " " + item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_END_FORMAT));
             tv_date_schedule_end_lbl.setText(
-                    hmAux_Trans.get("lbl_date_schedule_end") + " " +
-                    ToolBox_Inf.millisecondsToString(
-                            ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_END_FORMAT)),
-                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                    )
+                hmAux_Trans.get("lbl_date_schedule_end") + " " +
+                   /* ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_END_FORMAT)),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )*/
+                    ToolBox_Inf.formatScheduleDate(context,item.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_END_FORMAT))
             );
         } else {
             tv_data_serv_lbl.setVisibility(View.GONE);
@@ -299,6 +314,8 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
             tv_date_schedule_end_lbl.setVisibility(View.GONE);
             tv_date_schedule_end_val.setText("");
         }
+
+
         TextView tv_status_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_status_lbl);
         TextView tv_status_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_status_val);
 

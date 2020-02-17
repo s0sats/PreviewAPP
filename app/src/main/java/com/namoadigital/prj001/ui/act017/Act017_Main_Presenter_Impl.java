@@ -145,6 +145,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 //                        filter_site_logged
 //                ).toSqlQuery()
                 new Sql_Act017_003(
+                        context,
                         ToolBox_Con.getPreference_Customer_Code(context),
                         selected_date
                 ).toSqlQuery()
@@ -392,8 +393,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 customFormLocal.setCustom_form_version(customForm.getCustom_form_version());
                 customFormLocal.setCustom_form_data(Long.parseLong(nextFormData.get("id")));
                 customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
-                customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
-                customFormLocal.setCustom_form_data_serv(null);
+                customFormLocal.setCustom_form_status(ConstantBaseApp.SYS_STATUS_IN_PROCESSING );
                 customFormLocal.setCustom_product_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.PRODUCT_CODE)));
                 customFormLocal.setCustom_product_desc(item.get(MD_Schedule_ExecDao.PRODUCT_DESC));
                 customFormLocal.setCustom_product_id(item.get(MD_Schedule_ExecDao.PRODUCT_ID));

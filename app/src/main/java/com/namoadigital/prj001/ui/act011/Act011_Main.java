@@ -818,6 +818,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     /**
      * Valida se botão de finaliza + novo deve aparecer no fluxo.
+     *
+     * LUCHE - 17/02/2020
+     *  Subistutuido a validação de agedamento via custom_form_data_serv pelo metodo isScheduleForm
+     *
      * Regras:
      *  - O Usr deve ter o perfil de acesso ao botão.
      *  - O N-Form não pode ter sido gerado pela O.S
@@ -830,7 +834,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if( ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)
             && mSo_Prefix == null
             && mSo_Code == null
-            //&& formLocal.getCustom_form_data_serv() == null
             && !mPresenter.isScheduleForm(formLocal)
             && serial_id != null
             && !serial_id.isEmpty()
@@ -1166,7 +1169,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     form_data_field.setCustom_form_code(formData.getCustom_form_code());
                     form_data_field.setCustom_form_version(formData.getCustom_form_version());
                     form_data_field.setCustom_form_data(formData.getCustom_form_data());
-                    form_data_field.setCustom_form_data_serv(formData.getCustom_form_data_serv());
                     form_data_field.setCustom_form_seq(Integer.parseInt(cf.get("custom_form_seq")));
                     //
                     formData.getDataFields().add(form_data_field);
@@ -1339,7 +1341,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
             act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs, mSignature, form_desc);
-            //act011_ff_options.enableScheduled(formData.getCustom_form_data_serv());
             act011_ff_options.enableScheduled(mPresenter.isScheduleForm(formLocal));
 
             if (mSo_Prefix == null || mSo_Code == null) {
@@ -2574,50 +2575,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             tv_so_code_desc.setVisibility(View.GONE);
         }
 
-        GE_Custom_Form_LocalDao formLocalDao =
-                new GE_Custom_Form_LocalDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                );
-
-        /*HMAux dialogFormLocal
-                = formLocalDao.getByStringHM(
-                new Sql_Act011_003(
-                        context,
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        type,
-                        form,
-                        form_version,
-                        form_data
-                ).toSqlQuery()
-
-        );
-        //Dados do agendamento
-        if (dialogFormLocal != null && dialogFormLocal.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).length() > 0) {
+         if(mPresenter.isScheduleForm(formLocal)){
             tv_data_serv_lbl.setText(hmAux_Trans.get("dialog_info_data_serv_lbl"));
             tv_dt_schedule_start_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_start_lbl"));
             tv_dt_schedule_end_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_end_lbl"));
             //
             ll_schedule_info.setVisibility(View.VISIBLE);
-            tv_data_serv_val.setText(dialogFormLocal.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
-            tv_dt_schedule_start_val.setText(dialogFormLocal.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
-            tv_dt_schedule_end_val.setText(dialogFormLocal.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_END_FORMAT));
-        } else {
-            ll_schedule_info.setVisibility(View.GONE);
-        }*/
-        if(mPresenter.isScheduleForm(formLocal)){
-            tv_data_serv_lbl.setText(hmAux_Trans.get("dialog_info_data_serv_lbl"));
-            tv_dt_schedule_start_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_start_lbl"));
-            tv_dt_schedule_end_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_end_lbl"));
+            tv_data_serv_val.setText(
+                ToolBox_Inf.formatSchedulePk(
+                    formLocal.getSchedule_prefix(),
+                    formLocal.getSchedule_code(),
+                    formLocal.getSchedule_exec()
+                )
+            );
             //
-            ll_schedule_info.setVisibility(View.VISIBLE);
-            tv_data_serv_val.setText(formatSchedulePk());
             tv_dt_schedule_start_val.setText(
-                mPresenter.formatScheduleDate(formLocal.getSchedule_date_start_format())
+                ToolBox_Inf.formatScheduleDate(context, formLocal.getSchedule_date_start_format())
             );
             tv_dt_schedule_end_val.setText(
-                mPresenter.formatScheduleDate(formLocal.getSchedule_date_end_format())
+                ToolBox_Inf.formatScheduleDate(context, formLocal.getSchedule_date_end_format())
             );
         }else{
             ll_schedule_info.setVisibility(View.GONE);
@@ -2713,14 +2689,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         infoDialog.show();
 
-    }
-
-    private String formatSchedulePk() {
-        return
-            formLocal.getSchedule_prefix() +"."+
-            formLocal.getSchedule_code() +"."+
-            formLocal.getSchedule_exec()
-            ;
     }
 
     private void setTrackingListForm(LinearLayout ll_tracking, LinearLayout ll_tracking_val, MD_Product_Serial serial) {

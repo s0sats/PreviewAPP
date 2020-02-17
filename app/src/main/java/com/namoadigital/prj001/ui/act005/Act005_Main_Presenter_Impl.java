@@ -538,6 +538,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         try {
                             qty = customFormLocalDao.getByStringHM(
                                     new Sql_Act005_003(
+                                            context,
                                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                                             forward_hour
                                     ).toSqlQuery()

@@ -29,7 +29,6 @@ public class GE_Custom_Form_Data_FieldDao  extends BaseDao implements Dao<GE_Cus
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
     public static final String CUSTOM_FORM_DATA = "custom_form_data";
     public static final String CUSTOM_FORM_SEQ = "custom_form_seq";
-    public static final String CUSTOM_FORM_DATA_SERV = "custom_form_data_serv";
     public static final String VALUE = "value";
     public static final String VALUE_EXTRA = "value_extra";
 
@@ -252,12 +251,6 @@ public class GE_Custom_Form_Data_FieldDao  extends BaseDao implements Dao<GE_Cus
             custom_form_data_field.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
             custom_form_data_field.setCustom_form_data(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
             custom_form_data_field.setCustom_form_seq(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_SEQ)));
-            custom_form_data_field.setCustom_form_data_serv(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
-            if (cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV))) {
-                custom_form_data_field.setCustom_form_data_serv(null);
-            }else {
-                custom_form_data_field.setCustom_form_data_serv(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
-            }
             custom_form_data_field.setValue(cursor.getString(cursor.getColumnIndex(VALUE)));
             custom_form_data_field.setValue_extra(cursor.getString(cursor.getColumnIndex(VALUE_EXTRA)));
 
@@ -288,8 +281,6 @@ public class GE_Custom_Form_Data_FieldDao  extends BaseDao implements Dao<GE_Cus
             if (custom_form_data_field.getCustom_form_seq() > -1) {
                 contentValues.put(CUSTOM_FORM_SEQ, custom_form_data_field.getCustom_form_seq());
             }
-
-            contentValues.put(CUSTOM_FORM_DATA_SERV, custom_form_data_field.getCustom_form_data_serv());
 
             if (custom_form_data_field.getValue() != null) {
                 contentValues.put(VALUE, custom_form_data_field.getValue());

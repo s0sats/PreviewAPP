@@ -33,6 +33,4 @@ public interface Act011_Main_Presenter {
 
     boolean isScheduleForm(GE_Custom_Form_Local customFormLocal);
 
-    String formatScheduleDate(String date);
-
 }

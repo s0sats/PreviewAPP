@@ -11,6 +11,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by DANIEL.LUCHE on 24/02/2017.
+ *
+ * LUCHE - 17/02/2020
+ *
+ * Modificado query substituido o campos custom_form_data_serv pela pk do agedamento (md_schedule_exec)
  */
 
 public class Sql_Act015_001 implements Specification {
@@ -45,11 +49,6 @@ public class Sql_Act015_001 implements Specification {
                         "       THEN L.serial_id\n" +
                         "       ELSE d.serial_id\n" +
                         "  END  serial_id,\n"+
-                        "  l.custom_form_data_serv,\n"+
-//                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_start,'localtime') date_start,\n" +
-//                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'localtime') date_end,\n "+
-//                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n"+
-//                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format,\n"+
                         "  d.date_start,\n" +
                         "  d.date_end,\n "+
                         "  l.schedule_date_start_format,\n"+
@@ -57,7 +56,10 @@ public class Sql_Act015_001 implements Specification {
                         "  l.schedule_comments,\n" +
                         "  d.site_code,\n" +
                         "  s.site_id,\n" +
-                        "  s.site_desc\n" +
+                        "  s.site_desc\n," +
+                        "  l.schedule_prefix,\n"+
+                        "  l.schedule_code,\n"+
+                        "  l.schedule_exec\n"+
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l,\n" +
                         GE_Custom_Form_DataDao.TABLE+ " d\n " +
@@ -80,17 +82,6 @@ public class Sql_Act015_001 implements Specification {
                         "    l.serial_id, \n" +
                         "    l.custom_form_data \n" +
                         ";")
-                /*.append("customer_code#custom_form_type#custom_form_type_desc#" +
-                        "custom_form_code#custom_form_version#custom_form_desc#" +
-                        "custom_product_code#custom_product_desc#custom_product_id#custom_form_data#" +
-                        "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#" +
-                        "schedule_date_start_format#schedule_date_end_format#so_prefix#so_code#" +
-                        "schedule_comments#"+
-                        MD_SiteDao.SITE_CODE +"#"+
-                        MD_SiteDao.SITE_ID +"#"+
-                        MD_SiteDao.SITE_DESC
-
-                )*/
                 .toString();
     }
 }

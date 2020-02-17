@@ -51,7 +51,6 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,8 +134,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             //LUCHE - 14/02/2020
             //A identificação de se um form é agendamento agora verifica a pk do agendamento e não o status
             if (isScheduleForm(customFormLocal)) {
-                //
-                customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
                 customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
                 //
                 custom_form_LocalDao.addUpdate(customFormLocal);
@@ -202,7 +199,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_form_data(Long.parseLong(ii.get("id")));
             customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
             customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
-            customFormLocal.setCustom_form_data_serv(null);
             customFormLocal.setCustom_product_code(Integer.parseInt(product_code));
             customFormLocal.setCustom_product_desc(product_desc);
             customFormLocal.setCustom_product_id(product_id);
@@ -356,31 +352,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     /**
-     * LUCHE - 17/02/2020
-     *
-     * Formata a data do agedamento SEM APLICAR GMT.(Pedido do backend)
-     * @param date
-     * @return
-     */
-    public String formatScheduleDate(String date) {
-        SimpleDateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-        SimpleDateFormat dateFormatOut;
-        String format = ToolBox_Inf.nlsDateFormat(context);
-        try{
-            if( format == null || format.equalsIgnoreCase("")){
-                format = "dd-MM-yyyy";
-            }
-            //
-            format += " HH:mm";
-            dateFormatOut = new SimpleDateFormat(format);
-            //
-            return dateFormatOut.format(dateFormatIn.parse(date));
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
-            return "01-01-1900";
-        }
-    }
-    /**
      * LUCHE - 14/02/2020
      *
      * Modificado assinatura do metodo, substituido os parametro de form e produto pelo obj GE_Custom_Form_Local
@@ -429,7 +400,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setCustom_form_code(formLocal.getCustom_form_code());
             form_data.setCustom_form_version(formLocal.getCustom_form_version());
             form_data.setCustom_form_data(formLocal.getCustom_form_data());
-            form_data.setCustom_form_data_serv(formLocal.getCustom_form_data_serv());
             form_data.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
             form_data.setProduct_code(formLocal.getCustom_product_code());
             form_data.setSerial_id("");

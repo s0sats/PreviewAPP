@@ -11,6 +11,12 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by DANIEL.LUCHE on 09/02/2017.
+ *
+ * LUCHE 17/02/2020
+ *
+ * Modificado query, removimendo o campos custom_form_data_serv e adiconando os campos da pk do novo
+ * agendamento (md_schedule_exec)
+ *
  */
 
 public class Sql_Act013_001 implements Specification {
@@ -38,14 +44,21 @@ public class Sql_Act013_001 implements Specification {
                 status += "'"+Constant.SYS_STATUS_SCHEDULE+"',";
             }
             status = status.substring(0,status.length() -1);
-            s_filter += "AND l.custom_form_status in(" +status+")";
+            s_filter += "   AND l.custom_form_status in(" +status+")\n";
+            //LUCHE - 17/02/2020
+            //Se somente filtro por agendendamento, então além do status, filtra por quem tem pk
+            if(!filter_in_processing && !filter_finalized && filter_scheduled ){
+                s_filter += "  AND schedule_prefix is not null \n" +
+                            "  AND schedule_code is not null \n" +
+                            "  AND schedule_exec is not null \n";
+            }
         }else{
             //Se todos os filtros falsos, não filtra nada.
-            s_filter += "AND l.custom_form_status NOT in(" +
+            s_filter += " AND l.custom_form_status NOT in(" +
                     "'"+ Constant.SYS_STATUS_IN_PROCESSING+"',"+
                     "'"+Constant.SYS_STATUS_FINALIZED+"'," +
                     "'"+Constant.SYS_STATUS_SCHEDULE+"' "+
-                    ")";
+                    ")\n";
 
         }
 
@@ -73,16 +86,8 @@ public class Sql_Act013_001 implements Specification {
                         "       THEN L.serial_id\n" +
                         "       ELSE d.serial_id\n" +
                         "  END  serial_id,\n" +
-
-                        "  l.custom_form_data_serv,\n" +
-
                         "  d.so_prefix,\n" +
                         "  d.so_code,\n" +
-
-//                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_start,'localtime') date_start,\n" +
-//                        "  strftime('"+sqlite_date_format+" %H:%M',d.date_end,'localtime') date_end,\n" +
-//                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_start_format,'localtime') schedule_date_start_format,\n "+
-//                        "  strftime('"+sqlite_date_format+" %H:%M',l.schedule_date_end_format,'localtime') schedule_date_end_format,\n"+
                         "  d.date_start,\n" +
                         "  d.date_end,\n" +
                         "  l.schedule_date_start_format,\n "+
@@ -103,17 +108,20 @@ public class Sql_Act013_001 implements Specification {
                         "  CASE WHEN LENGTH(l.site_desc) <> 0\n" +
                         "       THEN l.site_desc\n" +
                         "       ELSE s.site_desc\n" +
-                        "  END "+MD_SiteDao.SITE_DESC +"\n"+
+                        "  END "+MD_SiteDao.SITE_DESC +",\n"+
+                        "  l.schedule_prefix,\n"+
+                        "  l.schedule_code,\n"+
+                        "  l.schedule_exec\n"+
                         "  FROM\n" +
-                        GE_Custom_Form_LocalDao.TABLE+ " l\n" +
-                        "LEFT JOIN " + GE_Custom_Form_DataDao.TABLE+ " d ON \n" +
-                        "      l.customer_code = d.customer_code  \n" +
-                        "      AND l.custom_form_type = d.custom_form_type\n" +
-                        "      AND l.custom_form_code = d.custom_form_code\n" +
-                        "      AND l.custom_form_version = d.custom_form_version\n" +
-                        "      AND l.custom_form_data = d.custom_form_data\n" +
-                        "LEFT JOIN "+MD_SiteDao.TABLE+" s ON \n" +
-                        "      d.customer_code = s.customer_code\n" +
+                        "   " + GE_Custom_Form_LocalDao.TABLE+ " l\n" +
+                        "  LEFT JOIN " + GE_Custom_Form_DataDao.TABLE+ " d ON \n" +
+                        "        l.customer_code = d.customer_code  \n" +
+                        "        AND l.custom_form_type = d.custom_form_type\n" +
+                        "        AND l.custom_form_code = d.custom_form_code\n" +
+                        "        AND l.custom_form_version = d.custom_form_version\n" +
+                        "        AND l.custom_form_data = d.custom_form_data\n" +
+                        "  LEFT JOIN "+MD_SiteDao.TABLE+" s ON \n" +
+                        "        d.customer_code = s.customer_code\n" +
                         "      AND d.site_code = s.site_code\n " +
                         "  WHERE\n" +
                         "      l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' \n" +
@@ -134,19 +142,9 @@ public class Sql_Act013_001 implements Specification {
                         "      l.custom_form_type, \n" +
                         "      l.custom_product_code, \n" +
                         "      l.serial_id, \n" +
-                        "      l.custom_form_data" +
+                        "      l.custom_form_data \n" +
                         "\n;")
-                /*.append("customer_code#custom_form_type#custom_form_type_desc#" +
-                        "custom_form_code#custom_form_version#custom_form_desc#" +
-                        "custom_product_code#custom_product_desc#custom_product_id#custom_form_data#" +
-                        "custom_form_status#serial_id#custom_form_data_serv#date_start#date_end#" +
-                        "schedule_date_start_format#schedule_date_end_format#so_prefix#so_code#" +
-                        "schedule_comments#require_serial_done#require_serial#allow_new_serial_cl#" +
-                        "site_code#"+
-                        MD_SiteDao.SITE_CODE+"#"+
-                        MD_SiteDao.SITE_ID+"#"+
-                        MD_SiteDao.SITE_DESC
-                )*/
+
                 .toString();
     }
 

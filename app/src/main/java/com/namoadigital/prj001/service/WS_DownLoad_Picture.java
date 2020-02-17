@@ -28,7 +28,6 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Sql_002;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_017;
 import com.namoadigital.prj001.sql.MD_All_Product_Sql_004;
 import com.namoadigital.prj001.sql.MD_All_Product_Sql_005;
 import com.namoadigital.prj001.sql.MD_Product_Sql_004;
@@ -91,7 +90,10 @@ public class WS_DownLoad_Picture extends IntentService {
             MD_All_ProductDao allProductDao = null;
             ArrayList<HMAux> all_product_sketch_list = new ArrayList<>();
             ArrayList<HMAux> product_icon_list = new ArrayList<>();
-            ArrayList<HMAux> schedule_product_icon_list = new ArrayList<>();
+            //LUCHE - 17/02/2020
+            //Comentado lista, pois após analise concluimos que não faze sentido, ja que ela é gerada
+            //porem não é considerada na lista de download
+            //ArrayList<HMAux> schedule_product_icon_list = new ArrayList<>();
             //
             GE_Custom_Form_FieldDao form_fieldDao = new GE_Custom_Form_FieldDao(
                     getApplicationContext(),
@@ -151,12 +153,14 @@ public class WS_DownLoad_Picture extends IntentService {
                         customer_code
                     ).toSqlQuery()
             );
-            //
-            schedule_product_icon_list = (ArrayList<HMAux>) formLocalDao.query_HM(
+            //LUCHE - 17/02/2020
+            //Comentado lista, pois após analise concluimos que não faze sentido, ja que ela é gerada
+            //porem não é considerada na lista de download
+            /*schedule_product_icon_list = (ArrayList<HMAux>) formLocalDao.query_HM(
                 new GE_Custom_Form_Local_Sql_017(
                     customer_code
                 ).toSqlQuery()
-            );
+            );*/
 
             /**
              *
@@ -294,7 +298,7 @@ public class WS_DownLoad_Picture extends IntentService {
                     && roomImgList.size() == 0
                     && messageImgList.size() == 0
                     && product_icon_list.size() == 0
-                    && schedule_product_icon_list.size() == 0
+                    //&& schedule_product_icon_list.size() == 0
                     && ticketImgList.size() == 0
                     && ticketActionImgList.size() == 0
                     ) {

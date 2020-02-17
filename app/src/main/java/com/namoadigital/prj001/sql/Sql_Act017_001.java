@@ -76,12 +76,10 @@ public class Sql_Act017_001 implements Specification {
                         "  s.site_code,\n" +
                         "  s.site_id,\n" +
                         "  s.site_desc,\n" +
-                        //"  l.serial_id,\n" +
                         "  CASE WHEN LENGTH(s.serial_id) <> 0 \n" +
                         "       THEN s.serial_id\n" +
                         "       ELSE d.serial_id\n" +
                         "  END  serial_id,\n" +
-                        //"  s.custom_form_data_serv,\n" +
                         "  d.date_start, \n" +
                         "  d.date_end ,\n" +
                         "  s.date_start ||' "+customerGMT+"' "+MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT+",\n"+

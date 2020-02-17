@@ -6353,4 +6353,53 @@ public class ToolBox_Inf {
         //
         return ToolBox_Con.getPreference_HideSerialInfo(context);
     }
+
+    public static String formatSchedulePk(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
+        return formatSchedulePk(
+            String.valueOf(schedule_prefix),
+            String.valueOf(schedule_code),
+            String.valueOf(schedule_exec)
+        );
+    }
+
+    public static String formatSchedulePk(String schedule_prefix, String schedule_code, String schedule_exec) {
+        if(
+            schedule_prefix == null || schedule_prefix.equalsIgnoreCase("null")
+            || schedule_code == null || schedule_code.equalsIgnoreCase("null")
+            || schedule_exec == null || schedule_exec.equalsIgnoreCase("null")
+        ){
+            return "";
+        }
+        //
+        return  schedule_prefix +"."+
+                schedule_code +"."+
+                schedule_exec ;
+    }
+
+    /**
+     * LUCHE - 17/02/2020
+     *
+     * Formata a data do agedamento SEM APLICAR GMT.(Pedido do backend)
+     * @param context
+     * @param date
+     * @return
+     */
+    public static String formatScheduleDate(Context context, String date) {
+        SimpleDateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+        SimpleDateFormat dateFormatOut;
+        String format = ToolBox_Inf.nlsDateFormat(context);
+        try{
+            if( format == null || format.equalsIgnoreCase("")){
+                format = "dd-MM-yyyy";
+            }
+            //
+            format += " HH:mm";
+            dateFormatOut = new SimpleDateFormat(format);
+            //
+            return dateFormatOut.format(dateFormatIn.parse(date));
+        }catch (Exception e){
+            ToolBox_Inf.registerException(CLASS_NAME,e);
+            return "01-01-1900";
+        }
+    }
 }

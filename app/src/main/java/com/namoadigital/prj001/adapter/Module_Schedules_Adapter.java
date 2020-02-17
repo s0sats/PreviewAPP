@@ -21,7 +21,6 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -441,7 +440,6 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 tv_item_05_lbl.setText(hmAux_Trans.get("lbl_type") + " " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
                 tv_item_06_lbl.setText(hmAux_Trans.get("lbl_form") + " " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
 
-                //if (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).trim().length() > 0) {
                 if (item.get("schedule_pk").trim().length() > 0) {
                     tv_item_07_lbl.setVisibility(View.VISIBLE);
                     tv_item_07_lbl.setText(hmAux_Trans.get("lbl_data_serv") + " " + item.get("schedule_pk"));
@@ -450,13 +448,13 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                     tv_item_08_lbl.setVisibility(View.VISIBLE);
                     tv_item_08_lbl.setText(
                             hmAux_Trans.get("lbl_date_schedule_start") + " " +
-                            formatScheduleDate(item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT))
+                            ToolBox_Inf.formatScheduleDate(context,item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT))
 
                     );
                     tv_item_09_lbl.setVisibility(View.VISIBLE);
                     tv_item_09_lbl.setText(
                         hmAux_Trans.get("lbl_date_schedule_end") + " " +
-                            formatScheduleDate(item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT))
+                            ToolBox_Inf.formatScheduleDate(context,item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT))
                     );
 
                 } else {
@@ -514,7 +512,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
             case Constant.SYS_STATUS_SCHEDULE:
                 tv_date_lbl.setText(
                         hmAux_Trans.get("lbl_date") + " " +
-                            formatScheduleDate(item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT))
+                            ToolBox_Inf.formatScheduleDate(context,item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT))
                 );
                 //
 //                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_7_states);
@@ -530,25 +528,6 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
                 llBackground.setBackground(llDrawable);
                 break;
-        }
-    }
-
-    private String formatScheduleDate(String date) {
-        SimpleDateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-        SimpleDateFormat dateFormatOut;
-        String format = ToolBox_Inf.nlsDateFormat(context);
-        try{
-            if( format == null || format.equalsIgnoreCase("")){
-                format = "dd-MM-yyyy";
-            }
-            //
-            format += " HH:mm";
-            dateFormatOut = new SimpleDateFormat(format);
-            //
-            return dateFormatOut.format(dateFormatIn.parse(date));
-        }catch (Exception e){
-            ToolBox_Inf.registerException(getClass().getName(),e);
-            return "01-01-1900";
         }
     }
 

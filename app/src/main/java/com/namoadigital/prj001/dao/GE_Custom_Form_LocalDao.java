@@ -21,7 +21,7 @@ import java.util.List;
  * Created by neomatrix on 11/01/17.
  */
 
-public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_Custom_Form_Local> {
+public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Form_Local> {
     private final Mapper<GE_Custom_Form_Local, ContentValues> toContentValuesMapper;
     private final Mapper<Cursor, GE_Custom_Form_Local> toGE_Custom_Form_LocalMapper;
 
@@ -33,7 +33,6 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
     public static final String CUSTOM_FORM_DATA = "custom_form_data";
     public static final String CUSTOM_FORM_PRE = "custom_form_pre";
     public static final String CUSTOM_FORM_STATUS = "custom_form_status";
-    public static final String CUSTOM_FORM_DATA_SERV = "custom_form_data_serv";
     public static final String REQUIRE_SIGNATURE = "require_signature";
     public static final String AUTOMATIC_FILL = "automatic_fill";
     public static final String CUSTOM_PRODUCT_CODE = "custom_product_code";
@@ -336,40 +335,6 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
     }
 
     @Override
-    public void remove(Iterable<GE_Custom_Form_Local> custom_form_locals) {
-        openDB();
-
-        try {
-
-            db.beginTransaction();
-
-            for (GE_Custom_Form_Local custom_form_local : custom_form_locals) {
-                StringBuilder sbWhere = new StringBuilder();
-                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustomer_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_type())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(CUSTOM_FORM_DATA_SERV).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data_serv())).append("'");
-
-                db.delete(TABLE, sbWhere.toString(), null);
-
-            }
-
-            db.setTransactionSuccessful();
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(), e);
-        } finally {
-            db.endTransaction();
-        }
-
-        closeDB();
-    }
-
-    @Override
     public GE_Custom_Form_Local getByString(String s_query) {
         GE_Custom_Form_Local custom_form_local = null;
         openDB();
@@ -480,11 +445,6 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             custom_form_local.setCustom_form_data(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
             custom_form_local.setCustom_form_pre(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_PRE)));
             custom_form_local.setCustom_form_status(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_STATUS)));
-            if (cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV))) {
-                custom_form_local.setCustom_form_data_serv(null);
-            } else {
-                custom_form_local.setCustom_form_data_serv(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
-            }
             custom_form_local.setRequire_signature(cursor.getInt(cursor.getColumnIndex(REQUIRE_SIGNATURE)));
             custom_form_local.setAutomatic_fill(cursor.getString(cursor.getColumnIndex(AUTOMATIC_FILL)));
             custom_form_local.setCustom_product_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_PRODUCT_CODE)));
@@ -594,8 +554,6 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements DaoFormLocal<GE_
             if (custom_form_local.getCustom_form_status() != null) {
                 contentValues.put(CUSTOM_FORM_STATUS, custom_form_local.getCustom_form_status());
             }
-
-            contentValues.put(CUSTOM_FORM_DATA_SERV, custom_form_local.getCustom_form_data_serv());
 
             if (custom_form_local.getRequire_signature() > -1) {
                 contentValues.put(REQUIRE_SIGNATURE, custom_form_local.getRequire_signature());
