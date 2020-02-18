@@ -84,7 +84,8 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
 
             if(validateFormSORestriction(item)) {
                 if(item.hasConsistentValue(GE_Custom_FormDao.REQUIRE_LOCATION)
-                && item.get(GE_Custom_FormDao.REQUIRE_LOCATION).equals("1")){
+                && item.get(GE_Custom_FormDao.REQUIRE_LOCATION).equals("1")
+                && !hasGPSResourceActive()){
                     mView.alertActiveGPSResource(item);
                 }else {
                     setAct011Call(item);
@@ -213,4 +214,21 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
             }
         }
     }
+
+    public boolean hasGPSResourceActive() {
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (lm.isLocationEnabled()) {
+                return true;
+            }
+        }else {
+            String provider = Settings.Secure.getString(context.getContentResolver(),
+                    Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            if (provider != null && provider.length() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
