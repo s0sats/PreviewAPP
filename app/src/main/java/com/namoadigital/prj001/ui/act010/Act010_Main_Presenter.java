@@ -14,4 +14,5 @@ public interface Act010_Main_Presenter {
 
     void onBackPressedClicked();
 
+    void validateGPSResource(HMAux item);
 }

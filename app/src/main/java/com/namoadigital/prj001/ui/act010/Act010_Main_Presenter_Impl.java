@@ -1,6 +1,9 @@
 package com.namoadigital.prj001.ui.act010;
 
 import android.content.Context;
+import android.location.LocationManager;
+import android.os.Build;
+import android.provider.Settings;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
@@ -80,15 +83,24 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
         ) {
 
             if(validateFormSORestriction(item)) {
-                //
-                mView.addFormInfoToBundle(item);
-                //
-                mView.callAct011(context);
+                if(item.hasConsistentValue(GE_Custom_FormDao.REQUIRE_LOCATION)
+                && item.get(GE_Custom_FormDao.REQUIRE_LOCATION).equals("1")){
+                    mView.alertActiveGPSResource(item);
+                }else {
+                    setAct011Call(item);
+                }
             }
 
         } else {
             mView.alertFormNotReady();
         }
+    }
+
+    private void setAct011Call(HMAux item) {
+        //
+        mView.addFormInfoToBundle(item);
+        //
+        mView.callAct011(context);
     }
 
     /**
@@ -180,5 +192,25 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     @Override
     public void onBackPressedClicked() {
         mView.callAct009(context);
+    }
+
+    @Override
+    public void validateGPSResource(HMAux item) {
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (lm.isLocationEnabled()) {
+                setAct011Call(item);
+            }else{
+                mView.alertActiveGPSResource(item);
+            }
+        }else{
+            String provider = Settings.Secure.getString(context.getContentResolver(),
+                    Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            if(provider != null && provider.length() > 0){
+                setAct011Call(item);
+            }else{
+                mView.alertActiveGPSResource(item);
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act010;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -288,6 +289,29 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 null,
                 0
         );
+    }
+
+    @Override
+    public void alertActiveGPSResource(final HMAux item) {
+        List<String> translist = new ArrayList<>();
+        translist.add("alert_form_turn_gps_on_title");
+        translist.add("alert_form_turn_gps_on_msg");
+
+        HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans, mModule_Code, mResource_Code, translist);
+
+        ToolBox.alertMSG(
+                Act010_Main.this,
+                alertTrans.get("alert_form_turn_gps_on_title"),
+                alertTrans.get("alert_form_turn_gps_on_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.validateGPSResource(item);
+                    }
+                },
+                1
+        );
+
     }
 
     @Override
