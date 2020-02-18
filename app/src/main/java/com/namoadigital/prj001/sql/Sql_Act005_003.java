@@ -58,10 +58,7 @@ public class Sql_Act005_003 implements Specification {
                         "   " + MD_Schedule_ExecDao.TABLE + " s \n" +
                         " WHERE\n" +
                         "   s.customer_code = '"+customer_code+"' \n" +
-                        /*"   and ( (l.schedule_date_start_format_ms < (strftime('%s', 'now')  * 1000 ))\n" +
-                        "          or(l.schedule_date_start_format_ms < (strftime('%s', 'now','+"+forward_hour+" hour')  * 1000 ))\n" +
-                        "          )\n" +*/
-                        "   and (strftime('%Y-%m-%d',s.schedule_date_start_format ,'"+customerGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))  \n"+
+                        "   and (strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))  \n"+
                         "   and s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"'\n")
                 .append(";")
                 //.append(BADGE_SCHEDULED_QTY)

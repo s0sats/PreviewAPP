@@ -15,4 +15,6 @@ public interface Act013_Main_Presenter {
     void validateOpenForm(HMAux item);
 
     void onBackPressedClicked(String requesting_act);
+
+    void processFormCreation(HMAux scheduleItem);
 }

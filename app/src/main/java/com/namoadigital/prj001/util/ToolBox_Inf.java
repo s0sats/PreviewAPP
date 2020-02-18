@@ -3072,13 +3072,18 @@ public class ToolBox_Inf {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
         Calendar calendar = Calendar.getInstance();
-        try {
-            calendar.setTime(sdf.parse(date_tmz));
-        } catch (ParseException e) {
-            ToolBox_Inf.registerException(CLASS_NAME, e);
-            e.printStackTrace();
+        //LUCHE - 18/02/2020
+        //Add if verificando data, pois gerava muitas arquivos de exception desnecessariamente quando
+        //data vazia ou null
+        if(date_tmz != null && !date_tmz.isEmpty() && !date_tmz.equalsIgnoreCase("null")) {
+            try {
+                calendar.setTime(sdf.parse(date_tmz));
+            } catch (ParseException e) {
+                ToolBox_Inf.registerException(CLASS_NAME, e);
+                e.printStackTrace();
+            }
         }
-
+        //
         return calendar.getTimeInMillis();
     }
 

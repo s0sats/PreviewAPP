@@ -24,7 +24,6 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Fields_Local_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
@@ -438,18 +437,8 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                             String.valueOf(customFormLocal.getCustom_form_data())
                         ).toSqlQuery().toLowerCase()
                     );
-
+                    //
                     custom_form_field_LocalDao.addUpdate(items);
-
-                    ArrayList<HMAux> cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
-                        new GE_Custom_Form_Fields_Local_Sql_001(
-                            String.valueOf(customFormLocal.getCustomer_code()),
-                            String.valueOf(customFormLocal.getCustom_form_type()),
-                            String.valueOf(customFormLocal.getCustom_form_code()),
-                            String.valueOf(customFormLocal.getCustom_form_version()),
-                            String.valueOf(customFormLocal.getCustom_form_data())
-                        ).toSqlQuery().toLowerCase()
-                    );
                     //
                     custom_form_blob_localDao.addUpdate(
                         custom_form_blob_localDao.query(

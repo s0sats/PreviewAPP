@@ -346,9 +346,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
      */
     public boolean isScheduleForm(GE_Custom_Form_Local customFormLocal) {
         return customFormLocal != null
-                 && customFormLocal.getSchedule_prefix() > 0
-                 && customFormLocal.getSchedule_code() > 0
-                 && customFormLocal.getSchedule_exec() > 0;
+                && customFormLocal.getSchedule_prefix() != null
+                && customFormLocal.getSchedule_code() != null
+                && customFormLocal.getSchedule_exec() != null
+                && customFormLocal.getSchedule_prefix() > 0
+                && customFormLocal.getSchedule_code() > 0
+                && customFormLocal.getSchedule_exec() > 0;
     }
 
     /**

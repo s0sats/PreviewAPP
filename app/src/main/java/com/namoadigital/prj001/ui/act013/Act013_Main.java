@@ -43,6 +43,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
 
     public static final String FORM_IN_PROCESSING = "form_in_processing";
     public static final String START_FORM = "start_form";
+    public static final String FORM_DATA_CREATION_ERROR = "form_data_creation_error";
 
     private Act013_Main_Presenter mPresenter;
     private Local_Data_List_Adapter mAdapter;
@@ -103,6 +104,9 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         translateList.add("alert_schedule_comment_ttl");
         translateList.add("alert_define_serial_ttl");
         translateList.add("alert_define_serial_msg");
+        //
+        translateList.add("alert_error_on_create_form_ttl");
+        translateList.add("alert_error_on_create_form_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -357,11 +361,16 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                 listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mPresenter.addFormInfoToBundle(item);
+                        //mPresenter.addFormInfoToBundle(item);
+                        mPresenter.processFormCreation(item);
                     }
                 };
                 break;
-
+            case FORM_DATA_CREATION_ERROR:
+                title = hmAux_Trans.get("alert_error_on_create_form_ttl");
+                msg = hmAux_Trans.get("alert_error_on_create_form_msg");
+                btnNegative = 0;
+                break;
         }
 
         if(btnNegative != null) {
