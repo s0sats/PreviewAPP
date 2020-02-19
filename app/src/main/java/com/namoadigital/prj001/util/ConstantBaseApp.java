@@ -409,6 +409,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String LOCATION_TYPE = "location_type";
     public static final String LOCATION_LAT = "location_lat";
     public static final String LOCATION_LNG = "location_lng";
+    public static final String LOCATION_DATE = "location_date";
+    public static final String HAS_PENDING_LOCATION = "has_pending_location";
     public static final String PREFERENCE_HIDE_SERIAL_INFO = "preference_hide_serial_info";
 
 

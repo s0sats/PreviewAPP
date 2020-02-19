@@ -102,7 +102,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -119,7 +121,8 @@ import static com.namoadigital.prj001.ui.act015.Act015_Main.FORM_SELECTED_INDEX_
 public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
-
+    public static final String LOCATION_REFRESH = "location_refresh";
+    public static final int GPS_VALID_INTERVAL = 60000;
 
     private Act011_Main_Presenter mPresenter;
 
@@ -242,6 +245,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         iniUIFooter();
         //
         initActions();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //todo tratar preferencia de location defasada.
+        ToolBox_Inf.stop_Location_Tracker(context);
     }
 
     private void iniSetup() {
@@ -672,6 +683,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 mSite_Code,
                 mOperation_Code
         );
+        if (formLocal.getRequire_location() == 1) {
+            getLocation();
+        }
 
     }
 
@@ -841,15 +855,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     private void checkGpsFlow(){
         if (formLocal.getRequire_location() == 1) {
-            enableProgressDialog(
-                    hmAux_Trans.get("alert_location_info_title"),
-                    hmAux_Trans.get("alert_location_info_required"),
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    hmAux_Trans.get("sys_alert_btn_ok")
-            );
-            //
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
+            String latitude = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LAT,"");
+            String longitude = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LNG,"");
+            long locationDate = ToolBox_Con.getLongPreferencesByKey(getApplicationContext(), Constant.LOCATION_DATE,0);
+            String location_type = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_TYPE,"");
+            long currentTime = Calendar.getInstance().getTime().getTime();
+            long diff = currentTime - locationDate;
 
+
+            if(diff >= GPS_VALID_INTERVAL){
+                ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
+                ToolBox_Con.setBooleanPreference(getApplicationContext(),Constant.HAS_PENDING_LOCATION,true);
+            }else {
+                if(latitude != null && !latitude.isEmpty()
+                && longitude != null && !longitude.isEmpty() )
+                formData.setLocation_type(location_type);
+                formData.setLocation_lat(latitude);
+                formData.setLocation_lng(longitude);
+                startCheckIN();
+            }
         } else {
             startCheckIN();
         }
@@ -2156,10 +2180,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     public void exitAlert() {
-             /*
-                30-08-2019  BARRIONUEVO
-                Agora ao sair o usuario nao perdera os dados, logo a mensagem de aviso mudou
-             */
+         /*
+            30-08-2019  BARRIONUEVO
+            Agora ao sair o usuario nao perdera os dados, logo a mensagem de aviso mudou
+         */
         String alertTitle = hmAux_Trans.get("alert_exit_confirmation_ttl");
         String alertMsg = hmAux_Trans.get("alert_exit_confirmation_msg");
         //
@@ -2840,6 +2864,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     @Override
     protected void processGPS_ENABLED() {
+
         SV_LocationTracker.msg_ok = hmAux_Trans.get("alert_location_info_aquired_succesfully");
         SV_LocationTracker.msg_nok = hmAux_Trans.get("alert_location_info_aquired_unsuccesfully");
 
@@ -3164,4 +3189,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //return mPresenter.getProductIcon(Long.parseLong(product_code));
         return formLocal != null ? formLocal.getCustom_product_icon_name(): "";
     }
+
+    private void getLocation() {
+        ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_NFORM_ON);
+    }
+
 }

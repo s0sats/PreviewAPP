@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.util.Constant;
@@ -15,6 +16,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -22,6 +24,10 @@ import java.util.List;
  */
 
 public class SV_LocationTracker extends Service {
+    public static final String ASYNC_GPS = "ASYNC_GPS";
+    public static final int LOCATION_DEFAULT = 0;
+    public static final int LOCATION_NFORM_ON = 1;
+    public static final int LOCATION_BACKGROUND = 2;
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
@@ -39,7 +45,8 @@ public class SV_LocationTracker extends Service {
     private static final String TAG = "BOOMBOOMTESTGPS";
     private LocationManager mLocationManager = null;
 
-    private static final int LOCATION_INTERVAL = 0;
+    private static final int LOCATION_INTERVAL_NFORM_ON = 300000;
+    private static final int LOCATION_INTERVAL_DEFAULT  = 0;
     private static final float LOCATION_DISTANCE = 0f;
 
     private Handler mHandler;
@@ -50,6 +57,7 @@ public class SV_LocationTracker extends Service {
     private String mLocation_Latitude;
     private String mLocation_Longitude;
     private String mLocation_Type;
+    private int async_gps;
 
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
@@ -65,26 +73,46 @@ public class SV_LocationTracker extends Service {
             mLocation_Type = location.getProvider();
             mLocation_Latitude = String.valueOf(location.getLatitude());
             mLocation_Longitude = String.valueOf(location.getLongitude());
+            Log.i("GPS_Service", "location Lat: " + location.getLatitude() +  " location Long: " + location.getLongitude());
 
-            readings++;
-
-            if (readings >= 5) {
-                readings = 0;
-                stopSelf();
+            switch (async_gps){
+                case 0:
+                    Log.i("GPS_Service", "async_gps: " + async_gps);
+                    readings++;
+                    if (readings >= 5) {
+                        readings = 0;
+                        stopSelf();
+                    }
+                    break;
+                case 1:
+                    Log.i("GPS_Service", "async_gps: " + async_gps);
+                    //todo setar preferencia
+                    setLocationPreference(location);
             }
         }
 
         @Override
         public void onProviderDisabled(String provider) {
+            Log.i("GPS_Service", "onProviderDisabled: " + provider);
         }
 
         @Override
         public void onProviderEnabled(String provider) {
+            Log.i("GPS_Service", "onProviderEnabled: " + provider);
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.i("GPS_Service", "onStatusChanged: " + "provider: " + provider +"\nstatus: " + status);
         }
+    }
+
+    private void setLocationPreference(Location location) {
+        ToolBox_Con.setStringPreference(getApplicationContext(), Constant.LOCATION_LAT, String.valueOf(location.getLatitude()));
+        ToolBox_Con.setStringPreference(getApplicationContext(), Constant.LOCATION_LNG, String.valueOf(location.getLongitude()));
+        ToolBox_Con.setStringPreference(getApplicationContext(), Constant.LOCATION_TYPE, location.getProvider().toUpperCase());
+        ToolBox_Con.setLongPreference(getApplicationContext(), Constant.LOCATION_DATE, Calendar.getInstance().getTime().getTime());
+        ToolBox_Con.setBooleanPreference(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false);
     }
 
     LocationListener[] mLocationListeners = new LocationListener[]{
@@ -100,16 +128,30 @@ public class SV_LocationTracker extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
+        Log.i("GPS_Service", "onStartCommand");
+        async_gps = intent.getIntExtra(ASYNC_GPS, 0);
 
-        mHandler = new Handler();
-        mRunnable = new Runnable() {
-            public void run() {
-                stopSelf();
-                status = false;
-            }
-        };
+        switch (async_gps){
+            //Parametrizacao para recuperar localizacao no termino do N-FORM
+//            case LOCATION_DEFAULT:
+//                Log.i("GPS_Service", "onStartCommand LOCATION_DEFAULT");
+//                setLocationListeners(LOCATION_INTERVAL_DEFAULT);
+//                setServiceTimeout();
+//                break;
+            //Parametrizacao para recuperar localizacao durante a exec do N-FORM no intervalo de 5min
+            case LOCATION_NFORM_ON:
+                Log.i("GPS_Service", "onStartCommand LOCATION_NFORM_ON");
+                setLocationListeners(LOCATION_INTERVAL_NFORM_ON);
+                break;
+            //Parametrizacao para recuperar localizacao apos finalizacao do N-FORM
+            case LOCATION_BACKGROUND:
+                Log.i("GPS_Service", "onStartCommand LOCATION_BACKGROUND");
+                setLocationListeners(LOCATION_INTERVAL_DEFAULT);
+                setServiceTimeout();
+                break;
 
-        mHandler.postDelayed(mRunnable, PROGRESS_TIME_OUT);
+        }
+
 
         mLocation_Type = "";
         mLocation_Latitude = "";
@@ -120,22 +162,38 @@ public class SV_LocationTracker extends Service {
         return START_STICKY;
     }
 
+    private void setServiceTimeout() {
+        mHandler = new Handler();
+        mRunnable = new Runnable() {
+            public void run() {
+                stopSelf();
+                status = false;
+            }
+        };
+
+        mHandler.postDelayed(mRunnable, PROGRESS_TIME_OUT);
+    }
+
     @Override
     public void onCreate() {
+        Log.i("GPS_Service", "onCreate");
         initializeLocationManager();
 
         status = true;
 
+    }
+
+    private void setLocationListeners(long location_interval) {
         try {
             mLocationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    LocationManager.NETWORK_PROVIDER, location_interval, LOCATION_DISTANCE,
                     mLocationListeners[1]);
         } catch (SecurityException ex) {
         } catch (IllegalArgumentException ex) {
         }
         try {
             mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    LocationManager.GPS_PROVIDER, location_interval, LOCATION_DISTANCE,
                     mLocationListeners[0]);
         } catch (SecurityException ex) {
         } catch (IllegalArgumentException ex) {
@@ -146,7 +204,10 @@ public class SV_LocationTracker extends Service {
 
     @Override
     public void onDestroy() {
-        mHandler.removeCallbacks(mRunnable);
+        Log.i("GPS_Service", "onDestroy");
+        if(async_gps != 1) {
+            mHandler.removeCallbacks(mRunnable);
+        }
         status = false;
 
         loadTranslation();
@@ -171,6 +232,10 @@ public class SV_LocationTracker extends Service {
 
         super.onDestroy();
 
+        removeLocationListeners();
+    }
+
+    private void removeLocationListeners() {
         if (mLocationManager != null) {
             for (int i = 0; i < mLocationListeners.length; i++) {
                 try {
