@@ -50,6 +50,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String SO_CODE = "so_code";
     public static final String ZONE_CODE = "zone_code";
     public static final String LOCAL_CODE = "local_code";
+    public static final String LOCATION_PENDENCY = "location_pendency";
 
     //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
 
@@ -367,6 +368,12 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             } else {
                 custom_form_data.setLocal_code(cursor.getInt(cursor.getColumnIndex(LOCAL_CODE)));
             }
+            /*
+                BARRIONUEVO - 19-02-2020
+                Tratamento de campo responsavel por controlar ciclo de vida do servico de captura
+                de localizacao (1= para ha pendencia e 0 para nao ha pendencia).
+            */
+            custom_form_data.setLocation_pendency(cursor.getInt(cursor.getColumnIndex(LOCATION_PENDENCY)));
 
             return custom_form_data;
         }
@@ -445,6 +452,17 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             //}
             contentValues.put(ZONE_CODE, custom_form_data.getZone_code());
             contentValues.put(LOCAL_CODE, custom_form_data.getLocal_code());
+
+            /*
+                BARRIONUEVO - 19-02-2020
+                Tratamento de campo para ser sempre 0 ou 1.
+            */
+            if (custom_form_data.getLocation_pendency() == 0
+                || custom_form_data.getLocation_pendency() == 1) {
+                contentValues.put(LOCATION_PENDENCY, custom_form_data.getLocation_pendency());
+            }else{
+                contentValues.put(LOCATION_PENDENCY, 0);
+            }
 
             return contentValues;
         }

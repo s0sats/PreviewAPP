@@ -3250,11 +3250,11 @@ public class ToolBox_Inf {
     }
 
     public static void call_Location_Tracker_On_Background(Context context, int mode) {
-        if (!SV_LocationTracker.status) {
+//        if (!SV_LocationTracker.status) {
             Intent mIntent = new Intent(context, SV_LocationTracker.class);
             mIntent.putExtra(SV_LocationTracker.ASYNC_GPS, mode);
             context.startService(mIntent);
-        }
+//        }
     }
 
     public static void call_Location_Tracker(Context context) {

@@ -81,6 +81,8 @@ public class GE_Custom_Form_Data {
     @Expose
     private Integer local_code;
 
+    private int location_pendency;
+
     private List<GE_Custom_Form_Data_Field> dataFields;
 
     public GE_Custom_Form_Data() {
@@ -109,6 +111,7 @@ public class GE_Custom_Form_Data {
         this.so_code = null;
         this.zone_code = null;
         this.local_code = null;
+        this.location_pendency = 0;
     }
 
     public long getCustomer_code() {
@@ -309,5 +312,13 @@ public class GE_Custom_Form_Data {
 
     public void setDataFields(List<GE_Custom_Form_Data_Field> dataFields) {
         this.dataFields = dataFields;
+    }
+
+    public int getLocation_pendency() {
+        return location_pendency;
+    }
+
+    public void setLocation_pendency(int location_pendency) {
+        this.location_pendency = location_pendency;
     }
 }

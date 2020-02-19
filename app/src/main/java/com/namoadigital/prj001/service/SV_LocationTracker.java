@@ -11,10 +11,14 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_006;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -45,8 +49,8 @@ public class SV_LocationTracker extends Service {
     private static final String TAG = "BOOMBOOMTESTGPS";
     private LocationManager mLocationManager = null;
 
-    private static final int LOCATION_INTERVAL_NFORM_ON = 300000;
-    private static final int LOCATION_INTERVAL_DEFAULT  = 0;
+    private static final int LOCATION_INTERVAL_NFORM_ON = 5 * 1 * 60 * 1000;
+    private static final int LOCATION_INTERVAL_DEFAULT  = 1 * 10 * 1000;
     private static final float LOCATION_DISTANCE = 0f;
 
     private Handler mHandler;
@@ -76,7 +80,7 @@ public class SV_LocationTracker extends Service {
             Log.i("GPS_Service", "location Lat: " + location.getLatitude() +  " location Long: " + location.getLongitude());
 
             switch (async_gps){
-                case 0:
+                case LOCATION_DEFAULT:
                     Log.i("GPS_Service", "async_gps: " + async_gps);
                     readings++;
                     if (readings >= 5) {
@@ -84,10 +88,26 @@ public class SV_LocationTracker extends Service {
                         stopSelf();
                     }
                     break;
-                case 1:
+                case LOCATION_NFORM_ON:
                     Log.i("GPS_Service", "async_gps: " + async_gps);
-                    //todo setar preferencia
                     setLocationPreference(location);
+                    break;
+                case LOCATION_BACKGROUND:
+//            setLocationToView("Old: " + lastKnownLocation.getLatitude(), "Old: " + lastKnownLocation.getLongitude());
+                    Log.i("GPS_Service", "async_gps: " + async_gps);
+                    long customer_code = ToolBox_Con.getPreference_Customer_Code(getApplicationContext());
+                    GE_Custom_Form_DataDao ge_custom_form_dataDao = new GE_Custom_Form_DataDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+                    ge_custom_form_dataDao.addUpdate(
+                            new GE_Custom_Form_Data_Sql_006(
+                                    customer_code,
+                                    mLocation_Type,
+                                    mLocation_Latitude,
+                                    mLocation_Longitude
+                            ).toSqlQuery().toLowerCase()
+                    );
+                    setLocationPreference(location);
+                    stopSelf();
+                    break;
             }
         }
 
@@ -147,7 +167,6 @@ public class SV_LocationTracker extends Service {
             case LOCATION_BACKGROUND:
                 Log.i("GPS_Service", "onStartCommand LOCATION_BACKGROUND");
                 setLocationListeners(LOCATION_INTERVAL_DEFAULT);
-                setServiceTimeout();
                 break;
 
         }
@@ -205,30 +224,30 @@ public class SV_LocationTracker extends Service {
     @Override
     public void onDestroy() {
         Log.i("GPS_Service", "onDestroy");
-        if(async_gps != 1) {
-            mHandler.removeCallbacks(mRunnable);
-        }
+
+//        mHandler.removeCallbacks(mRunnable);
+
         status = false;
 
         loadTranslation();
 
-        if (!mLocation_Type.equals("")) {
-            ToolBox_Inf.sendBCStatus(
-                    getApplicationContext(),
-                    "GPS_OK",
-                    hmAux_Trans.get("gps_location_aquired"),
-                    mLocation_Type.toUpperCase() + "#" + mLocation_Latitude + "#" + mLocation_Longitude,
-                    "0"
-            );
-        } else {
-            ToolBox_Inf.sendBCStatus(
-                    getApplicationContext(),
-                    "CUSTOM_ERROR",
-                    hmAux_Trans.get("gps_location_not_aquired"),
-                    "",
-                    "0"
-            );
-        }
+//        if (!mLocation_Type.equals("")) {
+//            ToolBox_Inf.sendBCStatus(
+//                    getApplicationContext(),
+//                    "GPS_OK",
+//                    hmAux_Trans.get("gps_location_aquired"),
+//                    mLocation_Type.toUpperCase() + "#" + mLocation_Latitude + "#" + mLocation_Longitude,
+//                    "0"
+//            );
+//        } else {
+//            ToolBox_Inf.sendBCStatus(
+//                    getApplicationContext(),
+//                    "CUSTOM_ERROR",
+//                    hmAux_Trans.get("gps_location_not_aquired"),
+//                    "",
+//                    "0"
+//            );
+//        }
 
         super.onDestroy();
 

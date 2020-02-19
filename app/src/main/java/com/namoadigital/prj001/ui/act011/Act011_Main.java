@@ -252,7 +252,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     protected void onDestroy() {
         super.onDestroy();
         //todo tratar preferencia de location defasada.
-        ToolBox_Inf.stop_Location_Tracker(context);
+        if(ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false)){
+
+        }else {
+            ToolBox_Inf.stop_Location_Tracker(context);
+        }
     }
 
     private void iniSetup() {
@@ -862,18 +866,21 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             long currentTime = Calendar.getInstance().getTime().getTime();
             long diff = currentTime - locationDate;
 
-
             if(diff >= GPS_VALID_INTERVAL){
+                ToolBox_Inf.stop_Location_Tracker(context);
+                formData.setLocation_pendency(1);
                 ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
                 ToolBox_Con.setBooleanPreference(getApplicationContext(),Constant.HAS_PENDING_LOCATION,true);
             }else {
                 if(latitude != null && !latitude.isEmpty()
-                && longitude != null && !longitude.isEmpty() )
-                formData.setLocation_type(location_type);
-                formData.setLocation_lat(latitude);
-                formData.setLocation_lng(longitude);
-                startCheckIN();
+                && longitude != null && !longitude.isEmpty() ) {
+                    formData.setLocation_type(location_type);
+                    formData.setLocation_lat(latitude);
+                    formData.setLocation_lng(longitude);
+                    formData.setLocation_pendency(0);
+                }
             }
+            startCheckIN();
         } else {
             startCheckIN();
         }
@@ -2072,8 +2079,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 //                                } else {
 //                                    nservCall();
 //                                }
-
-                                if (ToolBox_Con.isOnline(context)) {
+                                if (formLocal.getRequire_location() == 1
+                                    && formData.getLocation_pendency() == 1){
+                                    flowControl();
+                                }else if (ToolBox_Con.isOnline(context)) {
                                     enableProgressDialog(
                                             hmAux_Trans.get("alert_send_finish_ttl"),
                                             hmAux_Trans.get("alert_send_finish_msg"),
@@ -2082,12 +2091,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                                     );
 
                                     executeSerialSave();
-                                    //executeSaveProcess();
 
                                 } else {
                                     flowControl();
                                 }
-
                             }
                         },
                         0,
