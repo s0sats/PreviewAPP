@@ -56,7 +56,10 @@ public class Sql_Act046_001 implements Specification {
                 "  FROM " + MD_Schedule_ExecDao.TABLE + " s\n" +
                 "  \n" +
                 "  WHERE \n" +
-                "        s.customer_code= '" + customer_code + "' \n" ;
+                "        s.customer_code= '" + customer_code + "' \n" +
+                "        AND s.custom_form_type is not null \n" +
+                "        AND s.custom_form_code is not null \n" +
+                "        AND s.custom_form_version is not null \n";
         //
         sql_form_ap =
                 UNION_ALL +

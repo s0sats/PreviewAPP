@@ -100,6 +100,9 @@ public class Sql_Act013_001 implements Specification {
             "   "+ MD_Schedule_ExecDao.TABLE +" e     \n" +
             "  WHERE\n" +
             "    e.customer_code = '"+s_customer_code+"'       \n" +
+            "    AND e.custom_form_type is not null \n" +
+            "    AND e.custom_form_code is not null \n" +
+            "    AND e.custom_form_version is not null \n" +
             "    AND NOT EXISTS (SELECT 1\n" +
             "                    FROM ge_custom_forms_local l\n" +
             "                    WHERE l.customer_code = e.customer_code\n" +

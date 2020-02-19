@@ -304,6 +304,53 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
         } else {
             if(createFormLocalForSchedule(item,bundle)){
+                /**
+                 * TODO
+                 * POSSIVEL NOVO FLUXO, POREM PRECISA DEFIIR COMO CONTINUAR CASO O PRODUTO REQUEIRA SERIAL
+                 * E NENHUM FOI INFORMADO...HOJE ESSE CENARIO NÃO EXISTE
+                 *
+                 */
+//                if(item.get(MD_Schedule_ExecDao.REQUIRE_SERIAL).equals("0")){
+//                    if(item.get(MD_Schedule_ExecDao.ALLOW_NEW_SERIAL_CL).equals("1")){
+//                        //16/08/18
+//                        //Se o form agendado requer aprovação via serial, joga user para act008
+//                        //
+//                        if (item.get(MD_Schedule_ExecDao.REQUIRE_SERIAL_DONE).equalsIgnoreCase("1")) {
+//                            bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
+//                            bundle.putString(ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
+//                            //
+//                            mView.callAct008(context, bundle);
+//                        } else {
+//                            ToolBox.alertMSG_YES_NO(
+//                                context,
+//                                hmAux_Trans.get("alert_define_serial_ttl"),
+//                                hmAux_Trans.get("alert_define_serial_msg"),
+//                                new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
+//                                        bundle.putString(ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
+//                                        //
+//                                        mView.callAct008(context, bundle);
+//                                    }
+//                                },
+//                                2,
+//                                new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        mView.callAct011(context, bundle);
+//                                    }
+//                                }
+//                            );
+//                        }
+//                    } else{//
+//                        mView.callAct011(context, bundle);
+//                    }
+//                }else{
+//
+//                }
+
+
                 if (item.get(MD_Schedule_ExecDao.REQUIRE_SERIAL).equals("0")
                     && item.get(MD_Schedule_ExecDao.ALLOW_NEW_SERIAL_CL).equals("1")
                 ) {

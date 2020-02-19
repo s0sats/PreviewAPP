@@ -107,6 +107,9 @@ public class Sql_Act017_001 implements Specification {
                         "      AND s.schedule_exec = d.schedule_exec\n" +
                         "  WHERE\n" +
                         "      s."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' \n" +
+                        "      AND s.custom_form_type is not null \n" +
+                        "      AND s.custom_form_code is not null \n" +
+                        "      AND s.custom_form_version is not null \n" +
                         "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"') = '"+selected_date+"') \n" +
                         "      AND ('"+serial_id+"' is null or s.serial_id like '%"+serial_id+"%' or d.serial_id like '%"+serial_id+"%' ) \n" +
                         "      AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') \n" +

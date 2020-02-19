@@ -71,6 +71,9 @@ public class Sql_Act016_001 implements Specification {
                     "  \n" +
                     "  WHERE \n" +
                     "        s.customer_code= '"+customer_code+"'     \n" +
+                    "        AND s.custom_form_type is not null \n" +
+                    "        AND s.custom_form_code is not null \n" +
+                    "        AND s.custom_form_version is not null \n" +
                     "        AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') ";
         //Remove , caso exista, o text 'null'
         sql_form = sql_form.replace("'null'","null");
