@@ -39,6 +39,8 @@ public class WS_Save extends IntentService {
 
     private GE_Custom_Form_DataDao formDataDao;
     private GE_Custom_Form_Data_FieldDao formDataFieldDao;
+    private GE_Custom_Form_LocalDao formLocalDao;
+    private MD_Schedule_ExecDao scheduleExecDao;
     //
     private String token;
     private List<GE_Custom_Form_Data> form_datas;
@@ -50,6 +52,7 @@ public class WS_Save extends IntentService {
     private String mResource_Name = "WS_Save";
     private String mSEND = "";
     private boolean mResend = false;
+    private ArrayList<TSave_Rec.Error_Process> errorProcessList = new ArrayList<>();
 
     public WS_Save() {
         super("WS_Save");
@@ -73,6 +76,19 @@ public class WS_Save extends IntentService {
                             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                             Constant.DB_VERSION_CUSTOM
                     );
+            //
+            formLocalDao =
+                new GE_Custom_Form_LocalDao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                    Constant.DB_VERSION_CUSTOM
+                );
+            //
+            scheduleExecDao = new MD_Schedule_ExecDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+            );
             //
             form_datas = new ArrayList<>() ;
             form_data_fields = new ArrayList<>();
@@ -167,7 +183,7 @@ public class WS_Save extends IntentService {
             return;
         }
         //Apos processar validation, processa o retorno do SAve
-        checkSaveReturn(rec.getSave(),rec.getError_msg(),rec.getLink_url(), jumpValidation, jumpOD);
+        checkSaveReturn(gson,rec.getSave(),rec.getError_msg(),rec.getError_process(), jumpValidation, jumpOD);
 
     }
 
@@ -252,61 +268,64 @@ public class WS_Save extends IntentService {
 
     }
 
-    private boolean checkSaveReturn(String save, String error_msg, String link_url, int jumpValidation, int jumpOD) throws Exception{
+    private boolean checkSaveReturn(Gson gson, String save, String error_msg, ArrayList<TSave_Rec.Error_Process> error_process, int jumpValidation, int jumpOD) throws Exception{
         HMAux hmAuxRet = new HMAux();
         switch (save){
             case "OK":
             case"OK_DUP":
                 List<GE_Custom_Form_Local> formLocals = new ArrayList<>();
                 List<MD_Schedule_Exec> formSchedules = new ArrayList<>();
-                GE_Custom_Form_LocalDao formLocalDao =
-                        new GE_Custom_Form_LocalDao(
-                                getApplicationContext(),
-                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                                Constant.DB_VERSION_CUSTOM
-                        );
                 //
-                MD_Schedule_ExecDao scheduleExecDao = new MD_Schedule_ExecDao(
-                    getApplicationContext(),
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                    Constant.DB_VERSION_CUSTOM
-                );
+                if(error_msg != null && error_msg.length() > 0){
+                    errorProcessList.addAll(
+                        error_process
+                    );
+                }
                 //Se enviado com sucesso, atualiza Status para SENT
                 for (GE_Custom_Form_Data form_data : form_datas){
                     form_data.setCustom_form_status(Constant.SYS_STATUS_SENT);
-                    GE_Custom_Form_Local aux =
-                            formLocalDao.getByString(
-                            new GE_Custom_Form_Local_Sql_003(
-                                    String.valueOf(form_data.getCustomer_code()),
-                                    String.valueOf(form_data.getCustom_form_type()),
-                                    String.valueOf(form_data.getCustom_form_code()),
-                                    String.valueOf(form_data.getCustom_form_version()),
-                                    String.valueOf(form_data.getCustom_form_data())
-                            ).toSqlQuery()
+                    //LUCHE - 20/02/2020
+                    //Tratativa pós novo agendamento que registra no banco e exibe o erro
+                    form_data.setError_msg(
+                        checkErrorProcess(
+                            error_process,
+                            form_data.getCustomer_code(),
+                            form_data.getCustom_form_type(),
+                            form_data.getCustom_form_code(),
+                            form_data.getCustom_form_version(),
+                            form_data.getCustom_form_data()
+                        )
                     );
                     //
-                    aux.setCustom_form_status(Constant.SYS_STATUS_SENT);
-                    formLocals.add(aux);
-                    //LUCHE - 14/02/2020
-                    MD_Schedule_Exec auxSchedule =
-                        scheduleExecDao.getByString(
-                            new MD_Schedule_Exec_Sql_001(
+                    try {
+                        formLocals.add(
+                            processFormLocalSaveReturn(
                                 form_data.getCustomer_code(),
-                                form_data.getSchedule_prefix(),
-                                form_data.getSchedule_code(),
-                                form_data.getSchedule_exec()
-                            ).toSqlQuery()
+                                form_data.getCustom_form_type(),
+                                form_data.getCustom_form_code(),
+                                form_data.getCustom_form_version(),
+                                form_data.getCustom_form_data()
+                            )
                         );
-
-                    auxSchedule.setStatus(Constant.SYS_STATUS_SENT);
-                    formSchedules.add(auxSchedule);
-
+                    }catch (Exception e){
+                        //TODO VERIFICAR SE DEVEMOS TRATAR AQUI O CASO DO FORM_DATA SEM FORM LOCAL
+                        ToolBox_Inf.registerException(getClass().getName(),e);
+                    }
+                    //
+                    formSchedules.add(
+                        processScheduleExecSaveReturn(
+                            form_data.getCustomer_code(),
+                            form_data.getSchedule_prefix(),
+                            form_data.getSchedule_code(),
+                            form_data.getSchedule_exec()
+                        )
+                    );
+                    //
                 }
                 //Atualiza dados na tabela.
                 formLocalDao.addUpdate(formLocals,false);
                 scheduleExecDao.addUpdate(formSchedules,false);
                 formDataDao.addUpdate(form_datas,false);
-
                 /*27-08-2019 BARRIONUEVO
                    Controle de reprocessamento de n-form ao enviar registros com tokens
                  */
@@ -315,7 +334,7 @@ public class WS_Save extends IntentService {
                     processWS_Save(jumpValidation, jumpOD);
                     return  true;
                 }else {
-                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"), "", "0");
+                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),gson.toJson(errorProcessList) , "0");
                     //hmAuxRet.put(Constant.WS_SEND_RETURN,"OK");
                     //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),hmAuxRet, "", "0");
                     return true;
@@ -335,4 +354,58 @@ public class WS_Save extends IntentService {
 
     }
 
+    private MD_Schedule_Exec processScheduleExecSaveReturn(long customer_code, Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
+        //LUCHE - 14/02/2020
+        MD_Schedule_Exec auxSchedule =
+            scheduleExecDao.getByString(
+                new MD_Schedule_Exec_Sql_001(
+                    customer_code,
+                    schedule_prefix,
+                    schedule_code,
+                    schedule_exec
+                ).toSqlQuery()
+            );
+
+        auxSchedule.setStatus(Constant.SYS_STATUS_SENT);
+        //
+        return auxSchedule;
+    }
+
+    private GE_Custom_Form_Local processFormLocalSaveReturn(long customer_code,
+                                                            int custom_form_type,
+                                                            int custom_form_code,
+                                                            int custom_form_version,
+                                                            long custom_form_data
+                                                        ) throws Exception {
+        GE_Custom_Form_Local aux =
+            formLocalDao.getByString(
+                new GE_Custom_Form_Local_Sql_003(
+                    String.valueOf(customer_code),
+                    String.valueOf(custom_form_type),
+                    String.valueOf(custom_form_code),
+                    String.valueOf(custom_form_version),
+                    String.valueOf(custom_form_data)
+                ).toSqlQuery()
+            );
+        //
+        aux.setCustom_form_status(Constant.SYS_STATUS_SENT);
+        //
+        return aux;
+    }
+
+    private String checkErrorProcess(ArrayList<TSave_Rec.Error_Process> error_process_list, long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, long custom_form_data) {
+        for (TSave_Rec.Error_Process error : error_process_list) {
+            if(
+                error.getCustomer_code() == customer_code
+                && error.getCustom_form_type() == custom_form_type
+                && error.getCustom_form_code() == custom_form_code
+                && error.getCustom_form_version() == custom_form_version
+                && error.getCustom_form_data() == custom_form_data
+            ){
+                return error.getError();
+            }
+        }
+        //
+        return null;
+    }
 }

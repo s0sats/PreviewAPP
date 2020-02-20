@@ -3023,13 +3023,27 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
             setWsSoProcess("");
-            if (wsResults.size() > 0) {
-                showResults(wsResults);
-            } else {
-                progressDialog.dismiss();
-                flowControl();
-            }
+            mPresenter.processWS_SaveReturn(mLink);
+            //
+            afterSaveFlow();
         }
+    }
+
+    @Override
+    public void afterSaveFlow() {
+        if (wsResults.size() > 0) {
+            showResults(wsResults);
+        } else {
+            progressDialog.dismiss();
+            flowControl();
+        }
+    }
+
+    @Override
+    public void addWsResults(ArrayList<HMAux> formDataErroAux) {
+        wsResults.addAll(
+            formDataErroAux
+        );
     }
 
     public void showResults(List<HMAux> res) {

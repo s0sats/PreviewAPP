@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
@@ -29,7 +30,9 @@ import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_MULTI_SqlSpecification;
@@ -83,9 +86,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private HMAux hmAux_Trans;
 
     private boolean bAgendado;
-
     private MD_Schedule_ExecDao scheduleExecDao;
-
+    //LUCHE - 20/02/2020
+    //Flag que controla se é a primeira abertura do agendamento.
+    private boolean isScheduleFirstTime;
 
     public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans,MD_Schedule_ExecDao scheduleExecDao) {
         this.context = context;
@@ -133,23 +137,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             //if (customFormLocal.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)) {
             //LUCHE - 14/02/2020
             //A identificação de se um form é agendamento agora verifica a pk do agendamento e não o status
-            if (isScheduleForm(customFormLocal)) {
-                customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
-                //
-                custom_form_LocalDao.addUpdate(customFormLocal);
-                //
-                bNew = false;
-
-                bAgendado = true;
-
-                index = 0;
-            } else {
-                bNew = false;
-
-                index = -1;
-
-            }
-
+            bAgendado = isScheduleForm(customFormLocal);
+            bNew = false;
+            index = -1;
+            //
             cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
                     new GE_Custom_Form_Fields_Local_Sql_001(
                             String.valueOf(customFormLocal.getCustomer_code()),
@@ -282,6 +273,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
 
             if (bAgendado) {
+                //LUCHE - 20/02/2020
+                //Novo metodo de idetificação se é a primeira vez que o agendamento foi aberto.
+                index = isScheduleFirstTime ? 0 : -1;
+
                 if (serial_id == null || serial_id.isEmpty()) {
                     formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
                     formData.setZone_code(null);
@@ -396,6 +391,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 )
             );
         } else {
+            //LUCHE - 20/02/2020
+            //Se é um agendado e é criação de form data, seta flag indicando de primera abertura
+            isScheduleFirstTime = bAgendado;
             form_data = new GE_Custom_Form_Data();
             //
             form_data.setCustomer_code(formLocal.getCustomer_code());
@@ -804,5 +802,39 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         );
         //
         return result != null ? result : new MD_Product() ;
+    }
+
+    @Override
+    public void processWS_SaveReturn(String wsRet) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //
+        if(wsRet == null || wsRet.isEmpty()){
+            mView.afterSaveFlow();
+        }else{
+            ArrayList<TSave_Rec.Error_Process> errorProcesses = null;
+            try {
+                errorProcesses = gson.fromJson(
+                    wsRet,
+                    new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+                    }.getType()
+                );
+            }catch (Exception e){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+            }
+            //
+            if(errorProcesses != null && errorProcesses.size() > 0){
+                /**
+                 *
+                 * CONTINUAR PROCESSAMENTO DA MSG DE RETORNO DO WS DE SAVE
+                 *
+                 * GERAR LISTA DE HMAUX com os erros retornados.
+                 *
+                 */
+                mView.addWsResults(new ArrayList<HMAux>());
+                mView.afterSaveFlow();
+            }else{
+                mView.afterSaveFlow();
+            }
+        }
     }
 }

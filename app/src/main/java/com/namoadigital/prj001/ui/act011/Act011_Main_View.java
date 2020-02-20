@@ -7,6 +7,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,4 +33,8 @@ public interface Act011_Main_View {
     void callAct006(Context context);
 
     boolean allowFinalizeWithNewBtn();
+
+    void addWsResults(ArrayList<HMAux> formDataErroAux);
+
+    void afterSaveFlow();
 }

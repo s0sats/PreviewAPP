@@ -86,6 +86,8 @@ public class GE_Custom_Form_Data {
     private Integer schedule_code;
     @Expose
     private Integer schedule_exec;
+    //Contem msg de retorno após sae do form no servidor.
+    private String error_msg;
 
     public GE_Custom_Form_Data() {
         this.customer_code = -1L;
@@ -115,6 +117,7 @@ public class GE_Custom_Form_Data {
         this.schedule_prefix = null;
         this.schedule_code = null;
         this.schedule_exec = null;
+        this.error_msg = null;
     }
 
     public long getCustomer_code() {
@@ -331,5 +334,13 @@ public class GE_Custom_Form_Data {
 
     public void setSchedule_exec(Integer schedule_exec) {
         this.schedule_exec = schedule_exec;
+    }
+
+    public String getError_msg() {
+        return error_msg;
+    }
+
+    public void setError_msg(String error_msg) {
+        this.error_msg = error_msg;
     }
 }

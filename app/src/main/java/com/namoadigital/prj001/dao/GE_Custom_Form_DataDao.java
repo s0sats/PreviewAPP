@@ -52,8 +52,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String SCHEDULE_PREFIX = "schedule_prefix";
     public static final String SCHEDULE_CODE = "schedule_code";
     public static final String SCHEDULE_EXEC = "schedule_exec";
-
-    //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
+    public static final String ERROR_MSG = "error_msg";
 
     public GE_Custom_Form_DataDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -379,6 +378,11 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             }else{
                 custom_form_data.setSchedule_exec(cursor.getInt(cursor.getColumnIndex(SCHEDULE_EXEC)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(ERROR_MSG))){
+                custom_form_data.setError_msg(null);
+            }else{
+                custom_form_data.setError_msg(cursor.getString(cursor.getColumnIndex(ERROR_MSG)));
+            }
 
             return custom_form_data;
         }
@@ -458,6 +462,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             contentValues.put(SCHEDULE_PREFIX, custom_form_data.getSchedule_prefix());
             contentValues.put(SCHEDULE_CODE, custom_form_data.getSchedule_code());
             contentValues.put(SCHEDULE_EXEC, custom_form_data.getSchedule_exec());
+            contentValues.put(ERROR_MSG, custom_form_data.getError_msg());
 
             return contentValues;
         }

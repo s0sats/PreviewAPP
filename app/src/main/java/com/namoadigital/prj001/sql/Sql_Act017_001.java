@@ -71,7 +71,7 @@ public class Sql_Act017_001 implements Specification {
                         "  s.product_code,\n" +
                         "  s.product_desc,\n" +
                         "  s.product_id,\n" +
-                        //"  s.custom_form_data,\n" +
+                        "  d.custom_form_data,\n" +
                         "  s.status,\n" +
                         "  s.site_code,\n" +
                         "  s.site_id,\n" +
