@@ -74,7 +74,7 @@ public class SV_LocationTracker extends Service {
         public void onLocationChanged(Location location) {
             mLastLocation.set(location);
 
-            mLocation_Type = location.getProvider();
+            mLocation_Type = location.getProvider().toUpperCase();
             mLocation_Latitude = String.valueOf(location.getLatitude());
             mLocation_Longitude = String.valueOf(location.getLongitude());
             Log.i("GPS_Service", "location Lat: " + location.getLatitude() +  " location Long: " + location.getLongitude());
@@ -100,10 +100,10 @@ public class SV_LocationTracker extends Service {
                     ge_custom_form_dataDao.addUpdate(
                             new GE_Custom_Form_Data_Sql_006(
                                     customer_code,
-                                    mLocation_Type,
+                                    mLocation_Type.toUpperCase(),
                                     mLocation_Latitude,
                                     mLocation_Longitude
-                            ).toSqlQuery().toLowerCase()
+                            ).toSqlQuery()
                     );
                     setLocationPreference(location);
                     stopSelf();

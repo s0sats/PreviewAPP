@@ -3250,11 +3250,9 @@ public class ToolBox_Inf {
     }
 
     public static void call_Location_Tracker_On_Background(Context context, int mode) {
-//        if (!SV_LocationTracker.status) {
-            Intent mIntent = new Intent(context, SV_LocationTracker.class);
-            mIntent.putExtra(SV_LocationTracker.ASYNC_GPS, mode);
-            context.startService(mIntent);
-//        }
+        Intent mIntent = new Intent(context, SV_LocationTracker.class);
+        mIntent.putExtra(SV_LocationTracker.ASYNC_GPS, mode);
+        context.startService(mIntent);
     }
 
     public static void call_Location_Tracker(Context context) {
@@ -3265,10 +3263,8 @@ public class ToolBox_Inf {
     }
 
     public static void stop_Location_Tracker(Context context) {
-        if (SV_LocationTracker.status) {
-            Intent mIntent = new Intent(context, SV_LocationTracker.class);
-            context.stopService(mIntent);
-        }
+        Intent mIntent = new Intent(context, SV_LocationTracker.class);
+        context.stopService(mIntent);
     }
 
     public static void writeIn(String data, File file) throws IOException {

@@ -29,14 +29,14 @@ public class GE_Custom_Form_Data_Sql_006 implements Specification {
 
         return sb
                 .append(" UPDATE " +GE_Custom_Form_DataDao.TABLE +" SET \n" +
-                        GE_Custom_Form_DataDao.LOCATION_LAT+" = '"+s_location_lat + "'" +
-                        GE_Custom_Form_DataDao.LOCATION_LNG+" = '"+s_location_lng + "'" +
-                        GE_Custom_Form_DataDao.LOCATION_TYPE+" = '"+s_location_type + "'" +
+                        GE_Custom_Form_DataDao.LOCATION_LAT+" = '"+s_location_lat + "'\n ," +
+                        GE_Custom_Form_DataDao.LOCATION_LNG+" = '"+s_location_lng + "'\n ," +
+                        GE_Custom_Form_DataDao.LOCATION_TYPE+" = '"+s_location_type + "'\n," +
                         GE_Custom_Form_DataDao.LOCATION_PENDENCY+" = 0" +
                         " WHERE\n" +
-                        "      F."+GE_Custom_Form_DataDao.CUSTOMER_CODE+" = '"+s_customer_code + "'" +
-                        "      AND F."+GE_Custom_Form_DataDao.LOCATION_PENDENCY  + " = 1"+
-                        "      AND F."+GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS +
+                        "      "+GE_Custom_Form_DataDao.CUSTOMER_CODE+" = '"+s_customer_code + "'" +
+                        "      AND "+GE_Custom_Form_DataDao.LOCATION_PENDENCY  + " = 1"+
+                        "      AND "+GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS +
                                         "  = '" + Constant.SYS_STATUS_FINALIZED+"' ;"
 //                        tokenFilter + ";"
                 ).toString();

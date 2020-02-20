@@ -252,9 +252,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     protected void onDestroy() {
         super.onDestroy();
         //todo tratar preferencia de location defasada.
-        if(ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false)){
-
-        }else {
+        if(!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false)){
             ToolBox_Inf.stop_Location_Tracker(context);
         }
     }
