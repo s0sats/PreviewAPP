@@ -411,6 +411,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String LOCATION_LAT = "location_lat";
     public static final String LOCATION_LNG = "location_lng";
     public static final String PREFERENCE_HIDE_SERIAL_INFO = "preference_hide_serial_info";
+    public static final String SCHEDULE_N_FORM_FILTER_PREFERENCE = "schedule_n_form_filter";
+    public static final String SCHEDULE_N_FORM_AP_FILTER_PREFERENCE = "schedule_n_form_ap_filter";
+    public static final String SCHEDULE_N_TICKET_FILTER_PREFERENCE = "schedule_n_ticket_filter";
+    public static final String SCHEDULE_SITE_LOGGED_FILTER_PREFERENCE = "schedule_site_logged_filter";
 
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";

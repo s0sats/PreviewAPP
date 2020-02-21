@@ -93,6 +93,8 @@ import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
@@ -6406,5 +6408,39 @@ public class ToolBox_Inf {
             ToolBox_Inf.registerException(CLASS_NAME,e);
             return "01-01-1900";
         }
+    }
+
+    /**
+     * LUCHE - 17/02/2020
+     *
+     * Metodo que avalia se form é um agendado.Considera agendado se a pk do agendamento estiver preenchida
+     * @param customFormLocal
+     * @return
+     */
+    public static boolean isScheduleForm(GE_Custom_Form_Local customFormLocal) {
+        return customFormLocal != null
+            && customFormLocal.getSchedule_prefix() != null
+            && customFormLocal.getSchedule_code() != null
+            && customFormLocal.getSchedule_exec() != null
+            && customFormLocal.getSchedule_prefix() > 0
+            && customFormLocal.getSchedule_code() > 0
+            && customFormLocal.getSchedule_exec() > 0;
+    }
+
+    /**
+     * LUCHE - 17/02/2020
+     *
+     * Metodo que avalia se customFormData é um agendado.Considera agendado se a pk do agendamento estiver preenchida
+     * @param customFormData
+     * @return
+     */
+    public static boolean isScheduleForm(GE_Custom_Form_Data customFormData) {
+        return customFormData != null
+            && customFormData.getSchedule_prefix() != null
+            && customFormData.getSchedule_code() != null
+            && customFormData.getSchedule_exec() != null
+            && customFormData.getSchedule_prefix() > 0
+            && customFormData.getSchedule_code() > 0
+            && customFormData.getSchedule_exec() > 0;
     }
 }

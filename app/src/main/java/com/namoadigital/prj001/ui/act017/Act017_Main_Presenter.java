@@ -17,4 +17,8 @@ public interface Act017_Main_Presenter {
     void onBackPressedClicked();
 
     String getDateDesc(String scheduled_date);
+
+    void saveCheckBoxStatusIntoPreference(String checkboxConstant, boolean isChecked);
+
+    boolean loadCheckboxStatusFromPreferencie(String checkboxConstant, boolean defaultValue);
 }

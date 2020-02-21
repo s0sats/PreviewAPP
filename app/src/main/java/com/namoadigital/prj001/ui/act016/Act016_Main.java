@@ -24,6 +24,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -34,9 +35,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_SITE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 /**
@@ -58,6 +56,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private boolean filter_form;
     private boolean filter_form_ap;
     private boolean filter_site;
+    private boolean filter_ticket;
     private boolean noDateSelected;
 
     private HMAux hmAux_Trans_Extra = new HMAux();
@@ -117,6 +116,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         List<String> transList_Extra = new ArrayList<String>();
         transList_Extra.add("lbl_checklist");
         transList_Extra.add("lbl_form_ap");
+        transList_Extra.add("lbl_ticket");
 
         hmAux_Trans_Extra = ToolBox_Inf.setLanguage(
                 context,
@@ -136,15 +136,9 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         if (bundle != null && bundle.containsKey(ACT_SELECTED_DATE)) {
             noDateSelected = bundle.getString(ACT_SELECTED_DATE) == null;
             selected_date = ToolBox.generateDate(bundle.getString(ACT_SELECTED_DATE));
-            filter_form = bundle.getBoolean(ACT_FILTER_FORM, false);
-            filter_form_ap = bundle.getBoolean(ACT_FILTER_FORM_AP, false);
-            filter_site = bundle.getBoolean(ACT_FILTER_SITE, false);
         } else {
             noDateSelected = true;
             selected_date = ToolBox.generateDate("");
-            filter_form = false;
-            filter_form_ap = false;
-            filter_site = false;
         }
 
     }
@@ -175,9 +169,18 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         cv_schedules = (CalendarView) findViewById(R.id.act016_cv_schedules);
         //
         events = new HashSet<>();
-        //
+        //LUCHE - 21/02/2020
+        //Aplicação dos filtros via preferencia
+        loadFilterPreferences();
         //mPresenter.getSchedule(filter_form, filter_form_ap);
         applyModuleFilter();
+    }
+
+    private void loadFilterPreferences() {
+        filter_site = mPresenter.loadCheckboxStatusFromPreferencie(ConstantBaseApp.SCHEDULE_SITE_LOGGED_FILTER_PREFERENCE,false);
+        filter_form = mPresenter.loadCheckboxStatusFromPreferencie(ConstantBaseApp.SCHEDULE_N_FORM_FILTER_PREFERENCE,true);
+        filter_form_ap = mPresenter.loadCheckboxStatusFromPreferencie(ConstantBaseApp.SCHEDULE_N_FORM_AP_FILTER_PREFERENCE,true);
+        filter_ticket = mPresenter.loadCheckboxStatusFromPreferencie(ConstantBaseApp.SCHEDULE_N_TICKET_FILTER_PREFERENCE,true);
     }
 
     private void initActions() {
@@ -211,20 +214,25 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
         TextView tv_title = (TextView) view.findViewById(R.id.module_filter_dialog_tv_title);
         tv_title.setText(hmAux_Trans.get("alert_filter_dialog_msg"));
         //
-        final CheckBox chk_form = (CheckBox) view.findViewById(R.id.module_filter_dialog_chk_n_form);
-        chk_form.setText(hmAux_Trans_Extra.get("lbl_checklist"));
-        chk_form.setChecked(filter_form);
-        chk_form.setTag(filter_form);
-        //
-        final CheckBox chk_form_ap = (CheckBox) view.findViewById(R.id.module_filter_dialog_chk_n_form_ap);
-        chk_form_ap.setText(hmAux_Trans_Extra.get("lbl_form_ap"));
-        chk_form_ap.setChecked(filter_form_ap);
-        chk_form_ap.setTag(filter_form_ap);
-        //
-        final CheckBox chk_site = (CheckBox) view.findViewById(R.id.module_filter_dialog_chk_site_logado);
+        final CheckBox chk_site = (CheckBox) view.findViewById(R.id.schedule_filter_chk_site_logged);
         chk_site.setText(hmAux_Trans.get("lbl_site"));
         chk_site.setChecked(filter_site);
-        chk_site.setTag(filter_site);
+        chk_site.setTag(ConstantBaseApp.SCHEDULE_SITE_LOGGED_FILTER_PREFERENCE);
+        //
+        final CheckBox chk_form = (CheckBox) view.findViewById(R.id.schedule_filter_chk_n_form);
+        chk_form.setText(hmAux_Trans_Extra.get("lbl_checklist"));
+        chk_form.setChecked(filter_form);
+        chk_form.setTag(ConstantBaseApp.SCHEDULE_N_FORM_FILTER_PREFERENCE);
+        //
+        final CheckBox chk_form_ap = (CheckBox) view.findViewById(R.id.schedule_filter_chk_n_form_ap);
+        chk_form_ap.setText(hmAux_Trans_Extra.get("lbl_form_ap"));
+        chk_form_ap.setChecked(filter_form_ap);
+        chk_form_ap.setTag(ConstantBaseApp.SCHEDULE_N_FORM_AP_FILTER_PREFERENCE);
+        //
+        final CheckBox chk_ticket = (CheckBox) view.findViewById(R.id.schedule_filter_chk_n_ticket);
+        chk_ticket.setText(hmAux_Trans_Extra.get("lbl_ticket"));
+        chk_ticket.setChecked(filter_ticket);
+        chk_ticket.setTag(ConstantBaseApp.SCHEDULE_N_TICKET_FILTER_PREFERENCE);
 
         alert
                 .setView(view)
@@ -232,9 +240,17 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
                 .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        filter_site = chk_site.isChecked();
                         filter_form = chk_form.isChecked();
                         filter_form_ap = chk_form_ap.isChecked();
-                        filter_site = chk_site.isChecked();
+                        filter_ticket = chk_ticket.isChecked();
+                        //LUCHE - 21/02/2020
+                        //Salva alterações na preferencias.Como esse dialog, só aplica os filtros se usr der ok
+                        //não foi possivel colocar o save no listener de troca de dados.
+                        mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_site.getTag()),chk_site.isChecked());
+                        mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_form.getTag()),chk_form.isChecked());
+                        mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_form_ap.getTag()),chk_form_ap.isChecked());
+                        mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_ticket.getTag()),chk_ticket.isChecked());
                         //
                         applyModuleFilter();
                     }
@@ -246,7 +262,7 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private void applyModuleFilter() {
         mPresenter.getSchedule(filter_form, filter_form_ap, filter_site );
         //
-        if (filter_form || filter_form_ap || filter_site) {
+        if (filter_form || filter_form_ap || filter_site || filter_ticket) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
         } else {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
@@ -310,9 +326,6 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     public void callAct017(Bundle bundle) {
         Intent mIntent = new Intent(context, Act017_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putBoolean(ACT_FILTER_FORM, filter_form);
-        bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
-        bundle.putBoolean(ACT_FILTER_SITE, filter_site);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT016);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

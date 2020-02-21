@@ -88,6 +88,16 @@ public class TSave_Rec {
         private int custom_form_data;
         @Expose
         private String error;
+        //As propriedades abaixo são preenchidas após o retorno do servidor
+        //e são usadas somente para exibição do erro na tela.
+        @Expose
+        private String custom_form_type_desc;
+        @Expose
+        private String custom_form_desc;
+        @Expose
+        private String schedule_pk;
+        @Expose
+        private String schedule_desc;
 
         public int getCustomer_code() {
             return customer_code;
@@ -135,6 +145,38 @@ public class TSave_Rec {
 
         public void setError(String error) {
             this.error = error;
+        }
+
+        public String getCustom_form_type_desc() {
+            return custom_form_type_desc;
+        }
+
+        public void setCustom_form_type_desc(String custom_form_type_desc) {
+            this.custom_form_type_desc = custom_form_type_desc;
+        }
+
+        public String getCustom_form_desc() {
+            return custom_form_desc;
+        }
+
+        public void setCustom_form_desc(String custom_form_desc) {
+            this.custom_form_desc = custom_form_desc;
+        }
+
+        public String getSchedule_pk() {
+            return schedule_pk;
+        }
+
+        public void setSchedule_pk(String schedule_pk) {
+            this.schedule_pk = schedule_pk;
+        }
+
+        public String getSchedule_desc() {
+            return schedule_desc;
+        }
+
+        public void setSchedule_desc(String schedule_desc) {
+            this.schedule_desc = schedule_desc;
         }
     }
 }

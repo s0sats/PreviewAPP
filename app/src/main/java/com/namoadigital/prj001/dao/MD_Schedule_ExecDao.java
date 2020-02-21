@@ -267,6 +267,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public HMAux getByStringHM(String sQuery) {
         return getByStringHM(sQuery,null);
     }
+
     public HMAux getByStringHM(String sQuery, SQLiteDatabase dbInstance) {
         HMAux hmAux = null;
         if (dbInstance == null) {

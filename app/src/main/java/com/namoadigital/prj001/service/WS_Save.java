@@ -275,52 +275,76 @@ public class WS_Save extends IntentService {
             case"OK_DUP":
                 List<GE_Custom_Form_Local> formLocals = new ArrayList<>();
                 List<MD_Schedule_Exec> formSchedules = new ArrayList<>();
-                //
-                if(error_msg != null && error_msg.length() > 0){
-                    errorProcessList.addAll(
-                        error_process
-                    );
-                }
+                boolean isScheduleForm = false;
                 //Se enviado com sucesso, atualiza Status para SENT
                 for (GE_Custom_Form_Data form_data : form_datas){
+                    //Se status SENT
                     form_data.setCustom_form_status(Constant.SYS_STATUS_SENT);
+                    //Vars do novo agendamento
+                    TSave_Rec.Error_Process errorProcess = null;
+                    isScheduleForm = ToolBox_Inf.isScheduleForm(form_data);
                     //LUCHE - 20/02/2020
                     //Tratativa pós novo agendamento que registra no banco e exibe o erro
-                    form_data.setError_msg(
-                        checkErrorProcess(
+                    //Resgata item com erro se houver.
+                    if(isScheduleForm) {
+                        errorProcess = checkErrorProcess(
                             error_process,
                             form_data.getCustomer_code(),
                             form_data.getCustom_form_type(),
                             form_data.getCustom_form_code(),
                             form_data.getCustom_form_version(),
                             form_data.getCustom_form_data()
-                        )
-                    );
+                        );
+                        //Seta msg de erro no form_datase houver
+                        form_data.setError_msg(errorProcess != null ? errorProcess.getError() : null);
+                    }
                     //
                     try {
-                        formLocals.add(
-                            processFormLocalSaveReturn(
-                                form_data.getCustomer_code(),
-                                form_data.getCustom_form_type(),
-                                form_data.getCustom_form_code(),
-                                form_data.getCustom_form_version(),
-                                form_data.getCustom_form_data()
-                            )
+                        GE_Custom_Form_Local formLocal = processFormLocalSaveReturn(
+                            form_data.getCustomer_code(),
+                            form_data.getCustom_form_type(),
+                            form_data.getCustom_form_code(),
+                            form_data.getCustom_form_version(),
+                            form_data.getCustom_form_data()
                         );
+                        //
+                        formLocals.add(formLocal);
+                        //Preenche dados no obj de erro.
+                        if(errorProcess != null){
+                            errorProcess.setCustom_form_type_desc(formLocal.getCustom_form_type_desc());
+                            errorProcess.setCustom_form_desc(formLocal.getCustom_form_desc());
+                        }
                     }catch (Exception e){
                         //TODO VERIFICAR SE DEVEMOS TRATAR AQUI O CASO DO FORM_DATA SEM FORM LOCAL
                         ToolBox_Inf.registerException(getClass().getName(),e);
                     }
-                    //
-                    formSchedules.add(
-                        processScheduleExecSaveReturn(
+                    if(isScheduleForm) {
+                        //
+                        MD_Schedule_Exec scheduleExec = processScheduleExecSaveReturn(
                             form_data.getCustomer_code(),
                             form_data.getSchedule_prefix(),
                             form_data.getSchedule_code(),
                             form_data.getSchedule_exec()
-                        )
-                    );
+                        );
+                        //Add na lista
+                        formSchedules.add(scheduleExec);
+                        //Preenche dados no obj de erro.
+                        if (errorProcess != null) {
+                            errorProcess.setSchedule_pk(
+                                ToolBox_Inf.formatSchedulePk(
+                                    scheduleExec.getSchedule_prefix(),
+                                    scheduleExec.getSchedule_code(),
+                                    scheduleExec.getSchedule_exec()
+                                )
+                            );
+                            //
+                            errorProcess.setSchedule_desc(scheduleExec.getSchedule_desc());
+                        }
+                    }
                     //
+                    if(errorProcess != null) {
+                        errorProcessList.add(errorProcess);
+                    }
                 }
                 //Atualiza dados na tabela.
                 formLocalDao.addUpdate(formLocals,false);
@@ -334,7 +358,12 @@ public class WS_Save extends IntentService {
                     processWS_Save(jumpValidation, jumpOD);
                     return  true;
                 }else {
-                    ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),gson.toJson(errorProcessList) , "0");
+                    ToolBox_Inf.sendBCStatus(
+                        getApplicationContext(),
+                        "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),
+                        errorProcessList.size() > 0 ? gson.toJson(errorProcessList) : "",
+                        "0"
+                    );
                     //hmAuxRet.put(Constant.WS_SEND_RETURN,"OK");
                     //ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_forms_sent"),hmAuxRet, "", "0");
                     return true;
@@ -393,7 +422,7 @@ public class WS_Save extends IntentService {
         return aux;
     }
 
-    private String checkErrorProcess(ArrayList<TSave_Rec.Error_Process> error_process_list, long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, long custom_form_data) {
+    private TSave_Rec.Error_Process checkErrorProcess(ArrayList<TSave_Rec.Error_Process> error_process_list, long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, long custom_form_data) {
         for (TSave_Rec.Error_Process error : error_process_list) {
             if(
                 error.getCustomer_code() == customer_code
@@ -402,7 +431,7 @@ public class WS_Save extends IntentService {
                 && error.getCustom_form_version() == custom_form_version
                 && error.getCustom_form_data() == custom_form_data
             ){
-                return error.getError();
+                return error;
             }
         }
         //

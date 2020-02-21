@@ -17,6 +17,9 @@ public interface Act046_Main_Contract {
 
         int getTotalDelay(boolean filter_form, boolean filter_form_ap);
 
+        void saveCheckBoxStatusIntoPreference(String checkboxConstant, boolean isChecked);
+
+        boolean loadCheckboxStatusFromPreferencie(String checkboxConstant, boolean defaultValue);
     }
 
 }

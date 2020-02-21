@@ -660,6 +660,31 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         return final_date;
     }
 
+    /**
+     * LUCHE - 21/02/2020
+     * Metodo que salva na preferencia o valor do checkbox
+     *
+     * @param checkboxConstant - Constante da preferecia do checkbox.
+     * @param isChecked - Valor do checkbox.
+     */
+    @Override
+    public void saveCheckBoxStatusIntoPreference(String checkboxConstant, boolean isChecked) {
+        ToolBox_Con.setBooleanPreference(context,checkboxConstant,isChecked);
+    }
+
+    /**
+     * LUCHE - 21/02/2020
+     * Metodo que resgata da preferencia o valor do checkbox
+     *
+     * @param checkboxConstant - Constante da preferecia do checkbox.
+     * @param defaultValue - Caso a preferencia não exista, retorna o valor definido via codigo.
+     * @return
+     */
+    @Override
+    public boolean loadCheckboxStatusFromPreferencie(String checkboxConstant, boolean defaultValue) {
+        return ToolBox_Con.getBooleanPreferencesByKey(context, checkboxConstant, defaultValue);
+    }
+
     @Override
     public void onBackPressedClicked() {
 

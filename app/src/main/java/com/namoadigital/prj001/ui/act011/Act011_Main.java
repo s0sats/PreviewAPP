@@ -345,6 +345,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         transList.add("alert_exit_confirmation_ttl");
         transList.add("alert_exit_confirmation_msg");
+        transList.add("lbl_schedule");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -834,7 +835,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if( ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)
             && mSo_Prefix == null
             && mSo_Code == null
-            && !mPresenter.isScheduleForm(formLocal)
+            && !ToolBox_Inf.isScheduleForm(formLocal)
             && serial_id != null
             && !serial_id.isEmpty()
         ){
@@ -1341,7 +1342,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
             act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs, mSignature, form_desc);
-            act011_ff_options.enableScheduled(mPresenter.isScheduleForm(formLocal));
+            act011_ff_options.enableScheduled(ToolBox_Inf.isScheduleForm(formLocal));
 
             if (mSo_Prefix == null || mSo_Code == null) {
                 act011_ff_options.enableTab(formData.getCustom_form_status(), 0);
@@ -2575,7 +2576,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             tv_so_code_desc.setVisibility(View.GONE);
         }
 
-         if(mPresenter.isScheduleForm(formLocal)){
+         if(ToolBox_Inf.isScheduleForm(formLocal)){
             tv_data_serv_lbl.setText(hmAux_Trans.get("dialog_info_data_serv_lbl"));
             tv_dt_schedule_start_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_start_lbl"));
             tv_dt_schedule_end_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_end_lbl"));
@@ -3024,8 +3025,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
             setWsSoProcess("");
             mPresenter.processWS_SaveReturn(mLink);
-            //
-            afterSaveFlow();
         }
     }
 
@@ -3070,14 +3069,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 case "SERIAL":
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_serial_data"));
                     break;
-                case "A.P.":
-                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_form_ap"));
-                    break;
-                case "S.O.":
-                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_so"));
-                    break;
-                case "SO_EXPRESS":
-                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_so_express"));
+                case ConstantBaseApp.SYS_STATUS_SCHEDULE:
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_schedule"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
                     break;
 
             }

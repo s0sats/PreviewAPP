@@ -32,7 +32,6 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
-import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_MULTI_SqlSpecification;
@@ -137,7 +136,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             //if (customFormLocal.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)) {
             //LUCHE - 14/02/2020
             //A identificação de se um form é agendamento agora verifica a pk do agendamento e não o status
-            bAgendado = isScheduleForm(customFormLocal);
+            bAgendado = ToolBox_Inf.isScheduleForm(customFormLocal);
             bNew = false;
             index = -1;
             //
@@ -332,22 +331,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
     }
 
-    /**
-     * LUCHE - 17/02/2020
-     *
-     * Metodo que avalia se form pe um agendado.Considera agendado se a pk do agendamento estiver preenchida
-     * @param customFormLocal
-     * @return
-     */
-    public boolean isScheduleForm(GE_Custom_Form_Local customFormLocal) {
-        return customFormLocal != null
-                && customFormLocal.getSchedule_prefix() != null
-                && customFormLocal.getSchedule_code() != null
-                && customFormLocal.getSchedule_exec() != null
-                && customFormLocal.getSchedule_prefix() > 0
-                && customFormLocal.getSchedule_code() > 0
-                && customFormLocal.getSchedule_exec() > 0;
-    }
 
     /**
      * LUCHE - 14/02/2020
@@ -560,12 +543,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ).toSqlQuery().toString()
         );
         //LUCHE - 14/02/2020
-        updateScheduleStatus(
-            formData.getSchedule_prefix(),
-            formData.getSchedule_code(),
-            formData.getSchedule_exec(),
-            ConstantBaseApp.SYS_STATUS_FINALIZED
-        );
+        if(bAgendado) {
+            updateScheduleStatus(
+                formData.getSchedule_prefix(),
+                formData.getSchedule_code(),
+                formData.getSchedule_exec(),
+                ConstantBaseApp.SYS_STATUS_FINALIZED
+            );
+        }
         //
         formData.setCustom_form_status(Constant.SYS_STATUS_FINALIZED);
         formData.setDate_end(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -815,7 +800,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             try {
                 errorProcesses = gson.fromJson(
                     wsRet,
-                    new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+                    new TypeToken<ArrayList<TSave_Rec.Error_Process>>() {
                     }.getType()
                 );
             }catch (Exception e){
@@ -823,18 +808,31 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             }
             //
             if(errorProcesses != null && errorProcesses.size() > 0){
-                /**
-                 *
-                 * CONTINUAR PROCESSAMENTO DA MSG DE RETORNO DO WS DE SAVE
-                 *
-                 * GERAR LISTA DE HMAUX com os erros retornados.
-                 *
-                 */
-                mView.addWsResults(new ArrayList<HMAux>());
+                ArrayList<HMAux> auxResults = new ArrayList<>();
+                for (TSave_Rec.Error_Process error_process : errorProcesses) {
+                    //
+                    HMAux mHmAux = new HMAux();
+                    mHmAux.put("label", formatScheduleErroLabel(error_process));
+                    mHmAux.put("type", ConstantBaseApp.SYS_STATUS_SCHEDULE);
+                    mHmAux.put("status", error_process.getError());
+                    mHmAux.put("final_status", formatFormErrorDesc(error_process));
+                    //
+                    auxResults.add(mHmAux);
+                }
+                //
+                mView.addWsResults(auxResults);
                 mView.afterSaveFlow();
             }else{
                 mView.afterSaveFlow();
             }
         }
+    }
+
+    private String formatFormErrorDesc(TSave_Rec.Error_Process error_process) {
+        return error_process.getCustom_form_type_desc() +"\n" + error_process.getCustom_form_desc();
+    }
+
+    private String formatScheduleErroLabel(TSave_Rec.Error_Process error_process) {
+        return error_process.getSchedule_pk() +" - "+ error_process.getSchedule_desc();
     }
 }
