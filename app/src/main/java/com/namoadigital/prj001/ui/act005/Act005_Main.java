@@ -90,6 +90,7 @@ import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -1417,16 +1418,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //Fecha Drawer
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-                    //setRes("N-Form", hmAux_Trans.get("alert_send_finish_msg"), "");
-                    //mPresenter.executeSoSave();
-
-                    HMAux mHmAux = new HMAux();
-                    mHmAux.put("label", WS_RESULT_TYPE_NFORM);
-                    mHmAux.put("type", WS_RESULT_TYPE_NFORM);
-                    mHmAux.put("status", "OK");
-                    mHmAux.put("final_status", "");
-
-                    processCloseACT(mLink, mRequired, mHmAux);
+                    //LUCHE - 27/02/2020
+                    //Add tratativa pós save após implementação do novo agendamento
+                    processCloseACT(mLink, mRequired, new HMAux());
                 }
             }
         } else {
@@ -1468,15 +1462,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
             setWsSoProcess("");
-            //
-            if (!hmAux.isEmpty() && hmAux.size() > 0) {
-                HMAux mHmAux = new HMAux();
-                mHmAux.putAll(hmAux);
-                //
-                if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
-                    wsResults.add(mHmAux);
-                }
-            }
+            //LUCHE - 27/02/2020
+            //Add tratativa pós save após implementação do novo agendamento
+            mPresenter.processWS_SaveReturn(mLink);
 
             mPresenter.executeApSave(); // 3
 
@@ -1838,6 +1826,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 //        }
 //    }
 
+    @Override
+    public void addWsResults(ArrayList<HMAux> auxResults) {
+        wsResults.addAll(
+            auxResults
+        );
+    }
+
     public void showResults(List<HMAux> res) {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -1869,6 +1864,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             switch (item.get("type")) {
                 case WS_RESULT_TYPE_SERIAL:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_serial_data"));
+                    break;
+                case ConstantBaseApp.SYS_STATUS_SCHEDULE:
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_schedule_data"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
                     break;
                 case WS_RESULT_TYPE_AP:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_form_ap"));

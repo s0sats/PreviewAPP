@@ -42,6 +42,7 @@ import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MenuMainNamoa;
+import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
 import com.namoadigital.prj001.receiver.WBR_Enable_NFC;
@@ -1054,6 +1055,44 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         String msg = retStatus ;
         msg += retMsg != null && !retMsg.isEmpty() ? "\n" + retMsg  :"";
         return msg;
+    }
+
+    /**
+     * Metodo que processa o retorno do WS_Save(Checklist)
+     * @param wsRet - Json com retorno
+     */
+    @Override
+    public void processWS_SaveReturn(String wsRet) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //
+        if(wsRet != null && !wsRet.isEmpty()){
+            ArrayList<TSave_Rec.Error_Process> errorProcesses = null;
+            try {
+                errorProcesses = gson.fromJson(
+                    wsRet,
+                    new TypeToken<ArrayList<TSave_Rec.Error_Process>>() {
+                    }.getType()
+                );
+            }catch (Exception e){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+            }
+            //
+            if(errorProcesses != null && errorProcesses.size() > 0){
+                ArrayList<HMAux> auxResults = new ArrayList<>();
+                for (TSave_Rec.Error_Process error_process : errorProcesses) {
+                    //
+                    HMAux mHmAux = new HMAux();
+                    mHmAux.put("label", ToolBox_Inf.formatScheduleErroLabel(error_process));
+                    mHmAux.put("type", ConstantBaseApp.SYS_STATUS_SCHEDULE);
+                    mHmAux.put("status", error_process.getError());
+                    mHmAux.put("final_status", ToolBox_Inf.formatFormErrorDesc(error_process));
+                    //
+                    auxResults.add(mHmAux);
+                }
+                //
+                mView.addWsResults(auxResults);
+            }
+        }
     }
 
     @Override

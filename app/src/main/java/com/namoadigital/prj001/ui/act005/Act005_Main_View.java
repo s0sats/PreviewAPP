@@ -70,4 +70,6 @@ public interface Act005_Main_View {
     void callAct068(Context context);
 
     void callAct069(Context context);
+
+    void addWsResults(ArrayList<HMAux> auxResults);
 }

@@ -812,10 +812,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 for (TSave_Rec.Error_Process error_process : errorProcesses) {
                     //
                     HMAux mHmAux = new HMAux();
-                    mHmAux.put("label", formatScheduleErroLabel(error_process));
+                    mHmAux.put("label", ToolBox_Inf.formatScheduleErroLabel(error_process));
                     mHmAux.put("type", ConstantBaseApp.SYS_STATUS_SCHEDULE);
                     mHmAux.put("status", error_process.getError());
-                    mHmAux.put("final_status", formatFormErrorDesc(error_process));
+                    mHmAux.put("final_status", ToolBox_Inf.formatFormErrorDesc(error_process));
                     //
                     auxResults.add(mHmAux);
                 }
@@ -826,13 +826,5 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 mView.afterSaveFlow();
             }
         }
-    }
-
-    private String formatFormErrorDesc(TSave_Rec.Error_Process error_process) {
-        return error_process.getCustom_form_type_desc() +"\n" + error_process.getCustom_form_desc();
-    }
-
-    private String formatScheduleErroLabel(TSave_Rec.Error_Process error_process) {
-        return error_process.getSchedule_pk() +" - "+ error_process.getSchedule_desc();
     }
 }

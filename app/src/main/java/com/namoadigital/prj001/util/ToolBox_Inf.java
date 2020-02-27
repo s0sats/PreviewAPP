@@ -107,6 +107,7 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TSO_Save_Env;
+import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.TSerial_Save_Env;
 import com.namoadigital.prj001.model.T_IO_Inbound_Item_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
@@ -6442,5 +6443,26 @@ public class ToolBox_Inf {
             && customFormData.getSchedule_prefix() > 0
             && customFormData.getSchedule_code() > 0
             && customFormData.getSchedule_exec() > 0;
+    }
+
+    /**
+     * LUCHE - 27/02/2020
+     * Metodo que retorna String formatada com descrição do tipo e descrição do form
+     * @param error_process - Obj de retorno do WS_Save quando há mensagem de retorno
+     * @return - String formatada
+     */
+    public static String formatFormErrorDesc(TSave_Rec.Error_Process error_process) {
+        return error_process.getCustom_form_type_desc() +"\n" + error_process.getCustom_form_desc();
+    }
+
+    /**
+     * LUCHE - 27/02/2020
+     * Metodo que retorna String formatada com PK + descrição do agendamento
+     *
+     * @param error_process - Obj de retorno do WS_Save quando há mensagem de retorno
+     * @return - String formatada
+     */
+    public static String formatScheduleErroLabel(TSave_Rec.Error_Process error_process) {
+        return error_process.getSchedule_pk() +" - "+ error_process.getSchedule_desc();
     }
 }
