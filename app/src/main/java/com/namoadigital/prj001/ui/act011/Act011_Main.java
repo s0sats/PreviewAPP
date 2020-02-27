@@ -122,7 +122,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
     public static final String LOCATION_REFRESH = "location_refresh";
-    public static final int GPS_VALID_INTERVAL = 60000;
+    public static final int GPS_VALID_INTERVAL = 300000;
 
     private Act011_Main_Presenter mPresenter;
 
@@ -251,9 +251,21 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //todo tratar preferencia de location defasada.
+        String dataRecorded = "\nonDestroy ACT011: " + Calendar.getInstance().getTime();
+        recordProcess(dataRecorded);
         if(!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false)){
             ToolBox_Inf.stop_Location_Tracker(context);
+        }
+    }
+
+    private void recordProcess(String data) {
+        try {
+            String filePath = getApplicationContext().getFilesDir().getPath().toString() + "/GPS_Histo.txt";
+            ToolBox_Inf.writeIn(data, new File(filePath));
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -685,10 +697,21 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 mSite_Code,
                 mOperation_Code
         );
-        if (formLocal.getRequire_location() == 1) {
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String dataRecorded = "\nonResume ACT011\n Require_local: " + formLocal.getRequire_location()
+        + "\nonResume ACT011\n status: " + SV_LocationTracker.status;
+        recordProcess(dataRecorded);
+
+        if (formLocal.getRequire_location() == 1
+        && !SV_LocationTracker.status) {
             getLocation();
         }
-
     }
 
     private void showConfirmDeleteDialog() {
@@ -865,11 +888,20 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             long diff = currentTime - locationDate;
 
             if(diff >= GPS_VALID_INTERVAL){
-                ToolBox_Inf.stop_Location_Tracker(context);
+                String dataRecorded = "\ncheckGpsFlow: " +
+                                      "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
+                                      "\ndiff: " + diff ;
+                recordProcess(dataRecorded);
+
+//                ToolBox_Inf.stop_Location_Tracker(context);
                 formData.setLocation_pendency(1);
                 ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
                 ToolBox_Con.setBooleanPreference(getApplicationContext(),Constant.HAS_PENDING_LOCATION,true);
             }else {
+                String dataRecorded = "\ncheckGpsFlow: " +
+                        "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
+                        "\ndiff: " + diff ;
+                recordProcess(dataRecorded);
                 if(latitude != null && !latitude.isEmpty()
                 && longitude != null && !longitude.isEmpty() ) {
                     formData.setLocation_type(location_type);
@@ -877,6 +909,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     formData.setLocation_lng(longitude);
                     formData.setLocation_pendency(0);
                 }
+                ToolBox_Con.setBooleanPreference(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false);
             }
             startCheckIN();
         } else {
