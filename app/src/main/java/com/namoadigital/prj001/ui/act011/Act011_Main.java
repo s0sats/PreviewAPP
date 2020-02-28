@@ -103,8 +103,10 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -122,7 +124,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
     public static final String LOCATION_REFRESH = "location_refresh";
-    public static final int GPS_VALID_INTERVAL = 300000;
+    public static final int GPS_VALID_INTERVAL = 120000;
 
     private Act011_Main_Presenter mPresenter;
 
@@ -251,7 +253,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        String dataRecorded = "\nonDestroy ACT011: " + Calendar.getInstance().getTime();
+        String dataRecorded = "\nonDestroy ACT011: " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
         recordProcess(dataRecorded);
         if(!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false)){
             ToolBox_Inf.stop_Location_Tracker(context);
@@ -260,7 +262,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     private void recordProcess(String data) {
         try {
-            String filePath = getApplicationContext().getFilesDir().getPath().toString() + "/GPS_Histo.txt";
+            String filePath = getApplicationContext().getFilesDir().getPath() + "/GPS_Histo.txt";
             ToolBox_Inf.writeIn(data, new File(filePath));
         }catch (NullPointerException e){
             e.printStackTrace();
@@ -370,6 +372,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         transList.add("alert_exit_confirmation_ttl");
         transList.add("alert_exit_confirmation_msg");
+        //
+        transList.add("dialog_has_gps_pendency_ttl");
+        transList.add("dialog_has_gps_pendency_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -709,7 +714,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         recordProcess(dataRecorded);
 
         if (formLocal.getRequire_location() == 1
-        && !SV_LocationTracker.status) {
+        && ConstantBase.SYS_STATUS_IN_PROCESSING.equals(formLocal.getCustom_form_status() )) {
             getLocation();
         }
     }
@@ -890,17 +895,16 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             if(diff >= GPS_VALID_INTERVAL){
                 String dataRecorded = "\ncheckGpsFlow: " +
                                       "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
-                                      "\ndiff: " + diff ;
+                                      "\ndiff: " + diff;
                 recordProcess(dataRecorded);
-
-//                ToolBox_Inf.stop_Location_Tracker(context);
                 formData.setLocation_pendency(1);
                 ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
                 ToolBox_Con.setBooleanPreference(getApplicationContext(),Constant.HAS_PENDING_LOCATION,true);
             }else {
                 String dataRecorded = "\ncheckGpsFlow: " +
                         "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
-                        "\ndiff: " + diff ;
+                        "\ngps_date_formatted: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(locationDate)) +
+                        "\ndiff: " + diff;
                 recordProcess(dataRecorded);
                 if(latitude != null && !latitude.isEmpty()
                 && longitude != null && !longitude.isEmpty() ) {
@@ -908,8 +912,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     formData.setLocation_lat(latitude);
                     formData.setLocation_lng(longitude);
                     formData.setLocation_pendency(0);
+                    String gps_date_formatted = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(locationDate));
+                    formData.setDate_gps(gps_date_formatted);
                 }
-                ToolBox_Con.setBooleanPreference(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false);
+//                ToolBox_Con.setBooleanPreference(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false);
             }
             startCheckIN();
         } else {
@@ -2110,10 +2116,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 //                                } else {
 //                                    nservCall();
 //                                }
-                                if (formLocal.getRequire_location() == 1
-                                    && formData.getLocation_pendency() == 1){
-                                    flowControl();
-                                }else if (ToolBox_Con.isOnline(context)) {
+//                                if (formLocal.getRequire_location() == 1
+//                                    && formData.getLocation_pendency() == 1){
+//                                    flowControl();
+//                                }else
+                                    if (ToolBox_Con.isOnline(context)) {
                                     enableProgressDialog(
                                             hmAux_Trans.get("alert_send_finish_ttl"),
                                             hmAux_Trans.get("alert_send_finish_msg"),
@@ -2900,22 +2907,22 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         }
     }
 
-    @Override
-    protected void processGPS_ENABLED() {
-
-        SV_LocationTracker.msg_ok = hmAux_Trans.get("alert_location_info_aquired_succesfully");
-        SV_LocationTracker.msg_nok = hmAux_Trans.get("alert_location_info_aquired_unsuccesfully");
-
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_GO", hmAux_Trans.get("alert_location_gps_info"), "", "0");
-        ToolBox_Inf.call_Location_Tracker(context);
-    }
-
-    @Override
-    protected void processGPS_GO() {
-        super.processGPS_GO();
-        //
-        gpsCanceled = false;
-    }
+//    @Override
+//    protected void processGPS_ENABLED() {
+//
+//        SV_LocationTracker.msg_ok = hmAux_Trans.get("alert_location_info_aquired_succesfully");
+//        SV_LocationTracker.msg_nok = hmAux_Trans.get("alert_location_info_aquired_unsuccesfully");
+//
+//        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_GO", hmAux_Trans.get("alert_location_gps_info"), "", "0");
+//        ToolBox_Inf.call_Location_Tracker(context);
+//    }
+//
+//    @Override
+//    protected void processGPS_GO() {
+//        super.processGPS_GO();
+//        //
+//        gpsCanceled = false;
+//    }
 
     /**
      * LUCHE - 22/10/2019
@@ -2929,39 +2936,39 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
      *                  * Longitude
      * @param mRequired - Não analisado
      */
-    @Override
-    protected void processGPS_OK(String mLink, String mRequired) {
-        progressDialog.dismiss();
-        //processa as coordenadas
-        if (!gpsCanceled) {
-            String parts[] = mLink.split("#");
-            formData.setLocation_type(parts[0]);
-            formData.setLocation_lat(parts[1]);
-            formData.setLocation_lng(parts[2]);
-            startCheckIN();
-        } else {
-            gpsCanceled = false;
-            //Luche - 28/02/2019
-            //reseta var de fluxo finaliza  + novo
-            finalizeNewFlow = false;
-            formData.setLocation_type("");
-            formData.setLocation_lat("");
-            formData.setLocation_lng("");
-        }
-    }
+//    @Override
+//    protected void processGPS_OK(String mLink, String mRequired) {
+//        progressDialog.dismiss();
+//        //processa as coordenadas
+//        if (!gpsCanceled) {
+//            String parts[] = mLink.split("#");
+//            formData.setLocation_type(parts[0]);
+//            formData.setLocation_lat(parts[1]);
+//            formData.setLocation_lng(parts[2]);
+//            startCheckIN();
+//        } else {
+//            gpsCanceled = false;
+//            //Luche - 28/02/2019
+//            //reseta var de fluxo finaliza  + novo
+//            finalizeNewFlow = false;
+//            formData.setLocation_type("");
+//            formData.setLocation_lat("");
+//            formData.setLocation_lng("");
+//        }
+//    }
 
 
-    @Override
-    protected void processGPS_STOP() {
-        ToolBox_Inf.stop_Location_Tracker(context);
-
-        gpsCanceled = true;
-        //Luche - 28/02/2019
-        //reseta var de finaliza + novo
-        finalizeNewFlow = false;
-
-        progressDialog.dismiss();
-    }
+//    @Override
+//    protected void processGPS_STOP() {
+//        ToolBox_Inf.stop_Location_Tracker(context);
+//
+//        gpsCanceled = true;
+//        //Luche - 28/02/2019
+//        //reseta var de finaliza + novo
+//        finalizeNewFlow = false;
+//
+//        progressDialog.dismiss();
+//    }
 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
@@ -3095,7 +3102,28 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 showResults(wsResults);
             } else {
                 progressDialog.dismiss();
-                flowControl();
+                if(mPresenter.hasGpsPendecy(
+                        formLocal.getCustomer_code(),
+                        formLocal.getCustom_form_type(),
+                        formLocal.getCustom_form_code(),
+                        formLocal.getCustom_form_version(),
+                        formLocal.getCustom_form_data()
+                )){
+                    ToolBox.alertMSG(
+                            Act011_Main.this,
+                            hmAux_Trans.get("dialog_has_gps_pendency_ttl"),
+                            hmAux_Trans.get("dialog_has_gps_pendency_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    flowControl();
+                                }
+                            },
+                            0
+                    );
+                }else {
+                    flowControl();
+                }
             }
         }
     }

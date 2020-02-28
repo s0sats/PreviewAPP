@@ -31,4 +31,5 @@ public interface Act011_Main_Presenter {
 
     boolean isInProcessing(GE_Custom_Form_Local formLocal);
 
+    boolean hasGpsPendecy(long customer_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data);
 }

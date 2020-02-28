@@ -51,6 +51,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String ZONE_CODE = "zone_code";
     public static final String LOCAL_CODE = "local_code";
     public static final String LOCATION_PENDENCY = "location_pendency";
+    public static final String DATE_GPS = "date_gps";
 
     //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
 
@@ -87,6 +88,48 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
         }
 
         closeDB();
+    }
+
+    public DaoObjReturn addUpdateWithReturn(GE_Custom_Form_Data custom_form_data) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+
+        openDB();
+
+        try {
+
+            if (db.insert(TABLE, null, toContentValuesMapper.map(custom_form_data)) == -1) {
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_data.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_type())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_version())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_data.getCustom_form_data())).append("'");
+
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_data), sbWhere.toString(), null);
+            }
+
+        } catch (Exception e) {
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(
+                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                    )
+            );
+        } finally {
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+
+        closeDB();
+        return daoObjReturn;
     }
 
     @Override
@@ -374,7 +417,13 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
                 de localizacao (1= para ha pendencia e 0 para nao ha pendencia).
             */
             custom_form_data.setLocation_pendency(cursor.getInt(cursor.getColumnIndex(LOCATION_PENDENCY)));
-
+            //
+            if (cursor.isNull(cursor.getColumnIndex(DATE_GPS))) {
+                custom_form_data.setDate_gps(null);
+            } else {
+                custom_form_data.setDate_gps(cursor.getString(cursor.getColumnIndex(DATE_GPS)));
+            }
+            //
             return custom_form_data;
         }
     }
@@ -453,6 +502,9 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             contentValues.put(ZONE_CODE, custom_form_data.getZone_code());
             contentValues.put(LOCAL_CODE, custom_form_data.getLocal_code());
 
+            if (custom_form_data.getDate_gps() != null) {
+                contentValues.put(DATE_GPS, custom_form_data.getDate_gps());
+            }
             /*
                 BARRIONUEVO - 19-02-2020
                 Tratamento de campo para ser sempre 0 ou 1.

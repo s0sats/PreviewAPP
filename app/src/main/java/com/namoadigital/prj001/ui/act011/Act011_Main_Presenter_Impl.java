@@ -602,6 +602,21 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
     }
 
+    @Override
+    public boolean hasGpsPendecy(long customer_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data) {
+
+        GE_Custom_Form_Data form_data = custom_form_dataDao.getByString(
+                        new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
+                                String.valueOf(customer_code),
+                                String.valueOf(custom_form_type),
+                                String.valueOf(custom_form_code),
+                                String.valueOf(custom_form_version),
+                                String.valueOf(custom_form_data)
+                        ).toSqlQuery().toLowerCase()
+                );
+        return Constant.SYS_STATUS_FINALIZED.equals(form_data.getCustom_form_status());
+    }
+
     /**
      * LUCHE - 26/09/2019
      * Metodo que busca obj do produto usado no form

@@ -12,11 +12,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_006;
 import com.namoadigital.prj001.util.Constant;
@@ -25,7 +27,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -83,8 +84,8 @@ public class SV_LocationTracker extends Service {
             String dataRecorded =
                     "\nasync_gps = " + async_gps +
                     "\nmLocation_Type = " + location.getProvider().toUpperCase() +
-                    "\nmLocation_Latitude = " + String.valueOf(location.getLatitude()) +
-                    "\nmLocation_Longitude = " + String.valueOf(location.getLongitude());
+                    "\nmLocation_Latitude = " + location.getLatitude() +
+                    "\nmLocation_Longitude = " + location.getLongitude();
             recordProcess("\nonLocationChanged: " + dataRecorded );
             mLastLocation.set(location);
 
@@ -92,27 +93,19 @@ public class SV_LocationTracker extends Service {
             mLocation_Latitude = String.valueOf(location.getLatitude());
             mLocation_Longitude = String.valueOf(location.getLongitude());
             Log.i("GPS_Service", "location Lat: " + location.getLatitude() +  " location Long: " + location.getLongitude());
-
+            ToolBox.toastMSG(getApplicationContext(), "onLocationChanged: " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            boolean hasError;
             switch (async_gps){
-                case LOCATION_DEFAULT:
-                    Log.i("GPS_Service", "async_gps: " + async_gps);
-                    readings++;
-                    if (readings >= 5) {
-                        readings = 0;
-                        stopSelf();
-                    }
-                    recordProcess("onLocationChanged -> async_gps: " + async_gps );
-                    break;
                 case LOCATION_NFORM_ON:
                     Log.i("GPS_Service", "async_gps: " + async_gps);
-                    setLocationPreference(location);
-                    setFormLocation();
+                    hasError = setFormLocation();
+                    setLocationPreference(location, hasError);
                     recordProcess("onLocationChanged -> async_gps: " + async_gps );
                     break;
                 case LOCATION_BACKGROUND:
                     Log.i("GPS_Service", "async_gps: " + async_gps);
-                    setFormLocation();
-                    setLocationPreference(location);
+                    hasError = setFormLocation();
+                    setLocationPreference(location, hasError);
                     recordProcess("onLocationChanged -> async_gps: " + async_gps );
                     stopSelf();
                     break;
@@ -141,7 +134,8 @@ public class SV_LocationTracker extends Service {
         }
     }
 
-    private void setFormLocation() {
+    private boolean setFormLocation() {
+        boolean hasError = false;
         long customer_code = ToolBox_Con.getPreference_Customer_Code(getApplicationContext());
         GE_Custom_Form_DataDao ge_custom_form_dataDao = new GE_Custom_Form_DataDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
 
@@ -155,21 +149,28 @@ public class SV_LocationTracker extends Service {
                 form_data.setLocation_lng(mLocation_Longitude);
                 form_data.setLocation_type(mLocation_Type.toUpperCase());
                 form_data.setLocation_pendency(0);
-                ge_custom_form_dataDao.addUpdate(form_data);
-                String dataRecorded =
-                        "\nasync_gps = " + async_gps +
-                                "\nmSerial_id = " + form_data.getSerial_id() +
-                                "\nmLocation_Type = " + form_data.getLocation_type() +
-                                "\nmLocation_Latitude = " + form_data.getLocation_lat() +
-                                "\nmLocation_Longitude = " + form_data.getLocation_lng();
-                recordProcess("\nonLocationChanged: " + dataRecorded );
+                form_data.setDate_gps(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+
+                DaoObjReturn daoObjReturn = ge_custom_form_dataDao.addUpdateWithReturn(form_data);
+                if(daoObjReturn.hasError()){
+                    hasError = true;
+                }
+//                String dataRecorded =
+//                        "\nasync_gps = " + async_gps +
+//                                "\nmSerial_id = " + form_data.getSerial_id() +
+//                                "\nmLocation_Type = " + form_data.getLocation_type() +
+//                                "\nmLocation_Latitude = " + form_data.getLocation_lat() +
+//                                "\nmLocation_Longitude = " + form_data.getLocation_lng() +
+//                                "\nDate_gps = " + form_data.getDate_gps();
+//                recordProcess("\nonLocationChanged: " + dataRecorded);
             }
         }
+        return hasError;
     }
 
     private void recordProcess(String data) {
         try {
-            String date = Calendar.getInstance().getTime().toString() + "\n ";
+            String date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "\n ";
             String filePath = getApplicationContext().getFilesDir().getPath().toString() + "/GPS_Histo.txt";
             ToolBox_Inf.writeIn(data + "  ---  " + date, new File(filePath));
             Log.i("GPS_Service", "recordProcess: " + date + data);
@@ -180,12 +181,16 @@ public class SV_LocationTracker extends Service {
         }
     }
 
-    private void setLocationPreference(Location location) {
+    private void setLocationPreference(Location location, boolean hasError) {
         ToolBox_Con.setStringPreference(getApplicationContext(), Constant.LOCATION_LAT, String.valueOf(location.getLatitude()));
         ToolBox_Con.setStringPreference(getApplicationContext(), Constant.LOCATION_LNG, String.valueOf(location.getLongitude()));
         ToolBox_Con.setStringPreference(getApplicationContext(), Constant.LOCATION_TYPE, location.getProvider().toUpperCase());
         ToolBox_Con.setLongPreference(getApplicationContext(), Constant.LOCATION_DATE, Calendar.getInstance().getTime().getTime());
-        ToolBox_Con.setBooleanPreference(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false);
+        if(hasError) {
+            ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, true);
+        }else {
+            ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, false);
+        }
     }
 
     LocationListener[] mLocationListeners = new LocationListener[]{
@@ -203,7 +208,7 @@ public class SV_LocationTracker extends Service {
         super.onStartCommand(intent, flags, startId);
         ToolBox.toastMSG(getApplicationContext(), "onStartCommand");
         if (intent != null) {
-            async_gps = intent.getIntExtra(ASYNC_GPS, 0);
+            async_gps = intent.getIntExtra(ASYNC_GPS, LOCATION_BACKGROUND);
         }else{
             async_gps = LOCATION_BACKGROUND;
         }
@@ -349,8 +354,9 @@ public class SV_LocationTracker extends Service {
         //
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
         builder.setSmallIcon(R.mipmap.ic_namoa);
-        builder.setAutoCancel(true);
+        builder.setAutoCancel(false);
         builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
+        RemoteViews view = new RemoteViews(getApplicationContext().getPackageName(), R.layout.sv_resume_notification);
         String gps_searching_location = hmAux_Trans.get("gps_searching_location");
         String latitude = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LAT,"");
         String longitude = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LNG,"");
@@ -362,7 +368,7 @@ public class SV_LocationTracker extends Service {
         builder.setStyle(new NotificationCompat.BigTextStyle()
                 .bigText("latitude: " + latitude +
                         "\nlongitude: " + longitude +
-                        "\nlocationDate: " + ToolBox_Inf.millisecondsToString(locationDate, "dd/MM/yyyy HH:mm:ss") +
+                        "\nlocationDate: " + ToolBox_Inf.millisecondsToString(locationDate, "dd/MM/yyyy HH:mm:ss Z") +
                         "\nlocation_type: " + location_type +
                         "\nasync_gps: " + async_gps));
         //

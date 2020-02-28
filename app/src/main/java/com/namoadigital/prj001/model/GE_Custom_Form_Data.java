@@ -83,6 +83,9 @@ public class GE_Custom_Form_Data {
 
     private int location_pendency;
 
+    @Expose
+    private String date_gps;
+
     private List<GE_Custom_Form_Data_Field> dataFields;
 
     public GE_Custom_Form_Data() {
@@ -112,6 +115,7 @@ public class GE_Custom_Form_Data {
         this.zone_code = null;
         this.local_code = null;
         this.location_pendency = 0;
+        this.date_gps="";
     }
 
     public long getCustomer_code() {
@@ -320,5 +324,13 @@ public class GE_Custom_Form_Data {
 
     public void setLocation_pendency(int location_pendency) {
         this.location_pendency = location_pendency;
+    }
+
+    public String getDate_gps() {
+        return date_gps;
+    }
+
+    public void setDate_gps(String date_gps) {
+        this.date_gps = date_gps;
     }
 }
