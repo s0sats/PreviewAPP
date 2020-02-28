@@ -2,10 +2,21 @@ package com.namoadigital.prj001.ui.act017;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
@@ -301,15 +312,90 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             }else{
                 mView.showMsg(Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR,item);
             }
-
         } else {
-            if(createFormLocalForSchedule(item,bundle)){
-                /**
-                 * TODO
-                 * POSSIVEL NOVO FLUXO, POREM PRECISA DEFIIR COMO CONTINUAR CASO O PRODUTO REQUEIRA SERIAL
-                 * E NENHUM FOI INFORMADO...HOJE ESSE CENARIO NÃO EXISTE
-                 *
-                 */
+            showRequestSerialDialog(item, bundle);
+            //processScheduleWithoutSerial(item, bundle, "serial");
+        }
+    }
+
+    private void showRequestSerialDialog(HMAux item, Bundle bundle) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View serialDialogView = LayoutInflater.from(context).inflate(R.layout.act017_serial_dialog, null);
+        //
+        TextView tvQuestion = serialDialogView.findViewById(R.id.act017_serial_dialog_tv_question);
+        TextView tvProduct = serialDialogView.findViewById(R.id.act017_serial_dialog_tv_product);
+        RadioGroup rgConfirm = serialDialogView.findViewById(R.id.act017_serial_dialog_rg_confirm);
+        RadioButton rdoNo = serialDialogView.findViewById(R.id.act017_serial_dialog_rdo_no);
+        RadioButton rdoYes = serialDialogView.findViewById(R.id.act017_serial_dialog_rdo_yes);
+        final MKEditTextNM mketSerial = serialDialogView.findViewById(R.id.act017_serial_dialog_mket_serial);
+        final Button btnAction = serialDialogView.findViewById(R.id.act017_serial_dialog_btn_action);
+        final View.OnClickListener listenerNo = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context,"Btn Não",Toast.LENGTH_SHORT).show();
+            }
+        };
+        final View.OnClickListener listenerYes = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context,"Btn SIM",Toast.LENGTH_SHORT).show();
+            }
+        };
+        //
+        //tvQuestion.setText(hmAux_Trans.get("dialog_serial_inform_serial_confirm"));
+        tvQuestion.setText("Deseja informar serial ?");
+        tvProduct.setText(
+            ToolBox_Inf.getFormatedProductIdDesc(
+                    item.get(MD_Schedule_ExecDao.PRODUCT_ID),
+                    item.get(MD_Schedule_ExecDao.PRODUCT_DESC)
+                )
+            );
+        rgConfirm.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                Drawable searchIcon = null;
+                View.OnClickListener listener = null;
+                String btnText = "";
+                if(checkedId == R.id.act017_serial_dialog_rdo_no){
+                    searchIcon = null;
+                    mketSerial.setVisibility(View.GONE);
+                    listener = listenerNo;
+                    btnText = hmAux_Trans.get("btn_open_form");
+                } else{
+                    searchIcon =  context.getResources().getDrawable(R.drawable.icon_lupa_ns);
+                    mketSerial.setVisibility(View.VISIBLE);
+                    listener = listenerYes;
+                    btnText = hmAux_Trans.get("btn_search_serial");
+                }
+                //
+                btnAction.setCompoundDrawablesWithIntrinsicBounds(null,null,searchIcon,null);
+                btnAction.setText(btnText);
+                btnAction.setOnClickListener(listener);
+            }
+        });
+        //
+        rdoNo.setText(hmAux_Trans.get("sys_alert_btn_no"));
+        rdoYes.setText(hmAux_Trans.get("sys_alert_btn_yes"));
+        mketSerial.setHint(hmAux_Trans.get("serial_hint"));
+        btnAction.setText(hmAux_Trans.get("btn_search_serial"));
+        //
+        builder
+            //.setTitle(hmAux_Trans.get("dialog_serial_ttl"))
+            .setTitle("Dados do Serial")
+            .setView(serialDialogView)
+            .setCancelable(false);
+        //
+        builder.create().show();
+    }
+
+    private void processScheduleWithoutSerial(final HMAux item, final Bundle bundle, String serialId) {
+        if(createFormLocalForSchedule(item,bundle)){
+            /**
+             * TODO
+             * POSSIVEL NOVO FLUXO, POREM PRECISA DEFIIR COMO CONTINUAR CASO O PRODUTO REQUEIRA SERIAL
+             * E NENHUM FOI INFORMADO...HOJE ESSE CENARIO NÃO EXISTE
+             *
+             */
 //                if(item.get(MD_Schedule_ExecDao.REQUIRE_SERIAL).equals("0")){
 //                    if(item.get(MD_Schedule_ExecDao.ALLOW_NEW_SERIAL_CL).equals("1")){
 //                        //16/08/18
@@ -351,46 +437,45 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 //                }
 
 
-                if (item.get(MD_Schedule_ExecDao.REQUIRE_SERIAL).equals("0")
-                    && item.get(MD_Schedule_ExecDao.ALLOW_NEW_SERIAL_CL).equals("1")
-                ) {
-                    //16/08/18
-                    //Se o form agendado requer aprovação via serial, joga user para act008
+            if (item.get(MD_Schedule_ExecDao.REQUIRE_SERIAL).equals("0")
+                && item.get(MD_Schedule_ExecDao.ALLOW_NEW_SERIAL_CL).equals("1")
+            ) {
+                //16/08/18
+                //Se o form agendado requer aprovação via serial, joga user para act008
+                //
+                if (item.get(MD_Schedule_ExecDao.REQUIRE_SERIAL_DONE).equalsIgnoreCase("1")) {
+                    bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
+                    bundle.putString(ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
                     //
-                    if (item.get(MD_Schedule_ExecDao.REQUIRE_SERIAL_DONE).equalsIgnoreCase("1")) {
-                        bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
-                        bundle.putString(ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
-                        //
-                        mView.callAct008(context, bundle);
-                    } else {
-                        ToolBox.alertMSG_YES_NO(
-                            context,
-                            hmAux_Trans.get("alert_define_serial_ttl"),
-                            hmAux_Trans.get("alert_define_serial_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
-                                    bundle.putString(ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
-                                    //
-                                    mView.callAct008(context, bundle);
-                                }
-                            },
-                            2,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mView.callAct011(context, bundle);
-                                }
-                            }
-                        );
-                    }
+                    mView.callAct008(context, bundle);
                 } else {
-                    mView.callAct011(context, bundle);
+                    ToolBox.alertMSG_YES_NO(
+                        context,
+                        hmAux_Trans.get("alert_define_serial_ttl"),
+                        hmAux_Trans.get("alert_define_serial_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
+                                bundle.putString(ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
+                                //
+                                mView.callAct008(context, bundle);
+                            }
+                        },
+                        2,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mView.callAct011(context, bundle);
+                            }
+                        }
+                    );
                 }
-            }else{
-                mView.showMsg(Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR,item);
+            } else {
+                mView.callAct011(context, bundle);
             }
+        }else{
+            mView.showMsg(Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR,item);
         }
     }
 

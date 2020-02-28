@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/act017_serial_dialog_tv_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:padding="2dp"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Deseja informar Serial ?" />
+
+    <TextView
+        android:id="@+id/act017_serial_dialog_tv_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:padding="2dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/act017_serial_dialog_tv_question"
+        app:layout_constraintTop_toBottomOf="@+id/act017_serial_dialog_rg_confirm"
+        tools:text="PROD1" />
+
+    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+        android:id="@+id/act017_serial_dialog_mket_serial"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/act017_serial_dialog_tv_product"
+        app:layout_constraintTop_toBottomOf="@+id/act017_serial_dialog_tv_product"
+        tools:text="BTT00051" />
+
+    <RadioGroup
+        android:id="@+id/act017_serial_dialog_rg_confirm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/act017_serial_dialog_tv_question"
+        app:layout_constraintTop_toBottomOf="@+id/act017_serial_dialog_tv_question">
+
+        <RadioButton
+            android:id="@+id/act017_serial_dialog_rdo_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:padding="5dp"
+            tools:text="Não" />
+
+        <RadioButton
+            android:id="@+id/act017_serial_dialog_rdo_yes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            tools:text="Sim" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/act017_serial_dialog_btn_action"
+        android:layout_width="wrap_content"
+        android:minWidth="250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        tools:text="Ação"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/act017_serial_dialog_mket_serial"
+        android:background="@drawable/btn_namoa_main_states"
+        android:textColor="@color/padrao_WHITE"
+        android:padding="5dp"
+        />
+
+
+</android.support.constraint.ConstraintLayout>

@@ -8,6 +8,7 @@ public class MD_Schedule_Exec {
     private int schedule_code;
     private int schedule_exec;
     private String schedule_desc;
+    private String schedule_type;
     private String status;
     private int site_code;
     private String site_id;
@@ -22,11 +23,22 @@ public class MD_Schedule_Exec {
     private Integer serial_code;
     @Nullable
     private String serial_id;
-    private int custom_form_type;
+    @Nullable
+    private Integer custom_form_type;
+    @Nullable
     private String custom_form_type_desc;
-    private int custom_form_code;
-    private int custom_form_version;
+    @Nullable
+    private Integer custom_form_code;
+    @Nullable
+    private Integer custom_form_version;
+    @Nullable
     private String custom_form_desc;
+    @Nullable
+    private Integer ticket_type;
+    @Nullable
+    private String ticket_type_id;
+    @Nullable
+    private String ticket_type_desc;
     private String date_start;
     private String date_end;
     @Nullable
@@ -89,6 +101,14 @@ public class MD_Schedule_Exec {
 
     public void setSchedule_desc(String schedule_desc) {
         this.schedule_desc = schedule_desc;
+    }
+
+    public String getSchedule_type() {
+        return schedule_type;
+    }
+
+    public void setSchedule_type(String schedule_type) {
+        this.schedule_type = schedule_type;
     }
 
     public String getStatus() {
@@ -189,44 +209,76 @@ public class MD_Schedule_Exec {
         this.serial_id = serial_id;
     }
 
-    public int getCustom_form_type() {
+    @Nullable
+    public Integer getCustom_form_type() {
         return custom_form_type;
     }
 
-    public void setCustom_form_type(int custom_form_type) {
+    public void setCustom_form_type(@Nullable Integer custom_form_type) {
         this.custom_form_type = custom_form_type;
     }
 
+    @Nullable
     public String getCustom_form_type_desc() {
         return custom_form_type_desc;
     }
 
-    public void setCustom_form_type_desc(String custom_form_type_desc) {
+    public void setCustom_form_type_desc(@Nullable String custom_form_type_desc) {
         this.custom_form_type_desc = custom_form_type_desc;
     }
 
-    public int getCustom_form_code() {
+    @Nullable
+    public Integer getCustom_form_code() {
         return custom_form_code;
     }
 
-    public void setCustom_form_code(int custom_form_code) {
+    public void setCustom_form_code(@Nullable Integer custom_form_code) {
         this.custom_form_code = custom_form_code;
     }
 
-    public int getCustom_form_version() {
+    @Nullable
+    public Integer getCustom_form_version() {
         return custom_form_version;
     }
 
-    public void setCustom_form_version(int custom_form_version) {
+    public void setCustom_form_version(@Nullable Integer custom_form_version) {
         this.custom_form_version = custom_form_version;
     }
 
+    @Nullable
     public String getCustom_form_desc() {
         return custom_form_desc;
     }
 
-    public void setCustom_form_desc(String custom_form_desc) {
+    public void setCustom_form_desc(@Nullable String custom_form_desc) {
         this.custom_form_desc = custom_form_desc;
+    }
+
+    @Nullable
+    public Integer getTicket_type() {
+        return ticket_type;
+    }
+
+    public void setTicket_type(@Nullable Integer ticket_type) {
+        this.ticket_type = ticket_type;
+    }
+
+    @Nullable
+    public String getTicket_type_id() {
+        return ticket_type_id;
+    }
+
+    public void setTicket_type_id(@Nullable String ticket_type_id) {
+        this.ticket_type_id = ticket_type_id;
+    }
+
+    @Nullable
+    public String getTicket_type_desc() {
+        return ticket_type_desc;
+    }
+
+    public void setTicket_type_desc(@Nullable String ticket_type_desc) {
+        this.ticket_type_desc = ticket_type_desc;
     }
 
     public String getDate_start() {

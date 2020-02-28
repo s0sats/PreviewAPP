@@ -170,6 +170,12 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("alert_error_on_create_form_ttl");
         translateList.add("alert_error_on_create_form_msg");
         //
+        translateList.add("dialog_serial_ttl");
+        translateList.add("dialog_serial_serial_hint");
+        translateList.add("dialog_serial_btn_open_form");
+        translateList.add("dialog_serial_btn_search_serial");
+        translateList.add("dialog_serial_inform_serial_confirm");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,

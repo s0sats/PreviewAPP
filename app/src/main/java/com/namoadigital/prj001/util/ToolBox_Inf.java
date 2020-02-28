@@ -6458,11 +6458,27 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 27/02/2020
      * Metodo que retorna String formatada com PK + descrição do agendamento
-     *
      * @param error_process - Obj de retorno do WS_Save quando há mensagem de retorno
      * @return - String formatada
      */
     public static String formatScheduleErroLabel(TSave_Rec.Error_Process error_process) {
         return error_process.getSchedule_pk() +" - "+ error_process.getSchedule_desc();
+    }
+
+    /**
+     * LUCHE - 28/02/2020
+     * Metodo que retorna Id Descrição do produto formatada
+     * @param productId - ID do produto
+     * @param productDesc - Descrição do produto
+     * @return
+     */
+    public static String getFormatedProductIdDesc(String productId, String productDesc) {
+        if(productId != null && productId.equalsIgnoreCase("null") && !productId.isEmpty()
+            && productDesc != null && productDesc.equalsIgnoreCase("null") && !productDesc.isEmpty()
+        ){
+            return productId +" "+ productDesc;
+        }
+        //
+        return productId +" "+ productDesc;
     }
 }
