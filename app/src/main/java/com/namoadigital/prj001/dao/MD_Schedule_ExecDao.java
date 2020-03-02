@@ -426,6 +426,19 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                                 scheduleExec.setCustom_form_desc(mdAux.get(CUSTOM_FORM_DESC));
                             }
                         }
+                    } else{
+                        //Se agendamento ja existe, pega os dados "realacionais" e atualiza no obj vindo do server.
+                        scheduleExec.setSite_id(dbSchedule.getSite_id());
+                        scheduleExec.setSite_desc(dbSchedule.getSite_desc());
+                        scheduleExec.setOperation_id(dbSchedule.getOperation_id());
+                        scheduleExec.setOperation_desc(dbSchedule.getOperation_desc());
+                        scheduleExec.setProduct_id(dbSchedule.getProduct_id());
+                        scheduleExec.setProduct_desc(dbSchedule.getProduct_desc());
+                        scheduleExec.setRequire_serial(dbSchedule.getRequire_serial());
+                        scheduleExec.setAllow_new_serial_cl(dbSchedule.getAllow_new_serial_cl());
+                        scheduleExec.setRequire_serial_done(dbSchedule.getRequire_serial_done());
+                        scheduleExec.setCustom_form_type_desc(dbSchedule.getCustom_form_type_desc());
+                        scheduleExec.setCustom_form_desc(dbSchedule.getCustom_form_desc());
                     }
                     //
                     //receivedScheduleExecs.set(i,scheduleExec);

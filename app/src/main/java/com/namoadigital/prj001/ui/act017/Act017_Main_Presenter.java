@@ -21,4 +21,6 @@ public interface Act017_Main_Presenter {
     void saveCheckBoxStatusIntoPreference(String checkboxConstant, boolean isChecked);
 
     boolean loadCheckboxStatusFromPreferencie(String checkboxConstant, boolean defaultValue);
+
+    void extractSearchResult(String wsResult);
 }

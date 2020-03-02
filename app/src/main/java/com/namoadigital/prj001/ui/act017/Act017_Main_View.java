@@ -32,4 +32,10 @@ public interface Act017_Main_View {
     String getmRequesting_ACT();
 
     void setQty(int list_qty,int tot_qty);
+
+    void setWsProcess(String wsProcess);
+
+    void showPD(String ttl, String msg);
+
+    void callAct020(Context context, Bundle bundle);
 }

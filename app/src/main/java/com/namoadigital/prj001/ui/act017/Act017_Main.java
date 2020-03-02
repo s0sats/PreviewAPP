@@ -28,6 +28,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
+import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
@@ -64,6 +65,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public static final String MODULE_CHECKLIST_START_FORM = "checklist_start_form";
     public static final String MODULE_SCHEDULE_DATE_REF = "module_schedule_date_ref";
     public static final String MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR = "module_schedule_form_data_creation_error";
+    public static final String EMPTY_SERIAL_SEARCH = "empty_serial_search";
 
     private ListView lv_schedules;
     private Bundle bundle;
@@ -94,6 +96,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     private String site_code_back;
     private int zone_code_back;
     private HMAux item_selected;
+    private String wsProcess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,11 +173,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("alert_error_on_create_form_ttl");
         translateList.add("alert_error_on_create_form_msg");
         //
-        translateList.add("dialog_serial_ttl");
-        translateList.add("dialog_serial_serial_hint");
-        translateList.add("dialog_serial_btn_open_form");
-        translateList.add("dialog_serial_btn_search_serial");
-        translateList.add("dialog_serial_inform_serial_confirm");
+        translateList.add("alert_no_serial_found_ttl");
+        translateList.add("alert_no_serial_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -448,6 +448,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 msg = hmAux_Trans.get("alert_error_on_create_form_msg");
                 btnNegative = 0;
                 break;
+            case EMPTY_SERIAL_SEARCH:
+                title = hmAux_Trans.get("alert_no_serial_found_ttl");
+                msg = hmAux_Trans.get("alert_no_serial_found_msg");
+                btnNegative = 0;
+                break;
         }
 
         if (btnNegative != null) {
@@ -459,6 +464,21 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                     btnNegative
             );
         }
+    }
+
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public void showPD(String ttl, String msg) {
+        enableProgressDialog(
+            ttl,
+            msg,
+            hmAux_Trans.get("sys_alert_btn_cancel"),
+            hmAux_Trans.get("sys_alert_btn_ok")
+        );
     }
 
     @Override
@@ -504,6 +524,17 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         //
         mIntent.putExtras(bundle);
         startActivityForResult(mIntent, PROCESSO_SELECAO_ZONA);
+    }
+
+    @Override
+    public void callAct020(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act020_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (bundle != null) {
+            mIntent.putExtras(bundle);
+        }
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
@@ -554,6 +585,40 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public String getmRequesting_ACT() {
         return mRequesting_ACT;
     }
+
+    //region WS_Returns
+    @Override
+    protected void processCloseACT(String result, String mRequired) {
+        super.processCloseACT(result, mRequired);
+        progressDialog.dismiss();
+        mPresenter.extractSearchResult(result);
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+
+        progressDialog.dismiss();
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //implementar dialog confirmando busca offline
+        progressDialog.dismiss();
+    }
+    //TRATA SESSION_NOT_FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+    //endregion
 
     @Override
     public void onBackPressed() {
