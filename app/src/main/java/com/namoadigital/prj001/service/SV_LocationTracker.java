@@ -92,8 +92,8 @@ public class SV_LocationTracker extends Service {
             mLocation_Type = location.getProvider().toUpperCase();
             mLocation_Latitude = String.valueOf(location.getLatitude());
             mLocation_Longitude = String.valueOf(location.getLongitude());
-            Log.i("GPS_Service", "location Lat: " + location.getLatitude() +  " location Long: " + location.getLongitude());
-            ToolBox.toastMSG(getApplicationContext(), "onLocationChanged: " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+//            Log.i("GPS_Service", "location Lat: " + location.getLatitude() +  " location Long: " + location.getLongitude());
+//            ToolBox.toastMSG(getApplicationContext(), "onLocationChanged: " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             boolean hasError;
             switch (async_gps){
                 case LOCATION_NFORM_ON:
@@ -208,7 +208,7 @@ public class SV_LocationTracker extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        ToolBox.toastMSG(getApplicationContext(), "onStartCommand");
+//        ToolBox.toastMSG(getApplicationContext(), "onStartCommand");
         if (intent != null) {
             async_gps = intent.getIntExtra(ASYNC_GPS, LOCATION_BACKGROUND);
         }else{
@@ -216,7 +216,7 @@ public class SV_LocationTracker extends Service {
         }
         ToolBox_Inf.cancelNotification(getApplicationContext(), LOCATION_NOTIFICATION_ID);
         call_Notification();
-        Log.i("GPS_Service", "onStartCommand: " + async_gps);
+//        Log.i("GPS_Service", "onStartCommand: " + async_gps);
 
         switch (async_gps){
             //Parametrizacao para recuperar localizacao durante a exec do N-FORM no intervalo de 5min
@@ -292,7 +292,7 @@ public class SV_LocationTracker extends Service {
         status = false;
         ToolBox_Inf.cancelNotification(getApplicationContext(), LOCATION_NOTIFICATION_ID);
         removeLocationListeners();
-        ToolBox.toastMSG(getApplicationContext(), "onDestroy");
+//        ToolBox.toastMSG(getApplicationContext(), "onDestroy");
         super.onDestroy();
 
     }
@@ -351,7 +351,7 @@ public class SV_LocationTracker extends Service {
         builder.setSmallIcon(R.mipmap.ic_namoa);
         builder.setAutoCancel(false);
         builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-        RemoteViews view = new RemoteViews(getApplicationContext().getPackageName(), R.layout.sv_resume_notification);
+//        RemoteViews view = new RemoteViews(getApplicationContext().getPackageName(), R.layout.sv_resume_notification);
         String gps_searching_location = hmAux_Trans.get("gps_searching_location");
         String latitude = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LAT,"");
         String longitude = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LNG,"");
