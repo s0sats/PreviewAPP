@@ -6414,6 +6414,34 @@ public class ToolBox_Inf {
     /**
      * LUCHE - 17/02/2020
      *
+     * Formata a apresentacao de um intervalo de datas:
+     *  1) Para dias diferentes:
+     *     - "yyyy-MM-dd HH:mm - yyyy-MM-dd HH:mm"
+     *  2) Para dias iguais:
+     *     - "yyyy-MM-dd HH:mm - HH:mm"
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public static String formatScheduleIntervalDateFormatted(String startDate, String endDate) {
+        SimpleDateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+        SimpleDateFormat dateFormatStart = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        SimpleDateFormat dateFormatEnd = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        if(startDate.substring(0, 9).equals(endDate.substring(0,9))){
+            dateFormatEnd = new SimpleDateFormat("HH:mm");
+        }
+        try{
+            return dateFormatStart.format(dateFormatIn.parse(startDate)) + " - " + dateFormatEnd.format(dateFormatIn.parse(endDate));
+        }catch (Exception e){
+            ToolBox_Inf.registerException(CLASS_NAME,e);
+            return "01-01-1900";
+        }
+    }
+
+
+    /**
+     * LUCHE - 17/02/2020
+     *
      * Metodo que avalia se form é um agendado.Considera agendado se a pk do agendamento estiver preenchida
      * @param customFormLocal
      * @return

@@ -21,6 +21,8 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -293,95 +295,16 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         //Inicializa variaveis do layout da celula
         LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.module_schedules_cell_ll_bg);
         //
-        ArrayList<TextView> tv_list = new ArrayList<>();
-        //
-        ImageView iv_main = (ImageView) convertView.findViewById(R.id.module_schedules_cell_iv_main);
-        //
-        TextView tv_main_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_main_lbl);
-        TextView tv_main_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_main_val);
-        tv_list.add(tv_main_lbl);
-        tv_list.add(tv_main_val);
-        //
-        ImageView iv_comments = (ImageView) convertView.findViewById(R.id.module_schedules_cell_iv_comment);
-        //
-        TextView tv_date_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_date_label);
-        TextView tv_date_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_date_val);
-
-        tv_list.add(tv_date_lbl);
-        tv_list.add(tv_date_val);
-        //
-        TextView tv_ttl_001 = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_ttl_001);
-        tv_list.add(tv_ttl_001);
-        //
-        TextView tv_item_01_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_01_lbl);
-        TextView tv_item_01_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_01_val);
-
-        tv_list.add(tv_item_01_lbl);
-        tv_list.add(tv_item_01_val);
-        //
-        TextView tv_item_02_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_02_lbl);
-        TextView tv_item_02_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_02_val);
-
-        tv_list.add(tv_item_02_lbl);
-        tv_list.add(tv_item_02_val);
-        //
-        TextView tv_item_03_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_03_lbl);
-        TextView tv_item_03_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_03_val);
-
-        tv_list.add(tv_item_03_lbl);
-        tv_list.add(tv_item_03_val);
-        //
-        //
-        TextView tv_item_04_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_04_lbl);
-        TextView tv_item_04_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_04_val);
-
-        tv_list.add(tv_item_04_lbl);
-        tv_list.add(tv_item_04_val);
-        //
-        TextView tv_ttl_002 = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_ttl_002);
-
-        tv_list.add(tv_ttl_002);
-        //
-        TextView tv_item_05_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_05_lbl);
-        TextView tv_item_05_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_05_val);
-
-        tv_list.add(tv_item_05_lbl);
-        tv_list.add(tv_item_05_val);
-        //
-        TextView tv_item_06_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_06_lbl);
-        TextView tv_item_06_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_06_val);
-
-        tv_list.add(tv_item_06_lbl);
-        tv_list.add(tv_item_06_val);
-        //
-        TextView tv_item_07_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_07_lbl);
-        TextView tv_item_07_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_07_val);
-
-        tv_list.add(tv_item_07_lbl);
-        tv_list.add(tv_item_07_val);
-        //
-        TextView tv_item_71_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_71_lbl);
-        TextView tv_item_71_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_71_val);
-
-        tv_list.add(tv_item_71_lbl);
-        tv_list.add(tv_item_71_val);
-        //
-        TextView tv_item_08_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_08_lbl);
-        TextView tv_item_08_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_08_val);
-
-        tv_list.add(tv_item_08_lbl);
-        tv_list.add(tv_item_08_val);
-        //
-        TextView tv_item_09_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_09_lbl);
-        TextView tv_item_09_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_item_09_val);
-
-        tv_list.add(tv_item_09_lbl);
-        tv_list.add(tv_item_09_val);
-        //
-        TextView tv_status_lbl = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_status_lbl);
-        TextView tv_status_val = (TextView) convertView.findViewById(R.id.module_schedules_cell_tv_status_val);
-        tv_status_lbl.setText(hmAux_Trans.get("lbl_status"));
-        //
+        ImageView iv_form_info = convertView.findViewById(R.id.module_schedules_cell_iv_form_info);
+        TextView tv_item_product = convertView.findViewById(R.id.module_schedules_cell_tv_item_product);
+        TextView tv_item_serial_id = convertView.findViewById(R.id.module_schedules_cell_tv_item_serial_id);
+        TextView tv_item_form_desc = convertView.findViewById(R.id.module_schedules_cell_tv_item_form_desc);
+        TextView tv_item_seq_exec = convertView.findViewById(R.id.module_schedules_cell_tv_item_seq_exec);
+        TextView tv_item_site = convertView.findViewById(R.id.module_schedules_cell_tv_item_site);
+        TextView tv_item_date = convertView.findViewById(R.id.module_schedules_cell_tv_item_date);
+        TextView tv_item_comment = convertView.findViewById(R.id.module_schedules_cell_tv_item_comment);
+        TextView tv_ttl = convertView.findViewById(R.id.module_schedules_cell_tv_ttl);
+        TextView tv_status_val = convertView.findViewById(R.id.module_schedules_cell_tv_status_val);
         // Aguardando definicao
         if (item.get("site_code") != null && !item.get("site_code").equalsIgnoreCase("null") && Long.parseLong(item.get("site_code")) == site_id_preference) {
             llBackground.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
@@ -394,18 +317,14 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         switch (item.get(Act017_Main.ACT017_MODULE_KEY)) {
 
             case Constant.MODULE_CHECKLIST:
-
-                iv_main.setImageDrawable(context.getDrawable(R.drawable.ic_n_form));
-                //APÓS IMPLANTAÇÃO DO FORM_AP, ICONE FOI ESCONDIDO
-                iv_main.setVisibility(View.GONE);
                 //16/08/2018 - Add icone de comentario quando houver
-                if(!item.get(MD_Schedule_ExecDao.COMMENTS).isEmpty()){
-                    iv_comments.setVisibility(View.VISIBLE);
+                if(!item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE).isEmpty()){
+                    iv_form_info.setVisibility(View.VISIBLE);
                 }else{
-                    iv_comments.setVisibility(View.GONE);
+                    iv_form_info.setVisibility(View.GONE);
                 }
                 //
-                iv_comments.setOnClickListener(new View.OnClickListener() {
+                iv_form_info.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if(onIvCommentClickListner != null){
@@ -414,54 +333,33 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                     }
                 });
                 //
-                //tv_main_lbl.setText(hmAux_Trans.get("lbl_module")+" "+item.get(Act017_Main.ACT017_MODULE_KEY));
-                tv_main_lbl.setText(hmAux_Trans.get("CHECKLIST"));
-
-                //tv_date_lbl.setText(hmAux_Trans.get("lbl_date") + " " + item.get(GE_Custom_Form_DataDao.DATE_START));
-                tv_date_lbl.setText(
-                        hmAux_Trans.get("lbl_date") + " " +
-                        ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_START)),
-                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                        )
-                );
-                tv_ttl_001.setText(hmAux_Trans.get("ttl_product"));
-                tv_item_01_lbl.setText(hmAux_Trans.get("lbl_product_code") + " " + item.get(MD_Schedule_ExecDao.PRODUCT_CODE));
-                tv_item_02_lbl.setText(hmAux_Trans.get("lbl_product_id") + " " + item.get(MD_Schedule_ExecDao.PRODUCT_ID));
-                tv_item_03_lbl.setText(hmAux_Trans.get("lbl_product_desc") + " " + item.get(MD_Schedule_ExecDao.PRODUCT_DESC));
-                tv_item_04_lbl.setText(hmAux_Trans.get("lbl_serial_id") + " " + item.get(MD_Schedule_ExecDao.SERIAL_ID));
-
                 if (item.get(GE_Custom_Form_LocalDao.SERIAL_ID).trim().length() == 0) {
-                    tv_item_04_lbl.setVisibility(View.GONE);
-                    tv_item_04_val.setVisibility(View.GONE);
+                    tv_item_serial_id.setVisibility(View.GONE);
                 }
 
-                tv_ttl_002.setText(hmAux_Trans.get("ttl_form"));
-                tv_item_05_lbl.setText(hmAux_Trans.get("lbl_type") + " " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
-                tv_item_06_lbl.setText(hmAux_Trans.get("lbl_form") + " " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
-
+                tv_ttl.setText(hmAux_Trans.get("ttl_form"));
+                tv_item_form_desc.setText(item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
+                if(item.hasConsistentValue(MD_Schedule_ExecDao.COMMENTS)) {
+                    tv_item_comment.setVisibility(View.VISIBLE);
+                    tv_item_comment.setText(item.get(MD_Schedule_ExecDao.COMMENTS));
+                }else{
+                    tv_item_comment.setVisibility(View.GONE);
+                }
+                tv_item_product.setText(item.get(MD_Schedule_ExecDao.PRODUCT_ID) + " - " + item.get(MD_Schedule_ExecDao.PRODUCT_DESC) );
+                tv_item_serial_id.setText(item.get(MD_Schedule_ExecDao.SERIAL_ID));
                 if (item.get("schedule_pk").trim().length() > 0) {
-                    tv_item_07_lbl.setVisibility(View.VISIBLE);
-                    tv_item_07_lbl.setText(hmAux_Trans.get("lbl_data_serv") + " " + item.get("schedule_pk"));
-                    tv_item_71_lbl.setText(hmAux_Trans.get("lbl_site_id") + " " + item.get(MD_Schedule_ExecDao.SITE_ID) + " - " + item.get(MD_Schedule_ExecDao.SITE_DESC));
+                    tv_item_seq_exec.setVisibility(View.VISIBLE);
+                    tv_item_seq_exec.setText(hmAux_Trans.get("lbl_data_serv") + " " + item.get("schedule_pk"));
+                    tv_item_site.setText(hmAux_Trans.get("lbl_site_id") + " " + item.get(MD_Schedule_ExecDao.SITE_ID) + " - " + item.get(MD_Schedule_ExecDao.SITE_DESC));
                     //
-                    tv_item_08_lbl.setVisibility(View.VISIBLE);
-                    tv_item_08_lbl.setText(
-                            hmAux_Trans.get("lbl_date_schedule_start") + " " +
-                            ToolBox_Inf.formatScheduleDate(context,item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT))
-
+                    tv_item_date.setVisibility(View.VISIBLE);
+                    tv_item_date.setText(
+                                    ToolBox_Inf.formatScheduleIntervalDateFormatted(item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT), item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT))
                     );
-                    tv_item_09_lbl.setVisibility(View.VISIBLE);
-                    tv_item_09_lbl.setText(
-                        hmAux_Trans.get("lbl_date_schedule_end") + " " +
-                            ToolBox_Inf.formatScheduleDate(context,item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT))
-                    );
-
                 } else {
-                    tv_item_07_lbl.setVisibility(View.VISIBLE);
-                    tv_item_71_lbl.setVisibility(View.VISIBLE);
-                    tv_item_08_lbl.setVisibility(View.VISIBLE);
-                    tv_item_09_lbl.setVisibility(View.INVISIBLE);
+                    tv_item_seq_exec.setVisibility(View.VISIBLE);
+                    tv_item_site.setVisibility(View.VISIBLE);
+                    tv_item_date.setVisibility(View.VISIBLE);
                 }
 
                 break;
@@ -470,7 +368,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         switch (item.get(MD_Schedule_ExecDao.STATUS)) {
 
             case Constant.SYS_STATUS_IN_PROCESSING:
-                tv_date_lbl.setText(
+                tv_item_date.setText(
                         hmAux_Trans.get("lbl_date") + " " +
                                 //item.get(GE_Custom_Form_DataDao.DATE_START)
                         ToolBox_Inf.millisecondsToString(
@@ -510,9 +408,8 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 break;
 
             case Constant.SYS_STATUS_SCHEDULE:
-                tv_date_lbl.setText(
-                        hmAux_Trans.get("lbl_date") + " " +
-                            ToolBox_Inf.formatScheduleDate(context,item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT))
+                tv_item_date.setText(
+                        ToolBox_Inf.formatScheduleIntervalDateFormatted(item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT), item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT))
                 );
                 //
 //                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_7_states);
