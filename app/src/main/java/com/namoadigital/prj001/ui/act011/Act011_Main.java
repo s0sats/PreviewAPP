@@ -253,23 +253,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        String dataRecorded = "\nonDestroy ACT011: " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
-        recordProcess(dataRecorded);
+//        String dataRecorded = "\nonDestroy ACT011: " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+//        recordProcess(dataRecorded);
         if(!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false)){
             ToolBox_Inf.stop_Location_Tracker(context);
+        }else{
+            ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
         }
     }
 
-    private void recordProcess(String data) {
-        try {
-            String filePath = getApplicationContext().getFilesDir().getPath() + "/GPS_Histo.txt";
-            ToolBox_Inf.writeIn(data, new File(filePath));
-        }catch (NullPointerException e){
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void recordProcess(String data) {
+//        try {
+//            String filePath = getApplicationContext().getFilesDir().getPath() + "/GPS_Histo.txt";
+//            ToolBox_Inf.writeIn(data, new File(filePath));
+//        }catch (NullPointerException e){
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private void iniSetup() {
         //hasNFCSupport = ToolBox_Inf.hasNFC(context);
@@ -709,9 +711,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     protected void onResume() {
         super.onResume();
-        String dataRecorded = "\nonResume ACT011\n Require_local: " + formLocal.getRequire_location()
-        + "\nonResume ACT011\n status: " + SV_LocationTracker.status;
-        recordProcess(dataRecorded);
+//        String dataRecorded = "\nonResume ACT011\n Require_local: " + formLocal.getRequire_location()
+//        + "\nonResume ACT011\n status: " + SV_LocationTracker.status;
+//        recordProcess(dataRecorded);
 
         if (formLocal.getRequire_location() == 1
         && ConstantBase.SYS_STATUS_IN_PROCESSING.equals(formLocal.getCustom_form_status() )) {
@@ -893,19 +895,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             long diff = currentTime - locationDate;
 
             if(diff >= GPS_VALID_INTERVAL){
-                String dataRecorded = "\ncheckGpsFlow: " +
-                                      "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
-                                      "\ndiff: " + diff;
-                recordProcess(dataRecorded);
+//                String dataRecorded = "\ncheckGpsFlow: " +
+//                                      "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
+//                                      "\ndiff: " + diff;
+//                recordProcess(dataRecorded);
                 formData.setLocation_pendency(1);
-                ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
                 ToolBox_Con.setBooleanPreference(getApplicationContext(),Constant.HAS_PENDING_LOCATION,true);
             }else {
-                String dataRecorded = "\ncheckGpsFlow: " +
-                        "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
-                        "\ngps_date_formatted: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(locationDate)) +
-                        "\ndiff: " + diff;
-                recordProcess(dataRecorded);
+//                String dataRecorded = "\ncheckGpsFlow: " +
+//                        "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
+//                        "\ngps_date_formatted: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(locationDate)) +
+//                        "\ndiff: " + diff;
+//                recordProcess(dataRecorded);
                 if(latitude != null && !latitude.isEmpty()
                 && longitude != null && !longitude.isEmpty() ) {
                     formData.setLocation_type(location_type);

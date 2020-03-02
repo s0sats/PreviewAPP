@@ -81,12 +81,12 @@ public class SV_LocationTracker extends Service {
 
         @Override
         public void onLocationChanged(Location location) {
-            String dataRecorded =
-                    "\nasync_gps = " + async_gps +
-                    "\nmLocation_Type = " + location.getProvider().toUpperCase() +
-                    "\nmLocation_Latitude = " + location.getLatitude() +
-                    "\nmLocation_Longitude = " + location.getLongitude();
-            recordProcess("\nonLocationChanged: " + dataRecorded );
+//            String dataRecorded =
+//                    "\nasync_gps = " + async_gps +
+//                    "\nmLocation_Type = " + location.getProvider().toUpperCase() +
+//                    "\nmLocation_Latitude = " + location.getLatitude() +
+//                    "\nmLocation_Longitude = " + location.getLongitude();
+//            recordProcess("\nonLocationChanged: " + dataRecorded );
             mLastLocation.set(location);
 
             mLocation_Type = location.getProvider().toUpperCase();
@@ -97,40 +97,42 @@ public class SV_LocationTracker extends Service {
             boolean hasError;
             switch (async_gps){
                 case LOCATION_NFORM_ON:
-                    Log.i("GPS_Service", "async_gps: " + async_gps);
                     hasError = setFormLocation();
                     setLocationPreference(location, hasError);
-                    recordProcess("onLocationChanged -> async_gps: " + async_gps );
+//                    Log.i("GPS_Service", "async_gps: " + async_gps);
+//                    recordProcess("onLocationChanged -> async_gps: " + async_gps );
                     break;
                 case LOCATION_BACKGROUND:
-                    Log.i("GPS_Service", "async_gps: " + async_gps);
                     hasError = setFormLocation();
                     setLocationPreference(location, hasError);
-                    recordProcess("onLocationChanged -> async_gps: " + async_gps );
-                    stopSelf();
+//                    Log.i("GPS_Service", "async_gps: " + async_gps);
+//                    recordProcess("onLocationChanged -> async_gps: " + async_gps );
+                    if(!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false)) {
+                        stopSelf();
+                    }
                     break;
             }
         }
 
         @Override
         public void onProviderDisabled(String provider) {
-            Log.i("GPS_Service", "onProviderDisabled: " + provider);
-            String dataRecorded = "\nonProviderDisabled: " + provider;
-            recordProcess(dataRecorded);
+//            Log.i("GPS_Service", "onProviderDisabled: " + provider);
+//            String dataRecorded = "\nonProviderDisabled: " + provider;
+//            recordProcess(dataRecorded);
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-            Log.i("GPS_Service", "onProviderEnabled: " + provider);
-            String dataRecorded = "\nonProviderDisabled: " + provider;
-            recordProcess(dataRecorded);
+//            Log.i("GPS_Service", "onProviderEnabled: " + provider);
+//            String dataRecorded = "\nonProviderDisabled: " + provider;
+//            recordProcess(dataRecorded);
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            Log.i("GPS_Service", "onStatusChanged: " + "provider: " + provider +"\nstatus: " + status);
-            String dataRecorded = "\nonProviderDisabled: " + provider;
-            recordProcess(dataRecorded);
+//            Log.i("GPS_Service", "onStatusChanged: " + "provider: " + provider +"\nstatus: " + status);
+//            String dataRecorded = "\nonProviderDisabled: " + provider;
+//            recordProcess(dataRecorded);
         }
     }
 
@@ -217,22 +219,16 @@ public class SV_LocationTracker extends Service {
         Log.i("GPS_Service", "onStartCommand: " + async_gps);
 
         switch (async_gps){
-            //Parametrizacao para recuperar localizacao no termino do N-FORM
-//            case LOCATION_DEFAULT:
-//                Log.i("GPS_Service", "onStartCommand LOCATION_DEFAULT");
-//                setLocationListeners(LOCATION_INTERVAL_DEFAULT);
-//                setServiceTimeout();
-//                break;
             //Parametrizacao para recuperar localizacao durante a exec do N-FORM no intervalo de 5min
             case LOCATION_NFORM_ON:
-                Log.i("GPS_Service", "onStartCommand LOCATION_NFORM_ON");
-                recordProcess("onStartCommand -> async_gps: " + async_gps );
+//                Log.i("GPS_Service", "onStartCommand LOCATION_NFORM_ON");
+//                recordProcess("onStartCommand -> async_gps: " + async_gps );
                 setLocationListeners(LOCATION_INTERVAL_NFORM_ON);
                 break;
             //Parametrizacao para recuperar localizacao apos finalizacao do N-FORM
             case LOCATION_BACKGROUND:
-                Log.i("GPS_Service", "onStartCommand LOCATION_BACKGROUND");
-                recordProcess("onStartCommand -> async_gps: " + async_gps );
+//                Log.i("GPS_Service", "onStartCommand LOCATION_BACKGROUND");
+//                recordProcess("onStartCommand -> async_gps: " + async_gps );
                 setLocationListeners(LOCATION_INTERVAL_DEFAULT);
                 break;
 
@@ -262,8 +258,8 @@ public class SV_LocationTracker extends Service {
 
     @Override
     public void onCreate() {
-        Log.i("GPS_Service", "onCreate");
-        recordProcess("onCreate");
+//        Log.i("GPS_Service", "onCreate");
+//        recordProcess("onCreate");
         loadTranslation();
         initializeLocationManager();
         status = true;
@@ -290,9 +286,9 @@ public class SV_LocationTracker extends Service {
 
     @Override
     public void onDestroy() {
-        Log.i("GPS_Service", "onDestroy");
-        String dataRecorded = "\nonDestroy: ";
-        recordProcess(dataRecorded);
+//        Log.i("GPS_Service", "onDestroy");
+//        String dataRecorded = "\nonDestroy: ";
+//        recordProcess(dataRecorded);
         status = false;
         ToolBox_Inf.cancelNotification(getApplicationContext(), LOCATION_NOTIFICATION_ID);
         removeLocationListeners();
@@ -306,24 +302,23 @@ public class SV_LocationTracker extends Service {
             for (int i = 0; i < mLocationListeners.length; i++) {
                 try {
                     mLocationManager.removeUpdates(mLocationListeners[i]);
-                    recordProcess("removeLocationListener index: " + i);
+//                    recordProcess("removeLocationListener index: " + i);
                 } catch (Exception ex) {
-                    recordProcess("removeLocationListener exception: " + ex.toString());
+//                    recordProcess("removeLocationListener exception: " + ex.toString());
+                    ToolBox_Inf.registerException(ex);
                 }
             }
         }else{
-            recordProcess("removeLocationListeners: LocationManager eh null");
+//            recordProcess("removeLocationListeners: LocationManager eh null");
         }
     }
 
     private void initializeLocationManager() {
         if (mLocationManager == null) {
-            recordProcess("initLocationManager: Era null");
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-            recordProcess("initLocationManager: Agora ta instanciado: " + mLocationManager.toString());
         }else{
-            recordProcess("initLocationManager: " + mLocationManager.toString());
-            Log.i("GPS_Service", mLocationManager.toString());
+//            recordProcess("initLocationManager: " + mLocationManager.toString());
+//            Log.i("GPS_Service", mLocationManager.toString());
         }
     }
 
