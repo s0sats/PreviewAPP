@@ -12,8 +12,6 @@ public interface Act017_Main_Presenter {
 
     void checkScheduleFlow(HMAux item);
 
-    void prepareOpenForm(HMAux item,  boolean hasSerial);
-
     void onBackPressedClicked();
 
     String getDateDesc(String scheduled_date);
@@ -23,4 +21,6 @@ public interface Act017_Main_Presenter {
     boolean loadCheckboxStatusFromPreferencie(String checkboxConstant, boolean defaultValue);
 
     void extractSearchResult(String wsResult);
+
+    void checkFormFlow(HMAux item);
 }

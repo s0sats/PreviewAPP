@@ -73,7 +73,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
 
     @Override
     public DaoObjReturn addUpdate(MD_Schedule_Exec md_schedule_exec) {
-        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        DaoObjReturn daoObjReturn = new DaoObjReturn(TABLE);
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //
@@ -131,7 +131,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     }
 
     public DaoObjReturn addUpdate(List<MD_Schedule_Exec> md_schedule_execs, boolean status, SQLiteDatabase dbInstance) {
-        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        DaoObjReturn daoObjReturn = new DaoObjReturn(TABLE);
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
         //

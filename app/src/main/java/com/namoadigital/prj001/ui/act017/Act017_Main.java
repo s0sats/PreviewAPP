@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -24,7 +25,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Module_Schedules_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
@@ -175,6 +175,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         //
         translateList.add("alert_no_serial_found_ttl");
         translateList.add("alert_no_serial_found_msg");
+        translateList.add("dialog_serial_search_ttl");
+        translateList.add("dialog_serial_search_start");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -437,9 +439,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        boolean hasSerial = item.get(MD_Schedule_ExecDao.SERIAL_ID).length() > 0;
-
-                        mPresenter.prepareOpenForm(item, hasSerial);
+                        mPresenter.checkFormFlow(item);
                     }
                 };
                 break;
@@ -479,6 +479,16 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             hmAux_Trans.get("sys_alert_btn_cancel"),
             hmAux_Trans.get("sys_alert_btn_ok")
         );
+    }
+
+    @Override
+    public void addControlToActivity(MKEditTextNM mketSerial) {
+        controls_sta.add(mketSerial);
+    }
+
+    @Override
+    public void removeControlFromActivity(MKEditTextNM mketSerial) {
+        controls_sta.remove(mketSerial);
     }
 
     @Override

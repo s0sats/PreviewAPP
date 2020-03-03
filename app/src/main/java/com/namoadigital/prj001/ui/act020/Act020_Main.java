@@ -8,13 +8,25 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
-import com.namoadigital.prj001.dao.*;
+import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.service.WS_Sync;
@@ -23,7 +35,9 @@ import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
+import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -84,6 +98,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private String customFormCode;
     private String customFormVersion;
     private String customFormCodeDesc;
+    //LUCHE - 03/03/2020 - Novo Agendamento
+    private Bundle scheduleBundle;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -329,6 +346,17 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 customFormVersion = "";
                 customFormCodeDesc = "";
             }
+            //LUCHE - 03/03/2020 - Novo Agendamento
+            if(bundle.containsKey(ConstantBaseApp.ACT_SELECTED_DATE)){
+                scheduleBundle = new Bundle();
+                scheduleBundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, bundle.getString(ConstantBaseApp.ACT_SELECTED_DATE,""));
+                scheduleBundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE,""));
+                scheduleBundle.putString(Constant.ACT010_CUSTOM_FORM_CODE,bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE,""));
+                scheduleBundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION,bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION,""));
+                scheduleBundle.putString(Constant.ACT013_CUSTOM_FORM_DATA,bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA,""));
+            }else{
+                scheduleBundle = null;
+            }
         }
     }
 
@@ -531,6 +559,12 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     @Override
+    public boolean isScheduleFlow() {
+        return scheduleBundle != null
+               && scheduleBundle.containsKey(ConstantBaseApp.ACT_SELECTED_DATE);
+    }
+
+    @Override
     public void callAct006(Context context) {
         Bundle bundle = new Bundle();
         bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);
@@ -549,6 +583,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public void callAct008(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act008_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        bundle.putAll(scheduleBundle);
         mIntent.putExtras(bundle);
         //
         startActivity(mIntent);
@@ -574,6 +609,18 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         startActivity(mIntent);
         finish();
 
+    }
+
+    @Override
+    public void callAct017(Context context) {
+        Intent mIntent = new Intent(context, Act017_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        String scheduelDate = scheduleBundle.getString(ConstantBaseApp.ACT_SELECTED_DATE, null);
+        bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, scheduelDate);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 
 //    @Override

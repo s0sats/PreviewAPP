@@ -40,17 +40,44 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
     private MKEditTextNM mketSerial;
     private Button btnAction;
     private final OnScheduleRequestSerialDialogListeners listeners;
+    private final String serial_rule;
+    private final Integer minSerialSize;
+    private final Integer maxSerialSize;
 
-    public ScheduleRequestSerialDialog(@NonNull Context context, HMAux auxSchedule, OnScheduleRequestSerialDialogListeners listeners){
+    public ScheduleRequestSerialDialog(@NonNull Context context, HMAux auxSchedule, String serial_rule, Integer minSerialSize, Integer maxSerialSize, OnScheduleRequestSerialDialogListeners listeners){
         super(context);
         this.context = context;
         this.auxSchedule = auxSchedule;
         this.listeners = listeners;
+        this.serial_rule = serial_rule;
+        this.minSerialSize = minSerialSize;
+        this.maxSerialSize = maxSerialSize;
     }
 
     public interface OnScheduleRequestSerialDialogListeners{
+        /**
+         * Metodo disparado quando o usr não deseja informar serial
+         */
         void processToForm();
+
+        /**
+         * Metodo disparado quando o usuario deseja informar serial.
+         * @param serialID - Serial Id digitado.
+         */
         void processToSearchSerial(String serialID);
+
+        /**
+         * Metodo que adiciona o mket a lista de controles da act.
+         * Necessario para leitura via barcode, OCR e etc.
+         * @param mketSerial
+         */
+        void addMketControl(MKEditTextNM mketSerial);
+
+        /**
+         * Metodo que remove mket da lista de controles.
+         * @param mketSerial
+         */
+        void removeMketControl(MKEditTextNM mketSerial);
     }
 
     @Override
@@ -69,6 +96,23 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
         setConfig();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //
+        if(listeners != null){
+            listeners.addMketControl(mketSerial);
+        }
+    }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        if(listeners != null){
+            listeners.removeMketControl(mketSerial);
+        }
+    }
+
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         //
@@ -79,6 +123,11 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
         transList.add("inform_serial_confirm");
         transList.add("inform_serial_required");
         transList.add("serial_required_lbl");
+        transList.add("serial_field_empty");
+        transList.add("serial_rule_lbl");
+        transList.add("serial_min_length_lbl");
+        transList.add("serial_min_max_separator_lbl");
+        transList.add("serial_max_length_lbl");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
             getContext(),
@@ -135,13 +184,68 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
             public void onClick(View v) {
                 if(listeners != null){
                     if(rgConfirm.getCheckedRadioButtonId() ==  R.id.schedule_request_serial_dialog_rdo_yes){
-                        listeners.processToSearchSerial(mketSerial.getText().toString().trim());
+                        String serialId = mketSerial.getText().toString().trim();
+                        if(serialId != null && !serialId.isEmpty()) {
+                            listeners.processToSearchSerial(serialId);
+                        }else{
+                            if(isSerialOptional()) {
+                                tilSerial.setErrorEnabled(true);
+                                tilSerial.setError(hmAux_Trans.get("serial_field_empty"));
+                            }
+                        }
                     } else{
                         listeners.processToForm();
                     }
                 }
             }
         });
+        //
+        mketSerial.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                if(isSerialOptional()){
+                    tilSerial.setErrorEnabled(false);
+                }
+            }
+        });
+    }
+
+    private String getFormattedRuleHelper() {
+        String sHelper = "";
+        String sMin ="";
+        String sMax ="";
+        //
+        if(serial_rule == null && minSerialSize == null && maxSerialSize == null){
+            return null;
+        }
+        //
+        if(serial_rule != null && !serial_rule.trim().isEmpty()){
+            sHelper += hmAux_Trans.get("serial_rule_lbl") + " " + hmAux_Trans.get(serial_rule) + " ";
+        }
+        //
+        if(minSerialSize != null && minSerialSize > 0){
+            sMin = hmAux_Trans.get("serial_min_length_lbl") + minSerialSize;
+        }
+        //
+        if(maxSerialSize != null && maxSerialSize > 0){
+            sMax = (minSerialSize != null && minSerialSize > 0 ?  hmAux_Trans.get("serial_min_max_separator_lbl") : "") + hmAux_Trans.get("serial_max_length_lbl") + maxSerialSize;
+        }
+        //
+        if(!sMin.isEmpty() || !sMax.isEmpty() ){
+            sHelper += "(" +sMin + sMax +")";
+        }
+        //
+        return sHelper;
+    }
+
+    private boolean isSerialOptional() {
+        return auxSchedule.get(MD_Schedule_ExecDao.REQUIRE_SERIAL).equalsIgnoreCase("0")
+                && auxSchedule.get(MD_Schedule_ExecDao.REQUIRE_SERIAL_DONE).equalsIgnoreCase("0");
     }
 
     private void setConfig() {
@@ -150,18 +254,11 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
         if( auxSchedule.get(MD_Schedule_ExecDao.REQUIRE_SERIAL).equalsIgnoreCase("1")
             || auxSchedule.get(MD_Schedule_ExecDao.REQUIRE_SERIAL_DONE).equalsIgnoreCase("1")
         ){
-            //opção 1
+            tvQuestion.setText(hmAux_Trans.get("serial_required_lbl"));
+            rgConfirm.setVisibility(View.GONE);
             rdoNo.setEnabled(false);
-            tilSerial.setErrorEnabled(true);
-            tilSerial.setError(hmAux_Trans.get("inform_serial_required"));
-
-            //opção 2
-//            tvQuestion.setText(hmAux_Trans.get("serial_required_lbl"));
-//            rgConfirm.setVisibility(View.GONE);
-//            rdoNo.setEnabled(false);
-//            tilSerial.setErrorEnabled(false);
-//            mketSerial.setHint(hmAux_Trans.get("inform_serial_required"));
-
+            tilSerial.setHelperText(getFormattedRuleHelper());
+            mketSerial.setHint(hmAux_Trans.get("inform_serial_required"));
         }
     }
 
