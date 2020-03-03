@@ -352,7 +352,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                     tv_item_seq_exec.setVisibility(View.VISIBLE);
                     tv_item_seq_exec.setText(item.get("schedule_pk"));
                     if(item.hasConsistentValue(MD_Schedule_ExecDao.SITE_ID)
-                    && item.get(MD_Schedule_ExecDao.SITE_CODE).equals(ToolBox_Con.getPreference_Site_Code(context))){
+                    && item.get(MD_Schedule_ExecDao.SITE_CODE).equals(String.valueOf(site_id_preference))){
                         tv_item_site.setVisibility(View.GONE);
                     }else {
                         tv_item_site.setVisibility(View.VISIBLE);
