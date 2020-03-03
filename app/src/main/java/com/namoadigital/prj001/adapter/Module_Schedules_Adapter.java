@@ -339,7 +339,8 @@ public class Module_Schedules_Adapter extends BaseAdapter {
 
                 tv_ttl.setText(hmAux_Trans.get("ttl_form"));
                 tv_item_form_desc.setText(item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
-                if(item.hasConsistentValue(MD_Schedule_ExecDao.COMMENTS)) {
+                if(item.hasConsistentValue(MD_Schedule_ExecDao.COMMENTS)
+                && !item.get(MD_Schedule_ExecDao.COMMENTS).isEmpty()) {
                     tv_item_comment.setVisibility(View.VISIBLE);
                     tv_item_comment.setText(item.get(MD_Schedule_ExecDao.COMMENTS));
                 }else{
@@ -349,13 +350,18 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 tv_item_serial_id.setText(item.get(MD_Schedule_ExecDao.SERIAL_ID));
                 if (item.get("schedule_pk").trim().length() > 0) {
                     tv_item_seq_exec.setVisibility(View.VISIBLE);
-                    tv_item_seq_exec.setText(hmAux_Trans.get("lbl_data_serv") + " " + item.get("schedule_pk"));
-                    tv_item_site.setText(hmAux_Trans.get("lbl_site_id") + " " + item.get(MD_Schedule_ExecDao.SITE_ID) + " - " + item.get(MD_Schedule_ExecDao.SITE_DESC));
+                    tv_item_seq_exec.setText(item.get("schedule_pk"));
+                    if(item.hasConsistentValue(MD_Schedule_ExecDao.SITE_ID)
+                    && item.get(MD_Schedule_ExecDao.SITE_CODE).equals(ToolBox_Con.getPreference_Site_Code(context))){
+                        tv_item_site.setVisibility(View.GONE);
+                    }else {
+                        tv_item_site.setVisibility(View.VISIBLE);
+                        tv_item_site.setText(item.get(MD_Schedule_ExecDao.SITE_ID) + " - " + item.get(MD_Schedule_ExecDao.SITE_DESC));
+                    }
                     //
                     tv_item_date.setVisibility(View.VISIBLE);
-                    tv_item_date.setText(
-                                    ToolBox_Inf.formatScheduleIntervalDateFormatted(item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT), item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT))
-                    );
+
+                    setIntervalScheduled(item, tv_item_date);
                 } else {
                     tv_item_seq_exec.setVisibility(View.VISIBLE);
                     tv_item_site.setVisibility(View.VISIBLE);
@@ -408,13 +414,11 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 break;
 
             case Constant.SYS_STATUS_SCHEDULE:
-                tv_item_date.setText(
-                        ToolBox_Inf.formatScheduleIntervalDateFormatted(item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT), item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT))
-                );
-                //
+                setIntervalScheduled(item, tv_item_date);
+
 //                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_7_states);
 //                llBackground.setBackground(llDrawable);
-                //
+
                 tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_SCHEDULE));
                 tv_status_val.setTextColor(
                         context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_SCHEDULE))
@@ -426,6 +430,20 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 llBackground.setBackground(llDrawable);
                 break;
         }
+    }
+
+    private void setIntervalScheduled(HMAux item, TextView tv_item_date) {
+        String dateStart = ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(item.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT) ? item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT) : "", ""),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+        );
+
+        String dateEnd = ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(item.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT) ? item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT) : "", ""),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+        );
+
+        tv_item_date.setText(ToolBox_Inf.formatScheduleIntervalDateFormatted(context, dateStart, dateEnd));
     }
 
     private void loadTranslation() {

@@ -6423,11 +6423,11 @@ public class ToolBox_Inf {
      * @param endDate
      * @return
      */
-    public static String formatScheduleIntervalDateFormatted(String startDate, String endDate) {
-        SimpleDateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-        SimpleDateFormat dateFormatStart = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        SimpleDateFormat dateFormatEnd = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        if(startDate.substring(0, 9).equals(endDate.substring(0,9))){
+    public static String formatScheduleIntervalDateFormatted(Context context, String startDate, String endDate) {
+        SimpleDateFormat dateFormatIn = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
+        SimpleDateFormat dateFormatStart = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
+        SimpleDateFormat dateFormatEnd = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
+        if(checkSameDayDate(startDate, endDate)){
             dateFormatEnd = new SimpleDateFormat("HH:mm");
         }
         try{
@@ -6436,6 +6436,10 @@ public class ToolBox_Inf {
             ToolBox_Inf.registerException(CLASS_NAME,e);
             return "01-01-1900";
         }
+    }
+
+    private static boolean checkSameDayDate(String startDate, String endDate) {
+        return startDate.substring(0, 9).equals(endDate.substring(0,9));
     }
 
 
