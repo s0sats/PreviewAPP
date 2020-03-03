@@ -47,7 +47,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
     private OnIvCommentClickListner onIvCommentClickListner;
 
     public interface OnIvCommentClickListner{
-        void OnIvCommentClick(String comment);
+        void OnIvCommentClick(HMAux item);
     }
 
     public void setOnIvCommentClickListner(OnIvCommentClickListner onIvCommentClickListner) {
@@ -328,7 +328,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                     @Override
                     public void onClick(View v) {
                         if(onIvCommentClickListner != null){
-                            onIvCommentClickListner.OnIvCommentClick(item.get(MD_Schedule_ExecDao.COMMENTS));
+                            onIvCommentClickListner.OnIvCommentClick(item);
                         }
                     }
                 });
