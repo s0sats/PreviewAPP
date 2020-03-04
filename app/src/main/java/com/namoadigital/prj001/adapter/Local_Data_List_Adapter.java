@@ -1,14 +1,12 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -154,6 +152,25 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
 
         TextView tv_status_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_status_val);
         tv_status_val.setVisibility(View.VISIBLE);
+
+        TextView tv_so_code_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_so_code_ttl);
+        TextView tv_so_code_val = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_so_code_val);
+
+        String mSo_prefix = item.get("so_prefix");
+        String mSo_code = item.get("so_code");
+
+        if (mSo_prefix != null && !mSo_prefix.isEmpty()) {
+            tv_so_code_lbl.setVisibility(View.VISIBLE);
+            tv_so_code_lbl.setText(hmAux_Trans.get("lbl_so_code"));
+            tv_so_code_val.setVisibility(View.VISIBLE);
+            tv_so_code_val.setText(mSo_prefix + "." + mSo_code);
+
+        } else {
+            tv_so_code_lbl.setVisibility(View.GONE);
+            tv_so_code_val.setText("");
+            tv_so_code_lbl.setVisibility(View.GONE);
+            tv_so_code_val.setText("");
+        }
 
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)) {
 
