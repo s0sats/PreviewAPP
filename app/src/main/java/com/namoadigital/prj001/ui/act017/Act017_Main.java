@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
@@ -25,10 +26,10 @@ import com.namoadigital.prj001.adapter.Module_Schedules_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
+import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
@@ -65,6 +66,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public static final String MODULE_CHECKLIST_START_FORM = "checklist_start_form";
     public static final String MODULE_SCHEDULE_DATE_REF = "module_schedule_date_ref";
     public static final String MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR = "module_schedule_form_data_creation_error";
+    public static final String EMPTY_SERIAL_SEARCH = "empty_serial_search";
 
     private ListView lv_schedules;
     private Bundle bundle;
@@ -95,6 +97,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     private String site_code_back;
     private int zone_code_back;
     private HMAux item_selected;
+    private String wsProcess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,15 +171,15 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         //
         translateList.add("lbl_site");
         translateList.add("alert_schedule_comment_ttl");
+        //
         translateList.add("alert_error_on_create_form_ttl");
         translateList.add("alert_error_on_create_form_msg");
         //
-        translateList.add("dialog_serial_ttl");
-        translateList.add("dialog_serial_serial_hint");
-        translateList.add("dialog_serial_btn_open_form");
-        translateList.add("dialog_serial_btn_search_serial");
-        translateList.add("dialog_serial_inform_serial_confirm");
         translateList.add("form_type_dialog_lbl");
+        translateList.add("alert_no_serial_found_ttl");
+        translateList.add("alert_no_serial_found_msg");
+        translateList.add("dialog_serial_search_ttl");
+        translateList.add("dialog_serial_search_start");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -329,16 +332,14 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         //16/08/18
         mAdapter.setOnIvCommentClickListner(new Module_Schedules_Adapter.OnIvCommentClickListner() {
             @Override
-            public void OnIvCommentClick(HMAux item) {
-                String form_desc_ttl = item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n"
-                        +  hmAux_Trans.get("form_type_dialog_lbl") + ": "
-                        + item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE) + " - " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC);
-
-                AlertDialog.Builder dialog_detect= new AlertDialog.Builder(context);
-                dialog_detect.setMessage(form_desc_ttl);
-                dialog_detect.setCancelable(true);
-                dialog_detect.show();
-
+            public void OnIvCommentClick(String comment) {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_schedule_comment_ttl"),
+                        comment,
+                        null,
+                        0
+                );
             }
         });
 
@@ -441,15 +442,18 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 listener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        boolean hasSerial = item.get(MD_Schedule_ExecDao.SERIAL_ID).length() > 0;
-
-                        mPresenter.prepareOpenForm(item, hasSerial);
+                        mPresenter.checkFormFlow(item);
                     }
                 };
                 break;
             case MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR:
                 title = hmAux_Trans.get("alert_error_on_create_form_ttl");
                 msg = hmAux_Trans.get("alert_error_on_create_form_msg");
+                btnNegative = 0;
+                break;
+            case EMPTY_SERIAL_SEARCH:
+                title = hmAux_Trans.get("alert_no_serial_found_ttl");
+                msg = hmAux_Trans.get("alert_no_serial_found_msg");
                 btnNegative = 0;
                 break;
         }
@@ -463,6 +467,31 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                     btnNegative
             );
         }
+    }
+
+    @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public void showPD(String ttl, String msg) {
+        enableProgressDialog(
+            ttl,
+            msg,
+            hmAux_Trans.get("sys_alert_btn_cancel"),
+            hmAux_Trans.get("sys_alert_btn_ok")
+        );
+    }
+
+    @Override
+    public void addControlToActivity(MKEditTextNM mketSerial) {
+        controls_sta.add(mketSerial);
+    }
+
+    @Override
+    public void removeControlFromActivity(MKEditTextNM mketSerial) {
+        controls_sta.remove(mketSerial);
     }
 
     @Override
@@ -508,6 +537,17 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         //
         mIntent.putExtras(bundle);
         startActivityForResult(mIntent, PROCESSO_SELECAO_ZONA);
+    }
+
+    @Override
+    public void callAct020(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act020_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (bundle != null) {
+            mIntent.putExtras(bundle);
+        }
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
@@ -558,6 +598,40 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public String getmRequesting_ACT() {
         return mRequesting_ACT;
     }
+
+    //region WS_Returns
+    @Override
+    protected void processCloseACT(String result, String mRequired) {
+        super.processCloseACT(result, mRequired);
+        progressDialog.dismiss();
+        mPresenter.extractSearchResult(result);
+    }
+
+    @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+
+        progressDialog.dismiss();
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //implementar dialog confirmando busca offline
+        progressDialog.dismiss();
+    }
+    //TRATA SESSION_NOT_FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+    //endregion
 
     @Override
     public void onBackPressed() {

@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act017;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 
 import java.util.List;
@@ -32,4 +33,14 @@ public interface Act017_Main_View {
     String getmRequesting_ACT();
 
     void setQty(int list_qty,int tot_qty);
+
+    void setWsProcess(String wsProcess);
+
+    void showPD(String ttl, String msg);
+
+    void callAct020(Context context, Bundle bundle);
+
+    void addControlToActivity(MKEditTextNM mketSerial);
+
+    void removeControlFromActivity(MKEditTextNM mketSerial);
 }

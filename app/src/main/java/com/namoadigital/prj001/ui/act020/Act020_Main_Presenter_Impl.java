@@ -532,7 +532,11 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
 
     @Override
     public void onBackPressedClicked() {
-        mView.callAct006(context);
+        if(mView.isScheduleFlow()){
+            mView.callAct017(context);
+        }else {
+            mView.callAct006(context);
+        }
     }
 
 }

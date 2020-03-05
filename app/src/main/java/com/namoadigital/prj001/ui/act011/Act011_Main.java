@@ -119,6 +119,7 @@ import static com.namoadigital.prj001.ui.act015.Act015_Main.FORM_SELECTED_INDEX_
 public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
+    public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR = 5;
 
 
     private Act011_Main_Presenter mPresenter;
@@ -346,6 +347,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         transList.add("alert_exit_confirmation_ttl");
         transList.add("alert_exit_confirmation_msg");
         transList.add("lbl_schedule");
+        transList.add("alert_error_on_update_schedule_status_ttl");
+        transList.add("alert_error_on_update_schedule_status_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -2106,6 +2109,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 break;
             //Msg quando ocorre erro ao criar registro na ge_custom_form_local
             case SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR:
+            //Msg quando ocorrer erro ao atualizar dados do novo agendamento.
+            case SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR:
                 ToolBox.alertMSG(
                         Act011_Main.this,
                         title,
@@ -2119,7 +2124,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         0
                 );
                 break;
-
         }
     }
 

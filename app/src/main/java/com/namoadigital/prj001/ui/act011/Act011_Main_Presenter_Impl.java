@@ -88,7 +88,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private MD_Schedule_ExecDao scheduleExecDao;
     //LUCHE - 20/02/2020
     //Flag que controla se é a primeira abertura do agendamento.
-    private boolean isScheduleFirstTime;
+    private boolean isScheduleFirstTime = false;
 
     public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans,MD_Schedule_ExecDao scheduleExecDao) {
         this.context = context;
@@ -132,31 +132,39 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         int index = -1;
 
         if (customFormLocal != null) {
-            //Se Form vem do agendamento, muda status para in processing
-            //if (customFormLocal.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)) {
+            bNew = false;
+            index = -1;
+
             //LUCHE - 14/02/2020
             //A identificação de se um form é agendamento agora verifica a pk do agendamento e não o status
             bAgendado = ToolBox_Inf.isScheduleForm(customFormLocal);
-            bNew = false;
-            index = -1;
-            //
-            cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
+            //Se for um agendamento e status agendado, seta serial id e muda status para in_processo
+            if (bAgendado && customFormLocal.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)) {
+                isScheduleFirstTime = true;
+                //LUCHE - 20/02/2020
+                //Index  = 0 significa que os campos não serão "validados como obrigatorios" ao carregar o form.
+                //Só deve acontecer a primeira vez que o form é aberto
+                index = 0;
+                daoObjReturn = updateScheduleInfos(customFormLocal,serial_id);
+            }
+            if(!daoObjReturn.hasError()) {
+                //
+                cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
                     new GE_Custom_Form_Fields_Local_Sql_001(
-                            String.valueOf(customFormLocal.getCustomer_code()),
-                            String.valueOf(customFormLocal.getCustom_form_type()),
-                            String.valueOf(customFormLocal.getCustom_form_code()),
-                            String.valueOf(customFormLocal.getCustom_form_version()),
-                            String.valueOf(customFormLocal.getCustom_form_data())
+                        String.valueOf(customFormLocal.getCustomer_code()),
+                        String.valueOf(customFormLocal.getCustom_form_type()),
+                        String.valueOf(customFormLocal.getCustom_form_code()),
+                        String.valueOf(customFormLocal.getCustom_form_version()),
+                        String.valueOf(customFormLocal.getCustom_form_data())
                     ).toSqlQuery().toString().toLowerCase()
-            );
-            if(s_form_data == null || s_form_data.isEmpty() || "0".equals(s_form_data)){
-                hasNformPending = true;
+                );
+                if (s_form_data == null || s_form_data.isEmpty() || "0".equals(s_form_data)) {
+                    hasNformPending = true;
+                }
             }
         } else {
             bNew = true;
-
             index = 0;
-
             HMAux ii = custom_formDao.getByStringHM(
                     new GE_Custom_Form_Local_Sql_002(
                             customer_code,
@@ -255,11 +263,21 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
         //Verifica se houve erro ao inserir tabela form_local.
         if(daoObjReturn.hasError()) {
-            mView.showMsg(
+            if( daoObjReturn.getTable() != null
+                && daoObjReturn.getTable().equalsIgnoreCase(MD_Schedule_ExecDao.TABLE)
+            ){
+                mView.showMsg(
+                    hmAux_Trans.get("alert_error_on_update_schedule_status_ttl"),
+                    hmAux_Trans.get("alert_error_on_update_schedule_status_msg"),
+                    Act011_Main.SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR
+                );
+            }else {
+                mView.showMsg(
                     hmAux_Trans.get("alert_error_on_create_form_ttl"),
                     hmAux_Trans.get("alert_error_on_create_form_msg"),
                     Act011_Main.SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR
-            );
+                );
+            }
         }else{
             GE_Custom_Form_Data formData = loadAnswer(
                     customFormLocal,
@@ -270,12 +288,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     serial_id
             );
 
-
-            if (bAgendado) {
-                //LUCHE - 20/02/2020
-                //Novo metodo de idetificação se é a primeira vez que o agendamento foi aberto.
-                index = isScheduleFirstTime ? 0 : -1;
-
+            //if (bAgendado) {
+            if (isScheduleFirstTime) {
                 if (serial_id == null || serial_id.isEmpty()) {
                     formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
                     formData.setZone_code(null);
@@ -331,6 +345,52 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
     }
 
+    private DaoObjReturn updateScheduleInfos(GE_Custom_Form_Local customFormLocal, String serial_id) {
+        DaoObjReturn daoObjRet = new DaoObjReturn();
+        MD_Schedule_Exec mdScheduleExec = getMdScheduleExec(customFormLocal.getSchedule_prefix(), customFormLocal.getSchedule_code(), customFormLocal.getSchedule_exec());
+        String originalScheduleSerialId = MD_Schedule_Exec.isValidScheduleExec(mdScheduleExec) ? mdScheduleExec.getSerial_id() : null ;
+        Integer originalScheduleSeriaCode = MD_Schedule_Exec.isValidScheduleExec(mdScheduleExec) ? mdScheduleExec.getSerial_code() : null ;
+        MD_Product_Serial productSerial = null;
+        //Busca dados do serial. Se não havia serial no agendamento, busca usando o serial passado no bundle
+        productSerial = getSerialInfo(
+            mdScheduleExec.getCustomer_code(),
+            mdScheduleExec.getProduct_code(),
+            originalScheduleSeriaCode != null && originalScheduleSeriaCode > 0 ? mdScheduleExec.getSerial_id() : serial_id,
+            customFormLocal
+        );
+        //
+        customFormLocal.setSerial_id(productSerial.getSerial_id());
+        customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
+        //
+        if(MD_Schedule_Exec.isValidScheduleExec(mdScheduleExec)){
+            if( originalScheduleSerialId == null
+                && productSerial.getSerial_id() != null
+                && !productSerial.getSerial_id().isEmpty()
+            ) {
+                mdScheduleExec.setSerial_code((int) productSerial.getSerial_code());
+                mdScheduleExec.setSerial_id(productSerial.getSerial_id());
+            }
+            mdScheduleExec.setStatus(Constant.SYS_STATUS_IN_PROCESSING);
+        }
+        //Se erro retorn obj com erro
+        daoObjRet = scheduleExecDao.addUpdate(mdScheduleExec);
+        if(daoObjRet.hasError()) {
+            return daoObjRet;
+        }
+        //Se não houve erro tenta atualizar form_local
+        daoObjRet = custom_form_LocalDao.addUpdateThrowException(customFormLocal);
+        //se erro, faz rollback dos atualização do agendamento
+        if(daoObjRet.hasError()){
+            mdScheduleExec.setSerial_code(originalScheduleSeriaCode);
+            mdScheduleExec.setSerial_id(originalScheduleSerialId);
+            mdScheduleExec.setStatus(ConstantBaseApp.SYS_STATUS_SCHEDULE);
+            //Se der erro aqui, all hope is gone...
+            scheduleExecDao.addUpdate(mdScheduleExec);
+        }
+        //
+        return daoObjRet;
+    }
+
 
     /**
      * LUCHE - 14/02/2020
@@ -374,9 +434,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 )
             );
         } else {
-            //LUCHE - 20/02/2020
-            //Se é um agendado e é criação de form data, seta flag indicando de primera abertura
-            isScheduleFirstTime = bAgendado;
             form_data = new GE_Custom_Form_Data();
             //
             form_data.setCustomer_code(formLocal.getCustomer_code());
@@ -594,14 +651,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
      * @return
      */
     private boolean updateScheduleStatus(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec, String status) {
-        MD_Schedule_Exec scheduleExec = scheduleExecDao.getByString(
-            new MD_Schedule_Exec_Sql_001(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                schedule_prefix,
-                schedule_code,
-                schedule_exec
-            ).toSqlQuery()
-        );
+        MD_Schedule_Exec scheduleExec = getMdScheduleExec(schedule_prefix, schedule_code, schedule_exec);
         //
         if(MD_Schedule_Exec.isValidScheduleExec(scheduleExec)){
             scheduleExec.setStatus(status);
@@ -611,6 +661,17 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
         //
         return false;
+    }
+
+    private MD_Schedule_Exec getMdScheduleExec(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
+        return scheduleExecDao.getByString(
+                new MD_Schedule_Exec_Sql_001(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    schedule_prefix,
+                    schedule_code,
+                    schedule_exec
+                ).toSqlQuery()
+            );
     }
 
     @Override
