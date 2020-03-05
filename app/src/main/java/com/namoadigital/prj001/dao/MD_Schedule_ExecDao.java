@@ -14,6 +14,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_003;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_005;
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_006;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -385,7 +386,13 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                 //Se existir o agendamento e ele ja tiver sido iniciado, seta sync_process para 1 e
                 // substitui o agendamento do server pelo do banco de dados, evitando a substituição.
                 if( dbSchedule != null
-                    && !dbSchedule.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_SCHEDULE)
+                    &&( !dbSchedule.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_SCHEDULE)
+                        || scheduelFormLocalExists(  scheduleExec.getCustomer_code(),
+                                                        scheduleExec.getSchedule_prefix(),
+                                                        scheduleExec.getSchedule_code(),
+                                                        scheduleExec.getSchedule_exec(),
+                                                        db)
+                            )
                 ){
                     dbSchedule.setSync_process(1);
                     receivedScheduleExecs.set(i,dbSchedule);
@@ -497,6 +504,40 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         closeDB();
         //
         return daoObjReturn;
+    }
+    /**
+     * LUCHE - 03/03/2020
+     *
+     * Metodo que verifica se já existe form_local para o agendamento.
+     * Mesmo que o agendamento estaja no status agendado, se o serial não estiver definido, é possivel
+     * que durante a "coleta do serial" o usuario tente abortar o processo e como o status só é alterado
+     * quando o usr acessa o form, temos essa situação.
+     *
+     * @param customer_code
+     * @param schedule_prefix
+     * @param schedule_code
+     * @param schedule_exec
+     * @param db
+     * @return - Verdadeiro se o form_local ja existir
+     */
+    private boolean scheduelFormLocalExists(long customer_code, int schedule_prefix, int schedule_code, int schedule_exec, SQLiteDatabase db) {
+        HMAux mdAux = getByStringHM(
+            new MD_Schedule_Exec_Sql_006(
+                String.valueOf(customer_code),
+                String.valueOf(schedule_prefix),
+                String.valueOf(schedule_code),
+                String.valueOf(schedule_exec)
+            ).toSqlQuery(), db
+        );
+        //
+        if (mdAux != null && mdAux.size() > 0
+            && mdAux.hasConsistentValue(SCHEDULE_PREFIX)
+            && mdAux.hasConsistentValue(SCHEDULE_CODE)
+            && mdAux.hasConsistentValue(SCHEDULE_EXEC)
+        ) {
+            return true;
+        }
+        return false;
     }
 
     private DaoObjReturn delete(ArrayList<MD_Schedule_Exec> md_schedule_execs, SQLiteDatabase dbInstance) {

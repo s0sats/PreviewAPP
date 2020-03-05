@@ -11,6 +11,9 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
  * podem ser deletados.
  *
  * Query usada no metodo de consiliação dos agendamentos.
+ *
+ * LUCHE - 05/03/2020
+ * Modificado query adicionando not exists com tabela de custom_form_local para selecionar os agendamendados que já tiveram seus custom_form_local criados mas ainda estão no status de agendado.(Possivel quando o usr para no meio do processo de informar o serial)
  */
 
 public class MD_Schedule_Exec_Sql_003 implements Specification {
@@ -34,6 +37,13 @@ public class MD_Schedule_Exec_Sql_003 implements Specification {
                         "      s.customer_code = '"+customer_code+"'\n" +
                         "      AND s.sync_process = 0\n" +
                         "      AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"'\n" +
+                        "      AND NOT EXISTS (SELECT 1 \n" +
+                        "                      FROM ge_custom_forms_local l\n" +
+                        "                      WHERE l.customer_code = s.customer_code\n" +
+                        "                            and l.schedule_prefix = s.schedule_prefix\n" +
+                        "                            and l.schedule_code = s.schedule_code\n" +
+                        "                            and l.schedule_exec = s.schedule_exec\n" +
+                        "      )\n" +
                         " ORDER BY\n" +
                         "    s.customer_code,\n" +
                         "    s.schedule_prefix,\n" +
