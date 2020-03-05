@@ -35,6 +35,7 @@ import java.util.List;
 
 public class Module_Schedules_Adapter extends BaseAdapter {
 
+    public static final String SCHEDULE_PK = "schedule_pk";
     private Context context;
     private int resource_01;
     private int resource_02;
@@ -346,9 +347,9 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 }
                 tv_item_product.setText(item.get(MD_Schedule_ExecDao.PRODUCT_ID) + " - " + item.get(MD_Schedule_ExecDao.PRODUCT_DESC) );
                 tv_item_serial_id.setText(item.get(MD_Schedule_ExecDao.SERIAL_ID));
-                if (item.get("schedule_pk").trim().length() > 0) {
+                if (item.get(SCHEDULE_PK).trim().length() > 0) {
                     tv_item_seq_exec.setVisibility(View.VISIBLE);
-                    tv_item_seq_exec.setText(item.get("schedule_pk"));
+                    tv_item_seq_exec.setText(item.get(SCHEDULE_PK));
                     if(item.hasConsistentValue(MD_Schedule_ExecDao.SITE_ID)
                     && item.get(MD_Schedule_ExecDao.SITE_CODE).equals(String.valueOf(site_id_preference))){
                         tv_item_site.setVisibility(View.GONE);

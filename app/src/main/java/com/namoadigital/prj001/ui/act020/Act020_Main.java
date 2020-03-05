@@ -355,7 +355,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 scheduleBundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION,bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION,""));
                 scheduleBundle.putString(Constant.ACT013_CUSTOM_FORM_DATA,bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA,""));
             }else{
-                scheduleBundle = null;
+                scheduleBundle = new Bundle();
             }
         }
     }
@@ -583,7 +583,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public void callAct008(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act008_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putAll(scheduleBundle);
+        if(scheduleBundle != null) {
+            bundle.putAll(scheduleBundle);
+        }
         mIntent.putExtras(bundle);
         //
         startActivity(mIntent);
