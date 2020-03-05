@@ -99,7 +99,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private String customFormVersion;
     private String customFormCodeDesc;
     //LUCHE - 03/03/2020 - Novo Agendamento
-    private Bundle scheduleBundle;
+    private Bundle scheduleBundle = new Bundle();
 
 
     @Override
@@ -324,8 +324,12 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                         ).toSqlQuery()
                 );
             }
-            if(bundle.containsKey(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)){
-
+            //LUCHE - 05/03/2020
+            //Adicionando validação de se não contem ACT_SELECTED_DATE, pois o fluxo bem do agendamento
+            //também passa chave CUSTOM_FORM_TYPE_DESC
+            if( bundle.containsKey(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)
+                && !bundle.containsKey(ConstantBaseApp.ACT_SELECTED_DATE)
+            ){
                 productCode = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
                 productDesc = bundle.getString(MD_ProductDao.PRODUCT_DESC, "");
                 productId = bundle.getString(MD_ProductDao.PRODUCT_ID, "");
@@ -348,14 +352,13 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             }
             //LUCHE - 03/03/2020 - Novo Agendamento
             if(bundle.containsKey(ConstantBaseApp.ACT_SELECTED_DATE)){
-                scheduleBundle = new Bundle();
                 scheduleBundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, bundle.getString(ConstantBaseApp.ACT_SELECTED_DATE,""));
                 scheduleBundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE,""));
                 scheduleBundle.putString(Constant.ACT010_CUSTOM_FORM_CODE,bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE,""));
                 scheduleBundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION,bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION,""));
                 scheduleBundle.putString(Constant.ACT013_CUSTOM_FORM_DATA,bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA,""));
-            }else{
-                scheduleBundle = null;
+                scheduleBundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,""));
+                scheduleBundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,""));
             }
         }
     }

@@ -286,12 +286,6 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         if (!item.get(MD_Schedule_ExecDao.STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)) {
             prepareOpenForm(item);
         } else if(hasSerialDefined(item)){
-            Bundle bundle = getFormFlowBundle(item);
-            //Todo comentado antes de subir pro git avaliar nos testes
-            //if (createFormLocalForSchedule(item, bundle)) {
-                //mView.callAct008(context, bundle);
-                //Apenas Cria dialog que é o "holder" do item selecionado.
-                //É gambis ?!
                 buildRequestSerialDialog(
                     item,
                     getProduct(Long.parseLong(item.get(MD_Schedule_ExecDao.PRODUCT_CODE))),
@@ -303,9 +297,6 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                     item.get(MD_Schedule_ExecDao.SERIAL_ID),
                     true
                 );
-//            }else {
-//                mView.showMsg(Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, item);
-//            }
         } else {
             //Cria e exibe dialog que requer serial.
             buildRequestSerialDialog(
@@ -338,7 +329,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     }
 
     /**
-     *
+     * Verifica se  tem serial definido
      * @param item
      * @return
      */
@@ -348,45 +339,6 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     }
 
     private void prepareOpenForm(final HMAux item) {
-        //Atualiza status do form para in_processing
-        //foi comentando pois a atualização do status já corre na act011
-        //e pq se o form a ser aberto tem status inprocessing, fom ja abre
-        //com as bas e campos sendo validados.
-        //updateFormStatus(item);
-
-//        final Bundle bundle = new Bundle();
-//        bundle.putString(MD_ProductDao.PRODUCT_CODE, item.get(MD_Schedule_ExecDao.PRODUCT_CODE));
-//        bundle.putString(MD_ProductDao.PRODUCT_DESC, item.get(MD_Schedule_ExecDao.PRODUCT_DESC));
-//        bundle.putString(MD_ProductDao.PRODUCT_ID, item.get(MD_Schedule_ExecDao.PRODUCT_ID));
-//        bundle.putString(MD_Product_SerialDao.SERIAL_ID, item.get(MD_Schedule_ExecDao.SERIAL_ID));
-//        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE));
-//        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
-//        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_CODE));
-//        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_VERSION));
-//
-//        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
-//        bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA));
-//        // DIFERENTE VERIFICAR
-//        bundle.putString(Constant.ACT017_SCHEDULED_SITE, item.get(MD_Schedule_ExecDao.SITE_CODE));
-//
-//        if (!item.get(MD_Schedule_ExecDao.STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)) {
-//            mView.callAct011(context, bundle);
-//        } else if (hasSerial) {
-//            bundle.putString(ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
-//            if (createFormLocalForSchedule(item, bundle)) {
-//                //mView.callAct008(context, bundle);
-//                executeSerialSearch(
-//                    item.get(MD_Schedule_ExecDao.PRODUCT_CODE),
-//                    item.get(MD_Schedule_ExecDao.PRODUCT_ID),
-//                    item.get(MD_Schedule_ExecDao.SERIAL_ID),
-//                    true
-//                );
-//            } else {
-//                mView.showMsg(Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, item);
-//            }
-//        } else {
-//            showRequestSerialDialog(item, getProduct(Long.parseLong(item.get(MD_Schedule_ExecDao.PRODUCT_CODE))));
-//        }
         final Bundle bundle = getFormFlowBundle(item);
         mView.callAct011(context,bundle);
     }
@@ -419,6 +371,8 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                         );
                         //
                         prepareOpenForm(item);
+                    }else{
+                        mView.showMsg(Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, item);
                     }
                 }
 
@@ -579,7 +533,8 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_CODE));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_VERSION));
-            bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
+            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
             //
             if(createFormLocalForSchedule(item,bundle)){
                 mView.callAct020(context, bundle);

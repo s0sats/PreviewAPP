@@ -25,6 +25,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Module_Schedules_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
@@ -542,6 +543,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {
             mIntent.putExtras(bundle);
+            bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT017);
         }
         startActivity(mIntent);
         finish();
@@ -600,8 +602,14 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     @Override
     protected void processCloseACT(String result, String mRequired) {
         super.processCloseACT(result, mRequired);
-        progressDialog.dismiss();
-        mPresenter.extractSearchResult(result);
+        //
+        if(wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())) {
+            wsProcess = "";
+            progressDialog.dismiss();
+            mPresenter.extractSearchResult(result);
+        }else{
+            progressDialog.dismiss();
+        }
     }
 
     @Override
