@@ -1231,9 +1231,16 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                  if (i == 1) {
                     custom_form_ff.setComments(formLocal.getSchedule_comments() != null ? formLocal.getSchedule_comments() : "");
                     // BARRIONUEVO 05-03-2020 - ADICAO DE SCHEDULE DESC NO FORM
-                     MD_Schedule_Exec mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
-                     if(mdScheduleExec != null) {
-                         custom_form_ff.setSchedule_desc(mdScheduleExec.getSchedule_desc());
+                     if(formLocal.getSchedule_prefix() != null
+                     && formLocal.getSchedule_code() != null
+                     && formLocal.getSchedule_exec() != null) {
+                         MD_Schedule_Exec mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
+                         if (mdScheduleExec != null) {
+                             custom_form_ff.setSchedule_desc(mdScheduleExec.getSchedule_desc());
+                         }
+                     }else{
+                         custom_form_ff.setComments("");
+                         custom_form_ff.setSchedule_desc("");
                      }
                 } else {
                     custom_form_ff.setComments("");
