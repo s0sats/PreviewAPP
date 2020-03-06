@@ -76,6 +76,7 @@ import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
@@ -1229,8 +1230,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 //
                  if (i == 1) {
                     custom_form_ff.setComments(formLocal.getSchedule_comments() != null ? formLocal.getSchedule_comments() : "");
+                    // BARRIONUEVO 05-03-2020 - ADICAO DE SCHEDULE DESC NO FORM
+                     MD_Schedule_Exec mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
+                     if(mdScheduleExec != null) {
+                         custom_form_ff.setSchedule_desc(mdScheduleExec.getSchedule_desc());
+                     }
                 } else {
                     custom_form_ff.setComments("");
+                    custom_form_ff.setSchedule_desc("");
                 }
                 //
                 custom_form_ff.setCustomFFs(customFFs, i);
