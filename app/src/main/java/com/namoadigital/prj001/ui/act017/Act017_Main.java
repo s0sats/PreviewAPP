@@ -23,9 +23,11 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Module_Schedules_Adapter;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
@@ -174,6 +176,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         //
         translateList.add("alert_error_on_create_form_ttl");
         translateList.add("alert_error_on_create_form_msg");
+        //
+        translateList.add("form_type_dialog_lbl");
         translateList.add("alert_no_serial_found_ttl");
         translateList.add("alert_no_serial_found_msg");
         translateList.add("dialog_serial_search_ttl");
@@ -330,14 +334,16 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         //16/08/18
         mAdapter.setOnIvCommentClickListner(new Module_Schedules_Adapter.OnIvCommentClickListner() {
             @Override
-            public void OnIvCommentClick(String comment) {
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_schedule_comment_ttl"),
-                        comment,
-                        null,
-                        0
-                );
+            public void OnIvCommentClick(HMAux item) {
+                String form_desc_ttl = item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n"
+                        +  hmAux_Trans.get("form_type_dialog_lbl") + ": "
+                        + item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE) + " - " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC);
+
+                AlertDialog.Builder dialog_detect= new AlertDialog.Builder(context);
+                dialog_detect.setMessage(form_desc_ttl);
+                dialog_detect.setCancelable(true);
+                dialog_detect.show();
+
             }
         });
 
@@ -543,7 +549,6 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {
             mIntent.putExtras(bundle);
-            bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT017);
         }
         startActivity(mIntent);
         finish();
@@ -602,14 +607,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     @Override
     protected void processCloseACT(String result, String mRequired) {
         super.processCloseACT(result, mRequired);
-        //
-        if(wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())) {
-            wsProcess = "";
-            progressDialog.dismiss();
-            mPresenter.extractSearchResult(result);
-        }else{
-            progressDialog.dismiss();
-        }
+        progressDialog.dismiss();
+        mPresenter.extractSearchResult(result);
     }
 
     @Override

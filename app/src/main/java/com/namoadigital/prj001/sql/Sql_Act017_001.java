@@ -93,6 +93,7 @@ public class Sql_Act017_001 implements Specification {
                         "  s.schedule_prefix||'.'||s.schedule_code||'.'||s.schedule_exec schedule_pk, \n "+
                         "  s.schedule_prefix,\n" +
                         "  s.schedule_code,\n" +
+                        "  s.schedule_desc,\n" +
                         "  s.schedule_exec \n "+
                         " \n" +
                         "  FROM\n" +
