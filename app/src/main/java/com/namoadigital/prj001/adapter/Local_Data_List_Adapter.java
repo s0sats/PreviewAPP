@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,6 +114,7 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
 
         //Inicializa variaveis do layout da celula
         LinearLayout llBackground = convertView.findViewById(R.id.local_data_list_cell_01_ll_bg);
+        ConstraintLayout clHeader = convertView.findViewById(R.id.local_data_list_cell_01_cl_header);
         //
         TextView tv_schedule_lbl = convertView.findViewById(R.id.local_data_list_cell_01_tv_schedule_label);
         TextView tv_schedule_comments_lbl = convertView.findViewById(R.id.local_data_list_cell_01_tv_schedule_comment_ttl);
@@ -195,8 +198,10 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                                             ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                                     )
                     );
+                    setTvDateLblConstraint(clHeader, ConstraintSet.PARENT_ID);
                 }else{
                     tv_date_lbl.setText(ToolBox_Inf.formatScheduleIntervalDateFormatted(context, dateStart, dateEnd));
+                    setTvDateLblConstraint(clHeader, R.id.local_data_list_cell_01_tv_status_val);
                 }
                 tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_PROCESS));
                 tv_status_val.setTextColor(
@@ -259,6 +264,13 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
         }
 
         return convertView;
+    }
+
+    private void setTvDateLblConstraint(ConstraintLayout clHeader, int parentId) {
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.clone(clHeader);
+        constraintSet.connect(R.id.local_data_list_cell_01_tv_date_label, ConstraintSet.RIGHT, parentId, ConstraintSet.LEFT, 4);
+        constraintSet.applyTo(clHeader);
     }
 
     private void setScheduleComments(HMAux item, TextView tv_schedule_comments_lbl) {

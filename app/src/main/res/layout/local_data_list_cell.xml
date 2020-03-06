@@ -10,6 +10,7 @@
     android:background="@drawable/namoa_cell_8_states">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/local_data_list_cell_01_cl_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -33,26 +34,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"
-            tools:text="DONE"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/local_data_list_cell_01_tv_date_label"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/local_data_list_cell_01_tv_date_label"
             app:layout_constraintTop_toTopOf="@+id/local_data_list_cell_01_tv_schedule_label"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="DONE" />
 
         <TextView
             android:id="@+id/local_data_list_cell_01_tv_date_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
             android:layout_marginBottom="4dp"
             android:paddingBottom="4dp"
             android:text="item_date"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/local_data_list_cell_01_tv_status_val"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/local_data_list_cell_01_tv_schedule_label" />
 
