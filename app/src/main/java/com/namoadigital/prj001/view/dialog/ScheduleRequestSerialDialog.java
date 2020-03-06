@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -94,6 +96,10 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
         iniActions();
         //
         setConfig();
+        //
+        getWindow().clearFlags(
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
     }
 
     @Override
@@ -159,12 +165,21 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
         setTitle( hmAux_Trans.get("dialog_ttl"));
         tvQuestion.setText(hmAux_Trans.get("inform_serial_confirm"));
         //tvQuestion.setText("Deseja informar serial ?");
-        tvProduct.setText(
-            ToolBox_Inf.getFormatedProductIdDesc(
+        String productIdDesc = ToolBox_Inf.getFormatedProductIdDesc(
                 auxSchedule.get(MD_Schedule_ExecDao.PRODUCT_ID),
                 auxSchedule.get(MD_Schedule_ExecDao.PRODUCT_DESC)
-            )
         );
+
+        if(productIdDesc.contains("null")){
+            productIdDesc = ToolBox_Inf.getFormatedProductIdDesc(
+                    auxSchedule.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID),
+                    auxSchedule.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC)
+            );
+        }
+        tvProduct.setText(
+                productIdDesc != null ? productIdDesc : ""
+        );
+
         rdoNo.setText( hmAux_Trans.get("sys_alert_btn_no"));
         rdoYes.setText( hmAux_Trans.get("sys_alert_btn_yes"));
         mketSerial.setHint( hmAux_Trans.get("serial_hint"));

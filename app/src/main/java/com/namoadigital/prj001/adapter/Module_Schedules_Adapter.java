@@ -334,6 +334,8 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 //
                 if (item.get(GE_Custom_Form_LocalDao.SERIAL_ID).trim().length() == 0) {
                     tv_item_serial_id.setVisibility(View.GONE);
+                }else{
+                    tv_item_serial_id.setVisibility(View.VISIBLE);
                 }
 
                 tv_ttl.setText(hmAux_Trans.get("ttl_form"));
