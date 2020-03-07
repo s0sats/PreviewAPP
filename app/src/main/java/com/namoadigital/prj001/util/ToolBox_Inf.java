@@ -76,6 +76,7 @@ import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -6512,5 +6513,30 @@ public class ToolBox_Inf {
         }
         //
         return productId +" "+ productDesc;
+    }
+
+    /**
+     * LUCHE - 06/03/2020
+     *
+     * Metodo que verifica se a configuração do produto permite avançar para a criação a tela de
+     * seleção de serial.
+     *
+     * @param auxSchedule - Item regatado do dialog
+     * @return - Verdadeiro se se serial não foi informado e se produto permitie criação de serial
+     */
+
+    public static boolean productConfigPreventToProceed(HMAux auxSchedule) {
+        try {
+            boolean followToAct020 =
+                 auxSchedule.get(MD_Schedule_ExecDao.SERIAL_ID).isEmpty()
+                 && auxSchedule.get(MD_Schedule_ExecDao.ALLOW_NEW_SERIAL_CL).equalsIgnoreCase("1");
+            //
+            return !followToAct020;
+        }catch (Exception e){
+            e.printStackTrace();
+            registerException(CLASS_NAME,e);
+            return false;
+        }
+
     }
 }

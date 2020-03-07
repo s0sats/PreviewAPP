@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -94,6 +95,9 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
         iniActions();
         //
         setConfig();
+        //Sem essas flags não abre o teclado no campo Mket
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+            | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
     }
 
     @Override
@@ -158,7 +162,6 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
     private void setLabels() {
         setTitle( hmAux_Trans.get("dialog_ttl"));
         tvQuestion.setText(hmAux_Trans.get("inform_serial_confirm"));
-        //tvQuestion.setText("Deseja informar serial ?");
         tvProduct.setText(
             ToolBox_Inf.getFormatedProductIdDesc(
                 auxSchedule.get(MD_Schedule_ExecDao.PRODUCT_ID),
@@ -269,6 +272,8 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
             searchIcon = null;
             mketSerial.setVisibility(View.GONE);
             btnText =  hmAux_Trans.get("btn_open_form");
+            tilSerial.setErrorEnabled(false);
+            tilSerial.setError(null);
         } else{
             searchIcon =  context.getResources().getDrawable(R.drawable.icon_lupa_ns);
             searchIcon.setColorFilter(context.getResources().getColor(R.color.padrao_WHITE), PorterDuff.Mode.SRC_ATOP);
@@ -286,7 +291,7 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
 
     public String getSerialId(){
         if(mketSerial != null){
-            return mketSerial.getText().toString().trim();
+            return  ToolBox_Inf.removeAllLineBreaks(mketSerial.getText().toString()) ;
         }
         //
         return "";

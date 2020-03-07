@@ -34,7 +34,6 @@ import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
@@ -495,17 +494,21 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     }
 
     private void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page) {
-        if (serial_list == null || serial_list.size() == 0) {
+        HMAux item = serialDialog.getAuxSchedule();
+        //
+        if (ToolBox_Inf.productConfigPreventToProceed(item) && (serial_list == null || serial_list.size() == 0)) {
+            //TODO SE BARRADO PELA CONFIGURAÇÃO DO PRODUTO, TROCAR MSG DE ERRO.
             mView.showMsg(
                 Act017_Main.EMPTY_SERIAL_SEARCH,
                 new HMAux()
             );
         } else {
-            HMAux item = serialDialog.getAuxSchedule();
             int idx = getIdxIfEquals(
                 serial_list,
                 item.get(MD_Schedule_ExecDao.PRODUCT_CODE),
-                item.hasConsistentValue(MD_Schedule_ExecDao.SERIAL_ID) ? item.get(MD_Schedule_ExecDao.SERIAL_ID) : serialDialog.getSerialId()
+                item.hasConsistentValue(MD_Schedule_ExecDao.SERIAL_ID) && !item.get(MD_Schedule_ExecDao.SERIAL_ID).isEmpty()
+                    ? item.get(MD_Schedule_ExecDao.SERIAL_ID)
+                    : serialDialog.getSerialId()
             );
             //
             Bundle bundle = new Bundle();
@@ -757,21 +760,6 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         //
         return result != null ? result : new MD_Product();
     }
-
-    private void updateFormStatus(HMAux item) {
-
-        formLocalDao.addUpdate(
-            new GE_Custom_Form_Local_Sql_004(
-                item.get(GE_Custom_Form_LocalDao.CUSTOMER_CODE),
-                item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE),
-                item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE),
-                item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION),
-                item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA),
-                Constant.SYS_STATUS_IN_PROCESSING
-            ).toSqlQuery()
-        );
-    }
-
 
     public boolean isAnyFormInProcessing(HMAux item) {
 

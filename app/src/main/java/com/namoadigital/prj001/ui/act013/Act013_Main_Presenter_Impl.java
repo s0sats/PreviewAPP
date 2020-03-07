@@ -191,6 +191,8 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
 
     @Override
     public void processScheduleFlow(HMAux scheduleItem) {
+        addSelectedDateToItem(scheduleItem);
+        //
         if(hasSerialDefined(scheduleItem)){
             buildRequestSerialDialog(
                 scheduleItem,
@@ -212,6 +214,20 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 true
             );
         }
+    }
+
+    private void addSelectedDateToItem(HMAux scheduleItem) {
+        scheduleItem.put(
+            Act017_Main.ACT017_ADAPTER_DATE_REF,
+            extractScheduleSelectedDate(scheduleItem.get(MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT))
+        );
+    }
+
+    private String extractScheduleSelectedDate(String scheduleStartDate) {
+        if(scheduleStartDate != null  && !scheduleStartDate.isEmpty() && scheduleStartDate.length() >= 10){
+            return scheduleStartDate.substring(0,10);
+        }
+        return scheduleStartDate;
     }
 
     /**
