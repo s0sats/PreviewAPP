@@ -142,6 +142,8 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
 
         if (item.get(GE_Custom_Form_LocalDao.SERIAL_ID).trim().length() == 0) {
             tv_serial_lbl.setVisibility(View.GONE);
+        }else{
+            tv_serial_lbl.setVisibility(View.VISIBLE);
         }
         //
         TextView tv_form_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_form_label);
