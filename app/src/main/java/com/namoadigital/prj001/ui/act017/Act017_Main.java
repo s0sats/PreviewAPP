@@ -26,7 +26,6 @@ import com.namoadigital.prj001.adapter.Module_Schedules_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
@@ -69,6 +68,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public static final String MODULE_SCHEDULE_DATE_REF = "module_schedule_date_ref";
     public static final String MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR = "module_schedule_form_data_creation_error";
     public static final String EMPTY_SERIAL_SEARCH = "empty_serial_search";
+    public static final String SERIAL_CREATION_DENIED = "serial_creation_denied" ;
 
     private ListView lv_schedules;
     private Bundle bundle;
@@ -182,6 +182,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("alert_no_serial_found_msg");
         translateList.add("dialog_serial_search_ttl");
         translateList.add("dialog_serial_search_start");
+        translateList.add("alert_product_no_allow_new_serial_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -458,6 +459,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             case EMPTY_SERIAL_SEARCH:
                 title = hmAux_Trans.get("alert_no_serial_found_ttl");
                 msg = hmAux_Trans.get("alert_no_serial_found_msg");
+                btnNegative = 0;
+                break;
+            case SERIAL_CREATION_DENIED:
+                title = hmAux_Trans.get("alert_no_serial_found_ttl");
+                msg = hmAux_Trans.get("alert_product_no_allow_new_serial_msg");
                 btnNegative = 0;
                 break;
         }

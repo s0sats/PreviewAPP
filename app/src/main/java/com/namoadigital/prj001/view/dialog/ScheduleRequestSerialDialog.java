@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -163,15 +164,31 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
         setTitle( hmAux_Trans.get("dialog_ttl"));
         tvQuestion.setText(hmAux_Trans.get("inform_serial_confirm"));
         tvProduct.setText(
-            ToolBox_Inf.getFormatedProductIdDesc(
-                auxSchedule.get(MD_Schedule_ExecDao.PRODUCT_ID),
-                auxSchedule.get(MD_Schedule_ExecDao.PRODUCT_DESC)
-            )
+            getProductInfo()
         );
         rdoNo.setText( hmAux_Trans.get("sys_alert_btn_no"));
         rdoYes.setText( hmAux_Trans.get("sys_alert_btn_yes"));
         mketSerial.setHint( hmAux_Trans.get("serial_hint"));
         btnAction.setText( hmAux_Trans.get("btn_search_serial"));
+    }
+
+    @NonNull
+    /**
+     * LUCHE - 09/03/2020
+     *
+     * Metodo que gera a descrição do produto formatada , baseada na chave enviada.
+     * Quando dialog chamado da act017, chave do hmAux é PRODUCT_ID, quando act013 CUSTOM_PRODUCT_ID
+     */
+    private String getProductInfo() {
+        String prodId = auxSchedule.containsKey(MD_Schedule_ExecDao.PRODUCT_ID)
+            ? auxSchedule.get(MD_Schedule_ExecDao.PRODUCT_ID)
+            : auxSchedule.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID);
+        //
+        String prodDesc = auxSchedule.containsKey(MD_Schedule_ExecDao.PRODUCT_DESC)
+            ? auxSchedule.get(MD_Schedule_ExecDao.PRODUCT_DESC)
+            : auxSchedule.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC);
+        //
+        return ToolBox_Inf.getFormatedProductIdDesc(prodId,prodDesc);
     }
 
     private void iniActions() {

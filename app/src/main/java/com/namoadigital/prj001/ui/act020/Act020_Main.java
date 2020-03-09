@@ -35,6 +35,7 @@ import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
+import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -100,6 +101,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private String customFormCodeDesc;
     //LUCHE - 03/03/2020 - Novo Agendamento
     private Bundle scheduleBundle = new Bundle();
+    private Bundle act013Bundle = new Bundle();
+    private String requestingAct;
 
 
     @Override
@@ -213,7 +216,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ),
-                getBundleForNFormFinishPlusNew()
+                getBundleForNFormFinishPlusNew(),
+                requestingAct
         );
         //
         btn_no_serial = (Button) findViewById(R.id.act020_btn_no_serial);
@@ -359,6 +363,14 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 scheduleBundle.putString(Constant.ACT013_CUSTOM_FORM_DATA,bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA,""));
                 scheduleBundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,""));
                 scheduleBundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,""));
+            }
+            //
+            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT006);
+            //
+            if(requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT013)){
+                act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, true));
+                act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, false));
+                act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED,false));
             }
         }
     }
@@ -587,6 +599,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         Intent mIntent = new Intent(context, Act008_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.putAll(scheduleBundle);
+        bundle.putAll(act013Bundle);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, requestingAct);
         mIntent.putExtras(bundle);
         //
         startActivity(mIntent);
@@ -626,7 +640,16 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         finish();
     }
 
-//    @Override
+    @Override
+    public void callAct013(Context context) {
+        Intent mIntent = new Intent(context, Act013_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(act013Bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    //    @Override
 //    public void closeDrawer() {
 //        mDrawerLayout.closeDrawer(GravityCompat.START);
 //    }

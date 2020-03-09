@@ -497,9 +497,9 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         HMAux item = serialDialog.getAuxSchedule();
         //
         if (ToolBox_Inf.productConfigPreventToProceed(item) && (serial_list == null || serial_list.size() == 0)) {
-            //TODO SE BARRADO PELA CONFIGURAÇÃO DO PRODUTO, TROCAR MSG DE ERRO.
+            //Se serial não definido, significa que não avançou para proxima tela pois o produto não permite criação de serial.
             mView.showMsg(
-                Act017_Main.EMPTY_SERIAL_SEARCH,
+                !item.get(MD_Schedule_ExecDao.SERIAL_ID).isEmpty() ? Act017_Main.EMPTY_SERIAL_SEARCH : Act017_Main.SERIAL_CREATION_DENIED,
                 new HMAux()
             );
         } else {

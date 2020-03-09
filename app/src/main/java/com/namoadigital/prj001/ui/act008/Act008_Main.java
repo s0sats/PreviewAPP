@@ -47,6 +47,7 @@ import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit;
@@ -872,6 +873,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public void callAct013(Context context) {
         Intent mIntent = new Intent(context, Act013_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle act013Bundle = new Bundle();
+        act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING));
+        act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE));
+        act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED));
+        mIntent.putExtras(act013Bundle);
         startActivity(mIntent);
         finish();
     }

@@ -6506,8 +6506,8 @@ public class ToolBox_Inf {
      * @return
      */
     public static String getFormatedProductIdDesc(String productId, String productDesc) {
-        if(productId != null && productId.equalsIgnoreCase("null") && !productId.isEmpty()
-            && productDesc != null && productDesc.equalsIgnoreCase("null") && !productDesc.isEmpty()
+        if(productId != null && !productId.equalsIgnoreCase("null") && !productId.isEmpty()
+            && productDesc != null && !productDesc.equalsIgnoreCase("null") && !productDesc.isEmpty()
         ){
             return productId +" "+ productDesc;
         }

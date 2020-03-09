@@ -32,6 +32,7 @@ import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -48,6 +49,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     public static final String START_FORM = "start_form";
     public static final String FORM_DATA_CREATION_ERROR = "form_data_creation_error";
     public static final String EMPTY_SERIAL_SEARCH = "empty_serial_search" ;
+    public static final String SERIAL_CREATION_DENIED = "serial_creation_denied" ;
 
     private Act013_Main_Presenter mPresenter;
     private Local_Data_List_Adapter mAdapter;
@@ -63,6 +65,9 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
 
     private boolean accessToSchedule;
     private String wsProcess;
+    private boolean filterInProcessing;
+    private boolean filterSchedule;
+    private boolean filterFinalized;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -116,6 +121,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         translateList.add("alert_no_serial_found_msg");
         translateList.add("dialog_serial_search_ttl");
         translateList.add("dialog_serial_search_start");
+        translateList.add("alert_product_no_allow_new_serial_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -154,7 +160,6 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         checkBoxList = new ArrayList<>();
         //
         chk_processing = (CheckBox) findViewById(R.id.act013_chk_in_process);
-        chk_processing.setChecked(true);
         chk_processing.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_IN_PROCESSING))));
         //
         chk_scheduled = (CheckBox) findViewById(R.id.act013_chk_scheduled);
@@ -163,6 +168,8 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         //
         chk_finalized = (CheckBox) findViewById(R.id.act013_chk_finalized);
         chk_finalized.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_FINALIZED))));
+        //
+        initChkValues();
         //Add checkbox na lista
         checkBoxList.add(chk_processing);
         checkBoxList.add(chk_scheduled);
@@ -170,8 +177,18 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         //
         iv_help = (ImageView) findViewById(R.id.act013_iv_help);
         //
-        //mPresenter.getPendencies(true,false);
         filterApply();
+    }
+
+    /**
+     * LUCHE - 09/03/2020
+     * Metodo que inicializa os valores dos checkbox via parametros do bundle.
+     * Necessario após novo agendamento
+     */
+    private void initChkValues() {
+        chk_processing.setChecked(filterInProcessing);
+        chk_scheduled.setChecked(filterSchedule);
+        chk_finalized.setChecked(filterFinalized);
     }
 
     private void recoverIntentsInfo() {
@@ -179,8 +196,14 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         //
         if (bundle != null) {
             requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT012);
+            filterInProcessing = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, true);
+            filterSchedule = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, false);
+            filterFinalized = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED, false);
         } else {
             requesting_act = Constant.ACT012;
+            filterInProcessing = true;
+            filterSchedule = false;
+            filterFinalized = false;
         }
 
     }
@@ -383,6 +406,11 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                 msg = hmAux_Trans.get("alert_no_serial_found_msg");
                 btnNegative = 0;
                 break;
+            case SERIAL_CREATION_DENIED:
+                title = hmAux_Trans.get("alert_no_serial_found_ttl");
+                msg = hmAux_Trans.get("alert_product_no_allow_new_serial_msg");
+                btnNegative = 0;
+                break;
         }
 
         if(btnNegative != null) {
@@ -464,6 +492,10 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {
             bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT013);
+            bundle.putBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, chk_processing.isChecked());
+            bundle.putBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, chk_scheduled.isChecked());
+            bundle.putBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED, chk_finalized.isChecked());
+            //
             mIntent.putExtras(bundle);
         }
         startActivity(mIntent);

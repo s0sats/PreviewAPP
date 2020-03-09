@@ -33,6 +33,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -48,6 +49,7 @@ import java.util.List;
 public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
 
     private final Bundle bundleForNFormFinishPlusNew;
+    private String requestingAct;
     private Context context;
     private Act020_Main_View mView;
     private HMAux hmAux_Trans = new HMAux();
@@ -60,7 +62,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     private boolean downloadStarted = false;
     private MD_Product_Serial tProductSerial;
 
-    public Act020_Main_Presenter_Impl(Context context, Act020_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_LocalDao formLocalDao, Sync_ChecklistDao syncChecklistDao, GE_Custom_Form_OperationDao formOperationDao, MD_ProductDao productDao, Bundle bundleForNFormFinishPlusNew) {
+    public Act020_Main_Presenter_Impl(Context context, Act020_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_LocalDao formLocalDao, Sync_ChecklistDao syncChecklistDao, GE_Custom_Form_OperationDao formOperationDao, MD_ProductDao productDao, Bundle bundleForNFormFinishPlusNew, String requestingAct) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
@@ -70,6 +72,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         this.productDao = productDao;
         this.serialDao = new MD_Product_SerialDao(context);
         this.bundleForNFormFinishPlusNew = bundleForNFormFinishPlusNew;
+        this.requestingAct = requestingAct;
     }
 
     @Override
@@ -487,12 +490,14 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         }
     }
 
-    // New
-
     @Override
     public void onBackPressedClicked() {
         if(mView.isScheduleFlow()){
-            mView.callAct017(context);
+            if(requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT017)) {
+                mView.callAct017(context);
+            }else{
+                mView.callAct013(context);
+            }
         }else {
             mView.callAct006(context);
         }

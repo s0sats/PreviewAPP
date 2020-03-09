@@ -323,13 +323,15 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
     }
 
     private void defineSearchResultFlow(ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page) {
-        if (serial_list == null || serial_list.size() == 0) {
+        HMAux item = serialDialog.getAuxSchedule();
+        //
+        if (ToolBox_Inf.productConfigPreventToProceed(item) && (serial_list == null || serial_list.size() == 0)) {
+            //Se serial não definido, significa que não avançou para proxima tela pois o produto não permite criação de serial.
             mView.showMsg(
-                Act013_Main.EMPTY_SERIAL_SEARCH,
+                !item.get(MD_Schedule_ExecDao.SERIAL_ID).isEmpty() ? Act013_Main.EMPTY_SERIAL_SEARCH : Act013_Main.SERIAL_CREATION_DENIED,
                 new HMAux()
             );
         } else {
-            HMAux item = serialDialog.getAuxSchedule();
             int idx = getIdxIfEquals(
                 serial_list,
                 item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE),

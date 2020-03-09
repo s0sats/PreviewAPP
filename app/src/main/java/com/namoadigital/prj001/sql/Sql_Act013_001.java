@@ -8,6 +8,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
@@ -109,6 +110,7 @@ public class Sql_Act013_001 implements Specification {
             "                          AND l.schedule_prefix = e.schedule_prefix\n" +
             "                          AND l.schedule_code = e.schedule_code \n" +
             "                          AND l.schedule_exec =  e.schedule_exec\n" +
+            "                          AND l.custom_form_status <> '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"'\n" +
             "                       )";
     }
 

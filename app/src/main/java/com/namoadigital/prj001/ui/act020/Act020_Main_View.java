@@ -37,6 +37,8 @@ public interface Act020_Main_View {
 
     void callAct017(Context context);
 
+    void callAct013(Context context);
+
     //void closeDrawer();
 
 }
