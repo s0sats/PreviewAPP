@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +37,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.ModuleFilterDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -364,54 +364,28 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     private void showFilterDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        //
-        LayoutInflater inflater = this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.module_filter_dialog, null);
-        //
-        TextView tv_title = (TextView) view.findViewById(R.id.module_filter_dialog_tv_title);
-        tv_title.setText(hmAux_Trans.get("alert_filter_dialog_msg"));
-        final CheckBox chk_site = (CheckBox) view.findViewById(R.id.schedule_filter_chk_site_logged);
-        chk_site.setText(hmAux_Trans.get("lbl_site"));
-        chk_site.setChecked(filter_site);
-        chk_site.setTag(ConstantBaseApp.SCHEDULE_SITE_LOGGED_FILTER_PREFERENCE);
-        //
-        final CheckBox chk_form = (CheckBox) view.findViewById(R.id.schedule_filter_chk_n_form);
-        chk_form.setText(hmAux_Trans_Extra.get("lbl_checklist"));
-        chk_form.setChecked(filter_form);
-        chk_form.setTag(ConstantBaseApp.SCHEDULE_N_FORM_FILTER_PREFERENCE);
-        //
-        final CheckBox chk_form_ap = (CheckBox) view.findViewById(R.id.schedule_filter_chk_n_form_ap);
-        chk_form_ap.setText(hmAux_Trans_Extra.get("lbl_form_ap"));
-        chk_form_ap.setChecked(filter_form_ap);
-        chk_form_ap.setTag(ConstantBaseApp.SCHEDULE_N_FORM_AP_FILTER_PREFERENCE);
-        //
-        final CheckBox chk_ticket = (CheckBox) view.findViewById(R.id.schedule_filter_chk_n_ticket);
-        chk_ticket.setText(hmAux_Trans_Extra.get("lbl_ticket"));
-        chk_ticket.setChecked(filter_ticket);
-        chk_ticket.setTag(ConstantBaseApp.SCHEDULE_N_TICKET_FILTER_PREFERENCE);
-        //
-        alert
-                .setView(view)
-                .setCancelable(true)
-                .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        filter_form = chk_form.isChecked();
-                        filter_form_ap = chk_form_ap.isChecked();
-                        filter_site = chk_site.isChecked();
-                        filter_ticket = chk_ticket.isChecked();
-                        //LUCHE - 21/02/2020
-                        //Salva alterações na preferencias.Como esse dialog, só aplica os filtros se usr der ok
-                        //não foi possivel colocar o save no listener de troca de dados.
-                        mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_site.getTag()),chk_site.isChecked());
-                        mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_form.getTag()),chk_form.isChecked());
-                        mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_form_ap.getTag()),chk_form_ap.isChecked());
-                        mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_ticket.getTag()),chk_ticket.isChecked());
-                        //
-                        applyModuleFilter();
-                    }
-                });
+         ModuleFilterDialog alert = new ModuleFilterDialog(
+            context,
+            hmAux_Trans,
+            hmAux_Trans_Extra,
+            new ModuleFilterDialog.OnPositiveClickListener() {
+                @Override
+                public void onPositiveClick(CheckBox chk_site, CheckBox chk_form, CheckBox chk_form_ap, CheckBox chk_ticket) {
+                    filter_site = chk_site.isChecked();
+                    filter_form = chk_form.isChecked();
+                    filter_form_ap = chk_form_ap.isChecked();
+                    filter_ticket = chk_ticket.isChecked();
+                    //LUCHE - 21/02/2020
+                    //Salva alterações na preferencias.Como esse dialog, só aplica os filtros se usr der ok
+                    //não foi possivel colocar o save no listener de troca de dados.
+                    mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_site.getTag()),chk_site.isChecked());
+                    mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_form.getTag()),chk_form.isChecked());
+                    mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_form_ap.getTag()),chk_form_ap.isChecked());
+                    mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_ticket.getTag()),chk_ticket.isChecked());
+                    //
+                    applyModuleFilter();
+                }
+            });
         //
         alert.show();
     }

@@ -3,22 +3,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="20dp">
-
-    <TextView
-        android:id="@+id/module_filter_dialog_tv_title"
+    >
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        android:text="Filtros - trad"
-        android:textSize="@dimen/font_size_title"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:padding="20dp"
+        >
 
-    <include
-        android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/module_filter_dialog_tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:text="Filtros - trad"
+            android:textSize="@dimen/font_size_title"
+            android:textStyle="bold" />
+
+        <include
+            layout="@layout/schedule_filter_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="-20dp" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/module_filter_dialog_btn_ok"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="-20dp"
-        layout="@layout/schedule_filter_layout"/>
-
+        android:layout_gravity="end"
+        android:background="@drawable/namoa_icon_bg_states"
+        android:text="OK"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        />
 
 </LinearLayout>
