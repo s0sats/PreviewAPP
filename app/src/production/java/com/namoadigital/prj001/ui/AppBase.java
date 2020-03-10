@@ -103,11 +103,11 @@ public class AppBase extends Application {
         CACHE_PDF = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PDF";
 
         DB_NAME_BASE = "namoa_sms.db3";
-        DB_VERSION_BASE = 9;
+        DB_VERSION_BASE = 10;
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
         DB_NAME_CUSTOM = "cc.db3";
-        DB_VERSION_CUSTOM = 42;
+        DB_VERSION_CUSTOM = 43;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";
