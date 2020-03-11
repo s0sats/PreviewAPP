@@ -39,7 +39,7 @@ public class Act016_Main_Presenter_Impl implements Act016_Main_Presenter {
     @Override
     public void getSchedule(boolean filter_form, boolean filter_form_ap, boolean filter_site, boolean filter_ticket) {
         ArrayList<HMAux> schedules = new ArrayList<>();
-        if (filter_form || filter_form_ap) {
+        if (filter_form || filter_form_ap || filter_ticket) {
             schedules =
                     (ArrayList<HMAux>) formLocalDao.query_HM(
                             new Sql_Act016_001(
@@ -52,7 +52,7 @@ public class Act016_Main_Presenter_Impl implements Act016_Main_Presenter {
                             ).toSqlQuery()
                     );
         }else{
-            //SE ambos falso, chama query com amboos parametro true
+            //SE todos falso, chama query com os parametro true
             schedules =
                     (ArrayList<HMAux>) formLocalDao.query_HM(
                             new Sql_Act016_001(

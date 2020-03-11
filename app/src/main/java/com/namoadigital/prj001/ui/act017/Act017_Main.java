@@ -22,10 +22,8 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Module_Schedules_Adapter;
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
@@ -33,6 +31,7 @@ import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
+import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -69,6 +68,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public static final String MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR = "module_schedule_form_data_creation_error";
     public static final String EMPTY_SERIAL_SEARCH = "empty_serial_search";
     public static final String SERIAL_CREATION_DENIED = "serial_creation_denied" ;
+    public static final String MODULE_TICKET_EXEC_CONFIRM = "module_ticket_exec_confirm" ;
 
     private ListView lv_schedules;
     private Bundle bundle;
@@ -313,9 +313,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
-
                 item_selected.putAll(item);
-
                 mPresenter.checkScheduleFlow(item);
             }
         });
@@ -330,18 +328,17 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 schedules,
                 R.layout.module_schedules_cell,
                 R.layout.namoa_ap_cell,
-                R.layout.module_schedules_date_cell
+                R.layout.module_schedules_date_cell,
+                R.layout.module_schedules_ticket_cell
+
         );
         //16/08/18
         mAdapter.setOnIvCommentClickListner(new Module_Schedules_Adapter.OnIvCommentClickListner() {
             @Override
             public void OnIvCommentClick(HMAux item) {
-                String form_desc_ttl = item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n"
-                        +  hmAux_Trans.get("form_type_dialog_lbl") + ": "
-                        + item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE) + " - " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC);
-
+                String commentMsg = mPresenter.getCommentMessage(item);
                 AlertDialog.Builder dialog_detect= new AlertDialog.Builder(context);
-                dialog_detect.setMessage(form_desc_ttl);
+                dialog_detect.setMessage(commentMsg);
                 dialog_detect.setCancelable(true);
                 dialog_detect.show();
 
@@ -391,7 +388,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     private void applyModuleFilter() {
-        mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, serial_id, late, filter_site);
+        mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap,filter_ticket, serial_id, late, filter_site);
         //
         if (filter_form || filter_form_ap || filter_site || filter_ticket) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
@@ -439,6 +436,17 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 title = hmAux_Trans.get("alert_no_serial_found_ttl");
                 msg = hmAux_Trans.get("alert_product_no_allow_new_serial_msg");
                 btnNegative = 0;
+                break;
+            case MODULE_TICKET_EXEC_CONFIRM:
+                title = hmAux_Trans.get("alert_no_serial_found_ttl");
+                msg = hmAux_Trans.get("alert_product_no_allow_new_serial_msg");
+                btnNegative = 1;
+                listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.checkTicketFlow(item);
+                    }
+                };
                 break;
         }
 
@@ -535,11 +543,22 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     @Override
+    public void callAct071(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act071_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (bundle != null) {
+            mIntent.putExtras(bundle);
+        }
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PROCESSO_SELECAO_ZONA:
                 if (resultCode == RESULT_OK){
-                    mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, serial_id, late, filter_site);
+                    mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, filter_ticket, serial_id, late, filter_site);
                     iniUIFooter();
                     //
                     mPresenter.checkScheduleFlow(item_selected);

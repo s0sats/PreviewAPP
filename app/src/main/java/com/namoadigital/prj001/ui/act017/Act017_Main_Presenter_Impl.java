@@ -13,6 +13,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -21,6 +22,8 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -28,6 +31,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
@@ -43,7 +47,11 @@ import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.sql.Sql_Act017_001;
 import com.namoadigital.prj001.sql.Sql_Act017_002;
 import com.namoadigital.prj001.sql.Sql_Act017_003;
+import com.namoadigital.prj001.sql.Sql_Act017_004;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_010;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -74,6 +82,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     private MD_SiteDao siteDao;
     private MD_Schedule_ExecDao scheduleExecDao;
     private ScheduleRequestSerialDialog serialDialog;
+    private TK_TicketDao ticketDao;
 
 
     public Act017_Main_Presenter_Impl(Context context, Act017_Main_View mView, GE_Custom_Form_LocalDao formLocalDao, HMAux hmAux_Trans) {
@@ -92,17 +101,22 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
         );
+        this.ticketDao = new TK_TicketDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
     }
 
     @Override
-    public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap, String serial_id, boolean late, boolean filter_site_logged) {
+    public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap, boolean filter_ticket, String serial_id, boolean late, boolean filter_site_logged) {
         ArrayList<HMAux> schedules = new ArrayList<>();
         //Se atrasado, ignora data
         if (late) {
             selected_date = null;
         }
         //
-        if (filter_form || (!filter_form && !filter_form_ap)) {
+        if (filter_form || (!filter_form && !filter_form_ap && !filter_ticket)) {
             ArrayList<HMAux> schedulesForm =
                 (ArrayList<HMAux>) formLocalDao.query_HM(
                     new Sql_Act017_001(
@@ -119,7 +133,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             }
         }
         //
-        if (filter_form_ap || (!filter_form && !filter_form_ap)) {
+        if (filter_form_ap || (!filter_form && !filter_form_ap && !filter_ticket)) {
             ArrayList<HMAux> schedulesFormAP =
                 (ArrayList<HMAux>) formApDao.query_HM(
                     new Sql_Act017_002(
@@ -134,6 +148,25 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 schedules.addAll(schedulesFormAP);
             }
         }
+        //LUCHE - 11/03/2020
+        //Busca ticket agendados.
+        if (filter_ticket || (!filter_form && !filter_form_ap && !filter_ticket)) {
+            ArrayList<HMAux> schedulesTicket =
+                (ArrayList<HMAux>) ticketDao.query_HM(
+                    new Sql_Act017_004(
+                        context,
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        selected_date,
+                        serial_id,
+                        late,
+                        filter_site_logged
+                    ).toSqlQuery()
+                );
+            if (schedulesTicket != null) {
+                schedules.addAll(schedulesTicket);
+            }
+        }
+
         //Seta Qtd no tv
         mView.setQty(schedules.size(), getTotalQty(selected_date, filter_form, filter_form_ap, late, filter_site_logged));
         //Ordena agendados por data
@@ -239,9 +272,129 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             case Constant.MODULE_FORM_AP:
                 prepareOpenFormAP(item);
                 break;
-
+            case ConstantBaseApp.PROFILE_MENU_TICKET:
+                processTicketFlow(item);
+                break;
         }
 
+    }
+
+    private void processTicketFlow(HMAux item) {
+        if(!item.get(MD_Schedule_ExecDao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_SCHEDULE)){
+            prepareOpenTicket(item);
+        }else {
+            mView.showMsg(
+                Act017_Main.MODULE_TICKET_EXEC_CONFIRM,
+                item
+            );
+        }
+    }
+
+    @Override
+    public void checkTicketFlow(HMAux item) {
+        if(createTicketForSchedule(item)){
+
+        }else{
+
+        }
+    }
+
+    /**
+     * LUCHE - 11/03/2020
+     * <p></p>
+     * Metodo que tenta a criação do ticket caso ele não exista.
+     * Caso exista, atualiza item com os valores da pk do ticket.
+     * @param item - item selecionado na lista.
+     * @return - Verdadeiro se o item já existir na tabela de ticket, ou se ticket criado com sucesso.
+     */
+    private boolean createTicketForSchedule(HMAux item) {
+        if(isTicketAlreadyCreated(item)){
+            return true;
+        }else{
+            int nextTicketCode = getNextScheduelTicketCode();
+            //
+            if(nextTicketCode > 0){
+
+            }
+        }
+        return false;
+    }
+
+    /**
+     * LUCHE - 11/03/2020
+     * <p></p>
+     * Metodo que pega o proximo ticketCode para tickets criados via agendamento.
+     * O tickets criados via agendamento, terão sempre o prefixo  = 0.
+     * @return - Proximo ticket code  ou -1 em caso de erro.
+     */
+    private int getNextScheduelTicketCode() {
+        HMAux auxCode = ticketDao.getByStringHM(
+            new TK_Ticket_Sql_010(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
+        );
+        //
+        if (auxCode != null && auxCode.size() > 0 && auxCode.hasConsistentValue(TK_Ticket_Sql_010.NEXT_SCHEDULE_TICKET_CODE) ){
+            return ToolBox_Inf.convertStringToInt(auxCode.get(TK_Ticket_Sql_010.NEXT_SCHEDULE_TICKET_CODE));
+        }
+        return -1;
+    }
+
+    /**
+     * LUCHE - 11/03/2020
+     * <p></p>
+     * Metodo que verifica se o ticket ja existe na tabela ticket
+     * @param item - item selecionado
+     * @return - Verdadeiro se o ticket ja existir na tabela.
+     */
+    private boolean isTicketAlreadyCreated(HMAux item) {
+        TK_Ticket tkTicket = getTicketByScheduel(item);
+        if(tkTicket != null && TK_Ticket.isValidTkTicket(tkTicket) ){
+            item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getSchedule_prefix()));
+            item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getSchedule_code()));
+            return true;
+        }
+        return false;
+    }
+    /**
+     * LUCHE - 11/03/2020
+     * <p></p>
+     * Metodo que resgata o ticket da tabela de ticket.
+     * @param item - item selecionado
+     * @return - Obj ticket ou null se não encontrar
+     */
+    private TK_Ticket getTicketByScheduel(HMAux item) {
+        return ticketDao.getByString(
+            new TK_Ticket_Sql_009(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX),
+                item.get(MD_Schedule_ExecDao.SCHEDULE_CODE),
+                item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)
+            ).toSqlQuery()
+        );
+    }
+
+    private void prepareOpenTicket(HMAux item) {
+        mView.callAct071(getTicketFlowBundle(item));
+    }
+
+    private Bundle getTicketFlowBundle(HMAux item) {
+        Bundle bundle = new Bundle();
+        //
+       bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017);
+       bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX)));
+       bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_CODE, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_CODE)));
+       bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)));
+       bundle.putInt(TK_TicketDao.TICKET_PREFIX, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_PREFIX)));
+       bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_CODE)));
+       bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ToolBox_Inf.convertStringToInt(item.get(TK_Ticket_CtrlDao.TICKET_SEQ)));
+       bundle.putString(TK_TicketDao.TICKET_ID, item.get(TK_TicketDao.TICKET_ID));
+       bundle.putString(TK_TicketDao.TYPE_PATH, item.get(TK_TicketDao.TYPE_PATH));
+       bundle.putString(TK_TicketDao.TYPE_DESC, item.get(TK_TicketDao.TYPE_DESC));
+       bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN,false);
+       bundle.putString(Constant.ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
+        //
+        return bundle;
     }
 
     private boolean formSiteAccess(String site_code) {
@@ -860,6 +1013,30 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     @Override
     public boolean loadCheckboxStatusFromPreferencie(String checkboxConstant, boolean defaultValue) {
         return ToolBox_Con.getBooleanPreferencesByKey(context, checkboxConstant, defaultValue);
+    }
+
+    /**
+     * LUCHE - 11/03/2020
+     * <p>
+     * Metodo que devolve o texto a ser exibido no dialog de comentario do agendamento.
+     * @param item - Item agendado
+     * @return - String
+     */
+    @Override
+    public String getCommentMessage(HMAux item) {
+        String commentMsg = "";
+        switch (item.get(Act017_Main.ACT017_MODULE_KEY)) {
+            case Constant.MODULE_CHECKLIST:
+                commentMsg = item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n"
+                    +  hmAux_Trans.get("form_type_dialog_lbl") + ": "
+                    + item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE) + " - " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC);
+                break;
+            case ConstantBaseApp.PROFILE_MENU_TICKET:
+                commentMsg = item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n";
+                break;
+            default:
+        }
+        return commentMsg;
     }
 
     @Override

@@ -6516,6 +6516,23 @@ public class ToolBox_Inf {
     }
 
     /**
+     * LUCHE - 11/03/2020
+     * Metodo que retorna Id Descrição formatada
+     * @param objId - ID do obj
+     * @param objDesc - Descrição do obj
+     * @return
+     */
+    public static String getFormattedGenericIdDesc(String objId, String objDesc) {
+        if(objId != null && !objId.equalsIgnoreCase("null") && !objId.isEmpty()
+            && objDesc != null && !objDesc.equalsIgnoreCase("null") && !objDesc.isEmpty()
+        ){
+            return objId +" - "+ objDesc;
+        }
+        //
+        return objId +" " + objDesc;
+    }
+
+    /**
      * LUCHE - 06/03/2020
      *
      * Metodo que verifica se a configuração do produto permite avançar para a criação a tela de

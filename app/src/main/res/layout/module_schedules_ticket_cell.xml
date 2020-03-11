@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/module_schedules_ticket_cell_ll_bg"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/namoa_cell_8_states"
+    android:orientation="vertical"
+    android:padding="15dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="4dp">
+
+        <TextView
+            android:id="@+id/module_schedules_ticket_cell_tv_item_seq_exec"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:text="item_seq_exec"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/module_schedules_ticket_cell_tv_status_val"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:gravity="end"
+            android:text="DONE"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/module_schedules_ticket_cell_tv_item_date"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:paddingBottom="4dp"
+        android:text="item_date" />
+
+    <TextView
+        android:id="@+id/module_schedules_ticket_cell_tv_item_type_path"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:paddingBottom="4dp"
+        android:text="Ticket/Type/Path"
+        />
+
+    <TextView
+        android:id="@+id/module_schedules_ticket_cell_tv_item_type_desc"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:paddingBottom="4dp"
+        android:text="item_type_desc"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/module_schedules_ticket_cell_tv_item_site"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:paddingBottom="4dp"
+        android:text="item_site"
+        android:textColor="@color/namoa_color_red"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/module_schedules_ticket_cell_tv_item_product"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingBottom="4dp"
+        android:text="item_product"
+        android:textStyle="bold"
+        android:textSize="@dimen/font_size_font_12"
+        />
+
+    <TextView
+        android:id="@+id/module_schedules_ticket_cell_tv_item_serial_id"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingBottom="4dp"
+        android:text="module_schedules_ticket_cell_tv_item_serial_id"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/module_schedules_ticket_cell_tv_item_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="5"
+        android:paddingBottom="4dp"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:text="module_schedules_item_comment"
+        android:textColor="@color/namoa_color_light_blue2"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/module_schedules_ticket_cell_tv_ttl"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:text="ttl_002"
+                android:gravity="center_vertical"
+                android:layout_weight="7"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/module_schedules_ticket_cell_iv_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_user_msg_on"
+                android:tint="@color/light_to_dark_blue_color"
+                android:layout_gravity="center_vertical"
+
+                />
+
+    </LinearLayout>
+
+</LinearLayout>

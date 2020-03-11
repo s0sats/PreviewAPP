@@ -43,4 +43,6 @@ public interface Act017_Main_View {
     void addControlToActivity(MKEditTextNM mketSerial);
 
     void removeControlFromActivity(MKEditTextNM mketSerial);
+
+    void callAct071(Bundle bundle);
 }

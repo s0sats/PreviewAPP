@@ -68,6 +68,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String SYNC_REQUIRED = "sync_required";
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String TOKEN = "token";
+    public static final String SCHEDULE_PREFIX = "schedule_prefix";
+    public static final String SCHEDULE_CODE = "schedule_code";
+    public static final String SCHEDULE_EXEC = "schedule_exec";
 
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -601,7 +604,21 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             } else {
                 tk_ticket.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
             }
-
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_PREFIX))) {
+                tk_ticket.setSchedule_prefix(null);
+            } else {
+                tk_ticket.setSchedule_prefix(cursor.getInt(cursor.getColumnIndex(SCHEDULE_PREFIX)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_CODE))) {
+                tk_ticket.setSchedule_code(null);
+            } else {
+                tk_ticket.setSchedule_code(cursor.getInt(cursor.getColumnIndex(SCHEDULE_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_EXEC))) {
+                tk_ticket.setSchedule_exec(null);
+            } else {
+                tk_ticket.setSchedule_exec(cursor.getInt(cursor.getColumnIndex(SCHEDULE_EXEC)));
+            }
             //
             return tk_ticket;
         }
@@ -709,6 +726,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
             //
             tk_ticket.setToken(tk_ticket.getToken());
+            tk_ticket.setSchedule_prefix(tk_ticket.getSchedule_prefix());
+            tk_ticket.setSchedule_code(tk_ticket.getSchedule_code());
+            tk_ticket.setSchedule_exec(tk_ticket.getSchedule_exec());
             //
             return contentValues;
         }

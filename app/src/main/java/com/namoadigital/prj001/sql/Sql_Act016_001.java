@@ -110,8 +110,9 @@ public class Sql_Act016_001 implements Specification {
                 "        s.customer_code= '"+customer_code+"'     \n" +
                 "        AND s.schedule_type = '"+ ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET +"' \n" +
                 "        AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') ";
-
-
+        //Remove , caso exista, o text 'null'
+        sql_ticket = sql_ticket.replace("'null'","null");
+        //
         sql_sub_query += filter_form ? sql_form : "";
         sql_sub_query += filter_form_ap ? sql_form_ap :"";
         sql_sub_query += filter_ticket ? sql_ticket :"";
