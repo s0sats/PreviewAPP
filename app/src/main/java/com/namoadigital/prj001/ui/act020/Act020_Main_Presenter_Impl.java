@@ -33,6 +33,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -48,6 +49,7 @@ import java.util.List;
 public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
 
     private final Bundle bundleForNFormFinishPlusNew;
+    private String requestingAct;
     private Context context;
     private Act020_Main_View mView;
     private HMAux hmAux_Trans = new HMAux();
@@ -60,7 +62,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     private boolean downloadStarted = false;
     private MD_Product_Serial tProductSerial;
 
-    public Act020_Main_Presenter_Impl(Context context, Act020_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_LocalDao formLocalDao, Sync_ChecklistDao syncChecklistDao, GE_Custom_Form_OperationDao formOperationDao, MD_ProductDao productDao, Bundle bundleForNFormFinishPlusNew) {
+    public Act020_Main_Presenter_Impl(Context context, Act020_Main_View mView, HMAux hmAux_Trans, GE_Custom_Form_LocalDao formLocalDao, Sync_ChecklistDao syncChecklistDao, GE_Custom_Form_OperationDao formOperationDao, MD_ProductDao productDao, Bundle bundleForNFormFinishPlusNew, String requestingAct) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
@@ -70,6 +72,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         this.productDao = productDao;
         this.serialDao = new MD_Product_SerialDao(context);
         this.bundleForNFormFinishPlusNew = bundleForNFormFinishPlusNew;
+        this.requestingAct = requestingAct;
     }
 
     @Override
@@ -193,21 +196,25 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         //
         tProductSerial = productSerial;
         //
-        if (!hasSyncRegister()) {
-            if (ToolBox_Con.isOnline(context)) {
-                executeSyncProcess();
-            } else {
-                //ToolBox_Inf.showNoConnectionDialog(context);
-                if(no_serial) {
-                    ToolBox.alertMSG(
+        if(mView.isScheduleFlow()){
+            prepareAct008();
+        } else{
+            //
+            if (!hasSyncRegister()) {
+                if (ToolBox_Con.isOnline(context)) {
+                    executeSyncProcess();
+                } else {
+                    //ToolBox_Inf.showNoConnectionDialog(context);
+                    if(no_serial) {
+                        ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_no_connection_no_form_found_ttl"),
                             hmAux_Trans.get("alert_no_form_found_msg"),
                             null,
                             0
-                    );
-                }else{
-                    ToolBox.alertMSG(
+                        );
+                    }else{
+                        ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_no_form_found_ttl"),
                             hmAux_Trans.get("alert_no_form_but_go_to_serial_msg"),
@@ -218,66 +225,19 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
                                 }
                             },
                             1
-                    );
+                        );
+                    }
+
                 }
-
-            }
-        } else {
-            //Se for um criação sem serial, chama metodo que encaminha para lista de tipo de formulários.
-            if(no_serial){
-                prepareAct009();
-            }else{
-                prepareAct008();
-            }
-
-        }
-        /**
-         *  O TRECHO DE CODIGO ABAIXO, FOI COMENTADO EM 20/10/2017 POR DANIEL LUCHE
-         *  Após a inclusão da criação de N-Form dentro do N-Service, identificamos
-         *  a falha que existia nessa tela,que consistia em seguir um fluxo antigo,
-         *  onde cada Produto/Serial só poderia ter um unico formulário em aberto.
-         *  Dessa forma, o codigo abaixo verificava se existia um form em aberto para
-         *  aquele Produto/Serial e , caso existisse, fazia uma atalho direto para
-         *  o form em aberto.
-         */
-
-        //
-      /*
-       //
-        List<GE_Custom_Form_Local> formLocals = getFormInProcessing(productSerial);
-        Bundle bundle = new Bundle();
-        //Parametros comuns aos 2 fluxos
-        //Nenhum form aberto, manda para seleção de tipo e form
-        if(formLocals.size() == 0){
-
-            List<HMAux> syncChecklists =  checkSyncChecklist();
-
-            if(syncChecklists == null || syncChecklists.size() == 0){
-                if(ToolBox_Con.isOnline(context)) {
-                    executeSyncProcess();
+            } else {
+                //Se for um criação sem serial, chama metodo que encaminha para lista de tipo de formulários.
+                if(no_serial){
+                    prepareAct009();
                 }else{
-                   ToolBox_Inf.showNoConnectionDialog(context);
+                    prepareAct008();
                 }
-            }else{
-                prepareAct009();
             }
-
-        }else{
-            GE_Custom_Form_Local aux = formLocals.get(0);
-            bundle.putString(Constant.ACT007_PRODUCT_CODE, String.valueOf(productSerial.getProduct_code()));
-            bundle.putString(Constant.ACT008_PRODUCT_DESC, productSerial.getProduct_desc());
-            bundle.putString(Constant.ACT008_PRODUCT_ID, productSerial.getProduct_id());
-            bundle.putString(Constant.ACT008_SERIAL_ID, productSerial.getSerial_id());
-            bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, String.valueOf(aux.getCustom_form_type() ));
-            bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC, aux.getCustom_form_type_desc());
-            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE, String.valueOf(aux.getCustom_form_code()));
-            bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION, String.valueOf(aux.getCustom_form_version()));
-            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, aux.getCustom_form_desc());
-            bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA, String.valueOf(aux.getCustom_form_data()));
-
-            mView.callAct011(context,bundle);
-        }*/
-
+        }
     }
 
     private List<GE_Custom_Form_Local> getFormInProcessing(TProduct_Serial productSerial) {
@@ -391,17 +351,19 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, tProductSerial);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT020);
         bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, mView.isSerial_creation());
-        //bundle for NForm loop creation process
-        if((bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC) != null)
-        && !bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC).isEmpty()) {
-            bundle.putString(MD_ProductDao.PRODUCT_CODE, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_CODE));
-            bundle.putString(MD_ProductDao.PRODUCT_DESC, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_DESC));
-            bundle.putString(MD_ProductDao.PRODUCT_ID, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_ID));
-            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, bundleForNFormFinishPlusNew.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE));
-            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, bundleForNFormFinishPlusNew.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC));
-            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE));
-            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION));
-            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC));
+        if(!mView.isScheduleFlow()){
+            //bundle for NForm loop creation process
+            if((bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC) != null)
+                && !bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC).isEmpty()) {
+                bundle.putString(MD_ProductDao.PRODUCT_CODE, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_CODE));
+                bundle.putString(MD_ProductDao.PRODUCT_DESC, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_DESC));
+                bundle.putString(MD_ProductDao.PRODUCT_ID, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_ID));
+                bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, bundleForNFormFinishPlusNew.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE));
+                bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, bundleForNFormFinishPlusNew.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC));
+                bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE));
+                bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION));
+                bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC));
+            }
         }
         //
         mView.callAct008(context,bundle);
@@ -528,11 +490,17 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         }
     }
 
-    // New
-
     @Override
     public void onBackPressedClicked() {
-        mView.callAct006(context);
+        if(mView.isScheduleFlow()){
+            if(requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT017)) {
+                mView.callAct017(context);
+            }else{
+                mView.callAct013(context);
+            }
+        }else {
+            mView.callAct006(context);
+        }
     }
 
 }

@@ -32,7 +32,7 @@
 
 
                 <TextView
-                        android:id="@+id/act011_ff_tv_comments_ttl"
+                        android:id="@+id/act011_ff_tv_schedule_desc"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Titulo do Comentário"

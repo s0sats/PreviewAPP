@@ -67,6 +67,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
@@ -75,6 +76,7 @@ import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
@@ -86,7 +88,6 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_016;
 import com.namoadigital.prj001.sql.GE_File_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
-import com.namoadigital.prj001.sql.Sql_Act011_003;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act015.Act015_Main;
@@ -125,6 +126,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
     public static final String LOCATION_REFRESH = "location_refresh";
     public static final int GPS_VALID_INTERVAL = 300000;
+    public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR = 5;
+
 
     private Act011_Main_Presenter mPresenter;
 
@@ -374,6 +377,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         transList.add("alert_exit_confirmation_ttl");
         transList.add("alert_exit_confirmation_msg");
+        transList.add("lbl_schedule");
+        transList.add("alert_error_on_update_schedule_status_ttl");
+        transList.add("alert_error_on_update_schedule_status_msg");
         //
         transList.add("dialog_has_gps_pendency_ttl");
         transList.add("dialog_has_gps_pendency_msg");
@@ -675,7 +681,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 new GE_Custom_Form_Blob_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new MD_ProductDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
-                hmAux_Trans
+                hmAux_Trans,
+                new MD_Schedule_ExecDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         );
 
         recoverGetIntents();
@@ -863,6 +870,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     /**
      * Valida se botão de finaliza + novo deve aparecer no fluxo.
+     *
+     * LUCHE - 17/02/2020
+     *  Subistutuido a validação de agedamento via custom_form_data_serv pelo metodo isScheduleForm
+     *
      * Regras:
      *  - O Usr deve ter o perfil de acesso ao botão.
      *  - O N-Form não pode ter sido gerado pela O.S
@@ -875,7 +886,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if( ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)
             && mSo_Prefix == null
             && mSo_Code == null
-            && formLocal.getCustom_form_data_serv() == null
+            && !ToolBox_Inf.isScheduleForm(formLocal)
             && serial_id != null
             && !serial_id.isEmpty()
         ){
@@ -1233,7 +1244,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     form_data_field.setCustom_form_code(formData.getCustom_form_code());
                     form_data_field.setCustom_form_version(formData.getCustom_form_version());
                     form_data_field.setCustom_form_data(formData.getCustom_form_data());
-                    form_data_field.setCustom_form_data_serv(formData.getCustom_form_data_serv());
                     form_data_field.setCustom_form_seq(Integer.parseInt(cf.get("custom_form_seq")));
                     //
                     formData.getDataFields().add(form_data_field);
@@ -1290,8 +1300,21 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 //
                  if (i == 1) {
                     custom_form_ff.setComments(formLocal.getSchedule_comments() != null ? formLocal.getSchedule_comments() : "");
+                    // BARRIONUEVO 05-03-2020 - ADICAO DE SCHEDULE DESC NO FORM
+                     if(formLocal.getSchedule_prefix() != null
+                     && formLocal.getSchedule_code() != null
+                     && formLocal.getSchedule_exec() != null) {
+                         MD_Schedule_Exec mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
+                         if (mdScheduleExec != null) {
+                             custom_form_ff.setSchedule_desc(mdScheduleExec.getSchedule_desc());
+                         }
+                     }else{
+                         custom_form_ff.setComments("");
+                         custom_form_ff.setSchedule_desc("");
+                     }
                 } else {
                     custom_form_ff.setComments("");
+                    custom_form_ff.setSchedule_desc("");
                 }
                 //
                 custom_form_ff.setCustomFFs(customFFs, i);
@@ -1406,7 +1429,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
             act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs, mSignature, form_desc);
-            act011_ff_options.enableScheduled(formData.getCustom_form_data_serv());
+            act011_ff_options.enableScheduled(ToolBox_Inf.isScheduleForm(formLocal));
 
             if (mSo_Prefix == null || mSo_Code == null) {
                 act011_ff_options.enableTab(formData.getCustom_form_status(), 0);
@@ -2171,6 +2194,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 break;
             //Msg quando ocorre erro ao criar registro na ge_custom_form_local
             case SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR:
+            //Msg quando ocorrer erro ao atualizar dados do novo agendamento.
+            case SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR:
                 ToolBox.alertMSG(
                         Act011_Main.this,
                         title,
@@ -2184,7 +2209,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         0
                 );
                 break;
-
         }
     }
 
@@ -2641,36 +2665,27 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             tv_so_code_desc.setVisibility(View.GONE);
         }
 
-        GE_Custom_Form_LocalDao formLocalDao =
-                new GE_Custom_Form_LocalDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                );
-
-        HMAux dialogFormLocal
-                = formLocalDao.getByStringHM(
-                new Sql_Act011_003(
-                        context,
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        type,
-                        form,
-                        form_version,
-                        form_data
-                ).toSqlQuery()
-
-        );
-        //Dados do agendamento
-        if (dialogFormLocal != null && dialogFormLocal.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV).length() > 0) {
+         if(ToolBox_Inf.isScheduleForm(formLocal)){
             tv_data_serv_lbl.setText(hmAux_Trans.get("dialog_info_data_serv_lbl"));
             tv_dt_schedule_start_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_start_lbl"));
             tv_dt_schedule_end_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_end_lbl"));
             //
             ll_schedule_info.setVisibility(View.VISIBLE);
-            tv_data_serv_val.setText(dialogFormLocal.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA_SERV));
-            tv_dt_schedule_start_val.setText(dialogFormLocal.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_START_FORMAT));
-            tv_dt_schedule_end_val.setText(dialogFormLocal.get(GE_Custom_Form_LocalDao.SCHEDULE_DATE_END_FORMAT));
-        } else {
+            tv_data_serv_val.setText(
+                ToolBox_Inf.formatSchedulePk(
+                    formLocal.getSchedule_prefix(),
+                    formLocal.getSchedule_code(),
+                    formLocal.getSchedule_exec()
+                )
+            );
+            //
+            tv_dt_schedule_start_val.setText(
+                ToolBox_Inf.formatScheduleDate(context, formLocal.getSchedule_date_start_format())
+            );
+            tv_dt_schedule_end_val.setText(
+                ToolBox_Inf.formatScheduleDate(context, formLocal.getSchedule_date_end_format())
+            );
+        }else{
             ll_schedule_info.setVisibility(View.GONE);
         }
 
@@ -3099,6 +3114,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
             setWsSoProcess("");
+            mPresenter.processWS_SaveReturn(mLink);
+        }
+    }
+
+    @Override
+    public void afterSaveFlow() {
+        if (wsResults.size() > 0) {
+            showResults(wsResults);
+        } else {
+            progressDialog.dismiss();
+            flowControl();
+        }
+    }
+
+    @Override
+    public void addWsResults(ArrayList<HMAux> formDataErroAux) {
+        wsResults.addAll(
+            formDataErroAux
+        );
             if (wsResults.size() > 0) {
                 showResults(wsResults);
             } else {
@@ -3153,14 +3187,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 case "SERIAL":
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_serial_data"));
                     break;
-                case "A.P.":
-                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_form_ap"));
-                    break;
-                case "S.O.":
-                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_so"));
-                    break;
-                case "SO_EXPRESS":
-                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_so_express"));
+                case ConstantBaseApp.SYS_STATUS_SCHEDULE:
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_schedule"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
                     break;
 
             }

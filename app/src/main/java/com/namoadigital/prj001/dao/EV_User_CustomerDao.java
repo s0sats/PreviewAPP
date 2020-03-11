@@ -37,8 +37,9 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     public static final String PENDING = "pending";
     public static final String LOGO_URL = "logo_url";
     public static final String TRACKING = "tracking";
+    public static final String TIMEZONE = "timezone";
 
-    public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER, BLOCKED, SESSION_APP, PENDING, LOGO_URL, TRACKING};
+    public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER, BLOCKED, SESSION_APP, PENDING, LOGO_URL, TRACKING,TIMEZONE};
 
     public EV_User_CustomerDao(Context context) {
         super(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE, Constant.DB_MODE_SINGLE);
@@ -278,6 +279,9 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             if (ev_user_customer.getTracking() > -1) {
                 contentValues.put(TRACKING, ev_user_customer.getTracking());
             }
+            if (ev_user_customer.getTimezone() != null) {
+                contentValues.put(TIMEZONE, ev_user_customer.getTimezone());
+            }
 
             return contentValues;
         }
@@ -301,7 +305,7 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             ev_user_customer.setPending(cursor.getInt(cursor.getColumnIndex(PENDING)));
             ev_user_customer.setLogo_url(cursor.getString(cursor.getColumnIndex(LOGO_URL)));
             ev_user_customer.setTracking(cursor.getInt(cursor.getColumnIndex(TRACKING)));
-
+            ev_user_customer.setTimezone(cursor.getString(cursor.getColumnIndex(TIMEZONE)));
 
             return ev_user_customer;
         }

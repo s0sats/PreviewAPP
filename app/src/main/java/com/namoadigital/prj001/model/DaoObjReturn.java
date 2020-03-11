@@ -21,6 +21,10 @@ public class DaoObjReturn {
     private String table;
 
     public DaoObjReturn() {
+        initializeProperties();
+    }
+
+    private void initializeProperties() {
         this.error = false;
         this.action = "";
         this.code = "";
@@ -28,6 +32,11 @@ public class DaoObjReturn {
         this.rawMessage = "";
         this.actionReturn = -2;//Default menos 2 pois o retorno de dado não inserido é -1
         this.table = "";
+    }
+
+    public DaoObjReturn(String table) {
+        initializeProperties();
+        this.table = table;
     }
 
     public DaoObjReturn(String code, String description) {

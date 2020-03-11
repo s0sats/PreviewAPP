@@ -76,6 +76,7 @@ import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SM_SODao;
@@ -93,6 +94,8 @@ import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.GE_Custom_Form_Blob_Local;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
@@ -105,6 +108,7 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TSO_Save_Env;
+import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.TSerial_Save_Env;
 import com.namoadigital.prj001.model.T_IO_Inbound_Item_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
@@ -3072,13 +3076,18 @@ public class ToolBox_Inf {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
         Calendar calendar = Calendar.getInstance();
-        try {
-            calendar.setTime(sdf.parse(date_tmz));
-        } catch (ParseException e) {
-            ToolBox_Inf.registerException(CLASS_NAME, e);
-            e.printStackTrace();
+        //LUCHE - 18/02/2020
+        //Add if verificando data, pois gerava muitas arquivos de exception desnecessariamente quando
+        //data vazia ou null
+        if(date_tmz != null && !date_tmz.isEmpty() && !date_tmz.equalsIgnoreCase("null")) {
+            try {
+                calendar.setTime(sdf.parse(date_tmz));
+            } catch (ParseException e) {
+                ToolBox_Inf.registerException(CLASS_NAME, e);
+                e.printStackTrace();
+            }
         }
-
+        //
         return calendar.getTimeInMillis();
     }
 
@@ -6356,5 +6365,182 @@ public class ToolBox_Inf {
         }
         //
         return ToolBox_Con.getPreference_HideSerialInfo(context);
+    }
+
+    public static String formatSchedulePk(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
+        return formatSchedulePk(
+            String.valueOf(schedule_prefix),
+            String.valueOf(schedule_code),
+            String.valueOf(schedule_exec)
+        );
+    }
+
+    public static String formatSchedulePk(String schedule_prefix, String schedule_code, String schedule_exec) {
+        if(
+            schedule_prefix == null || schedule_prefix.equalsIgnoreCase("null")
+            || schedule_code == null || schedule_code.equalsIgnoreCase("null")
+            || schedule_exec == null || schedule_exec.equalsIgnoreCase("null")
+        ){
+            return "";
+        }
+        //
+        return  schedule_prefix +"."+
+                schedule_code +"."+
+                schedule_exec ;
+    }
+
+    /**
+     * LUCHE - 17/02/2020
+     *
+     * Formata a data do agedamento SEM APLICAR GMT.(Pedido do backend)
+     * @param context
+     * @param date
+     * @return
+     */
+    public static String formatScheduleDate(Context context, String date) {
+        SimpleDateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+        SimpleDateFormat dateFormatOut;
+        String format = ToolBox_Inf.nlsDateFormat(context);
+        try{
+            if( format == null || format.equalsIgnoreCase("")){
+                format = "dd-MM-yyyy";
+            }
+            //
+            format += " HH:mm";
+            dateFormatOut = new SimpleDateFormat(format);
+            //
+            return dateFormatOut.format(dateFormatIn.parse(date));
+        }catch (Exception e){
+            ToolBox_Inf.registerException(CLASS_NAME,e);
+            return "01-01-1900";
+        }
+    }
+
+    /**
+     * LUCHE - 17/02/2020
+     *
+     * Formata a apresentacao de um intervalo de datas:
+     *  1) Para dias diferentes:
+     *     - "yyyy-MM-dd HH:mm - yyyy-MM-dd HH:mm"
+     *  2) Para dias iguais:
+     *     - "yyyy-MM-dd HH:mm - HH:mm"
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public static String formatScheduleIntervalDateFormatted(Context context, String startDate, String endDate) {
+        SimpleDateFormat dateFormatIn = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
+        SimpleDateFormat dateFormatStart = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
+        SimpleDateFormat dateFormatEnd = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
+        if(checkSameDayDate(startDate, endDate)){
+            dateFormatEnd = new SimpleDateFormat("HH:mm");
+        }
+        try{
+            return dateFormatStart.format(dateFormatIn.parse(startDate)) + " - " + dateFormatEnd.format(dateFormatIn.parse(endDate));
+        }catch (Exception e){
+            ToolBox_Inf.registerException(CLASS_NAME,e);
+            return "01-01-1900";
+        }
+    }
+
+    private static boolean checkSameDayDate(String startDate, String endDate) {
+        return startDate.substring(0, 9).equals(endDate.substring(0,9));
+    }
+
+
+    /**
+     * LUCHE - 17/02/2020
+     *
+     * Metodo que avalia se form é um agendado.Considera agendado se a pk do agendamento estiver preenchida
+     * @param customFormLocal
+     * @return
+     */
+    public static boolean isScheduleForm(GE_Custom_Form_Local customFormLocal) {
+        return customFormLocal != null
+            && customFormLocal.getSchedule_prefix() != null
+            && customFormLocal.getSchedule_code() != null
+            && customFormLocal.getSchedule_exec() != null
+            && customFormLocal.getSchedule_prefix() > 0
+            && customFormLocal.getSchedule_code() > 0
+            && customFormLocal.getSchedule_exec() > 0;
+    }
+
+    /**
+     * LUCHE - 17/02/2020
+     *
+     * Metodo que avalia se customFormData é um agendado.Considera agendado se a pk do agendamento estiver preenchida
+     * @param customFormData
+     * @return
+     */
+    public static boolean isScheduleForm(GE_Custom_Form_Data customFormData) {
+        return customFormData != null
+            && customFormData.getSchedule_prefix() != null
+            && customFormData.getSchedule_code() != null
+            && customFormData.getSchedule_exec() != null
+            && customFormData.getSchedule_prefix() > 0
+            && customFormData.getSchedule_code() > 0
+            && customFormData.getSchedule_exec() > 0;
+    }
+
+    /**
+     * LUCHE - 27/02/2020
+     * Metodo que retorna String formatada com descrição do tipo e descrição do form
+     * @param error_process - Obj de retorno do WS_Save quando há mensagem de retorno
+     * @return - String formatada
+     */
+    public static String formatFormErrorDesc(TSave_Rec.Error_Process error_process) {
+        return error_process.getCustom_form_type_desc() +"\n" + error_process.getCustom_form_desc();
+    }
+
+    /**
+     * LUCHE - 27/02/2020
+     * Metodo que retorna String formatada com PK + descrição do agendamento
+     * @param error_process - Obj de retorno do WS_Save quando há mensagem de retorno
+     * @return - String formatada
+     */
+    public static String formatScheduleErroLabel(TSave_Rec.Error_Process error_process) {
+        return error_process.getSchedule_pk() +" - "+ error_process.getSchedule_desc();
+    }
+
+    /**
+     * LUCHE - 28/02/2020
+     * Metodo que retorna Id Descrição do produto formatada
+     * @param productId - ID do produto
+     * @param productDesc - Descrição do produto
+     * @return
+     */
+    public static String getFormatedProductIdDesc(String productId, String productDesc) {
+        if(productId != null && !productId.equalsIgnoreCase("null") && !productId.isEmpty()
+            && productDesc != null && !productDesc.equalsIgnoreCase("null") && !productDesc.isEmpty()
+        ){
+            return productId +" "+ productDesc;
+        }
+        //
+        return productId +" "+ productDesc;
+    }
+
+    /**
+     * LUCHE - 06/03/2020
+     *
+     * Metodo que verifica se a configuração do produto permite avançar para a criação a tela de
+     * seleção de serial.
+     *
+     * @param auxSchedule - Item regatado do dialog
+     * @return - Verdadeiro se se serial não foi informado e se produto permitie criação de serial
+     */
+
+    public static boolean productConfigPreventToProceed(HMAux auxSchedule) {
+        try {
+            boolean followToAct020 =
+                 auxSchedule.get(MD_Schedule_ExecDao.SERIAL_ID).isEmpty()
+                 && auxSchedule.get(MD_Schedule_ExecDao.ALLOW_NEW_SERIAL_CL).equalsIgnoreCase("1");
+            //
+            return !followToAct020;
+        }catch (Exception e){
+            e.printStackTrace();
+            registerException(CLASS_NAME,e);
+            return false;
+        }
+
     }
 }

@@ -33,6 +33,12 @@ public interface Act020_Main_View {
     //
     boolean isSerial_creation();
 
+    boolean isScheduleFlow();
+
+    void callAct017(Context context);
+
+    void callAct013(Context context);
+
     //void closeDrawer();
 
 }

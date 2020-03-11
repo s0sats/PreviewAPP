@@ -390,6 +390,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String LOGIN_LAST_USER_CODE_LOGGED = "last_user_logged";
     public static final String LOGIN_CUSTOMER_CODE = "login_customer_code";
     public static final String LOGIN_CUSTOMER_USES_TRACKING = "login_customer_uses_tracking";
+    public static final String LOGIN_CUSTOMER_TMZ = "login_customer_tmz";
     public static final String LOGIN_CUSTOMER_CODE_NAME = "login_customer_code_name";
     public static final String LOGIN_SITE_CODE = "login_site_code";
     public static final String LOGIN_ZONE_CODE = "login_zone_code";
@@ -412,6 +413,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String LOCATION_DATE = "location_date";
     public static final String HAS_PENDING_LOCATION = "has_pending_location";
     public static final String PREFERENCE_HIDE_SERIAL_INFO = "preference_hide_serial_info";
+    public static final String SCHEDULE_N_FORM_FILTER_PREFERENCE = "schedule_n_form_filter";
+    public static final String SCHEDULE_N_FORM_AP_FILTER_PREFERENCE = "schedule_n_form_ap_filter";
+    public static final String SCHEDULE_N_TICKET_FILTER_PREFERENCE = "schedule_n_ticket_filter";
+    public static final String SCHEDULE_SITE_LOGGED_FILTER_PREFERENCE = "schedule_site_logged_filter";
 
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";
@@ -419,13 +424,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String USER_CUSTOMER_TRANSLATE_CODE_TMP = "user_customer_translate_code_temp";
 
     public static final String PROCESS_MENU_SEND = "process_menu_send";
-
-    //Constantes do Status do Cabeçalho
-    public static final String CUSTOM_FORM_STATUS_RECEIVED = "RECEIVED";
-    public static final String CUSTOM_FORM_STATUS_IN_PROCESSING = "IN_PROCESSING";
-    public static final String CUSTOM_FORM_STATUS_FINALIZED = "FINALIZED";
-    public static final String CUSTOM_FORM_STATUS_SENT = "SENT";
-    public static final String CUSTOM_FORM_STATUS_SCHEDULED = "SCHEDULE";
 
     //ID de Notificações
     public static final int NOTIFICATION_UPLOAD = 666;
@@ -546,31 +544,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MODULE_SO_SEARCH_SERIAL = "MODULE_SO_SEARCH_SERIAL";
     public static final String MODULE_SO_SEARCH_SERIAL_EXPRESS = "MODULE_SO_SEARCH_SERIAL_EXPRESS";
     public static final String MODULE_SO_PACK_EXPRESS = "MODULE_SO_PACK_EXPRESS";
-    public static final String MODULE_WM = "MODULE_WM";
-    public static final String MODULE_TO = "MODULE_TO";
-    public static final String MODULE_IO = "MODULE_IO";
 
     //Constantes Status da SO
-    public static final String SO_STATUS_EDIT = "EDIT";
-    public static final String SO_STATUS_STOP = "STOP";
-    public static final String SO_STATUS_PENDING = "PENDING";
-    public static final String SO_STATUS_PROCESS = "PROCESS";
-    public static final String SO_STATUS_WAITING_BUDGET = "WAITING_BUDGET";
-    public static final String SO_STATUS_WAITING_QUALITY = "WAITING_QUALITY";
-    public static final String SO_STATUS_WAITING_CLIENT = "WAITING_CLIENT";
-    public static final String SO_STATUS_DONE = "DONE";
-    public static final String SO_STATUS_WAITING_SYNC = "WAITING_SYNC";
-    public static final String SO_STATUS_CANCELLED = "CANCELLED";
-    public static final String SO_STATUS_INCONSISTENT = "INCONSISTENT";
-    public static final String SO_STATUS_NOT_EXECUTED = "NOT_EXECUTED";
-    public static final String SO_STATUS_BLOCKED = "STOP";
     public static final String SO_SERVICE_TYPE_YES_NO = "YES_NO";
     public static final String SO_SERVICE_TYPE_START_STOP = "START_STOP";
-
-//    public static final String SO_PARAM_PREFIX = "SO_PARAM_PREFIX";
-//    public static final String SO_PARAM_CODE = "SO_PARAM_CODE";
-//    public static final String SO_PARAM_STATUS = "SO_PARAM_STATUS";
-//    public static final String SO_PARAM_CLIENT_TYPE = "SO_PARAM_CLIENT_TYPE";
 
     public static final String SO_PARAM_RETURN_STATUS = "so_param_return_status";
     public static final String SO_PARAM_RETURN_MSG = "so_param_return_msg";
@@ -603,34 +580,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FCM_ACTION_TK_TICKET_UPDATE = "<TK_TICKET_UPDATE>";
     public static final String FCM_MODULE_CHECKLIST = "CHECKLIST";
     public static final String FCM_TYPE_WARNING = "WARNING";
-
-
-
-    /*
-     Constante Status AP
-     */
-//    public static final String SYS_STATUS_EDIT = "EDIT";
-//    public static final String SYS_STATUS_STOP = "STOP";
-//    public static final String SYS_STATUS_PENDING = "PENDING";
-//    public static final String SYS_STATUS_PROCESS = "PROCESS";
-//    public static final String SYS_STATUS_WAITING_APPROVAL = "WAITING_APPROVAL";
-//    public static final String SYS_STATUS_WAITING_BUDGET = "WAITING_BUDGET";
-//    public static final String SYS_STATUS_WAITING_QUALITY = "WAITING_QUALITY";
-//    public static final String SYS_STATUS_WAITING_CLIENT = "WAITING_CLIENT";
-//    public static final String SYS_STATUS_WAITING_ACTION = "WAITING_ACTION";
-//    public static final String SYS_STATUS_WAITING_SYNC = "WAITING_SYNC";
-//    public static final String SYS_STATUS_DONE = "DONE";
-//    public static final String SYS_STATUS_NOT_EXECUTED = "NOT_EXECUTED";
-//    public static final String SYS_STATUS_CANCELLED = "CANCELLED";
-//    public static final String SYS_STATUS_INCONSISTENT = "INCONSISTENT";
-//    public static final String SYS_STATUS_SCHEDULE = "SCHEDULE";
-//    public static final String SYS_STATUS_ERROR = "ERROR";
-//    public static final String SYS_STATUS_ACTIVE = "ACTIVE";
-//    public static final String SYS_STATUS_INACTIVE = "INACTIVE";
-//    //Status N-Form, diferente dos do Server...
-//    public static final String SYS_STATUS_IN_PROCESSING = "IN_PROCESSING";
-//    public static final String SYS_STATUS_FINALIZED = "FINALIZED";
-//    public static final String SYS_STATUS_SENT = "SENT";
 
     /*
     * Constantes I/O
@@ -665,6 +614,12 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_TICKET_CRTL_TYPE_SERVICE ="SERVICE";
     public static final String TK_TICKET_CRTL_TYPE_MEASURE ="MEASURE";
     public static final String TK_TICKET_PREX_IMG ="tk_";
+
+    /*
+     * Constantes agendamento
+     */
+    public static final String MD_SCHEDULE_TYPE_FORM = "FORM";
+    public static final String MD_SCHEDULE_TYPE_TICKET = "TICKET";
 
     /*
      * Constantes CHAT

@@ -18,6 +18,7 @@ public class EV_User_Customer {
     private int pending;
     private String logo_url;
     private int tracking;
+    private String timezone;
 
     public long getUser_code() {
         return user_code;
@@ -121,5 +122,13 @@ public class EV_User_Customer {
 
     public void setTracking(int tracking) {
         this.tracking = tracking;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
     }
 }

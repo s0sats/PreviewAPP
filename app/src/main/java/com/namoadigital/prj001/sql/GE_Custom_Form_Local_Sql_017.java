@@ -6,7 +6,11 @@ import com.namoadigital.prj001.database.Specification;
 /**
  * LUCHE - 25/09/2019
  *
- * Query que seleciona os form agendados que possuem não possuem icone de produto baixado
+ * Query que seleciona os form agendados que não possuem icone de produto baixado
+ *
+ * LUCHE - 17/02/2020
+ *
+ * Substituido o campo custom_form_data_serv, pelos campos da pk do novo agendamento(md_schedule_exec)
  *
  */
 
@@ -29,7 +33,6 @@ public class GE_Custom_Form_Local_Sql_017 implements Specification {
                     "   l.custom_form_code,\n" +
                     "   l.custom_form_version,\n" +
                     "   l.custom_form_data,\n" +
-                    "   l.custom_form_data_serv,\n" +
                     "   l.custom_product_icon_name,\n" +
                     "   l.custom_product_icon_url\n" +
                     " FROM\n" +
@@ -39,7 +42,9 @@ public class GE_Custom_Form_Local_Sql_017 implements Specification {
                     "  AND l.custom_product_icon_name != ''\n" +
                     "  AND l.custom_product_icon_url != ''\n" +
                     "  AND l.custom_product_icon_url_local == ''\n" +
-                    "  AND l.custom_form_data_serv is not null\n")
+                    "  AND schedule_prefix is not null \n" +
+                    "  AND schedule_code is not null \n" +
+                    "  AND schedule_exec is not null \n")
             .toString();
     }
 }

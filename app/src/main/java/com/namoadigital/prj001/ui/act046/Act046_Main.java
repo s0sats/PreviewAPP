@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -27,6 +28,7 @@ import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
@@ -36,10 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT046;
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_LATE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_SITE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 
 public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_Main_Contract.I_View, On_Frg_Serial_Search {
@@ -60,6 +59,7 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
     private String fragSerial_ID;
     private String fragTracking;
     private boolean fragIsOnlyOne;
+    private HMAux hmAux_Trans_Extra = new HMAux();
 
     private MKEditTextNM mket_date;
     private ImageView iv_remove;
@@ -67,8 +67,9 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
     private CheckBox cbk_nform;
     private CheckBox cbk_nform_ap;
     private CheckBox cbk_site_logado;
+    private CheckBox cbk_ticket;
+    private CheckBox.OnCheckedChangeListener chkListener;
 
-    private HMAux hmAux_Trans_Extra = new HMAux();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -178,7 +179,8 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         List<String> transList_Extra = new ArrayList<String>();
         transList_Extra.add("lbl_checklist");
         transList_Extra.add("lbl_form_ap");
-
+        transList_Extra.add("lbl_ticket");
+        //
         hmAux_Trans_Extra = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -222,16 +224,23 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
             }
         });
 
-        mOptions = ((LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.ll_options, null);
-        cbk_nform = (CheckBox) mOptions.findViewById(R.id.ll_options_chk_n_form);
+        mOptions = ((LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(R.layout.schedule_filter_layout, null);
+        cbk_nform = (CheckBox) mOptions.findViewById(R.id.schedule_filter_chk_n_form);
         cbk_nform.setText(hmAux_Trans_Extra.get("lbl_checklist"));
+        cbk_nform.setTag(ConstantBaseApp.SCHEDULE_N_FORM_FILTER_PREFERENCE);
         //
-        cbk_nform_ap = (CheckBox) mOptions.findViewById(R.id.ll_options_chk_n_form_ap);
+        cbk_nform_ap = (CheckBox) mOptions.findViewById(R.id.schedule_filter_chk_n_form_ap);
         cbk_nform_ap.setText(hmAux_Trans_Extra.get("lbl_form_ap"));
+        cbk_nform_ap.setTag(ConstantBaseApp.SCHEDULE_N_FORM_AP_FILTER_PREFERENCE);
         //
-        cbk_site_logado = (CheckBox) mOptions.findViewById(R.id.ll_options_chk_sitee_logado);
+        cbk_site_logado = (CheckBox) mOptions.findViewById(R.id.schedule_filter_chk_site_logged);
         cbk_site_logado.setText(hmAux_Trans.get("lbl_site"));
-
+        cbk_site_logado.setTag(ConstantBaseApp.SCHEDULE_SITE_LOGGED_FILTER_PREFERENCE);
+        //
+        cbk_ticket = (CheckBox) mOptions.findViewById(R.id.schedule_filter_chk_n_ticket);
+        cbk_ticket.setText(hmAux_Trans_Extra.get("lbl_ticket"));
+        cbk_ticket.setTag(ConstantBaseApp.SCHEDULE_N_TICKET_FILTER_PREFERENCE);
+        //
         mFrgSerialSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.act046_frg_serial_search);
         mFrgSerialSearch.setHmAux_Trans(hmAux_Trans_frg_serial_search);
         mFrgSerialSearch.setLl_options(mOptions);
@@ -285,7 +294,7 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
                         Constant.DB_VERSION_CUSTOM
                 )
         );
-
+        //
         hideSoftKeyboard();
 
         int mDelays = mPresenter.getTotalDelay(true, true);
@@ -311,6 +320,24 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
             mFrgSerialSearch.setSerialIdText(fragSerial_ID);
             mFrgSerialSearch.setTrackingText(fragTracking);
         }
+        //
+        //LUCHE - 21/02/2020
+        loadCheckboxValueFromPreferencies();
+    }
+
+    private void loadCheckboxValueFromPreferencies() {
+        cbk_nform.setChecked(
+            mPresenter.loadCheckboxStatusFromPreferencie(String.valueOf(cbk_nform.getTag()), true)
+        );
+        cbk_nform_ap.setChecked(
+            mPresenter.loadCheckboxStatusFromPreferencie(String.valueOf(cbk_nform_ap.getTag()), true)
+        );
+        cbk_ticket.setChecked(
+            mPresenter.loadCheckboxStatusFromPreferencie(String.valueOf(cbk_ticket.getTag()), true)
+        );
+        cbk_site_logado.setChecked(
+            mPresenter.loadCheckboxStatusFromPreferencie(String.valueOf(cbk_site_logado.getTag()), false)
+        );
     }
 
 
@@ -385,6 +412,26 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
     }
 
     private void initActions() {
+        //LUCHE - 21/02/2020
+        //Criado listener para salvar valor dos checkbox na preferencia.
+        chkListener = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mPresenter.saveCheckBoxStatusIntoPreference(
+                    String.valueOf(buttonView.getTag()),
+                    isChecked
+                );
+            }
+        };
+        //
+        applyListenersToChk();
+    }
+
+    private void applyListenersToChk() {
+        cbk_nform.setOnCheckedChangeListener(chkListener);
+        cbk_nform_ap.setOnCheckedChangeListener(chkListener);
+        cbk_ticket.setOnCheckedChangeListener(chkListener);
+        cbk_site_logado.setOnCheckedChangeListener(chkListener);
     }
 
     @Override
@@ -402,9 +449,6 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         //
         Bundle bundle = new Bundle();
         bundle.putString(ACT_SELECTED_DATE, null);
-        bundle.putBoolean(ACT_FILTER_FORM, cbk_nform.isChecked());
-        bundle.putBoolean(ACT_FILTER_FORM_AP, cbk_nform_ap.isChecked());
-        bundle.putBoolean(ACT_FILTER_SITE, cbk_site_logado.isChecked());
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -421,9 +465,6 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         bundle.putString(ACT_SELECTED_DATE, ToolBox.reverseB(mket_date.getText().toString()).length() != 0 ? ToolBox.reverseB(mket_date.getText().toString()) : null);
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, serial_id);
         bundle.putBoolean(ACT_FILTER_LATE, late);
-        bundle.putBoolean(ACT_FILTER_FORM, cbk_nform.isChecked());
-        bundle.putBoolean(ACT_FILTER_FORM_AP, cbk_nform_ap.isChecked());
-        bundle.putBoolean(ACT_FILTER_SITE, cbk_site_logado.isChecked());
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);

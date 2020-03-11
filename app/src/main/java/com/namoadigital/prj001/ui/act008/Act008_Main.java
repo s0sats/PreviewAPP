@@ -47,6 +47,7 @@ import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit;
@@ -78,7 +79,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private String mResource_Code_Frag;
     private HMAux hmAux_Trans_Frag;
     private boolean isSchedule;////agendamento
-    private boolean forceCheckSerial = false;
+    //LUCHE - 03/03/2020
+    //TODO Apagar todos os pontos do forceCheckSerial após teste comprovar sua obsolecencia
+    //Comentado forceCheckSerial, pois agora o serial será busca na lista de agendamento, não sendo
+    //mais necessario forçar a busca do serial uqe ja vira atualziado.
+    //private boolean forceCheckSerial = false;
     private String scheduled_site;
     private View vNFormSelected;
     private LinearLayout contentMain;
@@ -359,7 +364,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                         if (!isSiteScheduleInList) {
                             //Seta var para falso para pular a busca por serial, uma vez que,
                             //pelo fluxo, o backpressed será executado.
-                            forceCheckSerial = false;
+                            //forceCheckSerial = false;
                             ToolBox.alertMSG(
                                     context,
                                     hmAux_Trans.get("alert_form_site_not_found_tll"),
@@ -376,18 +381,18 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
                         }
                     }
-                    //Se é verificação força true, força verificação
-                    //dos dados dos serial.
-                    if (forceCheckSerial) {
-                        //reseta variavel para ser executada apenas uma vez.
-                        forceCheckSerial = false;
-                        searchSerialFlow(
-                                mdProductSerial.getProduct_code(),
-                                mdProductSerial.getProduct_id(),
-                                mdProductSerial.getSerial_id(),
-                                ""
-                        );
-                    }
+//                    //Se é verificação força true, força verificação
+//                    //dos dados dos serial.
+//                    if (forceCheckSerial) {
+//                        //reseta variavel para ser executada apenas uma vez.
+//                        forceCheckSerial = false;
+//                        searchSerialFlow(
+//                                mdProductSerial.getProduct_code(),
+//                                mdProductSerial.getProduct_id(),
+//                                mdProductSerial.getSerial_id(),
+//                                ""
+//                        );
+//                    }
                 }
             }
 
@@ -446,7 +451,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 //batatinha
                 scheduled_site = bundle.getString(Constant.ACT017_SCHEDULED_SITE,"");
                 //Se agendado e existe serial preenchido, seta variavel forceCheckSerial para true.
-                forceCheckSerial = !bundle_serial_id.equals("");
+                //forceCheckSerial = !bundle_serial_id.equals("");
             } else {
                 bundle_product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE));
                 //bundle_product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE));
@@ -873,6 +878,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public void callAct013(Context context) {
         Intent mIntent = new Intent(context, Act013_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle act013Bundle = new Bundle();
+        act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING));
+        act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE));
+        act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED));
+        mIntent.putExtras(act013Bundle);
         startActivity(mIntent);
         finish();
     }

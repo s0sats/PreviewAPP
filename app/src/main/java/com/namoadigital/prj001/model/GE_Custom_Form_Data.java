@@ -27,9 +27,6 @@ public class GE_Custom_Form_Data {
     private long custom_form_data; // Indexador
 
     @Expose
-    private Long custom_form_data_serv; // Indexador
-
-    @Expose
     private String custom_form_status; // Local (0 = nao sincronizado 1 = sincronizado 2 = Bloqueado para envio)
 
     @Expose
@@ -87,6 +84,15 @@ public class GE_Custom_Form_Data {
     private String date_gps;
 
     private List<GE_Custom_Form_Data_Field> dataFields;
+    //Campos novo agendamento
+    @Expose
+    private Integer schedule_prefix;
+    @Expose
+    private Integer schedule_code;
+    @Expose
+    private Integer schedule_exec;
+    //Contem msg de retorno após sae do form no servidor.
+    private String error_msg;
 
     public GE_Custom_Form_Data() {
         this.customer_code = -1L;
@@ -94,7 +100,6 @@ public class GE_Custom_Form_Data {
         this.custom_form_code = -1;
         this.custom_form_version = -1;
         this.custom_form_data = -1L;
-        this.custom_form_data_serv = null;
         this.custom_form_status = "2";
         this.product_code = -1L;
         this.serial_id = "";
@@ -114,6 +119,10 @@ public class GE_Custom_Form_Data {
         this.so_code = null;
         this.zone_code = null;
         this.local_code = null;
+        this.schedule_prefix = null;
+        this.schedule_code = null;
+        this.schedule_exec = null;
+        this.error_msg = null;
         this.location_pendency = 0;
         this.date_gps="";
     }
@@ -156,14 +165,6 @@ public class GE_Custom_Form_Data {
 
     public void setCustom_form_data(long custom_form_data) {
         this.custom_form_data = custom_form_data;
-    }
-
-    public Long getCustom_form_data_serv() {
-        return custom_form_data_serv;
-    }
-
-    public void setCustom_form_data_serv(Long custom_form_data_serv) {
-        this.custom_form_data_serv = custom_form_data_serv;
     }
 
     public String getCustom_form_status() {
@@ -316,6 +317,38 @@ public class GE_Custom_Form_Data {
 
     public void setDataFields(List<GE_Custom_Form_Data_Field> dataFields) {
         this.dataFields = dataFields;
+    }
+
+    public Integer getSchedule_prefix() {
+        return schedule_prefix;
+    }
+
+    public void setSchedule_prefix(Integer schedule_prefix) {
+        this.schedule_prefix = schedule_prefix;
+    }
+
+    public Integer getSchedule_code() {
+        return schedule_code;
+    }
+
+    public void setSchedule_code(Integer schedule_code) {
+        this.schedule_code = schedule_code;
+    }
+
+    public Integer getSchedule_exec() {
+        return schedule_exec;
+    }
+
+    public void setSchedule_exec(Integer schedule_exec) {
+        this.schedule_exec = schedule_exec;
+    }
+
+    public String getError_msg() {
+        return error_msg;
+    }
+
+    public void setError_msg(String error_msg) {
+        this.error_msg = error_msg;
     }
 
     public int getLocation_pendency() {

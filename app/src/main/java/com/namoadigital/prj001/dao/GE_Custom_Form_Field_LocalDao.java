@@ -30,7 +30,6 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
     public static final String CUSTOM_FORM_DATA = "custom_form_data";
-    public static final String CUSTOM_FORM_DATA_SERV = "custom_form_data_serv";
     public static final String CUSTOM_FORM_SEQ = "custom_form_seq";
     public static final String CUSTOM_FORM_DATA_TYPE = "custom_form_data_type";
     public static final String CUSTOM_FORM_DATA_SIZE = "custom_form_data_size";
@@ -310,12 +309,6 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             custom_form_field_local.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             custom_form_field_local.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
             custom_form_field_local.setCustom_form_data(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
-            if (cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV))) {
-                custom_form_field_local.setCustom_form_data_serv(null);
-            }else {
-                custom_form_field_local.setCustom_form_data_serv(cursor.getLong(cursor.getColumnIndex(CUSTOM_FORM_DATA_SERV)));
-            }
-
             custom_form_field_local.setCustom_form_seq(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_SEQ)));
             custom_form_field_local.setCustom_form_data_type(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DATA_TYPE)));
 
@@ -364,8 +357,6 @@ public class GE_Custom_Form_Field_LocalDao extends BaseDao implements DaoLocal<G
             if (custom_form_field_local.getCustom_form_data() > -1) {
                 contentValues.put(CUSTOM_FORM_DATA, custom_form_field_local.getCustom_form_data());
             }
-
-            contentValues.put(CUSTOM_FORM_DATA_SERV, custom_form_field_local.getCustom_form_data_serv());
 
             if (custom_form_field_local.getCustom_form_seq() > -1) {
                 contentValues.put(CUSTOM_FORM_SEQ, custom_form_field_local.getCustom_form_seq());

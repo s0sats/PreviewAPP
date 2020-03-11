@@ -1991,7 +1991,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
 
         switch (currentFrag) {
-            case SELECTION_PRODUCT_SELECTION:
+            case SELECTION_PRODUCT_EDIT:
                 if (act027_product_edit_.getEventStatus().equalsIgnoreCase(
                         Act027_Product_Edit.EVENT_EDIT_MODE)
                 ) {
@@ -2017,7 +2017,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 }
                 setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
                 break;
-            case SELECTION_PRODUCT_EDIT:
+            case SELECTION_PRODUCT_SELECTION:
                 setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
                 break;
             case SELECTION_SERVICES:

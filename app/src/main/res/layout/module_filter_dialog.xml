@@ -14,29 +14,11 @@
         android:textSize="@dimen/font_size_title"
         android:textStyle="bold" />
 
-    <CheckBox
-        android:id="@+id/module_filter_dialog_chk_n_form"
-        android:layout_width="wrap_content"
+    <include
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:checked="true"
-        android:text="Edit - trad" />
-
-    <CheckBox
-        android:id="@+id/module_filter_dialog_chk_n_form_ap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:checked="true"
-        android:text="Process - trad" />
-
-    <CheckBox
-        android:id="@+id/module_filter_dialog_chk_site_logado"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:checked="true"
-        android:text="Site - trad" />
+        android:layout_margin="-20dp"
+        layout="@layout/schedule_filter_layout"/>
 
 
 </LinearLayout>

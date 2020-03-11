@@ -13,7 +13,6 @@ public class GE_Custom_Form_Local {
     private long custom_form_data;
     private String custom_form_pre;
     private String custom_form_status;
-    private Long custom_form_data_serv;
     private int require_signature;
     private int require_location;
     private int require_serial_done;
@@ -52,6 +51,10 @@ public class GE_Custom_Form_Local {
     private Integer serial_min_length;
     private Integer serial_max_length;
     private String schedule_comments;
+    //Campos novo agendamento
+    private Integer schedule_prefix;
+    private Integer schedule_code;
+    private Integer schedule_exec;
 
     public long getCustomer_code() {
         return customer_code;
@@ -107,14 +110,6 @@ public class GE_Custom_Form_Local {
 
     public void setCustom_form_status(String custom_form_status) {
         this.custom_form_status = custom_form_status;
-    }
-
-    public Long getCustom_form_data_serv() {
-        return custom_form_data_serv;
-    }
-
-    public void setCustom_form_data_serv(Long custom_form_data_serv) {
-        this.custom_form_data_serv = custom_form_data_serv;
     }
 
     public int getRequire_signature() {
@@ -411,5 +406,29 @@ public class GE_Custom_Form_Local {
 
     public void setSchedule_comments(String schedule_comments) {
         this.schedule_comments = schedule_comments;
+    }
+
+    public Integer getSchedule_prefix() {
+        return schedule_prefix;
+    }
+
+    public void setSchedule_prefix(Integer schedule_prefix) {
+        this.schedule_prefix = schedule_prefix;
+    }
+
+    public Integer getSchedule_code() {
+        return schedule_code;
+    }
+
+    public void setSchedule_code(Integer schedule_code) {
+        this.schedule_code = schedule_code;
+    }
+
+    public Integer getSchedule_exec() {
+        return schedule_exec;
+    }
+
+    public void setSchedule_exec(Integer schedule_exec) {
+        this.schedule_exec = schedule_exec;
     }
 }
