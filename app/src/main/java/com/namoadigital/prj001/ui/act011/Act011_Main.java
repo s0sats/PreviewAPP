@@ -124,7 +124,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
     public static final String LOCATION_REFRESH = "location_refresh";
-    public static final int GPS_VALID_INTERVAL = 120000;
+    public static final int GPS_VALID_INTERVAL = 300000;
 
     private Act011_Main_Presenter mPresenter;
 

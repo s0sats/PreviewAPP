@@ -1,22 +1,17 @@
 package com.namoadigital.prj001.service;
 
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.RemoteViews;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
@@ -31,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.NotificationHelper.LOCATION_NOTIFICATION_ID;
+
 /**
  * Created by neomatrix on 11/05/17.
  */
@@ -40,7 +37,7 @@ public class SV_LocationTracker extends Service {
     public static final int LOCATION_DEFAULT = 0;
     public static final int LOCATION_NFORM_ON = 1;
     public static final int LOCATION_BACKGROUND = 2;
-    public static final int LOCATION_NOTIFICATION_ID = 9999;
+
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
@@ -92,8 +89,7 @@ public class SV_LocationTracker extends Service {
             mLocation_Type = location.getProvider().toUpperCase();
             mLocation_Latitude = String.valueOf(location.getLatitude());
             mLocation_Longitude = String.valueOf(location.getLongitude());
-//            Log.i("GPS_Service", "location Lat: " + location.getLatitude() +  " location Long: " + location.getLongitude());
-//            ToolBox.toastMSG(getApplicationContext(), "onLocationChanged: " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+
             boolean hasError;
             switch (async_gps){
                 case LOCATION_NFORM_ON:
@@ -141,9 +137,7 @@ public class SV_LocationTracker extends Service {
         long customer_code = ToolBox_Con.getPreference_Customer_Code(getApplicationContext());
         GE_Custom_Form_DataDao ge_custom_form_dataDao = new GE_Custom_Form_DataDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
 
-        List<GE_Custom_Form_Data> formDataList = ge_custom_form_dataDao.query(
-                new GE_Custom_Form_Data_Sql_006(customer_code).toSqlQuery()
-        );
+        List<GE_Custom_Form_Data> formDataList = getFormDataList(customer_code, ge_custom_form_dataDao);
 
         if(formDataList != null && !formDataList.isEmpty()) {
             for (GE_Custom_Form_Data form_data : formDataList) {
@@ -168,6 +162,12 @@ public class SV_LocationTracker extends Service {
             }
         }
         return hasError;
+    }
+
+    private List<GE_Custom_Form_Data> getFormDataList(long customer_code, GE_Custom_Form_DataDao ge_custom_form_dataDao) {
+        return ge_custom_form_dataDao.query(
+                new GE_Custom_Form_Data_Sql_006(customer_code).toSqlQuery()
+        );
     }
 
     private void recordProcess(String data) {
@@ -214,8 +214,7 @@ public class SV_LocationTracker extends Service {
         }else{
             async_gps = LOCATION_BACKGROUND;
         }
-        ToolBox_Inf.cancelNotification(getApplicationContext(), LOCATION_NOTIFICATION_ID);
-        call_Notification();
+
 //        Log.i("GPS_Service", "onStartCommand: " + async_gps);
 
         switch (async_gps){
@@ -343,38 +342,7 @@ public class SV_LocationTracker extends Service {
                 translist);
     }
 
-    public void call_Notification() {
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-        //
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
-        builder.setSmallIcon(R.mipmap.ic_namoa);
-        builder.setAutoCancel(false);
-        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
-//        RemoteViews view = new RemoteViews(getApplicationContext().getPackageName(), R.layout.sv_resume_notification);
-        String gps_searching_location = hmAux_Trans.get("gps_searching_location");
-        String latitude = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LAT,"");
-        String longitude = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LNG,"");
-        long locationDate = ToolBox_Con.getLongPreferencesByKey(getApplicationContext(), Constant.LOCATION_DATE,0);
-        String location_type = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_TYPE,"");
 
-        builder.setContentText(gps_searching_location);
-
-        builder.setStyle(new NotificationCompat.BigTextStyle()
-                .bigText("latitude: " + latitude +
-                        "\nlongitude: " + longitude +
-                        "\nlocationDate: " + ToolBox_Inf.millisecondsToString(locationDate, "dd/MM/yyyy HH:mm:ss Z") +
-                        "\nlocation_type: " + location_type +
-                        "\nasync_gps: " + async_gps));
-        //
-        int versao = Build.VERSION.SDK_INT;
-        //
-        if (versao >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            nm.notify(LOCATION_NOTIFICATION_ID, builder.build());
-        } else {
-            nm.notify(LOCATION_NOTIFICATION_ID, builder.getNotification());
-        }
-    }
 
 }
 
