@@ -394,8 +394,8 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                     DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
                     //
                     if (!daoObjReturn.hasError()) {
-                        item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getSchedule_prefix()));
-                        item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getSchedule_code()));
+                        item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
+                        item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
                         return true;
                     }else{
                         updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_SCHEDULE);
@@ -513,8 +513,8 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     private boolean isTicketAlreadyCreated(HMAux item) {
         TK_Ticket tkTicket = getTicketBySchedule(item);
         if(tkTicket != null && TK_Ticket.isValidTkTicket(tkTicket) ){
-            item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getSchedule_prefix()));
-            item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getSchedule_code()));
+            item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
+            item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
             return true;
         }
         return false;
