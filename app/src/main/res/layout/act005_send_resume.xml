@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <include
+        android:id="@+id/act005_send_resume_nform"
+        layout="@layout/act005_send_resume_detail" />
+
+    <include
+        android:id="@+id/act005_send_resume_serial"
+        layout="@layout/act005_send_resume_detail" />
+
+    <include
+        android:id="@+id/act005_send_resume_so"
+        layout="@layout/act005_send_resume_detail" />
+
+    <include
+        android:id="@+id/act005_send_resume_assets"
+        layout="@layout/act005_send_resume_detail" />
+
+    <include
+        android:id="@+id/act005_send_resume_form_ap"
+        layout="@layout/act005_send_resume_detail" />
+
+    <include
+        android:id="@+id/act005_send_resume_express_so"
+        layout="@layout/act005_send_resume_detail" />
+
+    <include
+        android:id="@+id/act005_send_resume_ticket"
+        layout="@layout/act005_send_resume_detail" />
+
+</LinearLayout>

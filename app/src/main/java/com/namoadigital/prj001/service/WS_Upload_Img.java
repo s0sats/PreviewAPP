@@ -113,6 +113,7 @@ public class WS_Upload_Img extends IntentService {
             programAlarm(getApplicationContext(),customer_code);
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
+            ToolBox_Inf.callPendencyNotification(getApplicationContext());
             WBR_Upload_Img.IS_RUNNING = false;
             WBR_Upload_Img.completeWakefulIntent(intent);
             //

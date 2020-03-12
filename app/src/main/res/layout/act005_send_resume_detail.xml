@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="10">
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <ProgressBar
+            android:id="@+id/send_resume_pb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:progressTint="@color/namoa_color_green_chat"
+            android:visibility="visible"
+             />
+        <ImageView
+            android:id="@+id/send_resume_iv_ready"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_done_black_24dp"
+            android:tint="@color/namoa_color_green_chat"
+            android:visibility="invisible"
+            />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/send_resume_tv_module"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="7"
+        tools:text="MODULO" />
+
+    <TextView
+        android:id="@+id/send_resume_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:textAlignment="viewEnd"
+        tools:text="1/10"
+        android:visibility="gone"/>
+</LinearLayout>
