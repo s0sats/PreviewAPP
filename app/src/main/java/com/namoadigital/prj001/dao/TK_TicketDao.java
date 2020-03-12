@@ -726,9 +726,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
             //
             tk_ticket.setToken(tk_ticket.getToken());
-            tk_ticket.setSchedule_prefix(tk_ticket.getSchedule_prefix());
-            tk_ticket.setSchedule_code(tk_ticket.getSchedule_code());
-            tk_ticket.setSchedule_exec(tk_ticket.getSchedule_exec());
+            contentValues.put(SCHEDULE_PREFIX,tk_ticket.getSchedule_prefix());
+            contentValues.put(SCHEDULE_CODE,tk_ticket.getSchedule_code());
+            contentValues.put(SCHEDULE_EXEC,tk_ticket.getSchedule_exec());
             //
             return contentValues;
         }

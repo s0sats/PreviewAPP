@@ -19,7 +19,6 @@ public class TK_Ticket_Sql_010 implements Specification {
 
     @Override
     public String toSqlQuery() {
-
         StringBuilder sb = new StringBuilder();
         return sb
             .append(" SELECT\n" +

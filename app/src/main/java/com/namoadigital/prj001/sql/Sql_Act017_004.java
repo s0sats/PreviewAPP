@@ -47,6 +47,7 @@ public class Sql_Act017_004 implements Specification {
                 "  s.site_code,\n" +
                 "  s.site_id,\n" +
                 "  s.site_desc,\n" +
+                "  s.serial_code,\n" +
                 "  s.serial_id,\n" +
                 "  s.date_start, \n" +
                 "  s.date_end ,\n" +

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
 /**
  * Created by DANIEL.LUCHE on 16/01/2017.
  */
@@ -158,5 +160,11 @@ public class MD_Site {
 
     public void setOut_done_automatic(int out_done_automatic) {
         this.out_done_automatic = out_done_automatic;
+    }
+
+    public static boolean isValid(MD_Site mdSite){
+        return  mdSite != null
+                && mdSite.getCustomer_code() > 0
+                && ToolBox_Inf.convertStringToInt(mdSite.getSite_code()) > 0;
     }
 }

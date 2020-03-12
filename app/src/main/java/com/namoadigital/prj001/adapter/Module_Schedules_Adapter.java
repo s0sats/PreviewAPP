@@ -174,6 +174,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         switch (getItemViewType(position)){
             case 0:
             case 1:
+            case 3:
                 isEnabled = true;
                 break;
             case 2:

@@ -31,6 +31,7 @@ import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -69,6 +70,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public static final String EMPTY_SERIAL_SEARCH = "empty_serial_search";
     public static final String SERIAL_CREATION_DENIED = "serial_creation_denied" ;
     public static final String MODULE_TICKET_EXEC_CONFIRM = "module_ticket_exec_confirm" ;
+    public static final String MODULE_SCHEDULE_TICKET_CREATION_ERROR = "module_schedule_ticket_creation_error" ;
 
     private ListView lv_schedules;
     private Bundle bundle;
@@ -183,6 +185,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("dialog_serial_search_ttl");
         translateList.add("dialog_serial_search_start");
         translateList.add("alert_product_no_allow_new_serial_msg");
+        //
+        translateList.add("alert_ticket_action_start_ttl");
+        translateList.add("alert_ticket_action_start_confirm");
+        translateList.add("alert_error_on_create_ticket_action_ttl");
+        translateList.add("alert_error_on_create_ticket_action_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -438,8 +445,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 btnNegative = 0;
                 break;
             case MODULE_TICKET_EXEC_CONFIRM:
-                title = hmAux_Trans.get("alert_no_serial_found_ttl");
-                msg = hmAux_Trans.get("alert_product_no_allow_new_serial_msg");
+                title = hmAux_Trans.get("alert_ticket_action_start_ttl");
+                msg = hmAux_Trans.get("alert_ticket_action_start_confirm");
                 btnNegative = 1;
                 listener = new DialogInterface.OnClickListener() {
                     @Override
@@ -447,6 +454,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                         mPresenter.checkTicketFlow(item);
                     }
                 };
+                break;
+            case MODULE_SCHEDULE_TICKET_CREATION_ERROR:
+                title = hmAux_Trans.get("alert_error_on_create_ticket_action_ttl");
+                msg = hmAux_Trans.get("alert_error_on_create_ticket_action_msg");
+                btnNegative = 0;
                 break;
         }
 
@@ -534,6 +546,17 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     @Override
     public void callAct020(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act020_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (bundle != null) {
+            mIntent.putExtras(bundle);
+        }
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct070(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act070_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {
             mIntent.putExtras(bundle);

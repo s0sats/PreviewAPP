@@ -44,5 +44,7 @@ public interface Act017_Main_View {
 
     void removeControlFromActivity(MKEditTextNM mketSerial);
 
+    void callAct070(Bundle bundle);
+
     void callAct071(Bundle bundle);
 }
