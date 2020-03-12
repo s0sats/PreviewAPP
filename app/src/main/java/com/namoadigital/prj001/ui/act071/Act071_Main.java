@@ -96,6 +96,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     //flag criada para controle do metodo que coloca imagem na tela
     private boolean fromCamera = false;
     private boolean hasImageFileChanged = false;
+    //LUCHE - 12/03/2020
+    private int mSchedulePrefix;
+    private int mScheduleCode;
+    private int mScheduleExec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,7 +184,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             hmAux_Trans
         );
         //
-        if (mPresenter.validateBundleParams(mActionPrefix, mActionCode, mActionSeq)) {
+        if (mPresenter.validateBundleParams(mActionPrefix, mActionCode, mActionSeq, mSchedulePrefix, mScheduleCode, mScheduleExec)) {
             updateActionData();
         } else {
             paramErrorFlow();
@@ -200,7 +204,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mTypePath = requestingBundle.getString(TK_TicketDao.TYPE_PATH, "");
             mTypeDesc = requestingBundle.getString(TK_TicketDao.TYPE_DESC, "");
             bDisableByCheckin = requestingBundle.getBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN,false);
-            //
+            //LUCHE - 12/03/2020
+            mSchedulePrefix = requestingBundle.getInt(TK_TicketDao.SCHEDULE_PREFIX, -1);
+            mScheduleCode = requestingBundle.getInt(TK_TicketDao.SCHEDULE_CODE, -1);
+            mScheduleExec = requestingBundle.getInt(TK_TicketDao.SCHEDULE_EXEC, -1);
         } else {
             requestingAct = ConstantBaseApp.ACT070;
             mActionPrefix = -1;
@@ -210,6 +217,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mTypePath = "";
             mTypeDesc = "";
             bDisableByCheckin = false;
+            mSchedulePrefix = -1;
+            mScheduleCode = -1;
+            mScheduleExec = -1;
         }
     }
 

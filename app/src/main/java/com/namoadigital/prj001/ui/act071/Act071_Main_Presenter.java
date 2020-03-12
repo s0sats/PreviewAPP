@@ -71,10 +71,24 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         );
     }
 
-
+    /**
+     * LUCHE- 12/03/2020
+     * <p></p>
+     * Metodo que verifica se parametros do bundle são validos.
+     * Atualizado o metodo adicionando as pk do agendamento pois, nesse caso, o prefix do ticket pode ser 0
+     * @param mTkActionPrefix - Ticket Prefix
+     * @param mTkActionCode - Ticket Code
+     * @param mTkActionSeq - Ticket Seq
+     * @param mSchedulePrefix - Schedule Prefix
+     * @param mScheduleCode - Schedule Code
+     * @param mScheduleExec - Schedule Exec
+     * @return - Verdadeiro se a pk do ticket maior que zero ou se pk agendamento , mas ticket code e seq maior que 0
+     */
     @Override
-    public boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq) {
-        return mTkActionPrefix > 0 && mTkActionCode > 0 && mTkActionSeq > 0 ;
+    public boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq, int mSchedulePrefix, int mScheduleCode, int mScheduleExec) {
+        return ((mTkActionPrefix > 0 || (mSchedulePrefix > 0 && mScheduleCode > 0 && mScheduleExec > 0 ))
+                && mTkActionCode > 0 && mTkActionSeq > 0
+        );
     }
 
     @Override

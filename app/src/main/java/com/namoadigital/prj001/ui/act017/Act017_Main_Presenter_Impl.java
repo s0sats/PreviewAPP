@@ -394,6 +394,8 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                     DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
                     //
                     if (!daoObjReturn.hasError()) {
+                        item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getSchedule_prefix()));
+                        item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getSchedule_code()));
                         return true;
                     }else{
                         updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_SCHEDULE);
@@ -545,11 +547,12 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_PREFIX)));
         bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_CODE)));
         bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ToolBox_Inf.convertStringToInt(item.get(TK_Ticket_CtrlDao.TICKET_SEQ)));
+        bundle.putString(Constant.ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
         return bundle;
     }
 
     private Bundle getTicketActionFlowBundle(HMAux item) {
-        Bundle bundle = new Bundle();
+       Bundle bundle = new Bundle();
         //
        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017);
        bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX)));

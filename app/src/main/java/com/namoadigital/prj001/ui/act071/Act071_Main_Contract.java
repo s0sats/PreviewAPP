@@ -37,7 +37,7 @@ public interface Act071_Main_Contract {
 
         void onBackPressedClicked(String requestingAct);
 
-        boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq);
+        boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq, int mSchedulePrefix, int mScheduleCode, int mScheduleExec);
 
         TK_Ticket_Ctrl getTicketCtrlObj(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq);
 
