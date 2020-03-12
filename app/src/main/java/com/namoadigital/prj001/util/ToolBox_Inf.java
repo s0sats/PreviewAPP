@@ -2829,6 +2829,35 @@ public class ToolBox_Inf {
         manager.cancel(notification_id);
     }
 
+    public static void callPendencyNotification(Context context) {
+        HMAux hmAux_trans = new HMAux();
+        List<String> translateList = new ArrayList<>();
+        translateList.add("sys_notification_pendency_form_lbl");
+        translateList.add("sys_notification_pendency_form_ap_lbl");
+        translateList.add("sys_notification_pendency_serial_lbl");
+        translateList.add("sys_notification_pendency_assets_lbl");
+        translateList.add("sys_notification_pendency_services_lbl");
+        hmAux_trans = ToolBox_Inf.setLanguage(
+                context,
+                Constant.APP_MODULE,
+                ToolBox_Inf.getResourceCode(
+                        context,
+                        Constant.APP_MODULE,
+                        "sys"
+                ),
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translateList
+        );
+        //
+        if (hmAux_trans == null || hmAux_trans.size() == 0) {
+            if(hmAux_trans == null){
+                hmAux_trans = new HMAux();
+            }
+        }
+
+        callPendencyNotification(context, hmAux_trans);
+    }
+
     /**
      * BARRIONUEVO - 12/03/2020
      * <p></p>

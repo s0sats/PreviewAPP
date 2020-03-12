@@ -42,6 +42,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
             Intent mIntent = new Intent(context, ScreenStatusService.class);
             context.startService(mIntent);
         }
+        ToolBox_Inf.callPendencyNotification(context);
     }
 
     private void activeChatService(Context context) {
