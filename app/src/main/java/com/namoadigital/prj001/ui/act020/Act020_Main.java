@@ -45,6 +45,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
+
 /**
  * Created by d.luche on 17/05/2017.
  */
@@ -99,6 +101,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private String customFormCode;
     private String customFormVersion;
     private String customFormCodeDesc;
+    private boolean from_offline_source;
     //LUCHE - 03/03/2020 - Novo Agendamento
     private Bundle scheduleBundle = new Bundle();
     private Bundle act013Bundle = new Bundle();
@@ -304,6 +307,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         Bundle bundle = getIntent().getExtras();
         //
         if (bundle != null) {
+            from_offline_source = bundle.getBoolean(FROM_OFFLINE_SOURCE, false);
             if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
 
                 mJump = bundle.getBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP);
@@ -539,7 +543,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         mAdapter = new Act020_Prod_Serial_Adapter(
                 context,
                 R.layout.act020_cell,
-                prod_serial_list
+                prod_serial_list,
+                from_offline_source
+
         );
         //
         mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));
@@ -598,6 +604,10 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public void callAct008(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act008_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Adicao de imagem informativa que o serial escolhido veio de fonte offline.
+        if(from_offline_source){
+            bundle.putBoolean(FROM_OFFLINE_SOURCE, from_offline_source);
+        }
         bundle.putAll(scheduleBundle);
         bundle.putAll(act013Bundle);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, requestingAct);
@@ -649,7 +659,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         finish();
     }
 
-    //    @Override
+//    @Override
 //    public void closeDrawer() {
 //        mDrawerLayout.closeDrawer(GravityCompat.START);
 //    }

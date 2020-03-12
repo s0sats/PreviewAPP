@@ -485,6 +485,10 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         //implementar dialog confirmando busca offline
         progressDialog.dismiss();
         /*
+            07/02/2020 - Decidido tratar o erro de Http no metodo processError_http.
+                         Para qualquer alteracao futura, considerar o sync_required do serial
+                         pois o resultado da consulta de serial online atropela o serial offline
+
             14/08/2019 -  Inicio do fluxo offline para N-Form, ao nao conseguir realizar a pesquisa
             de serial devido mah conexao, exibi um dialog perguntando se o user gostaria de ligar o
             modo of-line
@@ -502,6 +506,20 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
 //                },
 //                1
 //        );
+    }
+        /*
+            07/02/2020 - Barrionuevo - Continuar fluxo via offline quando ha falha no HTTP.
+            Decidido tratar o erro de Http no metodo processError_http.
+            Para qualquer alteracao futura, considerar o sync_required do serial
+            pois o resultado da consulta de serial online atropela o serial offline
+
+        */
+    @Override
+    protected void processError_http() {
+        //Super realiza o mesmo comportamento do error_1
+//        super.processError_http();
+        progressDialog.dismiss();
+        mPresenter.offlineSerialSearch();
     }
 
     // Hugo

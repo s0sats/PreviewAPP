@@ -163,6 +163,15 @@
                             android:src="@drawable/ic_clock_chat"
                             android:tint="@color/light_to_dark_blue_color"
                             android:visibility="visible" />
+                     <ImageView
+                            android:id="@+id/frg_serial_edit_iv_offline"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end|center_vertical"
+                            android:layout_marginEnd="13dp"
+                            android:layout_marginStart="2dp"
+                            android:src="@drawable/ic_signal_wifi_off_black_24dp"
+                            android:visibility="gone" />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"

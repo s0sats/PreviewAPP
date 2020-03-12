@@ -78,6 +78,11 @@ public class GE_Custom_Form_Data {
     @Expose
     private Integer local_code;
 
+    private int location_pendency;
+
+    @Expose
+    private String date_gps;
+
     private List<GE_Custom_Form_Data_Field> dataFields;
     //Campos novo agendamento
     @Expose
@@ -118,6 +123,8 @@ public class GE_Custom_Form_Data {
         this.schedule_code = null;
         this.schedule_exec = null;
         this.error_msg = null;
+        this.location_pendency = 0;
+        this.date_gps="";
     }
 
     public long getCustomer_code() {
@@ -342,5 +349,21 @@ public class GE_Custom_Form_Data {
 
     public void setError_msg(String error_msg) {
         this.error_msg = error_msg;
+    }
+
+    public int getLocation_pendency() {
+        return location_pendency;
+    }
+
+    public void setLocation_pendency(int location_pendency) {
+        this.location_pendency = location_pendency;
+    }
+
+    public String getDate_gps() {
+        return date_gps;
+    }
+
+    public void setDate_gps(String date_gps) {
+        this.date_gps = date_gps;
     }
 }

@@ -48,6 +48,7 @@ public class GE_Custom_Form_Sql_002 implements Specification {
                 "      cf."+GE_Custom_FormDao.CUSTOM_FORM_TYPE+",\n" +
                 "      cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+",\n" +
                 "      cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+",\n" +
+                "      cf."+GE_Custom_FormDao.REQUIRE_LOCATION+",\n" +
                 "      (SELECT txt_value\n" +
                 "       FROM "+ EV_Module_Res_Txt_TransDao.TABLE+" tr,\n" +
                 "            "+ EV_Module_Res_TxtDao.TABLE+" ts,\n" +

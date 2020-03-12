@@ -27,6 +27,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -269,6 +270,50 @@ public class ToolBox_Con {
                 PreferenceManager.getDefaultSharedPreferences(context);
 
         return sharedPreferences.getBoolean(
+                pref_key,
+                default_value
+        );
+    }
+    //endregion
+    //region String
+    //
+    public static void setStringPreference(Context context, String pref_key, String pref_value) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        sharedPreferences.edit().putString(
+                pref_key,
+                pref_value
+        ).apply();
+    }
+
+    public static String getStringPreferencesByKey(Context context, String pref_key, String default_value) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return sharedPreferences.getString(
+                pref_key,
+                default_value
+        );
+    }
+    //endregion
+
+
+    //region Long
+    //
+    public static void setLongPreference(Context context, String pref_key, long pref_value) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        sharedPreferences.edit().putLong(
+                pref_key,
+                pref_value
+        ).apply();
+    }
+    public static long getLongPreferencesByKey(Context context, String pref_key, long default_value) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+
+        return  sharedPreferences.getLong(
                 pref_key,
                 default_value
         );

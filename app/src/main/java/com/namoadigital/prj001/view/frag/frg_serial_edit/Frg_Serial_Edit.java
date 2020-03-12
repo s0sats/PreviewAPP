@@ -158,6 +158,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     //VIEW_SO_EDIT
     private TextView tv_brand_model_color;
     private ImageView iv_serial_dialog_info;
+    private ImageView iv_serial_offline;
     private String brand_model_color_lbl;
     private boolean showCategorySegmentoInfo = true;
     private boolean translationLoaded = false;
@@ -203,6 +204,15 @@ public class Frg_Serial_Edit extends BaseFragment {
     //Var que controla se site ja foi sugerido. após primeira sugestão, não deve ser mais sugerido, deve
     //manter o que ja esta preenchido.
     private boolean isSiteAlreadySuggested = false;
+    private boolean showOffline;
+
+    public void setShowOffline(boolean showOffline) {
+        //Quando serial eh acessado offline
+        this.showOffline = showOffline;
+        if(showOffline){
+            iv_serial_offline.setVisibility(View.VISIBLE);
+        }
+    }
 
     //region Interfaces
     public interface I_Frg_Serial_Edit {
@@ -598,6 +608,8 @@ public class Frg_Serial_Edit extends BaseFragment {
         controls_sta.add(mket_serial_id);
         //
         iv_serial_log = (ImageView) view.findViewById(R.id.frg_serial_edit_iv_serial_dialog_log);
+        iv_serial_offline = (ImageView) view.findViewById(R.id.frg_serial_edit_iv_offline);
+        iv_serial_offline.setVisibility(View.GONE);
         //
         tv_product_code_label = (TextView) view.findViewById(R.id.frg_serial_edit_tv_product_code_lbl);
         tv_product_code_label.setTag("product_label");

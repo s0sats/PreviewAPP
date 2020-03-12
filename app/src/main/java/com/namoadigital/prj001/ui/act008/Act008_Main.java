@@ -56,6 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -96,6 +97,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private String customFormCode;
     private String customFormVersion;
     private String customFormCodeDesc;
+    private boolean bundle_from_offline_source;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -289,6 +292,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         frgSerialEdit.setBtnActionLabel(hmAux_Trans.get("btn_create"));
         frgSerialEdit.setViewMode(Frg_Serial_Edit.VIEW_FULL_EDIT);
         frgSerialEdit.setShowCategorySegmentoInfo(false);
+        frgSerialEdit.setShowOffline(bundle_from_offline_source);
         //frgSerialEdit.setForceCheckExistences(isSchedule);
         //Se for agendamento e o produto controlar local seguir mesma validação do site_restriction 19/06/2018
         if(isSchedule && mdProduct.getLocal_control() == 1) {
@@ -438,6 +442,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 isSchedule = true;
             }
             //
+            bundle_from_offline_source = bundle.getBoolean(FROM_OFFLINE_SOURCE, false);
             if (isSchedule) {
                 bundle_product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE));
                 //bundle_product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));

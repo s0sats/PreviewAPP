@@ -103,7 +103,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -117,9 +121,11 @@ import static com.namoadigital.prj001.ui.act015.Act015_Main.FORM_SELECTED_INDEX_
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act011_Main extends Base_Activity implements Act011_Main_View{
+public class Act011_Main extends Base_Activity implements Act011_Main_View {
 
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
+    public static final String LOCATION_REFRESH = "location_refresh";
+    public static final int GPS_VALID_INTERVAL = 300000;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR = 5;
 
 
@@ -225,14 +231,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
          * Implementado metodo para recuperar CUSTOM_FORM_DATA quando o app se recupera do fechamento
          * por falta de memoria evitando a msg de form aberto a cada evento de "fechamento por falta de memoria"
          */
-         if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             //Se tiver os savedInstanceState e a chave CUSTOM_FORM_DATA,
             //seta o CUSTOM_FORM_DATA no bundle da intent que por sua vez será resgatado no metodo
             //recoverGetIntents
-            if(savedInstanceState.containsKey(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA)) {
+            if (savedInstanceState.containsKey(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA)) {
                 getIntent().putExtra(
-                    GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
-                    savedInstanceState.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA)
+                        GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
+                        savedInstanceState.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA)
                 );
             }
         }
@@ -245,6 +251,30 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         initActions();
     }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        String dataRecorded = "\nonDestroy ACT011: " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+//        recordProcess(dataRecorded);
+        if (!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), Constant.HAS_PENDING_LOCATION, false)) {
+            ToolBox_Inf.stop_Location_Tracker(context);
+        } else {
+            ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
+        }
+    }
+
+//    private void recordProcess(String data) {
+//        try {
+//            String filePath = getApplicationContext().getFilesDir().getPath() + "/GPS_Histo.txt";
+//            ToolBox_Inf.writeIn(data, new File(filePath));
+//        }catch (NullPointerException e){
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private void iniSetup() {
         //hasNFCSupport = ToolBox_Inf.hasNFC(context);
@@ -351,6 +381,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         transList.add("alert_error_on_update_schedule_status_ttl");
         transList.add("alert_error_on_update_schedule_status_msg");
         //
+        transList.add("dialog_has_gps_pendency_ttl");
+        transList.add("dialog_has_gps_pendency_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -385,56 +418,59 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     /**
      * Retorna a tradução contida na act.
+     *
      * @return
      */
-    public HMAux getHmAuxTrans(){
+    public HMAux getHmAuxTrans() {
         return hmAux_Trans;
     }
 
     /**
      * Retorna a implementação das interfaces,delegate, do fragmento Act011_FF
+     *
      * @return
      */
-    public Act011_FF.ICustom_Form_FF_ll getFFInterface(){
-        return  new Act011_FF.ICustom_Form_FF_ll() {
-                    @Override
-                    public void openDrawer() {
-                        mDrawerLayout.openDrawer(GravityCompat.START);
-                    }
+    public Act011_FF.ICustom_Form_FF_ll getFFInterface() {
+        return new Act011_FF.ICustom_Form_FF_ll() {
+            @Override
+            public void openDrawer() {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
 
-                    @Override
-                    public void check() {
-                        checkAction(false);
-                    }
+            @Override
+            public void check() {
+                checkAction(false);
+            }
 
-                    @Override
-                    public void previosTab() {
-                        if ((index - 1) >= 1) {
-                            tabSelectedAction(index - 1);
-                        }
-                    }
+            @Override
+            public void previosTab() {
+                if ((index - 1) >= 1) {
+                    tabSelectedAction(index - 1);
+                }
+            }
 
-                    @Override
-                    public void nextTab() {
-                        if ((index + 1) <= pager.getAdapter().getCount()) {
-                            tabSelectedAction(index + 1);
-                        }
-                    }
+            @Override
+            public void nextTab() {
+                if ((index + 1) <= pager.getAdapter().getCount()) {
+                    tabSelectedAction(index + 1);
+                }
+            }
 
-                    @Override
-                    public void checkWithNew() {
-                        finalizeNewFlow = true;
-                        //
-                        checkAction(false);
-                    }
-                };
+            @Override
+            public void checkWithNew() {
+                finalizeNewFlow = true;
+                //
+                checkAction(false);
+            }
+        };
     }
 
     /**
      * Retorna a lista de componente do formulário.
+     *
      * @return
      */
-    public ArrayList<CustomFF> getFf(){
+    public ArrayList<CustomFF> getFf() {
         return customFFs;
     }
 
@@ -535,7 +571,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         listener,
                         1
                 );
-
 
 
             }
@@ -681,6 +716,20 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        String dataRecorded = "\nonResume ACT011\n Require_local: " + formLocal.getRequire_location()
+//        + "\nonResume ACT011\n status: " + SV_LocationTracker.status;
+//        recordProcess(dataRecorded);
+
+        if (formLocal.getRequire_location() == 1
+                && ConstantBase.SYS_STATUS_IN_PROCESSING.equals(formLocal.getCustom_form_status())) {
+            getLocation();
+        }
+    }
+
     private void showConfirmDeleteDialog() {
         final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
 
@@ -689,7 +738,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         Drawable drawable_ic = null;
         TextView tv_title = view.findViewById(R.id.act011_dialog_tv_title);
-        TextView tv_msg = view.findViewById(R.id.act011_dialog_tv_msg );
+        TextView tv_msg = view.findViewById(R.id.act011_dialog_tv_msg);
         TextView btn_ok = view.findViewById(R.id.act011_dialog_btn_ok);
         TextView btn_cancel = view.findViewById(R.id.act011_dialog_btn_cancel);
         ImageView iv_error = view.findViewById(R.id.act011_dialog_iv_error);
@@ -735,7 +784,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 //        formData.setLocation_lat("");
 //        formData.setLocation_lng("");
         //
-        if(fieldsValidation) {
+        if (fieldsValidation) {
             returnValidCheck(String.valueOf(-1));
         }
 
@@ -780,16 +829,16 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         formData.setLocation_lat("");
         formData.setLocation_lng("");
 
-        if(canSave) {
+        if (canSave) {
             saveV2(false);
         }
 
         int sum = returnValidCheck(String.valueOf(-1));
 
         if (sum == 0) {
-            if(showFinalizeOpt && allowFinalizeWithNewBtn()){
+            if (showFinalizeOpt && allowFinalizeWithNewBtn()) {
                 showFinalizeDialogOpt();
-            }else {
+            } else {
                 // Mudar Aqui
                 ToolBox.alertMSG(
                         Act011_Main.this,
@@ -823,43 +872,67 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     /**
      * Valida se botão de finaliza + novo deve aparecer no fluxo.
-     *
+     * <p>
      * LUCHE - 17/02/2020
-     *  Subistutuido a validação de agedamento via custom_form_data_serv pelo metodo isScheduleForm
-     *
+     * Subistutuido a validação de agedamento via custom_form_data_serv pelo metodo isScheduleForm
+     * <p>
      * Regras:
-     *  - O Usr deve ter o perfil de acesso ao botão.
-     *  - O N-Form não pode ter sido gerado pela O.S
-     *  - O N-Form não pode ter sido gerado pelo Agendamento
-     *  - 0 Serial deve ser informdo
+     * - O Usr deve ter o perfil de acesso ao botão.
+     * - O N-Form não pode ter sido gerado pela O.S
+     * - O N-Form não pode ter sido gerado pelo Agendamento
+     * - 0 Serial deve ser informdo
+     *
      * @return
      */
     @Override
     public boolean allowFinalizeWithNewBtn() {
-        if( ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)
-            && mSo_Prefix == null
-            && mSo_Code == null
-            && !ToolBox_Inf.isScheduleForm(formLocal)
-            && serial_id != null
-            && !serial_id.isEmpty()
-        ){
+        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST_PARAM_DONE_NEW)
+                && mSo_Prefix == null
+                && mSo_Code == null
+                && !ToolBox_Inf.isScheduleForm(formLocal)
+                && serial_id != null
+                && !serial_id.isEmpty()
+        ) {
             return true;
         }
 
         return false;
     }
 
-    private void checkGpsFlow(){
+    private void checkGpsFlow() {
         if (formLocal.getRequire_location() == 1) {
-            enableProgressDialog(
-                    hmAux_Trans.get("alert_location_info_title"),
-                    hmAux_Trans.get("alert_location_info_required"),
-                    hmAux_Trans.get("sys_alert_btn_cancel"),
-                    hmAux_Trans.get("sys_alert_btn_ok")
-            );
-            //
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_ENABLED", hmAux_Trans.get("alert_location_info_required"), "", "0");
+            String latitude = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LAT, "");
+            String longitude = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LNG, "");
+            long locationDate = ToolBox_Con.getLongPreferencesByKey(getApplicationContext(), Constant.LOCATION_DATE, 0);
+            String location_type = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_TYPE, "");
+            long currentTime = Calendar.getInstance().getTime().getTime();
+            long diff = currentTime - locationDate;
 
+            if (diff >= GPS_VALID_INTERVAL) {
+//                String dataRecorded = "\ncheckGpsFlow: " +
+//                                      "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
+//                                      "\ndiff: " + diff;
+//                recordProcess(dataRecorded);
+                formData.setLocation_pendency(1);
+                ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, true);
+            } else {
+//                String dataRecorded = "\ncheckGpsFlow: " +
+//                        "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
+//                        "\ngps_date_formatted: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(locationDate)) +
+//                        "\ndiff: " + diff;
+//                recordProcess(dataRecorded);
+                if (latitude != null && !latitude.isEmpty()
+                        && longitude != null && !longitude.isEmpty()) {
+                    formData.setLocation_type(location_type);
+                    formData.setLocation_lat(latitude);
+                    formData.setLocation_lng(longitude);
+                    formData.setLocation_pendency(0);
+                    String gps_date_formatted = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(locationDate));
+                    formData.setDate_gps(gps_date_formatted);
+                }
+//                ToolBox_Con.setBooleanPreference(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false);
+            }
+            startCheckIN();
         } else {
             startCheckIN();
         }
@@ -1006,15 +1079,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //Query modificada para alterar status de form em vez de excluir fisicamente.
         //
         formLocalDao.addUpdate(
-            new GE_Custom_Form_Local_Sql_016(
-                String.valueOf(formData.getCustomer_code()),
-                String.valueOf(formData.getCustom_form_type()),
-                String.valueOf(formData.getCustom_form_code()),
-                String.valueOf(formData.getCustom_form_version()),
-                String.valueOf(formData.getCustom_form_data()),
-                    ConstantBase.SYS_STATUS_DELETED,
-                    ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
-            ).toSqlQuery()
+                new GE_Custom_Form_Local_Sql_016(
+                        String.valueOf(formData.getCustomer_code()),
+                        String.valueOf(formData.getCustom_form_type()),
+                        String.valueOf(formData.getCustom_form_code()),
+                        String.valueOf(formData.getCustom_form_version()),
+                        String.valueOf(formData.getCustom_form_data()),
+                        ConstantBase.SYS_STATUS_DELETED,
+                        ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
+                ).toSqlQuery()
         );
         //
         formDataDao.addUpdate(
@@ -1074,7 +1147,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     /**
      * LUCHE - 30/01/2020
-     *
+     * <p>
      * Implmentado metodo para salvar o form_data no bundle
      *
      * @param outState
@@ -1082,7 +1155,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,form_data);
+        outState.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, form_data);
     }
 
     private void iniUIFooter() {
@@ -1101,9 +1174,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //LUCHE - 14/03/2018
         //Tratativa necessaria quando o carregamento dos itens é abortado pelo erro de insert na ge_custom_form_local
         //pois nesse fluxo, o adapter do pager não é setado.
-        if(pager != null && pager.getAdapter() != null) {
+        if (pager != null && pager.getAdapter() != null) {
             setTitleLanguage("          (" + String.valueOf(index) + "/" + String.valueOf(pager.getAdapter().getCount()) + ")");
-        }else{
+        } else {
             setTitleLanguage();
         }
         setFooter();
@@ -1148,8 +1221,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
          * IN_PROCESSING
          */
         String signaturePath = Constant.CACHE_PATH_PHOTO + "/" + mSignature;
-        if(ToolBox.validationCheckFile(signaturePath)
-        && mPresenter.isInProcessing(formLocal)){
+        if (ToolBox.validationCheckFile(signaturePath)
+                && mPresenter.isInProcessing(formLocal)) {
             cleanSignatureFile(signaturePath);
         }
 
@@ -1228,20 +1301,20 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             for (int i = 1; i <= pages; i++) {
                 Act011_FF custom_form_ff = new Act011_FF();
                 //
-                 if (i == 1) {
+                if (i == 1) {
                     custom_form_ff.setComments(formLocal.getSchedule_comments() != null ? formLocal.getSchedule_comments() : "");
                     // BARRIONUEVO 05-03-2020 - ADICAO DE SCHEDULE DESC NO FORM
-                     if(formLocal.getSchedule_prefix() != null
-                     && formLocal.getSchedule_code() != null
-                     && formLocal.getSchedule_exec() != null) {
-                         MD_Schedule_Exec mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
-                         if (mdScheduleExec != null) {
-                             custom_form_ff.setSchedule_desc(mdScheduleExec.getSchedule_desc());
-                         }
-                     }else{
-                         custom_form_ff.setComments("");
-                         custom_form_ff.setSchedule_desc("");
-                     }
+                    if (formLocal.getSchedule_prefix() != null
+                            && formLocal.getSchedule_code() != null
+                            && formLocal.getSchedule_exec() != null) {
+                        MD_Schedule_Exec mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
+                        if (mdScheduleExec != null) {
+                            custom_form_ff.setSchedule_desc(mdScheduleExec.getSchedule_desc());
+                        }
+                    } else {
+                        custom_form_ff.setComments("");
+                        custom_form_ff.setSchedule_desc("");
+                    }
                 } else {
                     custom_form_ff.setComments("");
                     custom_form_ff.setSchedule_desc("");
@@ -1371,7 +1444,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             act011_ff_options.translaTab(hmAux_Trans);
 
             returnValidCheck(String.valueOf(index_old));
-            if(bNew){
+            if (bNew) {
                 saveV2(false);
             }
         }
@@ -1384,7 +1457,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             if (file.exists()) {
                 file.delete();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             ToolBox.registerException(getClass().getName(), e);
         }
     }
@@ -1401,6 +1474,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         return labelFF;
     }
+
     /**
      * BARRIONUEVO - 23-10-2019 - Autosave no onPause
      * Função que visa diminuir a perda de dados no N-Form como metodo paliativo para o crash de
@@ -1409,7 +1483,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     @Override
     protected void onPause() {
         super.onPause();
-        if(canSave) {
+        if (canSave) {
             saveV2(false);
         }
     }
@@ -1485,7 +1559,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
 //              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-                ) {
+        ) {
             mkEditTextNMFF.setmEnabled(false);
         } else {
             mkEditTextNMFF.setmEnabled(true);
@@ -1522,7 +1596,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
 //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-                ) {
+        ) {
             comboBoxFF.setmEnabled(false);
         } else {
             comboBoxFF.setmEnabled(true);
@@ -1610,7 +1684,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
 //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-                ) {
+        ) {
             ratingImageFF.setmEnabled(false);
         } else {
             ratingImageFF.setmEnabled(true);
@@ -1646,7 +1720,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
 //              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-                ) {
+        ) {
             ratingBarFF.setmEnabled(false);
         } else {
             ratingBarFF.setmEnabled(true);
@@ -1683,7 +1757,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
 //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-                ) {
+        ) {
             pictureFF.setmEnabled(false);
         } else {
             pictureFF.setmEnabled(true);
@@ -1713,9 +1787,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
 
         if (itemDB.hasConsistentValue(HMAux.TEXTO_01)
-        && itemDB.get(HMAux.TEXTO_01).length() > 0) {
+                && itemDB.get(HMAux.TEXTO_01).length() > 0) {
             photoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
-        }else{
+        } else {
             photoFF.setmValue("p_" + prefix + cf.get("custom_form_seq") + ".jpg");
         }
         photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
@@ -1724,7 +1798,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
                 formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
 //              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
-                ) {
+        ) {
             photoFF.setmEnabled(false);
         } else {
             photoFF.setmEnabled(true);
@@ -1780,7 +1854,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     numberOfErrors += 1;
                 }
 //                if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
-                    customFFs.get(i).setValidationBackGroundDots();
+                customFFs.get(i).setValidationBackGroundDots();
 //                }
             } else {
                 if (customFFs.get(i).getmPage() == ipage) {
@@ -1788,7 +1862,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         numberOfErrors += 1;
                     }
 //                    if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
-                        customFFs.get(i).setValidationBackGroundDots();
+                    customFFs.get(i).setValidationBackGroundDots();
 //                    }
                 } else {
                 }
@@ -1942,10 +2016,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         Intent mIntent = new Intent(context, Act015_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
-        if(filter_search != null && filter_search.length() > 0) {
+        if (filter_search != null && filter_search.length() > 0) {
             bundle.putString(Act015_Main.FILTER_SEARCH_KEY, filter_search);
         }
-        if(form_selected_index > -1) {
+        if (form_selected_index > -1) {
             bundle.putInt(Act015_Main.FORM_SELECTED_INDEX_KEY, form_selected_index);
         }
         mIntent.putExtras(bundle);
@@ -2070,7 +2144,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 //                                } else {
 //                                    nservCall();
 //                                }
-
+//                                if (formLocal.getRequire_location() == 1
+//                                    && formData.getLocation_pendency() == 1){
+//                                    flowControl();
+//                                }else
                                 if (ToolBox_Con.isOnline(context)) {
                                     enableProgressDialog(
                                             hmAux_Trans.get("alert_send_finish_ttl"),
@@ -2080,12 +2157,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                                     );
 
                                     executeSerialSave();
-                                    //executeSaveProcess();
 
                                 } else {
                                     flowControl();
                                 }
-
                             }
                         },
                         0,
@@ -2123,7 +2198,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 break;
             //Msg quando ocorre erro ao criar registro na ge_custom_form_local
             case SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR:
-            //Msg quando ocorrer erro ao atualizar dados do novo agendamento.
+                //Msg quando ocorrer erro ao atualizar dados do novo agendamento.
             case SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR:
                 ToolBox.alertMSG(
                         Act011_Main.this,
@@ -2151,10 +2226,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
          */
         canSave = false;
         if (mSo_Prefix == null || mSo_Code == null) {
-            if(finalizeNewFlow) {
-                if(mPresenter.checkNFormExists(formLocal)){
+            if (finalizeNewFlow) {
+                if (mPresenter.checkNFormExists(formLocal)) {
                     callAct006(context);
-                }else{
+                } else {
                     finalizeNewFlow = false;
                     //
                     ToolBox.alertMSG(
@@ -2170,7 +2245,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                             0
                     );
                 }
-            }else{
+            } else {
                 callAct005(context);
             }
         } else {
@@ -2179,10 +2254,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     public void exitAlert() {
-             /*
-                30-08-2019  BARRIONUEVO
-                Agora ao sair o usuario nao perdera os dados, logo a mensagem de aviso mudou
-             */
+         /*
+            30-08-2019  BARRIONUEVO
+            Agora ao sair o usuario nao perdera os dados, logo a mensagem de aviso mudou
+         */
         String alertTitle = hmAux_Trans.get("alert_exit_confirmation_ttl");
         String alertMsg = hmAux_Trans.get("alert_exit_confirmation_msg");
         //
@@ -2212,7 +2287,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     private boolean hasAnyValueChanged() {
         for (CustomFF customFF : customFFs) {
-            if(customFF != null && !customFF.getmValue().isEmpty()){
+            if (customFF != null && !customFF.getmValue().isEmpty()) {
                 return true;
             }
         }
@@ -2264,7 +2339,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(formLocal.getCustom_product_code()));
         bundle.putString(MD_ProductDao.PRODUCT_DESC, formLocal.getCustom_product_desc());
         bundle.putString(MD_ProductDao.PRODUCT_ID, formLocal.getCustom_product_id());
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID, formLocal.getSerial_id()  );
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, formLocal.getSerial_id());
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(formLocal.getCustom_form_type()));
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, formLocal.getCustom_form_type_desc());
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(formLocal.getCustom_form_code()));
@@ -2291,18 +2366,18 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //super.onBackPressed();
         //mPresenter.onBackPressedClicked();
 
-        if (formData != null){
-            if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
+        if (formData != null) {
+            if (formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
                 exitAlert();
-            }else {
-                if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_SENT)) {
+            } else {
+                if (formData.getCustom_form_status().equals(Constant.SYS_STATUS_SENT)) {
                     callAct015();
-                }else{
+                } else {
                     callAct005(Act011_Main.this);
                 }
             }
         } else {
-                callAct005(Act011_Main.this);
+            callAct005(Act011_Main.this);
         }
     }
 
@@ -2315,7 +2390,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     protected void getSignatueF(String mValue) {
         String sName = mValue;
         canSave = mPresenter.isInProcessing(formLocal);
-        if (sName.trim().length() != 0 && !sName.equals(Constant.CACHE_PATH_PHOTO + "/" + mSignature) ) {
+        if (sName.trim().length() != 0 && !sName.equals(Constant.CACHE_PATH_PHOTO + "/" + mSignature)) {
 
             File sFile = new File(Constant.CACHE_PATH_PHOTO + "/" + mSignature);
             if (sFile.exists()) {
@@ -2379,6 +2454,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     /**
      * Resultado da leitura de NFC do serial
+     *
      * @param mValue
      */
     @Override
@@ -2438,7 +2514,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private void activateUpload(Context context) {
         Intent mIntent = new Intent(context, WBR_Upload_Img.class);
         Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
@@ -2552,13 +2628,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //Campos do Serial podem ou não existir
         MD_Product_Serial serial = null;
 
-        if(serial_id == null || serial_id.isEmpty()) {
+        if (serial_id == null || serial_id.isEmpty()) {
             //Pegar info do serial
             ll_serial_info.setVisibility(View.GONE);
-        }else{
-             serial = getSerialInfo();
-             //
-            if(serial != null) {
+        } else {
+            serial = getSerialInfo();
+            //
+            if (serial != null) {
                 setDescriptions(tv_descriptions, serial);
                 setSerialInfo(ll_serial, tv_serial_code_val, serial.getSerial_id());
                 setSerialInfo(ll_class, tv_classe_id_val, serial.getClass_id());
@@ -2594,27 +2670,27 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             tv_so_code_desc.setVisibility(View.GONE);
         }
 
-         if(ToolBox_Inf.isScheduleForm(formLocal)){
+        if (ToolBox_Inf.isScheduleForm(formLocal)) {
             tv_data_serv_lbl.setText(hmAux_Trans.get("dialog_info_data_serv_lbl"));
             tv_dt_schedule_start_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_start_lbl"));
             tv_dt_schedule_end_lbl.setText(hmAux_Trans.get("dialog_info_dt_schedule_end_lbl"));
             //
             ll_schedule_info.setVisibility(View.VISIBLE);
             tv_data_serv_val.setText(
-                ToolBox_Inf.formatSchedulePk(
-                    formLocal.getSchedule_prefix(),
-                    formLocal.getSchedule_code(),
-                    formLocal.getSchedule_exec()
-                )
+                    ToolBox_Inf.formatSchedulePk(
+                            formLocal.getSchedule_prefix(),
+                            formLocal.getSchedule_code(),
+                            formLocal.getSchedule_exec()
+                    )
             );
             //
             tv_dt_schedule_start_val.setText(
-                ToolBox_Inf.formatScheduleDate(context, formLocal.getSchedule_date_start_format())
+                    ToolBox_Inf.formatScheduleDate(context, formLocal.getSchedule_date_start_format())
             );
             tv_dt_schedule_end_val.setText(
-                ToolBox_Inf.formatScheduleDate(context, formLocal.getSchedule_date_end_format())
+                    ToolBox_Inf.formatScheduleDate(context, formLocal.getSchedule_date_end_format())
             );
-        }else{
+        } else {
             ll_schedule_info.setVisibility(View.GONE);
         }
 
@@ -2635,7 +2711,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 //        }
 
 
-        if(pdfs_local.size()>0) {
+        if (pdfs_local.size() > 0) {
             String[] from = {"blob_icon", "blob_name"};
             int[] to = {R.id.act011_dialog_form_info_cell_iv_logo, R.id.act011_dialog_form_info_cell_tv_name};
             lv_pdfs.setAdapter(
@@ -2673,14 +2749,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         }
                         //LUCHE - 03/10/2020
                         //Modificado metodo de abertura do PDF para que seja compativel com Android 10
-                        Intent intent = ToolBox_Inf.getOpenPdfIntent(context,Constant.CACHE_PDF + "/" + aux.get("blob_url_local"));
+                        Intent intent = ToolBox_Inf.getOpenPdfIntent(context, Constant.CACHE_PDF + "/" + aux.get("blob_url_local"));
                         /*
                             23/08/2019 - BARRIONUEVO
                             Trata devices sem suporte a pdf
                         */
                         try {
                             startActivity(intent);
-                        }catch (ActivityNotFoundException e){
+                        } catch (ActivityNotFoundException e) {
                             ToolBox_Inf.registerException(e);
                             ToolBox.alertMSG(
                                     context,
@@ -2693,7 +2769,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     }
                 }
             });
-        }else{
+        } else {
             lv_pdfs.setVisibility(View.GONE);
         }
 
@@ -2711,9 +2787,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     private void setTrackingListForm(LinearLayout ll_tracking, LinearLayout ll_tracking_val, MD_Product_Serial serial) {
-        if(serial.getTracking_list() == null || serial.getTracking_list().isEmpty()) {
+        if (serial.getTracking_list() == null || serial.getTracking_list().isEmpty()) {
             ll_tracking.setVisibility(View.GONE);
-        }else{
+        } else {
             for (MD_Product_Serial_Tracking tracking : serial.getTracking_list()) {
                 TextView tvTracking = new TextView(Act011_Main.this);
                 tvTracking.setText(tracking.getTracking());
@@ -2729,28 +2805,28 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     private void setDescriptions(TextView tv_descriptions, MD_Product_Serial serial) {
-        String description = ( serial.getBrand_desc() == null ? "" :  serial.getBrand_desc() );
-        description = description + ( serial.getModel_desc() == null ? "" :  " - " + serial.getModel_desc() );
-        description = description + ( serial.getColor_desc() == null ? "" :  " - " + serial.getColor_desc() );
-        if(description.isEmpty()){
+        String description = (serial.getBrand_desc() == null ? "" : serial.getBrand_desc());
+        description = description + (serial.getModel_desc() == null ? "" : " - " + serial.getModel_desc());
+        description = description + (serial.getColor_desc() == null ? "" : " - " + serial.getColor_desc());
+        if (description.isEmpty()) {
             tv_descriptions.setVisibility(View.GONE);
-        }else{
+        } else {
             tv_descriptions.setText(description);
         }
     }
 
     private void setSerialInfo(LinearLayout layout, TextView tvValor, String conteudo_id, String conteudo_desc) {
-        if (conteudo_id==null || conteudo_id.isEmpty()){
+        if (conteudo_id == null || conteudo_id.isEmpty()) {
             hideView(layout);
-        } else{
+        } else {
             tvValor.setText(conteudo_id + " - " + conteudo_desc);
         }
     }
 
     private void setSerialInfo(LinearLayout layout, TextView tvValor, String conteudo) {
-        if (conteudo==null || conteudo.isEmpty()){
+        if (conteudo == null || conteudo.isEmpty()) {
             hideView(layout);
-        } else{
+        } else {
             tvValor.setText(conteudo);
         }
     }
@@ -2794,10 +2870,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     }
 
-    private void showFinalizeDialogOpt(){
+    private void showFinalizeDialogOpt() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         //
-        View view = LayoutInflater.from(context).inflate(R.layout.act011_dialog_finalize_option,null);
+        View view = LayoutInflater.from(context).inflate(R.layout.act011_dialog_finalize_option, null);
         final RadioGroup rdgFinalize = view.findViewById(R.id.act011_dialog_finalize_option_rg);
         RadioButton rdoFinalize = view.findViewById(R.id.act011_dialog_finalize_option_rdo_finalize);
         RadioButton rdoFinalizeNew = view.findViewById(R.id.act011_dialog_finalize_option_rdo_finalize_new);
@@ -2808,7 +2884,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         rdgFinalize.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
+                switch (checkedId) {
                     case R.id.act011_dialog_finalize_option_rdo_finalize:
                         break;
                     case R.id.act011_dialog_finalize_option_rdo_finalize_new:
@@ -2834,7 +2910,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         }
 
                 )
-                .setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"),null)
+                .setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), null)
         ;
         //
         builder.create().show();
@@ -2852,21 +2928,22 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         }
     }
 
-    @Override
-    protected void processGPS_ENABLED() {
-        SV_LocationTracker.msg_ok = hmAux_Trans.get("alert_location_info_aquired_succesfully");
-        SV_LocationTracker.msg_nok = hmAux_Trans.get("alert_location_info_aquired_unsuccesfully");
-
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_GO", hmAux_Trans.get("alert_location_gps_info"), "", "0");
-        ToolBox_Inf.call_Location_Tracker(context);
-    }
-
-    @Override
-    protected void processGPS_GO() {
-        super.processGPS_GO();
-        //
-        gpsCanceled = false;
-    }
+//    @Override
+//    protected void processGPS_ENABLED() {
+//
+//        SV_LocationTracker.msg_ok = hmAux_Trans.get("alert_location_info_aquired_succesfully");
+//        SV_LocationTracker.msg_nok = hmAux_Trans.get("alert_location_info_aquired_unsuccesfully");
+//
+//        ToolBox_Inf.sendBCStatus(getApplicationContext(), "GPS_GO", hmAux_Trans.get("alert_location_gps_info"), "", "0");
+//        ToolBox_Inf.call_Location_Tracker(context);
+//    }
+//
+//    @Override
+//    protected void processGPS_GO() {
+//        super.processGPS_GO();
+//        //
+//        gpsCanceled = false;
+//    }
 
     /**
      * LUCHE - 22/10/2019
@@ -2874,54 +2951,82 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
      * do GPS caso o usuario NÃO TENHA cancelado a ação.
      * Em caso de cancelamento, por segurança, os valores estão sendo resetados.
      *
-     * @param mLink - String concatenada com as informações:
+     * @param mLink     - String concatenada com as informações:
      *                  * Tipo de Provider
      *                  * Latitude
      *                  * Longitude
      * @param mRequired - Não analisado
      */
+//    @Override
+//    protected void processGPS_OK(String mLink, String mRequired) {
+//        progressDialog.dismiss();
+//        //processa as coordenadas
+//        if (!gpsCanceled) {
+//            String parts[] = mLink.split("#");
+//            formData.setLocation_type(parts[0]);
+//            formData.setLocation_lat(parts[1]);
+//            formData.setLocation_lng(parts[2]);
+//            startCheckIN();
+//        } else {
+//            gpsCanceled = false;
+//            //Luche - 28/02/2019
+//            //reseta var de fluxo finaliza  + novo
+//            finalizeNewFlow = false;
+//            formData.setLocation_type("");
+//            formData.setLocation_lat("");
+//            formData.setLocation_lng("");
+//        }
+//    }
+
+
+//    @Override
+//    protected void processGPS_STOP() {
+//        ToolBox_Inf.stop_Location_Tracker(context);
+//
+//        gpsCanceled = true;
+//        //Luche - 28/02/2019
+//        //reseta var de finaliza + novo
+//        finalizeNewFlow = false;
+//
+//        progressDialog.dismiss();
+//    }
     @Override
-    protected void processGPS_OK(String mLink, String mRequired) {
+    protected void processCustom_error(String mLink, String mRequired) {
         progressDialog.dismiss();
-        //processa as coordenadas
-        if (!gpsCanceled) {
-            String parts[] = mLink.split("#");
-            formData.setLocation_type(parts[0]);
-            formData.setLocation_lat(parts[1]);
-            formData.setLocation_lng(parts[2]);
-            startCheckIN();
+        //
+        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())
+                || wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
+        ) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_data_not_sent_ttl"),
+                    hmAux_Trans.get("alert_resend_data_by_menu_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            flowControl();
+                        }
+                    },
+                    0
+            );
         } else {
-            gpsCanceled = false;
-            //Luche - 28/02/2019
-            //reseta var de fluxo finaliza  + novo
-            finalizeNewFlow = false;
             formData.setLocation_type("");
             formData.setLocation_lat("");
             formData.setLocation_lng("");
         }
     }
 
-
+    /**
+     * LUCHE
+     *
+     * @param mLink
+     * @param mRequired
+     */
     @Override
-    protected void processGPS_STOP() {
-        ToolBox_Inf.stop_Location_Tracker(context);
-
-        gpsCanceled = true;
-        //Luche - 28/02/2019
-        //reseta var de finaliza + novo
-        finalizeNewFlow = false;
-
-        progressDialog.dismiss();
-    }
-
-    @Override
-    protected void processCustom_error(String mLink, String mRequired) {
-        progressDialog.dismiss();
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
         //
-        if( wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())
-           || wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
-        ){
-            ToolBox.alertMSG(
+        ToolBox.alertMSG(
                 context,
                 hmAux_Trans.get("alert_data_not_sent_ttl"),
                 hmAux_Trans.get("alert_resend_data_by_menu_msg"),
@@ -2932,34 +3037,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     }
                 },
                 0
-            );
-        }else {
-            formData.setLocation_type("");
-            formData.setLocation_lat("");
-            formData.setLocation_lng("");
-        }
-    }
-
-    /**
-     * LUCHE
-     * @param mLink
-     * @param mRequired
-     */
-    @Override
-    protected void processError_1(String mLink, String mRequired) {
-        super.processError_1(mLink, mRequired);
-        //
-        ToolBox.alertMSG(
-            context,
-            hmAux_Trans.get("alert_data_not_sent_ttl"),
-            hmAux_Trans.get("alert_resend_data_by_menu_msg"),
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    flowControl();
-                }
-            },
-            0
         );
     }
 
@@ -3061,6 +3138,33 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         wsResults.addAll(
             formDataErroAux
         );
+        if (wsResults.size() > 0) {
+                showResults(wsResults);
+        } else {
+            progressDialog.dismiss();
+            if(mPresenter.hasGpsPendecy(
+                    formLocal.getCustomer_code(),
+                    formLocal.getCustom_form_type(),
+                    formLocal.getCustom_form_code(),
+                    formLocal.getCustom_form_version(),
+                    formLocal.getCustom_form_data()
+            )){
+                ToolBox.alertMSG(
+                        Act011_Main.this,
+                        hmAux_Trans.get("dialog_has_gps_pendency_ttl"),
+                        hmAux_Trans.get("dialog_has_gps_pendency_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                flowControl();
+                            }
+                        },
+                        0
+                );
+            }else {
+                flowControl();
+            }
+        }
     }
 
     public void showResults(List<HMAux> res) {
@@ -3089,7 +3193,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     break;
                 case ConstantBaseApp.SYS_STATUS_SCHEDULE:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_schedule"));
-                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status") + "\n" + item.get("status"));
                     break;
 
             }
@@ -3172,7 +3276,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //super.processNotification_close(mValue, mActivity);
     }
 
-    public MD_Product_Serial getSerialInfo(){
+    public MD_Product_Serial getSerialInfo() {
         return mPresenter.getSerialInfo(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 Integer.parseInt(product_code),
@@ -3181,8 +3285,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         );
     }
 
-    public String getProduct_icon(){
+    public String getProduct_icon() {
         //return mPresenter.getProductIcon(Long.parseLong(product_code));
-        return formLocal != null ? formLocal.getCustom_product_icon_name(): "";
+        return formLocal != null ? formLocal.getCustom_product_icon_name() : "";
     }
+
+    private void getLocation() {
+        ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_NFORM_ON);
+    }
+
 }

@@ -91,6 +91,7 @@ import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.NotificationHelper;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -243,6 +244,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         if (ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_SESSION_NOT_FOUND)) {
             forceLogoutBySessionNotFound();
         }
+        NotificationHelper notificationHelper = new NotificationHelper(getApplicationContext(), hmAux_Trans);
+        notificationHelper.call_Notification();
     }
 
     private void forceLogoutBySessionNotFound() {

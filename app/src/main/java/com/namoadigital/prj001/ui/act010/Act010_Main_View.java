@@ -24,4 +24,5 @@ public interface Act010_Main_View {
 
     void showAlertMsg(String title, String msg);
 
+    void alertActiveGPSResource(HMAux item);
 }

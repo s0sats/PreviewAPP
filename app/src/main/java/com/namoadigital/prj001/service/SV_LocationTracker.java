@@ -8,20 +8,36 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_006;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+
+import static com.namoadigital.prj001.util.NotificationHelper.LOCATION_NOTIFICATION_ID;
 
 /**
  * Created by neomatrix on 11/05/17.
  */
 
 public class SV_LocationTracker extends Service {
+    public static final String ASYNC_GPS = "ASYNC_GPS";
+    public static final int LOCATION_DEFAULT = 0;
+    public static final int LOCATION_NFORM_ON = 1;
+    public static final int LOCATION_BACKGROUND = 2;
+
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
@@ -39,7 +55,8 @@ public class SV_LocationTracker extends Service {
     private static final String TAG = "BOOMBOOMTESTGPS";
     private LocationManager mLocationManager = null;
 
-    private static final int LOCATION_INTERVAL = 0;
+    private static final int LOCATION_INTERVAL_NFORM_ON = 5 * 1 * 60 * 1000;
+    private static final int LOCATION_INTERVAL_DEFAULT  = 1 * 60 * 1000;
     private static final float LOCATION_DISTANCE = 0f;
 
     private Handler mHandler;
@@ -50,6 +67,7 @@ public class SV_LocationTracker extends Service {
     private String mLocation_Latitude;
     private String mLocation_Longitude;
     private String mLocation_Type;
+    private int async_gps;
 
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
@@ -60,30 +78,120 @@ public class SV_LocationTracker extends Service {
 
         @Override
         public void onLocationChanged(Location location) {
+//            String dataRecorded =
+//                    "\nasync_gps = " + async_gps +
+//                    "\nmLocation_Type = " + location.getProvider().toUpperCase() +
+//                    "\nmLocation_Latitude = " + location.getLatitude() +
+//                    "\nmLocation_Longitude = " + location.getLongitude();
+//            recordProcess("\nonLocationChanged: " + dataRecorded );
             mLastLocation.set(location);
 
-            mLocation_Type = location.getProvider();
+            mLocation_Type = location.getProvider().toUpperCase();
             mLocation_Latitude = String.valueOf(location.getLatitude());
             mLocation_Longitude = String.valueOf(location.getLongitude());
 
-            readings++;
-
-            if (readings >= 5) {
-                readings = 0;
-                stopSelf();
+            boolean hasError;
+            switch (async_gps){
+                case LOCATION_NFORM_ON:
+                    hasError = setFormLocation();
+                    setLocationPreference(location, hasError);
+//                    Log.i("GPS_Service", "async_gps: " + async_gps);
+//                    recordProcess("onLocationChanged -> async_gps: " + async_gps );
+                    break;
+                case LOCATION_BACKGROUND:
+                    hasError = setFormLocation();
+                    setLocationPreference(location, hasError);
+//                    Log.i("GPS_Service", "async_gps: " + async_gps);
+//                    recordProcess("onLocationChanged -> async_gps: " + async_gps );
+                    if(!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false)) {
+                        stopSelf();
+                    }
+                    break;
             }
         }
 
         @Override
         public void onProviderDisabled(String provider) {
+//            Log.i("GPS_Service", "onProviderDisabled: " + provider);
+//            String dataRecorded = "\nonProviderDisabled: " + provider;
+//            recordProcess(dataRecorded);
         }
 
         @Override
         public void onProviderEnabled(String provider) {
+//            Log.i("GPS_Service", "onProviderEnabled: " + provider);
+//            String dataRecorded = "\nonProviderDisabled: " + provider;
+//            recordProcess(dataRecorded);
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
+//            Log.i("GPS_Service", "onStatusChanged: " + "provider: " + provider +"\nstatus: " + status);
+//            String dataRecorded = "\nonProviderDisabled: " + provider;
+//            recordProcess(dataRecorded);
+        }
+    }
+
+    private boolean setFormLocation() {
+        boolean hasError = false;
+        long customer_code = ToolBox_Con.getPreference_Customer_Code(getApplicationContext());
+        GE_Custom_Form_DataDao ge_custom_form_dataDao = new GE_Custom_Form_DataDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+
+        List<GE_Custom_Form_Data> formDataList = getFormDataList(customer_code, ge_custom_form_dataDao);
+
+        if(formDataList != null && !formDataList.isEmpty()) {
+            for (GE_Custom_Form_Data form_data : formDataList) {
+                form_data.setLocation_lat(mLocation_Latitude);
+                form_data.setLocation_lng(mLocation_Longitude);
+                form_data.setLocation_type(mLocation_Type.toUpperCase());
+                form_data.setLocation_pendency(0);
+                form_data.setDate_gps(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+
+                DaoObjReturn daoObjReturn = ge_custom_form_dataDao.addUpdateWithReturn(form_data);
+                if(daoObjReturn.hasError()){
+                    hasError = true;
+                }
+//                String dataRecorded =
+//                        "\nasync_gps = " + async_gps +
+//                                "\nmSerial_id = " + form_data.getSerial_id() +
+//                                "\nmLocation_Type = " + form_data.getLocation_type() +
+//                                "\nmLocation_Latitude = " + form_data.getLocation_lat() +
+//                                "\nmLocation_Longitude = " + form_data.getLocation_lng() +
+//                                "\nDate_gps = " + form_data.getDate_gps();
+//                recordProcess("\nonLocationChanged: " + dataRecorded);
+            }
+        }
+        return hasError;
+    }
+
+    private List<GE_Custom_Form_Data> getFormDataList(long customer_code, GE_Custom_Form_DataDao ge_custom_form_dataDao) {
+        return ge_custom_form_dataDao.query(
+                new GE_Custom_Form_Data_Sql_006(customer_code).toSqlQuery()
+        );
+    }
+
+    private void recordProcess(String data) {
+        try {
+            String date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "\n ";
+            String filePath = getApplicationContext().getFilesDir().getPath().toString() + "/GPS_Histo.txt";
+            ToolBox_Inf.writeIn(data + "  ---  " + date, new File(filePath));
+            Log.i("GPS_Service", "recordProcess: " + date + data);
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setLocationPreference(Location location, boolean hasError) {
+        ToolBox_Con.setStringPreference(getApplicationContext(), Constant.LOCATION_LAT, String.valueOf(location.getLatitude()));
+        ToolBox_Con.setStringPreference(getApplicationContext(), Constant.LOCATION_LNG, String.valueOf(location.getLongitude()));
+        ToolBox_Con.setStringPreference(getApplicationContext(), Constant.LOCATION_TYPE, location.getProvider().toUpperCase());
+        ToolBox_Con.setLongPreference(getApplicationContext(), Constant.LOCATION_DATE, Calendar.getInstance().getTime().getTime());
+        if(hasError) {
+            ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, true);
+        }else {
+            ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, false);
         }
     }
 
@@ -100,16 +208,31 @@ public class SV_LocationTracker extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
+//        ToolBox.toastMSG(getApplicationContext(), "onStartCommand");
+        if (intent != null) {
+            async_gps = intent.getIntExtra(ASYNC_GPS, LOCATION_BACKGROUND);
+        }else{
+            async_gps = LOCATION_BACKGROUND;
+        }
 
-        mHandler = new Handler();
-        mRunnable = new Runnable() {
-            public void run() {
-                stopSelf();
-                status = false;
-            }
-        };
+//        Log.i("GPS_Service", "onStartCommand: " + async_gps);
 
-        mHandler.postDelayed(mRunnable, PROGRESS_TIME_OUT);
+        switch (async_gps){
+            //Parametrizacao para recuperar localizacao durante a exec do N-FORM no intervalo de 5min
+            case LOCATION_NFORM_ON:
+//                Log.i("GPS_Service", "onStartCommand LOCATION_NFORM_ON");
+//                recordProcess("onStartCommand -> async_gps: " + async_gps );
+                setLocationListeners(LOCATION_INTERVAL_NFORM_ON);
+                break;
+            //Parametrizacao para recuperar localizacao apos finalizacao do N-FORM
+            case LOCATION_BACKGROUND:
+//                Log.i("GPS_Service", "onStartCommand LOCATION_BACKGROUND");
+//                recordProcess("onStartCommand -> async_gps: " + async_gps );
+                setLocationListeners(LOCATION_INTERVAL_DEFAULT);
+                break;
+
+        }
+
 
         mLocation_Type = "";
         mLocation_Latitude = "";
@@ -120,22 +243,38 @@ public class SV_LocationTracker extends Service {
         return START_STICKY;
     }
 
+    private void setServiceTimeout() {
+        mHandler = new Handler();
+        mRunnable = new Runnable() {
+            public void run() {
+                stopSelf();
+                status = false;
+            }
+        };
+
+        mHandler.postDelayed(mRunnable, PROGRESS_TIME_OUT);
+    }
+
     @Override
     public void onCreate() {
+//        Log.i("GPS_Service", "onCreate");
+//        recordProcess("onCreate");
+        loadTranslation();
         initializeLocationManager();
-
         status = true;
+    }
 
+    private void setLocationListeners(long location_interval) {
         try {
             mLocationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    LocationManager.NETWORK_PROVIDER, location_interval, LOCATION_DISTANCE,
                     mLocationListeners[1]);
         } catch (SecurityException ex) {
         } catch (IllegalArgumentException ex) {
         }
         try {
             mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    LocationManager.GPS_PROVIDER, location_interval, LOCATION_DISTANCE,
                     mLocationListeners[0]);
         } catch (SecurityException ex) {
         } catch (IllegalArgumentException ex) {
@@ -146,44 +285,39 @@ public class SV_LocationTracker extends Service {
 
     @Override
     public void onDestroy() {
-        mHandler.removeCallbacks(mRunnable);
+//        Log.i("GPS_Service", "onDestroy");
+//        String dataRecorded = "\nonDestroy: ";
+//        recordProcess(dataRecorded);
         status = false;
-
-        loadTranslation();
-
-        if (!mLocation_Type.equals("")) {
-            ToolBox_Inf.sendBCStatus(
-                    getApplicationContext(),
-                    "GPS_OK",
-                    hmAux_Trans.get("gps_location_aquired"),
-                    mLocation_Type.toUpperCase() + "#" + mLocation_Latitude + "#" + mLocation_Longitude,
-                    "0"
-            );
-        } else {
-            ToolBox_Inf.sendBCStatus(
-                    getApplicationContext(),
-                    "CUSTOM_ERROR",
-                    hmAux_Trans.get("gps_location_not_aquired"),
-                    "",
-                    "0"
-            );
-        }
-
+        ToolBox_Inf.cancelNotification(getApplicationContext(), LOCATION_NOTIFICATION_ID);
+        removeLocationListeners();
+//        ToolBox.toastMSG(getApplicationContext(), "onDestroy");
         super.onDestroy();
 
+    }
+
+    private void removeLocationListeners() {
         if (mLocationManager != null) {
             for (int i = 0; i < mLocationListeners.length; i++) {
                 try {
                     mLocationManager.removeUpdates(mLocationListeners[i]);
+//                    recordProcess("removeLocationListener index: " + i);
                 } catch (Exception ex) {
+//                    recordProcess("removeLocationListener exception: " + ex.toString());
+                    ToolBox_Inf.registerException(ex);
                 }
             }
+        }else{
+//            recordProcess("removeLocationListeners: LocationManager eh null");
         }
     }
 
     private void initializeLocationManager() {
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        }else{
+//            recordProcess("initLocationManager: " + mLocationManager.toString());
+//            Log.i("GPS_Service", mLocationManager.toString());
         }
     }
 
@@ -192,6 +326,7 @@ public class SV_LocationTracker extends Service {
 
         translist.add("gps_location_aquired");
         translist.add("gps_location_not_aquired");
+        translist.add("gps_searching_location");
 
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),
@@ -206,5 +341,8 @@ public class SV_LocationTracker extends Service {
                 ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
                 translist);
     }
+
+
+
 }
 
