@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act017;
 
+import android.text.SpannableString;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 
 /**
@@ -24,7 +26,7 @@ public interface Act017_Main_Presenter {
 
     void checkFormFlow(HMAux item);
 
-    String getCommentMessage(HMAux item);
+    SpannableString getCommentMessage(HMAux item);
 
     void checkTicketFlow(HMAux item);
 }

@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:padding="4dp"
                 android:layout_weight="1"
-                android:src="@drawable/ic_user_msg_on"
+                android:src="@drawable/ic_info"
                 android:tint="@color/light_to_dark_blue_color"
                 android:layout_gravity="center_vertical"
 

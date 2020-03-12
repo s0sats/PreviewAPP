@@ -3,8 +3,12 @@ package com.namoadigital.prj001.ui.act017;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -1210,20 +1214,59 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
      * @return - String
      */
     @Override
-    public String getCommentMessage(HMAux item) {
+    public SpannableString getCommentMessage(HMAux item) {
+        SpannableString finalString = null;
         String commentMsg = "";
         switch (item.get(Act017_Main.ACT017_MODULE_KEY)) {
             case Constant.MODULE_CHECKLIST:
-                commentMsg = item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n"
-                    +  hmAux_Trans.get("form_type_dialog_lbl") + ": "
-                    + item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE) + " - " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC);
+                commentMsg =
+                    hmAux_Trans.get("dialog_schedule_desc_lbl") +": \n"
+                    + item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n"
+                    + hmAux_Trans.get("form_type_dialog_lbl") + ": \n"
+                    + item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE) + " - " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC)+ "\n";
+                //Seta negrito nas area necessarias
+                finalString = new SpannableString(commentMsg);
+                try {
+                    finalString.setSpan(
+                        new StyleSpan(Typeface.BOLD),
+                        0,
+                        commentMsg.indexOf(item.get(MD_Schedule_ExecDao.SCHEDULE_DESC)),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+
+                    );
+                    finalString.setSpan(
+                        new StyleSpan(Typeface.BOLD),
+                        commentMsg.indexOf(hmAux_Trans.get("form_type_dialog_lbl") + ":"),
+                        commentMsg.indexOf(item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE)),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+
+                    );
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 break;
             case ConstantBaseApp.PROFILE_MENU_TICKET:
-                commentMsg = item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n";
+                commentMsg =
+                        hmAux_Trans.get("dialog_schedule_desc_lbl") +": \n"
+                        + item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n";
+                //
+                finalString = new SpannableString(commentMsg);
+                try {
+                    finalString.setSpan(
+                        new StyleSpan(Typeface.BOLD),
+                        0,
+                        commentMsg.indexOf(item.get(MD_Schedule_ExecDao.SCHEDULE_DESC)),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+
+                    );
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 break;
             default:
         }
-        return commentMsg;
+        //
+        return finalString;
     }
 
     @Override

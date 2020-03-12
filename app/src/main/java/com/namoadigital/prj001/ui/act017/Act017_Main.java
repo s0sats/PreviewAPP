@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -190,6 +191,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("alert_ticket_action_start_confirm");
         translateList.add("alert_error_on_create_ticket_action_ttl");
         translateList.add("alert_error_on_create_ticket_action_msg");
+        translateList.add("dialog_more_info_ttl");
+        translateList.add("dialog_schedule_desc_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -343,8 +346,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         mAdapter.setOnIvCommentClickListner(new Module_Schedules_Adapter.OnIvCommentClickListner() {
             @Override
             public void OnIvCommentClick(HMAux item) {
-                String commentMsg = mPresenter.getCommentMessage(item);
+                SpannableString commentMsg = mPresenter.getCommentMessage(item);
                 AlertDialog.Builder dialog_detect= new AlertDialog.Builder(context);
+                dialog_detect.setTitle(hmAux_Trans.get("dialog_more_info_ttl"));
                 dialog_detect.setMessage(commentMsg);
                 dialog_detect.setCancelable(true);
                 dialog_detect.show();
