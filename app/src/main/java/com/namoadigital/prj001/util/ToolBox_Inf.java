@@ -2829,6 +2829,19 @@ public class ToolBox_Inf {
         manager.cancel(notification_id);
     }
 
+    /**
+     * BARRIONUEVO - 12/03/2020
+     * <p></p>
+     * Chamada de notificacao com resumo de pendencia.
+     * @param context Application Context
+     * @param hmAux_Trans Traducao utilizada na Notification eh do Sys
+     */
+    @NonNull
+    public static void callPendencyNotification(Context context, HMAux hmAux_Trans){
+        NotificationHelper notificationHelper = new NotificationHelper(context, hmAux_Trans);
+        notificationHelper.call_Notification();
+    }
+
     public static StringBuilder wsExceptionTreatment(Context context, Exception e) {
         StringBuilder sb = new StringBuilder();
         String results = "";

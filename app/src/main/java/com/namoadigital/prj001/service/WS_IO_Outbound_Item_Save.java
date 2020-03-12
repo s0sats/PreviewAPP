@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -13,9 +14,22 @@ import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
-import com.namoadigital.prj001.model.*;
+import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.IO_Move;
+import com.namoadigital.prj001.model.IO_Outbound;
+import com.namoadigital.prj001.model.IO_Outbound_Item;
+import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
+import com.namoadigital.prj001.model.T_IO_Outbound_Item_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Item_Save;
-import com.namoadigital.prj001.sql.*;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_008;
+import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_013;
+import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_005;
+import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_008;
+import com.namoadigital.prj001.sql.IO_Outbound_Item_Sql_009;
+import com.namoadigital.prj001.sql.IO_Outbound_Sql_004;
+import com.namoadigital.prj001.sql.IO_Outbound_Sql_009;
+import com.namoadigital.prj001.sql.IO_Outbound_Sql_010;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -74,7 +88,7 @@ public class WS_IO_Outbound_Item_Save extends IntentService {
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
         } finally {
-
+            ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
             WBR_IO_Outbound_Item_Save.completeWakefulIntent(intent);
         }
     }

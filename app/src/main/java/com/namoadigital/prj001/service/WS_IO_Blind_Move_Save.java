@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -69,7 +70,7 @@ public class WS_IO_Blind_Move_Save extends IntentService {
                 "0"
             );
         } finally {
-
+            ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
             WBR_IO_Blind_Move_Save.completeWakefulIntent(intent);
         }
     }

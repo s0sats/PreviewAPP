@@ -32,6 +32,25 @@ import java.util.List;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
+/**
+ * BARRIONUEVO - 12/03/2020
+ * <p></p>
+ *
+ * Classe responsavel pela noticacao de pendencias.
+ * Locais de instacia:
+ *     ACT005
+ *     WS_AP_Save
+ *     WS_IO_Blind_Move_Save
+ *     WS_IO_Inbound_Item_Save
+ *     WS_IO_Move_Save
+ *     WS_IO_Outbound_Item_Save
+ *     WS_Save
+ *     WS_Serial_Save
+ *     WS_SO_Approval
+ *     WS_SO_Pack_Express_Local
+ *     WS_SO_Save
+ *     WS_TK_Ticket_Save
+ */
 public class NotificationHelper {
     public static final int LOCATION_NOTIFICATION_ID = 9999;
     Context context;

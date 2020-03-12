@@ -71,7 +71,7 @@ public class WS_SO_Approval extends IntentService {
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", sb.toString(), "", "0");
 
         } finally {
-
+            ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
             WBR_SO_Approval.completeWakefulIntent(intent);
         }
     }

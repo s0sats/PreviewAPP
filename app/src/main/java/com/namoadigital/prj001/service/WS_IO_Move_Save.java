@@ -69,7 +69,7 @@ public class WS_IO_Move_Save extends IntentService {
                     "0"
             );
         } finally {
-
+            ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
             WBR_IO_Move_Save.completeWakefulIntent(intent);
         }
     }

@@ -104,7 +104,7 @@ public class WS_SO_Save extends IntentService {
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
         } finally {
-
+            ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
             WBR_SO_Save.completeWakefulIntent(intent);
         }
     }
