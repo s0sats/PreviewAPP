@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -150,6 +151,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private List<HMAux> customer_list;
     //
     private ArrayList<MenuMainNamoa> menuList = new ArrayList<>();
+    //
+    private int customFormPendentAmount=0;
+
+
 
     public Act005_Main_Presenter_Impl(Context context, Act005_Main_View mView, GE_Custom_Form_LocalDao customFormLocalDao, HMAux hmAux_Trans, EV_User_CustomerDao userCustomerDao, FCMMessageDao fcmMessageDao, SM_SODao soDao, GE_Custom_Form_ApDao customFormApDao, SO_Pack_Express_LocalDao soPackExpressLocalDao, MD_ProductDao mdProductDao, CH_MessageDao chMessageDao) {
         this.context = context;
@@ -481,6 +486,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         } catch (Exception e) {
                             qty = "0";
                         }
+                        customFormPendentAmount = Integer.parseInt(qty);
                         try {
                             qtySO = soDao.getByStringHM(
                                     new Sql_Act021_003(
@@ -997,20 +1003,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public ArrayList<HMAux> processTicketSaveReturn(String jsonRet, String ticket_lbl) {
-        Gson gson = new GsonBuilder().serializeNulls().create();
         ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn> checkinReturns = null;
         ArrayList<HMAux> resultList = new ArrayList<>();
         //
         if (jsonRet != null && !jsonRet.isEmpty()) {
-            try {
-                checkinReturns = gson.fromJson(
-                    jsonRet,
-                    new TypeToken<ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn>>() {
-                    }.getType());
-
-            } catch (Exception e) {
-                ToolBox_Inf.registerException(getClass().getName(), e);
-            }
+            checkinReturns = getTicketSaveActReturns(jsonRet, checkinReturns);
             //
             if (checkinReturns != null && checkinReturns.size() > 0) {
                 boolean ticketResult = true;
@@ -1049,6 +1046,22 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             }
         }
         return null;
+    }
+
+    @Nullable
+    @Override
+    public ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn> getTicketSaveActReturns(String jsonRet, ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn> checkinReturns) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        try {
+            checkinReturns = gson.fromJson(
+                jsonRet,
+                new TypeToken<ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn>>() {
+                }.getType());
+
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+        return checkinReturns;
     }
 
     private String getFormmatedRetMsg(String retStatus, String retMsg ) {
@@ -1090,7 +1103,10 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     auxResults.add(mHmAux);
                 }
                 //
+                mView.refreshResume(R.id.act005_send_resume_nform, false, customFormPendentAmount - auxResults.size(), customFormPendentAmount);
                 mView.addWsResults(auxResults);
+            }else{
+                mView.refreshResume(R.id.act005_send_resume_nform, true,customFormPendentAmount ,customFormPendentAmount );
             }
         }
     }

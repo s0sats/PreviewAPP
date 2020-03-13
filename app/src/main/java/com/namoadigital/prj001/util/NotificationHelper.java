@@ -85,7 +85,7 @@ public class NotificationHelper {
         notificationLayout.setTextViewText(R.id.tv_update_required_val, updatePendencies);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setSmallIcon(R.drawable.namoa_logo);
+        builder.setSmallIcon(R.drawable.namoa_logo_white24x24);
         builder.setAutoCancel(false);
         builder.setContentTitle(context.getString(R.string.title_notification_generic));
         builder.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
@@ -149,7 +149,6 @@ public class NotificationHelper {
         notificationLayoutExpanded.setImageViewResource(R.id.iv_location_placeholder, R.drawable.ic_pin_drop_black_24dp);
         notificationLayoutExpanded.setImageViewResource(R.id.iv_file_upload_placeholder, R.drawable.ic_photo_size_select_actual_black_24dp);
         notificationLayoutExpanded.setImageViewResource(R.id.iv_update_required_placeholder, R.drawable.ic_mail_black_24dp);
-
 
         int totalPendency = ToolBox_Inf.convertStringToInt(qty);
         totalPendency += ToolBox_Inf.convertStringToInt(qtyAP);

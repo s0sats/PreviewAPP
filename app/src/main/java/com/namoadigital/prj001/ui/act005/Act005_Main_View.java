@@ -45,6 +45,8 @@ public interface Act005_Main_View {
 
     void setWsSoProcess(String ws_called);
 
+    void refreshResume(int layout_id, boolean isDone, int sucessAmount, int totalAmount);
+
     void callLoginProcess();
 
     void callChangeCustomerProcess();
@@ -72,4 +74,5 @@ public interface Act005_Main_View {
     void callAct069(Context context);
 
     void addWsResults(ArrayList<HMAux> auxResults);
+
 }

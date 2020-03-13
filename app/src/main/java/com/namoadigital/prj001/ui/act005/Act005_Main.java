@@ -93,6 +93,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.SendResumeDialog;
 
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
@@ -196,6 +197,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private FCMReceiver fcmReceiver;
     private BR_Chat chatReceiver;
     private boolean syncAfterSave;
+    private SendResumeDialog sendResumeDialog;
+    private int sOProcessErrorAmount=0;
+    private int sOProcessAmount=0;
+    private int assetsProcessErrorAmount=0;
+    private String move_planned[];
+    private String blinds[];
+    ArrayList<HMAux> inbound_items;
+    ArrayList<HMAux> outbound_items;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -1442,6 +1451,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
             setWsSoProcess("");
             //
+            int errorAmount = 0;
             if (!hmAux.isEmpty() && hmAux.size() > 0) {
                 for (Map.Entry<String, String> item : hmAux.entrySet()) {
                     HMAux aux = new HMAux();
@@ -1457,10 +1467,24 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
                         wsResults.add(mHmAux);
+                        errorAmount++;
                     }
                 }
             }
 
+            if(errorAmount > 0){
+                try {
+                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_serial, false, errorAmount,hmAux.size());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else {
+                try {
+                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_serial, true, hmAux.size(), hmAux.size());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             mPresenter.executeSaveProcess();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
@@ -1473,7 +1497,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
             setWsSoProcess("");
-
+            int errorAmount = 0;
             for (String sKey : hmAux.keySet()) {
                 HMAux mHmAux = new HMAux();
                 //
@@ -1486,14 +1510,28 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 //
                 if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
                     wsResults.add(mHmAux);
+                    errorAmount++;
                 }
             }
-
+            if(errorAmount > 0 ){
+                try {
+                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_form_ap, false, errorAmount, hmAux.size());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else {
+                try {
+                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_form_ap, true, hmAux.size(), hmAux.size());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             mPresenter.executeSOPackExpress();  // 4
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getSimpleName())) {
             setWsSoProcess("");
             //
+            int errorAmount = 0;
             if (!hmAux.isEmpty() && hmAux.size() > 0) {
                 for (Map.Entry<String, String> item : hmAux.entrySet()) {
                     HMAux aux = new HMAux();
@@ -1510,10 +1548,24 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
                         wsResults.add(mHmAux);
+                        errorAmount++;
                     }
                 }
             }
 
+            if(errorAmount>0){
+                try {
+                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_express_so, false, errorAmount, hmAux.size());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else {
+                try {
+                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_express_so, true, hmAux.size(),hmAux.size());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             mPresenter.executeSoSave();  // 5
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE)) {
@@ -1522,6 +1574,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
             if (approval.length > 0 && !approval[0].isEmpty()) {
+                sOProcessAmount +=approval.length;
                 for (int i = 0; i < approval.length; i++) {
                     String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
                     //
@@ -1533,9 +1586,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
                         wsResults.add(mHmAux);
+                        sOProcessErrorAmount++;
                     }
                 }
             }
+
             mPresenter.executeSoSaveApproval();
 
         } else if (wsSoProcess.equalsIgnoreCase(WS_PROCESS_SO_SAVE_APPROVAL)) {
@@ -1544,6 +1599,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
             if (approval.length > 0 && !approval[0].isEmpty()) {
+                sOProcessAmount += approval.length;
                 for (int i = 0; i < approval.length; i++) {
                     String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
                     //
@@ -1555,14 +1611,28 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
                         wsResults.add(mHmAux);
+                        sOProcessErrorAmount++;
                     }
+                }
+            }
+            if(sOProcessErrorAmount>0) {
+                try {
+                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_so, false, sOProcessAmount- sOProcessErrorAmount, sOProcessAmount);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else{
+                try {
+                    sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_so, true, sOProcessAmount, sOProcessAmount);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             mPresenter.executeMoveSave();  // 6
         } else if (wsSoProcess.equalsIgnoreCase(WS_IO_Move_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
-            String move_planned[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+            move_planned = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
             if (move_planned.length > 0 && !move_planned[0].isEmpty()) {
                 for (int i = 0; i < move_planned.length; i++) {
@@ -1576,6 +1646,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
                         wsResults.add(mHmAux);
+                        assetsProcessErrorAmount++;
                     }
                 }
             }
@@ -1585,7 +1656,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }  else if (wsSoProcess.equalsIgnoreCase(WS_IO_Blind_Move_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
-            String blinds[] = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
+            blinds = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
             if (blinds.length > 0 && !blinds[0].isEmpty()) {
                 for (int i = 0; i < blinds.length; i++) {
@@ -1599,6 +1670,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                     if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
                         wsResults.add(mHmAux);
+                        assetsProcessErrorAmount++;
                     }
                 }
             }
@@ -1608,7 +1680,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }   else if (wsSoProcess.equalsIgnoreCase(WS_IO_Inbound_Item_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
-            ArrayList<HMAux> inbound_items = mPresenter.processInboundItemSaveReturn(mLink, WS_RESULT_TYPE_ASSETS_INBOUND_ITEM);
+            inbound_items = mPresenter.processInboundItemSaveReturn(mLink, WS_RESULT_TYPE_ASSETS_INBOUND_ITEM);
 
             if(inbound_items != null) {
                 wsResults.addAll(inbound_items);
@@ -1619,12 +1691,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }  else if (wsSoProcess.equalsIgnoreCase(WS_IO_Outbound_Item_Save.class.getSimpleName())) {
             setWsSoProcess("");
 
-            ArrayList<HMAux> outbound_items = mPresenter.processOutboundItemSaveReturn(mLink, WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM);
+            outbound_items = mPresenter.processOutboundItemSaveReturn(mLink, WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM);
 
             if(outbound_items != null) {
                 wsResults.addAll(outbound_items);
             }
 
+            setAssetsResume();
             mPresenter.executeTicketSave(); //10
 
 /*
@@ -1644,11 +1717,19 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             }*/
         }  else if (wsSoProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getSimpleName())) {
             setWsSoProcess("");
-
+            boolean sucess=false;
+            ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn> total_tickets =new ArrayList<>();
+            total_tickets = mPresenter.getTicketSaveActReturns(mLink, total_tickets);
             ArrayList<HMAux> ticket_items = mPresenter.processTicketSaveReturn(mLink, WS_RESULT_TYPE_TICKET);
+            int total_tickets_amount = 0;
+            int total_tickets_error_amount = 0;
+            if(total_tickets != null) {
+                total_tickets_amount =  total_tickets.size();
+            }
 
             if(ticket_items != null) {
                 wsResults.addAll(ticket_items);
+                total_tickets_error_amount = ticket_items.size();
             }
 
             mPresenter.getMenuItensV2(hmAux_Trans);
@@ -1658,14 +1739,23 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 showResults(wsResults);
             } else {
                 if (syncAfterSave) {
+                    try {
+                        sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, false, total_tickets_amount - total_tickets_error_amount, total_tickets_amount);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     setSyncAfterSave(false);
                     //
                     mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
                 } else {
+                    try {
+                        sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, true, total_tickets_amount, total_tickets_amount);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     showSuccessDialog();
                 }
             }
-
         } else {
             setWsSoProcess("");
             mPresenter.getMenuItensV2(hmAux_Trans);
@@ -1679,8 +1769,24 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }
     }
 
+    private void setAssetsResume() {
+        int totalAmount = move_planned.length + blinds.length + inbound_items.size() + outbound_items.size();
+        if(assetsProcessErrorAmount >0){
+            try {
+                sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_assets, false, totalAmount - assetsProcessErrorAmount, totalAmount);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{
+            try {
+                sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_assets, true, totalAmount, totalAmount);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-//    @Override
+    //    @Override
 //    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
 //        super.processCloseACT(mLink, mRequired, hmAux);
 //
@@ -1834,6 +1940,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         wsResults.addAll(
             auxResults
         );
+    }
+
+    @Override
+    public void refreshResume(int layout_id, boolean isDone, int sucessAmount, int totalAmount) {
+        try {
+            sendResumeDialog.updateResumeStatus(layout_id, isDone, sucessAmount, totalAmount);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void showResults(List<HMAux> res) {
@@ -2094,6 +2210,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
         wsProcess = "";
 
+        sendResumeDialog.dismiss();
+
         ToolBox.alertMSG(
                 Act005_Main.this,
                 alertTitle,
@@ -2128,6 +2246,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     @Override
     public void cleanUpResults() {
+        /*
+            BARRIONUEVO  13-03-2020
+            Instacia Dialog de resumo dos servicos.
+         */
+        if( sendResumeDialog ==null) {
+            sendResumeDialog = new SendResumeDialog(context, hmAux_Trans);
+        }else{
+            sendResumeDialog.cancel();
+            sendResumeDialog = new SendResumeDialog(context, hmAux_Trans);
+        }
+        sendResumeDialog.show();
         if (wsResults != null) {
             wsResults.clear();
         } else {
