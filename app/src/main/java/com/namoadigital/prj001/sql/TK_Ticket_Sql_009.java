@@ -23,6 +23,22 @@ public class TK_Ticket_Sql_009 implements Specification {
         this.schedule_exec = schedule_exec;
     }
 
+    /**
+     * LUCHE - 13/03/2020
+     * Construtor usado pelo WS que salva os tickets.
+     * @param customer_code - Codigo do customer
+     * @param schedule_prefix - Prefix do agendamento
+     * @param schedule_code - Codigo do agendamento
+     * @param schedule_exec - Exec do agendamento
+     */
+    public TK_Ticket_Sql_009(long customer_code, Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
+        this.customer_code = customer_code;
+        this.schedule_prefix = String.valueOf(schedule_prefix);
+        this.schedule_code = String.valueOf(schedule_code);
+        this.schedule_exec = String.valueOf(schedule_exec);
+    }
+
+
     @Override
     public String toSqlQuery() {
 

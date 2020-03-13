@@ -31,6 +31,18 @@ public interface Act071_Main_Contract {
         boolean hasUnsavedData();
 
         void restoreActionImage();
+
+        void callAct017();
+
+        boolean isScheduledTicket();
+
+        int getmSchedulePrefix();
+
+        int getmScheduleCode();
+
+        int getmScheduleExec();
+
+        void updateTicketPk(int mPrefix, int mCode);
     }
 
     interface I_Presenter{
@@ -55,13 +67,15 @@ public interface Act071_Main_Contract {
 
         void execTicketSave();
 
-        void definePostTicketSaveFlow(int ticket_prefix, int ticket_code);
-
         void processSaveReturn(int ticket_prefix, int ticket_code, String mLink);
 
         String hasCheckinBlockBy(int ticket_prefix, int ticket_code);
 
         boolean hasCheckinAlertByStatus(String ticketStatus);
+        //Metodo chamado quando o ticket ja existe
+        void definePostTicketSaveFlow(int ticket_prefix, int ticket_code);
+        //Metodo chamado quando o ticket foi criado via agendamento
+        void definePostTicketSaveFlow(int mSchedulePrefix, int mScheduleCode, int mScheduleExec);
 
         /*boolean hasPartnerProfile(Integer partner_code);
 

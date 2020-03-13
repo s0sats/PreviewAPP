@@ -6166,20 +6166,81 @@ public class ToolBox_Inf {
         }
     }
 
+    /**
+     * LUCHE
+     * <p>
+     * Metodo que devolve nome da imagem baseado no obj de control do ticket
+     * </p>
+     * LUCHE - 13/03/2020
+     * <p>
+     * Modificado, extraindo o seu codigo para o novo metodo buildTicketActionImgPath
+     * </p>
+     * @param ctrl - Controle
+     * @return - Retorna nome da imagem formatoda ou null se exception
+     */
     @Nullable
     public static String buildTicketActionImgPath(TK_Ticket_Ctrl ctrl) {
+//        try{
+//            return ConstantBaseApp.TK_TICKET_PREX_IMG + ctrl.getCustomer_code() +"_"+ctrl.getTicket_prefix()+"_"+ctrl.getTicket_code()+"_"+ctrl.getTicket_seq()+ ".png";
+//        }catch (Exception e){
+//            registerException(CLASS_NAME,e);
+//            return null;
+//        }
+        //LUCHE - 13/03/2020
+        //Extraido o codigo acima para novo metodo
         try{
-            return ConstantBaseApp.TK_TICKET_PREX_IMG + ctrl.getCustomer_code() +"_"+ctrl.getTicket_prefix()+"_"+ctrl.getTicket_code()+"_"+ctrl.getTicket_seq()+ ".png";
+            return buildTicketActionImgPath(ctrl.getCustomer_code(),ctrl.getTicket_prefix(),ctrl.getTicket_code(),ctrl.getTicket_seq());
         }catch (Exception e){
             registerException(CLASS_NAME,e);
             return null;
         }
     }
 
+    /**
+     * LUCHE
+     * <p>
+     * Metodo que devolve nome da imagem baseado no obj de control do ticket
+     * </p>
+     * LUCHE - 13/03/2020
+     * <p>
+     * Modificado, extraindo o seu codigo para o novo metodo buildTicketActionImgPath
+     * </p>
+     * @param action
+     * @return
+     */
     @Nullable
     public static String buildTicketActionImgPath(TK_Ticket_Action action) {
+//        try{
+//            return ConstantBaseApp.TK_TICKET_PREX_IMG + action.getCustomer_code() +"_"+action.getTicket_prefix()+"_"+action.getTicket_code()+"_"+action.getTicket_seq()+ ".png";
+//        }catch (Exception e){
+//            registerException(CLASS_NAME,e);
+//            return null;
+//        }
+        //LUCHE - 13/03/2020
+        //Extraido o codigo acima para novo metodo
+        try {
+            return buildTicketActionImgPath(action.getCustomer_code(), action.getTicket_prefix(), action.getTicket_code(), action.getTicket_seq());
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+            return null;
+        }
+    }
+
+    /**
+     * LUCHE - 13/03/2020
+     * <p>
+     * Metodo que devolve nome da imagem baseado nos itens da pk do ticket_action
+     * </p>
+     * @param customerCode - Codigo do Customer
+     * @param ticket_prefix - Preixo do ticket
+     * @param ticket_code - Codigo do ticket
+     * @param ticket_seq - Sequencia do Ctrl ou  action
+     * @return
+     */
+    @Nullable
+    public static String buildTicketActionImgPath(long customerCode, int ticket_prefix, int ticket_code, int ticket_seq){
         try{
-            return ConstantBaseApp.TK_TICKET_PREX_IMG + action.getCustomer_code() +"_"+action.getTicket_prefix()+"_"+action.getTicket_code()+"_"+action.getTicket_seq()+ ".png";
+            return ConstantBaseApp.TK_TICKET_PREX_IMG + customerCode +"_"+ticket_prefix+"_"+ticket_code+"_"+ticket_seq+ ".png";
         }catch (Exception e){
             registerException(CLASS_NAME,e);
             return null;

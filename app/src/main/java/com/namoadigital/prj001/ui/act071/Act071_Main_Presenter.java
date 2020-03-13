@@ -14,11 +14,13 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Partner;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
@@ -26,9 +28,11 @@ import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_005;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -46,6 +50,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     private TK_TicketDao ticketDao;
     private TK_Ticket_CtrlDao ticketCtrlDao;
     private MD_PartnerDao mdPartnerDao;
+    private MD_Schedule_ExecDao scheduleExecDao;
 
     public Act071_Main_Presenter(Context context, Act071_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -69,6 +74,12 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
         );
+        //
+        this.scheduleExecDao = new MD_Schedule_ExecDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
     }
 
     /**
@@ -76,18 +87,19 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      * <p></p>
      * Metodo que verifica se parametros do bundle são validos.
      * Atualizado o metodo adicionando as pk do agendamento pois, nesse caso, o prefix do ticket pode ser 0
+     *
      * @param mTkActionPrefix - Ticket Prefix
-     * @param mTkActionCode - Ticket Code
-     * @param mTkActionSeq - Ticket Seq
+     * @param mTkActionCode   - Ticket Code
+     * @param mTkActionSeq    - Ticket Seq
      * @param mSchedulePrefix - Schedule Prefix
-     * @param mScheduleCode - Schedule Code
-     * @param mScheduleExec - Schedule Exec
+     * @param mScheduleCode   - Schedule Code
+     * @param mScheduleExec   - Schedule Exec
      * @return - Verdadeiro se a pk do ticket maior que zero ou se pk agendamento , mas ticket code e seq maior que 0
      */
     @Override
     public boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq, int mSchedulePrefix, int mScheduleCode, int mScheduleExec) {
-        return ((mTkActionPrefix > 0 || (mSchedulePrefix > 0 && mScheduleCode > 0 && mScheduleExec > 0 ))
-                && mTkActionCode > 0 && mTkActionSeq > 0
+        return ((mTkActionPrefix > 0 || (mSchedulePrefix > 0 && mScheduleCode > 0 && mScheduleExec > 0))
+            && mTkActionCode > 0 && mTkActionSeq > 0
         );
     }
 
@@ -118,12 +130,12 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     @Override
     public boolean getReadOnlyDefinition(TK_Ticket_Ctrl mTicketCtrl) {
         return isReadOnlyStatus(mTicketCtrl.getCtrl_status())
-                || !hasActionExecProfile()
-                || !hasPartnerProfile(mTicketCtrl.getPartner_code());
+            || !hasActionExecProfile()
+            || !hasPartnerProfile(mTicketCtrl.getPartner_code());
     }
 
-   private boolean hasPartnerProfile(Integer partner_code) {
-        if(partner_code == null){
+    private boolean hasPartnerProfile(Integer partner_code) {
+        if (partner_code == null) {
             return true;
         }
         //
@@ -134,7 +146,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             ).toSqlQuery()
         );
         //
-        if(partner != null && partner.getCustomer_code() > 0){
+        if (partner != null && partner.getCustomer_code() > 0) {
             return true;
         }
         //
@@ -155,7 +167,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
 
     private boolean isReadOnlyStatus(String ticketStatus) {
         return !ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticketStatus)
-               && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketStatus);
+            && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketStatus);
     }
 
     /**
@@ -165,7 +177,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      */
     @Override
     public String generateActionPhotoLocalPath(TK_Ticket_Action action) {
-        if(action.getAction_photo() == null && action.getAction_photo_local() == null){
+        if (action.getAction_photo() == null && action.getAction_photo_local() == null) {
             return ToolBox_Inf.buildTicketActionImgPath(action);
         }
         //
@@ -176,9 +188,9 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     public boolean newActionPhotoExists(TK_Ticket_Action action) {
         String localPath = generateActionPhotoLocalPath(action);
         try {
-            File file = new File(ConstantBase.CACHE_PATH_PHOTO,localPath);
+            File file = new File(ConstantBase.CACHE_PATH_PHOTO, localPath);
             return file.exists();
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
@@ -186,21 +198,21 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     @Override
     public boolean fileExists(String path) {
         try {
-            File file = new File(ConstantBase.CACHE_PATH_PHOTO,path);
+            File file = new File(ConstantBase.CACHE_PATH_PHOTO, path);
             return file.exists();
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
-    private void checkActionPhotoToDel(TK_Ticket_Action action){
-        if( !ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(action.getAction_status())
+    private void checkActionPhotoToDel(TK_Ticket_Action action) {
+        if (!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(action.getAction_status())
             && action.getAction_photo_local() == null
             && newActionPhotoExists(action)
-        ){
+        ) {
             deleteNewActionPhoto(action);
-        }else{
-            if(action.getAction_photo_local() != null) {
+        } else {
+            if (action.getAction_photo_local() != null) {
                 mView.restoreActionImage();
             }
         }
@@ -208,8 +220,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
 
     private void deleteNewActionPhoto(TK_Ticket_Action action) {
         String localPath = generateActionPhotoLocalPath(action);
-        File file = new File(ConstantBase.CACHE_PATH_PHOTO,localPath);
-        if(file.exists() && file.isFile()){
+        File file = new File(ConstantBase.CACHE_PATH_PHOTO, localPath);
+        if (file.exists() && file.isFile()) {
             file.delete();
         }
     }
@@ -219,7 +231,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     @Override
     public boolean updateTicketAction(TK_Ticket_Ctrl mTicketCtrl) {
         DaoObjReturn daoObjReturn = ticketCtrlDao.addUpdate(mTicketCtrl);
-        if(!daoObjReturn.hasError()) {
+        if (!daoObjReturn.hasError()) {
             ticketDao.addUpdate(
                 new TK_Ticket_Sql_005(
                     mTicketCtrl.getCustomer_code(),
@@ -229,13 +241,54 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 ).toSqlQuery()
             );
             //
-            if( mTicketCtrl.getAction().getAction_photo_local() != null
+            if (mTicketCtrl.getAction().getAction_photo_local() != null
                 && !mTicketCtrl.getAction().getAction_photo_local().isEmpty()
             ) {
                 uploadActionImage(mTicketCtrl);
             }
+            //TODO add esse update antes do update do control.
+            if(mView.isScheduledTicket()){
+                updateScheduleStatus(
+                    mView.getmSchedulePrefix(),
+                    mView.getmScheduleCode(),
+                    mView.getmScheduleExec(),
+                    mTicketCtrl.getCtrl_status()
+                );
+            }
+            //
             return true;
         }
+        return false;
+    }
+
+    /**
+     * LUCHE - 14/02/2020
+     * <p>
+     * Atualiza status da tabela de agendamentos.
+     *
+     * @param schedule_prefix
+     * @param schedule_code
+     * @param schedule_exec
+     * @param status
+     * @return
+     */
+    private boolean updateScheduleStatus(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec, String status) {
+        MD_Schedule_Exec scheduleExec = scheduleExecDao.getByString(
+            new MD_Schedule_Exec_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedule_prefix,
+                schedule_code,
+                schedule_exec
+            ).toSqlQuery()
+        );
+        //
+        if (MD_Schedule_Exec.isValidScheduleExec(scheduleExec)) {
+            scheduleExec.setStatus(status);
+            DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
+            //Retorna verdadeiro se não teve erro.
+            return !daoObjReturn.hasError();
+        }
+        //
         return false;
     }
 
@@ -263,7 +316,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     private void startUploadImg() {
         Intent mIntent = new Intent(context, WBR_Upload_Img.class);
         Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
@@ -286,7 +339,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             context.sendBroadcast(mIntent);
         } else {
             //Se falso, será exibi msg na tela.
-            if(checkOfflineTicketDone(mView.getAction())) {
+            if (checkOfflineTicketDone(mView.getAction())) {
                 mView.showAlert(
                     hmAux_Trans.get("alert_offline_save_ttl"),
                     hmAux_Trans.get("alert_offline_save_msg"),
@@ -325,6 +378,13 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 //
                 for (WS_TK_Ticket_Save.TicketSaveActReturn actReturn : checkinReturns) {
                     String ticketCode = actReturn.getPrefix() + "." + actReturn.getCode();
+                    //Se a ação da tela é agendamento  e a pk do agendamento bater com a retornada,
+                    //atualiza o prefix e code para gerar o extrato correto.
+                    if (isScheduleCreationForThisAction(actReturn)) {
+                        mPrefix = actReturn.getPrefix();
+                        mCode = actReturn.getCode();
+                        mView.updateTicketPk(mPrefix,mCode);
+                    }
                     //
                     if (!auxResult.containsKey(ticketCode)
                         || (auxResult.containsKey(ticketCode)
@@ -370,12 +430,20 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         }
     }
 
+    private boolean isScheduleCreationForThisAction(WS_TK_Ticket_Save.TicketSaveActReturn actReturn) {
+        return
+            mView.isScheduledTicket()
+                && actReturn.getSchedulePrefix() == mView.getmSchedulePrefix()
+                && actReturn.getScheduleCode() == mView.getmScheduleCode()
+                && actReturn.getScheduleExec() == mView.getmScheduleExec();
+    }
+
     @Override
     public String hasCheckinBlockBy(int ticket_prefix, int ticket_code) {
-        TK_Ticket ticket = getTicket(ticket_prefix, ticket_code);
+        TK_Ticket ticket = getTicketbyPk(ticket_prefix, ticket_code);
         String preference_user_code = ToolBox_Con.getPreference_User_Code(context);
-        if(preference_user_code!= null){
-            if(!preference_user_code.equals(ticket.getCheckin_user()) && ticket.getCheckin_date() != null) {
+        if (preference_user_code != null) {
+            if (!preference_user_code.equals(ticket.getCheckin_user()) && ticket.getCheckin_date() != null) {
 
                 return getFormattedInfo(ticket.getCheckin_date(), ticket.getCheckin_user_name());
             }
@@ -393,50 +461,72 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
 
     @Override
     public void definePostTicketSaveFlow(int ticket_prefix, int ticket_code) {
-        TK_Ticket tkTicket = getTicket(ticket_prefix,ticket_code);
-        //
-        if(tkTicket != null && tkTicket.getCustomer_code() > 0){
-            if( ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(tkTicket.getTicket_status())
+        proceedPostSaveFlow(getTicketbyPk(ticket_prefix, ticket_code));
+    }
+
+    @Override
+    public void definePostTicketSaveFlow(int mSchedulePrefix, int mScheduleCode, int mScheduleExec) {
+        proceedPostSaveFlow(getTicketBySchedule(mSchedulePrefix,mScheduleCode,mScheduleExec));
+    }
+
+    private void proceedPostSaveFlow(TK_Ticket tkTicket) {
+        if (tkTicket != null && tkTicket.getCustomer_code() > 0) {
+            if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(tkTicket.getTicket_status())
                 || !hasActionNotExec(tkTicket)
-            ){
+            ) {
                 mView.callAct069();
-            }else{
+            } else {
                 mView.callAct070();
             }
         }
     }
 
-    private TK_Ticket getTicket(int ticket_prefix, int ticket_code) {
-        return ticketDao.getByString(
+    private TK_Ticket getTicketbyPk(int ticket_prefix, int ticket_code) {
+        return getTicket(
             new TK_Ticket_Sql_001(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 ticket_prefix,
                 ticket_code
+            ).toSqlQuery());
+    }
+
+    private TK_Ticket getTicket(String query) {
+        return ticketDao.getByString(query);
+    }
+
+    private TK_Ticket getTicketBySchedule(int schedulePrefix, int scheduleCode, int scheduleExec) {
+        return getTicket(
+            new TK_Ticket_Sql_009(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedulePrefix,
+                scheduleCode,
+                scheduleExec
             ).toSqlQuery()
         );
+
     }
 
     private boolean checkOfflineTicketDone(TK_Ticket_Action ctrl) {
-        final TK_Ticket tkTicket = getTicket(ctrl.getTicket_prefix(), ctrl.getTicket_code());
+        final TK_Ticket tkTicket = getTicketbyPk(ctrl.getTicket_prefix(), ctrl.getTicket_code());
         //
-        if(!hasActionNotExec(tkTicket)){
+        if (!hasActionNotExec(tkTicket)) {
             tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
             tkTicket.setUpdate_required(1);
             DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
             //
-            if(daoObjReturn.hasError()){
+            if (daoObjReturn.hasError()) {
                 mView.showAlert(
                     hmAux_Trans.get("alert_error_on_offline_done_ttl"),
                     hmAux_Trans.get("alert_error_on_offline_done_msg"),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            definePostTicketSaveFlow(tkTicket.getTicket_prefix(),tkTicket.getTicket_code());
+                            definePostTicketSaveFlow(tkTicket.getTicket_prefix(), tkTicket.getTicket_code());
                         }
                     }
                 );
                 return false;
-            }else{
+            } else {
                 return true;
             }
         }
@@ -446,15 +536,15 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
 
     /**
      * Varre os controles em busca de algum que ainda esteja pendente de execução.
+     *
      * @param tkTicket - Ticket pai do controle/action
      * @return - Verdadeiro se encontrar ao menos uma acão pendente de execução.
      */
     private boolean hasActionNotExec(TK_Ticket tkTicket) {
         //
         for (TK_Ticket_Ctrl ctrl : tkTicket.getCtrl()) {
-            if( !ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())
-                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(ctrl.getCtrl_status()))
-            {
+            if (!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())
+                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(ctrl.getCtrl_status())) {
                 return true;
             }
         }
@@ -464,15 +554,15 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
 
     //
     @Override
-    public void onBackPressedClicked(String requestingAct) {
-        switch (requestingAct){
+    public void onBackPressedClicked(final String requestingAct) {
+        switch (requestingAct) {
             case ConstantBaseApp.ACT014:
                 mView.callAct070();
                 break;
             case ConstantBaseApp.ACT070:
+            case ConstantBaseApp.ACT017:
             default:
-                if(mView.hasUnsavedData()){
-
+                if (mView.hasUnsavedData()) {
                     ToolBox.alertMSG(
                         context,
                         hmAux_Trans.get("alert_unsaved_data_will_be_lost_ttl"),
@@ -480,19 +570,25 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                checkActionPhotoToDel(mView.getAction());
-                                //
-                                mView.callAct070();
+                                backActionFlow(requestingAct);
                             }
                         },
                         1
                     );
-                }else{
-                    checkActionPhotoToDel(mView.getAction());
-                    //
-                    mView.callAct070();
+                } else {
+                    backActionFlow(requestingAct);
                 }
                 break;
+        }
+    }
+
+    private void backActionFlow(String requestingAct) {
+        checkActionPhotoToDel(mView.getAction());
+        //
+        if (requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT017)) {
+            mView.callAct017();
+        } else {
+            mView.callAct070();
         }
     }
 }

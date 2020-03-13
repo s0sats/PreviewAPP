@@ -396,6 +396,9 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                     if (!daoObjReturn.hasError()) {
                         item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
                         item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
+                        //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
+                        //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
+                        item.put(TK_Ticket_CtrlDao.TICKET_SEQ, "1");
                         return true;
                     }else{
                         updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_SCHEDULE);
@@ -515,6 +518,9 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         if(tkTicket != null && TK_Ticket.isValidTkTicket(tkTicket) ){
             item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
             item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
+            //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
+            //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
+            item.put(TK_Ticket_CtrlDao.TICKET_SEQ, "1");
             return true;
         }
         return false;
@@ -538,7 +544,14 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     }
 
     private void prepareOpenTicket(HMAux item) {
-        mView.callAct070(getTicketFlowBundle(item));
+        if(ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_PREFIX)) > 0
+           && ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_CODE)) > 0
+        ){
+            mView.callAct070(getTicketFlowBundle(item));
+        }else{
+            mView.callAct071(getTicketActionFlowBundle(item));
+        }
+
     }
 
     private Bundle getTicketFlowBundle(HMAux item) {
@@ -560,7 +573,9 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
        bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)));
        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_PREFIX)));
        bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_CODE)));
-       bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ToolBox_Inf.convertStringToInt(item.get(TK_Ticket_CtrlDao.TICKET_SEQ)));
+       //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
+        //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
+       bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, 1);
        bundle.putString(TK_TicketDao.TICKET_ID, item.get(TK_TicketDao.TICKET_ID));
        bundle.putString(TK_TicketDao.TYPE_PATH, item.get(TK_TicketDao.TYPE_PATH));
        bundle.putString(TK_TicketDao.TYPE_DESC, item.get(TK_TicketDao.TYPE_DESC));

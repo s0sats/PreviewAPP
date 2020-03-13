@@ -40,6 +40,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -254,7 +255,15 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     private void updateActionData() {
         mTicketCtrl = mPresenter.getTicketCtrlObj(mActionPrefix, mActionCode, mActionSeq);
+        //TODO Se for agendamento, atualizar as infos abaixo , pois elas só veem via bundle.
         //
+        /**
+         *  mTicketID = "";
+         *  mTypePath = "";
+         *  mTypeDesc = "";
+         *
+         *
+         */
         if (mTicketCtrl != null) {
             setReadOnly();
             setDataToViews();
@@ -505,10 +514,18 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             public void onClick(View v) {
                 //
                 if(ticketResult){
-                    mPresenter.definePostTicketSaveFlow(
-                        mTicketCtrl.getTicket_prefix(),
-                        mTicketCtrl.getTicket_code()
-                    );
+                    if(isScheduledTicket()){
+                        mPresenter.definePostTicketSaveFlow(
+                            mSchedulePrefix,
+                            mScheduleCode,
+                            mScheduleExec
+                        );
+                    }else {
+                        mPresenter.definePostTicketSaveFlow(
+                            mTicketCtrl.getTicket_prefix(),
+                            mTicketCtrl.getTicket_code()
+                        );
+                    }
                 }else{
                     updateActionData();
                 }
@@ -516,6 +533,38 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 show.dismiss();
             }
         });
+    }
+
+    @Override
+    public void updateTicketPk(int mPrefix, int mCode) {
+        this.mActionPrefix = mPrefix;
+        this.mActionCode = mCode;
+        updateActionData();
+    }
+
+    @Override
+    public boolean isScheduledTicket(){
+        return mActionPrefix == 0
+               && mActionCode > 0
+               && mActionSeq > 0
+               && mSchedulePrefix > 0
+               && mScheduleCode > 0
+               && mScheduleExec > 0;
+    }
+
+    @Override
+    public int getmSchedulePrefix() {
+        return mSchedulePrefix;
+    }
+
+    @Override
+    public int getmScheduleCode() {
+        return mScheduleCode;
+    }
+
+    @Override
+    public int getmScheduleExec() {
+        return mScheduleExec;
     }
 
     @Override
@@ -927,6 +976,17 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         requestingBundle.remove(TK_TicketDao.TICKET_ID);
         requestingBundle.remove(TK_TicketDao.TYPE_PATH);
         requestingBundle.remove(TK_TicketDao.TYPE_DESC);
+        intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct017() {
+        Intent intent = new Intent(context, Act017_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, requestingBundle.getString(ConstantBaseApp.ACT_SELECTED_DATE, null));
         intent.putExtras(requestingBundle);
         startActivity(intent);
         finish();
