@@ -576,13 +576,30 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
        //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
         //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, 1);
-       bundle.putString(TK_TicketDao.TICKET_ID, item.get(TK_TicketDao.TICKET_ID));
-       bundle.putString(TK_TicketDao.TYPE_PATH, item.get(TK_TicketDao.TYPE_PATH));
-       bundle.putString(TK_TicketDao.TYPE_DESC, item.get(TK_TicketDao.TYPE_DESC));
+       //16/03/2020 - foi convencionado que durante a criação da execução do ticket, o ticket id,
+       //será o igual ao do exibido nas celulas do agendamento.
+       bundle.putString(TK_TicketDao.TICKET_ID, getFormattedScheduelTicktId(
+           item.get(Sql_Act017_004.SCHEDULE_PK),
+           item.get(item.get(TK_TicketDao.TICKET_PREFIX)),
+           item.get(item.get(TK_TicketDao.TICKET_CODE))
+           )
+       );
+       //bundle.putString(TK_TicketDao.TYPE_PATH, item.get(TK_TicketDao.TYPE_PATH));
+       bundle.putString(TK_TicketDao.TYPE_DESC, item.get(MD_Schedule_ExecDao.TICKET_TYPE_DESC));
        bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN,false);
        bundle.putString(Constant.ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
         //
         return bundle;
+    }
+
+    private String getFormattedScheduelTicktId(String schedulePk, String ticketPrefix, String ticketCode) {
+            String formmattedTicketSeqExec =  schedulePk;
+            if( ticketPrefix != null & !ticketPrefix.isEmpty()
+                && ticketCode != null & !ticketCode.isEmpty()
+            ){
+                formmattedTicketSeqExec += "["+ticketPrefix+"."+ticketCode+"]";
+            }
+            return formmattedTicketSeqExec;
     }
 
     private boolean hasScheduleSiteAccess(String site_code) {

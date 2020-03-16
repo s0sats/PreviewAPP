@@ -255,15 +255,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     private void updateActionData() {
         mTicketCtrl = mPresenter.getTicketCtrlObj(mActionPrefix, mActionCode, mActionSeq);
-        //TODO Se for agendamento, atualizar as infos abaixo , pois elas só veem via bundle.
-        //
-        /**
-         *  mTicketID = "";
-         *  mTypePath = "";
-         *  mTypeDesc = "";
-         *
-         *
-         */
         if (mTicketCtrl != null) {
             setReadOnly();
             setDataToViews();
