@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,11 +42,15 @@ public class SendResumeDialog extends AlertDialog {
     private TextView  tv_module_so;
     private TextView  tv_module_express_so;
     private TextView  tv_module_ticket;
+    private TextView  tvTitle;
+    private Button btnOK;
+    public OnDialogClickListener listener;
 
-    public SendResumeDialog(Context context, HMAux hmAux_trans) {
+    public SendResumeDialog(Context context, HMAux hmAux_trans, OnDialogClickListener listener) {
         super(context);
         this.hmAux_trans = hmAux_trans;
         this.context = context;
+        this.listener = listener;
     }
 
     @Override
@@ -59,6 +64,17 @@ public class SendResumeDialog extends AlertDialog {
         //
         setViewVisibility();
         //
+        setAction();
+        //
+    }
+
+    private void setAction() {
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onConfirm();
+            }
+        });
     }
 
     /**
@@ -100,6 +116,8 @@ public class SendResumeDialog extends AlertDialog {
     }
 
     private void setViewVisibility() {
+        tvTitle.setText(hmAux_trans.get("alert_resume_title"));
+        btnOK.setText(R.string.sys_alert_btn_ok);
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST, null)) {
             nFormItem.setVisibility(View.VISIBLE);
             nFormItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
@@ -193,6 +211,8 @@ public class SendResumeDialog extends AlertDialog {
         formApItem = findViewById(R.id.act005_send_resume_form_ap);
         expressSoItem = findViewById(R.id.act005_send_resume_express_so);
         ticketItem = findViewById(R.id.act005_send_resume_ticket);
+        tvTitle = findViewById(R.id.act005_send_resume_tv_title);
+        btnOK = findViewById(R.id.act005_send_resume_btn_ok);
     }
 
     private void loadTranslation() {
@@ -219,5 +239,11 @@ public class SendResumeDialog extends AlertDialog {
                 ToolBox_Con.getPreference_Translate_Code(getContext()),
                 transList
         );
+    }
+
+
+
+    public interface OnDialogClickListener {
+        void onConfirm();
     }
 }

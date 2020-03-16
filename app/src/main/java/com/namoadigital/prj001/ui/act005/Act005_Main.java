@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -1786,155 +1787,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         }
     }
 
-    //    @Override
-//    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
-//        super.processCloseACT(mLink, mRequired, hmAux);
-//
-//        if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE)) {
-//
-//            String so[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-//
-//            if (so.length > 0 && !so[0].isEmpty()) {
-//                for (int i = 0; i < so.length; i++) {
-//                    String fields[] = so[i].split(Constant.MAIN_CONCAT_STRING_2);
-//                    //
-//                    HMAux mHmAux = new HMAux();
-//                    mHmAux.put("label", "" + fields[0]);
-//                    mHmAux.put("type", "S.O.");
-//                    mHmAux.put("status", fields[1]);
-//                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
-//                    //
-//                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
-//                        wsResults.add(mHmAux);
-//                    }
-//                }
-//            } else {
-//            }
-//
-//            mPresenter.executeSoSaveApproval();
-//        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
-//            setWsSoProcess("");
-//
-//            String approval[] = hmAux.get(WS_SO_Save.SO_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
-//
-//            if (approval.length > 0 && !approval[0].isEmpty()) {
-//                for (int i = 0; i < approval.length; i++) {
-//                    String fields[] = approval[i].split(Constant.MAIN_CONCAT_STRING_2);
-//                    //
-//                    HMAux mHmAux = new HMAux();
-//                    mHmAux.put("label", fields[0]);
-//                    mHmAux.put("type", "S.O.");
-//                    mHmAux.put("status", fields[1]);
-//                    mHmAux.put("final_status", fields[0] + " / " + fields[1]);
-//                    //
-//                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
-//                        wsResults.add(mHmAux);
-//                    }
-//                }
-//            } else {
-//            }
-//
-//            mPresenter.executeApSave();
-//
-//        } else if (wsSoProcess.equalsIgnoreCase(WS_AP_Save.class.getSimpleName())) {
-//            setWsSoProcess("");
-//
-//            for (String sKey : hmAux.keySet()) {
-//                HMAux mHmAux = new HMAux();
-//                //
-//                String[] res = hmAux.get(sKey).split(Constant.MAIN_CONCAT_STRING);
-//
-//                mHmAux.put("label", res[0]);
-//                mHmAux.put("type", "A.P.");
-//                mHmAux.put("status", (res[1].equals("1") ? "OK" : res[1]));
-//                mHmAux.put("final_status", ToolBox_Inf.getSafeSubstring(ToolBox_Inf.getBreakNewLine(res[0]), 20) + " - " + (res[1].equals("1") ? "OK" : res[1]));
-//                //
-//                if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
-//                    wsResults.add(mHmAux);
-//                }
-//            }
-//            //
-//            mPresenter.executeSerialSave();
-//            //
-//
-//        } else if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
-//            setWsSoProcess("");
-//            //
-//            if (!hmAux.isEmpty() && hmAux.size() > 0) {
-//                for (Map.Entry<String, String> item : hmAux.entrySet()) {
-//                    HMAux aux = new HMAux();
-//                    String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
-//                    String status = item.getValue();
-//                    String productInfo = mPresenter.getProductInfo(Long.parseLong(pk[0]));
-//                    //
-//                    HMAux mHmAux = new HMAux();
-//                    mHmAux.put("label", "" + productInfo + " - " + pk[1]);
-//                    mHmAux.put("type", "SERIAL");
-//                    mHmAux.put("status", status);
-//                    mHmAux.put("final_status", productInfo + " - " + pk[1] + " / " + status);
-//                    //
-//                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
-//                        wsResults.add(mHmAux);
-//                    }
-//
-//                }
-//            }
-//            //
-//            mPresenter.executeSOPackExpress();
-//
-//        } else if (wsSoProcess.equalsIgnoreCase(WS_SO_Pack_Express_Local.class.getSimpleName())) {
-//            setWsSoProcess("");
-//            //
-//            if (!hmAux.isEmpty() && hmAux.size() > 0) {
-//                for (Map.Entry<String, String> item : hmAux.entrySet()) {
-//                    HMAux aux = new HMAux();
-//                    String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
-//                    ;
-//                    String status = item.getValue();
-//                    String soInfo = pk[0];
-//                    //
-//                    HMAux mHmAux = new HMAux();
-//                    mHmAux.put("label", "" + soInfo + "  -  " + pk[2] + "\n" + pk[1]);
-//                    mHmAux.put("type", "SO_EXPRESS");
-//                    mHmAux.put("status", status);
-//                    mHmAux.put("final_status", soInfo + " / " + status);
-//                    //
-//                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
-//                        wsResults.add(mHmAux);
-//                    }
-//                }
-//            }
-//            //
-//            //mPresenter.getMenuItens(hmAux_Trans);
-//            mPresenter.getMenuItensV2(hmAux_Trans);
-//            progressDialog.dismiss();
-//
-//            if (wsResults.size() > 0) {
-//                showResults(wsResults);
-//            } else {
-//                if (syncAfterSave) {
-//                    setSyncAfterSave(false);
-//                    //
-//                    mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
-//                } else {
-//                    showSuccessDialog();
-//                }
-//            }
-//
-//        } else {
-//            setWsSoProcess("");
-//            //mPresenter.getMenuItens(hmAux_Trans);
-//            mPresenter.getMenuItensV2(hmAux_Trans);
-//            progressDialog.dismiss();
-//
-//            if (wsResults.size() > 0) {
-//                showResults(wsResults);
-//            } else {
-//                showSuccessDialog();
-//            }
-//        }
-//    }
-
     @Override
     public void addWsResults(ArrayList<HMAux> auxResults) {
         wsResults.addAll(
@@ -2248,13 +2100,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     public void cleanUpResults() {
         /*
             BARRIONUEVO  13-03-2020
-            Instacia Dialog de resumo dos servicos.
+            Instancia Dialog de resumo dos servicos.
          */
         if( sendResumeDialog ==null) {
-            sendResumeDialog = new SendResumeDialog(context, hmAux_Trans);
+            sendResumeDialog = getSendResumeDialog();
         }else{
             sendResumeDialog.cancel();
-            sendResumeDialog = new SendResumeDialog(context, hmAux_Trans);
+            sendResumeDialog = getSendResumeDialog();
         }
         sendResumeDialog.show();
         if (wsResults != null) {
@@ -2262,6 +2114,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         } else {
             wsResults = new ArrayList<>();
         }
+    }
+
+    @NonNull
+    private SendResumeDialog getSendResumeDialog() {
+        return new SendResumeDialog(context, hmAux_Trans, new SendResumeDialog.OnDialogClickListener() {
+            @Override
+            public void onConfirm() {
+
+            }
+        });
     }
 
     @Override

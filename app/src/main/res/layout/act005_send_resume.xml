@@ -1,36 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="8dp"
+    android:orientation="vertical">
 
-    <include
-        android:id="@+id/act005_send_resume_nform"
-        layout="@layout/act005_send_resume_detail" />
+    <ImageView
+        android:id="@+id/act005_send_resume_iv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/act005_send_resume_tv_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/act005_send_resume_tv_title"
+        app:srcCompat="@drawable/ic_alert_n"
+        android:contentDescription="@string/generic_sending_data_msg"/>
 
-    <include
-        android:id="@+id/act005_send_resume_serial"
-        layout="@layout/act005_send_resume_detail" />
+    <TextView
+        android:id="@+id/act005_send_resume_tv_title"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/act005_send_resume_iv_title"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="ENVIO DE DADOS" />
 
-    <include
-        android:id="@+id/act005_send_resume_so"
-        layout="@layout/act005_send_resume_detail" />
+    <LinearLayout
+        android:id="@+id/ll_modules"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/act005_send_resume_tv_title">
 
-    <include
-        android:id="@+id/act005_send_resume_assets"
-        layout="@layout/act005_send_resume_detail" />
+        <include
+            android:id="@+id/act005_send_resume_nform"
+            layout="@layout/act005_send_resume_detail" />
 
-    <include
-        android:id="@+id/act005_send_resume_form_ap"
-        layout="@layout/act005_send_resume_detail" />
+        <include
+            android:id="@+id/act005_send_resume_serial"
+            layout="@layout/act005_send_resume_detail" />
 
-    <include
-        android:id="@+id/act005_send_resume_express_so"
-        layout="@layout/act005_send_resume_detail" />
+        <include
+            android:id="@+id/act005_send_resume_so"
+            layout="@layout/act005_send_resume_detail" />
 
-    <include
-        android:id="@+id/act005_send_resume_ticket"
-        layout="@layout/act005_send_resume_detail" />
+        <include
+            android:id="@+id/act005_send_resume_assets"
+            layout="@layout/act005_send_resume_detail" />
 
-</LinearLayout>
+        <include
+            android:id="@+id/act005_send_resume_form_ap"
+            layout="@layout/act005_send_resume_detail" />
+
+        <include
+            android:id="@+id/act005_send_resume_express_so"
+            layout="@layout/act005_send_resume_detail" />
+
+        <include
+            android:id="@+id/act005_send_resume_ticket"
+            layout="@layout/act005_send_resume_detail" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/act005_send_resume_btn_ok"
+        style="@style/ThemeOverlay.MaterialComponents.Dialog.Alert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="#00000000"
+        android:text="@string/generic_msg_ok"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_modules" />
+
+
+</android.support.constraint.ConstraintLayout>
