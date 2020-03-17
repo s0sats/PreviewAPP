@@ -1685,6 +1685,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             if(inbound_items != null) {
                 wsResults.addAll(inbound_items);
+            }else{
+                inbound_items = new ArrayList<>();
             }
 
             mPresenter.executeItemOutboundSave();  // 9
@@ -1696,6 +1698,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
             if(outbound_items != null) {
                 wsResults.addAll(outbound_items);
+            }else{
+                outbound_items = new ArrayList<>();
             }
 
             setAssetsResume();
@@ -1757,7 +1761,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     showSuccessDialog();
                 }
             }
+            sendResumeDialog.setBtnOKEnable(true);
         } else {
+            sendResumeDialog.setBtnOKEnable(true);
             setWsSoProcess("");
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
@@ -1771,7 +1777,23 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     }
 
     private void setAssetsResume() {
-        int totalAmount = move_planned.length + blinds.length + inbound_items.size() + outbound_items.size();
+        int movePlannedLenght=0;
+        try {
+            movePlannedLenght = getVectorStringLength(move_planned);
+        } catch (Exception e) {
+            e.printStackTrace();
+            movePlannedLenght=0;
+        }
+
+        int moveBlindLenght=0;
+        try {
+            moveBlindLenght = getVectorStringLength(blinds);
+        } catch (Exception e) {
+            e.printStackTrace();
+            moveBlindLenght=0;
+        }
+
+        int totalAmount = movePlannedLenght + moveBlindLenght + inbound_items.size() + outbound_items.size();
         if(assetsProcessErrorAmount >0){
             try {
                 sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_assets, false, totalAmount - assetsProcessErrorAmount, totalAmount);
@@ -1785,6 +1807,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 e.printStackTrace();
             }
         }
+    }
+
+    private int getVectorStringLength(String[] moves) throws Exception{
+        if(moves.length > 0 && !moves[0].isEmpty() ){
+            return moves.length;
+        }
+        return 0;
     }
 
     @Override
@@ -2062,8 +2091,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
         wsProcess = "";
 
-        sendResumeDialog.dismiss();
-
         ToolBox.alertMSG(
                 Act005_Main.this,
                 alertTitle,
@@ -2121,7 +2148,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         return new SendResumeDialog(context, hmAux_Trans, new SendResumeDialog.OnDialogClickListener() {
             @Override
             public void onConfirm() {
-
+                sendResumeDialog.dismiss();
+                progressDialog.dismiss();
             }
         });
     }

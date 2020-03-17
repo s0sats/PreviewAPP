@@ -118,6 +118,7 @@ public class SendResumeDialog extends AlertDialog {
     private void setViewVisibility() {
         tvTitle.setText(hmAux_trans.get("alert_resume_title"));
         btnOK.setText(R.string.sys_alert_btn_ok);
+        btnOK.setEnabled(false);
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST, null)) {
             nFormItem.setVisibility(View.VISIBLE);
             nFormItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
@@ -241,7 +242,9 @@ public class SendResumeDialog extends AlertDialog {
         );
     }
 
-
+    public void setBtnOKEnable(boolean isEnable) {
+        btnOK.setEnabled(isEnable);
+    }
 
     public interface OnDialogClickListener {
         void onConfirm();
