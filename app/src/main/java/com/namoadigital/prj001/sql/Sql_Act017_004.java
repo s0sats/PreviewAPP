@@ -12,8 +12,6 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 public class Sql_Act017_004 implements Specification {
-    public static final String SCHEDULE_PK = "schedule_pk";
-
     private long customer_code;
     private String selected_date;
     private String serial_id;
@@ -57,7 +55,7 @@ public class Sql_Act017_004 implements Specification {
                 "  strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n"+
                 "  (strftime('%s',s.date_start,'"+customerGMT+"') * 1000)  "+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+",\n"+
                 "  s.comments\n,"+
-                "  s.schedule_prefix||'.'||s.schedule_code||'.'||s.schedule_exec "+SCHEDULE_PK+", \n "+
+                "  s.schedule_prefix||'.'||s.schedule_code||'.'||s.schedule_exec "+ MD_Schedule_ExecDao.SCHEDULE_PK +", \n "+
                 "  s.schedule_prefix,\n" +
                 "  s.schedule_code,\n" +
                 "  s.schedule_desc,\n" +

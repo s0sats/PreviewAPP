@@ -14,11 +14,9 @@ import java.util.List;
 
 public interface Act017_Main_View {
 
-    void loadSchedules(List<HMAux> schedules);
+    void loadSchedules(List<HMAux> schedules, int schedulePkPosition);
 
     void showMsg(String type, HMAux item);
-
-    void callAct008(Context context, Bundle bundle);
 
     void callAct011(Context context, Bundle bundle);
 

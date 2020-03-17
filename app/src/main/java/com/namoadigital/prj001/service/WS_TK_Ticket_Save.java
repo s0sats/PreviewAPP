@@ -3,6 +3,7 @@ package com.namoadigital.prj001.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -238,7 +239,6 @@ public class WS_TK_Ticket_Save extends IntentService {
                     //
                     processTicketRet(retResult,actReturn);
                 }
-                //
                 //if (deleteFile(Constant.TOKEN_PATH, file_to_del)) {
                 if (ToolBox_Inf.deleteFileWithRet(file_to_del)) {
                     if (reSend) {
@@ -302,15 +302,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                 retTicket.updateLocalImagesPathIfExists();
                 //Salva obj
                 if(createdBySchedule){
-                    daoObjReturn = ticketDao.addUpdateBySchedulePk(retTicket,null);
-                    if (!daoObjReturn.hasError()) {
-                        updateScheduleStatus(
-                            retTicket.getSchedule_prefix(),
-                            retTicket.getSchedule_code(),
-                            retTicket.getSchedule_exec(),
-                            retTicket.getTicket_status()
-                        );
-                    }
+                    daoObjReturn = updateTicketAndScheduleReg(retTicket);
                 }else {
                     daoObjReturn = ticketDao.addUpdate(retTicket);
                 }
@@ -321,7 +313,57 @@ public class WS_TK_Ticket_Save extends IntentService {
                 //Remove dados do processamento da lista, pois haverá um segundo processamento pro mesmo item
                 actReturnList.remove(actReturn);
             }
+        }else{
+            if(createdBySchedule){
+                //Resgata ticket origim
+                TK_Ticket dbTicket = execGetDbTicketQuery(
+                    new TK_Ticket_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                        retResult.getOld_ticket_prefix(),
+                        retResult.getOld_ticket_code()
+                    ).toSqlQuery()
+                );
+                //Se exisir, o que deve sempre acontecer
+                if(dbTicket != null){
+                    //Atualiza no obj retornado a tela a pk do agendamento
+                    actReturn.setSchedulePrefix(dbTicket.getSchedule_prefix());
+                    actReturn.setScheduleCode(dbTicket.getSchedule_code());
+                    actReturn.setScheduleExec(dbTicket.getSchedule_exec());
+                    //Seta status rejeitado no ticket, ctrls e ações
+                    dbTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_REJECTED);
+                    if(dbTicket.getCtrl() != null && dbTicket.getCtrl().size() > 0) {
+                        for (TK_Ticket_Ctrl ticketCtrl : dbTicket.getCtrl()) {
+                            ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_REJECTED);
+                            if(ticketCtrl.getAction() != null){
+                                ticketCtrl.getAction().setAction_status(ConstantBaseApp.SYS_STATUS_REJECTED);
+                            }
+                        }
+                    }
+                    //Atualiza ticket e agendamento
+                    daoObjReturn =  updateTicketAndScheduleReg(dbTicket);
+                    if (daoObjReturn.hasError()) {
+                        throw new Exception(daoObjReturn.getErrorMsg());
+                    }//
+                }else{
+                    throw new Exception("Original ticket not found !!!");
+                }
+            }
         }
+    }
+
+    @NonNull
+    private DaoObjReturn updateTicketAndScheduleReg(TK_Ticket ticket) {
+        DaoObjReturn daoObjReturn;
+        daoObjReturn = ticketDao.addUpdateBySchedulePk(ticket,null);
+        if (!daoObjReturn.hasError()) {
+            updateScheduleStatus(
+                ticket.getSchedule_prefix(),
+                ticket.getSchedule_code(),
+                ticket.getSchedule_exec(),
+                ticket.getTicket_status()
+            );
+        }
+        return daoObjReturn;
     }
 
 
@@ -423,6 +465,10 @@ public class WS_TK_Ticket_Save extends IntentService {
             ).toSqlQuery();
         }
         //
+        return execGetDbTicketQuery(selectionQuery);
+    }
+
+    private TK_Ticket execGetDbTicketQuery(String selectionQuery) {
         return ticketDao.getByString(selectionQuery);
     }
 

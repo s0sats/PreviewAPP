@@ -31,6 +31,8 @@ public interface Act070_Main_Contract {
         void callRefreshUi();
 
         void updateSyncRequiredByFCM();
+
+        void callAct017();
     }
 
     interface I_Presenter{

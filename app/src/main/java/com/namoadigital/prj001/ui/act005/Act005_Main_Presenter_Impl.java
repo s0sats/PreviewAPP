@@ -1074,6 +1074,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     }.getType()
                 );
             }catch (Exception e){
+                //TODO quando não há dados para enviar o ws ta retornando uam string e cai no catch rever
                 ToolBox_Inf.registerException(getClass().getName(),e);
             }
             //

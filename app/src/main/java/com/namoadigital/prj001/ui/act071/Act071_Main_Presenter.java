@@ -31,7 +31,6 @@ import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
-import com.namoadigital.prj001.sql.TK_Ticket_Sql_005;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -125,6 +124,11 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         sFormatted += " (" + ctrl_end_user_name + ")";
         //
         return sFormatted;
+    }
+
+    @Override
+    public String getFormattedSeqText(String seq) {
+        return hmAux_Trans.get("seq_lbl") + " " + seq;
     }
 
     @Override
@@ -231,33 +235,41 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     @Override
     public boolean updateTicketAction(TK_Ticket_Ctrl mTicketCtrl) {
         DaoObjReturn daoObjReturn = ticketCtrlDao.addUpdate(mTicketCtrl);
+        TK_Ticket tkTicket = getTicketbyPk(mTicketCtrl.getTicket_prefix(),mTicketCtrl.getTicket_code());
         if (!daoObjReturn.hasError()) {
-            ticketDao.addUpdate(
+            /*ticketDao.addUpdate(
                 new TK_Ticket_Sql_005(
                     mTicketCtrl.getCustomer_code(),
                     mTicketCtrl.getTicket_prefix(),
                     mTicketCtrl.getTicket_code(),
                     1
                 ).toSqlQuery()
-            );
+            );*/
+            tkTicket.setUpdate_required(1);
+            tkTicket.setTicket_status( mView.isScheduledTicket() ? ConstantBaseApp.SYS_STATUS_WAITING_SYNC : tkTicket.getTicket_status());
             //
-            if (mTicketCtrl.getAction().getAction_photo_local() != null
-                && !mTicketCtrl.getAction().getAction_photo_local().isEmpty()
-            ) {
-                uploadActionImage(mTicketCtrl);
+            daoObjReturn = ticketDao.addUpdate(tkTicket);
+            if(!daoObjReturn.hasError()){
+                if(mView.isScheduledTicket()){
+                    //
+                    updateScheduleStatus(
+                        mView.getmSchedulePrefix(),
+                        mView.getmScheduleCode(),
+                        mView.getmScheduleExec(),
+                        mTicketCtrl.getCtrl_status()
+                    );
+                }
+                //
+                if (mTicketCtrl.getAction().getAction_photo_local() != null
+                    && !mTicketCtrl.getAction().getAction_photo_local().isEmpty()
+                ) {
+                    uploadActionImage(mTicketCtrl);
+                }
+                //
+                return true;
             }
-            //TODO add esse update antes do update do control.
-            if(mView.isScheduledTicket()){
-                updateScheduleStatus(
-                    mView.getmSchedulePrefix(),
-                    mView.getmScheduleCode(),
-                    mView.getmScheduleExec(),
-                    mTicketCtrl.getCtrl_status()
-                );
-            }
-            //
-            return true;
         }
+        //TODO OQUE FAZER NOS CASOS DE ERRO ? CRIAR ANTES COPIA DOS OBJ PARA "ROLLBACK" NA MÃO OU COLOCAR TUDO EM UM TRANSACTION
         return false;
     }
 
@@ -471,12 +483,16 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
 
     private void proceedPostSaveFlow(TK_Ticket tkTicket) {
         if (tkTicket != null && tkTicket.getCustomer_code() > 0) {
-            if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(tkTicket.getTicket_status())
-                || !hasActionNotExec(tkTicket)
-            ) {
-                mView.callAct069();
-            } else {
-                mView.callAct070();
+            if(!mView.isScheduledTicket()){
+                if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(tkTicket.getTicket_status())
+                    || !hasActionNotExec(tkTicket)
+                ) {
+                    mView.callAct069();
+                } else {
+                    mView.callAct070();
+                }
+            }else{
+                mView.callAct017();
             }
         }
     }
@@ -521,7 +537,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            definePostTicketSaveFlow(tkTicket.getTicket_prefix(), tkTicket.getTicket_code());
+                            mView.checkPostTicketSaveFlow();
+                            //definePostTicketSaveFlow(tkTicket.getTicket_prefix(), tkTicket.getTicket_code());
                         }
                     }
                 );

@@ -36,8 +36,6 @@ import java.util.List;
  */
 
 public class Module_Schedules_Adapter extends BaseAdapter {
-
-    public static final String SCHEDULE_PK = "schedule_pk";
     private Context context;
     private int resource_01;
     private int resource_02;
@@ -362,9 +360,9 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 }
                 tv_item_product.setText(item.get(MD_Schedule_ExecDao.PRODUCT_ID) + " - " + item.get(MD_Schedule_ExecDao.PRODUCT_DESC) );
                 tv_item_serial_id.setText(item.get(MD_Schedule_ExecDao.SERIAL_ID));
-                if (item.get(SCHEDULE_PK).trim().length() > 0) {
+                if (item.get(MD_Schedule_ExecDao.SCHEDULE_PK).trim().length() > 0) {
                     tv_item_seq_exec.setVisibility(View.VISIBLE);
-                    tv_item_seq_exec.setText(item.get(SCHEDULE_PK));
+                    tv_item_seq_exec.setText(item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
                     if(item.hasConsistentValue(MD_Schedule_ExecDao.SITE_ID)
                     && item.get(MD_Schedule_ExecDao.SITE_CODE).equals(String.valueOf(site_id_preference))){
                         tv_item_site.setVisibility(View.GONE);
@@ -463,7 +461,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         TextView tv_status_val = convertView.findViewById(R.id.module_schedules_ticket_cell_tv_status_val);
         //
         tv_item_seq_exec.setText(
-            getFormattedTicketSeqExec(item.get(SCHEDULE_PK),item.get(TK_TicketDao.TICKET_PREFIX),item.get(TK_TicketDao.TICKET_CODE))
+            ToolBox_Inf.getFormattedTicketSeqExec(item.get(MD_Schedule_ExecDao.SCHEDULE_PK),item.get(TK_TicketDao.TICKET_PREFIX),item.get(TK_TicketDao.TICKET_CODE))
         );
         //
         tv_status_val.setText(hmAux_Trans.get(item.get(MD_Schedule_ExecDao.STATUS)));
@@ -477,8 +475,8 @@ public class Module_Schedules_Adapter extends BaseAdapter {
             tv_item_type_path.setVisibility(View.VISIBLE);
         }
         tv_item_type_desc.setVisibility(View.GONE);
-        if(valueExists(item,TK_TicketDao.TYPE_DESC)){
-            tv_item_type_desc.setText(item.get(TK_TicketDao.TYPE_PATH));
+        if(valueExists(item, MD_Schedule_ExecDao.TICKET_TYPE_DESC)){
+            tv_item_type_desc.setText(item.get(MD_Schedule_ExecDao.TICKET_TYPE_DESC));
             tv_item_type_desc.setVisibility(View.VISIBLE);
         }
         //
@@ -525,16 +523,6 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         return  item.hasConsistentValue(key)
                 && !item.get(key).isEmpty()
                 && !item.get(key).equalsIgnoreCase("null");
-    }
-
-    private String getFormattedTicketSeqExec(String schedulePk, String ticketPrefix, String ticketCode) {
-        String formmattedTicketSeqExec =  schedulePk;
-        if( ticketPrefix != null & !ticketPrefix.isEmpty()
-            && ticketCode != null & !ticketCode.isEmpty()
-        ){
-            formmattedTicketSeqExec += "["+ticketPrefix+"."+ticketCode+"]";
-        }
-        return formmattedTicketSeqExec;
     }
 
     private void setIntervalScheduled(HMAux item, TextView tv_item_date) {

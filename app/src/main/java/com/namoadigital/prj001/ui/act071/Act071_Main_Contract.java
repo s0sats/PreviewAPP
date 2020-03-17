@@ -43,6 +43,8 @@ public interface Act071_Main_Contract {
         int getmScheduleExec();
 
         void updateTicketPk(int mPrefix, int mCode);
+
+        void checkPostTicketSaveFlow();
     }
 
     interface I_Presenter{
@@ -76,6 +78,8 @@ public interface Act071_Main_Contract {
         void definePostTicketSaveFlow(int ticket_prefix, int ticket_code);
         //Metodo chamado quando o ticket foi criado via agendamento
         void definePostTicketSaveFlow(int mSchedulePrefix, int mScheduleCode, int mScheduleExec);
+
+        String getFormattedSeqText(String seq);
 
         /*boolean hasPartnerProfile(Integer partner_code);
 

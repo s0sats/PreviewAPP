@@ -6615,6 +6615,24 @@ public class ToolBox_Inf {
             registerException(CLASS_NAME,e);
             return false;
         }
+    }
 
+    /**
+     * LUCHE - 17/03/2020
+     * Metodo que formata a exibição de Schedule Pk + Ticket Pk.
+     *
+     * @param schedulePk - PK concatenada por .
+     * @param ticketPrefix - Ticket Prefix
+     * @param ticketCode - Ticket Code
+     * @return - Dados formatado
+     */
+    public static String getFormattedTicketSeqExec(String schedulePk, String ticketPrefix, String ticketCode) {
+        String formmattedTicketSeqExec =  schedulePk;
+        if( ticketPrefix != null && !ticketPrefix.isEmpty()
+            && ticketCode != null && !ticketCode.isEmpty()
+        ){
+            formmattedTicketSeqExec += " ["+ticketPrefix+"."+ticketCode+"]";
+        }
+        return formmattedTicketSeqExec;
     }
 }

@@ -65,6 +65,10 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     //NÃO SÃO CAMPOS DA TABELA, mas são usados em queries
     public static final String SCHEDULE_DATE_START_FORMAT = "schedule_date_start_format";
     public static final String SCHEDULE_DATE_END_FORMAT = "schedule_date_end_format";
+    //LUCHE - 17/03/2020
+    //Constante não usada no banco, mas usada por varias telas.
+    public static final String SCHEDULE_PK = "schedule_pk";
+
 
     public MD_Schedule_ExecDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);

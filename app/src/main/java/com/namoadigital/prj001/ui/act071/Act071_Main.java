@@ -35,6 +35,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
@@ -63,6 +64,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private Act071_Main_Presenter mPresenter;
     private TextView tvTicketId;
     private TextView tvStatus;
+    private TextView tvSerialId;
     private TextView tvTypePath;
     private TextView tvTypeDesc;
     private TextView tvSeq;
@@ -101,6 +103,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private int mSchedulePrefix;
     private int mScheduleCode;
     private int mScheduleExec;
+    private boolean mIsSchedule;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,6 +168,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("alert_image_too_large_to_open_ttl");
         transList.add("alert_image_too_large_to_open_msg");
         //
+        transList.add("seq_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -209,6 +214,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mSchedulePrefix = requestingBundle.getInt(TK_TicketDao.SCHEDULE_PREFIX, -1);
             mScheduleCode = requestingBundle.getInt(TK_TicketDao.SCHEDULE_CODE, -1);
             mScheduleExec = requestingBundle.getInt(TK_TicketDao.SCHEDULE_EXEC, -1);
+            mIsSchedule = defineIsScheduleAttr();
         } else {
             requestingAct = ConstantBaseApp.ACT070;
             mActionPrefix = -1;
@@ -221,12 +227,14 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mSchedulePrefix = -1;
             mScheduleCode = -1;
             mScheduleExec = -1;
+            mIsSchedule = false;
         }
     }
 
     private void bindViews() {
         tvTicketId = findViewById(R.id.act071_tv_ticket_id);
         tvStatus = findViewById(R.id.act071_tv_status);
+        tvSerialId = findViewById(R.id.act071_tv_serial);
         tvTypePath = findViewById(R.id.act071_tv_type_path);
         tvTypeDesc = findViewById(R.id.act071_tv_type_desc);
         tvSeq = findViewById(R.id.act071_tv_seq);
@@ -505,18 +513,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             public void onClick(View v) {
                 //
                 if(ticketResult){
-                    if(isScheduledTicket()){
-                        mPresenter.definePostTicketSaveFlow(
-                            mSchedulePrefix,
-                            mScheduleCode,
-                            mScheduleExec
-                        );
-                    }else {
-                        mPresenter.definePostTicketSaveFlow(
-                            mTicketCtrl.getTicket_prefix(),
-                            mTicketCtrl.getTicket_code()
-                        );
-                    }
+                    checkPostTicketSaveFlow();
                 }else{
                     updateActionData();
                 }
@@ -524,6 +521,21 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 show.dismiss();
             }
         });
+    }
+    @Override
+    public void checkPostTicketSaveFlow() {
+        if(isScheduledTicket()){
+            mPresenter.definePostTicketSaveFlow(
+                mSchedulePrefix,
+                mScheduleCode,
+                mScheduleExec
+            );
+        }else {
+            mPresenter.definePostTicketSaveFlow(
+                mTicketCtrl.getTicket_prefix(),
+                mTicketCtrl.getTicket_code()
+            );
+        }
     }
 
     @Override
@@ -533,14 +545,23 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         updateActionData();
     }
 
-    @Override
-    public boolean isScheduledTicket(){
+    /**
+     * LUCHE - 17/03/2020
+     * Metodo que define o atributo mIsSchedule
+     * @return - Verdadeiro se ticket prefix == 0 e ticket_code, ticket_seq e pk do agendamento
+     */
+    private boolean defineIsScheduleAttr(){
         return mActionPrefix == 0
                && mActionCode > 0
                && mActionSeq > 0
                && mSchedulePrefix > 0
                && mScheduleCode > 0
                && mScheduleExec > 0;
+    }
+
+    @Override
+    public boolean isScheduledTicket() {
+        return mIsSchedule;
     }
 
     @Override
@@ -562,25 +583,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     public void postTicketSave() {
         updateActionData();
         //
-        mPresenter.definePostTicketSaveFlow(
-            mTicketCtrl.getTicket_prefix(),
-            mTicketCtrl.getTicket_code()
-        );
-//        //
-//        showAlert(
-//            hmAux_Trans.get("alert_ticket_save_ttl"),
-//            hmAux_Trans.get("alert_ticket_save_success_msg"),
-//            new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    //updateActionData();
-//                    mPresenter.definePostTicketSaveFlow(
-//                        mTicketCtrl.getTicket_prefix(),
-//                        mTicketCtrl.getTicket_code()
-//                    );
-//                }
-//            }
-//        );
+        checkPostTicketSaveFlow();
     }
 
     private void applyReadOnlyInPhoto() {
@@ -609,9 +612,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         tvTicketId.setText(mTicketID);
         tvStatus.setText(hmAux_Trans.get(mTicketCtrl.getCtrl_status()));
         tvStatus.setTextColor(ToolBox_Inf.getStatusColorV2(context, mTicketCtrl.getCtrl_status()));
+        defineSerialVisibility();
         definePathVisibility();
         tvTypeDesc.setText(mTypeDesc);
-        tvSeq.setText(String.valueOf(mTicketCtrl.getTicket_seq()));
+        tvSeq.setText(mPresenter.getFormattedSeqText(String.valueOf(mTicketCtrl.getTicket_seq())));
         definePartner();
         defineComments();
         defineActionPhotoMetrics();
@@ -619,6 +623,14 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         defineDoneInfo();
         defineCheckinAlert();
 
+    }
+
+    private void defineSerialVisibility() {
+        tvSerialId.setVisibility(View.GONE);
+        if(isScheduledTicket()){
+            tvSerialId.setVisibility(View.VISIBLE);
+            tvSerialId.setText(mTicketCtrl.getSerial_id());
+        }
     }
 
     /*
@@ -978,7 +990,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, requestingBundle.getString(ConstantBaseApp.ACT_SELECTED_DATE, null));
-        intent.putExtras(requestingBundle);
+        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, requestingBundle.getString(MD_Schedule_ExecDao.SCHEDULE_PK, null));
+        intent.putExtras(bundle);
         startActivity(intent);
         finish();
     }
