@@ -664,15 +664,25 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
             Integer.parseInt(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION))
         )
         ) {
-            if (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equals(Constant.SYS_STATUS_SCHEDULE)) {
-                if (isAnyFormInProcessing(item)) {
-                    mView.showMsg(Act013_Main.FORM_IN_PROCESSING, item);
+            /*
+                Barrionuevo - 17/03/2020
+                Validacao de Recurso de GPS ativo para formularios pendentes.
+             */
+            if(item.hasConsistentValue(GE_Custom_FormDao.REQUIRE_LOCATION)
+                    && item.get(GE_Custom_FormDao.REQUIRE_LOCATION).equals("1")
+                    && !ToolBox_Con.hasGPSResourceActive(context)){
+                    mView.alertActiveGPSResource(item);
+            }else {
+                if (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equals(Constant.SYS_STATUS_SCHEDULE)) {
+                    if (isAnyFormInProcessing(item)) {
+                        mView.showMsg(Act013_Main.FORM_IN_PROCESSING, item);
+                    } else {
+                        mView.showMsg(Act013_Main.START_FORM, item);
+                    }
                 } else {
-                    mView.showMsg(Act013_Main.START_FORM, item);
+                    //addFormInfoToBundle(item);
+                    prepareOpenForm(item);
                 }
-            } else {
-                //addFormInfoToBundle(item);
-                prepareOpenForm(item);
             }
         } else {
             mView.alertFormNotReady();
@@ -708,6 +718,15 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 break;
             default:
                 mView.callAct012(context);
+        }
+    }
+
+    @Override
+    public void validateGPSResource(HMAux item) {
+        if (ToolBox_Con.hasGPSResourceActive(context)) {
+            prepareOpenForm(item);
+        }else{
+            mView.alertActiveGPSResource(item);
         }
     }
 }

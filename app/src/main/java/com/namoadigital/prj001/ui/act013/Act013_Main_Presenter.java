@@ -19,4 +19,6 @@ public interface Act013_Main_Presenter {
     void processScheduleFlow(HMAux item);
 
     void extractSearchResult(String result);
+
+    void validateGPSResource(HMAux item);
 }

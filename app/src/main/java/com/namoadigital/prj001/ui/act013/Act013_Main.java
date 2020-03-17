@@ -574,4 +574,27 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
     }
+
+    @Override
+    public void alertActiveGPSResource(final HMAux item) {
+        List<String> translist = new ArrayList<>();
+        translist.add("alert_form_turn_gps_on_title");
+        translist.add("alert_form_turn_gps_on_msg");
+
+        HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans, mModule_Code, mResource_Code, translist);
+
+        ToolBox.alertMSG(
+                Act013_Main.this,
+                alertTrans.get("alert_form_turn_gps_on_title"),
+                alertTrans.get("alert_form_turn_gps_on_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.validateGPSResource(item);
+                    }
+                },
+                1
+        );
+
+    }
 }

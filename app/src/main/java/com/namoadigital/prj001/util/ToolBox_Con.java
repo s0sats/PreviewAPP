@@ -2,9 +2,12 @@ package com.namoadigital.prj001.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -27,7 +30,6 @@ import java.net.Socket;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -225,10 +227,10 @@ public class ToolBox_Con {
      */
     public static void removePreference(Context context,String preferenceKey){
         SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
+                PreferenceManager.getDefaultSharedPreferences(context);
         //
         sharedPreferences.edit().remove(
-            preferenceKey
+                preferenceKey
         ).apply();
     }
 
@@ -326,9 +328,9 @@ public class ToolBox_Con {
     public static boolean getPreference_HideSerialInfo(Context context) {
         //
         return getBooleanPreferencesByKey(
-            context,
-            ConstantBaseApp.PREFERENCE_HIDE_SERIAL_INFO,
-            false
+                context,
+                ConstantBaseApp.PREFERENCE_HIDE_SERIAL_INFO,
+                false
         );
     }
 
@@ -399,21 +401,21 @@ public class ToolBox_Con {
      */
     public static void setPreference_BkpUnsentImg(Context context, boolean unsentImg) {
         SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
+                PreferenceManager.getDefaultSharedPreferences(context);
 
         sharedPreferences.edit().putBoolean(
-            Constant.BACKUP_UNSENT_IMG_KEY,
-            unsentImg
+                Constant.BACKUP_UNSENT_IMG_KEY,
+                unsentImg
         ).apply();
     }
 
     public static boolean getPreference_BkpUnsentImg(Context context) {
         SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
+                PreferenceManager.getDefaultSharedPreferences(context);
 
         return sharedPreferences.getBoolean(
-            Constant.BACKUP_UNSENT_IMG_KEY,
-            false
+                Constant.BACKUP_UNSENT_IMG_KEY,
+                false
         );
     }
     //endregion
@@ -623,21 +625,21 @@ public class ToolBox_Con {
     //region CUSTOMER_TIMEZONE
     public static void setPreference_Customer_TMZ(Context context, String timezone) {
         SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
+                PreferenceManager.getDefaultSharedPreferences(context);
 
         sharedPreferences.edit().putString(
-            Constant.LOGIN_CUSTOMER_TMZ,
-            timezone
+                Constant.LOGIN_CUSTOMER_TMZ,
+                timezone
         ).apply();
     }
 
     public static String getPreference_Customer_TMZ(Context context) {
         SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
+                PreferenceManager.getDefaultSharedPreferences(context);
 
         return sharedPreferences.getString(
-            Constant.LOGIN_CUSTOMER_TMZ,
-            ""
+                Constant.LOGIN_CUSTOMER_TMZ,
+                ""
         );
     }
     //endregion
@@ -1038,21 +1040,21 @@ public class ToolBox_Con {
     //region PHONE_UNIQUE_ID
     public static void setPreference_PHONE_UNIQUE_ID(Context context, String phone_uuid_code) {
         SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
+                PreferenceManager.getDefaultSharedPreferences(context);
 
         sharedPreferences.edit().putString(
-            Constant.PHONE_UNIQUE_ID,
-            phone_uuid_code
+                Constant.PHONE_UNIQUE_ID,
+                phone_uuid_code
         ).apply();
     }
 
     public static String getPreference_PHONE_UNIQUE_ID(Context context) {
         SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
+                PreferenceManager.getDefaultSharedPreferences(context);
 
         return sharedPreferences.getString(
-            Constant.PHONE_UNIQUE_ID,
-            ""
+                Constant.PHONE_UNIQUE_ID,
+                ""
         );
     }
     //endregion
@@ -1268,7 +1270,7 @@ public class ToolBox_Con {
     public static boolean isOnline(Context context, boolean ignoreOfflineMode) {
         if(!ignoreOfflineMode){
             if(ToolBox.getPreference_Offline_Mode(context)){
-               return false;
+                return false;
             }
         }
         //
@@ -1479,6 +1481,23 @@ public class ToolBox_Con {
         String s = "UNKNOW_ERROR";
         //
         return sqliteMap.containsKey(code) ? sqliteMap.get(code) : s;
+    }
+
+
+    public static boolean hasGPSResourceActive(Context context) {
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (lm.isLocationEnabled()) {
+                return true;
+            }
+        }else {
+            String provider = Settings.Secure.getString(context.getContentResolver(),
+                    Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            if (provider != null && provider.length() > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

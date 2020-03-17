@@ -37,4 +37,6 @@ public interface Act013_Main_View {
     void removeControlFromActivity(MKEditTextNM mketSerial);
 
     void callAct020(Context context, Bundle bundle);
+
+    void alertActiveGPSResource(HMAux item);
 }

@@ -1,9 +1,6 @@
 package com.namoadigital.prj001.ui.act010;
 
 import android.content.Context;
-import android.location.LocationManager;
-import android.os.Build;
-import android.provider.Settings;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
@@ -84,8 +81,8 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
 
             if(validateFormSORestriction(item)) {
                 if(item.hasConsistentValue(GE_Custom_FormDao.REQUIRE_LOCATION)
-                && item.get(GE_Custom_FormDao.REQUIRE_LOCATION).equals("1")
-                && !hasGPSResourceActive()){
+                        && item.get(GE_Custom_FormDao.REQUIRE_LOCATION).equals("1")
+                        && !ToolBox_Con.hasGPSResourceActive(context)){
                     mView.alertActiveGPSResource(item);
                 }else {
                     setAct011Call(item);
@@ -148,13 +145,13 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                             ||
                             (so_prefix.equals(String.valueOf(formData.getSo_prefix()))
                                     && so_code.equals(String.valueOf(formData.getSo_code())))
-                    ) {
+            ) {
                 return true;
             } else {
                 if (!so_prefix.equals("") && !so_code.equals("")
                         && (!so_prefix.equals(String.valueOf(formData.getSo_prefix())) ||
                         !so_code.equals(String.valueOf(formData.getSo_code())))
-                        ) {
+                ) {
                     if(formData.getSo_prefix() == null && formData.getSo_code() == null){
                         //msg de não e possivel abrir form via S.O,pois ele ja existe sem S.O o.O
                         mView.showAlertMsg(
@@ -165,8 +162,8 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                         mView.showAlertMsg(
                                 hmAux_Trans.get("alert_so_form_exits_with_so_ttl"),
                                 hmAux_Trans.get("alert_so_form_exits_with_so_msg")
-                                + "\n" + hmAux_Trans.get("alert_so_lbl")
-                                + ":    " + formData.getSo_prefix() +"."+formData.getSo_code()
+                                        + "\n" + hmAux_Trans.get("alert_so_lbl")
+                                        + ":    " + formData.getSo_prefix() +"."+formData.getSo_code()
                         );
                     }
                     return false;
@@ -197,38 +194,11 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
 
     @Override
     public void validateGPSResource(HMAux item) {
-        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            if (lm.isLocationEnabled()) {
+            if (ToolBox_Con.hasGPSResourceActive(context)) {
                 setAct011Call(item);
             }else{
                 mView.alertActiveGPSResource(item);
             }
-        }else{
-            String provider = Settings.Secure.getString(context.getContentResolver(),
-                    Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-            if(provider != null && provider.length() > 0){
-                setAct011Call(item);
-            }else{
-                mView.alertActiveGPSResource(item);
-            }
-        }
-    }
-
-    public boolean hasGPSResourceActive() {
-        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            if (lm.isLocationEnabled()) {
-                return true;
-            }
-        }else {
-            String provider = Settings.Secure.getString(context.getContentResolver(),
-                    Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-            if (provider != null && provider.length() > 0) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }
