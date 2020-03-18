@@ -86,7 +86,7 @@ public class NotificationHelper {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.drawable.namoa_logo_white24x24);
-        builder.setAutoCancel(false);
+        builder.setOngoing(true);
         builder.setContentTitle(context.getString(R.string.title_notification_generic));
         builder.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
         builder.setCustomContentView(notificationLayout);

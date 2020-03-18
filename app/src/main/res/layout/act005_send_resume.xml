@@ -47,19 +47,19 @@
             layout="@layout/act005_send_resume_detail" />
 
         <include
-            android:id="@+id/act005_send_resume_so"
-            layout="@layout/act005_send_resume_detail" />
-
-        <include
-            android:id="@+id/act005_send_resume_assets"
-            layout="@layout/act005_send_resume_detail" />
-
-        <include
             android:id="@+id/act005_send_resume_form_ap"
             layout="@layout/act005_send_resume_detail" />
 
         <include
             android:id="@+id/act005_send_resume_express_so"
+            layout="@layout/act005_send_resume_detail" />
+
+        <include
+            android:id="@+id/act005_send_resume_so"
+            layout="@layout/act005_send_resume_detail" />
+
+        <include
+            android:id="@+id/act005_send_resume_assets"
             layout="@layout/act005_send_resume_detail" />
 
         <include

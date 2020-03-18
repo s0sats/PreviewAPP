@@ -1720,59 +1720,38 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     showSuccessDialog();
                 }
             }*/
-        }  else if (wsSoProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getSimpleName())) {
+        } else if (wsSoProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getSimpleName())) {
             setWsSoProcess("");
-            boolean sucess=false;
-            ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn> total_tickets =new ArrayList<>();
+            boolean sucess = false;
+            ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn> total_tickets = new ArrayList<>();
             total_tickets = mPresenter.getTicketSaveActReturns(mLink, total_tickets);
             ArrayList<HMAux> ticket_items = mPresenter.processTicketSaveReturn(mLink, WS_RESULT_TYPE_TICKET);
             int total_tickets_amount = 0;
-            int total_tickets_error_amount = 0;
-            if(total_tickets != null) {
-                total_tickets_amount =  total_tickets.size();
+            boolean isDone = true;
+            if (total_tickets != null) {
+                total_tickets_amount = total_tickets.size();
             }
 
-            if(ticket_items != null) {
+            if (ticket_items != null && ticket_items.size() > 0) {
                 wsResults.addAll(ticket_items);
-                total_tickets_error_amount = ticket_items.size();
+                total_tickets_amount = total_tickets_amount - ticket_items.size();
+                isDone  = false;
             }
 
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
-
-            if (wsResults.size() > 0) {
-                showResults(wsResults);
-            } else {
-                if (syncAfterSave) {
-                    try {
-                        sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, false, total_tickets_amount - total_tickets_error_amount, total_tickets_amount);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    setSyncAfterSave(false);
-                    //
-                    mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
-                } else {
-                    try {
-                        sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, true, total_tickets_amount, total_tickets_amount);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    showSuccessDialog();
-                }
+            try {
+                sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, isDone, total_tickets_amount, total_tickets_amount);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
             sendResumeDialog.setBtnOKEnable(true);
         } else {
             sendResumeDialog.setBtnOKEnable(true);
             setWsSoProcess("");
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
-
-            if (wsResults.size() > 0) {
-                showResults(wsResults);
-            } else {
-                showSuccessDialog();
-            }
         }
     }
 
@@ -1940,12 +1919,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     /**
      * LUCHE - 07/01/2020
-     *
+     * <p>
      * Revisado metodo, pois não havia logica por tras. Todas as opções geravam um hmAux que não era
      * utilizado para nada e setavam o valor de syncAfterSave para false(somente no else final a var não
      * era resetada o que estava causando problemas ja que estavam falando if's para os modulos assets
      * e ticket.
-     *
+     * <p>
      * Simplificado metodo para sempre setar syncAfterSave = false e recarregar os menus.
      *
      * @param mLink
@@ -1953,6 +1932,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
      */
     @Override
     protected void processError_1(String mLink, String mRequired) {
+        sendResumeDialog.dismiss();
         setSyncAfterSave(false);
         mPresenter.getMenuItensV2(hmAux_Trans);
 //        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
@@ -2001,7 +1981,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
-
+        sendResumeDialog.dismiss();
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
             processError_1(mLink, mRequired);
         } else if (wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
@@ -2148,8 +2128,19 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         return new SendResumeDialog(context, hmAux_Trans, new SendResumeDialog.OnDialogClickListener() {
             @Override
             public void onConfirm() {
+
                 sendResumeDialog.dismiss();
                 progressDialog.dismiss();
+
+                if (wsResults.size() > 0) {
+                    showResults(wsResults);
+                } else {
+                    if (syncAfterSave) {
+                        setSyncAfterSave(false);
+                        //
+                        mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+                    }
+                }
             }
         });
     }
@@ -2285,11 +2276,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
         Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
         Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
         mIntentPDF.putExtras(bundle);
         mIntentPIC.putExtras(bundle);
         //
-        bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
+        bundle.putString(Constant.LOGIN_USER_CODE, ToolBox_Con.getPreference_User_Code(context));
         mIntentLogo.putExtras(bundle);
         //
         context.sendBroadcast(mIntentPDF);
@@ -2343,7 +2334,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 case Constant.CHAT_BR_TYPE_MSG:
                 case Constant.CHAT_EVENT_C_MESSAGE_FCM:
 
-                    if(mAdapter != null){
+                    if (mAdapter != null) {
                         mAdapter.updateMenuItemBadge(
                                 MENU_ID_CHAT,
                                 1,
