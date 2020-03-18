@@ -126,7 +126,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     }
 
     @Override
-    public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap, boolean filter_ticket, String serial_id, boolean late, boolean filter_site_logged) {
+    public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap, boolean filter_ticket, String serial_id, boolean late, boolean filter_site_logged, String schedulePk) {
         ArrayList<HMAux> schedules = new ArrayList<>();
         //Se atrasado, ignora data
         if (late) {
@@ -189,8 +189,29 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         //Ordena agendados por data
         sortSchedulesByDate(schedules);
         //Adiciona datas na lista de agendados e devole lista
-        mView.loadSchedules(addDateMsgs(schedules));
+        List<HMAux> finalScheduleList = addDateMsgs(schedules);
+        mView.loadSchedules(finalScheduleList,getSchedulePkPosition((ArrayList<HMAux>) finalScheduleList,schedulePk));
 
+    }
+
+    /**
+     * LUCHE - 17/03/2020
+     * Pega posição do agendamento na lista a ser exibida no listview
+     * @param schedules- Lista com todos os agendamentos
+     * @param schedulePk - Pk do agendamento retornado ou NULL
+     * @return - Posição do item ou -1 caso null ou não encontrado.
+     */
+    private int getSchedulePkPosition(ArrayList<HMAux> schedules, String schedulePk) {
+        if(schedulePk != null && !schedulePk.isEmpty()) {
+            for (int i = 0; i < schedules.size(); i++) {
+                if (schedules.get(i).hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_PK)
+                    && schedules.get(i).get(MD_Schedule_ExecDao.SCHEDULE_PK).equalsIgnoreCase(schedulePk)
+                ) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     private int getTotalQty(String selected_date, boolean filter_form, boolean filter_form_ap, boolean late, boolean filter_site_logged) {
@@ -561,6 +582,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_CODE)));
         bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ToolBox_Inf.convertStringToInt(item.get(TK_Ticket_CtrlDao.TICKET_SEQ)));
         bundle.putString(Constant.ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
+        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
         return bundle;
     }
 
@@ -578,28 +600,19 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, 1);
        //16/03/2020 - foi convencionado que durante a criação da execução do ticket, o ticket id,
        //será o igual ao do exibido nas celulas do agendamento.
-       bundle.putString(TK_TicketDao.TICKET_ID, getFormattedScheduelTicktId(
-           item.get(Sql_Act017_004.SCHEDULE_PK),
-           item.get(item.get(TK_TicketDao.TICKET_PREFIX)),
-           item.get(item.get(TK_TicketDao.TICKET_CODE))
+       bundle.putString(TK_TicketDao.TICKET_ID, ToolBox_Inf.getFormattedTicketSeqExec(
+           item.get(MD_Schedule_ExecDao.SCHEDULE_PK),
+           item.get(TK_TicketDao.TICKET_PREFIX),
+           item.get(TK_TicketDao.TICKET_CODE)
            )
        );
        //bundle.putString(TK_TicketDao.TYPE_PATH, item.get(TK_TicketDao.TYPE_PATH));
        bundle.putString(TK_TicketDao.TYPE_DESC, item.get(MD_Schedule_ExecDao.TICKET_TYPE_DESC));
        bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN,false);
        bundle.putString(Constant.ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
+       bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
         //
         return bundle;
-    }
-
-    private String getFormattedScheduelTicktId(String schedulePk, String ticketPrefix, String ticketCode) {
-            String formmattedTicketSeqExec =  schedulePk;
-            if( ticketPrefix != null & !ticketPrefix.isEmpty()
-                && ticketCode != null & !ticketCode.isEmpty()
-            ){
-                formmattedTicketSeqExec += "["+ticketPrefix+"."+ticketCode+"]";
-            }
-            return formmattedTicketSeqExec;
     }
 
     private boolean hasScheduleSiteAccess(String site_code) {
@@ -917,6 +930,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_VERSION));
             bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
+            bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
             //
             if(createFormLocalForSchedule(item,bundle)){
                 mView.callAct020(context, bundle);
