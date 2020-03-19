@@ -428,9 +428,16 @@ public class ConstantBaseApp extends ConstantBase {
     public static final int NOTIFICATION_DOWNLOAD = 667;
     public static final int NOTIFICATION_CHAT_MSG = 668;
     public static final int NOTIFICATION_CHAT_ROOM = 669;
-    //Alarms
+    /**
+     * Alarms
+     */
     public static final int ALARM_REQUEST_CODE_WS_PROCESS_FORM_AP = 670;
     public static final int ALARM_REQUEST_CODE_WS_UPLOAD_UNSENT_IMGS = 671;
+    //Alarm a cada 60 minutos que exibe agendamentos para proxima hora e os atrasado
+    public static final int ALARM_REQUEST_CODE_WS_AL_FULL = 100;
+    //Alarm a cada 15 minutos que exibe agendamentos para proxima hora
+    public static final int ALARM_REQUEST_CODE_WS_AL_QUARTER = 200;
+
     //Request codes
     public static final int REQUEST_CODE_SERIAL_LOG = 666;
 
@@ -616,6 +623,15 @@ public class ConstantBaseApp extends ConstantBase {
      */
     public static final String MD_SCHEDULE_TYPE_FORM = "FORM";
     public static final String MD_SCHEDULE_TYPE_TICKET = "TICKET";
+    //Constantes notificação de agendamento
+    public static final String MD_SCHEDULE_KEY_FUTURE = "future";
+    public static final String MD_SCHEDULE_KEY_FUTURE_TEXT = "future_text";
+    public static final String MD_SCHEDULE_KEY_LATE = "late";
+    public static final String MD_SCHEDULE_KEY_LATE_TEXT = "late_text";
+    public static final String MD_SCHEDULE_KEY_TYPE = "type";
+    public static final String MD_SCHEDULE_KEY_TOTAL = "total";
+    public static final String MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_FUTURE = "message_full_quarter_notification_future";
+    public static final String MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_LATE = "message_full_quarter_notification_late";
 
     /*
      * Constantes CHAT

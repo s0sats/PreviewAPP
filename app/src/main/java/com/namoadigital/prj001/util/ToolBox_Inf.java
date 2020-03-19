@@ -2394,11 +2394,11 @@ public class ToolBox_Inf {
                 Calendar.SECOND,
                 0
         );
-//        // Tirar
-//        calendarAux.set(
-//                Calendar.SECOND,
-//                calendarAux.get(Calendar.SECOND) + 15
-//        );
+        // Tirar
+       /* calendarAux.set(
+                Calendar.SECOND,
+                calendarAux.get(Calendar.SECOND) + 60
+        );*/
 
         /**
          * Alarme a cada 4 horas
@@ -2408,15 +2408,20 @@ public class ToolBox_Inf {
         );
         //
         boolean isWorking = (PendingIntent.getBroadcast(
-                context, 100, mIntent_Full, PendingIntent.FLAG_NO_CREATE) != null);
+                context,
+                //100,
+                ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
+                mIntent_Full,
+                PendingIntent.FLAG_NO_CREATE) != null
+        );
 
         Log.d("ALARM", String.valueOf(isWorking));
 
         if (!isWorking) {
-
             PendingIntent pi_full = PendingIntent.getBroadcast(
                     context,
-                    100,
+                    //100,
+                    ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
                     mIntent_Full,
                     0
             );
@@ -2425,7 +2430,6 @@ public class ToolBox_Inf {
                     AlarmManager.RTC_WAKEUP,
                     calendarAux.getTimeInMillis(),
                     (1000 * 60 * 60 * 4),
-                    //(1000 * 60 * 5),
                     pi_full
             );
         }
@@ -2445,14 +2449,20 @@ public class ToolBox_Inf {
         );
         //
         isWorking = (PendingIntent.getBroadcast(
-                context, 200, mIntent_Quarter, PendingIntent.FLAG_NO_CREATE) != null);
+                            context,
+                        //200,
+                        ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
+                        mIntent_Quarter,
+                        PendingIntent.FLAG_NO_CREATE) != null
+                    );
 
         Log.d("ALARM", String.valueOf(isWorking));
 
         if (!isWorking) {
             PendingIntent pi_Quarter = PendingIntent.getBroadcast(
                     context,
-                    200,
+                    //200,
+                    ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
                     mIntent_Quarter,
                     0
             );
@@ -2461,7 +2471,6 @@ public class ToolBox_Inf {
                     AlarmManager.RTC_WAKEUP,
                     calendarAux.getTimeInMillis(),
                     (1000 * 60 * 15),
-                    //(1000 * 60 * 2),
                     pi_Quarter
             );
         }
@@ -2469,117 +2478,127 @@ public class ToolBox_Inf {
         // generateNotification(context, 300);
     }
 
+    /**
+     * Modificado em 19/03/2020 - LUCHE
+     * <p></p>
+     * Metodo ancestral que gera a notificação de agendados e atrasados.
+     * Foi modificado em 19/03/2020 substituindo os textos chumbados por constantes e
+     * foram adiconado comentarios para facilitar o entendimento do codigo
+     * @param context Contexto
+     * @param parameter Request Code da pedingIntent
+     */
     public static void generateNotification(Context context, int parameter) {
-
+        MD_Schedule_ExecDao scheduleDao;
+        ArrayList<HMAux> customers_vs_total = new ArrayList<>();
+        ArrayList<HMAux> totals;
+        //
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
-
+        //
         EV_User_CustomerDao ev_user_customerDao = new EV_User_CustomerDao(
                 context,
                 Constant.DB_FULL_BASE,
                 Constant.DB_VERSION_BASE
         );
-
-        GE_Custom_Form_LocalDao formLocalDao;
-
-        ArrayList<HMAux> customers_vs_total = new ArrayList<>();
-
-        ArrayList<HMAux> totals;
-
-        ArrayList<HMAux> customers = (ArrayList<HMAux>) ev_user_customerDao.query_HM(
-                new EV_User_Customer_Sql_006()
-                        .toSqlQuery()
-        );
-
+        //Seleciona lista de customers com sessão.
+        ArrayList<HMAux> customers =  (ArrayList<HMAux>) ev_user_customerDao.query_HM(new EV_User_Customer_Sql_006().toSqlQuery());
+        //Loop na lista de customer para exibir msg de agendamentos para cada um.
         for (HMAux hmAux : customers) {
-            formLocalDao =
-                    new GE_Custom_Form_LocalDao(
+            long customerCode = Long.parseLong(hmAux.get(EV_User_CustomerDao.CUSTOMER_CODE));
+            //
+            scheduleDao =
+                    new MD_Schedule_ExecDao(
                             context,
-                            ToolBox_Con.customDBPath(Long.parseLong(hmAux.get("customer_code"))),
+                            ToolBox_Con.customDBPath(customerCode),
                             Constant.DB_VERSION_CUSTOM
                     );
-
+            //
+//            HMAux auxCT = new HMAux();
+//            auxCT.put(EV_User_CustomerDao.CUSTOMER_CODE, hmAux.get(EV_User_CustomerDao.CUSTOMER_CODE));
+//            auxCT.put(EV_User_CustomerDao.CUSTOMER_NAME, hmAux.get(EV_User_CustomerDao.CUSTOMER_NAME));
+//            auxCT.put(EV_User_CustomerDao.TRANSLATE_CODE, hmAux.get(EV_User_CustomerDao.TRANSLATE_CODE));
             HMAux auxCT = new HMAux();
-            auxCT.put("customer_code", hmAux.get("customer_code"));
-            auxCT.put("customer_name", hmAux.get("customer_name"));
-            auxCT.put("translate_code", hmAux.get("translate_code"));
+            auxCT.putAll(hmAux);
             //
             boolean bInclude = false;
-            //
-            if (parameter == 100 || parameter == 300) {
-                totals = (ArrayList<HMAux>) formLocalDao.query_HM(
+            // parameter:
+            //  100 - Notificação alarm full a cada 60 minutos.
+            //  200 - Notificação alarm quarter a cada 15 minutos.
+            //  300 - Codigo comentado, deveria ser teste - apagar  após nova implementação
+            if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL || parameter == 300) {
+                //Gera "lista" com a qtd de itens agendados para a proxima 1 horas(future) e os atrasados(late).
+                //A parte da lista é apenas para não retornar null, pois o resultado sempre será apenas um registro
+                totals = (ArrayList<HMAux>) scheduleDao.query_HM(
                         new GE_Custom_Form_Local_Sql_013(
+                                context,
+                                customerCode,
                                 Calendar.getInstance().getTimeInMillis()
                         ).toSqlQuery()
                 );
             } else {
-                totals = (ArrayList<HMAux>) formLocalDao.query_HM(
+                //Gera lista com a qtd de itens agendados para a proxima 1 horas(future)
+                totals = (ArrayList<HMAux>) scheduleDao.query_HM(
                         new GE_Custom_Form_Local_Sql_014(
-                                Calendar.getInstance().getTimeInMillis()
+                            context,
+                            customerCode,
+                            Calendar.getInstance().getTimeInMillis()
                         ).toSqlQuery()
                 );
             }
-            //
+            //loop na lista dos dados retornados.
             for (HMAux hmAuxTotal : totals) {
                 bInclude = true;
-
-                if (parameter == 100 || parameter == 300) {
-                    if (hmAuxTotal.get("type").equalsIgnoreCase("future")) {
-                        auxCT.put("future", hmAuxTotal.get("total"));
+                if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL || parameter == 300) {
+                    if (hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TYPE).equalsIgnoreCase(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE)) {
+                        auxCT.put(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE, hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TOTAL));
                     } else {
-                        auxCT.put("late", hmAuxTotal.get("total"));
+                        auxCT.put(ConstantBaseApp.MD_SCHEDULE_KEY_LATE, hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TOTAL));
                     }
                 } else {
-                    if (hmAuxTotal.get("type").equalsIgnoreCase("future")) {
-                        auxCT.put("future", hmAuxTotal.get("total"));
+                    if (hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TYPE).equalsIgnoreCase(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE)) {
+                        auxCT.put(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE, hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TOTAL));
                     } else {
                     }
                 }
             }
-            //
+            //Se houve resultado na query, insere tradução no proximo aux o.O
             if (bInclude) {
-                HMAux hmTr = translationCustomerSys(context, auxCT.get("translate_code"));
-                auxCT.put("future_text", hmTr.get("message_full_quarter_notification_future"));
-                auxCT.put("late_text", hmTr.get("message_full_quarter_notification_late"));
+                HMAux hmTr = translationCustomerSys(context, auxCT.get(EV_User_CustomerDao.TRANSLATE_CODE));
+                auxCT.put(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE_TEXT, hmTr.get(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_FUTURE));
+                auxCT.put(ConstantBaseApp.MD_SCHEDULE_KEY_LATE_TEXT, hmTr.get(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_LATE));
                 customers_vs_total.add(auxCT);
             }
 
         }
-
-        int tamanho_final = customers_vs_total.size();
-
-
+        //Executa loop no HmAux com a msg de cada customer e monta a notificação
         for (HMAux cust : customers_vs_total) {
-
             StringBuilder sbFinal = new StringBuilder();
-
+            //
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
             builder.setSmallIcon(R.drawable.ic_calendario);
             builder.setAutoCancel(true);
-
-            if (parameter == 100 || parameter == 300) {
-                if (!cust.get("future").equals("0") || !cust.get("late").equals("0")) {
+            //
+            if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL || parameter == 300) {
+                if (!cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE).equals("0") || !cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_LATE).equals("0")) {
                     sbFinal
-                            .append(cust.get("future_text") + "(")
-                            .append(cust.get("future") + ")  ")
-                            .append(cust.get("late_text") + "(")
-                            .append(cust.get("late") + ")\n");
+                            .append(cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE_TEXT) + "(")
+                            .append(cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE) + ")  ")
+                            .append(cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_LATE_TEXT) + "(")
+                            .append(cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_LATE) + ")\n");
                 }
             } else {
-                if (!cust.get("future").equals("0")) {
+                if (!cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE).equals("0")) {
                     sbFinal
-                            .append(cust.get("future_text") + "(")
-                            .append(cust.get("future") + ")\n");
+                            .append(cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE_TEXT) + "(")
+                            .append(cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE) + ")\n");
                 }
             }
-
+            //Só deus o sabe o pq, mas é um "prefixo" para gerar o "id" da notificação.
+            //
             int parameter_unified = 500;
-
+            //Se tradução OK, monta builder da notificação e exibe notificação.
             if (sbFinal.toString().length() != 0) {
-
-                //builder.setContentTitle(context.getString(R.string.title_notification_generic));
-                //builder.setContentText(context.getString(R.string.message_notification_sync));
-                builder.setContentTitle(cust.get("customer_name"));
+                builder.setContentTitle(cust.get(EV_User_CustomerDao.CUSTOMER_NAME));
                 builder.setContentText(sbFinal.toString());
                 builder.setAutoCancel(true);
                 builder.setPriority(NotificationCompat.PRIORITY_HIGH);
@@ -2587,11 +2606,10 @@ public class ToolBox_Inf {
                 int versao = Build.VERSION.SDK_INT;
                 //
                 if (versao >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    nm.notify(parameter_unified + Integer.parseInt(cust.get("customer_code")), builder.build());
+                    nm.notify(parameter_unified + Integer.parseInt(cust.get(EV_User_CustomerDao.CUSTOMER_CODE)), builder.build());
                 } else {
-                    nm.notify(parameter_unified + Integer.parseInt(cust.get("customer_code")), builder.getNotification());
+                    nm.notify(parameter_unified + Integer.parseInt(cust.get(EV_User_CustomerDao.CUSTOMER_CODE)), builder.getNotification());
                 }
-
             }
         }
     }
@@ -2666,8 +2684,8 @@ public class ToolBox_Inf {
                     transList);
         }
 
-        hmAux.put("message_full_quarter_notification_future", (!hmAux.containsKey("message_full_quarter_notification_future") || hmAux.get("message_full_quarter_notification_future").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.message_full_quarter_notification_future) : hmAux.get("message_full_quarter_notification_future")));
-        hmAux.put("message_full_quarter_notification_late", (!hmAux.containsKey("message_full_quarter_notification_late") || hmAux.get("message_full_quarter_notification_late").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.message_full_quarter_notification_late) : hmAux.get("message_full_quarter_notification_late")));
+        hmAux.put(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_FUTURE, (!hmAux.containsKey(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_FUTURE) || hmAux.get(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_FUTURE).contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.message_full_quarter_notification_future) : hmAux.get(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_FUTURE)));
+        hmAux.put(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_LATE, (!hmAux.containsKey(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_LATE) || hmAux.get(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_LATE).contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.message_full_quarter_notification_late) : hmAux.get(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_LATE)));
 
         return hmAux;
     }

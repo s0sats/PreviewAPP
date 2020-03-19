@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -31,7 +32,10 @@ public class WS_AL_Full extends IntentService {
             if (customer_code == -1L) {
                 return;
             }
-            ToolBox_Inf.generateNotification(getApplicationContext(), 100);
+            ToolBox_Inf.generateNotification(getApplicationContext(),
+                //100
+                ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL
+            );
 
         } catch (Exception e) {
             String results = e.toString();

@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -40,7 +41,10 @@ public class WS_AL_Quarter extends IntentService {
             }
 
             //if (difference < (1000 * 60 * 5)){
-                ToolBox_Inf.generateNotification(getApplicationContext(), 200);
+                ToolBox_Inf.generateNotification(getApplicationContext(),
+                    //200
+                    ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER
+                );
             //}
 
         } catch (Exception e) {
