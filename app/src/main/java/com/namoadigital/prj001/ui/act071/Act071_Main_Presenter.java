@@ -487,7 +487,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(tkTicket.getTicket_status())
                     || !hasActionNotExec(tkTicket)
                 ) {
-                    mView.callAct069();
+                    mView.callAct069(false);
                 } else {
                     mView.callAct070();
                 }
@@ -602,10 +602,21 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     private void backActionFlow(String requestingAct) {
         checkActionPhotoToDel(mView.getAction());
         //
-        if (requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT017)) {
-            mView.callAct017();
-        } else {
-            mView.callAct070();
+        switch (requestingAct){
+            case ConstantBaseApp.ACT070:
+            case ConstantBaseApp.ACT068:
+                mView.callAct070();
+                break;
+            case ConstantBaseApp.ACT017:
+                if(mView.isScheduledTicket()){
+                    mView.callAct017();
+                }else{
+                    mView.callAct070();
+                }
+                break;
+            case ConstantBaseApp.ACT069:
+                mView.callAct069(true);
+                break;
         }
     }
 }

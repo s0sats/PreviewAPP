@@ -32,6 +32,7 @@ import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
+import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -231,7 +232,9 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
                 mAdapter.setOnTicketClickListener(new Act069_Tickets_Adapter.OnTicketClickListener() {
                     @Override
                     public void onTicketClickListner(Act069_TicketVH item) {
-                        callAct070(generateAct070Bundle(item));
+                        //LUCHE - 18/03/2020
+                        //Add chamada do metodo que define qual proximo step
+                        mPresenter.checkTicketFlow(item);
                     }
                 });
             }
@@ -242,20 +245,6 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
             tvNoResult.setVisibility(View.VISIBLE);
             rvTickets.setVisibility(View.INVISIBLE);
         }
-    }
-
-    private Bundle generateAct070Bundle(Act069_TicketVH item) {
-        Bundle bundle = new Bundle();
-        bundle.putInt(TK_TicketDao.TICKET_PREFIX,item.getTicket_prefix());
-        bundle.putInt(TK_TicketDao.TICKET_CODE,item.getTicket_code());
-        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_PENDING,bStatusPending);
-        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_PROCESS,bStatusProcess);
-        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,bStatusWaitingSync);
-        bundle.putBoolean(FILTER_PARTNER_EMPTY,bParterEmpty);
-        bundle.putBoolean(FILTER_PARTNER_PROFILE,bParterProfile);
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingAct);
-        //
-        return bundle;
     }
 
     @Override
@@ -425,9 +414,34 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         }
     }
 
-    private void callAct070(Bundle bundle) {
+    private Bundle generateActFilterBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_PENDING,bStatusPending);
+        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_PROCESS,bStatusProcess);
+        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,bStatusWaitingSync);
+        bundle.putBoolean(FILTER_PARTNER_EMPTY,bParterEmpty);
+        bundle.putBoolean(FILTER_PARTNER_PROFILE,bParterProfile);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingAct);
+        //
+        return bundle;
+    }
+
+    @Override
+    public void callAct070(Bundle bundle) {
         Intent intent = new Intent(context, Act070_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        bundle.putAll(generateActFilterBundle());
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct071(Bundle bundle) {
+        Intent intent = new Intent(context, Act071_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        bundle.putAll(generateActFilterBundle());
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT069);
         intent.putExtras(bundle);
         startActivity(intent);
         finish();

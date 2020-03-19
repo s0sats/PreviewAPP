@@ -964,9 +964,26 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     //endregion
 
     @Override
-    public void callAct069() {
+    public void callAct069(boolean useRequestingBundle) {
         Intent intent = new Intent(context, Act069_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Flag que indica que se deve usar vars do requestingBundle como bundle na chamada da act069
+        //Usado somente quando o usuario veio da act069 para "executar uma ação" de agendamento e
+        //desistiu
+        if(useRequestingBundle){
+            requestingBundle.remove(TK_TicketDao.TICKET_PREFIX);
+            requestingBundle.remove(TK_TicketDao.TICKET_CODE);
+            requestingBundle.remove(MD_Schedule_ExecDao.SCHEDULE_PREFIX);
+            requestingBundle.remove(MD_Schedule_ExecDao.SCHEDULE_CODE);
+            requestingBundle.remove(MD_Schedule_ExecDao.SCHEDULE_EXEC);
+            requestingBundle.remove(TK_Ticket_CtrlDao.TICKET_SEQ);
+            requestingBundle.remove(TK_TicketDao.TICKET_ID);
+            requestingBundle.remove(TK_TicketDao.TYPE_DESC);
+            requestingBundle.remove(Act070_Main.PARAM_DENIED_BY_CHECKIN);
+            requestingBundle.remove(MD_Schedule_ExecDao.SCHEDULE_PK);
+            //
+            intent.putExtras(requestingBundle);
+        }
         startActivity(intent);
         finish();
     }

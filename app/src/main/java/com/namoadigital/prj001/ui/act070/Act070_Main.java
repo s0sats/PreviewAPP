@@ -605,11 +605,17 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         }
         if (ConstantBaseApp.ACT012.equals(requestingAct)
             || ConstantBaseApp.ACT014.equals(requestingAct)
-            || ConstantBaseApp.ACT035.equals(requestingAct))
+            || ConstantBaseApp.ACT035.equals(requestingAct)
+            || ConstantBaseApp.ACT017.equals(requestingAct))
         {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
             if (ConstantBaseApp.ACT035.equals(requestingAct)) {
                 bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
+            }
+            //LUCHE - 18/03/2020 - Tratativa especifica do agendamento
+            if(ConstantBaseApp.ACT017.equals(requestingAct)){
+                bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, requestingBundle.getString(MD_Schedule_ExecDao.SCHEDULE_PK, null));
+                bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, requestingBundle.getString(ConstantBaseApp.ACT_SELECTED_DATE, null));
             }
         }
         //

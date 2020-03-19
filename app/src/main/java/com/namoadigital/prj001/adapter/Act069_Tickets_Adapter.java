@@ -155,7 +155,7 @@ public class Act069_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.Vi
         public void bindData(Act069_TicketVH item){
             resetVisibility();
             //
-            tvTicketId.setText(item.getTicket_id());
+            tvTicketId.setText(getFormattedTicketID(item));
             setSyncIcon(item.getSync_required());
             tvStatus.setText(hmAux_Trans.get(item.getTicket_status()));
             tvStatus.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(item.getTicket_status())));
@@ -215,6 +215,25 @@ public class Act069_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.Vi
                     item.getCurrent_serial_id()
                 );
             }
+        }
+
+        /**
+         * LUCHE - 18/03/2020
+         * <p></p>
+         * Metodo que define exibição da informação de ticket id.
+         * Caso sea agendamento, exibe primeiro a pk do agendamento.*
+         * @param item - Obj View holder
+         */
+        private String getFormattedTicketID(Act069_TicketVH item) {
+            String id = item.getTicket_id();
+            if(item.getSchedulePk() != null && !item.getSchedulePk().isEmpty()){
+                id = ToolBox_Inf.getFormattedTicketSeqExec(
+                    item.getSchedulePk(),
+                    String.valueOf(item.getTicket_prefix()),
+                    String.valueOf(item.getTicket_code())
+                );
+            }
+            return id;
         }
 
         private void setSyncIcon(int sync_required) {

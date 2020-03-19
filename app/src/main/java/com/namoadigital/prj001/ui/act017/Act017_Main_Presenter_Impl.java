@@ -438,7 +438,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         tkTicket.setTicket_prefix(0);
         tkTicket.setTicket_code(nextTicketCode);
         tkTicket.setScn(0);
-        tkTicket.setTicket_id("");
+        tkTicket.setTicket_id(getFormattedTicketId(0,nextTicketCode));
         tkTicket.setType_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.TICKET_TYPE)));
         tkTicket.setType_id(item.get(MD_Schedule_ExecDao.TICKET_TYPE_ID));
         tkTicket.setType_desc(item.get(MD_Schedule_ExecDao.TICKET_TYPE_DESC));
@@ -467,6 +467,10 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         tkTicket.setSchedule_exec(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)));
         //
         return tkTicket;
+    }
+
+    private String getFormattedTicketId(int ticketPrefix, int nextTicketCode) {
+        return ticketPrefix+"."+nextTicketCode;
     }
 
     private TK_Ticket_Ctrl createTicketCtrl(HMAux item, TK_Ticket tkTicket, MD_Site md_site, MD_Operation mdOperation) {

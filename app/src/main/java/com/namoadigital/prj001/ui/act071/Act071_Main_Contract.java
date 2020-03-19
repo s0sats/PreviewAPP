@@ -22,7 +22,7 @@ public interface Act071_Main_Contract {
 
         void postTicketSave();
 
-        void callAct069();
+        void callAct069(boolean useRequestingBundle);
 
         void callAct070();
 
