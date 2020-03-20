@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act043;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -34,6 +35,7 @@ import com.namoadigital.prj001.model.TSO_SO_Service_Item_Detail;
 import com.namoadigital.prj001.model.TSO_SO_Service_Rec;
 import com.namoadigital.prj001.model.TSO_Service_Search_Detail_Obj;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -672,11 +674,23 @@ public class Act043_Frag_Service_List extends BaseFragment {
             //
             if (delegate != null) {
                 if (hmAux != null) {
+                    startDownloadServices();
                     delegate.progressAction("", "", "hide");
                     delegate.showResults(hmAux);
                 } else {
                 }
             }
+        }
+
+        private void startDownloadServices() {
+            Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+
+            Bundle bundle = new Bundle();
+            bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+            mIntentPIC.putExtras(bundle);
+            bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
+            //
+            context.sendBroadcast(mIntentPIC);
         }
     }
 
