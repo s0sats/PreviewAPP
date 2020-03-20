@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="10dp">
 
@@ -80,10 +81,11 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <LinearLayout
+                <android.support.constraint.ConstraintLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:padding="8dp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -91,15 +93,37 @@
                         android:id="@+id/act027_product_edit_content_iv_gallery"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:background="@drawable/ic_foto_marcada_ns" />
-                </LinearLayout>
+                        android:src="@drawable/ic_camera"
+                        android:tint="@color/namoa_icon_petrol_blue"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/act027_product_edit_content_tv_photo_amount"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:background="@drawable/badge"
+                        android:gravity="center"
+                        app:layout_constraintBottom_toBottomOf="@+id/act027_product_edit_content_iv_gallery"
+                        app:layout_constraintEnd_toEndOf="@+id/act027_product_edit_content_iv_gallery"
+                        app:layout_constraintHorizontal_bias="1.25"
+                        app:layout_constraintStart_toStartOf="@+id/act027_product_edit_content_iv_gallery"
+                        app:layout_constraintTop_toTopOf="@+id/act027_product_edit_content_iv_gallery"
+                        app:layout_constraintVertical_bias="0.0"
+                        tools:text="10" />
+
+                </android.support.constraint.ConstraintLayout>
 
                 <LinearLayout
                     android:id="@+id/act027_product_edit_content_ll_save"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:padding="8dp"
                     android:gravity="center"
+                    android:visibility="visible"
                     android:orientation="horizontal">
 
                     <ImageView

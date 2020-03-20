@@ -73,6 +73,7 @@ public class Act027_Product_Edit extends BaseFragment {
     private TextView tv_unit;
     private PictureFF pff_sketch;
     private TextView tv_comments_lbl;
+    private TextView tv_photo_amount;
     private MKEditTextNM mk_comments;
     private ImageView iv_gallery;
     private LinearLayout ll_save;
@@ -212,30 +213,31 @@ public class Act027_Product_Edit extends BaseFragment {
 
             hideSoftKeyboard(getActivity());
 
-            tv_tmp_ref_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_seq_tmp_ttl);
-            tv_tmp_ref_val = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_seq_tmp_val);
+            tv_tmp_ref_ttl = view.findViewById(R.id.act027_product_edit_content_tv_seq_tmp_ttl);
+            tv_tmp_ref_val = view.findViewById(R.id.act027_product_edit_content_tv_seq_tmp_val);
 
-            tv_prod_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_prod_ttl);
-            tv_desc_ttl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_prod_desc);
-            arff_applyrepair = (ApplyRepairImageFF) view.findViewById(R.id.act027_product_edit_content_arff_applyrepair);
-            cb_inspection = (CheckBox) view.findViewById(R.id.act027_product_edit_content_cb_inspection);
+            tv_prod_ttl = view.findViewById(R.id.act027_product_edit_content_tv_prod_ttl);
+            tv_desc_ttl = view.findViewById(R.id.act027_product_edit_content_tv_prod_desc);
+            arff_applyrepair = view.findViewById(R.id.act027_product_edit_content_arff_applyrepair);
+            cb_inspection = view.findViewById(R.id.act027_product_edit_content_cb_inspection);
             cb_inspection.setText(hmAux_Trans.get("event_inspection_lbl"));
-            ll_qty = (LinearLayout) view.findViewById(R.id.act027_product_edit_content_ll_qty_apply);
-            tv_unit = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_unit);
-            mk_qty = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_qty);
+            ll_qty = view.findViewById(R.id.act027_product_edit_content_ll_qty_apply);
+            tv_unit = view.findViewById(R.id.act027_product_edit_content_tv_unit);
+            mk_qty = view.findViewById(R.id.act027_product_edit_content_mk_qty);
 
-            pff_sketch = (PictureFF) view.findViewById(R.id.act027_product_edit_content_pff_sketch);
+            pff_sketch = view.findViewById(R.id.act027_product_edit_content_pff_sketch);
 
-            tv_comments_lbl = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_comments_lbl);
+            tv_comments_lbl = view.findViewById(R.id.act027_product_edit_content_tv_comments_lbl);
             tv_comments_lbl.setText(hmAux_Trans.get("event_comments_lbl"));
-            mk_comments = (MKEditTextNM) view.findViewById(R.id.act027_product_edit_content_mk_comments);
-            iv_gallery = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_gallery);
-            ll_save = (LinearLayout) view.findViewById(R.id.act027_product_edit_content_ll_save);
-            iv_save = (ImageView) view.findViewById(R.id.act027_product_edit_content_iv_save);
+            mk_comments = view.findViewById(R.id.act027_product_edit_content_mk_comments);
+            iv_gallery = view.findViewById(R.id.act027_product_edit_content_iv_gallery);
+            tv_photo_amount = view.findViewById(R.id.act027_product_edit_content_tv_photo_amount);
+            ll_save = view.findViewById(R.id.act027_product_edit_content_ll_save);
+            iv_save = view.findViewById(R.id.act027_product_edit_content_iv_save);
 
-            ll_log = (LinearLayout) view.findViewById(R.id.act027_product_edit_content_ll_log);
-            tv_nick = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_nick);
-            tv_date = (TextView) view.findViewById(R.id.act027_product_edit_content_tv_date);
+            ll_log = view.findViewById(R.id.act027_product_edit_content_ll_log);
+            tv_nick = view.findViewById(R.id.act027_product_edit_content_tv_nick);
+            tv_date = view.findViewById(R.id.act027_product_edit_content_tv_date);
 
             md_all_productDao = new MD_All_ProductDao(context);
 
@@ -580,11 +582,25 @@ public class Act027_Product_Edit extends BaseFragment {
         }
     }
 
+    /**
+     * BARRIONUEVO 20-03-2020
+     * Alteracao de icone de camera com contador de fotos tiradas.
+     */
     private void upImgGallery() {
         if (((String) iv_gallery.getTag()).equalsIgnoreCase("")) {
-            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_foto_ns));
+            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_camera));
+            tv_photo_amount.setVisibility(View.GONE);
         } else {
-            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_foto_marcada_ns));
+            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_camera));
+            int mPhoto_amount = countPhotoAmount(((String) iv_gallery.getTag()));
+            if(mPhoto_amount >0){
+                String mPhoto_amount_formatted;
+                mPhoto_amount_formatted= String.valueOf(mPhoto_amount);
+                tv_photo_amount.setText(mPhoto_amount_formatted);
+                tv_photo_amount.setVisibility(View.VISIBLE);
+            }else {
+                tv_photo_amount.setVisibility(View.GONE);
+            }
         }
 
         iv_gallery.setOnClickListener(new View.OnClickListener() {
@@ -593,6 +609,21 @@ public class Act027_Product_Edit extends BaseFragment {
                 callCamera();
             }
         });
+    }
+
+    /**
+     * BARRIONUEVO 20-03-2020
+     * Envia lista de nomes de imagens para calcular quantidade, mesmo parametro usado para
+     * contar total de imagem na galeria v1.
+     * @param photos
+     * @return
+     */
+    private int countPhotoAmount(String photos){
+        String[] photoArray = photos.split("#");
+        if( photoArray != null && !photoArray[0].isEmpty()){
+            return photoArray.length;
+        }
+        return 0;
     }
 
     @Override
