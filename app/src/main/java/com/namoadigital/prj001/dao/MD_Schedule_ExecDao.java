@@ -335,7 +335,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
 
     @Override
     public List<HMAux> query_HM(String sQuery) {
-        List<HMAux> tk_tickets = new ArrayList<>();
+        List<HMAux> md_schedule_execs = new ArrayList<>();
         openDB();
 
         try {
@@ -343,7 +343,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             Cursor cursor = db.rawQuery(sQuery, null);
 
             while (cursor.moveToNext()) {
-                tk_tickets.add(CursorToHMAuxMapper.mapN(cursor));
+                md_schedule_execs.add(CursorToHMAuxMapper.mapN(cursor));
             }
 
             cursor.close();
@@ -354,7 +354,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
 
         closeDB();
 
-        return tk_tickets;
+        return md_schedule_execs;
     }
 
     /**

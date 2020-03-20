@@ -156,8 +156,8 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_011;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_010;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_013;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_014;
+import com.namoadigital.prj001.sql.Sql_Notification_Schedule_001;
+import com.namoadigital.prj001.sql.Sql_Notification_Schedule_002;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_006;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_013;
@@ -2379,26 +2379,26 @@ public class ToolBox_Inf {
                 context.getSystemService(Context.ALARM_SERVICE);
 
         Calendar calendarAux = Calendar.getInstance();
-        //
-        calendarAux.set(
-                Calendar.HOUR,
-                calendarAux.get(Calendar.HOUR) + 1
-        );
-        //
-        calendarAux.set(
-                Calendar.MINUTE,
-                0
-        );
-        //
-        calendarAux.set(
-                Calendar.SECOND,
-                0
-        );
+//        //
+//        calendarAux.set(
+//                Calendar.HOUR,
+//                calendarAux.get(Calendar.HOUR) + 1
+//        );
+//        //
+//        calendarAux.set(
+//                Calendar.MINUTE,
+//                0
+//        );
+//        //
+//        calendarAux.set(
+//                Calendar.SECOND,
+//                0
+//        );
         // Tirar
-       /* calendarAux.set(
+        calendarAux.set(
                 Calendar.SECOND,
-                calendarAux.get(Calendar.SECOND) + 60
-        );*/
+                calendarAux.get(Calendar.SECOND) + 10
+        );
 
         /**
          * Alarme a cada 4 horas
@@ -2429,17 +2429,18 @@ public class ToolBox_Inf {
             am.setInexactRepeating(
                     AlarmManager.RTC_WAKEUP,
                     calendarAux.getTimeInMillis(),
-                    (1000 * 60 * 60 * 4),
+                    //(1000 * 60 * 60 * 4),
+                    (1000 * 60),
                     pi_full
             );
         }
 
         calendarAux = Calendar.getInstance();
 
-        calendarAux.set(
-                Calendar.SECOND,
-                calendarAux.get(Calendar.SECOND) + 15
-        );
+//        calendarAux.set(
+//                Calendar.SECOND,
+//                calendarAux.get(Calendar.SECOND) + 15
+//        );
 
         /**
          * Alarme a cada 15 minutos
@@ -2474,8 +2475,6 @@ public class ToolBox_Inf {
                     pi_Quarter
             );
         }
-        //
-        // generateNotification(context, 300);
     }
 
     /**
@@ -2513,42 +2512,34 @@ public class ToolBox_Inf {
                             Constant.DB_VERSION_CUSTOM
                     );
             //
-//            HMAux auxCT = new HMAux();
-//            auxCT.put(EV_User_CustomerDao.CUSTOMER_CODE, hmAux.get(EV_User_CustomerDao.CUSTOMER_CODE));
-//            auxCT.put(EV_User_CustomerDao.CUSTOMER_NAME, hmAux.get(EV_User_CustomerDao.CUSTOMER_NAME));
-//            auxCT.put(EV_User_CustomerDao.TRANSLATE_CODE, hmAux.get(EV_User_CustomerDao.TRANSLATE_CODE));
-            HMAux auxCT = new HMAux();
-            auxCT.putAll(hmAux);
+            HMAux auxCT = (HMAux) hmAux.clone();
             //
             boolean bInclude = false;
             // parameter:
             //  100 - Notificação alarm full a cada 60 minutos.
             //  200 - Notificação alarm quarter a cada 15 minutos.
-            //  300 - Codigo comentado, deveria ser teste - apagar  após nova implementação
-            if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL || parameter == 300) {
+            if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL) {
                 //Gera "lista" com a qtd de itens agendados para a proxima 1 horas(future) e os atrasados(late).
                 //A parte da lista é apenas para não retornar null, pois o resultado sempre será apenas um registro
                 totals = (ArrayList<HMAux>) scheduleDao.query_HM(
-                        new GE_Custom_Form_Local_Sql_013(
+                        new Sql_Notification_Schedule_001(
                                 context,
-                                customerCode,
-                                Calendar.getInstance().getTimeInMillis()
+                                customerCode
                         ).toSqlQuery()
                 );
             } else {
                 //Gera lista com a qtd de itens agendados para a proxima 1 horas(future)
                 totals = (ArrayList<HMAux>) scheduleDao.query_HM(
-                        new GE_Custom_Form_Local_Sql_014(
+                        new Sql_Notification_Schedule_002(
                             context,
-                            customerCode,
-                            Calendar.getInstance().getTimeInMillis()
+                            customerCode
                         ).toSqlQuery()
                 );
             }
             //loop na lista dos dados retornados.
             for (HMAux hmAuxTotal : totals) {
                 bInclude = true;
-                if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL || parameter == 300) {
+                if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL ) {
                     if (hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TYPE).equalsIgnoreCase(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE)) {
                         auxCT.put(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE, hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TOTAL));
                     } else {
@@ -2578,7 +2569,7 @@ public class ToolBox_Inf {
             builder.setSmallIcon(R.drawable.ic_calendario);
             builder.setAutoCancel(true);
             //
-            if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL || parameter == 300) {
+            if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL) {
                 if (!cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE).equals("0") || !cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_LATE).equals("0")) {
                     sbFinal
                             .append(cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE_TEXT) + "(")
