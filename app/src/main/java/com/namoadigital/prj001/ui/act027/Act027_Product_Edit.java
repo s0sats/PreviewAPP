@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,7 @@ public class Act027_Product_Edit extends BaseFragment {
     private MKEditTextNM mk_qty;
     private TextView tv_unit;
     private PictureFF pff_sketch;
+    private TextInputLayout tilComment;
     private TextView tv_comments_lbl;
     private TextView tv_photo_amount;
     private MKEditTextNM mk_comments;
@@ -227,6 +229,7 @@ public class Act027_Product_Edit extends BaseFragment {
 
             pff_sketch = view.findViewById(R.id.act027_product_edit_content_pff_sketch);
 
+            tilComment = view.findViewById(R.id.act027_product_edit_content_til_comment);
             tv_comments_lbl = view.findViewById(R.id.act027_product_edit_content_tv_comments_lbl);
             tv_comments_lbl.setText(hmAux_Trans.get("event_comments_lbl"));
             mk_comments = view.findViewById(R.id.act027_product_edit_content_mk_comments);
@@ -348,8 +351,7 @@ public class Act027_Product_Edit extends BaseFragment {
 
                 }
             }
-
-            mk_comments.setText(mSm_so_product_event.getComments());
+            setMk_comments_refreshing_layout(mSm_so_product_event.getComments());
 
             tv_unit.setText(mSm_so_product_event.getUn());
 
@@ -479,6 +481,14 @@ public class Act027_Product_Edit extends BaseFragment {
         }
     }
 
+    private void setMk_comments_refreshing_layout(String comment) {
+        //Remove counter
+        tilComment.setCounterEnabled(false);
+        mk_comments.setText(comment);
+        //Reabilita counter para atualizar contador
+        tilComment.setCounterEnabled(true);
+    }
+
     private void iniAction() {
 
         arff_applyrepair.setOnSelectionChangedListener(new ApplyRepairImageFF.IApplyRepairImageFF() {
@@ -547,7 +557,7 @@ public class Act027_Product_Edit extends BaseFragment {
                     if (widgetset) {
                         widgetset = false;
                     } else {
-                        mk_comments.setText(tempValues.get("mk_comments"));
+                        setMk_comments_refreshing_layout(tempValues.get("mk_comments"));
                     }
 
 //                if (tempValues.get("mk_qty") != null && !tempValues.get("mk_qty").isEmpty()) {
