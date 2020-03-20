@@ -52,6 +52,7 @@ public class Act043_Frag_Preview extends BaseFragment {
     private boolean isDialogOpen = false;
     private DialogInterface.OnDismissListener dismissListener;
     onSmSoRequestObject delegateSmSo;
+    private Button btn_product_event;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -91,19 +92,21 @@ public class Act043_Frag_Preview extends BaseFragment {
                 Constant.DB_VERSION_CUSTOM
         );
         //
-        tv_so_prefix_code = (TextView) view.findViewById(R.id.act043_frag_preview_tv_so_prefix_code);
+        tv_so_prefix_code = view.findViewById(R.id.act043_frag_preview_tv_so_prefix_code);
         //
-        btn_search_service = (Button) view.findViewById(R.id.act043_frag_preview_btn_search_service);
+        btn_search_service = view.findViewById(R.id.act043_frag_preview_btn_search_service);
         btn_search_service.setEnabled(false);
+        btn_product_event = view.findViewById(R.id.act043_frag_preview_btn_product_event);
+
         //
-        tv_service_pack_ttl = (TextView) view.findViewById(R.id.act043_frag_preview_tv_service_pack_ttl);
+        tv_service_pack_ttl = view.findViewById(R.id.act043_frag_preview_tv_service_pack_ttl);
         tv_service_pack_ttl.setVisibility(View.GONE);
         //
-        tv_total_lbl = (TextView) view.findViewById(R.id.act043_frag_preview_tv_total_lbl);
+        tv_total_lbl = view.findViewById(R.id.act043_frag_preview_tv_total_lbl);
         //
-        tv_total_val = (TextView) view.findViewById(R.id.act043_frag_preview_tv_total_val);
+        tv_total_val = view.findViewById(R.id.act043_frag_preview_tv_total_val);
         //
-        lv_service_pack = (ListView) view.findViewById(R.id.act043_frag_preview_lv_services_packs);
+        lv_service_pack = view.findViewById(R.id.act043_frag_preview_lv_services_packs);
         //
         dismissListener = new DialogInterface.OnDismissListener() {
             @Override
@@ -123,6 +126,13 @@ public class Act043_Frag_Preview extends BaseFragment {
                 }else{
                     ToolBox_Inf.showNoConnectionDialog(context);
                 }
+            }
+        });
+
+        btn_product_event.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delegateSmSo.callProductEvent();
             }
         });
     }
