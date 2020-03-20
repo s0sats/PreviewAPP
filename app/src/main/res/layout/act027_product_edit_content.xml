@@ -219,7 +219,9 @@
                 android:id="@+id/act027_product_edit_content_mk_comments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
+                tools:text="Comentario aqui"
+                android:inputType="textMultiLine"
+                android:maxLength="500"/>
 
         </LinearLayout>
 
