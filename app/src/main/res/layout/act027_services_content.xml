@@ -50,6 +50,11 @@
             android:divider="@color/padrao_TRANSPARENT"/>
 
 
+        <FrameLayout
+            android:id="@+id/act027_services_content_fl_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
         <Button
             android:id="@+id/act027_services_content_btn_quality_approval"
             android:layout_width="match_parent"
@@ -66,6 +71,23 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
+        <Button
+            android:id="@+id/act027_services_content_btn_product_event_shortcut"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/btn_namoa_main_states"
+            tools:text="Cancel - Trad"
+            android:textColor="@color/padrao_WHITE"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/gl_bottom_buttons"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+        </FrameLayout>
     </LinearLayout>
 
 </LinearLayout>

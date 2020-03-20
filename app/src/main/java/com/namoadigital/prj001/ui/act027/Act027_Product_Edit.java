@@ -598,10 +598,10 @@ public class Act027_Product_Edit extends BaseFragment {
      */
     private void upImgGallery() {
         if (((String) iv_gallery.getTag()).equalsIgnoreCase("")) {
-            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_camera));
+            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_camera_on));
             tv_photo_amount.setVisibility(View.GONE);
         } else {
-            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_camera));
+            iv_gallery.setBackground(context.getResources().getDrawable(R.drawable.ic_camera_on));
             int mPhoto_amount = countPhotoAmount(((String) iv_gallery.getTag()));
             if(mPhoto_amount >0){
                 String mPhoto_amount_formatted;
@@ -692,8 +692,10 @@ public class Act027_Product_Edit extends BaseFragment {
 
             if (sFF.length() != 0) {
                 iv_gallery.setEnabled(true);
+                iv_gallery.setImageDrawable(context.getDrawable(R.drawable.ic_camera_on));
             } else {
                 iv_gallery.setEnabled(false);
+                iv_gallery.setImageDrawable(context.getDrawable(R.drawable.ic_camera_off));
             }
             ll_save.setVisibility(View.GONE);
             //iv_save.setVisibility(View.GONE);
@@ -730,8 +732,10 @@ public class Act027_Product_Edit extends BaseFragment {
 
             if (sFF.length() != 0) {
                 iv_gallery.setEnabled(true);
+                iv_gallery.setImageDrawable(context.getDrawable(R.drawable.ic_camera_on));
             } else {
                 iv_gallery.setEnabled(false);
+                iv_gallery.setImageDrawable(context.getDrawable(R.drawable.ic_camera_off));
             }
 
             ll_save.setVisibility(View.GONE);

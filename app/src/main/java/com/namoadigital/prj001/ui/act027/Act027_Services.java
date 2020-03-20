@@ -32,6 +32,7 @@ import com.namoadigital.prj001.dao.MD_Brand_ModelDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
@@ -39,6 +40,7 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
+import com.namoadigital.prj001.sql.Act027_Product_List_Sql_002;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_SS;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_Sql_004;
@@ -58,6 +60,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by neomatrix on 14/08/17.
@@ -86,6 +89,7 @@ public class Act027_Services extends BaseFragment {
     private ImageView iv_editable_serial;
     private View listHeader;
     private Button btn_quality_approval;
+    private Button btn_product_event_shortcut;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -180,14 +184,15 @@ public class Act027_Services extends BaseFragment {
         //
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         listHeader = inflater.inflate(R.layout.cv_product_serial_with_icon, null);
-        tv_filter_lbl = (TextView) view.findViewById(R.id.act027_services_content_tv_filter_lbl);
+        tv_filter_lbl = view.findViewById(R.id.act027_services_content_tv_filter_lbl);
         iv_product_serial_id =  listHeader.findViewById(R.id.iv_product_serial_id);
         tv_product_serial_id = listHeader.findViewById(R.id.tv_product_serial_id);
         tv_product_serial_infos = listHeader.findViewById(R.id.tv_product_serial_infos);
         iv_editable_serial = listHeader.findViewById(R.id.iv_editable_serial);
-        sw_filter = (Switch) view.findViewById(R.id.act027_services_content_sw_filter);
-        lv_services = (ListView) view.findViewById(R.id.act027_services_content_lv_services);
-        btn_quality_approval = (Button) view.findViewById(R.id.act027_services_content_btn_quality_approval);
+        sw_filter = view.findViewById(R.id.act027_services_content_sw_filter);
+        lv_services = view.findViewById(R.id.act027_services_content_lv_services);
+        btn_quality_approval = view.findViewById(R.id.act027_services_content_btn_quality_approval);
+        btn_product_event_shortcut = view.findViewById(R.id.act027_services_content_btn_product_event_shortcut);
 
         btn_quality_approval.setText(hmAux_Trans.get("quality_approval_shortcut"));
         iv_editable_serial.setVisibility(View.VISIBLE);
@@ -202,6 +207,7 @@ public class Act027_Services extends BaseFragment {
 
         if(hasQualityStatus()) {
             btn_quality_approval.setVisibility(View.VISIBLE);
+            btn_product_event_shortcut.setVisibility(View.GONE);
             btn_quality_approval.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -210,7 +216,43 @@ public class Act027_Services extends BaseFragment {
             });
         }else{
             btn_quality_approval.setVisibility(View.GONE);
+            int productEventPendancy = getProductEventPendancy();
+            if(productEventPendancy > 0){
+                btn_product_event_shortcut.setVisibility(View.VISIBLE);
+                btn_product_event_shortcut.setText(
+                        hmAux_Trans.get("product_event_shortcut")+ " (" + productEventPendancy+")"
+                );
+                btn_product_event_shortcut.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mMain.selectDrawerOption(Act027_Main.SELECTION_PRODUCT_LIST);
+                    }
+                });
+            }else{
+                btn_product_event_shortcut.setVisibility(View.GONE);
+            }
         }
+    }
+
+    private int getProductEventPendancy() {
+        SM_SO_Product_EventDao sm_so_product_eventDao = new SM_SO_Product_EventDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        List<HMAux> eventList = sm_so_product_eventDao.query_HM(
+                new Act027_Product_List_Sql_002(
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code()
+                ).toSqlQuery()
+        );
+        //
+        if (eventList != null && eventList.size() > 0) {
+            return eventList.size();
+        }
+        return 0;
     }
 
     private boolean hasQualityStatus() {
