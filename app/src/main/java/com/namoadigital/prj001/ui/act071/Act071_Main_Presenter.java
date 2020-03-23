@@ -231,20 +231,54 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     }
     //
 
-
+    /**
+     * LUCHE - 23/03/2020
+     * <P></P>
+     * Metodo que atualiza o ticket com os dados do controle.
+     *
+     * Modificado metodo para que ao invés de atualizar somente o control, atualize o ticket por completo,
+     * garantindo o rollback em caso de erro.
+     * @param mTicketCtrl Objeto carregado e alterado na tela.
+     * @return - Verdadeiro somente se todas as atualizações forem salvas.
+     */
     @Override
     public boolean updateTicketAction(TK_Ticket_Ctrl mTicketCtrl) {
-        DaoObjReturn daoObjReturn = ticketCtrlDao.addUpdate(mTicketCtrl);
         TK_Ticket tkTicket = getTicketbyPk(mTicketCtrl.getTicket_prefix(),mTicketCtrl.getTicket_code());
+        //Em teoria, nunca deveria ser null, mas vai saber.
+        if(tkTicket != null && tkTicket.getCtrl() != null){
+            int ctrlIdx = getCtrlIdx(mTicketCtrl, tkTicket);
+            if(ctrlIdx > -1){
+                tkTicket.getCtrl().set(ctrlIdx,mTicketCtrl);
+                tkTicket.setUpdate_required(1);
+                tkTicket.setTicket_status( mView.isScheduledTicket() ? ConstantBaseApp.SYS_STATUS_WAITING_SYNC : tkTicket.getTicket_status());
+                //Atualiza Ticket completo, para garantir rolback caso erro ao atualizar ctrls
+                DaoObjReturn daoObjReturn  = ticketDao.addUpdate(tkTicket);
+                //
+                if(!daoObjReturn.hasError()){
+                    //Se agendamento, atualiza status do agendamento.
+                    if(mView.isScheduledTicket()){
+                        //
+                        updateScheduleStatus(
+                            mView.getmSchedulePrefix(),
+                            mView.getmScheduleCode(),
+                            mView.getmScheduleExec(),
+                            mTicketCtrl.getCtrl_status()
+                        );
+                    }
+                    //
+                    if (mTicketCtrl.getAction().getAction_photo_local() != null
+                        && !mTicketCtrl.getAction().getAction_photo_local().isEmpty()
+                    ) {
+                        uploadActionImage(mTicketCtrl);
+                    }
+                    //
+                    return true;
+                }
+            }
+        }
+        //Metodo de update original, modificado para garantir rollback via transation
+        /*DaoObjReturn daoObjReturn = ticketCtrlDao.addUpdate(mTicketCtrl);
         if (!daoObjReturn.hasError()) {
-            /*ticketDao.addUpdate(
-                new TK_Ticket_Sql_005(
-                    mTicketCtrl.getCustomer_code(),
-                    mTicketCtrl.getTicket_prefix(),
-                    mTicketCtrl.getTicket_code(),
-                    1
-                ).toSqlQuery()
-            );*/
             tkTicket.setUpdate_required(1);
             tkTicket.setTicket_status( mView.isScheduledTicket() ? ConstantBaseApp.SYS_STATUS_WAITING_SYNC : tkTicket.getTicket_status());
             //
@@ -268,9 +302,30 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 //
                 return true;
             }
-        }
-        //TODO OQUE FAZER NOS CASOS DE ERRO ? CRIAR ANTES COPIA DOS OBJ PARA "ROLLBACK" NA MÃO OU COLOCAR TUDO EM UM TRANSACTION
+        }*/
         return false;
+    }
+
+    /**
+     * LUCHE - 23/03/2020
+     * <p></p>
+     * Metodo que retorna o indice do control que esta sendo alterado.
+     * Na teoria, sempre retornará um valor, por o crl sempre existe.
+     * @param mTicketCtrl Obj controle alterado pelo usr
+     * @param tkTicket Obj Ticket ao qual o controle pertence
+     * @return - Idx do ctrl ou -1 caso não encontre.
+     */
+    private int getCtrlIdx(TK_Ticket_Ctrl mTicketCtrl, TK_Ticket tkTicket) {
+        for (int i = 0; i < tkTicket.getCtrl().size(); i++) {
+            if(
+                tkTicket.getCtrl().get(i).getTicket_prefix() == mTicketCtrl.getTicket_prefix()
+                && tkTicket.getCtrl().get(i).getTicket_code() == mTicketCtrl.getTicket_code()
+                && tkTicket.getCtrl().get(i).getTicket_seq() == mTicketCtrl.getTicket_seq()
+            ){
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
