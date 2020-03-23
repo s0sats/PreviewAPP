@@ -312,8 +312,6 @@ public class SV_LocationTracker extends Service {
 
     @Override
     public void onCreate() {
-//        Log.i("GPS_Service", "onCreate");
-//        recordProcess("onCreate");
         loadTranslation();
         initializeLocationManager();
         status = true;
@@ -340,11 +338,10 @@ public class SV_LocationTracker extends Service {
 
     @Override
     public void onDestroy() {
-//        Log.i("GPS_Service", "onDestroy");
-//        String dataRecorded = "\nonDestroy: ";
-//        recordProcess(dataRecorded);
         status = false;
         ToolBox_Inf.callPendencyNotification(getApplicationContext());
+        NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+        manager.cancel(123401234);
         removeLocationListeners();
 //        ToolBox.toastMSG(getApplicationContext(), "onDestroy");
         super.onDestroy();
