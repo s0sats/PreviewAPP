@@ -8,7 +8,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:clickable="false"
         android:focusable="false"
         android:gravity="center"
@@ -25,20 +26,16 @@
             app:mNFC="false"
             app:mOCR="false" />
 
-        <ImageView
-            android:id="@+id/act027_product_list_content_iv_new_event"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
-            android:src="@drawable/ic_adicionar_filled_states" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/act027_product_list_content_ll_event_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <ListView
             android:id="@+id/act027_product_list_content_lv_events"
@@ -52,9 +49,11 @@
     <LinearLayout
         android:id="@+id/act027_product_list_content_ll_empty_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:visibility="gone">
         <TextView
             android:id="@+id/act027_product_list_content_tv_empty_lbl"
             android:layout_width="wrap_content"
@@ -63,5 +62,45 @@
             android:text="Empty List"
             />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <Button
+            android:id="@+id/act027_product_list_btn_add_event"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/namoa_cell_3_states"
+            android:text="Add Event"
+            android:textColor="@color/padrao_WHITE" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <Button
+            android:id="@+id/act027_product_list_btn_service_preview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/btn_namoa_main_states"
+            android:text="Service Search"
+            android:textColor="@color/padrao_WHITE" />
+
+    </LinearLayout>
+
+
 
 </LinearLayout>

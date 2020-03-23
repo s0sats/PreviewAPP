@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -40,7 +40,8 @@ public class Act027_Product_List extends BaseFragment {
     private LinearLayout ll_event_list;
     private LinearLayout ll_empty_list;
     private MKEditTextNM mket_product_search;
-    private ImageView iv_new_event;
+    private Button btn_add_event;
+    private Button btn_service_preview;
     private ListView lv_events;
     private TextView tv_empty_lbl;
     private Act027_Product_List_Adapter mAdapter;
@@ -119,17 +120,19 @@ public class Act027_Product_List extends BaseFragment {
         //
         mMain = (Act027_Main) getActivity();
         //
-        ll_event_list = (LinearLayout) view.findViewById(R.id.act027_product_list_content_ll_event_list);
+        ll_event_list = view.findViewById(R.id.act027_product_list_content_ll_event_list);
         //
-        ll_empty_list = (LinearLayout) view.findViewById(R.id.act027_product_list_content_ll_empty_list);
+        ll_empty_list = view.findViewById(R.id.act027_product_list_content_ll_empty_list);
         //
-        mket_product_search = (MKEditTextNM) view.findViewById(R.id.act027_product_list_content_mket_product);
+        mket_product_search = view.findViewById(R.id.act027_product_list_content_mket_product);
         //
-        iv_new_event = (ImageView) view.findViewById(R.id.act027_product_list_content_iv_new_event);
+        btn_add_event = view.findViewById(R.id.act027_product_list_btn_add_event);
         //
-        lv_events = (ListView) view.findViewById(R.id.act027_product_list_content_lv_events);
+        btn_service_preview = view.findViewById(R.id.act027_product_list_btn_service_preview);
         //
-        tv_empty_lbl = (TextView) view.findViewById(R.id.act027_product_list_content_tv_empty_lbl);
+        lv_events = view.findViewById(R.id.act027_product_list_content_lv_events);
+        //
+        tv_empty_lbl = view.findViewById(R.id.act027_product_list_content_tv_empty_lbl);
         //
         sm_so_product_eventDao = new SM_SO_Product_EventDao(
                 context,
@@ -160,10 +163,10 @@ public class Act027_Product_List extends BaseFragment {
 
             if (mSm_so.getStatus().equals(Constant.SYS_STATUS_EDIT)
                 || mSm_so.getStatus().equals(Constant.SYS_STATUS_STOP)) {
-                iv_new_event.setEnabled(false);
+                btn_add_event.setEnabled(false);
             }
 
-            iv_new_event.setOnClickListener(new View.OnClickListener() {
+            btn_add_event.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -181,6 +184,13 @@ public class Act027_Product_List extends BaseFragment {
                         },
                         1
                     );
+                }
+            });
+            //
+            btn_service_preview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mMain.menuOptionsSelected(Act027_Main.SELECTION_SERVICE_EDITION);
                 }
             });
             //
@@ -233,11 +243,11 @@ public class Act027_Product_List extends BaseFragment {
                     && hmAux_Trans != null) {
                 //
                 if (!mMain.hasExecutionProfile()) {
-                    iv_new_event.setVisibility(View.GONE);
+                    btn_add_event.setVisibility(View.GONE);
                 } else {
                     checkStatus();
                     //
-                    //iv_new_event.setVisibility(View.VISIBLE);
+                    //btn_add_event.setVisibility(View.VISIBLE);
                 }
                 //
                 mket_product_search.setHint(hmAux_Trans.get("mket_product_search_hint"));
@@ -259,9 +269,9 @@ public class Act027_Product_List extends BaseFragment {
                 !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) &&
                 !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC)
                 ) {
-            iv_new_event.setVisibility(View.VISIBLE);
+            btn_add_event.setVisibility(View.VISIBLE);
         } else {
-            iv_new_event.setVisibility(View.GONE);
+            btn_add_event.setVisibility(View.GONE);
         }
     }
 
