@@ -59,7 +59,7 @@ public class Sql_Notification_Schedule_001 implements Specification {
                 "   a.customer_code = '"+ customerCode +"' \n" +
                 "   and a.ap_status not in('" + Constant.SYS_STATUS_DONE + "','" + Constant.SYS_STATUS_CANCELLED + "')\n"+
                 "   and a.ap_when is not null\n"+
-                "   and (strftime('%s',a.ap_when,'"+customerGMT+"') * 1000) < " +dt_start +"\n";
+                "   and (strftime('%s',a.ap_when,'"+deviceGMT+"') * 1000) < " +dt_start +"\n";
     }
 
     private String getScheduleSql() {
@@ -71,8 +71,8 @@ public class Sql_Notification_Schedule_001 implements Specification {
                 " WHERE\n" +
                 "   s.customer_code = '"+ customerCode +"' \n" +
                 "   and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"' \n" +
-                "   and (strftime('%s',s.date_start,'"+customerGMT+"') * 1000) >= " + dt_start + "\n"+
-                "   and (strftime('%s',s.date_start,'"+customerGMT+"') * 1000) <= " + dt_end + "\n" +
+                "   and (strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') * 1000) >= " + dt_start + "\n"+
+                "   and (strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') * 1000) <= " + dt_end + "\n" +
                 " union\n" +
                 "  SELECT\n" +
                 "   '"+ConstantBaseApp.MD_SCHEDULE_KEY_LATE+"' as "+ConstantBaseApp.MD_SCHEDULE_KEY_TYPE+",\n" +
@@ -82,7 +82,7 @@ public class Sql_Notification_Schedule_001 implements Specification {
                 " WHERE\n" +
                 "   s.customer_code = '"+ customerCode +"' \n" +
                 "   and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"' \n" +
-                "   and (strftime('%s',s.date_start,'"+customerGMT+"') * 1000) < "+dt_start +"\n";
+                "   and (strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') * 1000) < "+dt_start +"\n";
     }
 
     @Override
