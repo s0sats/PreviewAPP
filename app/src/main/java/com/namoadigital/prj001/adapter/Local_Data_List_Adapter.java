@@ -20,6 +20,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -97,6 +98,26 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
     @Override
     public long getItemId(int position) {
         return 0L;
+    }
+
+    /**
+     * LUCHE - 24/03/2020
+     * <P></P>
+     * Metodo que reemplementa  o clique no item da lista.
+     * Na teoria não existem itens con os status abaixo, mas com o advento do novo agendamento, pode
+     * ser que algo mude.
+     * @param position Posição do item da list.
+     * @return - True se houver chave status e diferente dos status abaixo.
+     */
+    @Override
+    public boolean isEnabled(int position) {
+        //return super.isEnabled(position);
+        HMAux item = source.get(position);
+        //Se tem o status e é diferente de cancelled e rejected, permite clique
+        return
+            item.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
+            && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_CANCELLED)
+            && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_REJECTED);
     }
 
     @Override

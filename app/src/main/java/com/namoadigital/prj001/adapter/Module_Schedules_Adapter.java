@@ -438,8 +438,12 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 break;
 
             default:
-                llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
-                llBackground.setBackground(llDrawable);
+//                llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
+//                llBackground.setBackground(llDrawable);
+                tv_status_val.setText(hmAux_Trans.get(item.get(MD_Schedule_ExecDao.STATUS)));
+                tv_status_val.setTextColor(
+                    ToolBox_Inf.getStatusColorV2(context,item.get(MD_Schedule_ExecDao.STATUS))
+                );
                 break;
         }
     }

@@ -21,10 +21,14 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.Chat_C_Remove_Room;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.FCMMessage;
+import com.namoadigital.prj001.model.FCM_Schedule;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
@@ -33,6 +37,7 @@ import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_012;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_012;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
+import com.namoadigital.prj001.sql.Sql_Schedule_FCM_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_003;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act019.Act019_Main;
@@ -202,6 +207,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                      fcmMessage.getTitle().trim().equalsIgnoreCase(ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE)
             ) {
                 handleTkFMC(fcmMessage);
+
+            } if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_SCHEDULE)) {
+                //24/03/2020 - Todas as msg de scheduel, devem ser SILENT
+                if(fcmMessage.getType().equals(ConstantBaseApp.FCM_TYPE_SILENT)) {
+                    handleScheduleFCM(fcmMessage);
+                }
             } else {
                 //
                 //LUCHE - 07/08/2019
@@ -254,6 +265,67 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
+    }
+
+    private void handleScheduleFCM(FCMMessage fcmMessage) {
+        MD_Schedule_ExecDao scheduleExecDao = new MD_Schedule_ExecDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        try {
+            FCM_Schedule fcmSchedule = new FCM_Schedule(fcmMessage);
+            if(fcmSchedule.isValid()){
+                FCM_Schedule.FCM_Schedule_Msg_long scheduleMsgLong = fcmSchedule.getSchedule_msg_long();
+                //
+                ArrayList<MD_Schedule_Exec> scheduleToUpdate = (ArrayList<MD_Schedule_Exec>) scheduleExecDao.query(
+                    new Sql_Schedule_FCM_001(
+                        fcmSchedule.getCustomer_code(),
+                        fcmSchedule.getSchedule_prefix(),
+                        fcmSchedule.getSchedule_code(),
+                        fcmSchedule.getSchedule_exec()
+                    ).toSqlQuery()
+                );
+                int dumbDebugger = 0;
+                //Lista Seleciona, executa loop atualizando apenas as informações que vieram
+                for (MD_Schedule_Exec scheduleExec : scheduleToUpdate) {
+                    //Descrição do Agendamento
+                    if(scheduleMsgLong.getSchedule_desc() != null){
+                        scheduleExec.setSchedule_desc(scheduleMsgLong.getSchedule_desc());
+                        dumbDebugger++;
+                    }
+                    //Data de inicio da exec
+                    if(scheduleMsgLong.getDate_start() != null){
+                        scheduleExec.setDate_start(scheduleMsgLong.getDate_start());
+                        dumbDebugger++;
+                    }
+                    //Data Fim da exec
+                    if(scheduleMsgLong.getDate_end() != null){
+                        scheduleExec.setDate_end(scheduleMsgLong.getDate_end());
+                        dumbDebugger++;
+                    }
+                    //Status da exec
+                    //Add o validação a mais do status pra evitar de atualizar todas exec do agendamento.
+                    if(!fcmSchedule.getSchedule_exec().equalsIgnoreCase("-1") && scheduleMsgLong.getExec_status() != null){
+                        scheduleExec.setStatus(scheduleMsgLong.getExec_status());
+                        dumbDebugger++;
+                    }
+                    //Comments da exec
+                    if(scheduleMsgLong.getComments() != null){
+                        scheduleExec.setComments(scheduleMsgLong.getComments());
+                        dumbDebugger++;
+                    }
+                }
+                //
+                DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(scheduleToUpdate, false);
+                if(daoObjReturn.hasError()){
+                    throw new Exception(daoObjReturn.getErrorMsg());
+                }
+            }
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
     }
 
     private void checkNService_SO_Status(FCMMessage fcmMessage) {

@@ -74,6 +74,7 @@ public class Sql_Act017_004 implements Specification {
                 "  WHERE\n" +
                 "      s."+ MD_Schedule_ExecDao.CUSTOMER_CODE+" = '"+customer_code+"' \n" +
                 "      AND s.schedule_type = '"+ ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET +"' \n" +
+                "      AND s.status not in('"+ ConstantBaseApp.SYS_STATUS_CANCELLED+"','"+ ConstantBaseApp.SYS_STATUS_REJECTED+"')\n" +
                 "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"') = '"+selected_date+"') \n" +
                 "      AND ('"+serial_id+"' is null or s.serial_id like '%"+serial_id+"%' or s.serial_id like '%"+serial_id+"%' ) \n" +
                 "      AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') \n" +
