@@ -25,7 +25,6 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.Chat_C_Remove_Room;
-import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.FCMMessage;
 import com.namoadigital.prj001.model.FCM_Schedule;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
@@ -279,7 +278,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             if(fcmSchedule.isValid()){
                 FCM_Schedule.FCM_Schedule_Msg_long scheduleMsgLong = fcmSchedule.getSchedule_msg_long();
                 //
-                ArrayList<MD_Schedule_Exec> scheduleToUpdate = (ArrayList<MD_Schedule_Exec>) scheduleExecDao.query(
+                ArrayList<MD_Schedule_Exec> schedulesToUpdate = (ArrayList<MD_Schedule_Exec>) scheduleExecDao.query(
                     new Sql_Schedule_FCM_001(
                         fcmSchedule.getCustomer_code(),
                         fcmSchedule.getSchedule_prefix(),
@@ -289,39 +288,64 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 );
                 int dumbDebugger = 0;
                 //Lista Seleciona, executa loop atualizando apenas as informações que vieram
-                for (MD_Schedule_Exec scheduleExec : scheduleToUpdate) {
-                    //Descrição do Agendamento
-                    if(scheduleMsgLong.getSchedule_desc() != null){
-                        scheduleExec.setSchedule_desc(scheduleMsgLong.getSchedule_desc());
-                        dumbDebugger++;
-                    }
-                    //Data de inicio da exec
-                    if(scheduleMsgLong.getDate_start() != null){
-                        scheduleExec.setDate_start(scheduleMsgLong.getDate_start());
-                        dumbDebugger++;
-                    }
-                    //Data Fim da exec
-                    if(scheduleMsgLong.getDate_end() != null){
-                        scheduleExec.setDate_end(scheduleMsgLong.getDate_end());
-                        dumbDebugger++;
-                    }
-                    //Status da exec
-                    //Add o validação a mais do status pra evitar de atualizar todas exec do agendamento.
-                    if(!fcmSchedule.getSchedule_exec().equalsIgnoreCase("-1") && scheduleMsgLong.getExec_status() != null){
-                        scheduleExec.setStatus(scheduleMsgLong.getExec_status());
-                        dumbDebugger++;
-                    }
-                    //Comments da exec
-                    if(scheduleMsgLong.getComments() != null){
-                        scheduleExec.setComments(scheduleMsgLong.getComments());
-                        dumbDebugger++;
+                for (MD_Schedule_Exec scheduleExec : schedulesToUpdate) {
+                    if(scheduleExec.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_SCHEDULE)) {
+                        //Descrição do Agendamento
+                        if (scheduleMsgLong.getSchedule_desc() != null) {
+                            scheduleExec.setSchedule_desc(scheduleMsgLong.getSchedule_desc());
+                            dumbDebugger++;
+                        }
+                        //Data de inicio da exec
+                        if (scheduleMsgLong.getDate_start() != null) {
+                            scheduleExec.setDate_start(scheduleMsgLong.getDate_start());
+                            dumbDebugger++;
+                        }
+                        //Data Fim da exec
+                        if (scheduleMsgLong.getDate_end() != null) {
+                            scheduleExec.setDate_end(scheduleMsgLong.getDate_end());
+                            dumbDebugger++;
+                        }
+                        //Status da exec
+                        if (scheduleMsgLong.getExec_status() != null) {
+                            scheduleExec.setStatus(scheduleMsgLong.getExec_status());
+                            dumbDebugger++;
+                        }
+                        //Comments da exec
+                        if (scheduleMsgLong.getComments() != null) {
+                            scheduleExec.setComments(scheduleMsgLong.getComments());
+                            dumbDebugger++;
+                        }
+                        //Nick do user que fez a alteração.
+                        if (scheduleMsgLong.getUser_nick() != null) {
+                            scheduleExec.setFcm_user_nick(scheduleMsgLong.getUser_nick());
+                            dumbDebugger++;
+                        }
+                    }else{
+                        //Status da exec
+                        if (scheduleMsgLong.getSchedule_status() != null || scheduleMsgLong.getExec_status() != null) {
+                            scheduleExec.setFcm_new_status(scheduleMsgLong.getSchedule_status() != null ? scheduleMsgLong.getSchedule_status() : scheduleMsgLong.getExec_status());
+                            dumbDebugger++;
+                        }
+                        //Nick do user que fez a alteração.
+                        if (scheduleMsgLong.getUser_nick() != null) {
+                            scheduleExec.setFcm_user_nick(scheduleMsgLong.getUser_nick());
+                            dumbDebugger++;
+                        }
+                        //Chama notificação.
+                        ToolBox_Inf.showScheduleNotification(
+                            getApplicationContext(),
+                            fcmMessage.getMsg_short(),
+                            scheduleExec.getStatus(),
+                            scheduleExec.getFcm_new_status(),
+                            scheduleExec.getFcm_user_nick()
+                        );
                     }
                 }
                 //
-                DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(scheduleToUpdate, false);
+               /* DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(schedulesToUpdate, false);
                 if(daoObjReturn.hasError()){
                     throw new Exception(daoObjReturn.getErrorMsg());
-                }
+                }*/
             }
         }catch (Exception e){
             ToolBox_Inf.registerException(getClass().getName(),e);

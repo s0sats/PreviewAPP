@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/schedule_notification_s_cur_status_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        tools:text="Current Status:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/schedule_notification_s_cur_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        tools:text="PENDING"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/schedule_notification_s_cur_status_lbl"
+        app:layout_constraintTop_toTopOf="@id/schedule_notification_s_cur_status_lbl" />
+
+    <TextView
+        android:id="@+id/schedule_notification_s_new_status_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        tools:text="New Status"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/schedule_notification_s_cur_status_lbl"
+        app:layout_constraintTop_toBottomOf="@id/schedule_notification_s_cur_status_lbl" />
+
+    <TextView
+        android:id="@+id/schedule_notification_s_new_status_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        tools:text="Cancelled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/schedule_notification_s_new_status_lbl"
+        app:layout_constraintTop_toTopOf="@id/schedule_notification_s_new_status_lbl" />
+
+    <TextView
+        android:id="@+id/schedule_notification_s_user_nick_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        tools:text="User:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/schedule_notification_s_new_status_lbl"
+        app:layout_constraintTop_toBottomOf="@id/schedule_notification_s_new_status_lbl" />
+
+    <TextView
+        android:id="@+id/schedule_notification_s_user_nick_val"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        tools:text="Luche(52)"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/schedule_notification_s_user_nick_lbl"
+        app:layout_constraintTop_toTopOf="@id/schedule_notification_s_user_nick_lbl" />
+</android.support.constraint.ConstraintLayout>

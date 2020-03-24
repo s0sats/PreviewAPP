@@ -40,6 +40,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RemoteViews;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -156,8 +157,6 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_011;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_010;
-import com.namoadigital.prj001.sql.Sql_Notification_Schedule_001;
-import com.namoadigital.prj001.sql.Sql_Notification_Schedule_002;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_006;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_013;
@@ -178,6 +177,8 @@ import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
 import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
 import com.namoadigital.prj001.sql.Sql_Form_x_Product;
 import com.namoadigital.prj001.sql.Sql_Form_x_Site;
+import com.namoadigital.prj001.sql.Sql_Notification_Schedule_001;
+import com.namoadigital.prj001.sql.Sql_Notification_Schedule_002;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
@@ -2602,6 +2603,86 @@ public class ToolBox_Inf {
                     nm.notify(parameter_unified + Integer.parseInt(cust.get(EV_User_CustomerDao.CUSTOMER_CODE)), builder.getNotification());
                 }
             }
+        }
+    }
+
+    public static void showScheduleNotification(Context context,String schedulePk, String currentStatus, String newStatus, String userNick) {
+        String mModule = "SYS";
+        String mResource_name = "SYS_APP";
+        //
+        List<String> transList = new ArrayList<>();
+        //
+        transList.add("schedule_notification_schedule_pk_lbl");
+        transList.add("schedule_notification_current_status_lbl");
+        transList.add("schedule_notification_new_status_lbl");
+        transList.add("schedule_notification_user_nick_lbl");
+        HMAux hmAuxTrans = setLanguage(
+                            context,
+                            mModule,
+                            getResourceCode(
+                                context,
+                                mModule,
+                                mResource_name
+                            ),
+                            ToolBox_Con.getPreference_Translate_Code(context),
+                            transList
+                        );
+        /**
+         * A PORRA DO REMOTEVIEWS NÃO SUPORTA A PORRA DO CONSTRAINT LAYOUT COMO RAIZ
+         * https://stackoverflow.com/questions/45396426/crash-when-using-constraintlayout-in-notification
+         */
+        RemoteViews notificationLayout = new RemoteViews(context.getPackageName(), R.layout.schedule_notification_small2);
+        notificationLayout.setTextViewText(R.id.schedule_notification_s_cur_status_lbl, hmAuxTrans.get("schedule_notification_current_status_lbl"));
+        notificationLayout.setTextViewText(R.id.schedule_notification_s_cur_status,hmAuxTrans.get(currentStatus));
+        notificationLayout.setTextViewText(R.id.schedule_notification_s_new_status_lbl, hmAuxTrans.get("schedule_notification_new_status_lbl"));
+        notificationLayout.setTextViewText(R.id.schedule_notification_s_new_status_val, hmAuxTrans.get(newStatus));
+        notificationLayout.setTextViewText(R.id.schedule_notification_s_user_nick_lbl, hmAuxTrans.get("schedule_notification_user_nick_lbl"));
+        notificationLayout.setTextViewText(R.id.schedule_notification_s_user_nick_val, userNick);
+        //
+        String nfTitle = hmAuxTrans.get("schedule_notification_schedule_pk_lbl") + " " + schedulePk;
+        /*String sbFinal =
+            hmAuxTrans.get("schedule_notification_current_status_lbl") + " " + hmAuxTrans.get(currentStatus) + "\n" +
+            hmAuxTrans.get("schedule_notification_new_status_lbl") + " " + hmAuxTrans.get(newStatus) + "\n"+
+            hmAuxTrans.get("schedule_notification_user_nick_lbl") + " " + userNick;
+        //
+        SpannableString finalString = new SpannableString(sbFinal);
+        try{
+            finalString.setSpan(
+                new StyleSpan(Typeface.BOLD),
+                sbFinal.indexOf(hmAuxTrans.get("schedule_notification_current_status_lbl")),
+                sbFinal.indexOf(currentStatus),
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            );
+            finalString.setSpan(
+                new StyleSpan(Typeface.BOLD),
+                sbFinal.indexOf(hmAuxTrans.get("newStatus")),
+                sbFinal.indexOf(schedulePk),
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            );
+            finalString.setSpan(
+                new StyleSpan(Typeface.BOLD),
+                sbFinal.indexOf(hmAuxTrans.get("schedule_notification_user_nick_lbl")),
+                sbFinal.indexOf(userNick),
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            );
+        }catch (Exception e){
+            e.printStackTrace();
+        }*/
+
+        NotificationManager nm = (NotificationManager)
+            context.getSystemService(NOTIFICATION_SERVICE);
+        //
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder.setSmallIcon(R.drawable.ic_calendario);
+        builder.setContentTitle(nfTitle);
+        builder.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
+        builder.setCustomContentView(notificationLayout);
+        builder.setAutoCancel(true);
+        //
+        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            nm.notify(999, builder.build());
+        }else {
+            nm.notify(999, builder.getNotification());
         }
     }
 

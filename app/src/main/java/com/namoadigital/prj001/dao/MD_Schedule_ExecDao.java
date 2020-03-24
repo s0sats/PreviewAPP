@@ -62,9 +62,13 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public static final String REQUIRE_SERIAL = "require_serial";
     public static final String ALLOW_NEW_SERIAL_CL = "allow_new_serial_cl";
     public static final String REQUIRE_SERIAL_DONE = "require_serial_done";
+    public static final String FCM_NEW_STATUS = "fcm_new_status";
+    public static final String FCM_USER_NICK = "fcm_user_nick";
+    public static final String SCHEDULE_ERRO_MSG = "schedule_erro_msg";
     //NÃO SÃO CAMPOS DA TABELA, mas são usados em queries
     public static final String SCHEDULE_DATE_START_FORMAT = "schedule_date_start_format";
     public static final String SCHEDULE_DATE_END_FORMAT = "schedule_date_end_format";
+
     //LUCHE - 17/03/2020
     //Constante não usada no banco, mas usada por varias telas.
     public static final String SCHEDULE_PK = "schedule_pk";
@@ -770,6 +774,21 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             md_schedule_exec.setAllow_new_serial_cl(cursor.getInt(cursor.getColumnIndex(ALLOW_NEW_SERIAL_CL)));
             md_schedule_exec.setRequire_serial_done(cursor.getInt(cursor.getColumnIndex(REQUIRE_SERIAL_DONE)));
             md_schedule_exec.setSync_process(cursor.getInt(cursor.getColumnIndex(SYNC_PROCESS)));
+            if(cursor.isNull(cursor.getColumnIndex(FCM_NEW_STATUS))){
+                md_schedule_exec.setFcm_new_status(null);
+            }else{
+                md_schedule_exec.setFcm_new_status(cursor.getString(cursor.getColumnIndex(FCM_NEW_STATUS)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(FCM_USER_NICK))){
+                md_schedule_exec.setFcm_user_nick(null);
+            }else{
+                md_schedule_exec.setFcm_user_nick(cursor.getString(cursor.getColumnIndex(FCM_USER_NICK)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(SCHEDULE_ERRO_MSG))){
+                md_schedule_exec.setSchedule_erro_msg(null);
+            }else{
+                md_schedule_exec.setSchedule_erro_msg(cursor.getString(cursor.getColumnIndex(SCHEDULE_ERRO_MSG)));
+            }
             //
             return md_schedule_exec;
         }
@@ -845,6 +864,9 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             if(md_schedule_exec.getSync_process() > -1){
                 contentValues.put(SYNC_PROCESS,md_schedule_exec.getSync_process());
             }
+            contentValues.put(FCM_NEW_STATUS,md_schedule_exec.getFcm_new_status());
+            contentValues.put(FCM_USER_NICK,md_schedule_exec.getFcm_user_nick());
+            contentValues.put(SCHEDULE_ERRO_MSG,md_schedule_exec.getSchedule_erro_msg());
             //
             return contentValues;
         }

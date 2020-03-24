@@ -112,12 +112,16 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
     @Override
     public boolean isEnabled(int position) {
         //return super.isEnabled(position);
-        HMAux item = source.get(position);
-        //Se tem o status e é diferente de cancelled e rejected, permite clique
-        return
-            item.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
-            && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_CANCELLED)
-            && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_REJECTED);
+        if(source.size() > 0) {
+            HMAux item = source.get(position);
+            //Se tem o status e é diferente de cancelled e rejected, permite clique
+            return
+                item.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
+                    && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_CANCELLED)
+                    && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_REJECTED);
+        }else{
+            return super.isEnabled(position);
+        }
     }
 
     @Override

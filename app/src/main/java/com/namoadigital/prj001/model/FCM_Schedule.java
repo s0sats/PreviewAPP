@@ -127,9 +127,13 @@ public class FCM_Schedule {
         @Nullable
         private String date_end  = null;
         @Nullable
+        private String schedule_status  = null;
+        @Nullable
         private String exec_status  = null;
         @Nullable
         private String comments  = null;
+        @Nullable
+        private String user_nick  = null;
 
         @Nullable
         public String getSchedule_desc() {
@@ -159,6 +163,15 @@ public class FCM_Schedule {
         }
 
         @Nullable
+        public String getSchedule_status() {
+            return schedule_status;
+        }
+
+        public void setSchedule_status(@Nullable String schedule_status) {
+            this.schedule_status = schedule_status;
+        }
+
+        @Nullable
         public String getExec_status() {
             return exec_status;
         }
@@ -174,6 +187,15 @@ public class FCM_Schedule {
 
         public void setComments(@Nullable String comments) {
             this.comments = comments;
+        }
+
+        @Nullable
+        public String getUser_nick() {
+            return user_nick;
+        }
+
+        public void setUser_nick(@Nullable String user_nick) {
+            this.user_nick = user_nick;
         }
     }
 
