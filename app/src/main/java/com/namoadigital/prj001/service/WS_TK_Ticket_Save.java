@@ -302,7 +302,18 @@ public class WS_TK_Ticket_Save extends IntentService {
                 retTicket.updateLocalImagesPathIfExists();
                 //Salva obj
                 if(createdBySchedule){
-                    daoObjReturn = updateTicketAndScheduleReg(retTicket);
+                    MD_Schedule_Exec schedule = getSchedule(
+                        retTicket.getSchedule_prefix(),
+                        retTicket.getSchedule_code(),
+                        retTicket.getSchedule_exec()
+                    );
+                    //
+                    schedule.setStatus(retTicket.getTicket_status());
+                    schedule.setFcm_new_status(null);
+                    schedule.setFcm_user_nick(null);
+                    schedule.setSchedule_erro_msg(null);
+                    //
+                    daoObjReturn = updateTicketAndScheduleReg(retTicket,schedule);
                 }else {
                     daoObjReturn = ticketDao.addUpdate(retTicket);
                 }
@@ -339,8 +350,18 @@ public class WS_TK_Ticket_Save extends IntentService {
                             }
                         }
                     }
+                    MD_Schedule_Exec schedule = getSchedule(
+                        dbTicket.getSchedule_prefix(),
+                        dbTicket.getSchedule_code(),
+                        dbTicket.getSchedule_exec()
+                    );
+                    //
+                    schedule.setStatus(dbTicket.getTicket_status());
+                    schedule.setFcm_new_status(null);
+                    schedule.setFcm_user_nick(null);
+                    schedule.setSchedule_erro_msg(actReturn.getRetMsg());
                     //Atualiza ticket e agendamento
-                    daoObjReturn =  updateTicketAndScheduleReg(dbTicket);
+                    daoObjReturn =  updateTicketAndScheduleReg(dbTicket,schedule);
                     if (daoObjReturn.hasError()) {
                         throw new Exception(daoObjReturn.getErrorMsg());
                     }//
@@ -352,17 +373,13 @@ public class WS_TK_Ticket_Save extends IntentService {
     }
 
     @NonNull
-    private DaoObjReturn updateTicketAndScheduleReg(TK_Ticket ticket) {
+    private DaoObjReturn updateTicketAndScheduleReg(TK_Ticket ticket,MD_Schedule_Exec scheduleExec) {
         DaoObjReturn daoObjReturn;
         daoObjReturn = ticketDao.addUpdateBySchedulePk(ticket,null);
         if (!daoObjReturn.hasError()) {
-            updateScheduleStatus(
-                ticket.getSchedule_prefix(),
-                ticket.getSchedule_code(),
-                ticket.getSchedule_exec(),
-                ticket.getTicket_status()
-            );
+            updateSchedule(scheduleExec);
         }
+        //
         return daoObjReturn;
     }
 
@@ -372,14 +389,17 @@ public class WS_TK_Ticket_Save extends IntentService {
      * <p>
      * Atualiza status da tabela de agendamentos.
      *
-     * @param schedule_prefix - Prefixo do agendamento
-     * @param schedule_code - Codigo do agendamento
-     * @param schedule_exec - Exec do agendamento
-     * @param status - Status
+     * @param scheduleExec - Agendamento com dados a serem atualizados.
      * @return - Verdadeiro se sucesso
      */
-    private boolean updateScheduleStatus(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec, String status) {
-        MD_Schedule_Exec scheduleExec = scheduleExecDao.getByString(
+    private boolean updateSchedule(MD_Schedule_Exec scheduleExec) {
+        DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
+        //Retorna verdadeiro se não teve erro.
+        return !daoObjReturn.hasError();
+    }
+
+    private MD_Schedule_Exec getSchedule(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
+        return scheduleExecDao.getByString(
             new MD_Schedule_Exec_Sql_001(
                 ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
                 schedule_prefix,
@@ -387,15 +407,6 @@ public class WS_TK_Ticket_Save extends IntentService {
                 schedule_exec
             ).toSqlQuery()
         );
-        //
-        if (MD_Schedule_Exec.isValidScheduleExec(scheduleExec)) {
-            scheduleExec.setStatus(status);
-            DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
-            //Retorna verdadeiro se não teve erro.
-            return !daoObjReturn.hasError();
-        }
-        //
-        return false;
     }
 
     private void updateActionsFileNames(T_TK_Ticket_Save_Rec_Result retResult) throws Exception {

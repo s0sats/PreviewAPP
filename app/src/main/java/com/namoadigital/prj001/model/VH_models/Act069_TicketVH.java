@@ -32,11 +32,17 @@ public class Act069_TicketVH {
     private Integer schedule_code;
     @Nullable
     private Integer schedule_exec;
+    @Nullable
+    private String fcm_new_status;
+    @Nullable
+    private String fcm_user_nick;
+    @Nullable
+    private String schedule_erro_msg;
 
     public Act069_TicketVH() {
     }
 
-    public Act069_TicketVH(int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String type_path, String type_desc, String open_comments, String open_date, String forecast_date, String current_site_desc, String current_product_desc, String current_serial_id,int sync_required,String ctrls_serial_list,String schedulePk,Integer schedule_prefix, Integer schedule_code,Integer schedule_exec) {
+    public Act069_TicketVH(int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String type_path, String type_desc, String open_comments, String open_date, String forecast_date, String current_site_desc, String current_product_desc, String current_serial_id,int sync_required,String ctrls_serial_list,String schedulePk,Integer schedule_prefix, Integer schedule_code,Integer schedule_exec,String fcm_new_status,String fcm_user_nick,String schedule_erro_msg) {
         this.ticket_prefix = ticket_prefix;
         this.ticket_code = ticket_code;
         this.ticket_id = ticket_id;
@@ -55,6 +61,9 @@ public class Act069_TicketVH {
         this.schedule_prefix = schedule_prefix;
         this.schedule_code = schedule_code;
         this.schedule_exec = schedule_exec;
+        this.fcm_new_status = fcm_new_status;
+        this.fcm_user_nick = fcm_user_nick;
+        this.schedule_erro_msg = schedule_erro_msg;
     }
 
     public int getTicket_prefix() {
@@ -196,6 +205,33 @@ public class Act069_TicketVH {
         this.schedule_exec = schedule_exec;
     }
 
+    @Nullable
+    public String getFcm_new_status() {
+        return fcm_new_status;
+    }
+
+    public void setFcm_new_status(@Nullable String fcm_new_status) {
+        this.fcm_new_status = fcm_new_status;
+    }
+
+    @Nullable
+    public String getFcm_user_nick() {
+        return fcm_user_nick;
+    }
+
+    public void setFcm_user_nick(@Nullable String fcm_user_nick) {
+        this.fcm_user_nick = fcm_user_nick;
+    }
+
+    @Nullable
+    public String getSchedule_erro_msg() {
+        return schedule_erro_msg;
+    }
+
+    public void setSchedule_erro_msg(@Nullable String schedule_erro_msg) {
+        this.schedule_erro_msg = schedule_erro_msg;
+    }
+
     public static Act069_TicketVH getTicketVHObj(HMAux hmAux) throws Exception{
         //
         return new Act069_TicketVH(
@@ -216,7 +252,10 @@ public class Act069_TicketVH {
             hmAux.get(MD_Schedule_ExecDao.SCHEDULE_PK),
             getIntOrNull(hmAux.get(TK_TicketDao.SCHEDULE_PREFIX)),
             getIntOrNull(hmAux.get(TK_TicketDao.SCHEDULE_CODE)),
-            getIntOrNull(hmAux.get(TK_TicketDao.SCHEDULE_EXEC))
+            getIntOrNull(hmAux.get(TK_TicketDao.SCHEDULE_EXEC)),
+            hmAux.get(MD_Schedule_ExecDao.FCM_NEW_STATUS),
+            hmAux.get(MD_Schedule_ExecDao.FCM_USER_NICK),
+            hmAux.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG)
         );
     }
 

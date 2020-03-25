@@ -116,6 +116,11 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         transList.add("dialog_download_ticket_ttl");
         transList.add("dialog_download_ticket_start");
         //
+        transList.add("dialog_schedule_warning_ttl");
+        transList.add("dialog_schedule_warning_new_status_lbl");
+        transList.add("dialog_schedule_warning_user_nick_lbl");
+        transList.add("dialog_schedule_warning_error_msg_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -235,6 +240,21 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
                         //LUCHE - 18/03/2020
                         //Add chamada do metodo que define qual proximo step
                         mPresenter.checkTicketFlow(item);
+                    }
+                });
+                mAdapter.setOnScheduleWarningClickListener(new Act069_Tickets_Adapter.OnScheduleWarningClickListener() {
+                    @Override
+                    public void onScheduleWarningClick(String fcmNewStatus, String fcmUserNick, String errorMsg) {
+                        ToolBox_Inf.showScheduleWarningDialog(
+                            context,
+                            hmAux_Trans.get("dialog_schedule_warning_ttl"),
+                            hmAux_Trans.get("dialog_schedule_warning_new_status_lbl"),
+                            hmAux_Trans.get(fcmNewStatus),
+                            hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl"),
+                            fcmUserNick,
+                            hmAux_Trans.get("dialog_schedule_warning_error_msg_lbl"),
+                            errorMsg
+                        );
                     }
                 });
             }

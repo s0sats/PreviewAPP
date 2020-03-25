@@ -272,7 +272,7 @@ public class WS_Save extends IntentService {
         HMAux hmAuxRet = new HMAux();
         switch (save){
             case "OK":
-            case"OK_DUP":
+            case "OK_DUP":
                 List<GE_Custom_Form_Local> formLocals = new ArrayList<>();
                 List<MD_Schedule_Exec> formSchedules = new ArrayList<>();
                 boolean isScheduleForm = false;
@@ -326,6 +326,14 @@ public class WS_Save extends IntentService {
                             form_data.getSchedule_code(),
                             form_data.getSchedule_exec()
                         );
+                        //Reseta informações de FCM
+                        scheduleExec.setFcm_new_status(null);
+                        scheduleExec.setFcm_user_nick(null);
+                        //Seta msg de erro no agendamento, se houver
+                        if(errorProcess != null && errorProcess.getError() != null ){
+                            //Seta erro
+                            scheduleExec.setSchedule_erro_msg(errorProcess.getError());
+                        }
                         //Add na lista
                         formSchedules.add(scheduleExec);
                         //Preenche dados no obj de erro.

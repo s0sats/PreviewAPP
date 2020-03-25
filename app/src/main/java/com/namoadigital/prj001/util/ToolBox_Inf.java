@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -29,7 +30,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -2380,26 +2384,26 @@ public class ToolBox_Inf {
                 context.getSystemService(Context.ALARM_SERVICE);
 
         Calendar calendarAux = Calendar.getInstance();
-//        //
-//        calendarAux.set(
-//                Calendar.HOUR,
-//                calendarAux.get(Calendar.HOUR) + 1
-//        );
-//        //
-//        calendarAux.set(
-//                Calendar.MINUTE,
-//                0
-//        );
-//        //
-//        calendarAux.set(
-//                Calendar.SECOND,
-//                0
-//        );
-        // Tirar
+        //
+        calendarAux.set(
+                Calendar.HOUR,
+                calendarAux.get(Calendar.HOUR) + 1
+        );
+        //
+        calendarAux.set(
+                Calendar.MINUTE,
+                0
+        );
+        //
         calendarAux.set(
                 Calendar.SECOND,
-                calendarAux.get(Calendar.SECOND) + 10
+                0
         );
+        //Para Debug
+//        calendarAux.set(
+//                Calendar.SECOND,
+//                calendarAux.get(Calendar.SECOND) + 10
+//        );
 
         /**
          * Alarme a cada 4 horas
@@ -2430,18 +2434,17 @@ public class ToolBox_Inf {
             am.setInexactRepeating(
                     AlarmManager.RTC_WAKEUP,
                     calendarAux.getTimeInMillis(),
-                    //(1000 * 60 * 60 * 4),
-                    (1000 * 60),
+                    (1000 * 60 * 60 * 4),
                     pi_full
             );
         }
 
         calendarAux = Calendar.getInstance();
 
-//        calendarAux.set(
-//                Calendar.SECOND,
-//                calendarAux.get(Calendar.SECOND) + 15
-//        );
+        calendarAux.set(
+                Calendar.SECOND,
+                calendarAux.get(Calendar.SECOND) + 15
+        );
 
         /**
          * Alarme a cada 15 minutos
@@ -3324,6 +3327,73 @@ public class ToolBox_Inf {
         }
         //
         return files;
+    }
+
+    private static SpannableString getFormattedScheduleWarningInfo(String fcmNewStatusLbl,String fcmNewStatus, String fcmUserNickLbl,String fcmUserNick,String errorMsgLbl, String errorMsg) {
+        StringBuilder sbString = new StringBuilder("");
+        SpannableString finalString = null;
+        //
+        if(fcmNewStatus != null && !fcmNewStatus.isEmpty()){
+            sbString.append(fcmNewStatusLbl).append("\n").append(fcmNewStatus).append("\n");
+        }
+        if(fcmUserNick != null && !fcmUserNick.isEmpty()){
+            sbString.append(fcmUserNickLbl).append("\n").append(fcmUserNick).append("\n");
+        }
+        if(errorMsg != null && !errorMsg.isEmpty()){
+            sbString.append(errorMsgLbl).append("\n").append(errorMsg).append("\n");
+        }
+        //
+        finalString = new SpannableString(sbString.toString());
+        try{
+            if(fcmNewStatus != null && !fcmNewStatus.isEmpty()) {
+                finalString.setSpan(
+                    new StyleSpan(Typeface.BOLD),
+                    sbString.indexOf(fcmNewStatusLbl),
+                    sbString.indexOf(fcmNewStatus),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+
+                );
+            }
+            if(fcmUserNick != null && !fcmUserNick.isEmpty()) {
+                finalString.setSpan(
+                    new StyleSpan(Typeface.BOLD),
+                    sbString.indexOf(fcmUserNickLbl),
+                    sbString.indexOf(fcmUserNick),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+
+                );
+            }
+            if(errorMsg != null && !errorMsg.isEmpty()) {
+                finalString.setSpan(
+                    new StyleSpan(Typeface.BOLD),
+                    sbString.indexOf(errorMsgLbl),
+                    sbString.indexOf(errorMsg),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                );
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        //
+        return finalString;
+    }
+
+    public static void showScheduleWarningDialog(Context context,String dialogTitle, String fcmNewStatusLbl,String fcmNewStatus, String fcmUserNickLbl, String fcmUserNick,String errorMsgLbl,String errorMsg){
+        android.app.AlertDialog.Builder dialogScheduleWarning = new android.app.AlertDialog.Builder(context);
+        dialogScheduleWarning.setTitle(dialogTitle);
+        dialogScheduleWarning.setMessage(
+            getFormattedScheduleWarningInfo(
+                fcmNewStatusLbl,
+                fcmNewStatus,
+                fcmUserNickLbl,
+                fcmUserNick,
+                errorMsgLbl,
+                errorMsg
+            )
+        );
+        dialogScheduleWarning.setCancelable(true);
+        dialogScheduleWarning.show();
+
     }
 
     private static class GenericExtFilter implements FilenameFilter {

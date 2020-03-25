@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act015;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,7 +13,6 @@ import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Local_Data_List_Adapter;
@@ -81,6 +79,10 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         List<String> translateList = new ArrayList<>();
         translateList.add("alert_schedule_comment_ttl");
         translateList.add("lbl_filter");
+        translateList.add("dialog_schedule_warning_ttl");
+        translateList.add("dialog_schedule_warning_new_status_lbl");
+        translateList.add("dialog_schedule_warning_user_nick_lbl");
+        translateList.add("dialog_schedule_warning_error_msg_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -178,15 +180,18 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
                 mket_filter.getText().toString().trim()
         );
         //
-        mAdapter.setOnIvCommentClickListner(new Local_Data_List_Adapter.OnIvCommentClickListner() {
+        mAdapter.setOnIvScheduleWarningClickListner(new Local_Data_List_Adapter.OnIvScheduleWarningClickListner() {
             @Override
-            public void OnIvCommentClick(String comment) {
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_schedule_comment_ttl"),
-                        comment,
-                        null,
-                        0
+            public void OnIvScheduleWarningClick(String fcmNewStatus, String fcmUserNick, String errorMsg) {
+                ToolBox_Inf.showScheduleWarningDialog(
+                    context,
+                    hmAux_Trans.get("dialog_schedule_warning_ttl"),
+                    hmAux_Trans.get("dialog_schedule_warning_new_status_lbl"),
+                    hmAux_Trans.get(fcmNewStatus),
+                    hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl"),
+                    fcmUserNick,
+                    hmAux_Trans.get("dialog_schedule_warning_error_msg_lbl"),
+                    errorMsg
                 );
             }
         });

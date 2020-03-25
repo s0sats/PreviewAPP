@@ -123,4 +123,14 @@
         android:layout_weight="1"
         tools:text="Comments" />
 
+    <ImageView
+        android:id="@+id/local_data_list_cell_01_iv_schedule_warning_infos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        app:srcCompat="@drawable/ic_info"
+        android:layout_gravity="end"
+        android:visibility="gone"
+        />
+
 </LinearLayout>

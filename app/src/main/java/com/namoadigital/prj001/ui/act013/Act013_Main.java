@@ -123,6 +123,11 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         translateList.add("dialog_serial_search_start");
         translateList.add("alert_product_no_allow_new_serial_msg");
         //
+        translateList.add("dialog_schedule_warning_ttl");
+        translateList.add("dialog_schedule_warning_new_status_lbl");
+        translateList.add("dialog_schedule_warning_user_nick_lbl");
+        translateList.add("dialog_schedule_warning_error_msg_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -352,15 +357,18 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                         pendencies
                 );
         //
-        mAdapter.setOnIvCommentClickListner(new Local_Data_List_Adapter.OnIvCommentClickListner() {
+        mAdapter.setOnIvScheduleWarningClickListner(new Local_Data_List_Adapter.OnIvScheduleWarningClickListner() {
             @Override
-            public void OnIvCommentClick(String comment) {
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_schedule_comment_ttl"),
-                        comment,
-                        null,
-                        0
+            public void OnIvScheduleWarningClick(String fcmNewStatus, String fcmUserNick, String errorMsg) {
+                ToolBox_Inf.showScheduleWarningDialog(
+                    context,
+                    hmAux_Trans.get("dialog_schedule_warning_ttl"),
+                    hmAux_Trans.get("dialog_schedule_warning_new_status_lbl"),
+                    hmAux_Trans.get(fcmNewStatus),
+                    hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl"),
+                    fcmUserNick,
+                    hmAux_Trans.get("dialog_schedule_warning_error_msg_lbl"),
+                    errorMsg
                 );
             }
         });

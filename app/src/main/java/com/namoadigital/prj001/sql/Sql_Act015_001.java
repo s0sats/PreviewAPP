@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
@@ -15,6 +16,9 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * LUCHE - 17/02/2020
  *
  * Modificado query substituido o campos custom_form_data_serv pela pk do agedamento (md_schedule_exec)
+ *
+ * LUCHE - 25/03/2020
+ * Modificado query do para retornar tb as informações de fcm e error_msg
  */
 
 public class Sql_Act015_001 implements Specification {
@@ -59,14 +63,24 @@ public class Sql_Act015_001 implements Specification {
                         "  s.site_desc\n," +
                         "  l.schedule_prefix,\n"+
                         "  l.schedule_code,\n"+
-                        "  l.schedule_exec\n"+
+                        "  l.schedule_exec,\n"+
+                        "  sc.fcm_new_status,\n"+
+                        "  sc.fcm_user_nick,\n"+
+                        "  sc.schedule_erro_msg\n"+
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l,\n" +
                         GE_Custom_Form_DataDao.TABLE+ " d\n " +
+
                         "  LEFT JOIN\n" +
                         MD_SiteDao.TABLE +" s ON\n" +
                         "               d.customer_code = s.customer_code\n" +
                         "               AND d.site_code = s.site_code\n    " +
+                        "  LEFT JOIN\n" +
+                        "       " + MD_Schedule_ExecDao.TABLE+ " sc ON\n " +
+                        "      l.schedule_prefix = sc.schedule_prefix\n" +
+                        "      AND l.schedule_code = sc.schedule_code\n" +
+                        "      AND l.schedule_exec = sc.schedule_exec\n" +
+                        "\n" +
                         "  WHERE\n" +
                         "      l.customer_code = d.customer_code\n" +
                         "      AND l.custom_form_type = d.custom_form_type\n" +

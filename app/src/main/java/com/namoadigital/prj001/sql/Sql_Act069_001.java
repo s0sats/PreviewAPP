@@ -6,6 +6,11 @@ import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
+/**
+ * LUCHE - 25/03/2020
+ * Modificado query do para retornar tb as informações de fcm e error_msg
+ */
+
 public class Sql_Act069_001 implements Specification {
     private long customer_code;
     private String site_logged;
@@ -115,9 +120,17 @@ public class Sql_Act069_001 implements Specification {
                 "       END " + MD_Schedule_ExecDao.SCHEDULE_PK + " \n," +
                 "       t.schedule_prefix,\n" +
                 "       t.schedule_code,\n" +
-                "       t.schedule_exec\n" +
+                "       t.schedule_exec\n," +
+                "       s.fcm_new_status\n," +
+                "       s.fcm_user_nick\n," +
+                "       s.schedule_erro_msg\n" +
                 " FROM\n" +
                 "     " + TK_TicketDao.TABLE + " t \n" +
+                " LEFT JOIN\n" +
+                "     " + MD_Schedule_ExecDao.TABLE + " s ON \n" +
+                "       t.schedule_prefix = s.schedule_prefix \n" +
+                "       AND t.schedule_code = s.schedule_code\n" +
+                "       AND t.schedule_exec = s.schedule_exec \n" +
                 " WHERE\n" +
                 " t.customer_code = '" + customer_code + "'\n" +
                 statusFilter +

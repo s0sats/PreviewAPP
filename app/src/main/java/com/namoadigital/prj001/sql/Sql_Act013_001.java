@@ -19,6 +19,8 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  * Modificado query, removimendo o campos custom_form_data_serv e adiconando os campos da pk do novo
  * agendamento (md_schedule_exec)
  *
+ * LUCHE - 25/03/2020
+ * Modificado query do getScheduleQuery e getFormQuery, para retornar tb as informações de fcm e error_msg
  */
 
 public class Sql_Act013_001 implements Specification {
@@ -96,7 +98,10 @@ public class Sql_Act013_001 implements Specification {
             "    e.site_desc,\n" +
             "    e.schedule_prefix,\n" +
             "    e.schedule_code,\n" +
-            "    e.schedule_exec\n" +
+            "    e.schedule_exec,\n" +
+            "    e.fcm_new_status,\n" +
+            "    e.fcm_user_nick,\n" +
+            "    e.schedule_erro_msg\n" +
             "  FROM\n" +
             "   "+ MD_Schedule_ExecDao.TABLE +" e     \n" +
             "  WHERE\n" +
@@ -158,7 +163,10 @@ public class Sql_Act013_001 implements Specification {
             "  END "+MD_SiteDao.SITE_DESC +",\n"+
             "  l.schedule_prefix,\n"+
             "  l.schedule_code,\n"+
-            "  l.schedule_exec\n"+
+            "  l.schedule_exec,\n"+
+            "  sc.fcm_new_status,\n" +
+            "  sc.fcm_user_nick,\n" +
+            "  sc.schedule_erro_msg\n" +
             "  FROM\n" +
             "   " + GE_Custom_Form_LocalDao.TABLE+ " l\n" +
             "  LEFT JOIN " + GE_Custom_Form_DataDao.TABLE+ " d ON \n" +
@@ -170,6 +178,11 @@ public class Sql_Act013_001 implements Specification {
             "  LEFT JOIN "+MD_SiteDao.TABLE+" s ON \n" +
             "        d.customer_code = s.customer_code\n" +
             "      AND d.site_code = s.site_code\n " +
+            "  LEFT JOIN\n" +
+            "       " + MD_Schedule_ExecDao.TABLE+ " sc ON\n " +
+            "      l.schedule_prefix = sc.schedule_prefix\n" +
+            "      AND l.schedule_code = sc.schedule_code\n" +
+            "      AND l.schedule_exec = sc.schedule_exec\n" +
             "  WHERE\n" +
             "      l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' \n" +
             "      AND l.custom_form_status <> '" + Constant.SYS_STATUS_SENT+"'\n" +
