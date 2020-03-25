@@ -25,6 +25,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.Chat_C_Remove_Room;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.FCMMessage;
 import com.namoadigital.prj001.model.FCM_Schedule;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
@@ -331,10 +332,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             scheduleExec.setFcm_user_nick(scheduleMsgLong.getUser_nick());
                             dumbDebugger++;
                         }
+                        String notificationDesc =
+                            scheduleExec.getSchedule_type().equals(ConstantBaseApp.MD_SCHEDULE_TYPE_FORM)
+                                ? scheduleExec.getCustom_form_desc()
+                                : scheduleExec.getTicket_type_desc();
+                        //
                         //Chama notificação.
                         ToolBox_Inf.showScheduleNotification(
                             getApplicationContext(),
-                            fcmMessage.getMsg_short(),
+                            scheduleExec.getDate_start(),
+                            notificationDesc,
                             scheduleExec.getStatus(),
                             scheduleExec.getFcm_new_status(),
                             scheduleExec.getFcm_user_nick()
@@ -342,10 +349,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     }
                 }
                 //
-               /* DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(schedulesToUpdate, false);
+                DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(schedulesToUpdate, false);
                 if(daoObjReturn.hasError()){
                     throw new Exception(daoObjReturn.getErrorMsg());
-                }*/
+                }
             }
         }catch (Exception e){
             ToolBox_Inf.registerException(getClass().getName(),e);

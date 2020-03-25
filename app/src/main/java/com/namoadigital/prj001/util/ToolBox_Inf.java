@@ -2606,9 +2606,25 @@ public class ToolBox_Inf {
         }
     }
 
-    public static void showScheduleNotification(Context context,String schedulePk, String currentStatus, String newStatus, String userNick) {
+    public static void showScheduleNotification(Context context, String scheduleDateStart, String scheduleItemDesc, String currentStatus, String newStatus, String userNick) {
         String mModule = "SYS";
         String mResource_name = "SYS_APP";
+        //Formata Data para forao de exbição.
+        scheduleDateStart =   millisecondsToString(
+            dateToMilliseconds(scheduleDateStart +" "+ToolBox_Con.getPreference_Customer_TMZ(context)),
+            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+        );
+        //Tratativa para status que só existe no Checklist.
+        String testStatus = currentStatus;
+        switch (testStatus){
+            case ConstantBaseApp.SYS_STATUS_IN_PROCESSING:
+                currentStatus = ConstantBaseApp.SYS_STATUS_PROCESS;
+                break;
+            case ConstantBaseApp.SYS_STATUS_FINALIZED:
+                currentStatus = ConstantBaseApp.SYS_STATUS_DONE;
+                break;
+            default:
+        }
         //
         List<String> transList = new ArrayList<>();
         //
@@ -2616,6 +2632,7 @@ public class ToolBox_Inf {
         transList.add("schedule_notification_current_status_lbl");
         transList.add("schedule_notification_new_status_lbl");
         transList.add("schedule_notification_user_nick_lbl");
+        //
         HMAux hmAuxTrans = setLanguage(
                             context,
                             mModule,
@@ -2627,62 +2644,42 @@ public class ToolBox_Inf {
                             ToolBox_Con.getPreference_Translate_Code(context),
                             transList
                         );
+
+
         /**
          * A PORRA DO REMOTEVIEWS NÃO SUPORTA A PORRA DO CONSTRAINT LAYOUT COMO RAIZ
          * https://stackoverflow.com/questions/45396426/crash-when-using-constraintlayout-in-notification
          */
-        RemoteViews notificationLayout = new RemoteViews(context.getPackageName(), R.layout.schedule_notification_small2);
-        notificationLayout.setTextViewText(R.id.schedule_notification_s_cur_status_lbl, hmAuxTrans.get("schedule_notification_current_status_lbl"));
-        notificationLayout.setTextViewText(R.id.schedule_notification_s_cur_status,hmAuxTrans.get(currentStatus));
-        notificationLayout.setTextViewText(R.id.schedule_notification_s_new_status_lbl, hmAuxTrans.get("schedule_notification_new_status_lbl"));
-        notificationLayout.setTextViewText(R.id.schedule_notification_s_new_status_val, hmAuxTrans.get(newStatus));
-        notificationLayout.setTextViewText(R.id.schedule_notification_s_user_nick_lbl, hmAuxTrans.get("schedule_notification_user_nick_lbl"));
-        notificationLayout.setTextViewText(R.id.schedule_notification_s_user_nick_val, userNick);
+        //Notificação Small, monsta icone de warning, data de incio e descrição do form,caso seja N-Form, ou desc do tipo de ticket, caos ticket.
+        RemoteViews notificationLayoutSmall = new RemoteViews(context.getPackageName(), R.layout.schedule_notification_small);
+        notificationLayoutSmall.setTextViewText(R.id.schedule_notification_small_date_start,scheduleDateStart);
+        notificationLayoutSmall.setTextViewText(R.id.schedule_notification_small_desc,scheduleItemDesc);
+        //Notificação Big, exibe os dados da Small, mas a troca de Status e user que gerou a ação.
+        RemoteViews notificationLayoutBig = new RemoteViews(context.getPackageName(), R.layout.schedule_notification_big);
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_date_start,scheduleDateStart);
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_desc,scheduleItemDesc);
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_cur_status_lbl, hmAuxTrans.get("schedule_notification_current_status_lbl"));
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_cur_status, hmAuxTrans.get(currentStatus));
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_new_status_lbl, hmAuxTrans.get("schedule_notification_new_status_lbl"));
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_s_new_status_val, hmAuxTrans.get(newStatus));
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_user_nick_lbl, hmAuxTrans.get("schedule_notification_user_nick_lbl"));
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_user_nick_val, userNick);
         //
-        String nfTitle = hmAuxTrans.get("schedule_notification_schedule_pk_lbl") + " " + schedulePk;
-        /*String sbFinal =
-            hmAuxTrans.get("schedule_notification_current_status_lbl") + " " + hmAuxTrans.get(currentStatus) + "\n" +
-            hmAuxTrans.get("schedule_notification_new_status_lbl") + " " + hmAuxTrans.get(newStatus) + "\n"+
-            hmAuxTrans.get("schedule_notification_user_nick_lbl") + " " + userNick;
-        //
-        SpannableString finalString = new SpannableString(sbFinal);
-        try{
-            finalString.setSpan(
-                new StyleSpan(Typeface.BOLD),
-                sbFinal.indexOf(hmAuxTrans.get("schedule_notification_current_status_lbl")),
-                sbFinal.indexOf(currentStatus),
-                Spanned.SPAN_INCLUSIVE_INCLUSIVE
-            );
-            finalString.setSpan(
-                new StyleSpan(Typeface.BOLD),
-                sbFinal.indexOf(hmAuxTrans.get("newStatus")),
-                sbFinal.indexOf(schedulePk),
-                Spanned.SPAN_INCLUSIVE_INCLUSIVE
-            );
-            finalString.setSpan(
-                new StyleSpan(Typeface.BOLD),
-                sbFinal.indexOf(hmAuxTrans.get("schedule_notification_user_nick_lbl")),
-                sbFinal.indexOf(userNick),
-                Spanned.SPAN_INCLUSIVE_INCLUSIVE
-            );
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
-
         NotificationManager nm = (NotificationManager)
             context.getSystemService(NOTIFICATION_SERVICE);
         //
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.drawable.ic_calendario);
-        builder.setContentTitle(nfTitle);
         builder.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
-        builder.setCustomContentView(notificationLayout);
+        builder.setCustomContentView(notificationLayoutSmall);
+        builder.setCustomBigContentView(notificationLayoutBig);
         builder.setAutoCancel(true);
-        //
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            nm.notify(999, builder.build());
+        //Tentativa de unique
+        int id = (int) (Calendar.getInstance().getTimeInMillis() / 1000);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            nm.notify(id, builder.build());
         }else {
-            nm.notify(999, builder.getNotification());
+            nm.notify(id, builder.getNotification());
         }
     }
 
