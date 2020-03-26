@@ -80,6 +80,23 @@ public class FCM_Schedule {
     }
 
     /**
+     * LUCHE - 26/03/2020
+     * Metodo que retorna o status correto baseado no tipo do update
+     * @return - Status ou null se schedule_msg_long ainda não definida
+     */
+    @Nullable
+    public String getStatus(){
+        if(schedule_msg_long != null){
+            return  schedule_msg_type.equals(ConstantBaseApp.FCM_ACTION_SCHEDULE_UPDATE)
+                    ? schedule_msg_long.getSchedule_status()
+                    : schedule_msg_long.getExec_status();
+
+        }
+        //
+        return null;
+    }
+
+    /**
      * LUCHE - 24/03/2020
      * Metodo que extrai a pk da short_msg e seta no obj
      * @param short_msg Short MSg do FCM
