@@ -28,6 +28,8 @@ public class MD_PartnerDao extends BaseDao implements Dao<MD_Partner> {
     public static final String PARTNER_CODE = "partner_code";
     public static final String PARTNER_ID = "partner_id";
     public static final String PARTNER_DESC = "partner_desc";
+    public static final String OPERATIONAL = "operational";
+    public static final String BILLING = "billing";
 
     private String[] columns = {CUSTOMER_CODE, PARTNER_CODE, PARTNER_ID, PARTNER_DESC};
     public MD_PartnerDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -230,7 +232,8 @@ public class MD_PartnerDao extends BaseDao implements Dao<MD_Partner> {
             md_partner.setPartner_code(cursor.getInt(cursor.getColumnIndex(PARTNER_CODE)));
             md_partner.setPartner_id(cursor.getString(cursor.getColumnIndex(PARTNER_ID)));
             md_partner.setPartner_desc(cursor.getString(cursor.getColumnIndex(PARTNER_DESC)));
-
+            md_partner.setOperational(cursor.getInt(cursor.getColumnIndex(OPERATIONAL)));
+            md_partner.setBilling(cursor.getInt(cursor.getColumnIndex(BILLING)));
             return md_partner;
         }
     }
@@ -254,6 +257,14 @@ public class MD_PartnerDao extends BaseDao implements Dao<MD_Partner> {
 
             if(md_partner.getPartner_desc() != null){
                 contentValues.put(PARTNER_DESC,md_partner.getPartner_desc());
+            }
+
+            if(md_partner.getOperational() > -1){
+                contentValues.put(OPERATIONAL,md_partner.getOperational());
+            }
+
+            if(md_partner.getBilling() > -1){
+                contentValues.put(BILLING,md_partner.getBilling());
             }
 
             return contentValues;
