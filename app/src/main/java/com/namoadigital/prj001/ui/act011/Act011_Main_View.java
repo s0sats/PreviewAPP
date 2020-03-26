@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,4 +38,6 @@ public interface Act011_Main_View {
     void addWsResults(ArrayList<HMAux> formDataErroAux);
 
     void afterSaveFlow();
+
+    void showFormCancelledMsg(GE_Custom_Form_Local customFormLocal, MD_Schedule_Exec scheduleExec);
 }

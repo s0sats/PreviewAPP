@@ -64,7 +64,8 @@ public class Sql_Act017_004 implements Specification {
                 "  t.ticket_code,\n "+
                 "  t.type_path,\n "+
                 "  s.fcm_new_status,\n "+
-                "  s.fcm_user_nick\n "+
+                "  s.fcm_user_nick,\n "+
+                "  s.schedule_erro_msg\n "+
                 " \n" +
                 "  FROM\n" +
                 "   " + MD_Schedule_ExecDao.TABLE+ " s\n" +

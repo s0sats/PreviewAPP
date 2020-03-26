@@ -35,4 +35,6 @@ public interface Act011_Main_Presenter {
     boolean isInProcessing(GE_Custom_Form_Local formLocal);
 
     void processWS_SaveReturn(String json);
+
+    void cancelScheduleAndForm(GE_Custom_Form_Local customFormLocal, MD_Schedule_Exec scheduleExec);
 }

@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -325,13 +326,18 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         Drawable llDrawable = null;
 
         switch (item.get(Act017_Main.ACT017_MODULE_KEY)) {
-
             case Constant.MODULE_CHECKLIST:
                 //16/08/2018 - Add icone de comentario quando houver
                 if(!item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE).isEmpty()){
+                    int iconColor =  valueExists(item,MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG)
+                                     ? R.color.namoa_color_danger_red
+                                     : R.color.light_to_dark_blue_color;
+                    //
                     iv_form_info.setVisibility(View.VISIBLE);
+                    iv_form_info.setColorFilter(context.getResources().getColor(iconColor), PorterDuff.Mode.SRC_ATOP);
                 }else{
                     iv_form_info.setVisibility(View.GONE);
+                    iv_form_info.setColorFilter(context.getResources().getColor(R.color.light_to_dark_blue_color), PorterDuff.Mode.SRC_ATOP);
                 }
                 //
                 iv_form_info.setOnClickListener(new View.OnClickListener() {
@@ -513,6 +519,15 @@ public class Module_Schedules_Adapter extends BaseAdapter {
             tv_item_comment.setText(item.get(MD_Schedule_ExecDao.COMMENTS));
         }
         tv_ttl.setText(hmAux_Trans.get("lbl_ticket"));
+        //
+        int iconColor =
+                valueExists(item,MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG)
+                ? R.color.namoa_color_danger_red
+                : R.color.light_to_dark_blue_color;
+        //
+        iv_form_info.setVisibility(View.VISIBLE);
+        iv_form_info.setColorFilter(context.getResources().getColor(iconColor), PorterDuff.Mode.SRC_ATOP);
+
         iv_form_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

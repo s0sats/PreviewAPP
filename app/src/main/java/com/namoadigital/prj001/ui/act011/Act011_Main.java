@@ -121,6 +121,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR = 5;
+    public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR = 6;
 
 
     private Act011_Main_Presenter mPresenter;
@@ -350,6 +351,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         transList.add("lbl_schedule");
         transList.add("alert_error_on_update_schedule_status_ttl");
         transList.add("alert_error_on_update_schedule_status_msg");
+        //
+        transList.add("alert_schedule_cancelled_by_server_ttl");
+        transList.add("alert_schedule_cancelled_by_server_msg");
+        transList.add("alert_schedule_warning_new_status_lbl");
+        transList.add("alert_warning_user_nick_lbl");
+        transList.add("alert_erro_on_cancel_schedule_form_ttl");
+        transList.add("alert_erro_on_cancel_schedule_form_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -2138,7 +2146,55 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         0
                 );
                 break;
+            case SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR:
+                ToolBox.alertMSG(
+                    context,
+                    title,
+                    msg,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onBackPressed();
+                        }
+                    },
+                    0
+                );
+                break;
         }
+    }
+
+    @Override
+    public void showFormCancelledMsg(final GE_Custom_Form_Local customFormLocal, final MD_Schedule_Exec scheduleExec) {
+        android.app.AlertDialog.Builder dialogScheduleWarning = new android.app.AlertDialog.Builder(context);
+        dialogScheduleWarning.setTitle(hmAux_Trans.get("alert_schedule_cancelled_by_server_ttl"));
+        dialogScheduleWarning.setMessage(
+                ToolBox_Inf.getFormattedScheduleWarningInfo(
+                    hmAux_Trans.get("alert_schedule_warning_new_status_lbl"),
+                    hmAux_Trans.get(scheduleExec.getFcm_new_status()),
+                    hmAux_Trans.get("alert_warning_user_nick_lbl"),
+                    scheduleExec.getFcm_user_nick(),
+                    null,
+                    null,
+                    hmAux_Trans.get("alert_schedule_cancelled_by_server_msg")+"\n"
+                )
+        );
+        dialogScheduleWarning.setCancelable(true);
+        dialogScheduleWarning.setPositiveButton(
+            hmAux_Trans.get("sys_alert_btn_ok"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mPresenter.cancelScheduleAndForm(customFormLocal,scheduleExec);
+                }
+            }
+        );
+        //
+        AlertDialog dialog = dialogScheduleWarning.create();
+        dialog.show();
+        //
+        dialog.getButton(
+            DialogInterface.BUTTON_POSITIVE
+        ).setTextColor(getResources().getColor(R.color.namoa_lime_green));
     }
 
     private void flowControl() {

@@ -1271,19 +1271,24 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         SpannableString finalString = null;
         String commentMsg = "";
         String scheduleWarning = "";
-        //Se infos de warning existirem, gera string
-        if( item.hasConsistentValue(MD_Schedule_ExecDao.FCM_NEW_STATUS)
-            && item.hasConsistentValue(MD_Schedule_ExecDao.FCM_USER_NICK)
-            && !item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS).isEmpty()
-            && !item.get(MD_Schedule_ExecDao.FCM_USER_NICK).isEmpty()
-        ){
-            scheduleWarning =
-                hmAux_Trans.get("dialog_schedule_warning_new_status_lbl") + "\n" +
-                hmAux_Trans.get(item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS)) + "\n" +
-                hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl") +"\n" +
-                item.get(MD_Schedule_ExecDao.FCM_USER_NICK)+"\n"
-            ;
+        String scheduleWarningStatus = "";
+        String scheduleWarningNick = "";
+        String scheduleWarningErroMsg = "";
+        //Schedule Warning é comum a ambos os casos
+        if(item.hasConsistentValue(MD_Schedule_ExecDao.FCM_NEW_STATUS) && !item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS).isEmpty()){
+            scheduleWarningStatus =   hmAux_Trans.get("dialog_schedule_warning_new_status_lbl") + "\n" +
+                                      hmAux_Trans.get(item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS)) + "\n";
         }
+        if(item.hasConsistentValue(MD_Schedule_ExecDao.FCM_USER_NICK) && !item.get(MD_Schedule_ExecDao.FCM_USER_NICK).isEmpty()){
+            scheduleWarningNick = hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl") +"\n" +
+                                  item.get(MD_Schedule_ExecDao.FCM_USER_NICK)+"\n";
+        }
+        if(item.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) && !item.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG).isEmpty()){
+            scheduleWarningErroMsg =   hmAux_Trans.get("dialog_schedule_warning_error_msg_lbl") +"\n" +
+                item.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG)+"\n";
+        }
+        //Parece lusitano, mas se a var referente esta preenchida, significa que ter de fazer o span mais abaixo.
+        scheduleWarning += scheduleWarningStatus + scheduleWarningNick + scheduleWarningErroMsg;
         //
         switch (item.get(Act017_Main.ACT017_MODULE_KEY)) {
             case Constant.MODULE_CHECKLIST:
@@ -1340,19 +1345,31 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         //Como o scheduleWarning é comum a todos, seus spannable foi colocado fora do switch para não ter codigo repetido
         if(scheduleWarning.trim().length() > 0){
             try{
-                finalString.setSpan(
-                    new StyleSpan(Typeface.BOLD),
-                    commentMsg.indexOf(hmAux_Trans.get("dialog_schedule_warning_new_status_lbl")),
-                    commentMsg.indexOf(hmAux_Trans.get(item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS))),
-                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
-                );
+                if(!scheduleWarningStatus.isEmpty()) {
+                    finalString.setSpan(
+                        new StyleSpan(Typeface.BOLD),
+                        commentMsg.indexOf(hmAux_Trans.get("dialog_schedule_warning_new_status_lbl")),
+                        commentMsg.indexOf(hmAux_Trans.get(item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS))),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                    );
+                }
                 //
-                finalString.setSpan(
-                    new StyleSpan(Typeface.BOLD),
-                    commentMsg.indexOf(hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl")),
-                    commentMsg.indexOf(item.get(MD_Schedule_ExecDao.FCM_USER_NICK)),
-                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
-                );
+                if(!scheduleWarningNick.isEmpty()) {
+                    finalString.setSpan(
+                        new StyleSpan(Typeface.BOLD),
+                        commentMsg.indexOf(hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl")),
+                        commentMsg.indexOf(item.get(MD_Schedule_ExecDao.FCM_USER_NICK)),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                    );
+                }
+                if(!scheduleWarningErroMsg.isEmpty()) {
+                    finalString.setSpan(
+                        new StyleSpan(Typeface.BOLD),
+                        commentMsg.indexOf(hmAux_Trans.get("dialog_schedule_warning_error_msg_lbl")),
+                        commentMsg.indexOf(item.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG)),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                    );
+                }
             }catch (Exception e){
                 e.printStackTrace();
             }

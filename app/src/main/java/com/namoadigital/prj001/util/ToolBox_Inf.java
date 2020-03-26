@@ -3329,8 +3329,8 @@ public class ToolBox_Inf {
         return files;
     }
 
-    private static SpannableString getFormattedScheduleWarningInfo(String fcmNewStatusLbl,String fcmNewStatus, String fcmUserNickLbl,String fcmUserNick,String errorMsgLbl, String errorMsg) {
-        StringBuilder sbString = new StringBuilder("");
+    public static SpannableString getFormattedScheduleWarningInfo(String fcmNewStatusLbl,String fcmNewStatus, String fcmUserNickLbl,String fcmUserNick,String errorMsgLbl, String errorMsg, String initialText) {
+        StringBuilder sbString = new StringBuilder(initialText != null ? initialText : "");
         SpannableString finalString = null;
         //
         if(fcmNewStatus != null && !fcmNewStatus.isEmpty()){
@@ -3374,12 +3374,16 @@ public class ToolBox_Inf {
         }catch (Exception e){
             e.printStackTrace();
         }
-        //
+        //5
         return finalString;
     }
 
+    public static SpannableString getFormattedScheduleWarningInfo(String fcmNewStatusLbl,String fcmNewStatus, String fcmUserNickLbl,String fcmUserNick,String errorMsgLbl, String errorMsg) {
+        return getFormattedScheduleWarningInfo(fcmNewStatusLbl,fcmNewStatus,fcmUserNickLbl,fcmUserNick,errorMsgLbl,errorMsg,null);
+    }
+
     public static void showScheduleWarningDialog(Context context,String dialogTitle, String fcmNewStatusLbl,String fcmNewStatus, String fcmUserNickLbl, String fcmUserNick,String errorMsgLbl,String errorMsg){
-        android.app.AlertDialog.Builder dialogScheduleWarning = new android.app.AlertDialog.Builder(context);
+        android.app.AlertDialog.Builder dialogScheduleWarning = new android.app.AlertDialog.Builder(context,R.style.AlertDialogTheme);
         dialogScheduleWarning.setTitle(dialogTitle);
         dialogScheduleWarning.setMessage(
             getFormattedScheduleWarningInfo(
@@ -3393,7 +3397,6 @@ public class ToolBox_Inf {
         );
         dialogScheduleWarning.setCancelable(true);
         dialogScheduleWarning.show();
-
     }
 
     private static class GenericExtFilter implements FilenameFilter {

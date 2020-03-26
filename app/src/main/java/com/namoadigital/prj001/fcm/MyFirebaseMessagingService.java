@@ -208,7 +208,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             ) {
                 handleTkFMC(fcmMessage);
 
-            } if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_SCHEDULE)) {
+            } else if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_SCHEDULE)) {
                 //24/03/2020 - Todas as msg de scheduel, devem ser SILENT
                 if(fcmMessage.getType().equals(ConstantBaseApp.FCM_TYPE_SILENT)) {
                     handleScheduleFCM(fcmMessage);
