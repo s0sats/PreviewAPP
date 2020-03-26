@@ -100,26 +100,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/footer_dialog_app_tv_site_lbl"
+                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/footer_dialog_app_ss_site"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:layout_marginTop="10dp"
-                    android:text="SITE"
-                    android:textColor="@color/namoa_color_dark_blue_lib"
-                    android:textSize="@dimen/font_size_title_md_lib"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/footer_dialog_app_tv_site_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-
-                    android:text="Stuttgart"
-                    android:textColor="@color/namoa_color_light_blue_lib"
-                    android:textSize="@dimen/font_size_item_md_lib" />
+                    />
 
             </LinearLayout>
 
@@ -129,26 +115,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/footer_dialog_app_tv_zone_lbl"
+                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/footer_dialog_app_ss_zone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="10dp"
-                    android:text="ZONE"
-                    android:textColor="@color/namoa_color_dark_blue_lib"
-                    android:textSize="@dimen/font_size_title_md_lib"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/footer_dialog_app_tv_zone_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-
-                    android:text="Viellgiehn"
-                    android:textColor="@color/namoa_color_light_blue_lib"
-                    android:textSize="@dimen/font_size_item_md_lib" />
+                    android:layout_marginBottom="5dp"/>
 
             </LinearLayout>
 
@@ -158,26 +129,11 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/footer_dialog_app_tv_operation_lbl"
+                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/footer_dialog_app_ss_operation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="10dp"
-                    android:text="OPERATION"
-                    android:textColor="@color/namoa_color_dark_blue_lib"
-                    android:textSize="@dimen/font_size_title_md_lib"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/footer_dialog_app_tv_operation_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-
-                    android:text="BMW"
-                    android:textColor="@color/namoa_color_light_blue_lib"
-                    android:textSize="@dimen/font_size_item_md_lib" />
+                    android:layout_marginBottom="5dp"/>
             </LinearLayout>
 
             <LinearLayout
