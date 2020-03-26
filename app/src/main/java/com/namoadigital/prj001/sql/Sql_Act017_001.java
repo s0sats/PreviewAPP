@@ -95,7 +95,9 @@ public class Sql_Act017_001 implements Specification {
                         "  s.schedule_prefix,\n" +
                         "  s.schedule_code,\n" +
                         "  s.schedule_desc,\n" +
-                        "  s.schedule_exec \n "+
+                        "  s.schedule_exec,\n "+
+                        "  s.fcm_new_status,\n "+
+                        "  s.fcm_user_nick\n "+
                         " \n" +
                         "  FROM\n" +
                         "   " + MD_Schedule_ExecDao.TABLE+ " s\n" +

@@ -199,6 +199,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("dialog_more_info_ttl");
         translateList.add("dialog_schedule_desc_lbl");
         //
+        translateList.add("dialog_schedule_warning_new_status_lbl");
+        translateList.add("dialog_schedule_warning_user_nick_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,

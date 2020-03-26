@@ -1270,13 +1270,30 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     public SpannableString getCommentMessage(HMAux item) {
         SpannableString finalString = null;
         String commentMsg = "";
+        String scheduleWarning = "";
+        //Se infos de warning existirem, gera string
+        if( item.hasConsistentValue(MD_Schedule_ExecDao.FCM_NEW_STATUS)
+            && item.hasConsistentValue(MD_Schedule_ExecDao.FCM_USER_NICK)
+            && !item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS).isEmpty()
+            && !item.get(MD_Schedule_ExecDao.FCM_USER_NICK).isEmpty()
+        ){
+            scheduleWarning =
+                hmAux_Trans.get("dialog_schedule_warning_new_status_lbl") + "\n" +
+                hmAux_Trans.get(item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS)) + "\n" +
+                hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl") +"\n" +
+                item.get(MD_Schedule_ExecDao.FCM_USER_NICK)+"\n"
+            ;
+        }
+        //
         switch (item.get(Act017_Main.ACT017_MODULE_KEY)) {
             case Constant.MODULE_CHECKLIST:
                 commentMsg =
                     hmAux_Trans.get("dialog_schedule_desc_lbl") +": \n"
                     + item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n"
                     + hmAux_Trans.get("form_type_dialog_lbl") + ": \n"
-                    + item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE) + " - " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC)+ "\n";
+                    + item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE) + " - " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC)+ "\n"+
+                    scheduleWarning;
+
                 //Seta negrito nas area necessarias
                 finalString = new SpannableString(commentMsg);
                 try {
@@ -1301,7 +1318,9 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             case ConstantBaseApp.PROFILE_MENU_TICKET:
                 commentMsg =
                         hmAux_Trans.get("dialog_schedule_desc_lbl") +": \n"
-                        + item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n";
+                        + item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n"+
+                        scheduleWarning;
+
                 //
                 finalString = new SpannableString(commentMsg);
                 try {
@@ -1317,6 +1336,26 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 }
                 break;
             default:
+        }
+        //Como o scheduleWarning é comum a todos, seus spannable foi colocado fora do switch para não ter codigo repetido
+        if(scheduleWarning.trim().length() > 0){
+            try{
+                finalString.setSpan(
+                    new StyleSpan(Typeface.BOLD),
+                    commentMsg.indexOf(hmAux_Trans.get("dialog_schedule_warning_new_status_lbl")),
+                    commentMsg.indexOf(hmAux_Trans.get(item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS))),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                );
+                //
+                finalString.setSpan(
+                    new StyleSpan(Typeface.BOLD),
+                    commentMsg.indexOf(hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl")),
+                    commentMsg.indexOf(item.get(MD_Schedule_ExecDao.FCM_USER_NICK)),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                );
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
         //
         return finalString;
