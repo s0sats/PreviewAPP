@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -62,6 +63,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     public static final String TEMP_SUFIX_FILE = "temp-";
     private Act071_Main_Presenter mPresenter;
+    private ScrollView svMain;
     private TextView tvTicketId;
     private TextView tvStatus;
     private TextView tvSerialId;
@@ -169,6 +171,13 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("alert_image_too_large_to_open_msg");
         //
         transList.add("seq_lbl");
+        transList.add("alert_schedule_cancelled_by_server_ttl");
+        transList.add("alert_schedule_cancelled_by_server_msg");
+        transList.add("alert_schedule_warning_new_status_lbl");
+        transList.add("alert_warning_user_nick_lbl");
+        transList.add("alert_error_on_cancel_schedule_ttl");
+        transList.add("alert_error_on_cancel_schedule_msg");
+        transList.add("alert_error_ticket_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -192,11 +201,15 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //
         if (mPresenter.validateBundleParams(mActionPrefix, mActionCode, mActionSeq, mSchedulePrefix, mScheduleCode, mScheduleExec)) {
             updateActionData();
+            //
+            if(mIsSchedule && mPresenter.isScheduleAbortProcess(mSchedulePrefix, mScheduleCode, mScheduleExec)){
+                svMain.setVisibility(View.INVISIBLE);
+                mPresenter.showScheduleCancelMsg(mSchedulePrefix,mScheduleCode,mScheduleExec);
+            }
         } else {
             paramErrorFlow();
         }
     }
-
 
     private void recoverIntentsInfo() {
         requestingBundle = getIntent().getExtras();
@@ -232,6 +245,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void bindViews() {
+        svMain = findViewById(R.id.act071_sv_main);
         tvTicketId = findViewById(R.id.act071_tv_ticket_id);
         tvStatus = findViewById(R.id.act071_tv_status);
         tvSerialId = findViewById(R.id.act071_tv_serial);
@@ -543,6 +557,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         this.mActionPrefix = mPrefix;
         this.mActionCode = mCode;
         updateActionData();
+    }
+
+    @Override
+    public String getRequestingAct() {
+        return requestingAct;
     }
 
     /**

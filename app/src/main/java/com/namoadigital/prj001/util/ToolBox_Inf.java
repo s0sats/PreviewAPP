@@ -3383,7 +3383,7 @@ public class ToolBox_Inf {
     }
 
     public static void showScheduleWarningDialog(Context context,String dialogTitle, String fcmNewStatusLbl,String fcmNewStatus, String fcmUserNickLbl, String fcmUserNick,String errorMsgLbl,String errorMsg){
-        android.app.AlertDialog.Builder dialogScheduleWarning = new android.app.AlertDialog.Builder(context,R.style.AlertDialogTheme);
+        android.app.AlertDialog.Builder dialogScheduleWarning = new android.app.AlertDialog.Builder(context);
         dialogScheduleWarning.setTitle(dialogTitle);
         dialogScheduleWarning.setMessage(
             getFormattedScheduleWarningInfo(

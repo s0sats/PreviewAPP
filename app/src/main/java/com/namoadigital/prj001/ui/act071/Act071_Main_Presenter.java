@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act071;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
@@ -340,14 +342,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      * @return
      */
     private boolean updateScheduleStatus(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec, String status) {
-        MD_Schedule_Exec scheduleExec = scheduleExecDao.getByString(
-            new MD_Schedule_Exec_Sql_001(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                schedule_prefix,
-                schedule_code,
-                schedule_exec
-            ).toSqlQuery()
-        );
+        MD_Schedule_Exec scheduleExec = getScheduleExec(schedule_prefix, schedule_code, schedule_exec);
         //
         if (MD_Schedule_Exec.isValidScheduleExec(scheduleExec)) {
             scheduleExec.setStatus(status);
@@ -357,6 +352,114 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         }
         //
         return false;
+    }
+
+    private MD_Schedule_Exec getScheduleExec(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
+        return scheduleExecDao.getByString(
+            new MD_Schedule_Exec_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedule_prefix,
+                schedule_code,
+                schedule_exec
+            ).toSqlQuery()
+        );
+    }
+
+    @Override
+    public boolean isScheduleAbortProcess(int mSchedulePrefix, int mScheduleCode, int mScheduleExec) {
+         MD_Schedule_Exec scheduleExec = getScheduleExec(mSchedulePrefix,mScheduleCode,mScheduleExec);
+         if(
+             MD_Schedule_Exec.isValidScheduleExec(scheduleExec)
+             && scheduleExec.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS)
+             && hasScheduleWarningInfo(scheduleExec)
+         ){
+            return true;
+         }
+        return false;
+    }
+
+    private boolean hasScheduleWarningInfo(MD_Schedule_Exec scheduleExec) {
+        return scheduleExec.getFcm_new_status() != null
+                && scheduleExec.getFcm_user_nick() != null;
+    }
+
+    @Override
+    public void showScheduleCancelMsg(int mSchedulePrefix, int mScheduleCode, int mScheduleExec) {
+        final MD_Schedule_Exec scheduleExec = getScheduleExec(mSchedulePrefix,mScheduleCode,mScheduleExec);
+        //
+        android.app.AlertDialog.Builder dialogScheduleWarning = new android.app.AlertDialog.Builder(context);
+        dialogScheduleWarning.setTitle(hmAux_Trans.get("alert_schedule_cancelled_by_server_ttl"));
+        dialogScheduleWarning.setMessage(
+            ToolBox_Inf.getFormattedScheduleWarningInfo(
+                hmAux_Trans.get("alert_schedule_warning_new_status_lbl"),
+                hmAux_Trans.get(scheduleExec.getFcm_new_status()),
+                hmAux_Trans.get("alert_warning_user_nick_lbl"),
+                scheduleExec.getFcm_user_nick(),
+                null,
+                null,
+                hmAux_Trans.get("alert_schedule_cancelled_by_server_msg")+"\n"
+            )
+        );
+        dialogScheduleWarning.setCancelable(true);
+        dialogScheduleWarning.setPositiveButton(
+            hmAux_Trans.get("sys_alert_btn_ok"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    cancelScheduleAndTicket(scheduleExec);
+                }
+            }
+        );
+        //
+        AlertDialog dialog = dialogScheduleWarning.create();
+        dialog.show();
+        //
+        dialog.getButton(
+            DialogInterface.BUTTON_POSITIVE
+        ).setTextColor(context.getResources().getColor(R.color.namoa_lime_green));
+    }
+
+    private void cancelScheduleAndTicket(MD_Schedule_Exec scheduleExec) {
+        String erroMsg = "";
+        String finalStatus =
+            scheduleExec.getFcm_new_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS)
+            ? ConstantBaseApp.SYS_STATUS_CANCELLED
+            : scheduleExec.getFcm_new_status();
+        TK_Ticket tkTicket = getTicketBySchedule(scheduleExec.getSchedule_prefix(),scheduleExec.getSchedule_code(),scheduleExec.getSchedule_exec());
+        //
+        if(tkTicket != null){
+            if(tkTicket.getCtrl() != null && tkTicket.getCtrl().size() > 0){
+                tkTicket.getCtrl().get(0).setCtrl_status(finalStatus);
+                tkTicket.getCtrl().get(0).getAction().setAction_status(finalStatus);
+            }
+            tkTicket.setTicket_status(finalStatus);
+            scheduleExec.setStatus(finalStatus);
+            //
+            DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
+            if(!daoObjReturn.hasError()){
+                daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
+                if(daoObjReturn.hasError()){
+                    erroMsg = hmAux_Trans.get("alert_error_on_cancel_schedule_msg");
+                }
+            }
+        } else{
+            erroMsg = hmAux_Trans.get("alert_error_ticket_not_found_msg");
+        }
+        //
+        if(!erroMsg.isEmpty()){
+            mView.showAlert(
+                hmAux_Trans.get("alert_error_on_cancel_schedule_ttl"),
+                erroMsg,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onBackPressedClicked(mView.getRequestingAct());
+                    }
+                }
+            );
+        }else{
+            onBackPressedClicked(mView.getRequestingAct());
+        }
     }
 
     private void uploadActionImage(TK_Ticket_Ctrl mTicketCtrl) {

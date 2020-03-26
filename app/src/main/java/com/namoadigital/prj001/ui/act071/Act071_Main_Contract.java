@@ -45,6 +45,8 @@ public interface Act071_Main_Contract {
         void updateTicketPk(int mPrefix, int mCode);
 
         void checkPostTicketSaveFlow();
+
+        String getRequestingAct();
     }
 
     interface I_Presenter{
@@ -80,6 +82,10 @@ public interface Act071_Main_Contract {
         void definePostTicketSaveFlow(int mSchedulePrefix, int mScheduleCode, int mScheduleExec);
 
         String getFormattedSeqText(String seq);
+
+        boolean isScheduleAbortProcess(int mSchedulePrefix, int mScheduleCode, int mScheduleExec);
+
+        void showScheduleCancelMsg(int mSchedulePrefix, int mScheduleCode, int mScheduleExec);
 
         /*boolean hasPartnerProfile(Integer partner_code);
 
