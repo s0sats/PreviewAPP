@@ -122,6 +122,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
         //
         //FragPreview
         transList.add("btn_search_service");
+        transList.add("btn_product_event");
         transList.add("services_tll");
         transList.add("total_lbl");
         transList.add("total_val");

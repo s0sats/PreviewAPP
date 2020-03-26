@@ -513,6 +513,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("new_product_event_ttl");
         transList.add("new_product_event_msg");
         transList.add("empty_list_lbl");
+        transList.add("btn_add_event");
+        transList.add("btn_search_service");
         //Product Event Selection Fragment
         transList.add("lbl_code");
         transList.add("lbl_id");

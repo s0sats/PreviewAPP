@@ -24,7 +24,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
-import com.namoa_digital.namoa_library.view.Gallery_Activity;
+import com.namoa_digital.namoa_library.view.Gallery_v2_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_All_ProductDao;
@@ -656,7 +656,7 @@ public class Act027_Product_Edit extends BaseFragment {
     private void callCamera() {
         sdAvoid = true;
 
-        Intent mIntent = new Intent(context, Gallery_Activity.class);
+        Intent mIntent = new Intent(context, Gallery_v2_Activity.class);
         mIntent.putExtra(ConstantBase.PID, iv_gallery.getId());
         mIntent.putExtra(ConstantBase.PTYPE, 10);
         mIntent.putExtra(ConstantBase.PPATH, (String) iv_gallery.getTag());

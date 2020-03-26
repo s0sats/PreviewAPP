@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="5dp">
 
@@ -77,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/namoa_cell_3_states"
-            android:text="Add Event"
+            tools:text="Add Event"
             android:textColor="@color/padrao_WHITE" />
 
     </LinearLayout>
@@ -96,7 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_namoa_main_states"
-            android:text="Service Search"
+            tools:text="Service Search"
             android:textColor="@color/padrao_WHITE" />
 
     </LinearLayout>

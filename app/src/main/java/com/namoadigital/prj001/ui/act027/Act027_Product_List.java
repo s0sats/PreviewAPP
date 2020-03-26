@@ -139,6 +139,9 @@ public class Act027_Product_List extends BaseFragment {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
+        //
+        btn_add_event.setText(hmAux_Trans.get("btn_add_event"));
+        btn_service_preview.setText(hmAux_Trans.get("btn_search_service"));
     }
 
     private void iniAction() {

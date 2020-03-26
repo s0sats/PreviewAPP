@@ -217,6 +217,7 @@ public class Act043_Frag_Preview extends BaseFragment {
         tv_so_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
         //
         btn_search_service.setText(hmAux_Trans.get("btn_search_service"));
+        btn_product_event.setText(hmAux_Trans.get("btn_product_event"));
         if( mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
             || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
             || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_BUDGET)
