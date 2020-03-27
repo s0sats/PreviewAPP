@@ -13,6 +13,7 @@ import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Local_Data_List_Adapter;
@@ -84,6 +85,9 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         translateList.add("dialog_schedule_warning_user_nick_lbl");
         translateList.add("dialog_schedule_warning_error_msg_lbl");
         //
+        translateList.add("alert_form_status_prevents_to_open_ttl");
+        translateList.add("alert_form_status_prevents_to_open_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -154,7 +158,8 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 form_selected_index = position;
-                mPresenter.addFormInfoToBundle(item);
+                //LUCHE - 27/03/2020
+                mPresenter.processClickAction(item);
             }
         });
 
@@ -197,6 +202,17 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         });
         //
         lv_sent.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void showMsg(String ttl, String msg) {
+        ToolBox.alertMSG(
+            context,
+            ttl,
+            msg,
+            null,
+            0
+        );
     }
 
     @Override

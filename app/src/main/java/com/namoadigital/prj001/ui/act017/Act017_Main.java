@@ -72,6 +72,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public static final String SERIAL_CREATION_DENIED = "serial_creation_denied" ;
     public static final String MODULE_TICKET_EXEC_CONFIRM = "module_ticket_exec_confirm" ;
     public static final String MODULE_SCHEDULE_TICKET_CREATION_ERROR = "module_schedule_ticket_creation_error" ;
+    public static final String MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN = "module_schedule_status_prevent_to_open" ;
 
     private ListView lv_schedules;
     private Bundle bundle;
@@ -202,6 +203,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("dialog_schedule_warning_new_status_lbl");
         translateList.add("dialog_schedule_warning_user_nick_lbl");
         translateList.add("dialog_schedule_warning_error_msg_lbl");
+        //
+        translateList.add("alert_schedule_status_prevents_to_open_ttl");
+        translateList.add("alert_schedule_status_prevents_to_open_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -484,6 +488,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             case MODULE_SCHEDULE_TICKET_CREATION_ERROR:
                 title = hmAux_Trans.get("alert_error_on_create_ticket_action_ttl");
                 msg = hmAux_Trans.get("alert_error_on_create_ticket_action_msg");
+                btnNegative = 0;
+                break;
+            case MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN:
+                title = hmAux_Trans.get("alert_schedule_status_prevents_to_open_ttl");
+                msg = hmAux_Trans.get("alert_schedule_status_prevents_to_open_msg");
                 btnNegative = 0;
                 break;
         }

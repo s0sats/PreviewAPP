@@ -1000,6 +1000,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             requestingBundle.remove(TK_TicketDao.TYPE_DESC);
             requestingBundle.remove(Act070_Main.PARAM_DENIED_BY_CHECKIN);
             requestingBundle.remove(MD_Schedule_ExecDao.SCHEDULE_PK);
+            //LUCHE - 27/03/2020 - Se status do historico, força requesting 14 pra reconfigurar act 069 o.O
+            if(mPresenter.isClosedStatus(mTicketCtrl.getCtrl_status())){
+                requestingBundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT014);
+            }
             //
             intent.putExtras(requestingBundle);
         }

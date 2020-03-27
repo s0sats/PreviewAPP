@@ -662,7 +662,7 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
             Integer.parseInt(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE)),
             Integer.parseInt(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE)),
             Integer.parseInt(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION))
-        )
+            )
         ) {
             if (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equals(Constant.SYS_STATUS_SCHEDULE)) {
                 if (isAnyFormInProcessing(item)) {
@@ -672,11 +672,27 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 }
             } else {
                 //addFormInfoToBundle(item);
-                prepareOpenForm(item);
+                if(isStatusPossibleToOpen(item)){
+                    prepareOpenForm(item);
+                }else{
+                    mView.showMsg(
+                        Act013_Main.FORM_STATUS_PREVENT_TO_OPEN,
+                        item
+                    );
+                }
+
             }
         } else {
             mView.alertFormNotReady();
         }
+    }
+
+    private boolean isStatusPossibleToOpen(HMAux item) {
+        return item.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
+            && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_CANCELLED)
+            && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_REJECTED)
+            && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_IGNORED)
+            && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED);
     }
 
     public boolean isAnyFormInProcessing(HMAux item) {

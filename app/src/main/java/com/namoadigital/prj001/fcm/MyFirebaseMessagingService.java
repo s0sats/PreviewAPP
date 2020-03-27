@@ -335,9 +335,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             scheduleExec.setDate_end(scheduleMsgLong.getDate_end());
                             dumbDebugger++;
                         }
-                        //Status da exec
+                        //Status
                         if (fcmSchedule.getStatus() != null) {
                             scheduleExec.setStatus(fcmSchedule.getStatus());
+                           // scheduleExec.setFcm_new_status(fcmSchedule.getStatus());
+                            scheduleExec.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                             dumbDebugger++;
                         }
                         //Comments da exec
@@ -354,6 +356,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         //Status
                         if (fcmSchedule.getStatus() != null) {
                             scheduleExec.setFcm_new_status(fcmSchedule.getStatus());
+                            scheduleExec.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                             dumbDebugger++;
                         }
                         //Nick do user que fez a alteração.
@@ -378,9 +381,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     }
                 }
                 //
-                DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(schedulesToUpdate, false);
-                if(daoObjReturn.hasError()){
-                    throw new Exception(daoObjReturn.getErrorMsg());
+                if(schedulesToUpdate.size() > 0) {
+                    DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(schedulesToUpdate, false);
+                    if (daoObjReturn.hasError()) {
+                        throw new Exception(daoObjReturn.getErrorMsg());
+                    }
                 }
             }
         }catch (Exception e){

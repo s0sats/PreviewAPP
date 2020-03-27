@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
@@ -25,6 +26,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -307,13 +309,15 @@ public class WS_Save extends IntentService {
                             form_data.getCustom_form_version(),
                             form_data.getCustom_form_data()
                         );
-                        //
-                        formLocals.add(formLocal);
                         //Preenche dados no obj de erro.
                         if(errorProcess != null){
                             errorProcess.setCustom_form_type_desc(formLocal.getCustom_form_type_desc());
                             errorProcess.setCustom_form_desc(formLocal.getCustom_form_desc());
+                            form_data.setCustom_form_status(ConstantBaseApp.SYS_STATUS_IGNORED);
+                            formLocal.setCustom_form_status(ConstantBaseApp.SYS_STATUS_IGNORED);
                         }
+                        //
+                        formLocals.add(formLocal);
                     }catch (Exception e){
                         //TODO VERIFICAR SE DEVEMOS TRATAR AQUI O CASO DO FORM_DATA SEM FORM LOCAL
                         ToolBox_Inf.registerException(getClass().getName(),e);
@@ -333,7 +337,9 @@ public class WS_Save extends IntentService {
                         if(errorProcess != null && errorProcess.getError() != null ){
                             //Seta erro
                             scheduleExec.setSchedule_erro_msg(errorProcess.getError());
+                            scheduleExec.setStatus(ConstantBaseApp.SYS_STATUS_IGNORED);
                         }
+                        scheduleExec.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                         //Add na lista
                         formSchedules.add(scheduleExec);
                         //Preenche dados no obj de erro.

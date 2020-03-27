@@ -17,7 +17,7 @@ public class Sql_Act069_001 implements Specification {
     private String statusFilter = "";
     private String partnerFilter = "";
     private String serialFilter = "";
-
+    //
     public Sql_Act069_001(long customer_code, String site_logged, boolean bStatusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile, long ticketProductCode, long ticketSerialCode) {
         this.customer_code = customer_code;
         this.site_logged = site_logged;
@@ -26,7 +26,9 @@ public class Sql_Act069_001 implements Specification {
             statusFilter = "    and t.ticket_status in('" + ConstantBaseApp.SYS_STATUS_DONE + "'" +
                 ",'" + ConstantBaseApp.SYS_STATUS_NOT_EXECUTED + "'" +
                 ",'" + ConstantBaseApp.SYS_STATUS_CANCELLED + "'" +
-                ",'" + ConstantBaseApp.SYS_STATUS_REJECTED + "') \n";
+                ",'" + ConstantBaseApp.SYS_STATUS_REJECTED + "'" +
+                ",'" + ConstantBaseApp.SYS_STATUS_IGNORED + "'" +
+                ") \n";
         } else {
             if (bStatusPending || bStatusProcess || bStatusWaitingSync) {
                 /*statusFilter = "   and t.ticket_status in(";
@@ -43,7 +45,11 @@ public class Sql_Act069_001 implements Specification {
                 statusFilter += " )\n";
 
             } else {
-                statusFilter = "   and t.ticket_status <> '" + ConstantBaseApp.SYS_STATUS_DONE + "'\n";
+                statusFilter = "   and t.ticket_status in (\n" +
+                               "                           '" + ConstantBaseApp.SYS_STATUS_PENDING + "',\n" +
+                               "                           '" + ConstantBaseApp.SYS_STATUS_PROCESS + "',\n" +
+                               "                           '" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"'\n" +
+                               "                           )\n";
             }
             //LUCHE - 04/02/2020
             //Após implementação da busca de ticket por serial, foi necessario criar o filtro de prod/serial

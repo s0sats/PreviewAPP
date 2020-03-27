@@ -115,20 +115,23 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
      * @param position Posição do item da list.
      * @return - True se houver chave status e diferente dos status abaixo.
      */
-    @Override
-    public boolean isEnabled(int position) {
-        //return super.isEnabled(position);
-        if(source.size() > 0) {
-            HMAux item = source.get(position);
-            //Se tem o status e é diferente de cancelled e rejected, permite clique
-            return
-                item.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
-                    && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_CANCELLED)
-                    && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_REJECTED);
-        }else{
-            return super.isEnabled(position);
-        }
-    }
+//    @Override
+//    public boolean isEnabled(int position) {
+//        //return super.isEnabled(position);
+//        if(source.size() > 0) {
+//            HMAux item = source.get(position);
+//            //Se tem o status e é diferente de cancelled e rejected, permite clique
+//            return
+//                item.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
+//                    && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_CANCELLED)
+//                    && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_REJECTED)
+//                    && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_IGNORED)
+//                    && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED)
+//                ;
+//        }else{
+//            return super.isEnabled(position);
+//        }
+//    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -296,7 +299,33 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                         context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_DELETED))
                 );
                 break;
+            case ConstantBaseApp.SYS_STATUS_CANCELLED:
+            case ConstantBaseApp.SYS_STATUS_IGNORED:
+                //ATUALMENTE ESSES STATUS SÓ EXISTEM NO AGENDAMENTO , MAS VAI SABER....
+                if(!isScheduled) {
+                    tv_date_lbl.setText(
+                        hmAux_Trans.get("lbl_date") + " " +
+                            ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_START)),
+                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                            )
+                    );
+                    setTvDateLblConstraint(clHeader, ConstraintSet.PARENT_ID);
+                }else{
+                    tv_date_lbl.setText(ToolBox_Inf.formatScheduleIntervalDateFormatted(context, dateStart, dateEnd));
+                    setTvDateLblConstraint(clHeader, R.id.local_data_list_cell_01_tv_status_val);
+                }
+                //
+                tv_status_val.setText(hmAux_Trans.get(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)));
+                tv_status_val.setTextColor(
+                    ToolBox_Inf.getStatusColorV2(context,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
+                );
+                break;
             default:
+                tv_status_val.setText(hmAux_Trans.get(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)));
+                tv_status_val.setTextColor(
+                    ToolBox_Inf.getStatusColorV2(context,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
+                );
                 break;
         }
 

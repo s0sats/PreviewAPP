@@ -287,7 +287,14 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 mView.showMsg(Act017_Main.MODULE_CHECKLIST_START_FORM, item);
             }
         } else {
-            prepareOpenForm(item);
+            if(isStatusPossibleToOpen(item)) {
+                prepareOpenForm(item);
+            }else{
+                mView.showMsg(
+                    Act017_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
+                    item
+                );
+            }
         }
     }
 
@@ -357,7 +364,14 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
      */
     private void processTicketFlow(HMAux item) {
         if(!item.get(MD_Schedule_ExecDao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_SCHEDULE)){
-            prepareOpenTicket(item);
+            if(isStatusPossibleToOpen(item)) {
+                prepareOpenTicket(item);
+            }else{
+                mView.showMsg(
+                    Act017_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
+                    item
+                );
+            }
         }else {
             if(isScheduleSiteDifferentThanLogged(item)){
                 startSiteChangeFlow(item);
@@ -617,6 +631,14 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
         //
         return bundle;
+    }
+
+    private boolean isStatusPossibleToOpen(HMAux item) {
+        return item.hasConsistentValue(MD_Schedule_ExecDao.STATUS)
+            && !item.get(MD_Schedule_ExecDao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_CANCELLED)
+            && !item.get(MD_Schedule_ExecDao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_REJECTED)
+            && !item.get(MD_Schedule_ExecDao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_IGNORED)
+            && !item.get(MD_Schedule_ExecDao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED);
     }
 
     private boolean hasScheduleSiteAccess(String site_code) {

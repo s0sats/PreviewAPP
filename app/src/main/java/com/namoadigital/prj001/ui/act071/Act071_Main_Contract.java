@@ -87,6 +87,8 @@ public interface Act071_Main_Contract {
 
         void showScheduleCancelMsg(int mSchedulePrefix, int mScheduleCode, int mScheduleExec);
 
+        boolean isClosedStatus(String ctrl_status);
+
         /*boolean hasPartnerProfile(Integer partner_code);
 
         boolean hasActionExecProfile();

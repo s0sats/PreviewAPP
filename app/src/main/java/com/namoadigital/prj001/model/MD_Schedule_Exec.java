@@ -53,6 +53,8 @@ public class MD_Schedule_Exec {
     private String fcm_user_nick;
     @Nullable
     private String schedule_erro_msg;
+    @Nullable
+    private String close_date;
 
 
     /**
@@ -370,5 +372,14 @@ public class MD_Schedule_Exec {
 
     public void setSchedule_erro_msg(@Nullable String schedule_erro_msg) {
         this.schedule_erro_msg = schedule_erro_msg;
+    }
+
+    @Nullable
+    public String getClose_date() {
+        return close_date;
+    }
+
+    public void setClose_date(@Nullable String close_date) {
+        this.close_date = close_date;
     }
 }

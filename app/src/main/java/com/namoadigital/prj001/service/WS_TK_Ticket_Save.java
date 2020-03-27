@@ -312,6 +312,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                     schedule.setFcm_new_status(null);
                     schedule.setFcm_user_nick(null);
                     schedule.setSchedule_erro_msg(null);
+                    schedule.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                     //
                     daoObjReturn = updateTicketAndScheduleReg(retTicket,schedule);
                 }else {
@@ -341,12 +342,13 @@ public class WS_TK_Ticket_Save extends IntentService {
                     actReturn.setScheduleCode(dbTicket.getSchedule_code());
                     actReturn.setScheduleExec(dbTicket.getSchedule_exec());
                     //Seta status rejeitado no ticket, ctrls e ações
-                    dbTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_REJECTED);
+                    dbTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_IGNORED);
+                    dbTicket.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                     if(dbTicket.getCtrl() != null && dbTicket.getCtrl().size() > 0) {
                         for (TK_Ticket_Ctrl ticketCtrl : dbTicket.getCtrl()) {
-                            ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_REJECTED);
+                            ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_IGNORED);
                             if(ticketCtrl.getAction() != null){
-                                ticketCtrl.getAction().setAction_status(ConstantBaseApp.SYS_STATUS_REJECTED);
+                                ticketCtrl.getAction().setAction_status(ConstantBaseApp.SYS_STATUS_IGNORED);
                             }
                         }
                     }
@@ -360,6 +362,8 @@ public class WS_TK_Ticket_Save extends IntentService {
                     schedule.setFcm_new_status(null);
                     schedule.setFcm_user_nick(null);
                     schedule.setSchedule_erro_msg(actReturn.getRetMsg());
+                    schedule.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                    //
                     //Atualiza ticket e agendamento
                     daoObjReturn =  updateTicketAndScheduleReg(dbTicket,schedule);
                     if (daoObjReturn.hasError()) {

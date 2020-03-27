@@ -5106,6 +5106,7 @@ public class ToolBox_Inf {
             case Constant.SYS_STATUS_SCHEDULE:
                 return R.color.namoa_status_scheduled;
             case Constant.SYS_STATUS_ERROR:
+            case Constant.SYS_STATUS_IGNORED:
                 return R.color.namoa_status_error;
             case Constant.SYS_STATUS_ACTIVE:
                 return R.color.namoa_status_active;

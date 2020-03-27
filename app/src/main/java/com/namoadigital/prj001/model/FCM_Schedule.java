@@ -87,10 +87,11 @@ public class FCM_Schedule {
     @Nullable
     public String getStatus(){
         if(schedule_msg_long != null){
-            return  schedule_msg_type.equals(ConstantBaseApp.FCM_ACTION_SCHEDULE_UPDATE)
+            String sStatus = schedule_msg_type.equals(ConstantBaseApp.FCM_ACTION_SCHEDULE_UPDATE)
                     ? schedule_msg_long.getSchedule_status()
                     : schedule_msg_long.getExec_status();
-
+            //
+            return  sStatus != null && sStatus.equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS) ? ConstantBaseApp.SYS_STATUS_CANCELLED : sStatus;
         }
         //
         return null;

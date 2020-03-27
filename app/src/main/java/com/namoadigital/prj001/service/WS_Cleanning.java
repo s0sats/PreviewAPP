@@ -11,11 +11,13 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
@@ -33,6 +35,7 @@ import com.namoadigital.prj001.sql.WS_Cleaning_Sql_006;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_007;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_008;
 import com.namoadigital.prj001.sql.WS_Cleaning_Sql_009;
+import com.namoadigital.prj001.sql.WS_Cleaning_Sql_010;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -77,12 +80,31 @@ public class WS_Cleanning extends IntentService {
             deleteFCMMessages();
             deleteFormAP();
             deleteTickets();
+            deleteSchedules();
 
         } catch (Exception e) {
             String results = e.toString();
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
+    }
+
+    private void deleteSchedules() {
+        MD_Schedule_ExecDao scheduleExecDao = new MD_Schedule_ExecDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        ArrayList<MD_Schedule_Exec> scheduleExecList =
+            (ArrayList<MD_Schedule_Exec>) scheduleExecDao.query(
+                new WS_Cleaning_Sql_010(
+                    customer_code,
+                    sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
+                ).toSqlQuery()
+            );
+        //
+        scheduleExecDao.remove(scheduleExecList);
     }
 
     private void deleteTickets() {

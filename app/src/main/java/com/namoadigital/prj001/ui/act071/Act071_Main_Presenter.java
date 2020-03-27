@@ -176,6 +176,11 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketStatus);
     }
 
+    @Override
+    public boolean isClosedStatus(String ctrl_status) {
+        return isReadOnlyStatus(ctrl_status);
+    }
+
     /**
      * Gera path_local caso seja uma nova foto ou retorna path_local existente
      * @param action - obj
@@ -434,6 +439,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             }
             tkTicket.setTicket_status(finalStatus);
             scheduleExec.setStatus(finalStatus);
+            scheduleExec.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             //
             DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
             if(!daoObjReturn.hasError()){
@@ -777,4 +783,5 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 break;
         }
     }
+
 }

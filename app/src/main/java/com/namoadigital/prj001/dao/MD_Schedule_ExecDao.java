@@ -65,6 +65,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public static final String FCM_NEW_STATUS = "fcm_new_status";
     public static final String FCM_USER_NICK = "fcm_user_nick";
     public static final String SCHEDULE_ERRO_MSG = "schedule_erro_msg";
+    public static final String CLOSE_DATE = "close_date";
     //NÃO SÃO CAMPOS DA TABELA, mas são usados em queries
     public static final String SCHEDULE_DATE_START_FORMAT = "schedule_date_start_format";
     public static final String SCHEDULE_DATE_END_FORMAT = "schedule_date_end_format";
@@ -600,6 +601,17 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         return false;
     }
 
+    /**
+     * LUCHE - 27/03/2020
+     * <p></p>
+     * Metodo que deleta os agendamentos passados.
+     * @param md_schedule_execs Lista de agendamento
+     * @return DaoObj
+     */
+    public DaoObjReturn remove(ArrayList<MD_Schedule_Exec> md_schedule_execs){
+        return delete(md_schedule_execs,null);
+    }
+
     private DaoObjReturn delete(ArrayList<MD_Schedule_Exec> md_schedule_execs, SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
@@ -610,7 +622,6 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         }else{
             this.db = dbInstance;
         }
-
         try {
             //Se db não foi passado, inicializa transaction
             if (dbInstance == null) {
@@ -789,6 +800,12 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             }else{
                 md_schedule_exec.setSchedule_erro_msg(cursor.getString(cursor.getColumnIndex(SCHEDULE_ERRO_MSG)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(CLOSE_DATE))){
+                md_schedule_exec.setClose_date(null);
+            }else{
+                md_schedule_exec.setClose_date(cursor.getString(cursor.getColumnIndex(CLOSE_DATE)));
+            }
+
             //
             return md_schedule_exec;
         }
@@ -867,6 +884,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             contentValues.put(FCM_NEW_STATUS,md_schedule_exec.getFcm_new_status());
             contentValues.put(FCM_USER_NICK,md_schedule_exec.getFcm_user_nick());
             contentValues.put(SCHEDULE_ERRO_MSG,md_schedule_exec.getSchedule_erro_msg());
+            contentValues.put(CLOSE_DATE,md_schedule_exec.getClose_date());
             //
             return contentValues;
         }
