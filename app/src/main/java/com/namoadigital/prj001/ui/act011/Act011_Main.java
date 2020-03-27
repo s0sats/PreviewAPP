@@ -103,7 +103,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -730,7 +729,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 //        + "\nonResume ACT011\n status: " + SV_LocationTracker.status;
 //        recordProcess(dataRecorded);
 
-        if (formLocal.getRequire_location() == 1
+        if (formLocal != null
+                && formLocal.getRequire_location() == 1
                 && ConstantBase.SYS_STATUS_IN_PROCESSING.equals(formLocal.getCustom_form_status())) {
             getLocation();
         }

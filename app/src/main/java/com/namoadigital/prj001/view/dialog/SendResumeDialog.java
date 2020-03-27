@@ -219,6 +219,7 @@ public class SendResumeDialog extends AlertDialog {
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         //
+        transList.add("alert_resume_title");
         transList.add("alert_resume_nform");
         transList.add("alert_resume_serial");
         transList.add("alert_resume_so");
