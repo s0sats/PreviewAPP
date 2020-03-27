@@ -50,6 +50,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     public static final String FORM_DATA_CREATION_ERROR = "form_data_creation_error";
     public static final String EMPTY_SERIAL_SEARCH = "empty_serial_search" ;
     public static final String SERIAL_CREATION_DENIED = "serial_creation_denied" ;
+    public static final String FORM_STATUS_PREVENT_TO_OPEN = "form_status_prevent_to_open" ;
 
     private Act013_Main_Presenter mPresenter;
     private Local_Data_List_Adapter mAdapter;
@@ -122,6 +123,14 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         translateList.add("dialog_serial_search_ttl");
         translateList.add("dialog_serial_search_start");
         translateList.add("alert_product_no_allow_new_serial_msg");
+        //
+        translateList.add("dialog_schedule_warning_ttl");
+        translateList.add("dialog_schedule_warning_new_status_lbl");
+        translateList.add("dialog_schedule_warning_user_nick_lbl");
+        translateList.add("dialog_schedule_warning_error_msg_lbl");
+        //
+        translateList.add("alert_form_status_prevents_to_open_ttl");
+        translateList.add("alert_form_status_prevents_to_open_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -352,15 +361,18 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                         pendencies
                 );
         //
-        mAdapter.setOnIvCommentClickListner(new Local_Data_List_Adapter.OnIvCommentClickListner() {
+        mAdapter.setOnIvScheduleWarningClickListner(new Local_Data_List_Adapter.OnIvScheduleWarningClickListner() {
             @Override
-            public void OnIvCommentClick(String comment) {
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_schedule_comment_ttl"),
-                        comment,
-                        null,
-                        0
+            public void OnIvScheduleWarningClick(String fcmNewStatus, String fcmUserNick, String errorMsg) {
+                ToolBox_Inf.showScheduleWarningDialog(
+                    context,
+                    hmAux_Trans.get("dialog_schedule_warning_ttl"),
+                    hmAux_Trans.get("dialog_schedule_warning_new_status_lbl"),
+                    hmAux_Trans.get(fcmNewStatus),
+                    hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl"),
+                    fcmUserNick,
+                    hmAux_Trans.get("dialog_schedule_warning_error_msg_lbl"),
+                    errorMsg
                 );
             }
         });
@@ -409,6 +421,11 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
             case SERIAL_CREATION_DENIED:
                 title = hmAux_Trans.get("alert_no_serial_found_ttl");
                 msg = hmAux_Trans.get("alert_product_no_allow_new_serial_msg");
+                btnNegative = 0;
+                break;
+            case FORM_STATUS_PREVENT_TO_OPEN:
+                title = hmAux_Trans.get("alert_form_status_prevents_to_open_ttl");
+                msg = hmAux_Trans.get("alert_form_status_prevents_to_open_msg");
                 btnNegative = 0;
                 break;
         }

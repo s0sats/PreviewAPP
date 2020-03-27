@@ -18,7 +18,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
  *
  */
 
-public class MD_Schedule_Exec_Sql_005 implements Specification {
+public class MD_Schedule_Exec_Dao_Sql_001 implements Specification {
 
     private long customer_code;
     private int site_code;
@@ -28,7 +28,7 @@ public class MD_Schedule_Exec_Sql_005 implements Specification {
     private int custom_form_code;
     private int custom_form_version;
 
-    public MD_Schedule_Exec_Sql_005(long customer_code, int site_code, int operation_code, int product_code, int custom_form_type, int custom_form_code, int custom_form_version) {
+    public MD_Schedule_Exec_Dao_Sql_001(long customer_code, int site_code, int operation_code, int product_code, int custom_form_type, int custom_form_code, int custom_form_version) {
         this.customer_code = customer_code;
         this.site_code = site_code;
         this.operation_code = operation_code;

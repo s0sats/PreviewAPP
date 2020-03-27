@@ -59,4 +59,17 @@ public class MD_Operation {
     public void setAlias_service_com(int alias_service_com) {
         this.alias_service_com = alias_service_com;
     }
+
+    /**
+     * LUCHE - 12/03/2020
+     * <p></p>
+     * Metodo que valida se o obj é diferente de nulo e se é valido.
+     * @param mdOperation
+     * @return
+     */
+    public static boolean isValid(MD_Operation mdOperation){
+        return  mdOperation != null
+                && mdOperation.getCustomer_code() > 0
+                && mdOperation.getOperation_code() > 0;
+    }
 }

@@ -10,6 +10,8 @@ public class MD_Partner {
     private int partner_code;
     private String partner_id;
     private String partner_desc;
+    private int operational;
+    private int billing;
 
     public long getCustomer_code() {
         return customer_code;
@@ -41,5 +43,21 @@ public class MD_Partner {
 
     public void setPartner_desc(String partner_desc) {
         this.partner_desc = partner_desc;
+    }
+
+    public int getOperational() {
+        return operational;
+    }
+
+    public void setOperational(int operational) {
+        this.operational = operational;
+    }
+
+    public int getBilling() {
+        return billing;
+    }
+
+    public void setBilling(int billing) {
+        this.billing = billing;
     }
 }

@@ -35,6 +35,7 @@ import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_Outbound_ItemDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
@@ -144,6 +145,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private MD_ProductDao mdProductDao;
     private CH_MessageDao chMessageDao;
     private MD_SiteDao siteDao;
+    private MD_Schedule_ExecDao scheduleExecDao;
 
     private SO_Pack_Express_LocalDao soPackExpressLocalDao;
 
@@ -195,6 +197,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
+        );
+        this.scheduleExecDao = new MD_Schedule_ExecDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
         );
         buildMenuList();
     }
@@ -546,7 +553,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         //na hora de contar itens no badge
                         int forward_hour = 12;
                         try {
-                            qty = customFormLocalDao.getByStringHM(
+                            qty = scheduleExecDao.getByStringHM(
                                     new Sql_Act005_003(
                                             context,
                                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -1092,6 +1099,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     }.getType()
                 );
             }catch (Exception e){
+                //TODO quando não há dados para enviar o ws ta retornando uam string e cai no catch rever
                 ToolBox_Inf.registerException(getClass().getName(),e);
             }
             //

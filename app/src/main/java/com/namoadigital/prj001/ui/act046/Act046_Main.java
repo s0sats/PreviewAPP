@@ -209,7 +209,6 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
 
         fm = getSupportFragmentManager();
 
-
         mket_date = (MKEditTextNM) findViewById(R.id.act046_mket_date);
         mket_date.setHint(hmAux_Trans.get("search_date_hint"));
         mket_date.setText(
@@ -320,11 +319,36 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
             mFrgSerialSearch.setSerialIdText(fragSerial_ID);
             mFrgSerialSearch.setTrackingText(fragTracking);
         }
-        //
+        //LUCHE - 10/03/2020
+        applyCbkModuleProfile();
         //LUCHE - 21/02/2020
         loadCheckboxValueFromPreferencies();
     }
 
+    /**
+     * LUCHE - 10/03/2020
+     * Metodo que verifica o profile de acesso aos modulos.
+     * Caso não possua acesso,esconde checkbox e reseta preferencia para false
+     */
+    private void applyCbkModuleProfile() {
+        if(!ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,null)){
+            cbk_nform.setVisibility(View.GONE);
+            mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(cbk_nform.getTag()),false);
+        }
+        if(!ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP,null)){
+            cbk_nform_ap.setVisibility(View.GONE);
+            mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(cbk_nform_ap.getTag()),false);
+        }
+        //
+        if(!ToolBox_Inf.profileExists(context,ConstantBaseApp.PROFILE_MENU_TICKET,null)){
+            cbk_ticket.setVisibility(View.GONE);
+            mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(cbk_ticket.getTag()),false);
+        }
+    }
+    /**
+     * LUCHE
+     * Metodo que seta valor da preferencia nos checkbox.
+     */
     private void loadCheckboxValueFromPreferencies() {
         cbk_nform.setChecked(
             mPresenter.loadCheckboxStatusFromPreferencie(String.valueOf(cbk_nform.getTag()), true)

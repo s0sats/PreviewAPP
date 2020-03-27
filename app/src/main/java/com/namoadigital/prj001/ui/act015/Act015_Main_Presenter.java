@@ -13,4 +13,6 @@ public interface Act015_Main_Presenter {
     void addFormInfoToBundle(HMAux item);
 
     void onBackPressedClicked();
+
+    void processClickAction(HMAux item);
 }

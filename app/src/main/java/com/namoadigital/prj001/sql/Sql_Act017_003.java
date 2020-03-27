@@ -55,9 +55,6 @@ public class Sql_Act017_003 implements Specification {
                         "       "+ MD_Schedule_ExecDao.TABLE+"  s\n" +
                         "     WHERE\n" +
                         "       s.customer_code = '"+s_customer_code+"'\n" +
-                        "       AND s.custom_form_type is not null \n" +
-                        "       AND s.custom_form_code is not null \n" +
-                        "       AND s.custom_form_version is not null \n" +
                         "       AND ( '"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"') = '"+selected_date+"' )\n" +
                         "       \n" +
                         "     UNION  ALL \n" +

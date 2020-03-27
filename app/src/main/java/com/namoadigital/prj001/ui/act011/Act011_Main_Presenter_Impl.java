@@ -112,20 +112,22 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code) {
         boolean hasNformPending = false;
         boolean bNew = false;
+        boolean bAbortSchedule = false;
+
         bAgendado = false;
         //LUCHE - 14/03/2019
         DaoObjReturn daoObjReturn = new DaoObjReturn();
-
+        MD_Schedule_Exec scheduleExec = new MD_Schedule_Exec();
         GE_Custom_Form_Local customFormLocal = custom_form_LocalDao.getByString(
-                new GE_Custom_Form_Local_Sql_003(
-                        customer_code,
-                        formtype_code,
-                        form_code,
-                        formversion_code,
-                        s_form_data,
-                        product_code,
-                        serial_id
-                ).toSqlQuery().toString().toLowerCase()
+            new GE_Custom_Form_Local_Sql_003(
+                customer_code,
+                formtype_code,
+                form_code,
+                formversion_code,
+                s_form_data,
+                product_code,
+                serial_id
+            ).toSqlQuery().toString().toLowerCase()
         );
 
         List<HMAux> cf_fields = null;
@@ -134,56 +136,73 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         if (customFormLocal != null) {
             bNew = false;
             index = -1;
-
             //LUCHE - 14/02/2020
             //A identificação de se um form é agendamento agora verifica a pk do agendamento e não o status
             bAgendado = ToolBox_Inf.isScheduleForm(customFormLocal);
-            //Se for um agendamento e status agendado, seta serial id e muda status para in_processo
-            if (bAgendado && customFormLocal.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)) {
-                isScheduleFirstTime = true;
-                //LUCHE - 20/02/2020
-                //Index  = 0 significa que os campos não serão "validados como obrigatorios" ao carregar o form.
-                //Só deve acontecer a primeira vez que o form é aberto
-                index = 0;
-                daoObjReturn = updateScheduleInfos(customFormLocal,serial_id);
-            }
-            if(!daoObjReturn.hasError()) {
-                //
-                cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
-                    new GE_Custom_Form_Fields_Local_Sql_001(
-                        String.valueOf(customFormLocal.getCustomer_code()),
-                        String.valueOf(customFormLocal.getCustom_form_type()),
-                        String.valueOf(customFormLocal.getCustom_form_code()),
-                        String.valueOf(customFormLocal.getCustom_form_version()),
-                        String.valueOf(customFormLocal.getCustom_form_data())
-                    ).toSqlQuery().toString().toLowerCase()
+            //26/03/2020 - Tratativa para se recebeu FCM trocando status , mas o form já havia sido iniciado.
+            if (bAgendado) {
+                scheduleExec = getMdScheduleExec(
+                    customFormLocal.getSchedule_prefix(),
+                    customFormLocal.getSchedule_code(),
+                    customFormLocal.getSchedule_exec()
                 );
-                if (s_form_data == null || s_form_data.isEmpty() || "0".equals(s_form_data)) {
-                    hasNformPending = true;
+                //
+                if (MD_Schedule_Exec.isValidScheduleExec(scheduleExec)
+                    && scheduleExec.getFcm_new_status() != null
+                    && scheduleExec.getFcm_user_nick() != null
+                ) {
+                    bAbortSchedule = true;
+                }
+            }
+            //Se não deve ser abortado, continual
+            if (!bAbortSchedule) {
+                //Se for um agendamento e status agendado, seta serial id e muda status para in_processo
+                if (bAgendado && customFormLocal.getCustom_form_status().equals(Constant.SYS_STATUS_SCHEDULE)) {
+                    isScheduleFirstTime = true;
+                    //LUCHE - 20/02/2020
+                    //Index  = 0 significa que os campos não serão "validados como obrigatorios" ao carregar o form.
+                    //Só deve acontecer a primeira vez que o form é aberto
+                    index = 0;
+                    daoObjReturn = updateScheduleInfos(customFormLocal, serial_id);
+                }
+                if (!daoObjReturn.hasError()) {
+                    //
+                    cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
+                        new GE_Custom_Form_Fields_Local_Sql_001(
+                            String.valueOf(customFormLocal.getCustomer_code()),
+                            String.valueOf(customFormLocal.getCustom_form_type()),
+                            String.valueOf(customFormLocal.getCustom_form_code()),
+                            String.valueOf(customFormLocal.getCustom_form_version()),
+                            String.valueOf(customFormLocal.getCustom_form_data())
+                        ).toSqlQuery().toString().toLowerCase()
+                    );
+                    if (s_form_data == null || s_form_data.isEmpty() || "0".equals(s_form_data)) {
+                        hasNformPending = true;
+                    }
                 }
             }
         } else {
             bNew = true;
             index = 0;
             HMAux ii = custom_formDao.getByStringHM(
-                    new GE_Custom_Form_Local_Sql_002(
-                            customer_code,
-                            formtype_code,
-                            form_code,
-                            formversion_code
-                    )
-                            .toSqlQuery()
-                            .toLowerCase()
+                new GE_Custom_Form_Local_Sql_002(
+                    customer_code,
+                    formtype_code,
+                    form_code,
+                    formversion_code
+                )
+                    .toSqlQuery()
+                    .toLowerCase()
             );
 
             GE_Custom_Form customForm = custom_formDao.getByString(
 
-                    new GE_Custom_Form_Sql_001_TT(
-                            String.valueOf(customer_code),
-                            String.valueOf(formtype_code),
-                            String.valueOf(form_code),
-                            String.valueOf(formversion_code)
-                    ).toSqlQuery().toString().toLowerCase()
+                new GE_Custom_Form_Sql_001_TT(
+                    String.valueOf(customer_code),
+                    String.valueOf(formtype_code),
+                    String.valueOf(form_code),
+                    String.valueOf(formversion_code)
+                ).toSqlQuery().toString().toLowerCase()
 
             );
             MD_Product productInfo = getProduct(Integer.parseInt(product_code));
@@ -221,127 +240,132 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             //custom_form_LocalDao.addUpdate(customFormLocal);
             daoObjReturn = custom_form_LocalDao.addUpdateThrowException(customFormLocal);
             //
-            if(!daoObjReturn.hasError()) {
+            if (!daoObjReturn.hasError()) {
                 ArrayList<HMAux> items = (ArrayList<HMAux>) custom_form_fieldDao.query_HM(
-                        new Sql_Act011_002(
-                                String.valueOf(customFormLocal.getCustomer_code()),
-                                String.valueOf(customFormLocal.getCustom_form_type()),
-                                String.valueOf(customFormLocal.getCustom_form_code()),
-                                String.valueOf(customFormLocal.getCustom_form_version()),
-                                ToolBox_Con.getPreference_Translate_Code(context),
-                                String.valueOf(customFormLocal.getCustom_form_data())
-                        ).toSqlQuery().toString().toLowerCase()
+                    new Sql_Act011_002(
+                        String.valueOf(customFormLocal.getCustomer_code()),
+                        String.valueOf(customFormLocal.getCustom_form_type()),
+                        String.valueOf(customFormLocal.getCustom_form_code()),
+                        String.valueOf(customFormLocal.getCustom_form_version()),
+                        ToolBox_Con.getPreference_Translate_Code(context),
+                        String.valueOf(customFormLocal.getCustom_form_data())
+                    ).toSqlQuery().toString().toLowerCase()
                 );
 
                 custom_form_field_LocalDao.addUpdate(items);
 
                 cf_fields = (ArrayList<HMAux>) custom_form_field_LocalDao.query_HM(
-                        new GE_Custom_Form_Fields_Local_Sql_001(
-                                String.valueOf(customFormLocal.getCustomer_code()),
-                                String.valueOf(customFormLocal.getCustom_form_type()),
-                                String.valueOf(customFormLocal.getCustom_form_code()),
-                                String.valueOf(customFormLocal.getCustom_form_version()),
-                                String.valueOf(customFormLocal.getCustom_form_data())
-                        ).toSqlQuery().toString().toLowerCase()
+                    new GE_Custom_Form_Fields_Local_Sql_001(
+                        String.valueOf(customFormLocal.getCustomer_code()),
+                        String.valueOf(customFormLocal.getCustom_form_type()),
+                        String.valueOf(customFormLocal.getCustom_form_code()),
+                        String.valueOf(customFormLocal.getCustom_form_version()),
+                        String.valueOf(customFormLocal.getCustom_form_data())
+                    ).toSqlQuery().toString().toLowerCase()
                 );
 
                 custom_form_blob_localDao.addUpdate(
-                        custom_form_blob_localDao.query(
-                                new GE_Custom_Form_Blob_Sql_001(
-                                        String.valueOf(customFormLocal.getCustomer_code()),
-                                        String.valueOf(customFormLocal.getCustom_form_type()),
-                                        String.valueOf(customFormLocal.getCustom_form_code()),
-                                        String.valueOf(customFormLocal.getCustom_form_version())
-                                ).toSqlQuery().toString().toLowerCase()
-                        )
-                        ,
-                        false
+                    custom_form_blob_localDao.query(
+                        new GE_Custom_Form_Blob_Sql_001(
+                            String.valueOf(customFormLocal.getCustomer_code()),
+                            String.valueOf(customFormLocal.getCustom_form_type()),
+                            String.valueOf(customFormLocal.getCustom_form_code()),
+                            String.valueOf(customFormLocal.getCustom_form_version())
+                        ).toSqlQuery().toString().toLowerCase()
+                    )
+                    ,
+                    false
                 );
 
             }
 
         }
-        //Verifica se houve erro ao inserir tabela form_local.
-        if(daoObjReturn.hasError()) {
-            if( daoObjReturn.getTable() != null
-                && daoObjReturn.getTable().equalsIgnoreCase(MD_Schedule_ExecDao.TABLE)
-            ){
-                mView.showMsg(
-                    hmAux_Trans.get("alert_error_on_update_schedule_status_ttl"),
-                    hmAux_Trans.get("alert_error_on_update_schedule_status_msg"),
-                    Act011_Main.SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR
-                );
-            }else {
-                mView.showMsg(
-                    hmAux_Trans.get("alert_error_on_create_form_ttl"),
-                    hmAux_Trans.get("alert_error_on_create_form_msg"),
-                    Act011_Main.SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR
-                );
-            }
-        }else{
-            GE_Custom_Form_Data formData = loadAnswer(
+        //26/03/2020 - Informa usuario que o form foi abortado.
+        if (bAbortSchedule) {
+            mView.showFormCancelledMsg(customFormLocal,scheduleExec);
+        } else {
+            //Verifica se houve erro ao inserir tabela form_local.
+            if (daoObjReturn.hasError()) {
+                if (daoObjReturn.getTable() != null
+                    && daoObjReturn.getTable().equalsIgnoreCase(MD_Schedule_ExecDao.TABLE)
+                ) {
+                    mView.showMsg(
+                        hmAux_Trans.get("alert_error_on_update_schedule_status_ttl"),
+                        hmAux_Trans.get("alert_error_on_update_schedule_status_msg"),
+                        Act011_Main.SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR
+                    );
+                } else {
+                    mView.showMsg(
+                        hmAux_Trans.get("alert_error_on_create_form_ttl"),
+                        hmAux_Trans.get("alert_error_on_create_form_msg"),
+                        Act011_Main.SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR
+                    );
+                }
+            } else {
+                GE_Custom_Form_Data formData = loadAnswer(
                     customFormLocal,
                     so_prefix,
                     so_code,
                     so_site_code,
                     so_operation_code,
                     serial_id
-            );
+                );
 
-            //if (bAgendado) {
-            if (isScheduleFirstTime) {
-                if (serial_id == null || serial_id.isEmpty()) {
-                    formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
-                    formData.setZone_code(null);
-                    formData.setLocal_code(null);
-                } else {
-                    MD_Product_Serial md_product_serialAux = md_product_serialDao.getByString(
-                            new MD_Product_Serial_Sql_002(
-                                    Long.parseLong(customer_code),
-                                    Long.parseLong(product_code),
-                                    serial_id
-                            ).toSqlQuery()
-                    );
-
-                    if (md_product_serialAux != null) {
-                        formData.setSite_code(md_product_serialAux.getSite_code() != null ? String.valueOf(md_product_serialAux.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
-                        formData.setZone_code(md_product_serialAux.getZone_code());
-                        formData.setLocal_code(md_product_serialAux.getLocal_code());
-                    } else {
-                        // Erro Nao deve Acontecer
+                //if (bAgendado) {
+                if (isScheduleFirstTime) {
+                    if (serial_id == null || serial_id.isEmpty()) {
                         formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
                         formData.setZone_code(null);
                         formData.setLocal_code(null);
+                    } else {
+                        MD_Product_Serial md_product_serialAux = md_product_serialDao.getByString(
+                            new MD_Product_Serial_Sql_002(
+                                Long.parseLong(customer_code),
+                                Long.parseLong(product_code),
+                                serial_id
+                            ).toSqlQuery()
+                        );
+
+                        if (md_product_serialAux != null) {
+                            formData.setSite_code(md_product_serialAux.getSite_code() != null ? String.valueOf(md_product_serialAux.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
+                            formData.setZone_code(md_product_serialAux.getZone_code());
+                            formData.setLocal_code(md_product_serialAux.getLocal_code());
+                        } else {
+                            // Erro Nao deve Acontecer
+                            formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
+                            formData.setZone_code(null);
+                            formData.setLocal_code(null);
+                        }
                     }
+
+                    formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
+                    //
+                    custom_form_dataDao.addUpdate(formData);
+                    custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
                 }
 
-                formData.setSite_code(String.valueOf(customFormLocal.getSite_code()));
-                //
-                custom_form_dataDao.addUpdate(formData);
-                custom_form_data_fieldDao.addUpdate(formData.getDataFields(), false);
-            }
-
-            ArrayList<HMAux> pdfs = (ArrayList<HMAux>) custom_form_blob_localDao.query_HM(
+                ArrayList<HMAux> pdfs = (ArrayList<HMAux>) custom_form_blob_localDao.query_HM(
 
                     new GE_Custom_Form_Blob_Local_Sql_005(
-                            String.valueOf(customFormLocal.getCustomer_code()),
-                            String.valueOf(customFormLocal.getCustom_form_type()),
-                            String.valueOf(customFormLocal.getCustom_form_code()),
-                            String.valueOf(customFormLocal.getCustom_form_version())
+                        String.valueOf(customFormLocal.getCustomer_code()),
+                        String.valueOf(customFormLocal.getCustom_form_type()),
+                        String.valueOf(customFormLocal.getCustom_form_code()),
+                        String.valueOf(customFormLocal.getCustom_form_version())
                     ).toSqlQuery().toString()
-            );
-            if(hasNformPending){
-                mView.showMsg(
+                );
+                if (hasNformPending) {
+                    mView.showMsg(
                         hmAux_Trans.get("alert_nform_already_started_ttl"),
                         hmAux_Trans.get("alert_nform_already_started_msg") + " " +
-                                ToolBox_Inf.millisecondsToString(
-                                        ToolBox_Inf.dateToMilliseconds(formData.getDate_start()),
-                                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                                ),
+                            ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(formData.getDate_start()),
+                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                            ),
                         0
-                );
+                    );
+                }
+                mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done());
             }
-            mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done());
         }
     }
 
@@ -391,6 +415,56 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         return daoObjRet;
     }
 
+    @Override
+    public void cancelScheduleAndForm(GE_Custom_Form_Local customFormLocal, MD_Schedule_Exec scheduleExec) {
+        //Deveriam ser o mesmo.
+        String curStatus = scheduleExec.getStatus();
+        boolean rollback = false;
+        //
+        GE_Custom_Form_Data customFormData = custom_form_dataDao.getByString(
+                                    new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
+                                        String.valueOf(customFormLocal.getCustomer_code()),
+                                        String.valueOf(customFormLocal.getCustom_form_type()),
+                                        String.valueOf(customFormLocal.getCustom_form_code()),
+                                        String.valueOf(customFormLocal.getCustom_form_version()),
+                                        String.valueOf(customFormLocal.getCustom_form_data())
+                                    ).toSqlQuery().toLowerCase()
+        );
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        scheduleExec.setStatus(ConstantBaseApp.SYS_STATUS_CANCELLED);
+        customFormLocal.setCustom_form_status(ConstantBaseApp.SYS_STATUS_CANCELLED);
+        //
+        daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
+        rollback = daoObjReturn.hasError();
+        if(!rollback){
+            daoObjReturn = custom_form_LocalDao.addUpdateThrowException(customFormLocal);
+            rollback = daoObjReturn.hasError();
+        }
+        //Se não ha erro, e existe resposta, tenta o delete.
+        if(customFormData != null && !rollback) {
+            customFormData.setCustom_form_status(ConstantBaseApp.SYS_STATUS_CANCELLED);
+            custom_form_dataDao.addUpdate(customFormData);
+        }
+        //Segura na mão de deus e vai
+        if(rollback){
+            scheduleExec.setStatus(curStatus);
+            customFormLocal.setCustom_form_status(curStatus);
+            scheduleExecDao.addUpdate(scheduleExec);
+            custom_form_LocalDao.addUpdate(customFormLocal);
+            if(customFormData != null) {
+                customFormData.setCustom_form_status(curStatus);
+                custom_form_dataDao.addUpdate(customFormData);
+            }
+            //
+            mView.showMsg(
+                hmAux_Trans.get("alert_erro_on_cancel_schedule_form_ttl"),
+                hmAux_Trans.get("alert_erro_on_cancel_schedule_form_msg"),
+                Act011_Main.SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR
+            );
+        }else{
+            onBackPressedClicked();
+        }
+    }
 
     /**
      * LUCHE - 14/02/2020

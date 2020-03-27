@@ -19,4 +19,5 @@ public interface Act015_Main_View {
 
     void callAct014(Context context);
 
+    void showMsg(String ttl, String msg);
 }

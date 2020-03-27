@@ -68,6 +68,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String SYNC_REQUIRED = "sync_required";
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String TOKEN = "token";
+    public static final String SCHEDULE_PREFIX = "schedule_prefix";
+    public static final String SCHEDULE_CODE = "schedule_code";
+    public static final String SCHEDULE_EXEC = "schedule_exec";
 
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -75,7 +78,6 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         this.toContentValuesMapper = new TK_TicketToContentValuesMapper();
         this.toTK_TicketMapper = new CursorToTK_TicketMapper();
     }
-
 
     @Override
     public DaoObjReturn addUpdate(TK_Ticket tk_ticket) {
@@ -250,6 +252,91 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
             daoObjReturn.setAction(curAction);
             daoObjReturn.setActionReturn(addUpdateRet);
+        }
+        //
+        if (dbInstance == null) {
+            closeDB();
+        }
+        //
+        return daoObjReturn;
+    }
+
+    public DaoObjReturn addUpdateBySchedulePk(TK_Ticket tk_ticket, SQLiteDatabase dbInstance) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+        //
+        if (dbInstance == null) {
+            openDB();
+        } else {
+            this.db = dbInstance;
+        }
+
+        try {
+            //Se db não foi passado, inicializa transaction
+            if (dbInstance == null) {
+                db.beginTransaction();
+            }
+            //
+            curAction = DaoObjReturn.UPDATE;
+            //Where para update
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket.getCustomer_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SCHEDULE_PREFIX).append(" = '").append(tk_ticket.getSchedule_prefix()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SCHEDULE_CODE).append(" = '").append(tk_ticket.getSchedule_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SCHEDULE_EXEC).append(" = '").append(tk_ticket.getSchedule_exec()).append("'");
+            //Tenta update e armazena retorno
+            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket), sbWhere.toString(), null);
+            //Se nenhuma linha afetada, tenta insert
+            if (addUpdateRet == 0) {
+                curAction = DaoObjReturn.INSERT;
+                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket));
+            }
+            //
+            //Tenta inserir action
+            TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //Chama insertUpdate do Ctrl,passando db como param aguardando retorno.
+            daoObjReturn = ticketCtrlDao.addUpdate(tk_ticket.getCtrl(), false, db);
+            //Se erro durante insert, dispara exception abortando o processamento.
+            if (daoObjReturn.hasError()) {
+                throw new Exception(daoObjReturn.getRawMessage());
+            }
+            //Se db não foi passado, finaliza transaction com sucesso
+            if (dbInstance == null) {
+                db.setTransactionSuccessful();
+            }
+
+        } catch (SQLiteException e) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            if (dbInstance == null) {
+                db.endTransaction();
+            }
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+            daoObjReturn.setTable(TABLE);
         }
         //
         if (dbInstance == null) {
@@ -601,7 +688,21 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             } else {
                 tk_ticket.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
             }
-
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_PREFIX))) {
+                tk_ticket.setSchedule_prefix(null);
+            } else {
+                tk_ticket.setSchedule_prefix(cursor.getInt(cursor.getColumnIndex(SCHEDULE_PREFIX)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_CODE))) {
+                tk_ticket.setSchedule_code(null);
+            } else {
+                tk_ticket.setSchedule_code(cursor.getInt(cursor.getColumnIndex(SCHEDULE_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(SCHEDULE_EXEC))) {
+                tk_ticket.setSchedule_exec(null);
+            } else {
+                tk_ticket.setSchedule_exec(cursor.getInt(cursor.getColumnIndex(SCHEDULE_EXEC)));
+            }
             //
             return tk_ticket;
         }
@@ -709,6 +810,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
             //
             tk_ticket.setToken(tk_ticket.getToken());
+            contentValues.put(SCHEDULE_PREFIX,tk_ticket.getSchedule_prefix());
+            contentValues.put(SCHEDULE_CODE,tk_ticket.getSchedule_code());
+            contentValues.put(SCHEDULE_EXEC,tk_ticket.getSchedule_exec());
             //
             return contentValues;
         }

@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -35,11 +36,13 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -60,8 +63,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     public static final String TEMP_SUFIX_FILE = "temp-";
     private Act071_Main_Presenter mPresenter;
+    private ScrollView svMain;
     private TextView tvTicketId;
     private TextView tvStatus;
+    private TextView tvSerialId;
     private TextView tvTypePath;
     private TextView tvTypeDesc;
     private TextView tvSeq;
@@ -96,6 +101,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     //flag criada para controle do metodo que coloca imagem na tela
     private boolean fromCamera = false;
     private boolean hasImageFileChanged = false;
+    //LUCHE - 12/03/2020
+    private int mSchedulePrefix;
+    private int mScheduleCode;
+    private int mScheduleExec;
+    private boolean mIsSchedule;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +170,15 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("alert_image_too_large_to_open_ttl");
         transList.add("alert_image_too_large_to_open_msg");
         //
+        transList.add("seq_lbl");
+        transList.add("alert_schedule_cancelled_by_server_ttl");
+        transList.add("alert_schedule_cancelled_by_server_msg");
+        transList.add("alert_schedule_warning_new_status_lbl");
+        transList.add("alert_warning_user_nick_lbl");
+        transList.add("alert_error_on_cancel_schedule_ttl");
+        transList.add("alert_error_on_cancel_schedule_msg");
+        transList.add("alert_error_ticket_not_found_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -180,13 +199,17 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             hmAux_Trans
         );
         //
-        if (mPresenter.validateBundleParams(mActionPrefix, mActionCode, mActionSeq)) {
+        if (mPresenter.validateBundleParams(mActionPrefix, mActionCode, mActionSeq, mSchedulePrefix, mScheduleCode, mScheduleExec)) {
             updateActionData();
+            //
+            if(mIsSchedule && mPresenter.isScheduleAbortProcess(mSchedulePrefix, mScheduleCode, mScheduleExec)){
+                svMain.setVisibility(View.INVISIBLE);
+                mPresenter.showScheduleCancelMsg(mSchedulePrefix,mScheduleCode,mScheduleExec);
+            }
         } else {
             paramErrorFlow();
         }
     }
-
 
     private void recoverIntentsInfo() {
         requestingBundle = getIntent().getExtras();
@@ -200,7 +223,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mTypePath = requestingBundle.getString(TK_TicketDao.TYPE_PATH, "");
             mTypeDesc = requestingBundle.getString(TK_TicketDao.TYPE_DESC, "");
             bDisableByCheckin = requestingBundle.getBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN,false);
-            //
+            //LUCHE - 12/03/2020
+            mSchedulePrefix = requestingBundle.getInt(TK_TicketDao.SCHEDULE_PREFIX, -1);
+            mScheduleCode = requestingBundle.getInt(TK_TicketDao.SCHEDULE_CODE, -1);
+            mScheduleExec = requestingBundle.getInt(TK_TicketDao.SCHEDULE_EXEC, -1);
+            mIsSchedule = defineIsScheduleAttr();
         } else {
             requestingAct = ConstantBaseApp.ACT070;
             mActionPrefix = -1;
@@ -210,12 +237,18 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mTypePath = "";
             mTypeDesc = "";
             bDisableByCheckin = false;
+            mSchedulePrefix = -1;
+            mScheduleCode = -1;
+            mScheduleExec = -1;
+            mIsSchedule = false;
         }
     }
 
     private void bindViews() {
+        svMain = findViewById(R.id.act071_sv_main);
         tvTicketId = findViewById(R.id.act071_tv_ticket_id);
         tvStatus = findViewById(R.id.act071_tv_status);
+        tvSerialId = findViewById(R.id.act071_tv_serial);
         tvTypePath = findViewById(R.id.act071_tv_type_path);
         tvTypeDesc = findViewById(R.id.act071_tv_type_desc);
         tvSeq = findViewById(R.id.act071_tv_seq);
@@ -244,7 +277,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     private void updateActionData() {
         mTicketCtrl = mPresenter.getTicketCtrlObj(mActionPrefix, mActionCode, mActionSeq);
-        //
         if (mTicketCtrl != null) {
             setReadOnly();
             setDataToViews();
@@ -495,10 +527,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             public void onClick(View v) {
                 //
                 if(ticketResult){
-                    mPresenter.definePostTicketSaveFlow(
-                        mTicketCtrl.getTicket_prefix(),
-                        mTicketCtrl.getTicket_code()
-                    );
+                    checkPostTicketSaveFlow();
                 }else{
                     updateActionData();
                 }
@@ -507,30 +536,73 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             }
         });
     }
+    @Override
+    public void checkPostTicketSaveFlow() {
+        if(isScheduledTicket()){
+            mPresenter.definePostTicketSaveFlow(
+                mSchedulePrefix,
+                mScheduleCode,
+                mScheduleExec
+            );
+        }else {
+            mPresenter.definePostTicketSaveFlow(
+                mTicketCtrl.getTicket_prefix(),
+                mTicketCtrl.getTicket_code()
+            );
+        }
+    }
+
+    @Override
+    public void updateTicketPk(int mPrefix, int mCode) {
+        this.mActionPrefix = mPrefix;
+        this.mActionCode = mCode;
+        updateActionData();
+    }
+
+    @Override
+    public String getRequestingAct() {
+        return requestingAct;
+    }
+
+    /**
+     * LUCHE - 17/03/2020
+     * Metodo que define o atributo mIsSchedule
+     * @return - Verdadeiro se ticket prefix == 0 e ticket_code, ticket_seq e pk do agendamento
+     */
+    private boolean defineIsScheduleAttr(){
+        return mActionPrefix == 0
+               && mActionCode > 0
+               && mActionSeq > 0
+               && mSchedulePrefix > 0
+               && mScheduleCode > 0
+               && mScheduleExec > 0;
+    }
+
+    @Override
+    public boolean isScheduledTicket() {
+        return mIsSchedule;
+    }
+
+    @Override
+    public int getmSchedulePrefix() {
+        return mSchedulePrefix;
+    }
+
+    @Override
+    public int getmScheduleCode() {
+        return mScheduleCode;
+    }
+
+    @Override
+    public int getmScheduleExec() {
+        return mScheduleExec;
+    }
 
     @Override
     public void postTicketSave() {
         updateActionData();
         //
-        mPresenter.definePostTicketSaveFlow(
-            mTicketCtrl.getTicket_prefix(),
-            mTicketCtrl.getTicket_code()
-        );
-//        //
-//        showAlert(
-//            hmAux_Trans.get("alert_ticket_save_ttl"),
-//            hmAux_Trans.get("alert_ticket_save_success_msg"),
-//            new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    //updateActionData();
-//                    mPresenter.definePostTicketSaveFlow(
-//                        mTicketCtrl.getTicket_prefix(),
-//                        mTicketCtrl.getTicket_code()
-//                    );
-//                }
-//            }
-//        );
+        checkPostTicketSaveFlow();
     }
 
     private void applyReadOnlyInPhoto() {
@@ -559,9 +631,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         tvTicketId.setText(mTicketID);
         tvStatus.setText(hmAux_Trans.get(mTicketCtrl.getCtrl_status()));
         tvStatus.setTextColor(ToolBox_Inf.getStatusColorV2(context, mTicketCtrl.getCtrl_status()));
+        defineSerialVisibility();
         definePathVisibility();
         tvTypeDesc.setText(mTypeDesc);
-        tvSeq.setText(String.valueOf(mTicketCtrl.getTicket_seq()));
+        tvSeq.setText(mPresenter.getFormattedSeqText(String.valueOf(mTicketCtrl.getTicket_seq())));
         definePartner();
         defineComments();
         defineActionPhotoMetrics();
@@ -569,6 +642,14 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         defineDoneInfo();
         defineCheckinAlert();
 
+    }
+
+    private void defineSerialVisibility() {
+        tvSerialId.setVisibility(View.GONE);
+        if(isScheduledTicket()){
+            tvSerialId.setVisibility(View.VISIBLE);
+            tvSerialId.setText(mTicketCtrl.getSerial_id());
+        }
     }
 
     /*
@@ -902,9 +983,30 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     //endregion
 
     @Override
-    public void callAct069() {
+    public void callAct069(boolean useRequestingBundle) {
         Intent intent = new Intent(context, Act069_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //Flag que indica que se deve usar vars do requestingBundle como bundle na chamada da act069
+        //Usado somente quando o usuario veio da act069 para "executar uma ação" de agendamento e
+        //desistiu
+        if(useRequestingBundle){
+            requestingBundle.remove(TK_TicketDao.TICKET_PREFIX);
+            requestingBundle.remove(TK_TicketDao.TICKET_CODE);
+            requestingBundle.remove(MD_Schedule_ExecDao.SCHEDULE_PREFIX);
+            requestingBundle.remove(MD_Schedule_ExecDao.SCHEDULE_CODE);
+            requestingBundle.remove(MD_Schedule_ExecDao.SCHEDULE_EXEC);
+            requestingBundle.remove(TK_Ticket_CtrlDao.TICKET_SEQ);
+            requestingBundle.remove(TK_TicketDao.TICKET_ID);
+            requestingBundle.remove(TK_TicketDao.TYPE_DESC);
+            requestingBundle.remove(Act070_Main.PARAM_DENIED_BY_CHECKIN);
+            requestingBundle.remove(MD_Schedule_ExecDao.SCHEDULE_PK);
+            //LUCHE - 27/03/2020 - Se status do historico, força requesting 14 pra reconfigurar act 069 o.O
+            if(mPresenter.isClosedStatus(mTicketCtrl.getCtrl_status())){
+                requestingBundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT014);
+            }
+            //
+            intent.putExtras(requestingBundle);
+        }
         startActivity(intent);
         finish();
     }
@@ -918,6 +1020,18 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         requestingBundle.remove(TK_TicketDao.TYPE_PATH);
         requestingBundle.remove(TK_TicketDao.TYPE_DESC);
         intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct017() {
+        Intent intent = new Intent(context, Act017_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, requestingBundle.getString(ConstantBaseApp.ACT_SELECTED_DATE, null));
+        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, requestingBundle.getString(MD_Schedule_ExecDao.SCHEDULE_PK, null));
+        intent.putExtras(bundle);
         startActivity(intent);
         finish();
     }

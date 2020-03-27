@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +17,10 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -34,14 +37,13 @@ import java.util.List;
  */
 
 public class Module_Schedules_Adapter extends BaseAdapter {
-
-    public static final String SCHEDULE_PK = "schedule_pk";
     private Context context;
     private int resource_01;
     private int resource_02;
     private int resource_03;
     private List<HMAux> source;
     private String mResource_Code;
+    private int resource_04;
     private HMAux hmAux_Trans;
     private OnIvCommentClickListner onIvCommentClickListner;
 
@@ -69,11 +71,12 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public Module_Schedules_Adapter(Context context,List<HMAux> source, int resource_01, int resource_02, int resource_03) {
+    public Module_Schedules_Adapter(Context context, List<HMAux> source, int resource_01, int resource_02, int resource_03, int resource_04) {
         this.context = context;
         this.resource_01 = resource_01;
         this.resource_02 = resource_02;
         this.resource_03 = resource_03;
+        this.resource_04 = resource_04;
         this.source = source;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -100,7 +103,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -114,6 +117,8 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 return 1;
             case Act017_Main.MODULE_SCHEDULE_DATE_REF:
                 return 2;
+            case ConstantBaseApp.PROFILE_MENU_TICKET:
+                return 3;
             default:
                 return 0;
         }
@@ -137,6 +142,9 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 case 2:
                     convertView = mInflater.inflate(resource_03, parent, false);
                     break;
+                case 3:
+                    convertView = mInflater.inflate(resource_04, parent, false);
+                    break;
             }
         }
         //
@@ -150,6 +158,9 @@ public class Module_Schedules_Adapter extends BaseAdapter {
             case 2:
                 processDateItem(item, convertView);
                 break;
+            case 3:
+                processTicketItem(item, convertView);
+                break;
         }
         //
         return convertView;
@@ -162,6 +173,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         switch (getItemViewType(position)){
             case 0:
             case 1:
+            case 3:
                 isEnabled = true;
                 break;
             case 2:
@@ -314,13 +326,18 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         Drawable llDrawable = null;
 
         switch (item.get(Act017_Main.ACT017_MODULE_KEY)) {
-
             case Constant.MODULE_CHECKLIST:
                 //16/08/2018 - Add icone de comentario quando houver
                 if(!item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE).isEmpty()){
+                    int iconColor =  valueExists(item,MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG)
+                                     ? R.color.namoa_color_danger_red
+                                     : R.color.light_to_dark_blue_color;
+                    //
                     iv_form_info.setVisibility(View.VISIBLE);
+                    iv_form_info.setColorFilter(context.getResources().getColor(iconColor), PorterDuff.Mode.SRC_ATOP);
                 }else{
                     iv_form_info.setVisibility(View.GONE);
+                    iv_form_info.setColorFilter(context.getResources().getColor(R.color.light_to_dark_blue_color), PorterDuff.Mode.SRC_ATOP);
                 }
                 //
                 iv_form_info.setOnClickListener(new View.OnClickListener() {
@@ -349,9 +366,9 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 }
                 tv_item_product.setText(item.get(MD_Schedule_ExecDao.PRODUCT_ID) + " - " + item.get(MD_Schedule_ExecDao.PRODUCT_DESC) );
                 tv_item_serial_id.setText(item.get(MD_Schedule_ExecDao.SERIAL_ID));
-                if (item.get(SCHEDULE_PK).trim().length() > 0) {
+                if (item.get(MD_Schedule_ExecDao.SCHEDULE_PK).trim().length() > 0) {
                     tv_item_seq_exec.setVisibility(View.VISIBLE);
-                    tv_item_seq_exec.setText(item.get(SCHEDULE_PK));
+                    tv_item_seq_exec.setText(item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
                     if(item.hasConsistentValue(MD_Schedule_ExecDao.SITE_ID)
                     && item.get(MD_Schedule_ExecDao.SITE_CODE).equals(String.valueOf(site_id_preference))){
                         tv_item_site.setVisibility(View.GONE);
@@ -427,10 +444,104 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 break;
 
             default:
-                llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
-                llBackground.setBackground(llDrawable);
+//                llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
+//                llBackground.setBackground(llDrawable);
+                tv_status_val.setText(hmAux_Trans.get(item.get(MD_Schedule_ExecDao.STATUS)));
+                tv_status_val.setTextColor(
+                    ToolBox_Inf.getStatusColorV2(context,item.get(MD_Schedule_ExecDao.STATUS))
+                );
                 break;
         }
+    }
+
+    private void processTicketItem(final HMAux item, View convertView) {
+        //Inicializa variaveis do layout da celula
+        LinearLayout llBackground = (LinearLayout) convertView.findViewById(R.id.module_schedules_ticket_cell_ll_bg);
+        //
+        ImageView iv_form_info = convertView.findViewById(R.id.module_schedules_ticket_cell_iv_info);
+        TextView tv_item_product = convertView.findViewById(R.id.module_schedules_ticket_cell_tv_item_product);
+        TextView tv_item_serial_id = convertView.findViewById(R.id.module_schedules_ticket_cell_tv_item_serial_id);
+        TextView tv_item_type_path = convertView.findViewById(R.id.module_schedules_ticket_cell_tv_item_type_path);
+        TextView tv_item_type_desc = convertView.findViewById(R.id.module_schedules_ticket_cell_tv_item_type_desc);
+        TextView tv_item_seq_exec = convertView.findViewById(R.id.module_schedules_ticket_cell_tv_item_seq_exec);
+        TextView tv_item_site = convertView.findViewById(R.id.module_schedules_ticket_cell_tv_item_site);
+        TextView tv_item_date = convertView.findViewById(R.id.module_schedules_ticket_cell_tv_item_date);
+        TextView tv_item_comment = convertView.findViewById(R.id.module_schedules_ticket_cell_tv_item_comment);
+        TextView tv_ttl = convertView.findViewById(R.id.module_schedules_ticket_cell_tv_ttl);
+        TextView tv_status_val = convertView.findViewById(R.id.module_schedules_ticket_cell_tv_status_val);
+        //
+        tv_item_seq_exec.setText(
+            ToolBox_Inf.getFormattedTicketSeqExec(item.get(MD_Schedule_ExecDao.SCHEDULE_PK),item.get(TK_TicketDao.TICKET_PREFIX),item.get(TK_TicketDao.TICKET_CODE))
+        );
+        //
+        tv_status_val.setText(hmAux_Trans.get(item.get(MD_Schedule_ExecDao.STATUS)));
+        tv_status_val.setTextColor(ToolBox_Inf.getStatusColorV2(context,item.get(MD_Schedule_ExecDao.STATUS)));
+        //
+        setIntervalScheduled(item,tv_item_date);
+        //
+        tv_item_type_path.setVisibility(View.GONE);
+        if(valueExists(item,TK_TicketDao.TYPE_PATH)){
+            tv_item_type_path.setText(item.get(TK_TicketDao.TYPE_PATH));
+            tv_item_type_path.setVisibility(View.VISIBLE);
+        }
+        tv_item_type_desc.setVisibility(View.GONE);
+        if(valueExists(item, MD_Schedule_ExecDao.TICKET_TYPE_DESC)){
+            tv_item_type_desc.setText(item.get(MD_Schedule_ExecDao.TICKET_TYPE_DESC));
+            tv_item_type_desc.setVisibility(View.VISIBLE);
+        }
+        //
+        tv_item_site.setVisibility(View.GONE);
+        llBackground.setBackground(context.getDrawable(R.drawable.namoa_cell_8_states));
+        if( valueExists(item,MD_Schedule_ExecDao.SITE_CODE)
+            && !item.get(MD_Schedule_ExecDao.SITE_CODE).equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))
+        ){
+            tv_item_site.setVisibility(View.VISIBLE);
+            tv_item_site.setText(
+                ToolBox_Inf.getFormattedGenericIdDesc(
+                    item.get(MD_Schedule_ExecDao.SITE_ID),
+                    item.get(MD_Schedule_ExecDao.SITE_DESC)
+                )
+            );
+            llBackground.setBackground(context.getDrawable(R.drawable.act013_cell_in_processing_states));
+        }
+        //
+        tv_item_product.setText(
+            ToolBox_Inf.getFormattedGenericIdDesc(
+                item.get(MD_Schedule_ExecDao.PRODUCT_ID),
+                item.get(MD_Schedule_ExecDao.PRODUCT_DESC)
+            )
+        );
+        //
+        tv_item_serial_id.setText(item.get(MD_Schedule_ExecDao.SERIAL_ID));
+        tv_item_comment.setVisibility(View.GONE);
+        if(valueExists(item,MD_Schedule_ExecDao.COMMENTS)){
+            tv_item_comment.setVisibility(View.VISIBLE);
+            tv_item_comment.setText(item.get(MD_Schedule_ExecDao.COMMENTS));
+        }
+        tv_ttl.setText(hmAux_Trans.get("lbl_ticket"));
+        //
+        int iconColor =
+                valueExists(item,MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG)
+                ? R.color.namoa_color_danger_red
+                : R.color.light_to_dark_blue_color;
+        //
+        iv_form_info.setVisibility(View.VISIBLE);
+        iv_form_info.setColorFilter(context.getResources().getColor(iconColor), PorterDuff.Mode.SRC_ATOP);
+
+        iv_form_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onIvCommentClickListner != null){
+                    onIvCommentClickListner.OnIvCommentClick(item);
+                }
+            }
+        });
+    }
+
+    private boolean valueExists(HMAux item, String key) {
+        return  item.hasConsistentValue(key)
+                && !item.get(key).isEmpty()
+                && !item.get(key).equalsIgnoreCase("null");
     }
 
     private void setIntervalScheduled(HMAux item, TextView tv_item_date) {
@@ -489,6 +600,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         //
         List<String> transeList005 = new ArrayList<>();
         transeList005.add("lbl_form_ap");
+        transeList005.add("lbl_ticket");
         //
         hmAux_Trans.putAll(ToolBox_Inf.setLanguage(
                 context,

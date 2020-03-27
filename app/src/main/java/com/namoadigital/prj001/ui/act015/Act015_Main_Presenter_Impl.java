@@ -11,6 +11,7 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.sql.Sql_Act015_001;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
@@ -74,8 +75,28 @@ public class Act015_Main_Presenter_Impl implements Act015_Main_Presenter {
     }
 
     @Override
+    public void processClickAction(HMAux item) {
+        if(isStatusPossibleToOpen(item)){
+            addFormInfoToBundle(item);
+        }else{
+            mView.showMsg(
+                hmAux_Trans.get("alert_form_status_prevents_to_open_ttl"),
+                hmAux_Trans.get("alert_form_status_prevents_to_open_msg")
+            );
+        }
+
+    }
+
+    private boolean isStatusPossibleToOpen(HMAux item) {
+        return item.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
+            && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_CANCELLED)
+            && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_REJECTED)
+            && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_IGNORED)
+            && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED);
+    }
+
+    @Override
     public void onBackPressedClicked() {
         mView.callAct014(context);
-
     }
 }
