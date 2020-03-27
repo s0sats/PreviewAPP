@@ -2014,8 +2014,8 @@ public class ToolBox_Inf {
         tv_customer_value.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER));
         //
         setmCanClean(ss_site, ss_zone, ss_operation);
+        setmSSAction(ss_site, ss_zone, ss_operation);
         //
-
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         ArrayList<HMAux> ssSiteOption = (ArrayList<HMAux>) siteDao.query_HM(
                 new MD_Site_Sql_SS(
@@ -2027,12 +2027,11 @@ public class ToolBox_Inf {
         //
         ll_site.setVisibility(hmDialogInfo.get(Constant.FOOTER_SITE) == null || hmDialogInfo.get(Constant.FOOTER_SITE).length() <= 0 ? View.GONE : View.VISIBLE);
         //
-
         MD_Site_ZoneDao siteZoneDao = new MD_Site_ZoneDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         ArrayList<HMAux> ssZoneOption = (ArrayList<HMAux>) siteZoneDao.query_HM(
                 new MD_Site_Zone_Sql_SS(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        ToolBox_Con.getPreference_Site_Code(context)
+                        ssSiteValue.get(SearchableSpinner.CODE)
                 ).toSqlQuery()
         );
         HMAux ssZoneValue = getCurrentmValue(hmDialogInfo.get(Constant.FOOTER_ZONE), ssZoneOption);
@@ -2044,7 +2043,7 @@ public class ToolBox_Inf {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
-
+        //
         ArrayList<HMAux>  ssOperationOption = (ArrayList<HMAux>) operationDao.query_HM(
                 new MD_Operation_Sql_SS(
                         ToolBox_Con.getPreference_Customer_Code(context)
@@ -2096,6 +2095,20 @@ public class ToolBox_Inf {
 //            }
 //        });
 
+    }
+
+    private static void setmSSAction(SearchableSpinner ss_site, final SearchableSpinner ss_zone, SearchableSpinner ss_operation) {
+        ss_site.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+
+            }
+        });
     }
 
     private static HMAux getCurrentmValue(String current_value, ArrayList<HMAux> ssOption) {
