@@ -178,13 +178,13 @@ public class SendResumeDialog extends AlertDialog {
             formApItem.setVisibility(View.GONE);
         }
 
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER)) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_EXPRESS)) {
             expressSoItem.setVisibility(View.VISIBLE);
             expressSoItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
             expressSoItem.findViewById(R.id.send_resume_iv_ready).setVisibility(View.GONE);
             expressSoItem.findViewById(R.id.send_resume_tv_module);
             tv_module_express_so = expressSoItem.findViewById(R.id.send_resume_tv_module);
-            tv_module_express_so.setText(hmAux_trans.get("alert_resume_express_services"));
+            tv_module_express_so.setText(hmAux_trans.get("alert_resume_express_so"));
             expressSoItem.findViewById(R.id.send_resume_amount);
         } else {
             expressSoItem.setVisibility(View.GONE);
