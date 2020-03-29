@@ -132,6 +132,9 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         translateList.add("alert_form_status_prevents_to_open_ttl");
         translateList.add("alert_form_status_prevents_to_open_msg");
         //
+        translateList.add("alert_form_turn_gps_on_title");
+        translateList.add("alert_form_turn_gps_on_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -594,16 +597,11 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
 
     @Override
     public void alertActiveGPSResource(final HMAux item) {
-        List<String> translist = new ArrayList<>();
-        translist.add("alert_form_turn_gps_on_title");
-        translist.add("alert_form_turn_gps_on_msg");
-
-        HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans, mModule_Code, mResource_Code, translist);
 
         ToolBox.alertMSG(
                 Act013_Main.this,
-                alertTrans.get("alert_form_turn_gps_on_title"),
-                alertTrans.get("alert_form_turn_gps_on_msg"),
+                hmAux_Trans.get("alert_form_turn_gps_on_title"),
+                hmAux_Trans.get("alert_form_turn_gps_on_msg"),
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

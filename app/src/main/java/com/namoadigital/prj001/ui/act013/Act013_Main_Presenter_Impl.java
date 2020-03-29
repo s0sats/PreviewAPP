@@ -672,15 +672,24 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 }
             } else {
                 //addFormInfoToBundle(item);
-                if(isStatusPossibleToOpen(item)){
-                    prepareOpenForm(item);
-                }else{
-                    mView.showMsg(
-                        Act013_Main.FORM_STATUS_PREVENT_TO_OPEN,
-                        item
-                    );
+             /*
+                Barrionuevo - 17/03/2020
+                Validacao de Recurso de GPS ativo para formularios pendentes.
+             */
+                if(item.hasConsistentValue(GE_Custom_Form_LocalDao.REQUIRE_LOCATION)
+                        && item.get(GE_Custom_Form_LocalDao.REQUIRE_LOCATION).equals("1")
+                        && !ToolBox_Con.hasGPSResourceActive(context)){
+                    mView.alertActiveGPSResource(item);
+                }else {
+                    if (isStatusPossibleToOpen(item)) {
+                        prepareOpenForm(item);
+                    } else {
+                        mView.showMsg(
+                                Act013_Main.FORM_STATUS_PREVENT_TO_OPEN,
+                                item
+                        );
+                    }
                 }
-
             }
         } else {
             mView.alertFormNotReady();
