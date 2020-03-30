@@ -5140,8 +5140,10 @@ public class ToolBox_Inf {
             /*case Constant.SYS_STATUS_WAITING_SYNC:
                 return R.color.namoa_status_waiting_sync;*/
             case Constant.SYS_STATUS_DONE:
+            case Constant.SYS_STATUS_FINALIZED://Remover após certeza que não é mais usado
                 return R.color.namoa_status_done;
             case Constant.SYS_STATUS_NOT_EXECUTED:
+            case Constant.SYS_STATUS_SENT://30/03/2020 - Ainda usado na O.S express
                 return R.color.namoa_status_not_executed;
             case Constant.SYS_STATUS_CANCELLED:
             case Constant.SYS_STATUS_DELETED:
