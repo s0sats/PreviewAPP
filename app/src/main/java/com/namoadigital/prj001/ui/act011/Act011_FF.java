@@ -21,6 +21,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -132,11 +133,13 @@ public class Act011_FF extends Fragment {
         if(savedInstanceState != null &&
             savedInstanceState.containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS) &&
             savedInstanceState.containsKey(GE_Custom_Form_Field_LocalDao.PAGE) &&
-            savedInstanceState.containsKey(GE_Custom_Form_Field_LocalDao.COMMENT)
+            savedInstanceState.containsKey(GE_Custom_Form_Field_LocalDao.COMMENT) &&
+            savedInstanceState.containsKey(MD_Schedule_ExecDao.SCHEDULE_DESC)
         ){
             formStatus = savedInstanceState.getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS);
             tabIndex = savedInstanceState.getInt(GE_Custom_Form_Field_LocalDao.PAGE);
             comments = savedInstanceState.getString(GE_Custom_Form_Field_LocalDao.COMMENT);
+            schedule_desc = savedInstanceState.getString(MD_Schedule_ExecDao.SCHEDULE_DESC);
         }
         //
         iniVars(view);
@@ -426,5 +429,6 @@ public class Act011_FF extends Fragment {
         outState.putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus);
         outState.putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex);
         outState.putString(GE_Custom_Form_Field_LocalDao.COMMENT,comments);
+        outState.putString(MD_Schedule_ExecDao.SCHEDULE_DESC,schedule_desc);
     }
 }
