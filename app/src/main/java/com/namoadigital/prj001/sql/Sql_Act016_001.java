@@ -7,7 +7,6 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -37,6 +36,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  *
  * LUCHE - 13/02/2020
  * Como os agendamentos não possuem timezone, será usado a nova preferencia Customer_TMZ,
+ *
+ * LUCHE - 30/03/2020
+ * Substituido o status FINALIZED pelo WAITING_SYNC e  SENT por DONE, na query de form.
  */
 
 public class Sql_Act016_001 implements Specification {
@@ -63,11 +65,11 @@ public class Sql_Act016_001 implements Specification {
         sql_form =  UNION_ALL +
                     "   \nSELECT\n" +
                     "      strftime('%Y-%m-%d',s.date_start||' "+customerGMT+"','"+customerGMT+"') schedule_date_start,\n" +
-                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"' ) delayed_count,\n" +
-                    "      (s.status = '"+ Constant.SYS_STATUS_IN_PROCESSING+"') inprocessing_count,\n" +
-                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"') scheduled_count,    \n" +
-                    "      (s.status = '"+ Constant.SYS_STATUS_FINALIZED+"') finalized_count,\n" +
-                    "      (s.status = '"+ Constant.SYS_STATUS_SENT+"') sent_count\n" +
+                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) delayed_count,\n" +
+                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"') inprocessing_count,\n" +
+                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') scheduled_count,    \n" +
+                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') finalized_count,\n" +
+                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') sent_count\n" +
                     "     \n" +
                     "  FROM "+ MD_Schedule_ExecDao.TABLE+" s\n" +
                     "  \n" +
@@ -84,10 +86,10 @@ public class Sql_Act016_001 implements Specification {
                     UNION_ALL +
                     "\nSELECT\n" +
                     "      strftime('%Y-%m-%d',a.ap_when,'"+deviceGMT+"') schedule_date_start,\n" +
-                    "      ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_CANCELLED+"') ) delayed_count,\n" +
+                    "      ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+ConstantBaseApp.SYS_STATUS_DONE+"','"+ConstantBaseApp.SYS_STATUS_CANCELLED+"') ) delayed_count,\n" +
                     "      0 inprocessing_count,\n" +
-                    "      ((strftime('%s',a.ap_when) * 1000)  >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+Constant.SYS_STATUS_DONE+"','"+Constant.SYS_STATUS_CANCELLED+"')) scheduled_count,\n" +
-                    "      (a.ap_status = '"+ Constant.SYS_STATUS_DONE+"') finalized_count,\n" +
+                    "      ((strftime('%s',a.ap_when) * 1000)  >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+ConstantBaseApp.SYS_STATUS_DONE+"','"+ConstantBaseApp.SYS_STATUS_CANCELLED+"')) scheduled_count,\n" +
+                    "      (a.ap_status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') finalized_count,\n" +
                     "      0 sent_count\n" +
                     "  FROM "+ GE_Custom_Form_ApDao.TABLE+" a  \n" +
                     "  WHERE \n" +
@@ -98,11 +100,11 @@ public class Sql_Act016_001 implements Specification {
                 UNION_ALL +
                 "   \nSELECT\n" +
                 "      strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"') schedule_date_start,\n" +
-                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+customerGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"' ) delayed_count,\n" +
-                "      (s.status = '"+ Constant.SYS_STATUS_PROCESS+"') inprocessing_count,\n" +
-                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+customerGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"') scheduled_count,    \n" +
-                "      (s.status = '"+ Constant.SYS_STATUS_WAITING_SYNC+"') finalized_count,\n" +
-                "      (s.status = '"+ Constant.SYS_STATUS_DONE+"') sent_count\n" +
+                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+customerGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) delayed_count,\n" +
+                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"') inprocessing_count,\n" +
+                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+customerGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') scheduled_count,    \n" +
+                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') finalized_count,\n" +
+                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') sent_count\n" +
                 "     \n" +
                 "  FROM "+ MD_Schedule_ExecDao.TABLE+" s\n" +
                 "  \n" +
@@ -139,13 +141,6 @@ public class Sql_Act016_001 implements Specification {
                         "      \n" +
                         " GROUP BY\n" +
                         "  schedule_date_start;"
-//                        CalendarView.DT
-//                        +"#"+ CalendarView.DELAYED_COUNT
-//                        +"#"+ CalendarView.INPROCESSING_COUNT
-//                        +"#"+ CalendarView.SCHEDULED_COUNT
-//                        +"#"+ CalendarView.FINALIZED_COUNT
-//                        +"#"+ CalendarView.SENT_COUNT
-//                        +"#cur_data#cur_mili"
                 )
                 .toString();
 
