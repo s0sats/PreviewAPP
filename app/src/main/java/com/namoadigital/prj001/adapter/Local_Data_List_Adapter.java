@@ -249,7 +249,7 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                 );
                 break;
             //
-            case Constant.SYS_STATUS_FINALIZED:
+            case Constant.SYS_STATUS_WAITING_SYNC:
 
                 tv_date_lbl.setText(
                         hmAux_Trans.get("lbl_date") + " " +
@@ -259,12 +259,12 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                                 )
                 );
 
-                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_DONE));
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_WAITING_SYNC));
                 tv_status_val.setTextColor(
-                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_DONE))
+                        ToolBox_Inf.getStatusColorV2(context,Constant.SYS_STATUS_WAITING_SYNC)
                 );
                 break;
-            case Constant.SYS_STATUS_SENT:
+            case Constant.SYS_STATUS_DONE:
                 tv_date_lbl.setText(
                         hmAux_Trans.get("lbl_date") + " " +
                         ToolBox_Inf.millisecondsToString(
@@ -272,9 +272,9 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                         )
                 );
-                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_SENT));
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_DONE));
                 tv_status_val.setTextColor(
-                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_SENT))
+                    ToolBox_Inf.getStatusColorV2(context,Constant.SYS_STATUS_DONE)
                 );
 
                 break;
