@@ -117,18 +117,18 @@ public class Sql_Act017_001 implements Specification {
                         "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"') = '"+selected_date+"') \n" +
                         "      AND ('"+serial_id+"' is null or s.serial_id like '%"+serial_id+"%' or d.serial_id like '%"+serial_id+"%' ) \n" +
                         "      AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') \n" +
-                        "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))  and s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"')) \n" +
+                        "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))  and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"')) \n" +
                         "  ORDER BY\n" +
                         "      strftime('%Y-%m-%d %H:%M',s.date_start,'"+customerGMT+"'), \n" +
-                        "      CASE WHEN s.status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN 0\n" +
-                        "           WHEN s.status = '"+Constant.SYS_STATUS_FINALIZED+"' THEN 1\n" +
-                        "           WHEN s.status = '"+Constant.SYS_STATUS_SCHEDULE+"' THEN 2\n" +
+                        "      CASE WHEN s.status = '"+ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"' THEN 0\n" +
+                        "           WHEN s.status = '"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"' THEN 1\n" +
+                        "           WHEN s.status = '"+ConstantBaseApp.SYS_STATUS_SCHEDULE+"' THEN 2\n" +
                         "           ELSE 3\n" +
                         "      END \n," +
-                        "      (CASE WHEN s.status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN d.date_start\n" +
+                        "      (CASE WHEN s.status = '"+ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"' THEN d.date_start\n" +
                         "            ELSE  '31/12/9999 23:59'\n" +
                         "       END) ASC,\n" +
-                        "      (CASE WHEN s.status = '"+Constant.SYS_STATUS_FINALIZED+"' THEN d.date_end\n" +
+                        "      (CASE WHEN s.status = '"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"' THEN d.date_end\n" +
                         "            ELSE  '01/01/1900 00:00'\n" +
                         "       END) DESC , \n" +
                         "      s.custom_form_type, \n" +
