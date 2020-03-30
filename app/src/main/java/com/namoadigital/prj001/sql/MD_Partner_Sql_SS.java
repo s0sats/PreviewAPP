@@ -6,6 +6,13 @@ import com.namoadigital.prj001.database.Specification;
 
 /**
  * Created by DANIEL.LUCHE on 17/01/2017.
+ *
+ * LUCHE - 26/03/2020
+ *
+ * Modificado query para filtrar APENAS os parceiros operacionais.
+ * Essa query até esa data é usada somente para o modulo de O.S, e nele faz sentido.
+ *
+ * Se for usar essa query em outro processo, analisar o impacto da mudança.
  */
 
 public class MD_Partner_Sql_SS implements Specification {
@@ -23,17 +30,18 @@ public class MD_Partner_Sql_SS implements Specification {
         // customer_code, partner_code, partner_id as id, partner_desc as description
 
         return sb
-                .append("SELECT " +
-                        "   customer_code, " +
+                .append("SELECT \n" +
+                        "   customer_code, \n" +
                         "   partner_code "+ SearchableSpinner.CODE +",\n " +
                         "   partner_id "+ SearchableSpinner.ID +",\n" +
                         "   partner_desc "+ SearchableSpinner.DESCRIPTION +" \n" +
-                        "FROM ")
-                .append(MD_PartnerDao.TABLE)
-                .append(" WHERE " +
-                        MD_PartnerDao.CUSTOMER_CODE + " = '" + s_customer_code + "' " +
-                        " ORDER BY " +
-                        "      partner_desc")
+                        "FROM \n")
+                .append(MD_PartnerDao.TABLE).append(" \n")
+                .append(" WHERE \n" +
+                        "   " + MD_PartnerDao.CUSTOMER_CODE + " = '" + s_customer_code + "' \n" +
+                        "   AND " + MD_PartnerDao.OPERATIONAL + " = '1' \n" +
+                        " ORDER BY \n" +
+                        "      partner_desc \n")
                 .append(";")
                 //.append("customer_code#partner_id#id#description")
                 .toString();

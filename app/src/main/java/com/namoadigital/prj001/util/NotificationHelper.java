@@ -176,7 +176,7 @@ public class NotificationHelper {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER)) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_EXPRESS)) {
             Log.i("TESTE", "PROFILE_PRJ001_SO");
             notificationLayoutExpanded.setViewVisibility(R.id.tv_express_services, View.VISIBLE);
             try {

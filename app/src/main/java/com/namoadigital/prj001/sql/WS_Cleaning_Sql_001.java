@@ -1,10 +1,16 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 /**
  * Created by neomatrix on 23/02/17.
+ *
+ * LUCHE - 26/03/2020
+ *
+ * Modificado query para incluir o status cancelado, possivel após a implatação do novo agendamento.
  */
 
 public class WS_Cleaning_Sql_001 implements Specification {
@@ -21,12 +27,15 @@ public class WS_Cleaning_Sql_001 implements Specification {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append("select * FROM ge_custom_form_datas where custom_form_status in ('"+
-                        ConstantBase.SYS_STATUS_SENT + "', '"+ ConstantBase.SYS_STATUS_DELETED + "') and Date(date_end) <")
-                .append("Date('")
-                .append(s_date)
-                .append("');")
-                //.append(";customer_code#custom_form_type#custom_form_code#custom_form_version#custom_form_data#custom_form_status#product_code")
+                .append(" SELECT * \n " +
+                        " FROM "+ GE_Custom_Form_DataDao.TABLE +" \n" +
+                        " WHERE custom_form_status in ('"+ConstantBase.SYS_STATUS_SENT + "',\n" +
+                        "                               '"+ ConstantBase.SYS_STATUS_DELETED + "', \n" +
+                        "                               '"+ ConstantBase.SYS_STATUS_CANCELLED + "', \n" +
+                        "                               '"+ ConstantBase.SYS_STATUS_NOT_EXECUTED + "',\n" +
+                        "                               '"+ ConstantBaseApp.SYS_STATUS_IGNORED + "' \n" +
+                        "                              )\n" +
+                        " and Date(date_end) < Date('"+s_date+"');")
                 .toString();
     }
 }

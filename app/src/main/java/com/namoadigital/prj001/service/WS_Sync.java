@@ -1495,7 +1495,6 @@ public class WS_Sync extends IntentService {
             File[] files_md_schedule_exec = ToolBox_Inf.getListOfFiles_v2("md_schedule_exec-");
             if(files_md_schedule_exec.length > 0) {
                 ArrayList<MD_Schedule_Exec> scheduleExecs = new ArrayList<>();
-                ArrayList<MD_Schedule_Exec> scheduleToDel = new ArrayList<>();
                 //Loop nos arquivos extraindo todos os agendamentos para uma unica lista.
                 for (File _file : files_md_schedule_exec) {
                     ArrayList<MD_Schedule_Exec> tempScheduleExecs = gson.fromJson(

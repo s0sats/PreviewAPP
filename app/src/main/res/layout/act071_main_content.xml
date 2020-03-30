@@ -72,6 +72,19 @@
                 app:layout_constraintEnd_toStartOf="@id/act071_guide_end"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Pending" />
+            <!--Somente Visivel caso agendamento-->
+            <TextView
+                android:id="@+id/act071_tv_serial"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_item_md"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/act071_guide_end"
+                app:layout_constraintStart_toStartOf="@id/act071_guide_start"
+                app:layout_constraintTop_toBottomOf="@id/act071_tv_ticket_id"
+                tools:text="1234"
+                android:visibility="gone"
+                />
 
             <TextView
                 android:id="@+id/act071_tv_type_path"
@@ -83,7 +96,7 @@
                 android:textSize="@dimen/font_size_item"
                 app:layout_constraintEnd_toStartOf="@id/act071_guide_end"
                 app:layout_constraintStart_toStartOf="@id/act071_guide_start"
-                app:layout_constraintTop_toBottomOf="@id/act071_tv_ticket_id"
+                app:layout_constraintTop_toBottomOf="@id/act071_tv_serial"
                 tools:text="LIMPEZA\Banheiro Feminino" />
 
             <TextView
@@ -113,7 +126,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@color/namoa_color_gray"
+
                 android:padding="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/act071_guide_end"

@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,6 +22,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -37,7 +40,7 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
     private List<HMAux> source_filtered = new ArrayList<>();
     private String mResource_Code;
     private HMAux hmAux_Trans;
-    private OnIvCommentClickListner onIvCommentClickListner;
+    private OnIvScheduleWarningClickListner onIvScheduleWarningClickListner;
     private ValueFilter valueFilter;
     private List<HMAux> source = new ArrayList<>();
     private boolean isScheduled;
@@ -76,12 +79,16 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
         return valueFilter;
     }
 
-    public interface OnIvCommentClickListner{
-        void OnIvCommentClick(String comment);
+    public interface OnIvScheduleWarningClickListner {
+        void OnIvScheduleWarningClick(
+                String fcmNewStatus,
+                String fcmUserNick,
+                String errorMsg
+            );
     }
 
-    public void setOnIvCommentClickListner(OnIvCommentClickListner onIvCommentClickListner) {
-        this.onIvCommentClickListner = onIvCommentClickListner;
+    public void setOnIvScheduleWarningClickListner(OnIvScheduleWarningClickListner onIvScheduleWarningClickListner) {
+        this.onIvScheduleWarningClickListner = onIvScheduleWarningClickListner;
     }
 
     @Override
@@ -98,6 +105,33 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
     public long getItemId(int position) {
         return 0L;
     }
+
+    /**
+     * LUCHE - 24/03/2020
+     * <P></P>
+     * Metodo que reemplementa  o clique no item da lista.
+     * Na teoria não existem itens con os status abaixo, mas com o advento do novo agendamento, pode
+     * ser que algo mude.
+     * @param position Posição do item da list.
+     * @return - True se houver chave status e diferente dos status abaixo.
+     */
+//    @Override
+//    public boolean isEnabled(int position) {
+//        //return super.isEnabled(position);
+//        if(source.size() > 0) {
+//            HMAux item = source.get(position);
+//            //Se tem o status e é diferente de cancelled e rejected, permite clique
+//            return
+//                item.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
+//                    && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_CANCELLED)
+//                    && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_REJECTED)
+//                    && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_IGNORED)
+//                    && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED)
+//                ;
+//        }else{
+//            return super.isEnabled(position);
+//        }
+//    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -188,6 +222,10 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
             tv_so_code_lbl.setVisibility(View.GONE);
             tv_so_code_val.setText("");
         }
+        //
+        ImageView ivScheduleWarningInfos = convertView.findViewById(R.id.local_data_list_cell_01_iv_schedule_warning_infos);
+        //
+        defineScheduleWarningInfos(ivScheduleWarningInfos,item);
 
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)) {
 
@@ -261,11 +299,71 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                         context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_DELETED))
                 );
                 break;
+            case ConstantBaseApp.SYS_STATUS_CANCELLED:
+            case ConstantBaseApp.SYS_STATUS_IGNORED:
+                //ATUALMENTE ESSES STATUS SÓ EXISTEM NO AGENDAMENTO , MAS VAI SABER....
+                if(!isScheduled) {
+                    tv_date_lbl.setText(
+                        hmAux_Trans.get("lbl_date") + " " +
+                            ToolBox_Inf.millisecondsToString(
+                                ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_START)),
+                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                            )
+                    );
+                    setTvDateLblConstraint(clHeader, ConstraintSet.PARENT_ID);
+                }else{
+                    tv_date_lbl.setText(ToolBox_Inf.formatScheduleIntervalDateFormatted(context, dateStart, dateEnd));
+                    setTvDateLblConstraint(clHeader, R.id.local_data_list_cell_01_tv_status_val);
+                }
+                //
+                tv_status_val.setText(hmAux_Trans.get(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)));
+                tv_status_val.setTextColor(
+                    ToolBox_Inf.getStatusColorV2(context,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
+                );
+                break;
             default:
+                tv_status_val.setText(hmAux_Trans.get(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)));
+                tv_status_val.setTextColor(
+                    ToolBox_Inf.getStatusColorV2(context,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
+                );
                 break;
         }
 
         return convertView;
+    }
+
+    private void defineScheduleWarningInfos(ImageView ivScheduleWarningInfos, final HMAux item) {
+        ivScheduleWarningInfos.setVisibility(View.GONE);
+        ivScheduleWarningInfos.setOnClickListener(null);
+        //
+        if(item.hasConsistentValue(MD_Schedule_ExecDao.FCM_NEW_STATUS)
+           && item.hasConsistentValue(MD_Schedule_ExecDao.FCM_USER_NICK)
+           && item.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG)
+        ){
+            if( !item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS).isEmpty()
+                || !item.get(MD_Schedule_ExecDao.FCM_USER_NICK).isEmpty()
+                || !item.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG).isEmpty()
+            ){
+                int color = !item.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG).isEmpty()
+                    ? R.color.namoa_color_danger_red
+                    : R.color.light_to_dark_blue_color;
+
+                ivScheduleWarningInfos.setVisibility(View.VISIBLE);
+                ivScheduleWarningInfos.setColorFilter(context.getResources().getColor(color), PorterDuff.Mode.SRC_ATOP);
+                ivScheduleWarningInfos.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(onIvScheduleWarningClickListner != null){
+                            onIvScheduleWarningClickListner.OnIvScheduleWarningClick(
+                                item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS),
+                                item.get(MD_Schedule_ExecDao.FCM_USER_NICK),
+                                item.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG)
+                            );
+                        }
+                    }
+                });
+            }
+        }
     }
 
     private void setTvDateLblConstraint(ConstraintLayout clHeader, int parentId) {

@@ -9,6 +9,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -84,8 +85,8 @@ public class Sql_Act017_001 implements Specification {
                         "  d.date_end ,\n" +
                         "  s.date_start ||' "+customerGMT+"' "+MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT+",\n"+
                         "  s.date_end ||' "+customerGMT+"' "+MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT+",\n"+
-                        "  strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n"+
-                        "  (strftime('%s',s.date_start,'"+customerGMT+"') * 1000)  "+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+",\n"+
+                        "  strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n"+
+                        "  (strftime('%s',s.date_start ||' "+customerGMT+"','"+customerGMT+"') * 1000)  "+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+",\n"+
                         "  s.require_serial,\n"+
                         "  s.allow_new_serial_cl,\n"+
                         "  s.require_serial_done,\n"+
@@ -94,7 +95,10 @@ public class Sql_Act017_001 implements Specification {
                         "  s.schedule_prefix,\n" +
                         "  s.schedule_code,\n" +
                         "  s.schedule_desc,\n" +
-                        "  s.schedule_exec \n "+
+                        "  s.schedule_exec,\n "+
+                        "  s.fcm_new_status,\n "+
+                        "  s.fcm_user_nick\n,"+
+                        "  s.schedule_erro_msg\n "+
                         " \n" +
                         "  FROM\n" +
                         "   " + MD_Schedule_ExecDao.TABLE+ " s\n" +
@@ -108,13 +112,12 @@ public class Sql_Act017_001 implements Specification {
                         "      AND s.schedule_exec = d.schedule_exec\n" +
                         "  WHERE\n" +
                         "      s."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' \n" +
-                        "      AND s.custom_form_type is not null \n" +
-                        "      AND s.custom_form_code is not null \n" +
-                        "      AND s.custom_form_version is not null \n" +
-                        "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"') = '"+selected_date+"') \n" +
+                        "      AND s.schedule_type = '"+ConstantBaseApp.MD_SCHEDULE_TYPE_FORM+"'\n"+
+                        "      AND s.status <>'"+ ConstantBaseApp.SYS_STATUS_CANCELLED+"'\n" +
+                        "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"') = '"+selected_date+"') \n" +
                         "      AND ('"+serial_id+"' is null or s.serial_id like '%"+serial_id+"%' or d.serial_id like '%"+serial_id+"%' ) \n" +
                         "      AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') \n" +
-                        "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',s.date_start ,'"+customerGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))  and s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"')) \n" +
+                        "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))  and s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"')) \n" +
                         "  ORDER BY\n" +
                         "      strftime('%Y-%m-%d %H:%M',s.date_start,'"+customerGMT+"'), \n" +
                         "      CASE WHEN s.status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN 0\n" +

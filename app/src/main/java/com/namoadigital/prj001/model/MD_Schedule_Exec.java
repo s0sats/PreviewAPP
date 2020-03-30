@@ -47,6 +47,15 @@ public class MD_Schedule_Exec {
     private int allow_new_serial_cl;
     private int require_serial_done;
     private int sync_process;
+    @Nullable
+    private String fcm_new_status;
+    @Nullable
+    private String fcm_user_nick;
+    @Nullable
+    private String schedule_erro_msg;
+    @Nullable
+    private String close_date;
+
 
     /**
      * LUCHE - 14/02/2020
@@ -336,5 +345,41 @@ public class MD_Schedule_Exec {
 
     public void setSync_process(int sync_process) {
         this.sync_process = sync_process;
+    }
+
+    @Nullable
+    public String getFcm_new_status() {
+        return fcm_new_status;
+    }
+
+    public void setFcm_new_status(@Nullable String fcm_new_status) {
+        this.fcm_new_status = fcm_new_status;
+    }
+
+    @Nullable
+    public String getFcm_user_nick() {
+        return fcm_user_nick;
+    }
+
+    public void setFcm_user_nick(@Nullable String fcm_user_nick) {
+        this.fcm_user_nick = fcm_user_nick;
+    }
+
+    @Nullable
+    public String getSchedule_erro_msg() {
+        return schedule_erro_msg;
+    }
+
+    public void setSchedule_erro_msg(@Nullable String schedule_erro_msg) {
+        this.schedule_erro_msg = schedule_erro_msg;
+    }
+
+    @Nullable
+    public String getClose_date() {
+        return close_date;
+    }
+
+    public void setClose_date(@Nullable String close_date) {
+        this.close_date = close_date;
     }
 }

@@ -81,6 +81,15 @@ public class TK_Ticket {
     @Expose
     private String token;
     @Expose
+    @Nullable
+    private Integer schedule_prefix;
+    @Expose
+    @Nullable
+    private Integer schedule_code;
+    @Expose
+    @Nullable
+    private Integer schedule_exec;
+    @Expose
     private ArrayList<TK_Ticket_Ctrl> ctrl = new ArrayList<>();
 
     public void setPK() {
@@ -454,6 +463,33 @@ public class TK_Ticket {
         this.token = token;
     }
 
+    @Nullable
+    public Integer getSchedule_prefix() {
+        return schedule_prefix;
+    }
+
+    public void setSchedule_prefix(@Nullable Integer schedule_prefix) {
+        this.schedule_prefix = schedule_prefix;
+    }
+
+    @Nullable
+    public Integer getSchedule_code() {
+        return schedule_code;
+    }
+
+    public void setSchedule_code(@Nullable Integer schedule_code) {
+        this.schedule_code = schedule_code;
+    }
+
+    @Nullable
+    public Integer getSchedule_exec() {
+        return schedule_exec;
+    }
+
+    public void setSchedule_exec(@Nullable Integer schedule_exec) {
+        this.schedule_exec = schedule_exec;
+    }
+
     /**
      * Metodo que seta a referente a imagem local no campos *_photo_local.
      */
@@ -584,5 +620,20 @@ public class TK_Ticket {
             return imgLocalPath;
         }
         return null;
+    }
+
+    /**
+     * LUCHE - 11/03/2020
+     * <p></p>
+     * Metodo que valida se o ticket passada por parametro é valido
+     * @param tk_ticket - Ticket a ser avaliado
+     * @return  - Verdadeiro se ticket tiver os dados da pk diferente de 0
+     */
+    public static boolean isValidTkTicket(TK_Ticket tk_ticket){
+        return  tk_ticket != null
+                && tk_ticket.getCustomer_code() > 0
+                && tk_ticket.getTicket_prefix() > 0
+                && tk_ticket.getTicket_code() > 0 ;
+
     }
 }

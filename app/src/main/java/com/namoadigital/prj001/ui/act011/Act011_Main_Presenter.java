@@ -37,4 +37,6 @@ public interface Act011_Main_Presenter {
     void processWS_SaveReturn(String json);
 
     boolean hasGpsPendecy(long customer_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data);
+
+    void cancelScheduleAndForm(GE_Custom_Form_Local customFormLocal, MD_Schedule_Exec scheduleExec);
 }

@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -29,7 +30,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -40,6 +44,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RemoteViews;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -156,8 +161,6 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_011;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_010;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_013;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_014;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.sql.IO_Blind_Move_Sql_006;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_013;
@@ -181,6 +184,8 @@ import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
 import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
 import com.namoadigital.prj001.sql.Sql_Form_x_Product;
 import com.namoadigital.prj001.sql.Sql_Form_x_Site;
+import com.namoadigital.prj001.sql.Sql_Notification_Schedule_001;
+import com.namoadigital.prj001.sql.Sql_Notification_Schedule_002;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
@@ -2465,10 +2470,10 @@ public class ToolBox_Inf {
                 Calendar.SECOND,
                 0
         );
-//        // Tirar
+        //Para Debug
 //        calendarAux.set(
 //                Calendar.SECOND,
-//                calendarAux.get(Calendar.SECOND) + 15
+//                calendarAux.get(Calendar.SECOND) + 10
 //        );
 
         /**
@@ -2479,15 +2484,20 @@ public class ToolBox_Inf {
         );
         //
         boolean isWorking = (PendingIntent.getBroadcast(
-                context, 100, mIntent_Full, PendingIntent.FLAG_NO_CREATE) != null);
+                context,
+                //100,
+                ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
+                mIntent_Full,
+                PendingIntent.FLAG_NO_CREATE) != null
+        );
 
         Log.d("ALARM", String.valueOf(isWorking));
 
         if (!isWorking) {
-
             PendingIntent pi_full = PendingIntent.getBroadcast(
                     context,
-                    100,
+                    //100,
+                    ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
                     mIntent_Full,
                     0
             );
@@ -2496,7 +2506,6 @@ public class ToolBox_Inf {
                     AlarmManager.RTC_WAKEUP,
                     calendarAux.getTimeInMillis(),
                     (1000 * 60 * 60 * 4),
-                    //(1000 * 60 * 5),
                     pi_full
             );
         }
@@ -2516,14 +2525,20 @@ public class ToolBox_Inf {
         );
         //
         isWorking = (PendingIntent.getBroadcast(
-                context, 200, mIntent_Quarter, PendingIntent.FLAG_NO_CREATE) != null);
+                            context,
+                        //200,
+                        ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
+                        mIntent_Quarter,
+                        PendingIntent.FLAG_NO_CREATE) != null
+                    );
 
         Log.d("ALARM", String.valueOf(isWorking));
 
         if (!isWorking) {
             PendingIntent pi_Quarter = PendingIntent.getBroadcast(
                     context,
-                    200,
+                    //200,
+                    ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
                     mIntent_Quarter,
                     0
             );
@@ -2532,125 +2547,124 @@ public class ToolBox_Inf {
                     AlarmManager.RTC_WAKEUP,
                     calendarAux.getTimeInMillis(),
                     (1000 * 60 * 15),
-                    //(1000 * 60 * 2),
                     pi_Quarter
             );
         }
-        //
-        // generateNotification(context, 300);
     }
 
+    /**
+     * Modificado em 19/03/2020 - LUCHE
+     * <p></p>
+     * Metodo ancestral que gera a notificação de agendados e atrasados.
+     * Foi modificado em 19/03/2020 substituindo os textos chumbados por constantes e
+     * foram adiconado comentarios para facilitar o entendimento do codigo
+     * @param context Contexto
+     * @param parameter Request Code da pedingIntent
+     */
     public static void generateNotification(Context context, int parameter) {
-
+        MD_Schedule_ExecDao scheduleDao;
+        ArrayList<HMAux> customers_vs_total = new ArrayList<>();
+        ArrayList<HMAux> totals;
+        //
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
-
+        //
         EV_User_CustomerDao ev_user_customerDao = new EV_User_CustomerDao(
                 context,
                 Constant.DB_FULL_BASE,
                 Constant.DB_VERSION_BASE
         );
-
-        GE_Custom_Form_LocalDao formLocalDao;
-
-        ArrayList<HMAux> customers_vs_total = new ArrayList<>();
-
-        ArrayList<HMAux> totals;
-
-        ArrayList<HMAux> customers = (ArrayList<HMAux>) ev_user_customerDao.query_HM(
-                new EV_User_Customer_Sql_006()
-                        .toSqlQuery()
-        );
-
+        //Seleciona lista de customers com sessão.
+        ArrayList<HMAux> customers =  (ArrayList<HMAux>) ev_user_customerDao.query_HM(new EV_User_Customer_Sql_006().toSqlQuery());
+        //Loop na lista de customer para exibir msg de agendamentos para cada um.
         for (HMAux hmAux : customers) {
-            formLocalDao =
-                    new GE_Custom_Form_LocalDao(
+            long customerCode = Long.parseLong(hmAux.get(EV_User_CustomerDao.CUSTOMER_CODE));
+            //
+            scheduleDao =
+                    new MD_Schedule_ExecDao(
                             context,
-                            ToolBox_Con.customDBPath(Long.parseLong(hmAux.get("customer_code"))),
+                            ToolBox_Con.customDBPath(customerCode),
                             Constant.DB_VERSION_CUSTOM
                     );
-
-            HMAux auxCT = new HMAux();
-            auxCT.put("customer_code", hmAux.get("customer_code"));
-            auxCT.put("customer_name", hmAux.get("customer_name"));
-            auxCT.put("translate_code", hmAux.get("translate_code"));
+            //
+            HMAux auxCT = (HMAux) hmAux.clone();
             //
             boolean bInclude = false;
-            //
-            if (parameter == 100 || parameter == 300) {
-                totals = (ArrayList<HMAux>) formLocalDao.query_HM(
-                        new GE_Custom_Form_Local_Sql_013(
-                                Calendar.getInstance().getTimeInMillis()
+            // parameter:
+            //  100 - Notificação alarm full a cada 60 minutos.
+            //  200 - Notificação alarm quarter a cada 15 minutos.
+            if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL) {
+                //Gera "lista" com a qtd de itens agendados para a proxima 1 horas(future) e os atrasados(late).
+                //A parte da lista é apenas para não retornar null, pois o resultado sempre será apenas um registro
+                totals = (ArrayList<HMAux>) scheduleDao.query_HM(
+                        new Sql_Notification_Schedule_001(
+                                context,
+                                customerCode
                         ).toSqlQuery()
                 );
             } else {
-                totals = (ArrayList<HMAux>) formLocalDao.query_HM(
-                        new GE_Custom_Form_Local_Sql_014(
-                                Calendar.getInstance().getTimeInMillis()
+                //Gera lista com a qtd de itens agendados para a proxima 1 horas(future)
+                totals = (ArrayList<HMAux>) scheduleDao.query_HM(
+                        new Sql_Notification_Schedule_002(
+                            context,
+                            customerCode
                         ).toSqlQuery()
                 );
             }
-            //
+            //loop na lista dos dados retornados.
             for (HMAux hmAuxTotal : totals) {
                 bInclude = true;
-
-                if (parameter == 100 || parameter == 300) {
-                    if (hmAuxTotal.get("type").equalsIgnoreCase("future")) {
-                        auxCT.put("future", hmAuxTotal.get("total"));
+                if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL ) {
+                    if (hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TYPE).equalsIgnoreCase(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE)) {
+                        auxCT.put(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE, hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TOTAL));
                     } else {
-                        auxCT.put("late", hmAuxTotal.get("total"));
+                        auxCT.put(ConstantBaseApp.MD_SCHEDULE_KEY_LATE, hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TOTAL));
                     }
                 } else {
-                    if (hmAuxTotal.get("type").equalsIgnoreCase("future")) {
-                        auxCT.put("future", hmAuxTotal.get("total"));
+                    if (hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TYPE).equalsIgnoreCase(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE)) {
+                        auxCT.put(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE, hmAuxTotal.get(ConstantBaseApp.MD_SCHEDULE_KEY_TOTAL));
                     } else {
                     }
                 }
             }
-            //
+            //Se houve resultado na query, insere tradução no proximo aux o.O
             if (bInclude) {
-                HMAux hmTr = translationCustomerSys(context, auxCT.get("translate_code"));
-                auxCT.put("future_text", hmTr.get("message_full_quarter_notification_future"));
-                auxCT.put("late_text", hmTr.get("message_full_quarter_notification_late"));
+                HMAux hmTr = translationCustomerSys(context, auxCT.get(EV_User_CustomerDao.TRANSLATE_CODE));
+                auxCT.put(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE_TEXT, hmTr.get(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_FUTURE));
+                auxCT.put(ConstantBaseApp.MD_SCHEDULE_KEY_LATE_TEXT, hmTr.get(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_LATE));
                 customers_vs_total.add(auxCT);
             }
 
         }
-
-        int tamanho_final = customers_vs_total.size();
-
-
+        //Executa loop no HmAux com a msg de cada customer e monta a notificação
         for (HMAux cust : customers_vs_total) {
-
             StringBuilder sbFinal = new StringBuilder();
-
+            //
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
             builder.setSmallIcon(R.drawable.ic_calendario);
             builder.setAutoCancel(true);
-
-            if (parameter == 100 || parameter == 300) {
-                if (!cust.get("future").equals("0") || !cust.get("late").equals("0")) {
+            //
+            if (parameter == ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL) {
+                if (!cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE).equals("0") || !cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_LATE).equals("0")) {
                     sbFinal
-                            .append(cust.get("future_text") + "(")
-                            .append(cust.get("future") + ")  ")
-                            .append(cust.get("late_text") + "(")
-                            .append(cust.get("late") + ")\n");
+                            .append(cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE_TEXT) + "(")
+                            .append(cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE) + ")  ")
+                            .append(cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_LATE_TEXT) + "(")
+                            .append(cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_LATE) + ")\n");
                 }
             } else {
-                if (!cust.get("future").equals("0")) {
+                if (!cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE).equals("0")) {
                     sbFinal
-                            .append(cust.get("future_text") + "(")
-                            .append(cust.get("future") + ")\n");
+                            .append(cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE_TEXT) + "(")
+                            .append(cust.get(ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE) + ")\n");
                 }
             }
-
+            //Só deus o sabe o pq, mas é um "prefixo" para gerar o "id" da notificação.
+            //
             int parameter_unified = 500;
-
+            //Se tradução OK, monta builder da notificação e exibe notificação.
             if (sbFinal.toString().length() != 0) {
-
-                //builder.setContentTitle(context.getString(R.string.title_notification_generic));
-                //builder.setContentText(context.getString(R.string.message_notification_sync));
-                builder.setContentTitle(cust.get("customer_name"));
+                builder.setContentTitle(cust.get(EV_User_CustomerDao.CUSTOMER_NAME));
                 builder.setContentText(sbFinal.toString());
                 builder.setAutoCancel(true);
                 builder.setPriority(NotificationCompat.PRIORITY_HIGH);
@@ -2658,12 +2672,88 @@ public class ToolBox_Inf {
                 int versao = Build.VERSION.SDK_INT;
                 //
                 if (versao >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                    nm.notify(parameter_unified + Integer.parseInt(cust.get("customer_code")), builder.build());
+                    nm.notify(parameter_unified + Integer.parseInt(cust.get(EV_User_CustomerDao.CUSTOMER_CODE)), builder.build());
                 } else {
-                    nm.notify(parameter_unified + Integer.parseInt(cust.get("customer_code")), builder.getNotification());
+                    nm.notify(parameter_unified + Integer.parseInt(cust.get(EV_User_CustomerDao.CUSTOMER_CODE)), builder.getNotification());
                 }
-
             }
+        }
+    }
+
+    public static void showScheduleNotification(Context context, String scheduleDateStart, String scheduleItemDesc, String currentStatus, String newStatus, String userNick) {
+        String mModule = "SYS";
+        String mResource_name = "SYS_APP";
+        //Formata Data para forao de exbição.
+        scheduleDateStart =   millisecondsToString(
+            dateToMilliseconds(scheduleDateStart +" "+ToolBox_Con.getPreference_Customer_TMZ(context)),
+            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+        );
+        //Tratativa para status que só existe no Checklist.
+        String testStatus = currentStatus;
+        switch (testStatus){
+            case ConstantBaseApp.SYS_STATUS_IN_PROCESSING:
+                currentStatus = ConstantBaseApp.SYS_STATUS_PROCESS;
+                break;
+            case ConstantBaseApp.SYS_STATUS_FINALIZED:
+                currentStatus = ConstantBaseApp.SYS_STATUS_DONE;
+                break;
+            default:
+        }
+        //
+        List<String> transList = new ArrayList<>();
+        //
+        transList.add("schedule_notification_schedule_pk_lbl");
+        transList.add("schedule_notification_current_status_lbl");
+        transList.add("schedule_notification_new_status_lbl");
+        transList.add("schedule_notification_user_nick_lbl");
+        //
+        HMAux hmAuxTrans = setLanguage(
+                            context,
+                            mModule,
+                            getResourceCode(
+                                context,
+                                mModule,
+                                mResource_name
+                            ),
+                            ToolBox_Con.getPreference_Translate_Code(context),
+                            transList
+                        );
+
+
+        /**
+         * A PORRA DO REMOTEVIEWS NÃO SUPORTA A PORRA DO CONSTRAINT LAYOUT COMO RAIZ
+         * https://stackoverflow.com/questions/45396426/crash-when-using-constraintlayout-in-notification
+         */
+        //Notificação Small, monsta icone de warning, data de incio e descrição do form,caso seja N-Form, ou desc do tipo de ticket, caos ticket.
+        RemoteViews notificationLayoutSmall = new RemoteViews(context.getPackageName(), R.layout.schedule_notification_small);
+        notificationLayoutSmall.setTextViewText(R.id.schedule_notification_small_date_start,scheduleDateStart);
+        notificationLayoutSmall.setTextViewText(R.id.schedule_notification_small_desc,scheduleItemDesc);
+        //Notificação Big, exibe os dados da Small, mas a troca de Status e user que gerou a ação.
+        RemoteViews notificationLayoutBig = new RemoteViews(context.getPackageName(), R.layout.schedule_notification_big);
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_date_start,scheduleDateStart);
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_desc,scheduleItemDesc);
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_cur_status_lbl, hmAuxTrans.get("schedule_notification_current_status_lbl"));
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_cur_status, hmAuxTrans.get(currentStatus));
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_new_status_lbl, hmAuxTrans.get("schedule_notification_new_status_lbl"));
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_s_new_status_val, hmAuxTrans.get(newStatus));
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_user_nick_lbl, hmAuxTrans.get("schedule_notification_user_nick_lbl"));
+        notificationLayoutBig.setTextViewText(R.id.schedule_notification_big_user_nick_val, userNick);
+        //
+        NotificationManager nm = (NotificationManager)
+            context.getSystemService(NOTIFICATION_SERVICE);
+        //
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder.setSmallIcon(R.drawable.ic_calendario);
+        builder.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
+        builder.setCustomContentView(notificationLayoutSmall);
+        builder.setCustomBigContentView(notificationLayoutBig);
+        builder.setAutoCancel(true);
+        //Tentativa de unique
+        int id = (int) (Calendar.getInstance().getTimeInMillis() / 1000);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            nm.notify(id, builder.build());
+        }else {
+            nm.notify(id, builder.getNotification());
         }
     }
 
@@ -2737,8 +2827,8 @@ public class ToolBox_Inf {
                     transList);
         }
 
-        hmAux.put("message_full_quarter_notification_future", (!hmAux.containsKey("message_full_quarter_notification_future") || hmAux.get("message_full_quarter_notification_future").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.message_full_quarter_notification_future) : hmAux.get("message_full_quarter_notification_future")));
-        hmAux.put("message_full_quarter_notification_late", (!hmAux.containsKey("message_full_quarter_notification_late") || hmAux.get("message_full_quarter_notification_late").contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.message_full_quarter_notification_late) : hmAux.get("message_full_quarter_notification_late")));
+        hmAux.put(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_FUTURE, (!hmAux.containsKey(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_FUTURE) || hmAux.get(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_FUTURE).contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.message_full_quarter_notification_future) : hmAux.get(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_FUTURE)));
+        hmAux.put(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_LATE, (!hmAux.containsKey(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_LATE) || hmAux.get(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_LATE).contains(Constant.APP_MODULE + "/") ? context.getResources().getString(R.string.message_full_quarter_notification_late) : hmAux.get(ConstantBaseApp.MD_SCHEDULE_MESSAGE_FULL_QUARTER_NOTIFICATION_LATE)));
 
         return hmAux;
     }
@@ -3350,6 +3440,76 @@ public class ToolBox_Inf {
         }
         //
         return files;
+    }
+
+    public static SpannableString getFormattedScheduleWarningInfo(String fcmNewStatusLbl,String fcmNewStatus, String fcmUserNickLbl,String fcmUserNick,String errorMsgLbl, String errorMsg, String initialText) {
+        StringBuilder sbString = new StringBuilder(initialText != null ? initialText : "");
+        SpannableString finalString = null;
+        //
+        if(fcmNewStatus != null && !fcmNewStatus.isEmpty()){
+            sbString.append(fcmNewStatusLbl).append("\n").append(fcmNewStatus).append("\n");
+        }
+        if(fcmUserNick != null && !fcmUserNick.isEmpty()){
+            sbString.append(fcmUserNickLbl).append("\n").append(fcmUserNick).append("\n");
+        }
+        if(errorMsg != null && !errorMsg.isEmpty()){
+            sbString.append(errorMsgLbl).append("\n").append(errorMsg).append("\n");
+        }
+        //
+        finalString = new SpannableString(sbString.toString());
+        try{
+            if(fcmNewStatus != null && !fcmNewStatus.isEmpty()) {
+                finalString.setSpan(
+                    new StyleSpan(Typeface.BOLD),
+                    sbString.indexOf(fcmNewStatusLbl),
+                    sbString.indexOf(fcmNewStatus),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+
+                );
+            }
+            if(fcmUserNick != null && !fcmUserNick.isEmpty()) {
+                finalString.setSpan(
+                    new StyleSpan(Typeface.BOLD),
+                    sbString.indexOf(fcmUserNickLbl),
+                    sbString.indexOf(fcmUserNick),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+
+                );
+            }
+            if(errorMsg != null && !errorMsg.isEmpty()) {
+                finalString.setSpan(
+                    new StyleSpan(Typeface.BOLD),
+                    sbString.indexOf(errorMsgLbl),
+                    sbString.indexOf(errorMsg),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                );
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        //5
+        return finalString;
+    }
+
+    public static SpannableString getFormattedScheduleWarningInfo(String fcmNewStatusLbl,String fcmNewStatus, String fcmUserNickLbl,String fcmUserNick,String errorMsgLbl, String errorMsg) {
+        return getFormattedScheduleWarningInfo(fcmNewStatusLbl,fcmNewStatus,fcmUserNickLbl,fcmUserNick,errorMsgLbl,errorMsg,null);
+    }
+
+    public static void showScheduleWarningDialog(Context context,String dialogTitle, String fcmNewStatusLbl,String fcmNewStatus, String fcmUserNickLbl, String fcmUserNick,String errorMsgLbl,String errorMsg){
+        android.app.AlertDialog.Builder dialogScheduleWarning = new android.app.AlertDialog.Builder(context);
+        dialogScheduleWarning.setTitle(dialogTitle);
+        dialogScheduleWarning.setMessage(
+            getFormattedScheduleWarningInfo(
+                fcmNewStatusLbl,
+                fcmNewStatus,
+                fcmUserNickLbl,
+                fcmUserNick,
+                errorMsgLbl,
+                errorMsg
+            )
+        );
+        dialogScheduleWarning.setCancelable(true);
+        dialogScheduleWarning.show();
     }
 
     private static class GenericExtFilter implements FilenameFilter {
@@ -5063,6 +5223,7 @@ public class ToolBox_Inf {
             case Constant.SYS_STATUS_SCHEDULE:
                 return R.color.namoa_status_scheduled;
             case Constant.SYS_STATUS_ERROR:
+            case Constant.SYS_STATUS_IGNORED:
                 return R.color.namoa_status_error;
             case Constant.SYS_STATUS_ACTIVE:
                 return R.color.namoa_status_active;
@@ -6283,20 +6444,81 @@ public class ToolBox_Inf {
         }
     }
 
+    /**
+     * LUCHE
+     * <p>
+     * Metodo que devolve nome da imagem baseado no obj de control do ticket
+     * </p>
+     * LUCHE - 13/03/2020
+     * <p>
+     * Modificado, extraindo o seu codigo para o novo metodo buildTicketActionImgPath
+     * </p>
+     * @param ctrl - Controle
+     * @return - Retorna nome da imagem formatoda ou null se exception
+     */
     @Nullable
     public static String buildTicketActionImgPath(TK_Ticket_Ctrl ctrl) {
+//        try{
+//            return ConstantBaseApp.TK_TICKET_PREX_IMG + ctrl.getCustomer_code() +"_"+ctrl.getTicket_prefix()+"_"+ctrl.getTicket_code()+"_"+ctrl.getTicket_seq()+ ".png";
+//        }catch (Exception e){
+//            registerException(CLASS_NAME,e);
+//            return null;
+//        }
+        //LUCHE - 13/03/2020
+        //Extraido o codigo acima para novo metodo
         try{
-            return ConstantBaseApp.TK_TICKET_PREX_IMG + ctrl.getCustomer_code() +"_"+ctrl.getTicket_prefix()+"_"+ctrl.getTicket_code()+"_"+ctrl.getTicket_seq()+ ".png";
+            return buildTicketActionImgPath(ctrl.getCustomer_code(),ctrl.getTicket_prefix(),ctrl.getTicket_code(),ctrl.getTicket_seq());
         }catch (Exception e){
             registerException(CLASS_NAME,e);
             return null;
         }
     }
 
+    /**
+     * LUCHE
+     * <p>
+     * Metodo que devolve nome da imagem baseado no obj de control do ticket
+     * </p>
+     * LUCHE - 13/03/2020
+     * <p>
+     * Modificado, extraindo o seu codigo para o novo metodo buildTicketActionImgPath
+     * </p>
+     * @param action
+     * @return
+     */
     @Nullable
     public static String buildTicketActionImgPath(TK_Ticket_Action action) {
+//        try{
+//            return ConstantBaseApp.TK_TICKET_PREX_IMG + action.getCustomer_code() +"_"+action.getTicket_prefix()+"_"+action.getTicket_code()+"_"+action.getTicket_seq()+ ".png";
+//        }catch (Exception e){
+//            registerException(CLASS_NAME,e);
+//            return null;
+//        }
+        //LUCHE - 13/03/2020
+        //Extraido o codigo acima para novo metodo
+        try {
+            return buildTicketActionImgPath(action.getCustomer_code(), action.getTicket_prefix(), action.getTicket_code(), action.getTicket_seq());
+        }catch (Exception e){
+            registerException(CLASS_NAME,e);
+            return null;
+        }
+    }
+
+    /**
+     * LUCHE - 13/03/2020
+     * <p>
+     * Metodo que devolve nome da imagem baseado nos itens da pk do ticket_action
+     * </p>
+     * @param customerCode - Codigo do Customer
+     * @param ticket_prefix - Preixo do ticket
+     * @param ticket_code - Codigo do ticket
+     * @param ticket_seq - Sequencia do Ctrl ou  action
+     * @return
+     */
+    @Nullable
+    public static String buildTicketActionImgPath(long customerCode, int ticket_prefix, int ticket_code, int ticket_seq){
         try{
-            return ConstantBaseApp.TK_TICKET_PREX_IMG + action.getCustomer_code() +"_"+action.getTicket_prefix()+"_"+action.getTicket_code()+"_"+action.getTicket_seq()+ ".png";
+            return ConstantBaseApp.TK_TICKET_PREX_IMG + customerCode +"_"+ticket_prefix+"_"+ticket_code+"_"+ticket_seq+ ".png";
         }catch (Exception e){
             registerException(CLASS_NAME,e);
             return null;
@@ -6633,6 +6855,23 @@ public class ToolBox_Inf {
     }
 
     /**
+     * LUCHE - 11/03/2020
+     * Metodo que retorna Id Descrição formatada
+     * @param objId - ID do obj
+     * @param objDesc - Descrição do obj
+     * @return
+     */
+    public static String getFormattedGenericIdDesc(String objId, String objDesc) {
+        if(objId != null && !objId.equalsIgnoreCase("null") && !objId.isEmpty()
+            && objDesc != null && !objDesc.equalsIgnoreCase("null") && !objDesc.isEmpty()
+        ){
+            return objId +" - "+ objDesc;
+        }
+        //
+        return objId +" " + objDesc;
+    }
+
+    /**
      * LUCHE - 06/03/2020
      *
      * Metodo que verifica se a configuração do produto permite avançar para a criação a tela de
@@ -6654,6 +6893,24 @@ public class ToolBox_Inf {
             registerException(CLASS_NAME,e);
             return false;
         }
+    }
 
+    /**
+     * LUCHE - 17/03/2020
+     * Metodo que formata a exibição de Schedule Pk + Ticket Pk.
+     *
+     * @param schedulePk - PK concatenada por .
+     * @param ticketPrefix - Ticket Prefix
+     * @param ticketCode - Ticket Code
+     * @return - Dados formatado
+     */
+    public static String getFormattedTicketSeqExec(String schedulePk, String ticketPrefix, String ticketCode) {
+        String formmattedTicketSeqExec =  schedulePk;
+        if( ticketPrefix != null && !ticketPrefix.isEmpty()
+            && ticketCode != null && !ticketCode.isEmpty()
+        ){
+            formmattedTicketSeqExec += " ["+ticketPrefix+"."+ticketCode+"]";
+        }
+        return formmattedTicketSeqExec;
     }
 }

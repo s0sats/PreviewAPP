@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -34,6 +35,7 @@ public class Act069_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.Vi
     private String mResource_Name = "act069_tickets_adapter";
     private TicketFilter valueFilter;
     private OnTicketClickListener onTicketClickListener;
+    private OnScheduleWarningClickListener onScheduleWarningClickListener;
 
     public Act069_Tickets_Adapter(Context context, int resource, ArrayList<Act069_TicketVH> mValues) {
         this.context = context;
@@ -68,8 +70,16 @@ public class Act069_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.Vi
         void onTicketClickListner(Act069_TicketVH item);
     }
 
+    public interface OnScheduleWarningClickListener{
+        void onScheduleWarningClick(String fcm_new_status, String fcm_user_nick, String schedule_erro_msg);
+    }
+
     public void setOnTicketClickListener(OnTicketClickListener onTicketClickListener) {
         this.onTicketClickListener = onTicketClickListener;
+    }
+
+    public void setOnScheduleWarningClickListener(OnScheduleWarningClickListener onScheduleWarningClickListener) {
+        this.onScheduleWarningClickListener = onScheduleWarningClickListener;
     }
 
     @NonNull
@@ -115,6 +125,7 @@ public class Act069_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.Vi
         private TextView tvSite_dec;
         private TextView tvProduct;
         private TextView tvSerial;
+        private ImageView ivScheduleWarning;
 
         public TicketVH(View itemView) {
             super(itemView);
@@ -133,6 +144,7 @@ public class Act069_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.Vi
             tvSite_dec = itemView.findViewById(R.id.act069_ticket_cell_tv_site_dec);
             tvProduct = itemView.findViewById(R.id.act069_ticket_cell_tv_product);
             tvSerial = itemView.findViewById(R.id.act069_ticket_cell_tv_serial);
+            ivScheduleWarning = itemView.findViewById(R.id.act069_ticket_cell_iv_schedule_warning);
             //
             this.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -155,7 +167,7 @@ public class Act069_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.Vi
         public void bindData(Act069_TicketVH item){
             resetVisibility();
             //
-            tvTicketId.setText(item.getTicket_id());
+            tvTicketId.setText(getFormattedTicketID(item));
             setSyncIcon(item.getSync_required());
             tvStatus.setText(hmAux_Trans.get(item.getTicket_status()));
             tvStatus.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(item.getTicket_status())));
@@ -215,6 +227,52 @@ public class Act069_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.Vi
                     item.getCurrent_serial_id()
                 );
             }
+            setIvScheduleWarning(item);
+        }
+
+        private void setIvScheduleWarning(final Act069_TicketVH item) {
+            if( (item.getFcm_new_status() != null && !item.getFcm_new_status().isEmpty())
+                || (item.getFcm_user_nick() != null && !item.getFcm_user_nick().isEmpty())
+                || (item.getSchedule_erro_msg() != null && !item.getSchedule_erro_msg().isEmpty())
+            ){
+                int color = item.getSchedule_erro_msg() != null && !item.getSchedule_erro_msg().isEmpty()
+                    ? R.color.namoa_color_danger_red
+                    : R.color.light_to_dark_blue_color;
+                //
+                ivScheduleWarning.setVisibility(View.VISIBLE);
+                ivScheduleWarning.setColorFilter(context.getResources().getColor(color), PorterDuff.Mode.SRC_ATOP);
+                ivScheduleWarning.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(onScheduleWarningClickListener != null){
+                            onScheduleWarningClickListener.onScheduleWarningClick(
+                                item.getFcm_new_status(),
+                                item.getFcm_user_nick(),
+                                item.getSchedule_erro_msg()
+                            );
+                        }
+                    }
+                });
+            }
+        }
+
+        /**
+         * LUCHE - 18/03/2020
+         * <p></p>
+         * Metodo que define exibição da informação de ticket id.
+         * Caso sea agendamento, exibe primeiro a pk do agendamento.*
+         * @param item - Obj View holder
+         */
+        private String getFormattedTicketID(Act069_TicketVH item) {
+            String id = item.getTicket_id();
+            if(item.getSchedulePk() != null && !item.getSchedulePk().isEmpty()){
+                id = ToolBox_Inf.getFormattedTicketSeqExec(
+                    item.getSchedulePk(),
+                    String.valueOf(item.getTicket_prefix()),
+                    String.valueOf(item.getTicket_code())
+                );
+            }
+            return id;
         }
 
         private void setSyncIcon(int sync_required) {
@@ -239,6 +297,8 @@ public class Act069_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.Vi
             tvSite_dec.setVisibility(View.GONE);
             tvProduct.setVisibility(View.GONE);
             tvSerial.setVisibility(View.GONE);
+            ivScheduleWarning.setVisibility(View.GONE);
+            ivScheduleWarning.setOnClickListener(null);
         }
     }
 

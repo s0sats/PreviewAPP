@@ -6,7 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
+import android.text.SpannableString;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,21 +23,22 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Module_Schedules_Adapter;
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
-import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
+import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.ModuleFilterDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +70,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public static final String MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR = "module_schedule_form_data_creation_error";
     public static final String EMPTY_SERIAL_SEARCH = "empty_serial_search";
     public static final String SERIAL_CREATION_DENIED = "serial_creation_denied" ;
+    public static final String MODULE_TICKET_EXEC_CONFIRM = "module_ticket_exec_confirm" ;
+    public static final String MODULE_SCHEDULE_TICKET_CREATION_ERROR = "module_schedule_ticket_creation_error" ;
+    public static final String MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN = "module_schedule_status_prevent_to_open" ;
 
     private ListView lv_schedules;
     private Bundle bundle;
@@ -100,6 +104,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     private int zone_code_back;
     private HMAux item_selected;
     private String wsProcess;
+    //LUCHE - 17/03/2020
+    private String schedulePk;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,11 +148,14 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             mRequesting_ACT = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT046);
             //
             late = bundle.getBoolean(ACT_FILTER_LATE, false);
+            //LUCHE - 17/03/2020
+            schedulePk = bundle.getString(MD_Schedule_ExecDao.SCHEDULE_PK,null);
         } else {
             scheduled_date = null;
             serial_id = "";
             mRequesting_ACT = Constant.ACT046;
             late = false;
+            schedulePk = null;
         }
         // Cópia do Site_Code e do Zone_Code para o mudanca no Agendamento
         site_code_back = ToolBox_Con.getPreference_Site_Code(context);
@@ -183,6 +192,20 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("dialog_serial_search_ttl");
         translateList.add("dialog_serial_search_start");
         translateList.add("alert_product_no_allow_new_serial_msg");
+        //
+        translateList.add("alert_ticket_action_start_ttl");
+        translateList.add("alert_ticket_action_start_confirm");
+        translateList.add("alert_error_on_create_ticket_action_ttl");
+        translateList.add("alert_error_on_create_ticket_action_msg");
+        translateList.add("dialog_more_info_ttl");
+        translateList.add("dialog_schedule_desc_lbl");
+        //
+        translateList.add("dialog_schedule_warning_new_status_lbl");
+        translateList.add("dialog_schedule_warning_user_nick_lbl");
+        translateList.add("dialog_schedule_warning_error_msg_lbl");
+        //
+        translateList.add("alert_schedule_status_prevents_to_open_ttl");
+        translateList.add("alert_schedule_status_prevents_to_open_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -313,9 +336,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
-
                 item_selected.putAll(item);
-
                 mPresenter.checkScheduleFlow(item);
             }
         });
@@ -323,31 +344,30 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     @Override
-    public void loadSchedules(List<HMAux> schedules) {
+    public void loadSchedules(List<HMAux> schedules, int schedulePkPosition) {
         //
         mAdapter = new Module_Schedules_Adapter(
                 context,
                 schedules,
                 R.layout.module_schedules_cell,
                 R.layout.namoa_ap_cell,
-                R.layout.module_schedules_date_cell
+                R.layout.module_schedules_date_cell,
+                R.layout.module_schedules_ticket_cell
+
         );
         //16/08/18
         mAdapter.setOnIvCommentClickListner(new Module_Schedules_Adapter.OnIvCommentClickListner() {
             @Override
             public void OnIvCommentClick(HMAux item) {
-                String form_desc_ttl = item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n"
-                        +  hmAux_Trans.get("form_type_dialog_lbl") + ": "
-                        + item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE) + " - " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC);
-
+                SpannableString commentMsg = mPresenter.getCommentMessage(item);
                 AlertDialog.Builder dialog_detect= new AlertDialog.Builder(context);
-                dialog_detect.setMessage(form_desc_ttl);
+                dialog_detect.setTitle(hmAux_Trans.get("dialog_more_info_ttl"));
+                dialog_detect.setMessage(commentMsg);
                 dialog_detect.setCancelable(true);
                 dialog_detect.show();
 
             }
         });
-
         //
         mAdapter.setSite_id_preference(ToolBox_Con.getPreference_Site_Code(context));
         //
@@ -359,65 +379,53 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         } else {
             tv_no_result.setVisibility(View.GONE);
             lv_schedules.setVisibility(View.VISIBLE);
+            if(schedulePkPosition > 0){
+                moveListToPosition(schedulePkPosition);
+            }
         }
+    }
 
+    private void moveListToPosition(final int schedulePkPosition) {
+        lv_schedules.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                lv_schedules.smoothScrollToPosition(schedulePkPosition);
+                //Reseta var de pk após navegar para item
+                schedulePk = null;
+            }
+        },100);
+        //
     }
 
     private void showFilterDialog() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        //
-        LayoutInflater inflater = this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.module_filter_dialog, null);
-        //
-        TextView tv_title = (TextView) view.findViewById(R.id.module_filter_dialog_tv_title);
-        tv_title.setText(hmAux_Trans.get("alert_filter_dialog_msg"));
-        final CheckBox chk_site = (CheckBox) view.findViewById(R.id.schedule_filter_chk_site_logged);
-        chk_site.setText(hmAux_Trans.get("lbl_site"));
-        chk_site.setChecked(filter_site);
-        chk_site.setTag(ConstantBaseApp.SCHEDULE_SITE_LOGGED_FILTER_PREFERENCE);
-        //
-        final CheckBox chk_form = (CheckBox) view.findViewById(R.id.schedule_filter_chk_n_form);
-        chk_form.setText(hmAux_Trans_Extra.get("lbl_checklist"));
-        chk_form.setChecked(filter_form);
-        chk_form.setTag(ConstantBaseApp.SCHEDULE_N_FORM_FILTER_PREFERENCE);
-        //
-        final CheckBox chk_form_ap = (CheckBox) view.findViewById(R.id.schedule_filter_chk_n_form_ap);
-        chk_form_ap.setText(hmAux_Trans_Extra.get("lbl_form_ap"));
-        chk_form_ap.setChecked(filter_form_ap);
-        chk_form_ap.setTag(ConstantBaseApp.SCHEDULE_N_FORM_AP_FILTER_PREFERENCE);
-        //
-        final CheckBox chk_ticket = (CheckBox) view.findViewById(R.id.schedule_filter_chk_n_ticket);
-        chk_ticket.setText(hmAux_Trans_Extra.get("lbl_ticket"));
-        chk_ticket.setChecked(filter_ticket);
-        chk_ticket.setTag(ConstantBaseApp.SCHEDULE_N_TICKET_FILTER_PREFERENCE);
-        //
-        alert
-                .setView(view)
-                .setCancelable(true)
-                .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        filter_form = chk_form.isChecked();
-                        filter_form_ap = chk_form_ap.isChecked();
-                        filter_site = chk_site.isChecked();
-                        filter_ticket = chk_ticket.isChecked();
-                        //LUCHE - 21/02/2020
-                        //Salva alterações na preferencias.Como esse dialog, só aplica os filtros se usr der ok
-                        //não foi possivel colocar o save no listener de troca de dados.
-                        mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_site.getTag()),chk_site.isChecked());
-                        mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_form.getTag()),chk_form.isChecked());
-                        mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_form_ap.getTag()),chk_form_ap.isChecked());
-                        mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_ticket.getTag()),chk_ticket.isChecked());
-                        //
-                        applyModuleFilter();
-                    }
-                });
+         ModuleFilterDialog alert = new ModuleFilterDialog(
+            context,
+            hmAux_Trans,
+            hmAux_Trans_Extra,
+            new ModuleFilterDialog.OnPositiveClickListener() {
+                @Override
+                public void onPositiveClick(CheckBox chk_site, CheckBox chk_form, CheckBox chk_form_ap, CheckBox chk_ticket) {
+                    filter_site = chk_site.isChecked();
+                    filter_form = chk_form.isChecked();
+                    filter_form_ap = chk_form_ap.isChecked();
+                    filter_ticket = chk_ticket.isChecked();
+                    //LUCHE - 21/02/2020
+                    //Salva alterações na preferencias.Como esse dialog, só aplica os filtros se usr der ok
+                    //não foi possivel colocar o save no listener de troca de dados.
+                    mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_site.getTag()),chk_site.isChecked());
+                    mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_form.getTag()),chk_form.isChecked());
+                    mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_form_ap.getTag()),chk_form_ap.isChecked());
+                    mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_ticket.getTag()),chk_ticket.isChecked());
+                    //
+                    applyModuleFilter();
+                }
+            });
         //
         alert.show();
     }
 
     private void applyModuleFilter() {
-        mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, serial_id, late, filter_site);
+        mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap,filter_ticket, serial_id, late, filter_site, schedulePk);
         //
         if (filter_form || filter_form_ap || filter_site || filter_ticket) {
             iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
@@ -466,6 +474,27 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 msg = hmAux_Trans.get("alert_product_no_allow_new_serial_msg");
                 btnNegative = 0;
                 break;
+            case MODULE_TICKET_EXEC_CONFIRM:
+                title = hmAux_Trans.get("alert_ticket_action_start_ttl");
+                msg = hmAux_Trans.get("alert_ticket_action_start_confirm");
+                btnNegative = 1;
+                listener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mPresenter.checkTicketFlow(item);
+                    }
+                };
+                break;
+            case MODULE_SCHEDULE_TICKET_CREATION_ERROR:
+                title = hmAux_Trans.get("alert_error_on_create_ticket_action_ttl");
+                msg = hmAux_Trans.get("alert_error_on_create_ticket_action_msg");
+                btnNegative = 0;
+                break;
+            case MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN:
+                title = hmAux_Trans.get("alert_schedule_status_prevents_to_open_ttl");
+                msg = hmAux_Trans.get("alert_schedule_status_prevents_to_open_msg");
+                btnNegative = 0;
+                break;
         }
 
         if (btnNegative != null) {
@@ -502,20 +531,6 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     @Override
     public void removeControlFromActivity(MKEditTextNM mketSerial) {
         controls_sta.remove(mketSerial);
-    }
-
-    @Override
-    public void callAct008(Context context, Bundle bundle) {
-        Intent mIntent = new Intent(context, Act008_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //16/08/2018 - Add filtros no bundle para act008
-        bundle.putBoolean(ACT_FILTER_FORM, filter_form);
-        bundle.putBoolean(ACT_FILTER_FORM_AP, filter_form_ap);
-        bundle.putBoolean(ACT_FILTER_SITE, filter_site);
-        //
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
-        finish();
     }
 
     @Override
@@ -561,11 +576,33 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     }
 
     @Override
+    public void callAct070(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act070_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (bundle != null) {
+            mIntent.putExtras(bundle);
+        }
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct071(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act071_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (bundle != null) {
+            mIntent.putExtras(bundle);
+        }
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case PROCESSO_SELECAO_ZONA:
                 if (resultCode == RESULT_OK){
-                    mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, serial_id, late, filter_site);
+                    mPresenter.getSchedules(scheduled_date, filter_form, filter_form_ap, filter_ticket, serial_id, late, filter_site, schedulePk);
                     iniUIFooter();
                     //
                     mPresenter.checkScheduleFlow(item_selected);

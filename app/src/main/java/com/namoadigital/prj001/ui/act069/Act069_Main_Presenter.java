@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.VH_models.Act069_TicketVH;
@@ -13,6 +14,7 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.sql.Sql_Act069_001;
 import com.namoadigital.prj001.sql.Sql_Act069_002;
 import com.namoadigital.prj001.sql.Sql_Act069_003;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -105,6 +107,81 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
         //
         auxTicket.put(Act069_TicketVH.CTRLS_SERIAL_LIST,seriais);
     }
+
+    /**
+     * LUCHE - 18/03/2020
+     * <p></p>
+     * Metodo que define proxima ação do fluxo.
+     * Se for uma execução de ticket agendado, navega para act071, se não para act070
+     * @param item Ticket Clicado
+     */
+    @Override
+    public void checkTicketFlow(Act069_TicketVH item) {
+        if(isScheduledTicketExecution(item)){
+            mView.callAct071(generateAct071Bundle(item));
+        }else{
+            mView.callAct070(generateAct070Bundle(item));
+        }
+    }
+
+    /**
+     * LUCHE - 18/03/2020
+     * <P></P>
+     * Metodo que verifica se o item seleciona é um agendamento em andamento
+     * @param item Item clicado
+     * @return - Verdadeiro se scheduelPK existir e ticket_prefix == 0  e ticket_code > 0
+     */
+    private boolean isScheduledTicketExecution(Act069_TicketVH item) {
+        return item.getSchedulePk() != null && !item.getSchedulePk().isEmpty()
+        && item.getTicket_prefix() == 0
+        && item.getTicket_code() > 0;
+    }
+
+    /**
+     * LUCHE - 18/03/2020
+     * <P></P>
+     * Criad bundle com dado do ticket para seusado na chamada da act070
+     * @param item Ticket clicado
+     * @return - Bundle com pk do ticket
+     */
+    private Bundle generateAct070Bundle(Act069_TicketVH item) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX,item.getTicket_prefix());
+        bundle.putInt(TK_TicketDao.TICKET_CODE,item.getTicket_code());
+        return bundle;
+    }
+
+    /**
+     * LUCHE - 18/03/2020
+     * <P></P>
+     * Criad bundle com dado do ticket para ser usado na chamada da act071.
+     * Adiciona pk o ticket e dados do agendamento.
+     * @param item Ticket clicado
+     * @return - Bundle com dados do ticket agendamento
+     */
+    private Bundle generateAct071Bundle(Act069_TicketVH item) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX,item.getTicket_prefix());
+        bundle.putInt(TK_TicketDao.TICKET_CODE,item.getTicket_code());
+        bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, item.getSchedule_prefix() != null ? item.getSchedule_prefix() : -1);
+        bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_CODE, item.getSchedule_code()!= null ? item.getSchedule_code() : -1);
+        bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, item.getSchedule_exec()!= null ? item.getSchedule_exec() : -1);
+        //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
+        //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, 1);
+        bundle.putString(TK_TicketDao.TICKET_ID, ToolBox_Inf.getFormattedTicketSeqExec(
+            item.getSchedulePk(),
+            String.valueOf(item.getTicket_prefix()),
+            String.valueOf(item.getTicket_code())
+            )
+        );
+        bundle.putString(TK_TicketDao.TYPE_DESC, item.getType_desc());
+        bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN,false);
+        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.getSchedulePk());
+        //
+        return bundle;
+    }
+
 
     @Override
     public int checkTicketToSync() {

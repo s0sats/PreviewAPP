@@ -31,10 +31,12 @@ public class WS_Cleaning_Sql_009 implements Specification {
                         "   "+ TK_TicketDao.TABLE +" t \n" +
                         " WHERE \n" +
                         "   t.customer_code = '"+customer_code+"'\n"+
-                        "   AND t.ticket_status in('"+ ConstantBaseApp.SYS_STATUS_DONE + "'"+
-                                                    ",'" + ConstantBaseApp.SYS_STATUS_NOT_EXECUTED + "'"+
-                                                    ",'" + ConstantBaseApp.SYS_STATUS_CANCELLED + "'"+
-                                                    ",'" + ConstantBaseApp.SYS_STATUS_REJECTED +"') \n" +
+                        "   AND t.ticket_status in('"+ ConstantBaseApp.SYS_STATUS_DONE + "'\n"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_NOT_EXECUTED + "'\n"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_CANCELLED + "'\n"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_REJECTED +"'\n" +
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_IGNORED +"'\n" +
+                        "                           ) \n" +
                         "   AND Date(t.close_date) < Date('"+s_date+"')\n" )
                 .append(";")
                 .toString();

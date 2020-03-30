@@ -1,6 +1,9 @@
 package com.namoadigital.prj001.model.VH_models;
 
+import android.support.annotation.Nullable;
+
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -21,11 +24,25 @@ public class Act069_TicketVH {
     private String current_serial_id;
     private int sync_required;
     private String ctrls_serial_list;
+    //LUCHE - 18/03/2020 - Add atribuots do agendamento
+    private String schedulePk;
+    @Nullable
+    private Integer schedule_prefix;
+    @Nullable
+    private Integer schedule_code;
+    @Nullable
+    private Integer schedule_exec;
+    @Nullable
+    private String fcm_new_status;
+    @Nullable
+    private String fcm_user_nick;
+    @Nullable
+    private String schedule_erro_msg;
 
     public Act069_TicketVH() {
     }
 
-    public Act069_TicketVH(int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String type_path, String type_desc, String open_comments, String open_date, String forecast_date, String current_site_desc, String current_product_desc, String current_serial_id,int sync_required,String ctrls_serial_list) {
+    public Act069_TicketVH(int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String type_path, String type_desc, String open_comments, String open_date, String forecast_date, String current_site_desc, String current_product_desc, String current_serial_id,int sync_required,String ctrls_serial_list,String schedulePk,Integer schedule_prefix, Integer schedule_code,Integer schedule_exec,String fcm_new_status,String fcm_user_nick,String schedule_erro_msg) {
         this.ticket_prefix = ticket_prefix;
         this.ticket_code = ticket_code;
         this.ticket_id = ticket_id;
@@ -40,6 +57,13 @@ public class Act069_TicketVH {
         this.current_serial_id = current_serial_id;
         this.sync_required = sync_required;
         this.ctrls_serial_list = ctrls_serial_list;
+        this.schedulePk = schedulePk;
+        this.schedule_prefix = schedule_prefix;
+        this.schedule_code = schedule_code;
+        this.schedule_exec = schedule_exec;
+        this.fcm_new_status = fcm_new_status;
+        this.fcm_user_nick = fcm_user_nick;
+        this.schedule_erro_msg = schedule_erro_msg;
     }
 
     public int getTicket_prefix() {
@@ -146,6 +170,68 @@ public class Act069_TicketVH {
         this.sync_required = sync_required;
     }
 
+    public String getSchedulePk() {
+        return schedulePk;
+    }
+
+    public void setSchedulePk(String schedulePk) {
+        this.schedulePk = schedulePk;
+    }
+
+    @Nullable
+    public Integer getSchedule_prefix() {
+        return schedule_prefix;
+    }
+
+    public void setSchedule_prefix(@Nullable Integer schedule_prefix) {
+        this.schedule_prefix = schedule_prefix;
+    }
+
+    @Nullable
+    public Integer getSchedule_code() {
+        return schedule_code;
+    }
+
+    public void setSchedule_code(@Nullable Integer schedule_code) {
+        this.schedule_code = schedule_code;
+    }
+
+    @Nullable
+    public Integer getSchedule_exec() {
+        return schedule_exec;
+    }
+
+    public void setSchedule_exec(@Nullable Integer schedule_exec) {
+        this.schedule_exec = schedule_exec;
+    }
+
+    @Nullable
+    public String getFcm_new_status() {
+        return fcm_new_status;
+    }
+
+    public void setFcm_new_status(@Nullable String fcm_new_status) {
+        this.fcm_new_status = fcm_new_status;
+    }
+
+    @Nullable
+    public String getFcm_user_nick() {
+        return fcm_user_nick;
+    }
+
+    public void setFcm_user_nick(@Nullable String fcm_user_nick) {
+        this.fcm_user_nick = fcm_user_nick;
+    }
+
+    @Nullable
+    public String getSchedule_erro_msg() {
+        return schedule_erro_msg;
+    }
+
+    public void setSchedule_erro_msg(@Nullable String schedule_erro_msg) {
+        this.schedule_erro_msg = schedule_erro_msg;
+    }
+
     public static Act069_TicketVH getTicketVHObj(HMAux hmAux) throws Exception{
         //
         return new Act069_TicketVH(
@@ -162,8 +248,23 @@ public class Act069_TicketVH {
             hmAux.get(TK_TicketDao.CURRENT_PRODUCT_DESC),
             hmAux.get(TK_TicketDao.CURRENT_SERIAL_ID),
             ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SYNC_REQUIRED)),
-            hmAux.get(CTRLS_SERIAL_LIST)
+            hmAux.get(CTRLS_SERIAL_LIST),
+            hmAux.get(MD_Schedule_ExecDao.SCHEDULE_PK),
+            getIntOrNull(hmAux.get(TK_TicketDao.SCHEDULE_PREFIX)),
+            getIntOrNull(hmAux.get(TK_TicketDao.SCHEDULE_CODE)),
+            getIntOrNull(hmAux.get(TK_TicketDao.SCHEDULE_EXEC)),
+            hmAux.get(MD_Schedule_ExecDao.FCM_NEW_STATUS),
+            hmAux.get(MD_Schedule_ExecDao.FCM_USER_NICK),
+            hmAux.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG)
         );
+    }
+
+    private static Integer getIntOrNull(String value){
+        try{
+            return Integer.parseInt(value);
+        }catch (Exception e){
+            return null;
+        }
     }
     //
     public String getAllFieldForFilter(){
@@ -180,7 +281,8 @@ public class Act069_TicketVH {
                 current_site_desc+ "|" +
                 current_product_desc + "|" +
                 current_serial_id+"|" +
-                ctrls_serial_list)
+                ctrls_serial_list+"|" +
+                schedulePk)
             .replace("null|","")
             .replace("null","")
             ;

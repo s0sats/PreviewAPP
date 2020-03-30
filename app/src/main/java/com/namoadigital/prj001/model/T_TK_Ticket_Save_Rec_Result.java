@@ -11,6 +11,8 @@ public class T_TK_Ticket_Save_Rec_Result {
     private int scn;
     private String ret_status;
     private String ret_msg;
+    private Integer old_ticket_prefix;
+    private Integer old_ticket_code;
     private TK_Ticket ticket;
 
     public int getCustomer_code() {
@@ -59,6 +61,22 @@ public class T_TK_Ticket_Save_Rec_Result {
 
     public void setRet_msg(String ret_msg) {
         this.ret_msg = ret_msg;
+    }
+
+    public Integer getOld_ticket_prefix() {
+        return old_ticket_prefix;
+    }
+
+    public void setOld_ticket_prefix(Integer old_ticket_prefix) {
+        this.old_ticket_prefix = old_ticket_prefix;
+    }
+
+    public Integer getOld_ticket_code() {
+        return old_ticket_code;
+    }
+
+    public void setOld_ticket_code(Integer old_ticket_code) {
+        this.old_ticket_code = old_ticket_code;
     }
 
     public TK_Ticket getTicket() {

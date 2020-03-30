@@ -19,12 +19,18 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.Chat_C_Remove_Room;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.FCMMessage;
+import com.namoadigital.prj001.model.FCM_Schedule;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
@@ -33,6 +39,7 @@ import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_012;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_012;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
+import com.namoadigital.prj001.sql.Sql_Schedule_FCM_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_003;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act019.Act019_Main;
@@ -202,6 +209,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                      fcmMessage.getTitle().trim().equalsIgnoreCase(ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE)
             ) {
                 handleTkFMC(fcmMessage);
+
+            } else if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_SCHEDULE)) {
+                //24/03/2020 - Todas as msg de scheduel, devem ser SILENT
+                if(fcmMessage.getType().equals(ConstantBaseApp.FCM_TYPE_SILENT)) {
+                    handleScheduleFCM(fcmMessage);
+                }
             } else {
                 //
                 //LUCHE - 07/08/2019
@@ -255,6 +268,155 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
     }
+
+    private void handleScheduleFCM(FCMMessage fcmMessage) {
+        MD_Schedule_ExecDao scheduleExecDao = new MD_Schedule_ExecDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+            Constant.DB_VERSION_CUSTOM
+        );
+        GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+            Constant.DB_VERSION_CUSTOM
+        );
+        GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+            Constant.DB_VERSION_CUSTOM
+        );
+        TK_TicketDao ticketDao = new TK_TicketDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        try {
+            FCM_Schedule fcmSchedule = new FCM_Schedule(fcmMessage);
+            if(fcmSchedule.isValid()){
+                FCM_Schedule.FCM_Schedule_Msg_long scheduleMsgLong = fcmSchedule.getSchedule_msg_long();
+               /* ArrayList<GE_Custom_Form_Local> formLocalsToUpdate = new ArrayList<>();
+                ArrayList<GE_Custom_Form_Data> formDatasToUpdate = new ArrayList<>();
+                ArrayList<TK_Ticket> ticketsToUpdate = new ArrayList<>();*/
+                //
+                ArrayList<MD_Schedule_Exec> schedulesToUpdate = (ArrayList<MD_Schedule_Exec>) scheduleExecDao.query(
+                    new Sql_Schedule_FCM_001(
+                        fcmSchedule.getCustomer_code(),
+                        fcmSchedule.getSchedule_prefix(),
+                        fcmSchedule.getSchedule_code(),
+                        fcmSchedule.getSchedule_exec()
+                    ).toSqlQuery()
+                );
+                int dumbDebugger = 0;
+                //Lista Seleciona, executa loop atualizando apenas as informações que vieram
+                for (MD_Schedule_Exec scheduleExec : schedulesToUpdate) {
+                    if( scheduleExec.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_SCHEDULE)
+                        || fcmSchedule.getStatus() == null
+                      /* TODO analisar com comercial, pois no caso do ticket, ele pode estar no arquivo token e não adiantaria remover o update required
+                        || (scheduleExec.getSchedule_type().equalsIgnoreCase(ConstantBaseApp.MD_SCHEDULE_TYPE_FORM) && scheduleExec.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DONE))
+                        || (scheduleExec.getSchedule_type().equalsIgnoreCase(ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET) && scheduleExec.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_WAITING_SYNC))*/
+                    ) {
+                        /*if(scheduleExec.getSchedule_type().equalsIgnoreCase(ConstantBaseApp.MD_SCHEDULE_TYPE_FORM) && scheduleExec.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_DONE)){
+                            GE_Custom_Form_Local formLocal = getFormLocal(formLocalDao,scheduleExec);
+                            GE_Custom_Form_Data formData = getFormData(formDataDao,scheduleExec);
+                        }*/
+                        //Descrição do Agendamento
+                        if (scheduleMsgLong.getSchedule_desc() != null) {
+                            scheduleExec.setSchedule_desc(scheduleMsgLong.getSchedule_desc());
+                            dumbDebugger++;
+                        }
+                        //Data de inicio da exec
+                        if (scheduleMsgLong.getDate_start() != null) {
+                            scheduleExec.setDate_start(scheduleMsgLong.getDate_start());
+                            dumbDebugger++;
+                        }
+                        //Data Fim da exec
+                        if (scheduleMsgLong.getDate_end() != null) {
+                            scheduleExec.setDate_end(scheduleMsgLong.getDate_end());
+                            dumbDebugger++;
+                        }
+                        //Status
+                        if (fcmSchedule.getStatus() != null) {
+                            scheduleExec.setStatus(fcmSchedule.getStatus());
+                           // scheduleExec.setFcm_new_status(fcmSchedule.getStatus());
+                            scheduleExec.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                            dumbDebugger++;
+                        }
+                        //Comments da exec
+                        if (scheduleMsgLong.getComments() != null) {
+                            scheduleExec.setComments(scheduleMsgLong.getComments());
+                            dumbDebugger++;
+                        }
+                        //Nick do user que fez a alteração.
+                        if (scheduleMsgLong.getUser_nick() != null) {
+                            scheduleExec.setFcm_user_nick(scheduleMsgLong.getUser_nick());
+                            dumbDebugger++;
+                        }
+                    }else{
+                        //Status
+                        if (fcmSchedule.getStatus() != null) {
+                            scheduleExec.setFcm_new_status(fcmSchedule.getStatus());
+                            scheduleExec.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                            dumbDebugger++;
+                        }
+                        //Nick do user que fez a alteração.
+                        if (scheduleMsgLong.getUser_nick() != null) {
+                            scheduleExec.setFcm_user_nick(scheduleMsgLong.getUser_nick());
+                            dumbDebugger++;
+                        }
+                        String notificationDesc =
+                            scheduleExec.getSchedule_type().equals(ConstantBaseApp.MD_SCHEDULE_TYPE_FORM)
+                                ? scheduleExec.getCustom_form_desc()
+                                : scheduleExec.getTicket_type_desc();
+                        //
+                        //Chama notificação.
+                        ToolBox_Inf.showScheduleNotification(
+                            getApplicationContext(),
+                            scheduleExec.getDate_start(),
+                            notificationDesc,
+                            scheduleExec.getStatus(),
+                            scheduleExec.getFcm_new_status(),
+                            scheduleExec.getFcm_user_nick()
+                        );
+                    }
+                }
+                //
+                if(schedulesToUpdate.size() > 0) {
+                    DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(schedulesToUpdate, false);
+                    if (daoObjReturn.hasError()) {
+                        throw new Exception(daoObjReturn.getErrorMsg());
+                    }
+                }
+            }
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+    }
+
+    /*
+    private GE_Custom_Form_Data getFormData(GE_Custom_Form_DataDao formDataDao, MD_Schedule_Exec scheduleExec) {
+         return formDataDao.getByString(
+            new MD_Schedule_Exec_Sql_007(
+                String.valueOf(scheduleExec.getCustomer_code()),
+                String.valueOf(scheduleExec.getSchedule_prefix()),
+                String.valueOf(scheduleExec.getSchedule_code()),
+                String.valueOf(scheduleExec.getSchedule_exec())
+            ).toSqlQuery()
+        );
+    }
+
+    private GE_Custom_Form_Local getFormLocal(GE_Custom_Form_LocalDao formLocalDao, MD_Schedule_Exec scheduleExec) {
+        return formLocalDao.getByString(
+            new MD_Schedule_Exec_Sql_006(
+                    String.valueOf(scheduleExec.getCustomer_code()),
+                    String.valueOf(scheduleExec.getSchedule_prefix()),
+                    String.valueOf(scheduleExec.getSchedule_code()),
+                    String.valueOf(scheduleExec.getSchedule_exec())
+                ).toSqlQuery()
+            );
+    }
+
+     */
 
     private void checkNService_SO_Status(FCMMessage fcmMessage) {
 

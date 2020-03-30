@@ -3,7 +3,12 @@ package com.namoadigital.prj001.ui.act017;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -13,21 +18,29 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
+import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TK_Ticket_Action;
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
@@ -35,6 +48,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
+import com.namoadigital.prj001.sql.MD_Operation_Sql_004;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_006;
@@ -43,7 +57,11 @@ import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.sql.Sql_Act017_001;
 import com.namoadigital.prj001.sql.Sql_Act017_002;
 import com.namoadigital.prj001.sql.Sql_Act017_003;
+import com.namoadigital.prj001.sql.Sql_Act017_004;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_010;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -74,6 +92,8 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     private MD_SiteDao siteDao;
     private MD_Schedule_ExecDao scheduleExecDao;
     private ScheduleRequestSerialDialog serialDialog;
+    private TK_TicketDao ticketDao;
+    private MD_OperationDao operationDao;
 
 
     public Act017_Main_Presenter_Impl(Context context, Act017_Main_View mView, GE_Custom_Form_LocalDao formLocalDao, HMAux hmAux_Trans) {
@@ -92,17 +112,28 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
         );
+        this.ticketDao = new TK_TicketDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        this.operationDao = new MD_OperationDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+
     }
 
     @Override
-    public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap, String serial_id, boolean late, boolean filter_site_logged) {
+    public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap, boolean filter_ticket, String serial_id, boolean late, boolean filter_site_logged, String schedulePk) {
         ArrayList<HMAux> schedules = new ArrayList<>();
         //Se atrasado, ignora data
         if (late) {
             selected_date = null;
         }
         //
-        if (filter_form || (!filter_form && !filter_form_ap)) {
+        if (filter_form || (!filter_form && !filter_form_ap && !filter_ticket)) {
             ArrayList<HMAux> schedulesForm =
                 (ArrayList<HMAux>) formLocalDao.query_HM(
                     new Sql_Act017_001(
@@ -119,7 +150,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             }
         }
         //
-        if (filter_form_ap || (!filter_form && !filter_form_ap)) {
+        if (filter_form_ap || (!filter_form && !filter_form_ap && !filter_ticket)) {
             ArrayList<HMAux> schedulesFormAP =
                 (ArrayList<HMAux>) formApDao.query_HM(
                     new Sql_Act017_002(
@@ -134,13 +165,53 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 schedules.addAll(schedulesFormAP);
             }
         }
+        //LUCHE - 11/03/2020
+        //Busca ticket agendados.
+        if (filter_ticket || (!filter_form && !filter_form_ap && !filter_ticket)) {
+            ArrayList<HMAux> schedulesTicket =
+                (ArrayList<HMAux>) ticketDao.query_HM(
+                    new Sql_Act017_004(
+                        context,
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        selected_date,
+                        serial_id,
+                        late,
+                        filter_site_logged
+                    ).toSqlQuery()
+                );
+            if (schedulesTicket != null) {
+                schedules.addAll(schedulesTicket);
+            }
+        }
+
         //Seta Qtd no tv
         mView.setQty(schedules.size(), getTotalQty(selected_date, filter_form, filter_form_ap, late, filter_site_logged));
         //Ordena agendados por data
         sortSchedulesByDate(schedules);
         //Adiciona datas na lista de agendados e devole lista
-        mView.loadSchedules(addDateMsgs(schedules));
+        List<HMAux> finalScheduleList = addDateMsgs(schedules);
+        mView.loadSchedules(finalScheduleList,getSchedulePkPosition((ArrayList<HMAux>) finalScheduleList,schedulePk));
 
+    }
+
+    /**
+     * LUCHE - 17/03/2020
+     * Pega posição do agendamento na lista a ser exibida no listview
+     * @param schedules- Lista com todos os agendamentos
+     * @param schedulePk - Pk do agendamento retornado ou NULL
+     * @return - Posição do item ou -1 caso null ou não encontrado.
+     */
+    private int getSchedulePkPosition(ArrayList<HMAux> schedules, String schedulePk) {
+        if(schedulePk != null && !schedulePk.isEmpty()) {
+            for (int i = 0; i < schedules.size(); i++) {
+                if (schedules.get(i).hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_PK)
+                    && schedules.get(i).get(MD_Schedule_ExecDao.SCHEDULE_PK).equalsIgnoreCase(schedulePk)
+                ) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     private int getTotalQty(String selected_date, boolean filter_form, boolean filter_form_ap, boolean late, boolean filter_site_logged) {
@@ -179,86 +250,433 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         });
     }
 
-
+    /**
+     * LUCHE - 12/03/2020
+     * <P></P>
+     * Metodo que define do fluxo do agendamento baseado no tipo do mesmo
+     * @param item - Agendamento selecionado
+     */
     @Override
     public void checkScheduleFlow(final HMAux item) {
-
         switch (item.get(Act017_Main.ACT017_MODULE_KEY)) {
-
             case Constant.MODULE_CHECKLIST:
-                if (item.get(MD_Schedule_ExecDao.STATUS).equals(Constant.SYS_STATUS_SCHEDULE)) {
-                    if (item.get(MD_Schedule_ExecDao.SITE_CODE) != null &&
-                        !item.get(MD_Schedule_ExecDao.SITE_CODE).equalsIgnoreCase("null") &&
-                        !item.get(MD_Schedule_ExecDao.SITE_CODE).equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context))
-                    ) {
-                        //Verifica se o usuario possui acesso ao site do form com restrição
-                        //Se possuir, da opção do usr alterar para o site se não, apenas informa
-                        //sobre a restrição.
-                        if (formSiteAccess(item.get(MD_Schedule_ExecDao.SITE_CODE))) {
-                            ToolBox.alertMSG_YES_NO(
-                                context,
-                                hmAux_Trans.get("alert_form_site_restriction_ttl"),
-                                hmAux_Trans.get("alert_form_site_restriction_confirm"),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
-                                            ToolBox_Con.setPreference_Site_Code(context, item.get(MD_Schedule_ExecDao.SITE_CODE));
-                                            ToolBox_Con.setPreference_Zone_Code(context, -1);
-                                            //
-                                            checkScheduleFlow(item);
-                                        } else {
-                                            ToolBox_Con.setPreference_Site_Code(context, item.get(MD_Schedule_ExecDao.SITE_CODE));
-                                            ToolBox_Con.setPreference_Zone_Code(context, -1);
-                                            mView.callAct033(context);
-                                        }
-                                    }
-                                },
-                                1
-                            );
-                        } else {
-                            ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_form_site_restriction_ttl"),
-                                hmAux_Trans.get("alert_form_site_restriction_no_access_msg"),
-                                null,
-                                0
-                            );
-                        }
-
-                    } else if (isAnyFormInProcessing(item)) {
-                        mView.showMsg(Act017_Main.MODULE_CHECKLIST_FORM_IN_PROCESSING, item);
-                    } else {
-                        mView.showMsg(Act017_Main.MODULE_CHECKLIST_START_FORM, item);
-                    }
-                } else {
-                    prepareOpenForm(item);
-                }
+                processFormFlow(item);
                 break;
-
             case Constant.MODULE_FORM_AP:
                 prepareOpenFormAP(item);
                 break;
+            case ConstantBaseApp.PROFILE_MENU_TICKET:
+                processTicketFlow(item);
+                break;
+        }
+    }
 
+    /**
+     * LUCHE - 12/03/2020
+     * <P></P>
+     * Metodo que define o fluxo quando agendamento d é formulário
+     * @param item - Agendamento selecionado
+     */
+    private void processFormFlow(HMAux item) {
+        if (item.get(MD_Schedule_ExecDao.STATUS).equals(Constant.SYS_STATUS_SCHEDULE)) {
+            if (isScheduleSiteDifferentThanLogged(item)) {
+                startSiteChangeFlow(item);
+            } else if (isAnyFormInProcessing(item)) {
+                mView.showMsg(Act017_Main.MODULE_CHECKLIST_FORM_IN_PROCESSING, item);
+            } else {
+                mView.showMsg(Act017_Main.MODULE_CHECKLIST_START_FORM, item);
+            }
+        } else {
+            if(isStatusPossibleToOpen(item)) {
+                prepareOpenForm(item);
+            }else{
+                mView.showMsg(
+                    Act017_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
+                    item
+                );
+            }
+        }
+    }
+
+    /**
+     * LUCHE - 12/03/2020
+     * <p></p>
+     * Metodo que verifica se o site do agendamento é diferente do site logado
+     * @param item - Agendamento selecionado
+     * @return - Verdadeiro se o site do agendamento for diferente do site logado.
+     */
+    private boolean isScheduleSiteDifferentThanLogged(HMAux item) {
+        return item.get(MD_Schedule_ExecDao.SITE_CODE) != null &&
+            !item.get(MD_Schedule_ExecDao.SITE_CODE).equalsIgnoreCase("null") &&
+            !item.get(MD_Schedule_ExecDao.SITE_CODE).equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context));
+    }
+
+    /**
+     * LUCHE - 12/03/2020
+     * <p></p>
+     * Metodo que inicia fluxo para troca de site.
+     * @param item - Agendamento selecionado
+     */
+    private void startSiteChangeFlow(final HMAux item) {
+        //Verifica se o usuario possui acesso ao site do form com restrição
+        //Se possuir, da opção do usr alterar para o site se não, apenas informa
+        //sobre a restrição.
+        if (hasScheduleSiteAccess(item.get(MD_Schedule_ExecDao.SITE_CODE))) {
+            ToolBox.alertMSG_YES_NO(
+                context,
+                hmAux_Trans.get("alert_form_site_restriction_ttl"),
+                hmAux_Trans.get("alert_form_site_restriction_confirm"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
+                            && !ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
+                        ) {
+                            ToolBox_Con.setPreference_Site_Code(context, item.get(MD_Schedule_ExecDao.SITE_CODE));
+                            ToolBox_Con.setPreference_Zone_Code(context, -1);
+                            //
+                            checkScheduleFlow(item);
+                        } else {
+                            ToolBox_Con.setPreference_Site_Code(context, item.get(MD_Schedule_ExecDao.SITE_CODE));
+                            ToolBox_Con.setPreference_Zone_Code(context, -1);
+                            mView.callAct033(context);
+                        }
+                    }
+                },
+                1
+            );
+        } else {
+            ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_form_site_restriction_ttl"),
+                hmAux_Trans.get("alert_form_site_restriction_no_access_msg"),
+                null,
+                0
+            );
+        }
+    }
+
+    /**
+     * LUCHE - 12/03/2020
+     * <p></p>
+     * Metodo que processo o fluxo do ticket
+     * @param item - Agendamento selecionado
+     */
+    private void processTicketFlow(HMAux item) {
+        if(!item.get(MD_Schedule_ExecDao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_SCHEDULE)){
+            if(isStatusPossibleToOpen(item)) {
+                prepareOpenTicket(item);
+            }else{
+                mView.showMsg(
+                    Act017_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
+                    item
+                );
+            }
+        }else {
+            if(isScheduleSiteDifferentThanLogged(item)){
+                startSiteChangeFlow(item);
+            }else{
+                mView.showMsg(
+                    Act017_Main.MODULE_TICKET_EXEC_CONFIRM,
+                    item
+                );
+            }
+        }
+    }
+
+    /**
+     * LUCHE - 12/03/2020
+     * <p></p>
+     * Metodo que inicia o processo de criação e navegação para o ticket.
+     * @param item - Agendamento selecionado
+     */
+    @Override
+    public void checkTicketFlow(HMAux item) {
+        if(createTicketForSchedule(item)){
+            mView.callAct071(getTicketActionFlowBundle(item));
+        }else{
+            mView.showMsg(
+                Act017_Main.MODULE_SCHEDULE_TICKET_CREATION_ERROR,
+                item
+            );
+        }
+    }
+
+    /**
+     * LUCHE - 11/03/2020
+     * <p></p>
+     * Metodo que tenta a criação do ticket caso ele não exista.
+     * Caso exista, atualiza item com os valores da pk do ticket.
+     * @param item - item selecionado na lista.
+     * @return - Verdadeiro se o item já existir na tabela de ticket, ou se ticket criado com sucesso.
+     */
+    private boolean createTicketForSchedule(HMAux item) {
+        if(isTicketAlreadyCreated(item)){
+            return true;
+        }else{
+            int nextTicketCode = getNextScheduleTicketCode();
+            MD_Site md_site = getSiteObj(ToolBox_Con.getPreference_Site_Code(context));
+            MD_Operation mdOperation = getOperationObj(ToolBox_Con.getPreference_Operation_Code(context));
+            //
+            if(nextTicketCode > 0 && MD_Site.isValid(md_site) && MD_Operation.isValid(mdOperation)){
+                //Cria ticket
+                TK_Ticket tkTicket = createTicket(item, nextTicketCode, md_site, mdOperation);
+                //Add ctrl e action ao ticket
+                tkTicket.getCtrl().add(
+                    createTicketCtrl(item, tkTicket, md_site, mdOperation)
+                );
+                if(updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_PROCESS)){
+                    DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
+                    //
+                    if (!daoObjReturn.hasError()) {
+                        item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
+                        item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
+                        //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
+                        //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
+                        item.put(TK_Ticket_CtrlDao.TICKET_SEQ, "1");
+                        return true;
+                    }else{
+                        updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_SCHEDULE);
+                    }
+                }
+            }
+        }
+        //
+        return false;
+    }
+
+    private TK_Ticket createTicket(HMAux item, int nextTicketCode, MD_Site md_site, MD_Operation mdOperation) {
+        TK_Ticket tkTicket = new TK_Ticket();
+        //
+        tkTicket.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
+        tkTicket.setTicket_prefix(0);
+        tkTicket.setTicket_code(nextTicketCode);
+        tkTicket.setScn(0);
+        tkTicket.setTicket_id(getFormattedTicketId(0,nextTicketCode));
+        tkTicket.setType_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.TICKET_TYPE)));
+        tkTicket.setType_id(item.get(MD_Schedule_ExecDao.TICKET_TYPE_ID));
+        tkTicket.setType_desc(item.get(MD_Schedule_ExecDao.TICKET_TYPE_DESC));
+        tkTicket.setOpen_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        tkTicket.setOpen_user(ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context)));
+        tkTicket.setOpen_user_name(
+            ToolBox_Inf.getFullNick(
+                ToolBox_Con.getPreference_User_Code_Nick(context),
+                ToolBox_Con.getPreference_User_Code(context)
+            )
+        );
+        tkTicket.setCurrent_site_code(ToolBox_Inf.convertStringToInt(md_site.getSite_code()));
+        tkTicket.setCurrent_site_id(md_site.getSite_id());
+        tkTicket.setCurrent_site_desc(md_site.getSite_desc());
+        tkTicket.setCurrent_operation_code( (int) mdOperation.getOperation_code());
+        tkTicket.setCurrent_operation_id(mdOperation.getOperation_id());
+        tkTicket.setCurrent_operation_desc(mdOperation.getOperation_desc());
+        tkTicket.setCurrent_product_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.PRODUCT_CODE)));
+        tkTicket.setCurrent_product_id(item.get(MD_Schedule_ExecDao.PRODUCT_ID));
+        tkTicket.setCurrent_product_desc(item.get(MD_Schedule_ExecDao.PRODUCT_DESC));
+        tkTicket.setCurrent_serial_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SERIAL_CODE)));
+        tkTicket.setCurrent_serial_id(item.get(MD_Schedule_ExecDao.SERIAL_ID));
+        tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PROCESS);
+        tkTicket.setSchedule_prefix(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX)));
+        tkTicket.setSchedule_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_CODE)));
+        tkTicket.setSchedule_exec(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)));
+        //
+        return tkTicket;
+    }
+
+    private String getFormattedTicketId(int ticketPrefix, int nextTicketCode) {
+        return ticketPrefix+"."+nextTicketCode;
+    }
+
+    private TK_Ticket_Ctrl createTicketCtrl(HMAux item, TK_Ticket tkTicket, MD_Site md_site, MD_Operation mdOperation) {
+        TK_Ticket_Ctrl ticketCtrl = new TK_Ticket_Ctrl();
+        ticketCtrl.setTicket_seq(1);
+        ticketCtrl.setCtrl_type(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION);
+        ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_PENDING);
+        ticketCtrl.setSite_code(ToolBox_Inf.convertStringToInt(md_site.getSite_code()));
+        ticketCtrl.setSite_id(md_site.getSite_id());
+        ticketCtrl.setSite_desc(md_site.getSite_desc());
+        ticketCtrl.setOperation_code( (int) mdOperation.getOperation_code());
+        ticketCtrl.setOperation_id(mdOperation.getOperation_id());
+        ticketCtrl.setOperation_desc(mdOperation.getOperation_desc());
+        ticketCtrl.setProduct_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.PRODUCT_CODE)));
+        ticketCtrl.setProduct_id(item.get(MD_Schedule_ExecDao.PRODUCT_ID));
+        ticketCtrl.setProduct_desc(item.get(MD_Schedule_ExecDao.PRODUCT_DESC));
+        ticketCtrl.setSerial_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SERIAL_CODE)));
+        ticketCtrl.setSerial_id(item.get(MD_Schedule_ExecDao.SERIAL_ID));
+        ticketCtrl.setCtrl_start_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        ticketCtrl.setCtrl_start_user(ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context)));
+        ticketCtrl.setCtrl_start_user_name(
+            ToolBox_Inf.getFullNick(
+                ToolBox_Con.getPreference_User_Code_Nick(context),
+                ToolBox_Con.getPreference_User_Code(context)
+            )
+        );
+        //Add no ctrl
+        ticketCtrl.setAction(new TK_Ticket_Action());
+        //Seta Pk no controle e action
+        ticketCtrl.setPK(tkTicket);
+        //
+        return ticketCtrl;
+    }
+
+
+
+    /**
+     * LUCHE - 11/03/2020
+     * <p></p>
+     * Metodo que pega o proximo ticketCode para tickets criados via agendamento.
+     * O tickets criados via agendamento, terão sempre o prefixo  = 0.
+     * @return - Proximo ticket code  ou -1 em caso de erro.
+     */
+    private int getNextScheduleTicketCode() {
+        HMAux auxCode = ticketDao.getByStringHM(
+            new TK_Ticket_Sql_010(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
+        );
+        //
+        if (auxCode != null && auxCode.size() > 0 && auxCode.hasConsistentValue(TK_Ticket_Sql_010.NEXT_SCHEDULE_TICKET_CODE) ){
+            try{
+                return Integer.parseInt(auxCode.get(TK_Ticket_Sql_010.NEXT_SCHEDULE_TICKET_CODE));
+            }catch (Exception e){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * LUCHE - 11/03/2020
+     * <p></p>
+     * Metodo que verifica se o ticket ja existe na tabela ticket
+     * @param item - item selecionado
+     * @return - Verdadeiro se o ticket ja existir na tabela.
+     */
+    private boolean isTicketAlreadyCreated(HMAux item) {
+        TK_Ticket tkTicket = getTicketBySchedule(item);
+        if(tkTicket != null && TK_Ticket.isValidTkTicket(tkTicket) ){
+            item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
+            item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
+            //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
+            //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
+            item.put(TK_Ticket_CtrlDao.TICKET_SEQ, "1");
+            return true;
+        }
+        return false;
+    }
+    /**
+     * LUCHE - 11/03/2020
+     * <p></p>
+     * Metodo que resgata o ticket da tabela de ticket.
+     * @param item - item selecionado
+     * @return - Obj ticket ou null se não encontrar
+     */
+    private TK_Ticket getTicketBySchedule(HMAux item) {
+        return ticketDao.getByString(
+            new TK_Ticket_Sql_009(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX),
+                item.get(MD_Schedule_ExecDao.SCHEDULE_CODE),
+                item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)
+            ).toSqlQuery()
+        );
+    }
+
+    private void prepareOpenTicket(HMAux item) {
+        if(ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_PREFIX)) > 0
+           && ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_CODE)) > 0
+        ){
+            mView.callAct070(getTicketFlowBundle(item));
+        }else{
+            mView.callAct071(getTicketActionFlowBundle(item));
         }
 
     }
 
-    private boolean formSiteAccess(String site_code) {
+    private Bundle getTicketFlowBundle(HMAux item) {
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017);
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_PREFIX)));
+        bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_CODE)));
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ToolBox_Inf.convertStringToInt(item.get(TK_Ticket_CtrlDao.TICKET_SEQ)));
+        bundle.putString(Constant.ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
+        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
+        return bundle;
+    }
+
+    private Bundle getTicketActionFlowBundle(HMAux item) {
+       Bundle bundle = new Bundle();
+        //
+       bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017);
+       bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX)));
+       bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_CODE, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_CODE)));
+       bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)));
+       bundle.putInt(TK_TicketDao.TICKET_PREFIX, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_PREFIX)));
+       bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_CODE)));
+       //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
+        //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
+       bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, 1);
+       //16/03/2020 - foi convencionado que durante a criação da execução do ticket, o ticket id,
+       //será o igual ao do exibido nas celulas do agendamento.
+       bundle.putString(TK_TicketDao.TICKET_ID, ToolBox_Inf.getFormattedTicketSeqExec(
+           item.get(MD_Schedule_ExecDao.SCHEDULE_PK),
+           item.get(TK_TicketDao.TICKET_PREFIX),
+           item.get(TK_TicketDao.TICKET_CODE)
+           )
+       );
+       //bundle.putString(TK_TicketDao.TYPE_PATH, item.get(TK_TicketDao.TYPE_PATH));
+       bundle.putString(TK_TicketDao.TYPE_DESC, item.get(MD_Schedule_ExecDao.TICKET_TYPE_DESC));
+       bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN,false);
+       bundle.putString(Constant.ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
+       bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
+        //
+        return bundle;
+    }
+
+    private boolean isStatusPossibleToOpen(HMAux item) {
+        return item.hasConsistentValue(MD_Schedule_ExecDao.STATUS)
+            && !item.get(MD_Schedule_ExecDao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_CANCELLED)
+            && !item.get(MD_Schedule_ExecDao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_REJECTED)
+            && !item.get(MD_Schedule_ExecDao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_IGNORED)
+            && !item.get(MD_Schedule_ExecDao.STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED);
+    }
+
+    private boolean hasScheduleSiteAccess(String site_code) {
         boolean access = false;
         //
-        MD_Site formSite = siteDao.getByString(
-            new MD_Site_Sql_003(
-                ToolBox_Con.getPreference_Customer_Code(context),
-                site_code
-            ).toSqlQuery()
-        );
+        MD_Site formSite = getSiteObj(site_code);
         //
         if (formSite != null && formSite.getSite_code().equalsIgnoreCase(site_code)) {
             access = true;
         }
         //
         return access;
+    }
+
+    /**
+     * LUCHE - 12/03/2020
+     * <p></p>
+     * Metodo que resgata obj com dados do site.
+     * @param site_code - Codigo do Site
+     * @return - MD_Site com dados do site ou null se site não encontrado.
+     */
+    @Nullable
+    private MD_Site getSiteObj(String site_code) {
+        return siteDao.getByString(
+            new MD_Site_Sql_003(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                site_code
+            ).toSqlQuery()
+        );
+    }
+
+    private MD_Operation getOperationObj(long operationCode){
+        return operationDao.getByString(
+            new MD_Operation_Sql_004(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                operationCode
+            ).toSqlQuery()
+        );
     }
 
     private void prepareOpenFormAP(HMAux hmAux) {
@@ -538,6 +956,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_VERSION));
             bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
+            bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
             //
             if(createFormLocalForSchedule(item,bundle)){
                 mView.callAct020(context, bundle);
@@ -860,6 +1279,125 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     @Override
     public boolean loadCheckboxStatusFromPreferencie(String checkboxConstant, boolean defaultValue) {
         return ToolBox_Con.getBooleanPreferencesByKey(context, checkboxConstant, defaultValue);
+    }
+
+    /**
+     * LUCHE - 11/03/2020
+     * <p>
+     * Metodo que devolve o texto a ser exibido no dialog de comentario do agendamento.
+     * @param item - Item agendado
+     * @return - String
+     */
+    @Override
+    public SpannableString getCommentMessage(HMAux item) {
+        SpannableString finalString = null;
+        String commentMsg = "";
+        String scheduleWarning = "";
+        String scheduleWarningStatus = "";
+        String scheduleWarningNick = "";
+        String scheduleWarningErroMsg = "";
+        //Schedule Warning é comum a ambos os casos
+        if(item.hasConsistentValue(MD_Schedule_ExecDao.FCM_NEW_STATUS) && !item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS).isEmpty()){
+            scheduleWarningStatus =   hmAux_Trans.get("dialog_schedule_warning_new_status_lbl") + "\n" +
+                                      hmAux_Trans.get(item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS)) + "\n";
+        }
+        if(item.hasConsistentValue(MD_Schedule_ExecDao.FCM_USER_NICK) && !item.get(MD_Schedule_ExecDao.FCM_USER_NICK).isEmpty()){
+            scheduleWarningNick = hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl") +"\n" +
+                                  item.get(MD_Schedule_ExecDao.FCM_USER_NICK)+"\n";
+        }
+        if(item.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) && !item.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG).isEmpty()){
+            scheduleWarningErroMsg =   hmAux_Trans.get("dialog_schedule_warning_error_msg_lbl") +"\n" +
+                item.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG)+"\n";
+        }
+        //Parece lusitano, mas se a var referente esta preenchida, significa que ter de fazer o span mais abaixo.
+        scheduleWarning += scheduleWarningStatus + scheduleWarningNick + scheduleWarningErroMsg;
+        //
+        switch (item.get(Act017_Main.ACT017_MODULE_KEY)) {
+            case Constant.MODULE_CHECKLIST:
+                commentMsg =
+                    hmAux_Trans.get("dialog_schedule_desc_lbl") +": \n"
+                    + item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n"
+                    + hmAux_Trans.get("form_type_dialog_lbl") + ": \n"
+                    + item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE) + " - " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC)+ "\n"+
+                    scheduleWarning;
+
+                //Seta negrito nas area necessarias
+                finalString = new SpannableString(commentMsg);
+                try {
+                    finalString.setSpan(
+                        new StyleSpan(Typeface.BOLD),
+                        0,
+                        commentMsg.indexOf(item.get(MD_Schedule_ExecDao.SCHEDULE_DESC)),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+
+                    );
+                    finalString.setSpan(
+                        new StyleSpan(Typeface.BOLD),
+                        commentMsg.indexOf(hmAux_Trans.get("form_type_dialog_lbl") + ":"),
+                        commentMsg.indexOf(item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE)),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+
+                    );
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+            case ConstantBaseApp.PROFILE_MENU_TICKET:
+                commentMsg =
+                        hmAux_Trans.get("dialog_schedule_desc_lbl") +": \n"
+                        + item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n"+
+                        scheduleWarning;
+
+                //
+                finalString = new SpannableString(commentMsg);
+                try {
+                    finalString.setSpan(
+                        new StyleSpan(Typeface.BOLD),
+                        0,
+                        commentMsg.indexOf(item.get(MD_Schedule_ExecDao.SCHEDULE_DESC)),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+
+                    );
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                break;
+            default:
+        }
+        //Como o scheduleWarning é comum a todos, seus spannable foi colocado fora do switch para não ter codigo repetido
+        if(scheduleWarning.trim().length() > 0){
+            try{
+                if(!scheduleWarningStatus.isEmpty()) {
+                    finalString.setSpan(
+                        new StyleSpan(Typeface.BOLD),
+                        commentMsg.indexOf(hmAux_Trans.get("dialog_schedule_warning_new_status_lbl")),
+                        commentMsg.indexOf(hmAux_Trans.get(item.get(MD_Schedule_ExecDao.FCM_NEW_STATUS))),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                    );
+                }
+                //
+                if(!scheduleWarningNick.isEmpty()) {
+                    finalString.setSpan(
+                        new StyleSpan(Typeface.BOLD),
+                        commentMsg.indexOf(hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl")),
+                        commentMsg.indexOf(item.get(MD_Schedule_ExecDao.FCM_USER_NICK)),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                    );
+                }
+                if(!scheduleWarningErroMsg.isEmpty()) {
+                    finalString.setSpan(
+                        new StyleSpan(Typeface.BOLD),
+                        commentMsg.indexOf(hmAux_Trans.get("dialog_schedule_warning_error_msg_lbl")),
+                        commentMsg.indexOf(item.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG)),
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                    );
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        //
+        return finalString;
     }
 
     @Override
