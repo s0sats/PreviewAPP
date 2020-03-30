@@ -39,6 +39,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  *
  * LUCHE - 30/03/2020
  * Substituido o status FINALIZED pelo WAITING_SYNC e  SENT por DONE, na query de form.
+ * Substituido filtro que comparava pks do form <> de null pelo campo schedule_type = form
  */
 
 public class Sql_Act016_001 implements Specification {
@@ -75,9 +76,7 @@ public class Sql_Act016_001 implements Specification {
                     "  \n" +
                     "  WHERE \n" +
                     "        s.customer_code= '"+customer_code+"'     \n" +
-                    "        AND s.custom_form_type is not null \n" +
-                    "        AND s.custom_form_code is not null \n" +
-                    "        AND s.custom_form_version is not null \n" +
+                    "        AND s.schedule_type = '"+ConstantBaseApp.MD_SCHEDULE_TYPE_FORM+"'\n" +
                     "        AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') ";
         //Remove , caso exista, o text 'null'
         sql_form = sql_form.replace("'null'","null");
