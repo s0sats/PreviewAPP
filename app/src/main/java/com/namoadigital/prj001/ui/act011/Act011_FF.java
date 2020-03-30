@@ -203,7 +203,7 @@ public class Act011_FF extends Fragment {
             cv_product_serial_card.setVisibility(View.GONE);
         }
 
-        if(formStatus.equalsIgnoreCase(Constant.SYS_STATUS_SENT)){
+        if(formStatus.equalsIgnoreCase(Constant.SYS_STATUS_DONE)){
             go_to_history.setText(hmAux_Trans.get("btn_history"));
             go_to_history.setVisibility(View.VISIBLE);
             go_to_home.setVisibility(View.VISIBLE);
@@ -329,8 +329,8 @@ public class Act011_FF extends Fragment {
             }
             //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
             //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-            if (formStatus.equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                    formStatus.equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+            if (formStatus.equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
+                    formStatus.equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //                 || formStatus.equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                     ) {
                 ll_check.setVisibility(View.GONE);

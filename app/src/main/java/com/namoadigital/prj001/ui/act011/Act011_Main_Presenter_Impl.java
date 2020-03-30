@@ -670,7 +670,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         String.valueOf(formData.getCustom_form_code()),
                         String.valueOf(formData.getCustom_form_version()),
                         String.valueOf(formData.getCustom_form_data()),
-                        Constant.SYS_STATUS_FINALIZED
+                        Constant.SYS_STATUS_WAITING_SYNC
                 ).toSqlQuery().toString()
         );
         //LUCHE - 14/02/2020
@@ -679,11 +679,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 formData.getSchedule_prefix(),
                 formData.getSchedule_code(),
                 formData.getSchedule_exec(),
-                ConstantBaseApp.SYS_STATUS_FINALIZED
+                ConstantBaseApp.SYS_STATUS_WAITING_SYNC
             );
         }
         //
-        formData.setCustom_form_status(Constant.SYS_STATUS_FINALIZED);
+        formData.setCustom_form_status(Constant.SYS_STATUS_WAITING_SYNC);
         formData.setDate_end(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
 
         custom_form_dataDao.addUpdate(formData);
@@ -916,7 +916,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                 String.valueOf(custom_form_data)
                         ).toSqlQuery().toLowerCase()
                 );
-        return Constant.SYS_STATUS_FINALIZED.equals(form_data.getCustom_form_status());
+        return Constant.SYS_STATUS_WAITING_SYNC.equals(form_data.getCustom_form_status());
     }
 
     /**
