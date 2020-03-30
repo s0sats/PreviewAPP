@@ -32,8 +32,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * metodo getDeviceGMT().
  *
  * LUCHE - 13/02/2020
- *
  * Modificado query para usar a nova tabela de agendamento
+ *
+ * LUCHE - 30/03/2020
+ * Modificado query substituindo o status FINALIZED pelo WAITING_SYNC
  */
 
 public class Sql_Act017_001 implements Specification {
