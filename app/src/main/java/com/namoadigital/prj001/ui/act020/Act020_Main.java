@@ -376,7 +376,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             if(requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT013)){
                 act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, true));
                 act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, false));
-                act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED,false));
+                act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,false));
             }
         }
     }

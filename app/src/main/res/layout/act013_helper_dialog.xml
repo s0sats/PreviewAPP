@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="20dp">
 
@@ -23,6 +24,7 @@
         android:layout_marginBottom="20dp"
         android:checked="true"
         android:clickable="false"
+        tools:text = "In Processing"
         />
 
     <CheckBox
@@ -33,15 +35,19 @@
         android:visibility="visible"
         android:layout_marginBottom="20dp"
         android:checked="true"
-        android:clickable="false"/>
+        android:clickable="false"
+        tools:text = "Agendado"
+        />
 
     <CheckBox
-        android:id="@+id/act013_helper_dialog_chk_finalized"
+        android:id="@+id/act013_helper_dialog_chk_waiting_sync"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:buttonTint="@color/namoa_color_light_green4"
         android:layout_marginBottom="20dp"
         android:checked="true"
-        android:clickable="false"/>
+        android:clickable="false"
+        tools:text = "Aguardadand Sincronismos"
+        />
 
 </LinearLayout>

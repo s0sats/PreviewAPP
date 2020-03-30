@@ -7,7 +7,6 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -21,6 +20,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  *
  * LUCHE - 25/03/2020
  * Modificado query do getScheduleQuery e getFormQuery, para retornar tb as informações de fcm e error_msg
+ *
+ * LUCHE - 30/03/2020
+ * Modificado query substituindo o status de finalized pelo waiting_sync e status sent pelo done
  */
 
 public class Sql_Act013_001 implements Specification {
@@ -30,34 +32,32 @@ public class Sql_Act013_001 implements Specification {
     private String customerGMT;
 
 
-    public Sql_Act013_001(long s_customer_code, boolean filter_in_processing , boolean filter_finalized , boolean filter_scheduled, Context context) {
+    public Sql_Act013_001(long s_customer_code, boolean filter_in_processing , boolean filter_waiting_sync , boolean filter_scheduled, Context context) {
         this.s_customer_code = s_customer_code;
         this.customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
         String s_filter = "";
         String scheduleQuery = "";
         String formQuery = "";
 
-        if(filter_in_processing || filter_finalized || filter_scheduled){
-
+        if(filter_in_processing || filter_waiting_sync || filter_scheduled){
             String status =  "";
-
             if(filter_in_processing){
-                status += "'"+ Constant.SYS_STATUS_IN_PROCESSING+"',";
+                status += "'"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"',";
             }
-            if(filter_finalized){
-                status += "'"+Constant.SYS_STATUS_FINALIZED+"',";
+            if(filter_waiting_sync){
+                status += "'"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"',";
             }
             if(filter_scheduled){
-                status += "'"+Constant.SYS_STATUS_SCHEDULE+"',";
+                status += "'"+ConstantBaseApp.SYS_STATUS_SCHEDULE+"',";
             }
             status = status.substring(0,status.length() -1);
             s_filter += "   AND l.custom_form_status in(" +status+")\n";
         }else{
             //Se todos os filtros falsos, não filtra nada.
             s_filter += " AND l.custom_form_status NOT in(" +
-                    "'"+ Constant.SYS_STATUS_IN_PROCESSING+"',"+
-                    "'"+Constant.SYS_STATUS_FINALIZED+"'," +
-                    "'"+Constant.SYS_STATUS_SCHEDULE+"' "+
+                    "'"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"',"+
+                    "'"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"'," +
+                    "'"+ConstantBaseApp.SYS_STATUS_SCHEDULE+"' "+
                     ")\n";
         }
         //
@@ -185,7 +185,7 @@ public class Sql_Act013_001 implements Specification {
             "      AND l.schedule_exec = sc.schedule_exec\n" +
             "  WHERE\n" +
             "      l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' \n" +
-            "      AND l.custom_form_status <> '" + Constant.SYS_STATUS_SENT+"'\n" +
+            "      AND l.custom_form_status <> '" + ConstantBaseApp.SYS_STATUS_DONE+"'\n" +
             s_filter;
     }
 
@@ -199,15 +199,15 @@ public class Sql_Act013_001 implements Specification {
                         subQuery +"\n" +
                         "  ) t\n" +
                         "  ORDER BY\n" +
-                        "      CASE WHEN t.custom_form_status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN 0\n" +
-                        "           WHEN t.custom_form_status = '"+Constant.SYS_STATUS_FINALIZED+"' THEN 1\n" +
-                        "           WHEN t.custom_form_status = '"+Constant.SYS_STATUS_SCHEDULE+"' THEN 2\n" +
+                        "      CASE WHEN t.custom_form_status = '"+ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"' THEN 0\n" +
+                        "           WHEN t.custom_form_status = '"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"' THEN 1\n" +
+                        "           WHEN t.custom_form_status = '"+ConstantBaseApp.SYS_STATUS_SCHEDULE+"' THEN 2\n" +
                         "           ELSE 3\n" +
                         "      END ," +
-                        "      (CASE WHEN t.custom_form_status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN t.date_start\n" +
+                        "      (CASE WHEN t.custom_form_status = '"+ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"' THEN t.date_start\n" +
                         "            ELSE  '31/12/9999 23:59'\n" +
                         "       END) ASC,\n" +
-                        "      (CASE WHEN t.custom_form_status = '"+Constant.SYS_STATUS_FINALIZED+"' THEN t.date_end\n" +
+                        "      (CASE WHEN t.custom_form_status = '"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"' THEN t.date_end\n" +
                         "            ELSE  '01/01/1900 00:00'\n" +
                         "       END) DESC , \n" +
                         "      t.custom_form_type, \n" +

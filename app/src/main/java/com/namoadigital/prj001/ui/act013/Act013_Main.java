@@ -59,7 +59,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     private TextView tv_filter;
     private CheckBox chk_processing;
     private CheckBox chk_scheduled;
-    private CheckBox chk_finalized;
+    private CheckBox chk_waiting_sync;
     private ImageView iv_help;
     private List<CheckBox> checkBoxList;
     private String requesting_act = "";
@@ -68,7 +68,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     private String wsProcess;
     private boolean filterInProcessing;
     private boolean filterSchedule;
-    private boolean filterFinalized;
+    private boolean filterWaitingSync;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -175,14 +175,14 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         chk_scheduled.setVisibility(accessToSchedule ? View.VISIBLE : View.GONE);
         chk_scheduled.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_SCHEDULE))));
         //
-        chk_finalized = (CheckBox) findViewById(R.id.act013_chk_finalized);
-        chk_finalized.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_FINALIZED))));
+        chk_waiting_sync = (CheckBox) findViewById(R.id.act013_chk_waiting_sync);
+        chk_waiting_sync.setButtonTintList(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_WAITING_SYNC)));
         //
         initChkValues();
         //Add checkbox na lista
         checkBoxList.add(chk_processing);
         checkBoxList.add(chk_scheduled);
-        checkBoxList.add(chk_finalized);
+        checkBoxList.add(chk_waiting_sync);
         //
         iv_help = (ImageView) findViewById(R.id.act013_iv_help);
         //
@@ -197,7 +197,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     private void initChkValues() {
         chk_processing.setChecked(filterInProcessing);
         chk_scheduled.setChecked(filterSchedule);
-        chk_finalized.setChecked(filterFinalized);
+        chk_waiting_sync.setChecked(filterWaitingSync);
     }
 
     private void recoverIntentsInfo() {
@@ -207,12 +207,12 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
             requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT012);
             filterInProcessing = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, true);
             filterSchedule = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, false);
-            filterFinalized = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED, false);
+            filterWaitingSync = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, false);
         } else {
             requesting_act = Constant.ACT012;
             filterInProcessing = true;
             filterSchedule = false;
-            filterFinalized = false;
+            filterWaitingSync = false;
         }
 
     }
@@ -264,7 +264,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
             }
         });
 
-        chk_finalized.setOnClickListener(new View.OnClickListener() {
+        chk_waiting_sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 filterApply();
@@ -286,7 +286,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
      */
     private void filterApply() {
         boolean filterInProcessing = false;
-        boolean filterFinalized = false;
+        boolean filterWaitingSync = false;
         boolean filterScheduled = false;
 
         for ( CheckBox checkBox :checkBoxList ) {
@@ -298,11 +298,11 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                         filterInProcessing = true;
                     }
                     break;
-                case R.id.act013_chk_finalized:
+                case R.id.act013_chk_waiting_sync:
 
-                    if( chk_finalized.getVisibility() == View.VISIBLE
-                        && chk_finalized.isChecked() ){
-                        filterFinalized = true;
+                    if( chk_waiting_sync.getVisibility() == View.VISIBLE
+                        && chk_waiting_sync.isChecked() ){
+                        filterWaitingSync = true;
                     }
 
                     break;
@@ -317,7 +317,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
             }
         }
 
-        mPresenter.getPendencies(filterInProcessing,filterFinalized,filterScheduled);
+        mPresenter.getPendencies(filterInProcessing,filterWaitingSync,filterScheduled);
 
     }
 
@@ -339,9 +339,9 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         chk_scheduled.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_SCHEDULE))));
         chk_scheduled.setVisibility(accessToSchedule ? View.VISIBLE : View.GONE);
         //
-        CheckBox chk_finalized = (CheckBox) view.findViewById(R.id.act013_helper_dialog_chk_finalized);
-        chk_finalized.setText(hmAux_Trans.get(Constant.SYS_STATUS_DONE));
-        chk_finalized.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_FINALIZED))));
+        CheckBox chk_waiting_sync = (CheckBox) view.findViewById(R.id.act013_helper_dialog_chk_waiting_sync);
+        chk_waiting_sync.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC));
+        chk_waiting_sync.setButtonTintList(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_WAITING_SYNC)));
 
         alert
             .setView(view)
@@ -353,7 +353,6 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
 
     @Override
     public void loadPendencies(List<HMAux> pendencies) {
-
         mAdapter =
                 new Local_Data_List_Adapter(
                         context,
@@ -511,7 +510,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
             bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT013);
             bundle.putBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, chk_processing.isChecked());
             bundle.putBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, chk_scheduled.isChecked());
-            bundle.putBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED, chk_finalized.isChecked());
+            bundle.putBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, chk_waiting_sync.isChecked());
             //
             mIntent.putExtras(bundle);
         }
