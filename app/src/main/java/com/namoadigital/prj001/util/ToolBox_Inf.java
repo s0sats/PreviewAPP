@@ -1962,7 +1962,7 @@ public class ToolBox_Inf {
         return results;
     }
 
-    public static void buildFooterDialog(final Context context) {
+    public static Dialog buildFooterDialog(final Context context) {
 
         HMAux hmDialogInfo = loadFooterDialogInfo(context);
 
@@ -1982,7 +1982,7 @@ public class ToolBox_Inf {
         TextView tv_customer_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_value);
         //
         LinearLayout ll_site = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_site);
-        SearchableSpinner ss_site = customView.findViewById(R.id.footer_dialog_app_ss_site);
+        final SearchableSpinner ss_site = customView.findViewById(R.id.footer_dialog_app_ss_site);
 //        TextView tv_site_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_lbl);
 //        TextView tv_site_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_value);
         //
@@ -2019,7 +2019,7 @@ public class ToolBox_Inf {
         tv_customer_value.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER));
         //
         setmCanClean(ss_site, ss_zone, ss_operation);
-        setmSSAction(ss_site, ss_zone, ss_operation);
+        setmSSAction(context, ss_site, ss_zone, ss_operation);
         //
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         ArrayList<HMAux> ssSiteOption = (ArrayList<HMAux>) siteDao.query_HM(
@@ -2083,6 +2083,22 @@ public class ToolBox_Inf {
             }
         });
 
+        customDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                ToolBox_Con.setPreference_Site_Code(context, ss_site.getmValue().get(SearchableSpinner.CODE));
+                ToolBox_Con.setPreference_Zone_Code(context, 1);
+                Intent mIntent = new Intent(ToolBox.SW_TYPE_BR_REFRESH);
+                mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                //
+                Bundle bundle = new Bundle();
+                bundle.putString(ConstantBaseApp.SW_TYPE, ConstantBase.MSG_SPECIAL_NOTIFICATION);
+                mIntent.putExtras(bundle);
+                //
+                LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);
+            }
+        });
+
 //        LUCHE - 12/08/2019
 //        Comentado função de modo offline até que seja definido em conjunto como ele deverá funcionar
 
@@ -2099,10 +2115,11 @@ public class ToolBox_Inf {
 //                }
 //            }
 //        });
+        return customDialog;
 
     }
 
-    private static void setmSSAction(SearchableSpinner ss_site, final SearchableSpinner ss_zone, SearchableSpinner ss_operation) {
+    private static void setmSSAction(final Context context, SearchableSpinner ss_site, final SearchableSpinner ss_zone, SearchableSpinner ss_operation) {
         ss_site.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
             @Override
             public void onItemPreSelected(HMAux hmAux) {

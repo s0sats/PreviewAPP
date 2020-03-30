@@ -1008,6 +1008,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     }
 
     @Override
+    protected void processRefreshMessage(String mType, String mValue, String mActivity) {
+        super.processRefreshMessage(mType, mValue, mActivity);
+        onResume();
+        iniUIFooter();
+    }
+
+    @Override
     public void showPD() {
 
         switch (wsProcess) {
@@ -2348,6 +2355,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
         }
     }
+
 
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
