@@ -5,11 +5,14 @@ import com.namoadigital.prj001.util.Constant;
 
 /**
  * Created by DANIEL.LUCHE on 01/03/2017.
+ *
+ * LUCHE - 30/03/2020
+ * Modificado query, renomeado constante e substituindo o status FINALIZED pelo WAITING_SYNC
  */
 
 public class Sql_Act005_002 implements Specification {
 
-    public static final String BADGE_FINALIZED_QTY = "finalized_qty";
+    public static final String BADGE_WAITING_SYNC_QTY = "waiting_sync_qty";
     private String customer_code;
 
     public Sql_Act005_002(String customer_code) {
@@ -23,45 +26,14 @@ public class Sql_Act005_002 implements Specification {
 
         return sb
                 .append(" SELECT\n" +
-                        "   count(1) "+ BADGE_FINALIZED_QTY +" \n" +
+                        "   count(1) "+ BADGE_WAITING_SYNC_QTY +" \n" +
                         " FROM\n" +
                         "   ge_custom_forms_local l\n" +
                         " WHERE\n" +
                         "   l.customer_code = '"+customer_code+"' \n" +
-                        "   and l.custom_form_status = '"+ Constant.SYS_STATUS_FINALIZED+"'\n")
+                        "   and l.custom_form_status = '"+ Constant.SYS_STATUS_WAITING_SYNC+"'\n")
                 .append(";")
-                //.append(BADGE_FINALIZED_QTY)
                 .toString();
-        /**
-         * QUERY ABAIXO É EXEMPLO DE COMO FICARA
-         * QUANDO TIVERMOS OUTROS MODULOS.
-         */
-       /* return
-                sb
-                        .append(" SELECT\n" +
-                                "   SUM(sent_qty) sent_qty\n" +
-                                " FROM\n" +
-                                "    (\n" +
-                                "      SELECT\n" +
-                                "        count(1) sent_qty\n" +
-                                "      FROM\n" +
-                                "        ge_custom_forms_local l\n" +
-                                "      WHERE\n" +
-                                "        l.customer_code = 1 \n" +
-                                "        and l.custom_form_status = 'SENT'\n" +
-                                "        \n" +
-                                "      UNION ALL\n" +
-                                "      \n" +
-                                "      SELECT\n" +
-                                "        count(1) sent_qty\n" +
-                                "      FROM\n" +
-                                "        ge_service_order_local D\n" +
-                                "      WHERE\n" +
-                                "        D.customer_code = 1 \n" +
-                                "        and D.custom_form_status = 'SENT'\n" +
-                                "    )T")
-                        .toString();*/
-
 
     }
 }

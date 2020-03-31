@@ -767,10 +767,6 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         checkActionPhotoToDel(mView.getAction());
         //
         switch (requestingAct){
-            case ConstantBaseApp.ACT070:
-            case ConstantBaseApp.ACT068:
-                mView.callAct070();
-                break;
             case ConstantBaseApp.ACT017:
                 if(mView.isScheduledTicket()){
                     mView.callAct017();
@@ -780,6 +776,11 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 break;
             case ConstantBaseApp.ACT069:
                 mView.callAct069(true);
+                break;
+            case ConstantBaseApp.ACT070:
+            case ConstantBaseApp.ACT068:
+            default:
+                mView.callAct070();
                 break;
         }
     }

@@ -881,7 +881,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         Bundle act013Bundle = new Bundle();
         act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING));
         act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE));
-        act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED));
+        act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC));
         mIntent.putExtras(act013Bundle);
         startActivity(mIntent);
         finish();

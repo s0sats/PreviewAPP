@@ -492,7 +492,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                     new Sql_Act005_002(
                                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                     ).toSqlQuery()
-                            ).get(Sql_Act005_002.BADGE_FINALIZED_QTY);
+                            ).get(Sql_Act005_002.BADGE_WAITING_SYNC_QTY);
                         } catch (Exception e) {
                             qty = "0";
                         }

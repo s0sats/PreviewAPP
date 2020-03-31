@@ -337,8 +337,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         }
                         //Status
                         if (fcmSchedule.getStatus() != null) {
-                            scheduleExec.setStatus(fcmSchedule.getStatus());
-                           // scheduleExec.setFcm_new_status(fcmSchedule.getStatus());
+                            //Se houve troca de status ants da execução, sempre exibir como cancelado, pois não será exibido.
+                            //scheduleExec.setStatus(fcmSchedule.getStatus());
+                            scheduleExec.setStatus(ConstantBaseApp.SYS_STATUS_CANCELLED);
                             scheduleExec.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                             dumbDebugger++;
                         }
