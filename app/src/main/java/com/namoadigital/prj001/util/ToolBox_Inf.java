@@ -5120,8 +5120,9 @@ public class ToolBox_Inf {
             case Constant.SYS_STATUS_REJECTED:
                 return R.color.namoa_status_stop;
             case Constant.SYS_STATUS_PENDING:
-            case Constant.SYS_STATUS_SCHEDULE:
                 return R.color.namoa_status_pending;
+            case Constant.SYS_STATUS_SCHEDULE:
+                return R.color.namoa_status_scheduled;
             case Constant.SYS_STATUS_PROCESS:
             case Constant.SYS_STATUS_IN_PROCESSING:
             case Constant.SYS_STATUS_PUT_AWAY:
@@ -5137,8 +5138,6 @@ public class ToolBox_Inf {
             case Constant.SYS_STATUS_WAITING_CLIENT:
             case Constant.SYS_STATUS_WAITING_ACTION:
                 return R.color.namoa_status_waiting_client;
-            /*case Constant.SYS_STATUS_WAITING_SYNC:
-                return R.color.namoa_status_waiting_sync;*/
             case Constant.SYS_STATUS_DONE:
             case Constant.SYS_STATUS_FINALIZED://Remover após certeza que não é mais usado
                 return R.color.namoa_status_done;
@@ -5151,8 +5150,7 @@ public class ToolBox_Inf {
             case Constant.SYS_STATUS_INCONSISTENT:
                 return R.color.namoa_status_inconsistent;
             case Constant.SYS_STATUS_WAITING_SYNC:
-            //case Constant.SYS_STATUS_SCHEDULE:
-                return R.color.namoa_status_scheduled;
+                return R.color.namoa_status_waiting_sync;
             case Constant.SYS_STATUS_ERROR:
             case Constant.SYS_STATUS_IGNORED:
                 return R.color.namoa_status_error;

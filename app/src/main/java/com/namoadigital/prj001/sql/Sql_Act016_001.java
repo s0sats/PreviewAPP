@@ -40,6 +40,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  * LUCHE - 30/03/2020
  * Substituido o status FINALIZED pelo WAITING_SYNC e  SENT por DONE, na query de form.
  * Substituido filtro que comparava pks do form <> de null pelo campo schedule_type = form
+ * Modificado a query substituindo as antigas constantes o CalendarView pelas novas e adicionando o contador de not_executed
  */
 
 public class Sql_Act016_001 implements Specification {
@@ -66,11 +67,12 @@ public class Sql_Act016_001 implements Specification {
         sql_form =  UNION_ALL +
                     "   \nSELECT\n" +
                     "      strftime('%Y-%m-%d',s.date_start||' "+customerGMT+"','"+customerGMT+"') schedule_date_start,\n" +
-                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) delayed_count,\n" +
-                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"') inprocessing_count,\n" +
-                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') scheduled_count,    \n" +
-                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') finalized_count,\n" +
-                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') sent_count\n" +
+                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) "+CalendarView.DELAYED_COUNT+ ",\n" +
+                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"') "+CalendarView.INPROCESSING_COUNT+ ",\n" +
+                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') "+CalendarView.SCHEDULED_COUNT+ ",    \n" +
+                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
+                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') "+CalendarView.DONE_COUNT+", \n" +
+                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"') "+CalendarView.NOT_EXECUTED_COUNT+"\n" +
                     "     \n" +
                     "  FROM "+ MD_Schedule_ExecDao.TABLE+" s\n" +
                     "  \n" +
@@ -85,11 +87,12 @@ public class Sql_Act016_001 implements Specification {
                     UNION_ALL +
                     "\nSELECT\n" +
                     "      strftime('%Y-%m-%d',a.ap_when,'"+deviceGMT+"') schedule_date_start,\n" +
-                    "      ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+ConstantBaseApp.SYS_STATUS_DONE+"','"+ConstantBaseApp.SYS_STATUS_CANCELLED+"') ) delayed_count,\n" +
-                    "      0 inprocessing_count,\n" +
-                    "      ((strftime('%s',a.ap_when) * 1000)  >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+ConstantBaseApp.SYS_STATUS_DONE+"','"+ConstantBaseApp.SYS_STATUS_CANCELLED+"')) scheduled_count,\n" +
-                    "      (a.ap_status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') finalized_count,\n" +
-                    "      0 sent_count\n" +
+                    "      ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+ConstantBaseApp.SYS_STATUS_DONE+"','"+ConstantBaseApp.SYS_STATUS_CANCELLED+"') ) "+CalendarView.DELAYED_COUNT+ ",\n" +
+                    "      0 "+CalendarView.INPROCESSING_COUNT+ ",\n" +
+                    "      ((strftime('%s',a.ap_when) * 1000)  >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+ConstantBaseApp.SYS_STATUS_DONE+"','"+ConstantBaseApp.SYS_STATUS_CANCELLED+"')) "+CalendarView.SCHEDULED_COUNT+ ",\n" +
+                    "      (a.ap_status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
+                    "      0 "+CalendarView.DONE_COUNT+", \n" +
+                    "      0 "+CalendarView.NOT_EXECUTED_COUNT+"\n" +
                     "  FROM "+ GE_Custom_Form_ApDao.TABLE+" a  \n" +
                     "  WHERE \n" +
                     "        a.customer_code= '"+customer_code+"'     \n" +
@@ -99,11 +102,12 @@ public class Sql_Act016_001 implements Specification {
                 UNION_ALL +
                 "   \nSELECT\n" +
                 "      strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"') schedule_date_start,\n" +
-                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+customerGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) delayed_count,\n" +
-                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"') inprocessing_count,\n" +
-                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+customerGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') scheduled_count,    \n" +
-                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') finalized_count,\n" +
-                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') sent_count\n" +
+                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+customerGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) "+CalendarView.DELAYED_COUNT+ ",\n" +
+                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"') "+CalendarView.INPROCESSING_COUNT+ ",\n" +
+                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+customerGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') "+CalendarView.SCHEDULED_COUNT+ ",    \n" +
+                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
+                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') "+CalendarView.DONE_COUNT+", \n" +
+                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"') "+CalendarView.NOT_EXECUTED_COUNT+"\n" +
                 "     \n" +
                 "  FROM "+ MD_Schedule_ExecDao.TABLE+" s\n" +
                 "  \n" +
@@ -129,11 +133,12 @@ public class Sql_Act016_001 implements Specification {
         return sb
                 .append(" SELECT\n" +
                         "  t.schedule_date_start "+CalendarView.DT+" ,\n" +
-                        "  sum(t.delayed_count) "+CalendarView.DELAYED_COUNT+ ",\n" +
-                        "  sum(t.inprocessing_count) "+CalendarView.INPROCESSING_COUNT+ ",\n" +
-                        "  sum(t.scheduled_count) "+CalendarView.SCHEDULED_COUNT+ ",\n" +
-                        "  sum(t.finalized_count) "+CalendarView.FINALIZED_COUNT+ ",\n" +
-                        "  sum(t.sent_count) "+CalendarView.SENT_COUNT+ "\n " +
+                        "  sum(t."+CalendarView.DELAYED_COUNT+ ") "+CalendarView.DELAYED_COUNT+ ",\n" +
+                        "  sum(t."+CalendarView.INPROCESSING_COUNT+ ") "+CalendarView.INPROCESSING_COUNT+ ",\n" +
+                        "  sum(t."+CalendarView.SCHEDULED_COUNT+ ") "+CalendarView.SCHEDULED_COUNT+ ",\n" +
+                        "  sum(t."+CalendarView.WAITING_SYNC_COUNT+ ") "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
+                        "  sum(t."+CalendarView.DONE_COUNT+") "+CalendarView.DONE_COUNT+",\n " +
+                        "  sum(t."+CalendarView.NOT_EXECUTED_COUNT+") "+CalendarView.NOT_EXECUTED_COUNT+ "\n " +
                         " FROM(\n" +
                         sql_sub_query +
                         "   ) T\n" +
