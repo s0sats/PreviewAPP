@@ -113,6 +113,10 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
+import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_CANCELLED;
+import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_DONE;
+import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_IGNORED;
+import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_NOT_EXEC;
 import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_SEARCH_KEY;
 import static com.namoadigital.prj001.ui.act015.Act015_Main.FORM_SELECTED_INDEX_KEY;
 
@@ -156,6 +160,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private String dtCustomer_Format;
 
     private Bundle bundle;
+    private Bundle bundle_act015;
 
     private HMAux hmPages = new HMAux();
 
@@ -1113,6 +1118,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     private void recoverGetIntents() {
         bundle = getIntent().getExtras();
+        bundle_act015 = new Bundle();
         if (bundle != null) {
             product_code = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
             //product_code = bundle.getString(Constant.ACT007_PRODUCT_CODE, "");
@@ -1141,6 +1147,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             mOperation_Code = bundle.getString(SM_SODao.OPERATION_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.OPERATION_CODE, null));
             filter_search = bundle.getString(FILTER_SEARCH_KEY, null);
             form_selected_index = bundle.getInt(FORM_SELECTED_INDEX_KEY, -1);
+            bundle_act015.putBoolean(FILTER_CHK_IS_DONE, bundle.getBoolean(FILTER_CHK_IS_DONE, true));
+            bundle_act015.putBoolean(FILTER_CHK_IS_NOT_EXEC, bundle.getBoolean(FILTER_CHK_IS_NOT_EXEC, true));
+            bundle_act015.putBoolean(FILTER_CHK_IS_CANCELLED, bundle.getBoolean(FILTER_CHK_IS_CANCELLED, false));
+            bundle_act015.putBoolean(FILTER_CHK_IS_IGNORED, bundle.getBoolean(FILTER_CHK_IS_IGNORED, false));
         } else {
             mSo_Prefix = null;
             mSo_Code = null;
@@ -2027,6 +2037,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if(form_selected_index > -1) {
             bundle.putInt(Act015_Main.FORM_SELECTED_INDEX_KEY, form_selected_index);
         }
+        bundle.putAll(bundle_act015);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

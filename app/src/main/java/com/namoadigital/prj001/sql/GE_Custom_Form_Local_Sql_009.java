@@ -11,7 +11,7 @@ import com.namoadigital.prj001.util.Constant;
 /**
  *
  *
- *   Query pega qtd de checklists FINALIZED
+ *   Query pega qtd de checklists WAITING_SYNC
  *
  */
 
@@ -37,7 +37,7 @@ public class GE_Custom_Form_Local_Sql_009 implements Specification {
                         " WHERE\n" +
                         "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
                         "   AND l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS+"" +
-                        "    in('"+ Constant.SYS_STATUS_FINALIZED+"');")
+                        "    in('"+ Constant.SYS_STATUS_WAITING_SYNC+"');")
                 //.append(FINALIZED_QTY)
                 .toString();
     }
