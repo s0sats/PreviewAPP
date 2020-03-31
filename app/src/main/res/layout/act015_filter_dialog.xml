@@ -20,9 +20,10 @@
         android:id="@+id/act015_filter_dialog_chk_done"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/namoa_dark_blue"
+        android:buttonTint="@color/namoa_status_done"
+        android:textColor="@color/namoa_status_done"
         android:layout_marginBottom="20dp"
-        tools:text="Edit - trad"
+        tools:text="Done - trad"
         android:checked="true"
         />
 
@@ -30,29 +31,33 @@
         android:id="@+id/act015_filter_dialog_chk_not_exec"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/namoa_dark_blue"
+        android:buttonTint="@color/namoa_status_not_executed"
+        android:textColor="@color/namoa_status_not_executed"
         android:layout_marginBottom="20dp"
         android:checked="true"
-        tools:text="Process - trad"
+        tools:text="Not Executed - trad"
         />
 
     <CheckBox
         android:id="@+id/act015_filter_dialog_chk_cancelled"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/namoa_dark_blue"
+        android:buttonTint="@color/namoa_status_cancelled"
+        android:textColor="@color/namoa_status_cancelled"
         android:layout_marginBottom="20dp"
         android:checked="false"
-        tools:text="Process - trad"
+        tools:text="Cancelled - trad"
         />
+
     <CheckBox
         android:id="@+id/act015_filter_dialog_chk_ignored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:buttonTint="@color/namoa_dark_blue"
+        android:buttonTint="@color/namoa_status_ignored"
+        android:textColor="@color/namoa_status_ignored"
         android:layout_marginBottom="20dp"
         android:checked="false"
-        tools:text="Process - trad"
+        tools:text="Ignored - trad"
         />
 
     <Button

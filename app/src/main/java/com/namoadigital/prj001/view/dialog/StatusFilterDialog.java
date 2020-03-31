@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 public class StatusFilterDialog extends AlertDialog {
     private final boolean isDone;
@@ -78,10 +79,10 @@ public class StatusFilterDialog extends AlertDialog {
     private void setLabels() {
         tv_title.setText(hmAux_trans.get("alert_filter_status_dialog_msg"));
         btn_ok.setText(hmAux_trans.get("sys_alert_btn_ok"));
-        chk_done.setText("lbl_done");
-        chk_not_exec.setText("lbl_not_exec");
-        chk_cancelled.setText("lbl_cancelled");
-        chk_ignored.setText("lbl_ignored");
+        chk_done.setText(hmAux_trans.get(ConstantBaseApp.SYS_STATUS_DONE));
+        chk_not_exec.setText(hmAux_trans.get(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED));
+        chk_cancelled.setText(hmAux_trans.get(ConstantBaseApp.SYS_STATUS_CANCELLED));
+        chk_ignored.setText(hmAux_trans.get(ConstantBaseApp.SYS_STATUS_IGNORED));
     }
 
     private void bindViews() {

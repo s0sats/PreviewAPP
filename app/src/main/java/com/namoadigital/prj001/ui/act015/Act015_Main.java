@@ -31,6 +31,11 @@ import java.util.List;
 
 public class Act015_Main extends Base_Activity implements Act015_Main_View {
 
+
+    public static final String FILTER_CHK_IS_DONE = "FILTER_CHK_IS_DONE";
+    public static final String FILTER_CHK_IS_NOT_EXEC = "FILTER_CHK_IS_NOT_EXEC";
+    public static final String FILTER_CHK_IS_CANCELLED = "FILTER_CHK_IS_CANCELLED";
+    public static final String FILTER_CHK_IS_IGNORED = "FILTER_CHK_IS_IGNORED";
     private Act015_Main_Presenter mPresenter;
     private ListView lv_sent;
     private ImageView iv_filter;
@@ -95,10 +100,6 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         translateList.add("alert_form_status_prevents_to_open_msg");
         //
         translateList.add("alert_filter_status_dialog_msg");
-        translateList.add("lbl_done");
-        translateList.add("lbl_not_exec");
-        translateList.add("lbl_cancelled");
-        translateList.add("lbl_ignored");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -117,6 +118,15 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         if (bundle != null) {
             filter_search = bundle.getString(FILTER_SEARCH_KEY);
             form_selected_index = bundle.getInt(FORM_SELECTED_INDEX_KEY, -1);
+            is_done =  bundle.getBoolean(FILTER_CHK_IS_DONE, true);
+            is_not_exec =  bundle.getBoolean(FILTER_CHK_IS_NOT_EXEC, true);
+            is_cancelled = bundle.getBoolean(FILTER_CHK_IS_CANCELLED, false);
+            is_ignored =  bundle.getBoolean(FILTER_CHK_IS_IGNORED, false);
+        }else{
+            is_done = true ;
+            is_not_exec = true;
+            is_cancelled = false;
+            is_ignored = false;
         }
         //
         mPresenter =
@@ -143,12 +153,9 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
          * BARRIONUEVO - 30-03-2020
          * Default da tela sao os filtros done e not_exec como true e cancelled e ignored como falso
          */
-        is_done = true ;
-        is_not_exec = true;
-        is_cancelled = false;
-        is_ignored = false;
-        mPresenter.getSentData(is_done, is_not_exec, is_cancelled, is_ignored);
 
+        mPresenter.getSentData(is_done, is_not_exec, is_cancelled, is_ignored);
+        updateIvFilterState();
     }
 
     private void iniUIFooter() {
@@ -221,6 +228,7 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
                         is_not_exec = isNotExec;
                         is_cancelled = isCancelled;
                         is_ignored = isIgnored;
+                        updateIvFilterState();
                     }
                 });
         //
@@ -274,6 +282,10 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
             bundle.putString(FILTER_SEARCH_KEY,mket_filter.getText().toString());
         }
         bundle.putInt(FORM_SELECTED_INDEX_KEY, form_selected_index);
+        bundle.putBoolean(FILTER_CHK_IS_DONE, is_done);
+        bundle.putBoolean(FILTER_CHK_IS_NOT_EXEC, is_not_exec);
+        bundle.putBoolean(FILTER_CHK_IS_CANCELLED, is_cancelled);
+        bundle.putBoolean(FILTER_CHK_IS_IGNORED, is_ignored);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -314,5 +326,13 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         if (mAdapter != null) {
             mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
         }
-    };
+    }
+
+    private void updateIvFilterState() {
+        if (is_done || is_cancelled || is_ignored ||is_not_exec) {
+            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
+        } else {
+            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
+        }
+    }
 }
