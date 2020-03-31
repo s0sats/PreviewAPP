@@ -25,10 +25,33 @@ public class Sql_Act015_001 implements Specification {
 
     private long s_customer_code;
     private String sqlite_date_format;
+    private String status_filter = "";
 
-    public Sql_Act015_001(long s_customer_code, Context context) {
+    public Sql_Act015_001(long s_customer_code, Context context, boolean isDone, boolean isNotExec, boolean isCancelled, boolean isIgnored) {
         this.s_customer_code = s_customer_code;
         this.sqlite_date_format = ToolBox_Inf.nlsDate2SqliteDate(context);
+
+        if(isDone){
+            status_filter = "'"+ Constant.SYS_STATUS_DONE+"'" ;
+        }
+        if(isNotExec){
+            if(!status_filter.isEmpty()){
+                status_filter += ", \n";
+            }
+            status_filter += "'"+ Constant.SYS_STATUS_NOT_EXECUTED +"'\n";
+        }
+        if(isCancelled){
+            if(!status_filter.isEmpty()){
+                status_filter += ", \n";
+            }
+            status_filter += "'"+Constant.SYS_STATUS_CANCELLED +"'\n";
+        }
+        if(isIgnored){
+            if(!status_filter.isEmpty()){
+                status_filter += ", \n";
+            }
+            status_filter +="'"+ Constant.SYS_STATUS_IGNORED +"'\n";
+        }
     }
 
     @Override
@@ -87,10 +110,7 @@ public class Sql_Act015_001 implements Specification {
                         "      AND l.custom_form_version = d.custom_form_version\n" +
                         "      AND l.custom_form_data = d.custom_form_data\n" +
                         "      AND l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"'\n " +
-                        "      AND l.custom_form_status in ( '"+ Constant.SYS_STATUS_DONE+"'\n" +
-                        "                                    ,'"+ Constant.SYS_STATUS_NOT_EXECUTED+"'\n" +
-                        "                                    ,'"+ Constant.SYS_STATUS_CANCELLED+"'\n" +
-                        "                                    ,'"+ Constant.SYS_STATUS_IGNORED+"'\n" +
+                        "      AND l.custom_form_status in ( " + status_filter+
                         "                                   )\n " +
                         "  ORDER BY" +
                         "    d.date_end desc,\n" +
