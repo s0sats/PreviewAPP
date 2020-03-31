@@ -43,13 +43,14 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void getTicketList(boolean statusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile, long ticketProductCode, long ticketSerialCode) {
+    public void getTicketList(boolean isHistoricalShown, boolean statusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile, long ticketProductCode, long ticketSerialCode, boolean bStatusNotExecuted, boolean bStatusIgnored, boolean bStatusCanceled, boolean bStatusRejected) {
         ArrayList<HMAux> auxTickets = new ArrayList<>();
         //
         auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
             new Sql_Act069_001(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 ToolBox_Con.getPreference_Site_Code(context),
+                isHistoricalShown,
                 statusPending,
                 bStatusProcess,
                 bStatusWaitingSync,
@@ -57,7 +58,11 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
                 bParterEmpty,
                 bParterProfile,
                 ticketProductCode,
-                ticketSerialCode
+                ticketSerialCode,
+                bStatusNotExecuted,
+                bStatusIgnored,
+                bStatusCanceled,
+                bStatusRejected
             ).toSqlQuery()
         );
         //

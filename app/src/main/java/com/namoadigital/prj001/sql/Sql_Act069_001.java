@@ -9,6 +9,9 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 /**
  * LUCHE - 25/03/2020
  * Modificado query do para retornar tb as informações de fcm e error_msg
+ * LUCHE - 31/03/2020
+ * Modificado query para identificar fluxo de historico baseado no isHistoricalShown e possibilitar
+ * o filtros dos status de historico.
  */
 
 public class Sql_Act069_001 implements Specification {
@@ -18,25 +21,33 @@ public class Sql_Act069_001 implements Specification {
     private String partnerFilter = "";
     private String serialFilter = "";
     //
-    public Sql_Act069_001(long customer_code, String site_logged, boolean bStatusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile, long ticketProductCode, long ticketSerialCode) {
+    public Sql_Act069_001(long customer_code, String site_logged, boolean isHistoricalShown, boolean bStatusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile, long ticketProductCode, long ticketSerialCode, boolean bStatusNotExecuted, boolean bStatusIgnored, boolean bStatusCanceled, boolean bStatusRejected) {
         this.customer_code = customer_code;
         this.site_logged = site_logged;
-        //
-        if (bStatusDone) {
-            statusFilter = "    and t.ticket_status in('" + ConstantBaseApp.SYS_STATUS_DONE + "'" +
-                ",'" + ConstantBaseApp.SYS_STATUS_NOT_EXECUTED + "'" +
-                ",'" + ConstantBaseApp.SYS_STATUS_CANCELLED + "'" +
-                ",'" + ConstantBaseApp.SYS_STATUS_REJECTED + "'" +
-                ",'" + ConstantBaseApp.SYS_STATUS_IGNORED + "'" +
-                ") \n";
+        //LUCHE - 31/03/2020
+        //Agora o historico é definido pela var isHistoricalShown, pois haverá filtro de status no historico.
+        if (isHistoricalShown) {
+            if (bStatusDone || bStatusNotExecuted || bStatusIgnored || bStatusCanceled || bStatusRejected) {
+                statusFilter = "   and t.ticket_status in(";
+                statusFilter += bStatusDone ? "'" + ConstantBaseApp.SYS_STATUS_DONE + "', " : "";
+                statusFilter += bStatusNotExecuted ? "'" + ConstantBaseApp.SYS_STATUS_NOT_EXECUTED + "', " : "";
+                statusFilter += bStatusIgnored ? "'" + ConstantBaseApp.SYS_STATUS_IGNORED + "', " : "";
+                statusFilter += bStatusCanceled ? "'" + ConstantBaseApp.SYS_STATUS_CANCELLED + "', " : "";
+                statusFilter += bStatusRejected ? "'" + ConstantBaseApp.SYS_STATUS_REJECTED + "', " : "";
+                statusFilter = statusFilter.substring(0, statusFilter.length() - ", ".length());
+                statusFilter += " )\n";
+
+            } else {
+                statusFilter = "   and t.ticket_status in (\n" +
+                    "                           '" + ConstantBaseApp.SYS_STATUS_DONE + "',\n" +
+                    "                           '" + ConstantBaseApp.SYS_STATUS_NOT_EXECUTED + "',\n" +
+                    "                           '" + ConstantBaseApp.SYS_STATUS_IGNORED +"',\n" +
+                    "                           '" + ConstantBaseApp.SYS_STATUS_CANCELLED +"',\n" +
+                    "                           '" + ConstantBaseApp.SYS_STATUS_REJECTED +"'\n" +
+                    "                           )\n";
+            }
         } else {
             if (bStatusPending || bStatusProcess || bStatusWaitingSync) {
-                /*statusFilter = "   and t.ticket_status in(";
-                statusFilter += bStatusPending ? "'"+ConstantBaseApp.SYS_STATUS_PENDING +"' ":"";
-                statusFilter += bStatusPending && bStatusProcess ? " , ":"";
-                statusFilter += bStatusProcess ? "'"+ConstantBaseApp.SYS_STATUS_PROCESS +"' ":"";
-                statusFilter += " )\n";*/
-                //
                 statusFilter = "   and t.ticket_status in(";
                 statusFilter += bStatusPending ? "'" + ConstantBaseApp.SYS_STATUS_PENDING + "', " : "";
                 statusFilter += bStatusProcess ? "'" + ConstantBaseApp.SYS_STATUS_PROCESS + "', " : "";
