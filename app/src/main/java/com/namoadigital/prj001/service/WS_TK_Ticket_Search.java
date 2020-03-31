@@ -11,17 +11,21 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Search_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Search_Serial_PK_Env;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Search;
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_004;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -37,6 +41,7 @@ public class WS_TK_Ticket_Search extends IntentService {
     private String mResource_Name = "ws_tk_ticket_search";
     private Gson gson;
     private TK_TicketDao ticketDao;
+    private MD_Schedule_ExecDao scheduleExecDao;
 
     public WS_TK_Ticket_Search() { super("WS_TK_Ticket_Search");}
 
@@ -50,7 +55,11 @@ public class WS_TK_Ticket_Search extends IntentService {
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
             Constant.DB_VERSION_CUSTOM
         );
-
+        scheduleExecDao = new MD_Schedule_ExecDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+            Constant.DB_VERSION_CUSTOM
+        );
         try {
 
             gson = new GsonBuilder().serializeNulls().create();
@@ -130,8 +139,9 @@ public class WS_TK_Ticket_Search extends IntentService {
     }
 
     private void processTicketReturn(ArrayList<TK_Ticket> ticketList) {
+        ArrayList<MD_Schedule_Exec> scheduleExecList = new ArrayList<>();
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
         if(ticketList != null){
-            //
             HMAux hmAux = new HMAux();
             hmAux.put(RETURNED_TICKET_QTY, String.valueOf(ticketList.size()));
             //Se nenhum Ticket retornado, ja envia close act
@@ -163,21 +173,91 @@ public class WS_TK_Ticket_Search extends IntentService {
                         hmAux.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
                         hmAux.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
                     }
+                    //LUCHE - 31/03/2020
+                    //Atualiza dados do agendamento
+                    if(isScheduledTicket(tkTicket)) {
+                        MD_Schedule_Exec scheduleExec = getSchedule(
+                            tkTicket.getSchedule_prefix(),
+                            tkTicket.getSchedule_code(),
+                            tkTicket.getSchedule_exec()
+                        );
+                        //Pode não existir o agendamento, caso o usr não esteja no workgroup
+                        //Se status igual, não é necessario mexer.
+                        String adjustedStatus =
+                            tkTicket.getTicket_status().equals(ConstantBaseApp.SYS_STATUS_PENDING)
+                                ? ConstantBaseApp.SYS_STATUS_PROCESS
+                                : tkTicket.getTicket_status();
+                        //Se existe o agendamento, ele é valido e o status do ticket é diferente do agendamnto
+                        //Atualiza status do agendamento e reseta infos de FCM e msg de erro.
+                        if( MD_Schedule_Exec.isValidScheduleExec(scheduleExec)
+                            && !scheduleExec.getStatus().equalsIgnoreCase(adjustedStatus)
+                        ){
+                            scheduleExec.setStatus(adjustedStatus);
+                            scheduleExec.setFcm_new_status(null);
+                            scheduleExec.setFcm_user_nick(null);
+                            scheduleExec.setSchedule_erro_msg(null);
+                            scheduleExec.setClose_date(null);
+                            //
+                            scheduleExecList.add(scheduleExec);
+                        }
+                    }
                 }
-                //
-                DaoObjReturn daoObjReturn = ticketDao.addUpdate(ticketList, false);
-                if (!daoObjReturn.hasError()) {
-                    startDownloadServices();
+                //Se existe agendamento, tenta o insert
+                if(scheduleExecList != null && scheduleExecList.size() > 0) {
+                    daoObjReturn = scheduleExecDao.addUpdate(scheduleExecList, false);
+                }
+                //Se sucesso, vai para insert do ticket.
+                if(!daoObjReturn.hasError()) {
                     //
-                    ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), hmAux, "", "0");
-                } else {
-                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_on_insert_ticket"), new HMAux(), "", "0");
+                    daoObjReturn = ticketDao.addUpdate(ticketList, false);
+                    if (!daoObjReturn.hasError()) {
+                        startDownloadServices();
+                        //
+                        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), hmAux, "", "0");
+                    } else {
+                        ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_on_insert_ticket"), new HMAux(), "", "0");
+                    }
+                }else{
+                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_on_update_ticket_schedule_infos"), new HMAux(), "", "0");
                 }
             }
-
         }else{
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_data_returned"), new HMAux(), "", "0");
         }
+    }
+
+    /**
+     * LUCHE - 31/03/2020
+     * <p></p>
+     * Metodo que verifica se o ticket é um agendado
+     * @param tkTicket Ticket
+     * @return - True se o ticket for != null e tiver a pk do agendamento.
+     */
+    private boolean isScheduledTicket(TK_Ticket tkTicket) {
+        return  tkTicket != null
+            && tkTicket.getSchedule_prefix() != null
+            && tkTicket.getSchedule_code() != null
+            && tkTicket.getSchedule_exec() != null;
+    }
+
+    /**
+     * LUCHE - 31/03/2020
+     * <p></p>
+     * Metodo que busca o agendamento para o ticket
+     * @param schedule_prefix Prefixo do agendamento
+     * @param schedule_code Codigo do agendamento
+     * @param schedule_exec Exec do agendamento
+     * @return Obj agendamento ou null se não encontrar
+     */
+    private MD_Schedule_Exec getSchedule(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
+        return scheduleExecDao.getByString(
+            new MD_Schedule_Exec_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                schedule_prefix,
+                schedule_code,
+                schedule_exec
+            ).toSqlQuery()
+        );
     }
 
     private TK_Ticket getDbTicket(TK_Ticket tkTicket){
@@ -209,6 +289,7 @@ public class WS_TK_Ticket_Search extends IntentService {
         translist.add("generic_process_finalized_msg");
         translist.add("msg_error_on_insert_ticket");
         translist.add("msg_no_data_returned");
+        translist.add("msg_error_on_update_ticket_schedule_infos");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
             getApplicationContext(),
