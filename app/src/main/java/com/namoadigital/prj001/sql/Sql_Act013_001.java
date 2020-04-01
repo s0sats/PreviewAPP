@@ -54,11 +54,15 @@ public class Sql_Act013_001 implements Specification {
             s_filter += "   AND l.custom_form_status in(" +status+")\n";
         }else{
             //Se todos os filtros falsos, não filtra nada.
-            s_filter += " AND l.custom_form_status NOT in(" +
+            s_filter += "   AND 1 = 0";
+            /*
+            //LUCHE - 31/03/2020 - Quando nada for filtrado, filtrar tudo...
+            s_filter += " AND l.custom_form_status in(" +
                     "'"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"',"+
                     "'"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"'," +
                     "'"+ConstantBaseApp.SYS_STATUS_SCHEDULE+"' "+
-                    ")\n";
+                    ")\n";*/
+
         }
         //
         scheduleQuery = getScheduleQuery(filter_scheduled);
@@ -81,6 +85,17 @@ public class Sql_Act013_001 implements Specification {
             "    e.product_desc custom_product_desc,\n" +
             "    e.product_id custom_product_id, \n" +
             "    null custom_form_data,\n" +
+            //Paleativo até mudar Dao do agendamento
+            "    ( SELECT\n" +
+            "        ifnull(g.require_location,0) require_location\n" +
+            "      FROM\n" +
+            "        ge_custom_forms g\n" +
+            "      WHERE\n" +
+            "         e.customer_code = g.customer_code\n" +
+            "         AND e.custom_form_type = g.custom_form_type\n" +
+            "         AND e.custom_form_code = g.custom_form_code\n" +
+            "         AND e.custom_form_version = g.custom_form_version     \n" +
+            "    ) require_location," +
             "    e.status custom_form_status, \n" +
             "    e.serial_id,\n" +
             "    null so_prefix,\n" +
@@ -133,7 +148,7 @@ public class Sql_Act013_001 implements Specification {
             "  l.custom_product_desc,\n" +
             "  l.custom_product_id,\n" +
             "  l.custom_form_data,\n" +
-            //"  l.require_location,\n" +
+            "  l.require_location,\n" +
             "  l.custom_form_status,\n" +
             // "  l.serial_id,\n" +
             "  CASE WHEN LENGTH(l.serial_id) <> 0 \n" +
@@ -150,15 +165,15 @@ public class Sql_Act013_001 implements Specification {
             "  l.require_serial_done,\n" +
             "  l.require_serial,\n" +
             "  l.allow_new_serial_cl,\n" +
-            "  CASE WHEN LENGTH(l.site_code) <> 0\n" +
+            "  CASE WHEN LENGTH(l.site_code) <> 0 AND l.site_code > 0\n" +
             "       THEN l.site_code\n" +
             "       ELSE d.site_code\n" +
             "  END "+MD_SiteDao.SITE_CODE +",\n" +
-            "  CASE WHEN LENGTH(l.site_id) <> 0\n" +
+            "  CASE WHEN LENGTH(l.site_id) <> 0 AND l.site_code > 0\n" +
             "       THEN l.site_id\n" +
             "       ELSE s.site_id\n" +
             "  END "+MD_SiteDao.SITE_ID +",\n" +
-            "  CASE WHEN LENGTH(l.site_desc) <> 0\n" +
+            "  CASE WHEN LENGTH(l.site_desc) <> 0 AND l.site_code > 0\n" +
             "       THEN l.site_desc\n" +
             "       ELSE s.site_desc\n" +
             "  END "+MD_SiteDao.SITE_DESC +",\n"+
