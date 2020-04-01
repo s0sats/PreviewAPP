@@ -198,8 +198,8 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
                 bParterProfile = false;
                 //
                 //LUCHE - 31/03/2020
-                bStatusDone = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_DONE,false);
-                bStatusNotExecuted = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED,false);
+                bStatusDone = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_DONE,true);
+                bStatusNotExecuted = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED,true);
                 bStatusIgnored = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_IGNORED,false);
                 bStatusCanceled = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_CANCELLED,false);
                 bStatusRejected = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_REJECTED,false);

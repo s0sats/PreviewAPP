@@ -521,7 +521,8 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                 scheduleExec.getProduct_code(),
                 scheduleExec.getCustom_form_type(),
                 scheduleExec.getCustom_form_code(),
-                scheduleExec.getCustom_form_version()
+                scheduleExec.getCustom_form_version(),
+                ToolBox_Con.getPreference_Translate_Code(context)
             ).toSqlQuery(), db
         );
         //
