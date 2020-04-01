@@ -47,6 +47,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
     public static final String FILTER_TEXT = "FILTER_TEXT";
     public static final String FILTER_PARTNER_EMPTY = "FILTER_PARTNER_EMPTY";
     public static final String FILTER_PARTNER_PROFILE = "FILTER_PARTNER_PROFILE";
+    public static final String FILTER_PARTNER_NO_PROFILE = "FILTER_PARTNER_NO_PROFILE";
 
     private MKEditTextNM mketFilter;
     private ImageView ivFilters;
@@ -61,6 +62,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
     private boolean bStatusDone;
     private boolean bParterEmpty;
     private boolean bParterProfile;
+    private boolean bParterNoProfile;
     private String requestingAct;
     private String wsProcess;
     //
@@ -115,7 +117,8 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         transList.add("dialog_status_lbl");
         transList.add("dialog_partner_lbl");
         transList.add("chk_allow_no_partner_lbl");
-        transList.add("chk_hide_other_partner_lbl");
+        transList.add("chk_my_partner_lbl");
+        transList.add("chk_partner_no_profile_lbl");
         //
         transList.add("alert_ticket_to_send_ttl");
         transList.add("alert_ticket_to_send_msg");
@@ -164,7 +167,9 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
             bStatusNotExecuted,
             bStatusIgnored,
             bStatusCanceled,
-            bStatusRejected);
+            bStatusRejected,
+            bParterNoProfile
+            );
         //
         setBtnSyncVisibility();
     }
@@ -185,6 +190,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
             bStatusWaitingSync = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,true);
             bParterEmpty = bundle.getBoolean(FILTER_PARTNER_EMPTY,true);
             bParterProfile= bundle.getBoolean(FILTER_PARTNER_PROFILE,true);
+            bParterNoProfile= bundle.getBoolean(FILTER_PARTNER_NO_PROFILE,false);
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
             //
             ticketProductCode = bundle.getLong(TK_TicketDao.CURRENT_PRODUCT_CODE, -1);
@@ -196,6 +202,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
                 bStatusWaitingSync = false;
                 bParterEmpty = false;
                 bParterProfile = false;
+                bParterNoProfile = false;
                 //
                 //LUCHE - 31/03/2020
                 bStatusDone = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_DONE,true);
@@ -232,6 +239,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         bStatusWaitingSync = true;
         bParterEmpty = true;
         bParterProfile = true;
+        bParterNoProfile = false;
         bStatusDone = false;
         //LUCHE - 31/03/2020
         bStatusNotExecuted = false;
@@ -389,6 +397,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         final CheckBox chkStatusWaitingSync = view.findViewById(R.id.act069_filter_dialog_chk_waiting_sync);
         final CheckBox chkPartnerEmpty = view.findViewById(R.id.act069_filter_dialog_chk_no_partner);
         final CheckBox chkPartnerProfile = view.findViewById(R.id.act069_filter_dialog_chk_profile_partner);
+        final CheckBox chkPartnerNoProfile = view.findViewById(R.id.act069_filter_dialog_chk_profile_partner_others);
         final CheckBox chkStatusDone = view.findViewById(R.id.act069_filter_dialog_chk_done);
         final CheckBox chkStatusNotExecuted = view.findViewById(R.id.act069_filter_dialog_chk_not_exec);
         final CheckBox chkStatusIgnored = view.findViewById(R.id.act069_filter_dialog_chk_ignored);
@@ -419,8 +428,11 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         chkPartnerEmpty.setText(hmAux_Trans.get("chk_allow_no_partner_lbl"));
         chkPartnerEmpty.setChecked(bParterEmpty);
         //
-        chkPartnerProfile.setText(hmAux_Trans.get("chk_hide_other_partner_lbl"));
+        chkPartnerProfile.setText(hmAux_Trans.get("chk_my_partner_lbl"));
         chkPartnerProfile.setChecked(bParterProfile);
+        //
+        chkPartnerNoProfile.setText(hmAux_Trans.get("chk_partner_no_profile_lbl"));
+        chkPartnerNoProfile.setChecked(bParterNoProfile);
         //Dados do historico
         chkStatusDone.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_DONE));
         chkStatusDone.setChecked(bStatusDone);
@@ -469,6 +481,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
                         bStatusWaitingSync = chkStatusWaitingSync.isChecked();
                         bParterEmpty = chkPartnerEmpty.isChecked();
                         bParterProfile = chkPartnerProfile.isChecked();
+                        bParterNoProfile = chkPartnerNoProfile.isChecked();
                         //historico
                         bStatusDone = chkStatusDone.isChecked();
                         bStatusNotExecuted = chkStatusNotExecuted.isChecked();
@@ -490,8 +503,8 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
                             bStatusNotExecuted,
                             bStatusIgnored,
                             bStatusCanceled,
-                            bStatusRejected
-                        );
+                            bStatusRejected,
+                            bParterNoProfile);
                     }
                 }
             )
@@ -512,7 +525,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
                 ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
             }
         }else {
-            if (bStatusPending || bStatusProcess || bStatusWaitingSync ||bParterEmpty || bParterProfile) {
+            if (bStatusPending || bStatusProcess || bStatusWaitingSync ||bParterEmpty || bParterProfile || bParterNoProfile) {
                 ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
             } else {
                 ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
@@ -527,6 +540,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         bundle.putBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,bStatusWaitingSync);
         bundle.putBoolean(FILTER_PARTNER_EMPTY,bParterEmpty);
         bundle.putBoolean(FILTER_PARTNER_PROFILE,bParterProfile);
+        bundle.putBoolean(FILTER_PARTNER_NO_PROFILE,bParterNoProfile);
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingAct);
         //LUCHE - 31/03/2020
         bundle.putBoolean(ConstantBaseApp.SYS_STATUS_DONE, bStatusDone);
