@@ -6,6 +6,11 @@ import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
+/**
+ * LUCHE - 31/03/2020
+ * Adicionado os novos status de historico
+ */
+
 public class Sql_Act014_007 implements Specification {
     public static final String SENT_QTY = "sent_qty";
     public static final String TYPE = "type";
@@ -29,9 +34,10 @@ public class Sql_Act014_007 implements Specification {
                         TK_TicketDao.TABLE +" s\n" +
                         " WHERE \n" +
                         "   s.customer_code = '"+customer_code+"'\n" +
-                        "   and s.ticket_status in('"+ ConstantBaseApp.SYS_STATUS_DONE + "'"+
-                                                    ",'" + ConstantBaseApp.SYS_STATUS_NOT_EXECUTED + "'"+
-                                                    ",'" + ConstantBaseApp.SYS_STATUS_CANCELLED + "'"+
+                        "   and s.ticket_status in('"+ ConstantBaseApp.SYS_STATUS_DONE + "'\n"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_NOT_EXECUTED + "'\n"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_CANCELLED + "'\n"+
+                                                    ",'" + ConstantBaseApp.SYS_STATUS_IGNORED + "'\n"+
                                                     ",'" + ConstantBaseApp.SYS_STATUS_REJECTED +"') \n;")
                 .toString();
     }

@@ -40,4 +40,6 @@ public interface Act011_Main_View {
     void afterSaveFlow();
 
     void showFormCancelledMsg(GE_Custom_Form_Local customFormLocal, MD_Schedule_Exec scheduleExec);
+
+    void alertActiveGPSResource();
 }

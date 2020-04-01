@@ -411,23 +411,23 @@ public class Module_Schedules_Adapter extends BaseAdapter {
                 );
                 break;
             //
-            case Constant.SYS_STATUS_FINALIZED:
+            case Constant.SYS_STATUS_WAITING_SYNC:
 //                llDrawable = context.getResources().getDrawable(R.drawable.namoa_cell_6_states);
+//                llBackground.setBackground(llDrawable);
+                //
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_WAITING_SYNC));
+                tv_status_val.setTextColor(
+                        ToolBox_Inf.getStatusColorV2(context,Constant.SYS_STATUS_WAITING_SYNC)
+                );
+                break;
+
+            case Constant.SYS_STATUS_DONE:
+//                llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_sent_states);
 //                llBackground.setBackground(llDrawable);
                 //
                 tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_DONE));
                 tv_status_val.setTextColor(
-                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_DONE))
-                );
-                break;
-
-            case Constant.SYS_STATUS_SENT:
-//                llDrawable = context.getResources().getDrawable(R.drawable.act013_cell_sent_states);
-//                llBackground.setBackground(llDrawable);
-                //
-                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_SENT));
-                tv_status_val.setTextColor(
-                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_SENT))
+                        ToolBox_Inf.getStatusColorV2(context,Constant.SYS_STATUS_DONE)
                 );
                 break;
 

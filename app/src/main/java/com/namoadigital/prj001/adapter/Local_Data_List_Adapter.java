@@ -184,8 +184,11 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
         tv_form_lbl.setText(hmAux_Trans.get("lbl_form") + " " + item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
         //
         TextView tv_site_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_site_lbl);
-        //Tratativa para caso o de não encontrar o site no left join
-        if(item.get(MD_Schedule_ExecDao.SITE_CODE).equals(String.valueOf(ToolBox_Con.getPreference_Site_Code(context)))){
+        //Tratativa para caso site diferente do logado.
+        //Caso caso seja 0, considera igual tb....
+        if( item.get(MD_Schedule_ExecDao.SITE_CODE).equals("0")
+            || item.get(MD_Schedule_ExecDao.SITE_CODE).equals(String.valueOf(ToolBox_Con.getPreference_Site_Code(context)))
+        ){
             tv_site_lbl.setVisibility(View.GONE);
         }else{
             tv_site_lbl.setVisibility(View.VISIBLE);

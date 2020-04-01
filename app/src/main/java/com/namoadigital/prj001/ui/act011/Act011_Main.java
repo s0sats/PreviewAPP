@@ -396,6 +396,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         transList.add("alert_erro_on_cancel_schedule_form_ttl");
         transList.add("alert_erro_on_cancel_schedule_form_msg");
         //
+        transList.add("alert_form_turn_gps_on_title");
+        transList.add("alert_form_turn_gps_on_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -1210,7 +1213,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     @Override
     public void loadFragment_CF_Fields(List<HMAux> cf_fields, boolean bNew, GE_Custom_Form_Local formLocal, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature, int require_serial_done) {
-
         this.prefix = prefix;
         this.bNew = bNew;
         this.formLocal = formLocal;
@@ -1464,6 +1466,34 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 saveV2(false);
             }
         }
+        //LUCHE - 31/03/2020
+        //Caso GPS desligado e form dependa de GPS exibe dialog
+        //
+        mPresenter.validateGPSResource(formLocal);
+
+
+    }
+    @Override
+    public void alertActiveGPSResource() {
+        ToolBox.alertMSG(
+            this,
+            hmAux_Trans.get("alert_form_turn_gps_on_title"),
+            hmAux_Trans.get("alert_form_turn_gps_on_msg"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mPresenter.validateGPSResource(formLocal);
+                }
+            },
+            2,
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //LUCHE - 31/03/2020 - Gambi para evitar msg de deseja sair ao forçar volta
+                    checkBackFlow();
+                }
+            }
+        );
 
     }
 
@@ -2433,14 +2463,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
                 exitAlert();
             }else {
-                if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_DONE)) {
-                    callAct015();
-                }else{
-                    callAct005(Act011_Main.this);
-                }
+                checkBackFlow();
             }
         } else {
                 callAct005(Act011_Main.this);
+        }
+    }
+
+    /**
+     * LUCHE - 31/03/2020
+     * Extraido metodo que verifica o fluxo de voltar
+     * Feito isso para poder executar o fluxo de voltar sem exibir a msg de confirmação no fluxo
+     * do bvoltar por GPS desligado.
+     *
+     */
+    private void checkBackFlow() {
+        if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_DONE)) {
+            callAct015();
+        }else{
+            callAct005(Act011_Main.this);
         }
     }
 

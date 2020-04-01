@@ -466,6 +466,17 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
     }
 
+    @Override
+    public void validateGPSResource(GE_Custom_Form_Local formLocal) {
+        if( formLocal != null
+            && formLocal.getRequire_location() == 1
+            && formLocal.getCustom_form_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_IN_PROCESSING)
+            && !ToolBox_Con.hasGPSResourceActive(context)
+        ){
+            mView.alertActiveGPSResource();
+        }
+    }
+
     /**
      * LUCHE - 14/02/2020
      *
