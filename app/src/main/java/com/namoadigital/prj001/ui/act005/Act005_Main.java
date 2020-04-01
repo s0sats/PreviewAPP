@@ -1917,6 +1917,19 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         });
     }
 
+    @Override
+    protected void processError_http() {
+        super.processError_http();
+        sendResumeDialog.dismiss();
+    }
+
+
+    @Override
+    protected void processError_Resume() {
+        super.processError_Resume();
+        sendResumeDialog.dismiss();
+    }
+
     /**
      * LUCHE - 07/01/2020
      * <p>
@@ -2115,6 +2128,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             sendResumeDialog.cancel();
             sendResumeDialog = getSendResumeDialog();
         }
+        sendResumeDialog.setCancelable(false);
         sendResumeDialog.show();
         if (wsResults != null) {
             wsResults.clear();
