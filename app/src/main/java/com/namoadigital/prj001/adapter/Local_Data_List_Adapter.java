@@ -2,6 +2,7 @@ package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.view.LayoutInflater;
@@ -234,15 +235,16 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
 
             case Constant.SYS_STATUS_IN_PROCESSING:
                 if(!isScheduled) {
-                    tv_date_lbl.setText(
-                            hmAux_Trans.get("lbl_date") + " " +
-                                    ToolBox_Inf.millisecondsToString(
-                                            ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_START)),
-                                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                                    )
-                    );
-                    setTvDateLblConstraint(clHeader, ConstraintSet.PARENT_ID);
+
+                    tv_schedule_lbl.setText(hmAux_Trans.get("lbl_date") + " " +
+                            ToolBox_Inf.millisecondsToString(
+                                    ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_START)),
+                                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                            ));
+                    setDateGoneChangeForLayout(tv_schedule_lbl, tv_date_lbl);
+//                    setTvDateLblConstraint(clHeader, ConstraintSet.PARENT_ID);
                 }else{
+                    setDateVisibleChangeForLayout(tv_schedule_lbl, tv_date_lbl);
                     tv_date_lbl.setText(ToolBox_Inf.formatScheduleIntervalDateFormatted(context, dateStart, dateEnd));
                     setTvDateLblConstraint(clHeader, R.id.local_data_list_cell_01_tv_status_val);
                 }
@@ -253,28 +255,50 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                 break;
             //
             case Constant.SYS_STATUS_WAITING_SYNC:
-
-                tv_date_lbl.setText(
-                        hmAux_Trans.get("lbl_date") + " " +
-                                ToolBox_Inf.millisecondsToString(
-                                        ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_END)),
-                                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                                )
-                );
-
+                if(!isScheduled){
+                    tv_schedule_lbl.setText(
+                            hmAux_Trans.get("lbl_date") + " " +
+                                    ToolBox_Inf.millisecondsToString(
+                                            ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_END)),
+                                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                    )
+                    );
+                    setDateGoneChangeForLayout(tv_schedule_lbl, tv_date_lbl);
+                }else {
+                    setDateVisibleChangeForLayout(tv_schedule_lbl, tv_date_lbl);
+                    tv_date_lbl.setText(
+                            hmAux_Trans.get("lbl_date") + " " +
+                                    ToolBox_Inf.millisecondsToString(
+                                            ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_END)),
+                                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                    )
+                    );
+                }
                 tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_WAITING_SYNC));
                 tv_status_val.setTextColor(
                         ToolBox_Inf.getStatusColorV2(context,Constant.SYS_STATUS_WAITING_SYNC)
                 );
                 break;
             case Constant.SYS_STATUS_DONE:
-                tv_date_lbl.setText(
-                        hmAux_Trans.get("lbl_date") + " " +
-                        ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_END)),
-                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                        )
-                );
+                if(!isScheduled){
+                    tv_schedule_lbl.setText(
+                            hmAux_Trans.get("lbl_date") + " " +
+                                    ToolBox_Inf.millisecondsToString(
+                                            ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_END)),
+                                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                    )
+                    );
+                    setDateGoneChangeForLayout(tv_schedule_lbl, tv_date_lbl);
+                }else {
+                    setDateVisibleChangeForLayout(tv_schedule_lbl, tv_date_lbl);
+                    tv_date_lbl.setText(
+                            hmAux_Trans.get("lbl_date") + " " +
+                                    ToolBox_Inf.millisecondsToString(
+                                            ToolBox_Inf.dateToMilliseconds(item.get(GE_Custom_Form_DataDao.DATE_END)),
+                                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                    )
+                    );
+                }
                 tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_DONE));
                 tv_status_val.setTextColor(
                     ToolBox_Inf.getStatusColorV2(context,Constant.SYS_STATUS_DONE)
@@ -282,6 +306,7 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
 
                 break;
             case Constant.SYS_STATUS_SCHEDULE:
+                setDateVisibleChangeForLayout(tv_schedule_lbl, tv_date_lbl);
                 tv_date_lbl.setText(ToolBox_Inf.formatScheduleIntervalDateFormatted(context, dateStart, dateEnd));
 
                 tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_SCHEDULE));
@@ -290,6 +315,7 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                 );
                 break;
             case Constant.SYS_STATUS_DELETED:
+                setDateVisibleChangeForLayout(tv_schedule_lbl, tv_date_lbl);
                tv_date_lbl.setText(
                         hmAux_Trans.get("lbl_date") + " " +
                                 ToolBox_Inf.millisecondsToString(
@@ -314,7 +340,9 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                             )
                     );
                     setTvDateLblConstraint(clHeader, ConstraintSet.PARENT_ID);
+                    setDateGoneChangeForLayout(tv_schedule_lbl, tv_date_lbl);
                 }else{
+                    setDateVisibleChangeForLayout(tv_schedule_lbl, tv_date_lbl);
                     tv_date_lbl.setText(ToolBox_Inf.formatScheduleIntervalDateFormatted(context, dateStart, dateEnd));
                     setTvDateLblConstraint(clHeader, R.id.local_data_list_cell_01_tv_status_val);
                 }
@@ -333,6 +361,16 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
         }
 
         return convertView;
+    }
+
+    private void setDateGoneChangeForLayout(TextView tv_schedule_lbl, TextView tv_date_lbl) {
+        tv_schedule_lbl.setTypeface(null, Typeface.NORMAL);
+        tv_date_lbl.setVisibility(View.GONE);
+    }
+
+    private void setDateVisibleChangeForLayout(TextView tv_schedule_lbl, TextView tv_date_lbl) {
+        tv_schedule_lbl.setTypeface(null, Typeface.BOLD);
+        tv_date_lbl.setVisibility(View.VISIBLE);
     }
 
     private void defineScheduleWarningInfos(ImageView ivScheduleWarningInfos, final HMAux item) {
@@ -393,11 +431,11 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
     private void setSchedulePk(HMAux item, TextView tv_schedule_lbl) {
         try {
             if ((item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX) + item.get(MD_Schedule_ExecDao.SCHEDULE_CODE) + item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)).isEmpty()) {
-                tv_schedule_lbl.setVisibility(View.GONE);
+//                tv_schedule_lbl.setVisibility(View.GONE);
                 isScheduled = false;
             } else {
                 isScheduled = true;
-                tv_schedule_lbl.setVisibility(View.VISIBLE);
+//                tv_schedule_lbl.setVisibility(View.VISIBLE);
                 String schedule_pk = item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX) + "." + item.get(MD_Schedule_ExecDao.SCHEDULE_CODE) + "." + item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC);
                 tv_schedule_lbl.setText(schedule_pk);
 

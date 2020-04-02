@@ -739,7 +739,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         if (formLocal != null
                 && formLocal.getRequire_location() == 1
-                && ConstantBase.SYS_STATUS_IN_PROCESSING.equals(formLocal.getCustom_form_status())) {
+                && ConstantBase.SYS_STATUS_IN_PROCESSING.equals(formLocal.getCustom_form_status())
+                && !SV_LocationTracker.status) {
             getLocation();
         }
     }

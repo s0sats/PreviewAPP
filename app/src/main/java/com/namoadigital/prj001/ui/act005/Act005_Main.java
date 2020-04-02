@@ -1920,14 +1920,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void processError_http() {
         super.processError_http();
-        sendResumeDialog.dismiss();
+        if(sendResumeDialog != null) {
+            sendResumeDialog.dismiss();
+        }
     }
 
 
     @Override
     protected void processError_Resume() {
         super.processError_Resume();
-        sendResumeDialog.dismiss();
+        if(sendResumeDialog != null) {
+            sendResumeDialog.dismiss();
+        }
     }
 
     /**
@@ -1945,7 +1949,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
      */
     @Override
     protected void processError_1(String mLink, String mRequired) {
-        sendResumeDialog.dismiss();
+        if(sendResumeDialog != null) {
+            sendResumeDialog.dismiss();
+        }
         setSyncAfterSave(false);
         mPresenter.getMenuItensV2(hmAux_Trans);
 //        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
@@ -1994,7 +2000,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
-        sendResumeDialog.dismiss();
+        if(sendResumeDialog != null) {
+            sendResumeDialog.dismiss();
+        }
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
             processError_1(mLink, mRequired);
         } else if (wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
@@ -2142,8 +2150,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         return new SendResumeDialog(context, hmAux_Trans, new SendResumeDialog.OnDialogClickListener() {
             @Override
             public void onConfirm() {
-
-                sendResumeDialog.dismiss();
+                if(sendResumeDialog != null) {
+                    sendResumeDialog.dismiss();
+                }
                 progressDialog.dismiss();
 
                 if (wsResults.size() > 0) {
