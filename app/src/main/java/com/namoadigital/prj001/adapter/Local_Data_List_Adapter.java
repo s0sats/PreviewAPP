@@ -241,11 +241,10 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                                     ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                             ));
                     setDateGoneChangeForLayout(tv_schedule_lbl, tv_date_lbl);
-//                    setTvDateLblConstraint(clHeader, ConstraintSet.PARENT_ID);
+
                 }else{
                     setDateVisibleChangeForLayout(tv_schedule_lbl, tv_date_lbl);
                     tv_date_lbl.setText(ToolBox_Inf.formatScheduleIntervalDateFormatted(context, dateStart, dateEnd));
-//                    setTvDateLblConstraint(clHeader, R.id.local_data_list_cell_01_tv_status_val);
                 }
                 tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_PROCESS));
                 tv_status_val.setTextColor(
@@ -338,12 +337,10 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                             )
                     );
-//                    setTvDateLblConstraint(clHeader, ConstraintSet.PARENT_ID);
                     setDateGoneChangeForLayout(tv_schedule_lbl, tv_date_lbl);
                 }else{
                     setDateVisibleChangeForLayout(tv_schedule_lbl, tv_date_lbl);
                     tv_date_lbl.setText(ToolBox_Inf.formatScheduleIntervalDateFormatted(context, dateStart, dateEnd));
-//                    setTvDateLblConstraint(clHeader, R.id.local_data_list_cell_01_tv_status_val);
                 }
                 //
                 tv_status_val.setText(hmAux_Trans.get(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)));
