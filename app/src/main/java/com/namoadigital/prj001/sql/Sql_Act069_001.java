@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.sql;
 
+import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
@@ -12,6 +13,13 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
  * LUCHE - 31/03/2020
  * Modificado query para identificar fluxo de historico baseado no isHistoricalShown e possibilitar
  * o filtros dos status de historico.
+ *
+ * LUCHE - 02/04/2020
+ * Modificado query criando novo construtor e alterando logica dos filtros e adicionando o terceiro filtro de parceiro.
+ * Regras:
+ *  Sem Parceiro: Somente se todos os controles tiver sem parceiro - 100% sem parceiro
+ *  Com meu parceiro: Mostrar se ao menos um dos ctrls for de um parceiro.
+ *  Sem meu parceiro: Mostrar somente se 100% dos controles não for o meu.
  */
 
 public class Sql_Act069_001 implements Specification {
@@ -21,7 +29,7 @@ public class Sql_Act069_001 implements Specification {
     private String partnerFilter = "";
     private String serialFilter = "";
     //
-    public Sql_Act069_001(long customer_code, String site_logged, boolean isHistoricalShown, boolean bStatusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile, long ticketProductCode, long ticketSerialCode, boolean bStatusNotExecuted, boolean bStatusIgnored, boolean bStatusCanceled, boolean bStatusRejected) {
+    public Sql_Act069_001(long customer_code, String site_logged, boolean isHistoricalShown, boolean bStatusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, long ticketProductCode, long ticketSerialCode, boolean bStatusNotExecuted, boolean bStatusIgnored, boolean bStatusCanceled, boolean bStatusRejected, boolean bParterEmpty, boolean bParterProfile, boolean bParterNoProfile) {
         this.customer_code = customer_code;
         this.site_logged = site_logged;
         //LUCHE - 31/03/2020
@@ -77,36 +85,84 @@ public class Sql_Act069_001 implements Specification {
 
             }
             //
-            String partnerCondition = "";
-            //Filtro de null sempre existe, variando entre is null e is NOT null
-            partnerCondition += bParterEmpty ? " c.partner_code is null " : " c.partner_code is NOT null ";
-            //Filtro de somente meus parceiros só existe se true e varia entre OR se for junto com o filtro is null ou AND se filtro is not null
-            partnerCondition += bParterProfile ? (bParterEmpty ? " or m.partner_code is not null " : " and m.partner_code is not null ") : "";
-            //
-            partnerFilter += "  and (     \n" +
-                "         (SELECT\n" +
-                "            SUM(\n" +
-                "              CASE WHEN " + partnerCondition + " \n" +
-                "                   THEN 1\n" +
-                "                   ELSE 0\n" +
-                "              END\n" +
-                "            ) PARTNER_FILTER\n" +
-                "          FROM\n" +
-                "            " + TK_Ticket_CtrlDao.TABLE + " c\n" +
-                "          \n" +
-                "          LEFT JOIN\n" +
-                "                md_partners m on m.customer_code = c.customer_code \n" +
-                "                                 and m.partner_code = c.partner_code\n" +
-                "            \n" +
-                "          WHERE     \n" +
-                "            c.customer_code = t.customer_code\n" +
-                "            and c.ticket_prefix = t.ticket_prefix\n" +
-                "            and c.ticket_code = t.ticket_code\n" +
-                "          GROUP BY  \n" +
-                "            c.customer_code,\n" +
-                "            c.ticket_prefix,\n" +
-                "            c.ticket_code) > 0\n" +
-                "        )\n";
+            if(bParterEmpty || bParterProfile || bParterNoProfile){
+                String partnerCondition = "";
+                if(bParterEmpty){
+                    partnerCondition +=
+                        "       (SELECT\n" +
+                        "            sum (CASE WHEN c.partner_code is not null \n" +
+                        "                   THEN 1\n" +
+                        "                   ELSE 0\n" +
+                        "                 END\n" +
+                        "              ) PARTNER_FILTER\n" +
+                        "       FROM " + TK_Ticket_CtrlDao.TABLE + " c\n" +
+                        "       WHERE c.customer_code = t.customer_code\n" +
+                        "             and c.ticket_prefix = t.ticket_prefix\n" +
+                        "             and c.ticket_code = t.ticket_code" +
+                        "             and c.ctrl_status in (\n" +
+                        "                 '" + ConstantBaseApp.SYS_STATUS_PENDING + "',\n" +
+                        "                 '" + ConstantBaseApp.SYS_STATUS_PROCESS + "',\n" +
+                        "                 '" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"'\n" +
+                        "                 )\n"+
+                        "           ) = 0\n";
+                }
+                if(bParterProfile){
+                    partnerCondition += partnerCondition.length() == 0 ? partnerCondition : "   OR  ";
+                    partnerCondition +=
+                        "     (SELECT\n" +
+                        "           count(1)\n" +
+                        "      FROM " +
+                        "       "+ TK_Ticket_CtrlDao.TABLE +" c,\n" +
+                        "       "+ MD_PartnerDao.TABLE +" m \n" +
+                        "  \n" +
+                        "      WHERE c.customer_code = t.customer_code\n" +
+                        "           and c.ticket_prefix = t.ticket_prefix\n" +
+                        "           and c.ticket_code = t.ticket_code\n" +
+                        "           and c.ctrl_status in (\n" +
+                        "                 '" + ConstantBaseApp.SYS_STATUS_PENDING + "',\n" +
+                        "                 '" + ConstantBaseApp.SYS_STATUS_PROCESS + "',\n" +
+                        "                 '" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"'\n" +
+                        "                 )\n"+
+                        " \n" +
+                        "           and m.customer_code = c.customer_code \n" +
+                        "           and m.partner_code = c.partner_code) >= 1\n";
+                }
+                if(bParterNoProfile) {
+                    partnerCondition += partnerCondition.length() == 0 ? partnerCondition : "   OR  ";
+                    partnerCondition +=
+                         "      (SELECT\n" +
+                         "             CASE WHEN OTHER_PARTNER > 0 AND MY_PARTNER = 0\n" +
+                         "                  THEN 1\n" +
+                         "                  ELSE 0\n" +
+                         "              END\n" +
+                         "       FROM\n" +
+                         "         (SELECT\n" +
+                         "          sum (CASE WHEN m.partner_code is null\n" +
+                         "                    THEN 1\n" +
+                         "                    ELSE 0\n" +
+                         "               END) OTHER_PARTNER,\n" +
+                         "           sum (CASE WHEN m.partner_code is not null\n" +
+                         "                     THEN 1\n" +
+                         "                     ELSE 0\n" +
+                         "                END) MY_PARTNER \n" +
+                         "          FROM "+ TK_Ticket_CtrlDao.TABLE +" c\n" +
+                         "          LEFT JOIN\n" +
+                         "              "+ MD_PartnerDao.TABLE +" m on m.customer_code = c.customer_code \n" +
+                         "              and m.partner_code = c.partner_code\n" +
+                         "          WHERE c.customer_code = t.customer_code\n" +
+                         "                and c.ticket_prefix = t.ticket_prefix\n" +
+                         "                and c.ticket_code = t.ticket_code\n" +
+                         "                and c.ctrl_status in (\n" +
+                         "                   '" + ConstantBaseApp.SYS_STATUS_PENDING + "',\n" +
+                         "                   '" + ConstantBaseApp.SYS_STATUS_PROCESS + "',\n" +
+                         "                   '" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"'\n" +
+                         "                 )\n"+
+                         "                and c.partner_code is not null)\n" +
+                         "          ) = 1\n";
+                }
+                //
+                partnerFilter += " AND ("+partnerCondition+")\n";
+            }
         }
     }
 
