@@ -1780,9 +1780,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            sendResumeDialog.setBtnOKEnable(true);
+            if(sendResumeDialog != null) {
+                sendResumeDialog.setBtnOKEnable(true);
+            }
         } else {
-            sendResumeDialog.setBtnOKEnable(true);
+            if(sendResumeDialog != null) {
+                sendResumeDialog.setBtnOKEnable(true);
+            }
             setWsSoProcess("");
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
