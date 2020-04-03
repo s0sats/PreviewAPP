@@ -177,7 +177,7 @@ public class NotificationHelper {
                 Constant.DB_VERSION_CUSTOM
         );
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_EXPRESS)) {
-            Log.i("TESTE", "PROFILE_PRJ001_SO");
+//            Log.i("TESTE", "PROFILE_PRJ001_SO");
             notificationLayoutExpanded.setViewVisibility(R.id.tv_express_services, View.VISIBLE);
             try {
                 qtySO_Express = soPackExpressLocalDao.getByStringHM(
@@ -203,7 +203,7 @@ public class NotificationHelper {
                 Constant.DB_VERSION_CUSTOM
         );
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, null)) {
-            Log.i("TESTE", "PROFILE_PRJ001_PRODUCT_SERIAL");
+//            Log.i("TESTE", "PROFILE_PRJ001_PRODUCT_SERIAL");
             moduleShowCount++;
             notificationLayoutExpanded.setViewVisibility(R.id.tv_serial, View.VISIBLE);
             try {
@@ -215,6 +215,7 @@ public class NotificationHelper {
             } catch (Exception e) {
                 qtySerial = "0";
             }
+            qtySerial =  String.valueOf(Integer.valueOf(qtySerial)  + ToolBox_Inf.isSerialWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context)));
         }else{
             notificationLayoutExpanded.setViewVisibility(R.id.tv_serial, View.GONE);
         }
@@ -226,7 +227,7 @@ public class NotificationHelper {
         String qtyAP="0";
         GE_Custom_Form_ApDao customFormApDao = new GE_Custom_Form_ApDao(context);
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_AP, null)) {
-            Log.i("TESTE", "PROFILE_PRJ001_AP");
+//            Log.i("TESTE", "PROFILE_PRJ001_AP");
             moduleShowCount++;
             notificationLayoutExpanded.setViewVisibility(R.id.tv_form_ap, View.VISIBLE);
             try {
@@ -254,7 +255,7 @@ public class NotificationHelper {
         );
 
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST, null)) {
-            Log.i("TESTE", "PROFILE_PRJ001_CHECKLIST");
+//            Log.i("TESTE", "PROFILE_PRJ001_CHECKLIST");
             moduleShowCount++;
             notificationLayoutExpanded.setViewVisibility(R.id.tv_form, View.VISIBLE);
             try {
@@ -282,7 +283,7 @@ public class NotificationHelper {
         );
 
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
-            Log.i("TESTE", "PROFILE_PRJ001_SO");
+//            Log.i("TESTE", "PROFILE_PRJ001_SO");
             notificationLayoutExpanded.setViewVisibility(R.id.tv_services, View.VISIBLE);
             moduleShowCount++;
             try {
@@ -294,6 +295,7 @@ public class NotificationHelper {
             } catch (Exception e) {
                 qtySO = "0";
             }
+            qtySO = String.valueOf(Integer.valueOf(qtySO)  + ToolBox_Inf.isSoWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context)));
         } else {
             notificationLayoutExpanded.setViewVisibility(R.id.tv_services, View.GONE);
         }

@@ -66,6 +66,10 @@ public interface Act005_Main_Presenter {
 
     ArrayList<HMAux> processInboundItemSaveReturn(String mLink, String io_item_lbl);
 
+    int countInboundItemSaveReturnTotal(String mLink, String io_item_lbl);
+
+    int countOutboundItemSaveReturnTotal(String mLink, String io_item_lbl);
+
     void executeTicketSave();
 
     ArrayList<HMAux> processTicketSaveReturn(String mLink, String ticket_lbl);

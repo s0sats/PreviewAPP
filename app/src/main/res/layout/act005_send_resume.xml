@@ -76,6 +76,7 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/namoa_icon_bg_states"
         android:text="@string/generic_msg_ok"
+        android:textColor="@color/namoa_color_green_2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ll_modules" />

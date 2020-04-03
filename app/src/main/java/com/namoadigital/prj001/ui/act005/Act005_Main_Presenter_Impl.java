@@ -1819,4 +1819,43 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         return false;
     }
+    @Override
+    public int countInboundItemSaveReturnTotal(String jsonRet, String io_item_lbl) {
+        ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList = null;
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        int okInboundItem= 0;
+        try {
+            actReturnList = gson.fromJson(
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+                    }.getType());
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+
+        if(actReturnList != null){
+           return actReturnList.size();
+        }
+        return okInboundItem;
+    }
+
+    @Override
+    public int countOutboundItemSaveReturnTotal(String jsonRet, String io_item_lbl) {
+        ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn> actReturnList = null;
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        int okInboundItem= 0;
+        try {
+            actReturnList = gson.fromJson(
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+                    }.getType());
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+
+        if(actReturnList != null){
+            return actReturnList.size();
+        }
+        return okInboundItem;
+    }
 }

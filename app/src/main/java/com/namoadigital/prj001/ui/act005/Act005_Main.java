@@ -205,6 +205,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private String move_planned[];
     private String blinds[];
     ArrayList<HMAux> inbound_items;
+    int inboundItensTotal=0;
+    int outboundItensTotal=0;
     ArrayList<HMAux> outbound_items;
 
     @Override
@@ -1632,7 +1634,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.executeMoveSave();  // 6
         } else if (wsSoProcess.equalsIgnoreCase(WS_IO_Move_Save.class.getSimpleName())) {
             setWsSoProcess("");
-
+            assetsProcessErrorAmount=0;
             move_planned = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
             if (move_planned.length > 0 && !move_planned[0].isEmpty()) {
@@ -1682,9 +1684,21 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             setWsSoProcess("");
 
             inbound_items = mPresenter.processInboundItemSaveReturn(mLink, WS_RESULT_TYPE_ASSETS_INBOUND_ITEM);
+//            inboundItensOk = mPresenter.countInboundItemSaveReturnOk(mLink, WS_RESULT_TYPE_ASSETS_INBOUND_ITEM);
+            inboundItensTotal=0;
 
+            inboundItensTotal = mPresenter.countInboundItemSaveReturnTotal(mLink, WS_RESULT_TYPE_ASSETS_INBOUND_ITEM);
             if(inbound_items != null) {
                 wsResults.addAll(inbound_items);
+                for (HMAux item :inbound_items) {
+                    if(item != null
+                    && item.hasConsistentValue("status"))
+                    if( "OK".equalsIgnoreCase(item.get("status"))){
+
+                    }else{
+                        assetsProcessErrorAmount++;
+                    }
+                }
             }else{
                 inbound_items = new ArrayList<>();
             }
@@ -1695,13 +1709,25 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             setWsSoProcess("");
 
             outbound_items = mPresenter.processOutboundItemSaveReturn(mLink, WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM);
+//            outboundItensOk = mPresenter.countOutboundItemSaveReturnOk(mLink, WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM);
+            outboundItensTotal=0;
 
+            outboundItensTotal = mPresenter.countOutboundItemSaveReturnTotal(mLink, WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM);
             if(outbound_items != null) {
                 wsResults.addAll(outbound_items);
+                for (HMAux item :outbound_items) {
+                    if(item != null
+                            && item.hasConsistentValue("status"))
+                        if( "OK".equalsIgnoreCase(item.get("status"))){
+
+                        }else{
+                            assetsProcessErrorAmount++;
+                        }
+                }
             }else{
                 outbound_items = new ArrayList<>();
             }
-
+            assetsProcessErrorAmount = assetsProcessErrorAmount + outbound_items.size();
             setAssetsResume();
             mPresenter.executeTicketSave(); //10
 
@@ -1772,7 +1798,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             moveBlindLenght=0;
         }
 
-        int totalAmount = movePlannedLenght + moveBlindLenght + inbound_items.size() + outbound_items.size();
+        int totalAmount = movePlannedLenght + moveBlindLenght + inboundItensTotal + outboundItensTotal;
         if(assetsProcessErrorAmount >0){
             try {
                 sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_assets, false, totalAmount - assetsProcessErrorAmount, totalAmount);

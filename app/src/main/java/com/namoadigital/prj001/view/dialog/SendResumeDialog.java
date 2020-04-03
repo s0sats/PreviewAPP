@@ -100,12 +100,12 @@ public class SendResumeDialog extends AlertDialog {
 
             module_status.setVisibility(View.VISIBLE);
             if (isDone) {
-                Drawable unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_check_circle_white_24dp);
+                Drawable unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_check_white_24dp);
                 Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
                 DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(context, android.R.color.holo_green_light) );
                 module_status.setBackground(wrappedDrawable);
             }else{
-                Drawable unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_close_circle_black_24dp);
+                Drawable unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_clear_white_24dp);
                 Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
                 DrawableCompat.setTint(wrappedDrawable,  ContextCompat.getColor(context, android.R.color.holo_red_light));
                 module_status.setBackground(wrappedDrawable);
