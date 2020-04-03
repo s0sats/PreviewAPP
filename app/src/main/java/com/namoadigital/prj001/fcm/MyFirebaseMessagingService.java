@@ -96,6 +96,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             sb.append(remoteMessage.getData().get("sender"));
             sb.append("\nsync: ");
             sb.append(remoteMessage.getData().get("sync"));
+            sb.append("\ncancellable: ");
+            sb.append(remoteMessage.getData().get("cancellable"));
 
             FCMMessage fcmMessage = new FCMMessage();
 
@@ -112,6 +114,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
             fcmMessage.setDate_create(sDate);
             fcmMessage.setDate_create_ms(ToolBox.dateToMilliseconds(sDate));
+            fcmMessage.setCancellable(remoteMessage.getData().get("cancellable"));
 
             //Se FCM não é o que esta usr logado, aborta FCM
             if(!fcmMessage.getReceiver().equals(ToolBox_Con.getPreference_User_Code(getApplicationContext()))){
@@ -250,7 +253,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         remoteMessage.getData().get("title"),
                         remoteMessage.getData().get("msg_short"),
                         fcmmessage_code,
-                        fcmmessage_qty
+                        fcmmessage_qty,
+                        fcmMessage.getCancellable()
                 );
 
                 if (fcmMessage.getSync().equalsIgnoreCase("1")) {
@@ -571,7 +575,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
 
-    private void makeNF(Context context, String title, String message, long fcmmessage_code, int fcmmessage_qty) {
+    private void makeNF(Context context, String title, String message, long fcmmessage_code, int fcmmessage_qty, String cancellable) {
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
@@ -606,7 +610,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         } else {
             builder.setContentText(message);
         }
-        builder.setOngoing(true);
+        /**
+         *  BARRIONUEVO 03-04-2020
+         *  Tratativa para determinar se notification eh cancelavel.
+         */
+        if("1".equalsIgnoreCase(cancellable)){
+            builder.setOngoing(false);
+        }else {
+            builder.setOngoing(true);
+        }
         //
         long dt_last = ToolBox_Con.getPreference_Google_ID_DT(getApplicationContext());
         Calendar cal_now = Calendar.getInstance();

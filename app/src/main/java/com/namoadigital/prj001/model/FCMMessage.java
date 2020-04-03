@@ -19,6 +19,7 @@ public class FCMMessage {
     private String date_create;
     private long date_create_ms;
     private String receiver;
+    private String cancellable;
 
     public FCMMessage() {
         this.fcmmessage_code = -1;
@@ -32,6 +33,7 @@ public class FCMMessage {
         this.sync = "0";
         this.status = "1";
         this.date_create = "1900-01-01";
+        this.cancellable = "1";
     }
 
     public int getFcmmessage_code() {
@@ -136,5 +138,13 @@ public class FCMMessage {
 
     public void setReceiver(String receiver) {
         this.receiver = receiver;
+    }
+
+    public String getCancellable() {
+        return cancellable;
+    }
+
+    public void setCancellable(String cancellable) {
+        this.cancellable = cancellable;
     }
 }
