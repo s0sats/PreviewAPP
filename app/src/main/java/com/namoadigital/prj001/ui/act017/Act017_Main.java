@@ -569,6 +569,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         Intent mIntent = new Intent(context, Act020_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {
+            bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT017);
             mIntent.putExtras(bundle);
         }
         startActivity(mIntent);

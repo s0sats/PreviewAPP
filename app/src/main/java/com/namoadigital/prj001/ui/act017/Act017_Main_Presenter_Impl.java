@@ -862,7 +862,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         HMAux item = serialDialog.getAuxSchedule();
         ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(
             item.get(MD_Schedule_ExecDao.PRODUCT_ID),
-            item.hasConsistentValue(MD_Schedule_ExecDao.SERIAL_ID) ? item.get(MD_Schedule_ExecDao.SERIAL_ID) : serialDialog.getSerialId()
+            item.hasConsistentValue(MD_Schedule_ExecDao.SERIAL_ID) && !item.get(MD_Schedule_ExecDao.SERIAL_ID).isEmpty() ? item.get(MD_Schedule_ExecDao.SERIAL_ID) : serialDialog.getSerialId()
         );
         //
         if (serial_list.size() > 0) {

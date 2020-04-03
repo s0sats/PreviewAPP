@@ -103,8 +103,14 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                                     bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA)
                             ).toSqlQuery()
                     );
-            //
-            md_product  = createMdProduct(geCustomFormLocal);
+            //LUCHE - 03/04/2020
+            //Add tentativa de busca do produto antes de gerar o fake.Caso não encontre
+            //Gera o fake.
+            //Todo verificar a necessidade de colocar essas infos na md_schedule_exec
+            md_product  = getMDProduct(product_code);
+            if(md_product == null) {
+                md_product = createMdProduct(geCustomFormLocal);
+            }
             if(ToolBox_Inf.isValidProduct(md_product)){
                 MD_Product_Serial scheduledSerial = getSerialInfo(
                                                         product_code,
@@ -120,12 +126,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
         } else {
             md_product =
-                    mdProductDao.getByString(
-                            new MD_Product_Sql_001(
-                                    ToolBox_Con.getPreference_Customer_Code(context),
-                                    product_code
-                            ).toSqlQuery()
-                    );
+                getMDProduct(product_code);
         }
         //
         if (ToolBox_Inf.isValidProduct(md_product)) {
@@ -138,6 +139,15 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 //                    hmAux_Trans.get("alert_product_not_found_msg")
 //            );
         }
+    }
+
+    private MD_Product getMDProduct(Long product_code) {
+        return mdProductDao.getByString(
+            new MD_Product_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                product_code
+            ).toSqlQuery()
+        );
     }
 
     private MD_Product createMdProduct(GE_Custom_Form_Local geCustomFormLocal) {
@@ -560,12 +570,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                 String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
                 String status = item.getValue();
 
-                MD_Product mdProduct = mdProductDao.getByString(
-                        new MD_Product_Sql_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                Long.parseLong(pk[0])
-                        ).toSqlQuery()
-                );
+                MD_Product mdProduct = getMDProduct(Long.parseLong(pk[0]));
                 //
                 if (mdProduct != null) {
                     aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mdProduct.getProduct_code() + " - " + mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc());
