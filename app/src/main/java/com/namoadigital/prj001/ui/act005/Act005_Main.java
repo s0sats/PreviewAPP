@@ -1754,24 +1754,32 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             ArrayList<HMAux> ticket_items = mPresenter.processTicketSaveReturn(mLink, WS_RESULT_TYPE_TICKET);
             int total_tickets_amount = 0;
             boolean isDone = true;
+            int ticket_errors = 0;
+
             if (total_tickets != null) {
                 total_tickets_amount = total_tickets.size();
             }
 
             if (ticket_items != null && ticket_items.size() > 0) {
                 wsResults.addAll(ticket_items);
-                total_tickets_amount = total_tickets_amount - ticket_items.size();
-                isDone  = false;
+                for (HMAux item :ticket_items) {
+                    if(item != null
+                            && item.hasConsistentValue("status"))
+                        if(!"OK".equalsIgnoreCase(item.get("status"))){
+                            isDone  = false;
+                            ticket_errors++;
+                        }
+                }
+
             }
 
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
             try {
-                sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, isDone, total_tickets_amount, total_tickets_amount);
+                sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, isDone, total_tickets_amount - ticket_errors, total_tickets_amount);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             sendResumeDialog.setBtnOKEnable(true);
         } else {
             sendResumeDialog.setBtnOKEnable(true);
