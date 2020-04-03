@@ -117,6 +117,11 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         if(customers != null) {
             mAdapter = new EV_User_Customer_Adapter(context, R.layout.ev_user_customer_cell, customers);
             lv_customers.setAdapter(mAdapter);
+            /**
+             *  BARRIONUEVO 02-04-2020
+             *  Verifica necessidade de notificacao de modulos pendentes
+             */
+            ToolBox_Inf.callPendencyNotification(context);
         }
 
         if (customers.size() == 1) {
