@@ -16,6 +16,8 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
  *
  * Seleciona os dados de master data de site, operação e produto para inserir na tabela de md_schedule
  *
+ * LUCHE - 01/04/2020
+ * Modificado query para receber como parametro o translate_code da preferencia.
  */
 
 public class MD_Schedule_Exec_Dao_Sql_001 implements Specification {
@@ -27,8 +29,9 @@ public class MD_Schedule_Exec_Dao_Sql_001 implements Specification {
     private int custom_form_type;
     private int custom_form_code;
     private int custom_form_version;
+    private String preference_translate_code;
 
-    public MD_Schedule_Exec_Dao_Sql_001(long customer_code, int site_code, int operation_code, int product_code, int custom_form_type, int custom_form_code, int custom_form_version) {
+    public MD_Schedule_Exec_Dao_Sql_001(long customer_code, int site_code, int operation_code, int product_code, int custom_form_type, int custom_form_code, int custom_form_version, String preference_translate_code) {
         this.customer_code = customer_code;
         this.site_code = site_code;
         this.operation_code = operation_code;
@@ -36,6 +39,7 @@ public class MD_Schedule_Exec_Dao_Sql_001 implements Specification {
         this.custom_form_type = custom_form_type;
         this.custom_form_code = custom_form_code;
         this.custom_form_version = custom_form_version;
+        this.preference_translate_code = preference_translate_code;
     }
 
     @Override
@@ -60,7 +64,7 @@ public class MD_Schedule_Exec_Dao_Sql_001 implements Specification {
                         "           and r.resource_code = t.resource_code\n" +
                         "           and t.txt_code = sc.customer_code ||'|'|| sc.custom_form_type\n" +
                         "           and t.module_code = '"+ ConstantBaseApp.EV_MODULE_CUST_FORM +"'\n" +
-                        "           and t.translate_code = 1 \n" +
+                        "           and t.translate_code = '"+preference_translate_code+"' \n" +
                         "     ) "+ GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC+" ,\n" +
                         "     ( SELECT txt_value\n" +
                         "       FROM "+EV_Module_ResDao.TABLE+" r,\n" +
@@ -75,7 +79,7 @@ public class MD_Schedule_Exec_Dao_Sql_001 implements Specification {
                         "             --\n" +
                         "             and r.module_code = '"+ ConstantBaseApp.EV_MODULE_CUST_FORM +"'\n" +
                         "             and r.resource_name = sc.customer_code ||'|'|| sc.custom_form_type ||'|'|| sc.custom_form_code ||'|'|| sc.custom_form_version\n" +
-                        "             and t.translate_code = 1\n" +
+                        "             and t.translate_code = '"+preference_translate_code+"'\n" +
                         "             and t.txt_code = 'TITLE'             \n" +
                         "      ) "+GE_Custom_FormDao.CUSTOM_FORM_DESC +"\n" +
                         " FROM\n" +

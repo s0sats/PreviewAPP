@@ -41,6 +41,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  * Substituido o status FINALIZED pelo WAITING_SYNC e  SENT por DONE, na query de form.
  * Substituido filtro que comparava pks do form <> de null pelo campo schedule_type = form
  * Modificado a query substituindo as antigas constantes o CalendarView pelas novas e adicionando o contador de not_executed
+ *
+ * LUCHE - 01/04/2020
+ * Modificado query, corrigindo os contadores do Form Ap. Os concluidos estava sendo considerado como waiting_sync
  */
 
 public class Sql_Act016_001 implements Specification {
@@ -90,8 +93,8 @@ public class Sql_Act016_001 implements Specification {
                     "      ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+ConstantBaseApp.SYS_STATUS_DONE+"','"+ConstantBaseApp.SYS_STATUS_CANCELLED+"') ) "+CalendarView.DELAYED_COUNT+ ",\n" +
                     "      0 "+CalendarView.INPROCESSING_COUNT+ ",\n" +
                     "      ((strftime('%s',a.ap_when) * 1000)  >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+ConstantBaseApp.SYS_STATUS_DONE+"','"+ConstantBaseApp.SYS_STATUS_CANCELLED+"')) "+CalendarView.SCHEDULED_COUNT+ ",\n" +
-                    "      (a.ap_status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
-                    "      0 "+CalendarView.DONE_COUNT+", \n" +
+                    "      0 "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
+                    "      (a.ap_status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') "+CalendarView.DONE_COUNT+ ",\n" +
                     "      0 "+CalendarView.NOT_EXECUTED_COUNT+"\n" +
                     "  FROM "+ GE_Custom_Form_ApDao.TABLE+" a  \n" +
                     "  WHERE \n" +

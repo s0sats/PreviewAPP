@@ -16,7 +16,7 @@ import com.namoadigital.prj001.model.TSerial_Save_Env;
 import com.namoadigital.prj001.model.TSerial_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_004;
-import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_014;
+import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -55,7 +55,6 @@ public class WS_Serial_Save extends IntentService {
             serialDao = new MD_Product_SerialDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             boolean menu_send_process = bundle.getBoolean(ConstantBaseApp.PROCESS_MENU_SEND, false);
             processWS_Serial_Save(menu_send_process);
-
         } catch (Exception e) {
 
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(), e);
@@ -236,10 +235,12 @@ public class WS_Serial_Save extends IntentService {
                 //Barrionuevo - 19-12-2019
                 //Verificar status do serial antes de atualizar para evitar respecagem desnecessaria
                 MD_Product_Serial serial =
-                        serialDao.getByString(new MD_Product_Serial_Sql_014(
+                        serialDao.getByString(new MD_Product_Serial_Sql_016(
                                 serialAux.getCustomer_code(),
+                                serialAux.getProduct_code(),
                                 serialAux.getSerial_id()).toSqlQuery()
                         );
+                //
                 if(serial.getUpdate_required() == 1){
                     serial.setSerial_code(serialSaveReturn.getSerial_code());
                     serialDao.addUpdateTmp(serial);
@@ -261,6 +262,15 @@ public class WS_Serial_Save extends IntentService {
                     //Luche - 06/03/2019
                     //Limpa campo de reason.
                     serialAux.setReason_code(null);
+                    //LUCHE - 02/04/2020
+                    //Se houve denied na criação de um serial, significa que ja existe no servidor,
+                    //então atualiza o serialCode
+                    if( serialAux.getSerial_code() == 0
+                        && serialAux.getSerial_tmp() > 0
+                        && serialSaveReturn.getSerial_code() > 0)
+                    {
+                        serialAux.setSerial_code(serialSaveReturn.getSerial_code());
+                    }
                 }
                 serialDao.addUpdateTmp(serialAux);
                 //

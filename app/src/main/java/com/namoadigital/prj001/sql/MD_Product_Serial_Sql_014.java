@@ -7,8 +7,24 @@ import com.namoadigital.prj001.database.Specification;
  * Created by d.luche on 23/03/2018.
  * Seleciona todas os seriais com um serial_id especifico
  * SEM LEVAR EM CONSIDERAÇÃO O PRODUTO.
+ *
+ * LUCHE - 02/04/2020
+ *
+ *
+ *
+ *
+ * ESSA QUERY NÃO BUSCA  SERIAL SOMENTE USADO O SERIAL_ID E NÃO DEVE SER USADA A NÃO SER QUE SAIBA
+ *O QUE ESTA FAZENDO.
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
  */
-
+@Deprecated
 public class MD_Product_Serial_Sql_014 implements Specification {
     private long customer_code;
     private String serial_id;

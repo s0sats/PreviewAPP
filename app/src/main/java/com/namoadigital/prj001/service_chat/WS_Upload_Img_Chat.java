@@ -121,6 +121,7 @@ public class WS_Upload_Img_Chat extends IntentService {
             programAlarm(getApplicationContext());
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
+            ToolBox_Inf.callPendencyNotification(getApplicationContext());
             WBR_Upload_Img_Chat.IS_RUNNING = false;
             WBR_Upload_Img_Chat.completeWakefulIntent(intent);
             //
