@@ -6,6 +6,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
@@ -55,7 +56,15 @@ public class Sql_Act017_003 implements Specification {
                         "       "+ MD_Schedule_ExecDao.TABLE+"  s\n" +
                         "     WHERE\n" +
                         "       s.customer_code = '"+s_customer_code+"'\n" +
-                        "       AND ( '"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"') = '"+selected_date+"' )\n" +
+                        "      AND s.status in(" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"',\n" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"',\n" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"',\n" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"',\n" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_DONE+"',\n" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"'\n" +
+                        "                      )\n " +
+                        "       AND ( '"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start||' "+customerGMT+"','"+customerGMT+"') = '"+selected_date+"' )\n" +
                         "       \n" +
                         "     UNION  ALL \n" +
                         "        \n" +

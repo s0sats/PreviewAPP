@@ -44,6 +44,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  *
  * LUCHE - 01/04/2020
  * Modificado query, corrigindo os contadores do Form Ap. Os concluidos estava sendo considerado como waiting_sync
+ *
+ * LUCHE - 03/04/2020
+ * Modificado query add filtro dos status que devem aparecer no calendario, corrindo bug de clicar me item sem nada abrir a adata
  */
 
 public class Sql_Act016_001 implements Specification {
@@ -82,6 +85,14 @@ public class Sql_Act016_001 implements Specification {
                     "  WHERE \n" +
                     "        s.customer_code= '"+customer_code+"'     \n" +
                     "        AND s.schedule_type = '"+ConstantBaseApp.MD_SCHEDULE_TYPE_FORM+"'\n" +
+                    "        AND s.status in(" +
+                    "                       '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"',\n" +
+                    "                       '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"',\n" +
+                    "                       '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"',\n" +
+                    "                       '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"',\n" +
+                    "                       '"+ ConstantBaseApp.SYS_STATUS_DONE+"',\n" +
+                    "                       '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"'\n" +
+                    "                      )\n " +
                     "        AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') ";
         //Remove , caso exista, o text 'null'
         sql_form = sql_form.replace("'null'","null");
@@ -117,6 +128,14 @@ public class Sql_Act016_001 implements Specification {
                 "  WHERE \n" +
                 "        s.customer_code= '"+customer_code+"'     \n" +
                 "        AND s.schedule_type = '"+ ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET +"' \n" +
+                "        AND s.status in(" +
+                "                       '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"',\n" +
+                "                       '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"',\n" +
+                "                       '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"',\n" +
+                "                       '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"',\n" +
+                "                       '"+ ConstantBaseApp.SYS_STATUS_DONE+"',\n" +
+                "                       '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"'\n" +
+                "                      )\n " +
                 "        AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') ";
         //Remove , caso exista, o text 'null'
         sql_ticket = sql_ticket.replace("'null'","null");

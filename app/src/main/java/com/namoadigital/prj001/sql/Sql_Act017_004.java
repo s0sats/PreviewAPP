@@ -77,7 +77,15 @@ public class Sql_Act017_004 implements Specification {
                 "  WHERE\n" +
                 "      s."+ MD_Schedule_ExecDao.CUSTOMER_CODE+" = '"+customer_code+"' \n" +
                 "      AND s.schedule_type = '"+ ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET +"' \n" +
-                "      AND s.status not in('"+ ConstantBaseApp.SYS_STATUS_CANCELLED+"','"+ ConstantBaseApp.SYS_STATUS_REJECTED+"')\n" +
+                //"      AND s.status not in('"+ ConstantBaseApp.SYS_STATUS_CANCELLED+"','"+ ConstantBaseApp.SYS_STATUS_REJECTED+"')\n" +
+                "      AND s.status in(" +
+                "                       '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"',\n" +
+                "                       '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"',\n" +
+                "                       '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"',\n" +
+                "                       '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"',\n" +
+                "                       '"+ ConstantBaseApp.SYS_STATUS_DONE+"',\n" +
+                "                       '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"'\n" +
+                "                      )\n " +
                 "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"') = '"+selected_date+"') \n" +
                 "      AND ('"+serial_id+"' is null or s.serial_id like '%"+serial_id+"%' or s.serial_id like '%"+serial_id+"%' ) \n" +
                 "      AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') \n" +
