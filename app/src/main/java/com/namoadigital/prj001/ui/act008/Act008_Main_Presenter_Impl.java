@@ -91,31 +91,42 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         if (isSchedule) {
             String serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
             //se não veio serial, seta serial_id GAMBIS
-            serial_id = !serial_id.equals("") ? serial_id :Constant.KEY_NO_SERIAL;
-            //
-            GE_Custom_Form_Local geCustomFormLocal =
-                    geCustomFormLocalDao.getByString(
-                            new Sql_Act008_003(
-                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                    bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE),
-                                    bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE),
-                                    bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION),
-                                    bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA)
-                            ).toSqlQuery()
-                    );
+            serial_id = !serial_id.equals("") ? serial_id : Constant.KEY_NO_SERIAL;
             //LUCHE - 03/04/2020
             //Add tentativa de busca do produto antes de gerar o fake.Caso não encontre
             //Gera o fake.
             //Todo verificar a necessidade de colocar essas infos na md_schedule_exec
             md_product  = getMDProduct(product_code);
             if(md_product == null) {
+                //
+                GE_Custom_Form_Local geCustomFormLocal =
+                    geCustomFormLocalDao.getByString(
+                        new Sql_Act008_003(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                            bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE),
+                            bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE),
+                            bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION),
+                            bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA)
+                        ).toSqlQuery()
+                    );
+                //
                 md_product = createMdProduct(geCustomFormLocal);
             }
             if(ToolBox_Inf.isValidProduct(md_product)){
-                MD_Product_Serial scheduledSerial = getSerialInfo(
+                 /*MD_Product_Serial scheduledSerial = getSerialInfo(
                                                         product_code,
                                                         serial_id
-                                                    );
+                                                    );*/
+                //
+                MD_Product_Serial scheduledSerial;
+                if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
+                    scheduledSerial = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
+                } else {
+                    scheduledSerial = getSerialInfo(
+                        product_code,
+                        serial_id
+                    );
+                }
                 //
                 if(scheduledSerial != null){
                     mView.setMdProductSerial(scheduledSerial);
