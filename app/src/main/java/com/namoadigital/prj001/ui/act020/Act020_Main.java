@@ -369,6 +369,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 scheduleBundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,""));
                 scheduleBundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,""));
                 scheduleBundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK,bundle.getString(MD_Schedule_ExecDao.SCHEDULE_PK,""));
+                scheduleBundle.putString(Constant.ACT017_SCHEDULED_SITE,bundle.getString(Constant.ACT017_SCHEDULED_SITE,""));
             }
             //
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT006);

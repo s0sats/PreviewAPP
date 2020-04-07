@@ -658,7 +658,6 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
-
         progressDialog.dismiss();
     }
 
