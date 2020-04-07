@@ -14,6 +14,7 @@ import com.namoadigital.prj001.model.TUploadImg_Env;
 import com.namoadigital.prj001.model.TUploadImg_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
+import com.namoadigital.prj001.sql.GE_File_Sql_007;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -81,16 +82,20 @@ public class WS_Upload_Img extends IntentService {
             WBR_Upload_Img.IS_RUNNING = true;
             //
             for (GE_File geFile : geFiles) {
-
-                String sRealFileName = geFile.getFile_path_new() != null ? geFile.getFile_path_new() : geFile.getFile_path();
-
+                GE_File curGeFile = getCurrentFileReg(geFileDao,geFile);
+                //
+                if(curGeFile == null){
+                    curGeFile = geFile;
+                }
+                String sRealFileName = curGeFile.getFile_path_new() != null ? curGeFile.getFile_path_new() : curGeFile.getFile_path();
+                //
                 if (ToolBox_Inf.verifyFileExists(sRealFileName)) {
-                    env.setFile_path(geFile.getFile_path());
+                    env.setFile_path(curGeFile.getFile_path());
                     //
                     String sResults = ToolBox_Inf.uploadFile(
                             gson.toJson(env),
-                            geFile.getFile_path(),
-                            geFile.getFile_path_new()
+                            curGeFile.getFile_path(),
+                            curGeFile.getFile_path_new()
                     );
 
                     TUploadImg_Rec rec = gson.fromJson(
@@ -99,12 +104,12 @@ public class WS_Upload_Img extends IntentService {
                     );
 
                     if (rec.getSave().equalsIgnoreCase("OK")) {
-                        geFile.setFile_status("SENT");
-                        geFileDao.addUpdate(geFile);
+                        curGeFile.setFile_status("SENT");
+                        geFileDao.addUpdate(curGeFile);
                     }
                 } else {
-                    geFile.setFile_status("FILE_NOT_FOUND");
-                    geFileDao.addUpdate(geFile);
+                    curGeFile.setFile_status("FILE_NOT_FOUND");
+                    geFileDao.addUpdate(curGeFile);
                 }
             }
 
@@ -121,6 +126,14 @@ public class WS_Upload_Img extends IntentService {
                 ToolBox_Inf.cancelNotification(getApplicationContext(), Constant.NOTIFICATION_UPLOAD);
             }
         }
+    }
+
+    private GE_File getCurrentFileReg(GE_FileDao geFileDao, GE_File geFile) {
+        return geFileDao.getByString(
+            new GE_File_Sql_007(
+                geFile.getFile_code()
+            ).toSqlQuery()
+        );
     }
 
     private void programAlarm(Context context, long customer_code) {
