@@ -137,7 +137,7 @@ public class NotificationHelper {
         }
         String qtyTicket = "0";
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET, null)) {
-            Log.i("TESTE", "PROFILE_MENU_TICKET");
+
             moduleShowCount++;
             qtyTicket = ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context));
             notificationLayoutExpanded.setViewVisibility(R.id.tv_ticket, View.VISIBLE);
@@ -184,7 +184,7 @@ public class NotificationHelper {
                 Constant.DB_VERSION_CUSTOM
         );
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_EXPRESS)) {
-//            Log.i("TESTE", "PROFILE_PRJ001_SO");
+
             notificationLayoutExpanded.setViewVisibility(R.id.tv_express_services, View.VISIBLE);
             try {
                 qtySO_Express = soPackExpressLocalDao.getByStringHM(
@@ -210,7 +210,7 @@ public class NotificationHelper {
                 Constant.DB_VERSION_CUSTOM
         );
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, null)) {
-//            Log.i("TESTE", "PROFILE_PRJ001_PRODUCT_SERIAL");
+
             moduleShowCount++;
             notificationLayoutExpanded.setViewVisibility(R.id.tv_serial, View.VISIBLE);
             try {
@@ -234,7 +234,7 @@ public class NotificationHelper {
         String qtyAP="0";
         GE_Custom_Form_ApDao customFormApDao = new GE_Custom_Form_ApDao(context);
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_AP, null)) {
-//            Log.i("TESTE", "PROFILE_PRJ001_AP");
+
             moduleShowCount++;
             notificationLayoutExpanded.setViewVisibility(R.id.tv_form_ap, View.VISIBLE);
             try {
@@ -261,22 +261,18 @@ public class NotificationHelper {
                 Constant.DB_VERSION_CUSTOM
         );
 
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST, null)) {
-//            Log.i("TESTE", "PROFILE_PRJ001_CHECKLIST");
-            moduleShowCount++;
-            notificationLayoutExpanded.setViewVisibility(R.id.tv_form, View.VISIBLE);
-            try {
-                qty = customFormLocalDao.getByStringHM(
-                        new Sql_Act005_002(
-                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                        ).toSqlQuery()
-                ).get(Sql_Act005_002.BADGE_WAITING_SYNC_QTY);
-            } catch (Exception e) {
-                qty = "0";
-            }
-        } else {
-            notificationLayoutExpanded.setViewVisibility(R.id.tv_form, View.GONE);
+        moduleShowCount++;
+        notificationLayoutExpanded.setViewVisibility(R.id.tv_form, View.VISIBLE);
+        try {
+            qty = customFormLocalDao.getByStringHM(
+                    new Sql_Act005_002(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                    ).toSqlQuery()
+            ).get(Sql_Act005_002.BADGE_WAITING_SYNC_QTY);
+        } catch (Exception e) {
+            qty = "0";
         }
+
         return qty;
     }
 
@@ -290,7 +286,7 @@ public class NotificationHelper {
         );
 
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
-//            Log.i("TESTE", "PROFILE_PRJ001_SO");
+
             notificationLayoutExpanded.setViewVisibility(R.id.tv_services, View.VISIBLE);
             moduleShowCount++;
             try {
