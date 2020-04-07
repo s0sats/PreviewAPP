@@ -331,10 +331,6 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
      * Caso não possua acesso,esconde checkbox e reseta preferencia para false
      */
     private void applyCbkModuleProfile() {
-        if(!ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,null)){
-            cbk_nform.setVisibility(View.GONE);
-            mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(cbk_nform.getTag()),false);
-        }
         if(!ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP,null)){
             cbk_nform_ap.setVisibility(View.GONE);
             mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(cbk_nform_ap.getTag()),false);

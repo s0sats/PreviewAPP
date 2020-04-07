@@ -69,15 +69,21 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
         senList.addAll(senListF);
         //
         //FINALIZADOS FORM AP
-        GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
-        List<HMAux> NFormAPHistoric = formApDao.query_HM(
-                new Sql_Act014_003(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        hmAux_Trans
-                ).toSqlQuery()
-        );
-        //
-        senList.addAll(NFormAPHistoric);
+        /**
+         *   BARRIONUEVO 07-04-2020
+         *   Verifica perfil para form-ap
+         */
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_AP, null)) {
+            GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
+            List<HMAux> NFormAPHistoric = formApDao.query_HM(
+                    new Sql_Act014_003(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            hmAux_Trans
+                    ).toSqlQuery()
+            );
+            //
+            senList.addAll(NFormAPHistoric);
+        }
         //
         //if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
