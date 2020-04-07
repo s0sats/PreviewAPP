@@ -7,7 +7,9 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.sql.Sql_Act046_001;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -29,13 +31,13 @@ public class Act046_Main_Presenter implements Act046_Main_Contract.I_Presenter {
 
     @Override
     public int getTotalDelay(boolean filter_form, boolean filter_form_ap) {
-
+        boolean formApMenuAccess = ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP,null);
         ArrayList<HMAux> results = (ArrayList<HMAux>) mdProductDao.query_HM(
                 new Sql_Act046_001(
                         context,
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         filter_form,
-                        filter_form_ap
+                    formApMenuAccess && filter_form_ap
                 ).toSqlQuery()
         );
 

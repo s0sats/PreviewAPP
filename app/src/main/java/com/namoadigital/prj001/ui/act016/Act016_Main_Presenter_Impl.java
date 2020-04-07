@@ -7,7 +7,9 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.sql.Sql_Act016_001;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,9 +61,9 @@ public class Act016_Main_Presenter_Impl implements Act016_Main_Presenter {
                                     context,
                                     String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                                     true,
-                                    true,
+                                    ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP,null),//true,
                                     filter_site,
-                                    true
+                                    ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET,null)//true
                             ).toSqlQuery()
                     );
         }
