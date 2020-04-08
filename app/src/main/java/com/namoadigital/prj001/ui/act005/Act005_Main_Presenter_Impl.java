@@ -565,12 +565,17 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         }
                         //
                         try {
-                            qtyAP = customFormApDao.getByStringHM(
+                            //LUCHE - 08/04/2020 - So contabilza se tem acesso ao modulo.
+                            if(ToolBox_Inf.profileExists(context,ConstantBaseApp.PROFILE_PRJ001_AP,null)) {
+                                qtyAP = customFormApDao.getByStringHM(
                                     new Sql_Act005_006(
-                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                            forward_hour
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                        forward_hour
                                     ).toSqlQuery()
-                            ).get(Sql_Act005_006.BADGE_SCHEDULED_QTY);
+                                ).get(Sql_Act005_006.BADGE_SCHEDULED_QTY);
+                            }else{
+                                qtyAP = "0";
+                            }
                         } catch (Exception e) {
                             qtyAP = "0";
                         }

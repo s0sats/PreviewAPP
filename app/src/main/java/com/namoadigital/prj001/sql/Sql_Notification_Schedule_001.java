@@ -9,6 +9,7 @@ import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by DANIEL.LUCHE on 24/03/2017.
@@ -16,6 +17,10 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  * LUCHE - 19/03/2020
  * Seleciona qtd de itens agendados para a proxima 1 horas e os atrasados.
  *
+ * LUCHE - 08/04/2020
+ * - Modificado sub-queries adicionando filtro pelos tipo de agendamento, no caso da tabela schedule_exec, e filtro que zera resultados na do form_ap.
+ * - Na sub-query de schedule, o tipo FORM sempre é filtrado, ja os tipos ticket, somente se o usr tiver acesso ao modulo
+ * - Na sub-query de Form Ap, foi adicionado uma validação que só contará os form_aps agendados se o usr tiver acesso ao modulo.
  */
 
 public class Sql_Notification_Schedule_001 implements Specification {
@@ -26,6 +31,8 @@ public class Sql_Notification_Schedule_001 implements Specification {
     private String scheduleSql;
     private String formApSql;
     private String deviceGMT;
+    private boolean hasFormApMenuProfile;
+    private boolean hasTicketMenuProfile;
 
     public Sql_Notification_Schedule_001(Context context, long customerCode) {
         this.customerCode = customerCode;
@@ -33,8 +40,13 @@ public class Sql_Notification_Schedule_001 implements Specification {
         this.dt_start = " (strftime('%s','now','"+deviceGMT+"') * 1000) ";
         this.dt_end = " (strftime('%s','now','"+deviceGMT+"','+1 hour') * 1000) ";
         this.customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
+        //As var de profile devem vir sempre antes das de query(pode ser melhorado no futuro mas no hotfix, vai assim....)
+        this.hasFormApMenuProfile = ToolBox_Inf.profileExists(context,ConstantBaseApp.PROFILE_PRJ001_AP,null);
+        this.hasTicketMenuProfile = ToolBox_Inf.profileExists(context,ConstantBaseApp.PROFILE_MENU_TICKET,null);
+        //
         this.scheduleSql = getScheduleSql();
         this.formApSql = getFormApSql();
+
     }
 
     private String getFormApSql() {
@@ -47,6 +59,7 @@ public class Sql_Notification_Schedule_001 implements Specification {
                 "   a.customer_code = '"+ customerCode +"' \n" +
                 "   and a.ap_status not in('" + Constant.SYS_STATUS_DONE + "','" + Constant.SYS_STATUS_CANCELLED + "')\n"+
                 "   and a.ap_when is not null\n"+
+                "   and " +(hasFormApMenuProfile ? 1 : 0) +" = 1\n"+
                 "   and (strftime('%s',a.ap_when,'"+deviceGMT+"') * 1000) >= " +dt_start + "\n" +
                 "   and (strftime('%s',a.ap_when,'"+deviceGMT+"') * 1000) <= " +dt_end + "\n" +
                 " union\n" +
@@ -59,10 +72,12 @@ public class Sql_Notification_Schedule_001 implements Specification {
                 "   a.customer_code = '"+ customerCode +"' \n" +
                 "   and a.ap_status not in('" + Constant.SYS_STATUS_DONE + "','" + Constant.SYS_STATUS_CANCELLED + "')\n"+
                 "   and a.ap_when is not null\n"+
+                "   and " +(hasFormApMenuProfile ? 1 : 0 ) +" = 1\n"+
                 "   and (strftime('%s',a.ap_when,'"+deviceGMT+"') * 1000) < " +dt_start +"\n";
     }
 
     private String getScheduleSql() {
+        String scheduleTypeTicket = hasTicketMenuProfile ? "  ,'"+ ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET +"'" : "";
         return " SELECT\n" +
                 "   '"+ConstantBaseApp.MD_SCHEDULE_KEY_FUTURE+"' as "+ConstantBaseApp.MD_SCHEDULE_KEY_TYPE+",\n" +
                 "   count (1) as "+ConstantBaseApp.MD_SCHEDULE_KEY_TOTAL+"\n" +
@@ -71,6 +86,7 @@ public class Sql_Notification_Schedule_001 implements Specification {
                 " WHERE\n" +
                 "   s.customer_code = '"+ customerCode +"' \n" +
                 "   and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"' \n" +
+                "   and s.schedule_type in ('"+ ConstantBaseApp.MD_SCHEDULE_TYPE_FORM +"' "+scheduleTypeTicket+")\n" +
                 "   and (strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') * 1000) >= " + dt_start + "\n"+
                 "   and (strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') * 1000) <= " + dt_end + "\n" +
                 " union\n" +
@@ -82,6 +98,7 @@ public class Sql_Notification_Schedule_001 implements Specification {
                 " WHERE\n" +
                 "   s.customer_code = '"+ customerCode +"' \n" +
                 "   and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"' \n" +
+                "   and s.schedule_type in ('"+ ConstantBaseApp.MD_SCHEDULE_TYPE_FORM +"' "+scheduleTypeTicket+")\n" +
                 "   and (strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') * 1000) < "+dt_start +"\n";
     }
 
