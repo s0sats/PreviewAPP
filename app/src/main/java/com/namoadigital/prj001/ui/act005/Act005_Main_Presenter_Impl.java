@@ -429,13 +429,17 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             qtySO = "0";
                         }
                         //
-                        try {
-                            qtyAP = customFormApDao.getByStringHM(
+                        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP, null)) {
+                            try {
+                                qtyAP = customFormApDao.getByStringHM(
                                     new GE_Custom_Form_Ap_Sql_001(
-                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                        ToolBox_Con.getPreference_Customer_Code(context)
                                     ).toSqlQuery()
-                            ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
-                        } catch (Exception e) {
+                                ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
+                            } catch (Exception e) {
+                                qtyAP = "0";
+                            }
+                        } else{
                             qtyAP = "0";
                         }
                         //24/08/2018 - Add validação se usr tem acesso a S.O Express
