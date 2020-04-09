@@ -109,6 +109,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.namoadigital.prj001.sql.Sql_Act005_009.PENDING_QTY;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
 
@@ -458,12 +459,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         }
 
                         qtyAssets = handleAssetsPendency();
+                        //
+                        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
+                            qtyTicket = handleTicketPendency();
+                        }
+                        //
                         //Soma Qtd de n-form ,n_service, n_form_ap, so_express e assets que era io
                         menu.addInBadge1(qty);
                         menu.addInBadge1(qtySO);
                         menu.addInBadge1(qtyAP);
                         menu.addInBadge1(qtySO_Express);
                         menu.addInBadge1(qtyAssets);
+                        menu.addInBadge1(qtyTicket);
 //                        qty = String.valueOf(
 //                                Integer.parseInt(qty)
 //                                        + Integer.parseInt(qtySO)
@@ -693,6 +700,33 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         //
         //mView.loadMenuV2(menuList);
         mView.loadMenuV2(grantedMenus,calculateNumColumns());
+    }
+
+    private String handleTicketPendency() {
+
+        TK_TicketDao tk_ticketdao = new TK_TicketDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        HMAux ticketPendencies = tk_ticketdao.getByStringHM(
+                new Sql_Act005_009(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false
+                ).toSqlQuery()
+        );
+        //
+        if(ticketPendencies.hasConsistentValue(PENDING_QTY)){
+            return ticketPendencies.get(Sql_Act005_009.PENDING_QTY);
+        }else{
+            return "0";
+        }
     }
 
     /**

@@ -242,8 +242,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         initFrag();
         //
         contentMain.setVisibility(View.VISIBLE);
-        //
-        checkForHideSerialFlow();
+        /**
+         *  BARRIONUEVO 09-04-2020
+         *  Verifica se deve ocultar os dados do serial.
+         */
+        checkForHideSerialFlow(false);
         //
         if(hasNFormSelected()){
             vNFormSelected.setVisibility(View.VISIBLE);
@@ -256,13 +259,22 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
      * Metodo que concentra a verificação se deve seguir o fluxo do hide serial
      *
      */
-    private void checkForHideSerialFlow() {
+    private void checkForHideSerialFlow(boolean checkFlow) {
         if(!bundle_new_serial &&
             ToolBox_Inf.hasForceNotShowSerialInfo(context)) {
             contentMain.setVisibility(View.INVISIBLE);
             //LUCHE - 10/01/2020
             //Independentemente de estar ou não online, deve seguir para checkflow
-            mPresenter.checkFlow();
+            /**
+             *  BARRIONUEVO 09-04-2020
+             *  Verifica se deve ocultar os dados do serial.
+             */
+            if(checkFlow) {
+//                mPresenter.checkFlow();
+                if(frgSerialEdit.getBtn_action() != null){
+                    frgSerialEdit.getBtn_action().performClick();
+                }
+            }
         }
     }
 
@@ -379,7 +391,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
                             );
 
+                        }else{
+                            checkForHideSerialFlow(true);
                         }
+                    }else{
+                        checkForHideSerialFlow(true);
                     }
 //                    //Se é verificação força true, força verificação
 //                    //dos dados dos serial.
@@ -393,6 +409,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 //                                ""
 //                        );
 //                    }
+                }else {
+                    checkForHideSerialFlow(true);
                 }
             }
 
