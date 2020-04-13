@@ -108,7 +108,6 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             //Todo verificar a necessidade de colocar essas infos na md_schedule_exec
             md_product  = getMDProduct(product_code);
             if(md_product == null) {
-                /**
                  /**
                  * LUCHE - 13/04/2020
                  * Devido a falta de tempo do hotfix do hotfix do hotfix para ser publicado ainda nesta data
