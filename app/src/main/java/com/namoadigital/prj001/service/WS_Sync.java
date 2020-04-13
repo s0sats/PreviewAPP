@@ -90,6 +90,9 @@ import com.namoadigital.prj001.model.MD_Product_Group_Product;
 import com.namoadigital.prj001.model.MD_Product_Segment;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MD_Schedule_Exec_Operation;
+import com.namoadigital.prj001.model.MD_Schedule_Exec_Product;
+import com.namoadigital.prj001.model.MD_Schedule_Exec_Site;
 import com.namoadigital.prj001.model.MD_Segment;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
@@ -1493,7 +1496,54 @@ public class WS_Sync extends IntentService {
             );
             //
             File[] files_md_schedule_exec = ToolBox_Inf.getListOfFiles_v2("md_schedule_exec-");
+            //Gera lista de dados "relacionais que o usr não tem acesso.
+            File[] files_md_schedule_exec_site = ToolBox_Inf.getListOfFiles_v2("md_schedule_site-");
+            File[] files_md_schedule_exec_operation = ToolBox_Inf.getListOfFiles_v2("md_schedule_operation-");
+            File[] files_md_schedule_exec_product = ToolBox_Inf.getListOfFiles_v2("md_schedule_product-");
+            //
+            ArrayList<MD_Schedule_Exec_Site> scheduleExecSiteList = new ArrayList<>();
+            ArrayList<MD_Schedule_Exec_Operation> scheduleExecOperationList = new ArrayList<>();
+            ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList = new ArrayList<>();
+            //
+
             if(files_md_schedule_exec.length > 0) {
+                //Carrega lista de sites dos agendamentos
+                for (File fileSite : files_md_schedule_exec_site) {
+                    ArrayList<MD_Schedule_Exec_Site> tempScheduleExecSites = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(fileSite)
+                        ),
+                        new TypeToken<ArrayList<MD_Schedule_Exec_Site>>() {
+                        }.getType()
+                    );
+                    //
+                    scheduleExecSiteList.addAll(tempScheduleExecSites);
+                }
+                //Carrega lista de operation dos agendamentos
+                for (File fileOperation : files_md_schedule_exec_operation) {
+                    ArrayList<MD_Schedule_Exec_Operation> tempScheduleExecOperations = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(fileOperation)
+                        ),
+                        new TypeToken<ArrayList<MD_Schedule_Exec_Operation>>() {
+                        }.getType()
+                    );
+                    //
+                    scheduleExecOperationList.addAll(tempScheduleExecOperations);
+                }
+                //Carrega lista de produtos dos agendamentos
+                for (File fileOProducts : files_md_schedule_exec_product) {
+                    ArrayList<MD_Schedule_Exec_Product> tempScheduleExecProducts = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(fileOProducts)
+                        ),
+                        new TypeToken<ArrayList<MD_Schedule_Exec_Product>>() {
+                        }.getType()
+                    );
+                    //
+                    scheduleExecProductList.addAll(tempScheduleExecProducts);
+                }
+                //
                 ArrayList<MD_Schedule_Exec> scheduleExecs = new ArrayList<>();
                 //Loop nos arquivos extraindo todos os agendamentos para uma unica lista.
                 for (File _file : files_md_schedule_exec) {
@@ -1508,7 +1558,7 @@ public class WS_Sync extends IntentService {
                     scheduleExecs.addAll(tempScheduleExecs);
                 }
                 //
-                mdScheduleExecDao.processConciliation(scheduleExecs);
+                mdScheduleExecDao.processConciliation(scheduleExecs,scheduleExecSiteList,scheduleExecOperationList,scheduleExecProductList);
             }
         }
         //endregion

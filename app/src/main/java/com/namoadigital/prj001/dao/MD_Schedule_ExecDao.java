@@ -5,12 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.support.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MD_Schedule_Exec_Operation;
+import com.namoadigital.prj001.model.MD_Schedule_Exec_Product;
+import com.namoadigital.prj001.model.MD_Schedule_Exec_Site;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Dao_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Dao_Sql_002;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
@@ -371,9 +375,12 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
      *  - Atualiza agendamentos ja existentes e que NÃO foram iniciados ou executados
      *  - Exclui agendamentos que NÃO foram recebidos no sincronismo e que NÃO foram iniciados ou executados
      * @param receivedScheduleExecs - Agendamentos recebidos no sincronismo.
+     * @param scheduleExecSiteList
+     * @param scheduleExecOperationList
+     * @param scheduleExecProductList
      * @return
      */
-    public DaoObjReturn processConciliation(ArrayList<MD_Schedule_Exec> receivedScheduleExecs) {
+    public DaoObjReturn processConciliation(ArrayList<MD_Schedule_Exec> receivedScheduleExecs, ArrayList<MD_Schedule_Exec_Site> scheduleExecSiteList, ArrayList<MD_Schedule_Exec_Operation> scheduleExecOperationList, ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.DELETE;
@@ -418,10 +425,20 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                             //
                             switch (scheduleType){
                                 case ConstantBaseApp.MD_SCHEDULE_TYPE_FORM:
-                                    setFormsInfos(scheduleExec);
+                                    setFormsInfos(
+                                        scheduleExec,
+                                        scheduleExecSiteList,
+                                        scheduleExecOperationList,
+                                        scheduleExecProductList
+                                    );
                                     break;
                                 case ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET:
-                                    setTicketInfos(scheduleExec);
+                                    setTicketInfos(
+                                        scheduleExec,
+                                        scheduleExecSiteList,
+                                        scheduleExecOperationList,
+                                        scheduleExecProductList
+                                    );
                                     break;
                             }
                         }
@@ -510,9 +527,16 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
      * LUCHE - 11/03/2020
      * Metodo que seleciona os dados de master data do agendamento do tipo FORM
      * @param scheduleExec - Agendamento
+     * @param scheduleExecSiteList
+     * @param scheduleExecOperationList
+     * @param scheduleExecProductList
      */
-    private void setFormsInfos(MD_Schedule_Exec scheduleExec) {
+    private void setFormsInfos(MD_Schedule_Exec scheduleExec, ArrayList<MD_Schedule_Exec_Site> scheduleExecSiteList, ArrayList<MD_Schedule_Exec_Operation> scheduleExecOperationList, ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList) {
         //Tenta setar os dados do master data na tabela.
+        MD_Schedule_Exec_Site execSite = getExecSiteInfo(scheduleExec.getCustomer_code(),scheduleExec.getSite_code(),scheduleExecSiteList);
+        MD_Schedule_Exec_Operation execOperation = getExecOperationInfo(scheduleExec.getCustomer_code(),scheduleExec.getOperation_code(),scheduleExecOperationList);
+        MD_Schedule_Exec_Product execProduct = getExecProductInfo(scheduleExec.getCustomer_code(),scheduleExec.getProduct_code(),scheduleExecProductList);
+        //
         HMAux mdAux = getByStringHM(
             new MD_Schedule_Exec_Dao_Sql_001(
                 scheduleExec.getCustomer_code(),
@@ -541,12 +565,52 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         }
     }
 
+    private MD_Schedule_Exec_Product getExecProductInfo(long customer_code, int product_code, ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList) {
+        for (MD_Schedule_Exec_Product scheduleExecProduct : scheduleExecProductList) {
+            if( customer_code == scheduleExecProduct.getCustomer_code()
+                && product_code ==  scheduleExecProduct.getProduct_code()
+            ){
+                return scheduleExecProduct;
+            }
+        }
+        //JAMAIS DEVERIA ACONTECER......
+        return null;
+    }
+
+    private MD_Schedule_Exec_Operation getExecOperationInfo(long customer_code, int operation_code, ArrayList<MD_Schedule_Exec_Operation> scheduleExecOperationList) {
+        for (MD_Schedule_Exec_Operation scheduleExecOperation : scheduleExecOperationList) {
+            if( customer_code == scheduleExecOperation.getCustomer_code()
+                && operation_code ==  scheduleExecOperation.getOperation_code()
+            ){
+                return scheduleExecOperation;
+            }
+        }
+        //JAMAIS DEVERIA ACONTECER......
+        return null;
+    }
+
+    @Nullable
+    private MD_Schedule_Exec_Site getExecSiteInfo(long customer_code, int site_code, ArrayList<MD_Schedule_Exec_Site> scheduleExecSiteList) {
+        for (MD_Schedule_Exec_Site scheduleExecSite : scheduleExecSiteList) {
+            if( customer_code == scheduleExecSite.getCustomer_code()
+                && site_code ==  scheduleExecSite.getSite_code()
+            ){
+                return scheduleExecSite;
+            }
+        }
+        //JAMAIS DEVERIA ACONTECER......
+        return null;
+    }
+
     /**
      * LUCHE - 11/03/2020
      * Metodo que seleciona os dados de master data do agendamento do tipo TICKET
      * @param scheduleExec - Agendamento
+     * @param scheduleExecSiteList
+     * @param scheduleExecOperationList
+     * @param scheduleExecProductList
      */
-    private void setTicketInfos(MD_Schedule_Exec scheduleExec) {
+    private void setTicketInfos(MD_Schedule_Exec scheduleExec, ArrayList<MD_Schedule_Exec_Site> scheduleExecSiteList, ArrayList<MD_Schedule_Exec_Operation> scheduleExecOperationList, ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList) {
         //Tenta setar os dados do master data na tabela.a
         HMAux mdAux = getByStringHM(
             new MD_Schedule_Exec_Dao_Sql_002(
