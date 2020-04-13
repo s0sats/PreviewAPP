@@ -39,6 +39,23 @@ public class MD_Schedule_Exec {
     private String ticket_type_id;
     @Nullable
     private String ticket_type_desc;
+
+    private int local_control;
+    private int io_control;
+    @Nullable
+    private String serial_rule;
+    @Nullable
+    private Integer serial_min_length;
+    @Nullable
+    private Integer serial_max_length;
+    private int site_restriction;
+    @Nullable
+    private String product_icon_name;
+    @Nullable
+    private String product_icon_url;
+    private String product_icon_url_local;
+    private int require_location;
+
     private String date_start;
     private String date_end;
     @Nullable
@@ -304,6 +321,91 @@ public class MD_Schedule_Exec {
 
     public void setDate_end(String date_end) {
         this.date_end = date_end;
+    }
+
+    public int getLocal_control() {
+        return local_control;
+    }
+
+    public void setLocal_control(int local_control) {
+        this.local_control = local_control;
+    }
+
+    public int getIo_control() {
+        return io_control;
+    }
+
+    public void setIo_control(int io_control) {
+        this.io_control = io_control;
+    }
+
+    @Nullable
+    public String getSerial_rule() {
+        return serial_rule;
+    }
+
+    public void setSerial_rule(@Nullable String serial_rule) {
+        this.serial_rule = serial_rule;
+    }
+
+    @Nullable
+    public Integer getSerial_min_length() {
+        return serial_min_length;
+    }
+
+    public void setSerial_min_length(@Nullable Integer serial_min_length) {
+        this.serial_min_length = serial_min_length;
+    }
+
+    @Nullable
+    public Integer getSerial_max_length() {
+        return serial_max_length;
+    }
+
+    public void setSerial_max_length(@Nullable Integer serial_max_length) {
+        this.serial_max_length = serial_max_length;
+    }
+
+    public int getSite_restriction() {
+        return site_restriction;
+    }
+
+    public void setSite_restriction(int site_restriction) {
+        this.site_restriction = site_restriction;
+    }
+
+    @Nullable
+    public String getProduct_icon_name() {
+        return product_icon_name;
+    }
+
+    public void setProduct_icon_name(@Nullable String product_icon_name) {
+        this.product_icon_name = product_icon_name;
+    }
+
+    @Nullable
+    public String getProduct_icon_url() {
+        return product_icon_url;
+    }
+
+    public void setProduct_icon_url(@Nullable String product_icon_url) {
+        this.product_icon_url = product_icon_url;
+    }
+
+    public String getProduct_icon_url_local() {
+        return product_icon_url_local;
+    }
+
+    public void setProduct_icon_url_local(String product_icon_url_local) {
+        this.product_icon_url_local = product_icon_url_local;
+    }
+
+    public int getRequire_location() {
+        return require_location;
+    }
+
+    public void setRequire_location(int require_location) {
+        this.require_location = require_location;
     }
 
     @Nullable
