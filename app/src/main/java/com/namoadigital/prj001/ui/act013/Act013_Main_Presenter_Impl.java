@@ -204,7 +204,8 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 scheduleItem.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE),
                 scheduleItem.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID),
                 scheduleItem.get(MD_Schedule_ExecDao.SERIAL_ID),
-                true
+                true,
+                false
             );
         } else {
             //Cria e exibe dialog que requer serial.
@@ -239,7 +240,7 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
      * @param serialID - Id do serial
      * @param searchExact - Verdadeiro, busca serial exato, se falso, busca por like
      */
-    private void executeSerialSearch(String productCode, String productId, String serialID, boolean searchExact) {
+    private void executeSerialSearch(String productCode, String productId, String serialID, boolean searchExact, boolean scheduledProfileCheck) {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_Serial_Search.class.getName());
             //
@@ -255,6 +256,7 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID,productId);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serialID);
             bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, searchExact ? 1 : 0);
+            bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, scheduledProfileCheck);
             //
             mIntent.putExtras(bundle);
             //
@@ -439,6 +441,7 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                         item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE),
                         item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID),
                         serialID,
+                        false,
                         false);
                 }
 

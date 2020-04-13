@@ -843,6 +843,9 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
      * @param productId - Id do produto
      * @param serialID - Id do serial
      * @param searchExact - Verdadeiro, busca serial exato, se falso, busca por like
+     *
+     * BARRIONUEVO 13-04-2020
+     * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
      */
     private void executeSerialSearch(String productCode, String productId, String serialID, boolean searchExact) {
         if (ToolBox_Con.isOnline(context)) {
@@ -860,6 +863,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID,productId);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serialID);
             bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, searchExact ? 1 : 0);
+            bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false);
             //
             mIntent.putExtras(bundle);
             //
@@ -976,6 +980,11 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             bundle.putString(Constant.ACT017_SCHEDULED_SITE, item.get(MD_Schedule_ExecDao.SITE_CODE));
             //
             if(createFormLocalForSchedule(item,bundle)){
+                /*
+                 * BARRIONUEVO 13-04-2020
+                 * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
+                 */
+                bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false);
                 mView.callAct020(context, bundle);
             }else{
                 mView.showMsg(Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, item);

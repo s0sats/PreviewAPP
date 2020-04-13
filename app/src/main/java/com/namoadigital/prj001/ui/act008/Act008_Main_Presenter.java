@@ -31,7 +31,7 @@ public interface Act008_Main_Presenter {
 
     void executeTrackingSearch(long product_code, long serial_code, String tracking, String site_code);
 
-    void executeSerialSearch(String product_id, String serial_id);
+    void executeSerialSearch(String product_id, String serial_id, boolean scheduled_profile_check);
 
     void executeSerialSave();
 

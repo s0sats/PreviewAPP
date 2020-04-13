@@ -55,8 +55,9 @@ public class WS_Serial_Search extends IntentService {
             String serial_id = bundle.getString(Constant.WS_SERIAL_SEARCH_SERIAL_ID);
             String tracking = bundle.getString(Constant.WS_SERIAL_SEARCH_TRACKING);
             int serial_exact = bundle.getInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
+            boolean scheduled_profile_check = bundle.getBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, true);
 
-            processWSSerialSearch(product_code, product_id, serial_id, tracking, serial_exact);
+            processWSSerialSearch(product_code, product_id, serial_id, tracking, serial_exact, scheduled_profile_check);
 
         } catch (Exception e) {
 
@@ -94,7 +95,7 @@ public class WS_Serial_Search extends IntentService {
 
     }
 
-    private void processWSSerialSearch(String product_code, String product_id, String serial_id, String tracking, int serial_exact) throws Exception {
+    private void processWSSerialSearch(String product_code, String product_id, String serial_id, String tracking, int serial_exact, boolean scheduled_profile_check) throws Exception {
         //Seleciona traduções
         loadTranslation();
 
@@ -108,6 +109,11 @@ public class WS_Serial_Search extends IntentService {
         env.setSerial_id(serial_id);
         env.setSerial_exact(serial_exact);
         env.setTracking(tracking);
+        if(scheduled_profile_check){
+            env.setProfile_check(1);
+        }else{
+            env.setProfile_check(0);
+        }
         env.setSite_code(ToolBox_Con.getPreference_Site_Code(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
 
