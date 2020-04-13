@@ -54,6 +54,16 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public static final String TICKET_TYPE = "ticket_type";
     public static final String TICKET_TYPE_ID = "ticket_type_id";
     public static final String TICKET_TYPE_DESC = "ticket_type_desc";
+    public static final String LOCAL_CONTROL = "local_control";
+    public static final String IO_CONTROL = "io_control";
+    public static final String SERIAL_RULE = "serial_rule";
+    public static final String SERIAL_MIN_LENGTH = "serial_min_length";
+    public static final String SERIAL_MAX_LENGTH = "serial_max_length";
+    public static final String SITE_RESTRICTION = "site_restriction";
+    public static final String PRODUCT_ICON_NAME = "product_icon_name";
+    public static final String PRODUCT_ICON_URL = "product_icon_url";
+    public static final String PRODUCT_ICON_URL_LOCAL = "product_icon_url_local";
+    public static final String REQUIRE_LOCATION = "require_location";
     public static final String DATE_START = "date_start";
     public static final String DATE_END  = "date_end";
     public static final String COMMENTS  = "comments";
@@ -66,6 +76,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public static final String FCM_USER_NICK = "fcm_user_nick";
     public static final String SCHEDULE_ERRO_MSG = "schedule_erro_msg";
     public static final String CLOSE_DATE = "close_date";
+
     //NÃO SÃO CAMPOS DA TABELA, mas são usados em queries
     public static final String SCHEDULE_DATE_START_FORMAT = "schedule_date_start_format";
     public static final String SCHEDULE_DATE_END_FORMAT = "schedule_date_end_format";
@@ -775,6 +786,50 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             }else{
                 md_schedule_exec.setTicket_type_desc(cursor.getString(cursor.getColumnIndex(TICKET_TYPE_DESC)));
             }
+
+
+            //region new fields
+            md_schedule_exec.setLocal_control(cursor.getInt(cursor.getColumnIndex(LOCAL_CONTROL)));
+            md_schedule_exec.setIo_control(cursor.getInt(cursor.getColumnIndex(IO_CONTROL)));
+
+            if(cursor.isNull(cursor.getColumnIndex(SERIAL_RULE))){
+                md_schedule_exec.setSerial_rule(null);
+            }else{
+                md_schedule_exec.setSerial_rule(cursor.getString(cursor.getColumnIndex(SERIAL_RULE)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(SERIAL_MIN_LENGTH))){
+                md_schedule_exec.setSerial_min_length(null);
+            }else{
+                md_schedule_exec.setSerial_min_length(cursor.getInt(cursor.getColumnIndex(SERIAL_MIN_LENGTH)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(SERIAL_MAX_LENGTH))){
+                md_schedule_exec.setSerial_max_length(null);
+            }else{
+                md_schedule_exec.setSerial_max_length(cursor.getInt(cursor.getColumnIndex(SERIAL_MAX_LENGTH)));
+            }
+
+            md_schedule_exec.setSite_restriction(cursor.getInt(cursor.getColumnIndex(SITE_RESTRICTION)));
+
+
+            if(cursor.isNull(cursor.getColumnIndex(PRODUCT_ICON_NAME))){
+                md_schedule_exec.setProduct_icon_name(null);
+            }else{
+                md_schedule_exec.setProduct_icon_name(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_NAME)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(PRODUCT_ICON_URL ))){
+                md_schedule_exec.setProduct_icon_url(null);
+            }else{
+                md_schedule_exec.setProduct_icon_url(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_URL)));
+            }
+
+            md_schedule_exec.setProduct_icon_url_local(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_URL_LOCAL)));
+            md_schedule_exec.setRequire_location(cursor.getInt(cursor.getColumnIndex(REQUIRE_LOCATION)));
+
+            //endregion
+
             md_schedule_exec.setDate_start(cursor.getString(cursor.getColumnIndex(DATE_START)));
             md_schedule_exec.setDate_end(cursor.getString(cursor.getColumnIndex(DATE_END)));
             if(cursor.isNull(cursor.getColumnIndex(COMMENTS))){
@@ -869,6 +924,36 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             if(md_schedule_exec.getDate_end() != null){
                 contentValues.put(DATE_END,md_schedule_exec.getDate_end());
             }
+            //region new fields
+
+            if(md_schedule_exec.getLocal_control() > -1){
+                contentValues.put(LOCAL_CONTROL,md_schedule_exec.getLocal_control());
+            }
+
+            if(md_schedule_exec.getIo_control() > -1){
+                contentValues.put(IO_CONTROL,md_schedule_exec.getIo_control());
+            }
+
+            contentValues.put(SERIAL_RULE,md_schedule_exec.getSerial_rule());
+            contentValues.put(SERIAL_MIN_LENGTH,md_schedule_exec.getSerial_min_length());
+            contentValues.put(SERIAL_MAX_LENGTH,md_schedule_exec.getSerial_max_length());
+
+            if(md_schedule_exec.getSite_restriction() > -1){
+                contentValues.put(SITE_RESTRICTION ,md_schedule_exec.getSite_restriction());
+            }
+
+            contentValues.put(PRODUCT_ICON_NAME,md_schedule_exec.getProduct_icon_name());
+            contentValues.put(PRODUCT_ICON_URL ,md_schedule_exec.getProduct_icon_url());
+
+            if(md_schedule_exec.getProduct_icon_url_local() != null){
+                contentValues.put(PRODUCT_ICON_URL_LOCAL,md_schedule_exec.getProduct_icon_url_local());
+            }
+
+            if(md_schedule_exec.getRequire_location() > -1){
+                contentValues.put(REQUIRE_LOCATION ,md_schedule_exec.getRequire_location());
+            }
+            //endregion
+
             contentValues.put(COMMENTS,md_schedule_exec.getComments());
             if(md_schedule_exec.getRequire_serial() > -1){
                 contentValues.put(REQUIRE_SERIAL,md_schedule_exec.getRequire_serial());
