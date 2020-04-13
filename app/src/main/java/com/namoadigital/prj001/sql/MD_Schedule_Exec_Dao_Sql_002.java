@@ -10,6 +10,8 @@ import com.namoadigital.prj001.database.Specification;
  *
  * Seleciona os dados de master data de site, operação e produto para inserir na tabela de md_schedule
  *
+ * LUCHE - 13/04/2020
+ * Após implementado set de dados relacionais via list tmp, essa query perdeu ficou em desuso.
  */
 
 public class MD_Schedule_Exec_Dao_Sql_002 implements Specification {

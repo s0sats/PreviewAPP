@@ -16,7 +16,6 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec_Operation;
 import com.namoadigital.prj001.model.MD_Schedule_Exec_Product;
 import com.namoadigital.prj001.model.MD_Schedule_Exec_Site;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Dao_Sql_001;
-import com.namoadigital.prj001.sql.MD_Schedule_Exec_Dao_Sql_002;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_003;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_006;
@@ -536,11 +535,12 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
 
     /**
      * LUCHE - 11/03/2020
+     * <p></p>
      * Metodo que seleciona os dados de master data do agendamento do tipo FORM
      * @param scheduleExec - Agendamento
-     * @param scheduleExecSiteList
-     * @param scheduleExecOperationList
-     * @param scheduleExecProductList
+     * @param scheduleExecSiteList - Lista de todos os site que são usado no agendamento. Dados relacionais
+     * @param scheduleExecOperationList- Lista de todos as operations que são usado no agendamento. Dados relacionais
+     * @param scheduleExecProductList- Lista de todos os produtos que são usado no agendamento. Dados relacionais
      */
     private void setFormsInfos(MD_Schedule_Exec scheduleExec, ArrayList<MD_Schedule_Exec_Site> scheduleExecSiteList, ArrayList<MD_Schedule_Exec_Operation> scheduleExecOperationList, ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList) {
         //Tenta setar os dados do master data na tabela.
@@ -551,26 +551,41 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         HMAux mdAux = getByStringHM(
             new MD_Schedule_Exec_Dao_Sql_001(
                 scheduleExec.getCustomer_code(),
-                scheduleExec.getSite_code(),
-                scheduleExec.getOperation_code(),
-                scheduleExec.getProduct_code(),
                 scheduleExec.getCustom_form_type(),
                 scheduleExec.getCustom_form_code(),
                 scheduleExec.getCustom_form_version(),
                 ToolBox_Con.getPreference_Translate_Code(context)
             ).toSqlQuery(), db
         );
-        //
+        //Se existir tenta colocar infos do site
+        if(execSite != null){
+            scheduleExec.setSite_id(execSite.getSite_id());
+            scheduleExec.setSite_desc(execSite.getSite_desc());
+        }
+        //Se existir tenta colocar infos da operacao
+        if(execOperation != null){
+            scheduleExec.setOperation_id(execOperation.getOperation_id());
+            scheduleExec.setOperation_desc(execOperation.getOperation_desc());
+        }
+        //Se existir tenta colocar infos do produto
+        if(execProduct != null){
+            scheduleExec.setProduct_id(execProduct.getProduct_id());
+            scheduleExec.setProduct_desc(execProduct.getProduct_desc());
+            scheduleExec.setRequire_serial(execProduct.getRequire_serial());
+            scheduleExec.setAllow_new_serial_cl(execProduct.getAllow_new_serial_cl());
+            scheduleExec.setSerial_rule(execProduct.getSerial_rule());
+            scheduleExec.setSerial_max_length(execProduct.getSerial_max_length());
+            scheduleExec.setSerial_min_length(execProduct.getSerial_min_length());
+            scheduleExec.setLocal_control(execProduct.getLocal_control());
+            scheduleExec.setIo_control(execProduct.getIo_control());
+            scheduleExec.setSite_restriction(execProduct.getSite_restriction());
+            scheduleExec.setProduct_icon_name(execProduct.getProduct_icon_name());
+            scheduleExec.setProduct_icon_url(execProduct.getProduct_icon_url());
+        }
+        //Se existir tenta colocar infos do form
         if (mdAux != null && mdAux.size() > 0) {
-            scheduleExec.setSite_id(mdAux.get(SITE_ID));
-            scheduleExec.setSite_desc(mdAux.get(SITE_DESC));
-            scheduleExec.setOperation_id(mdAux.get(OPERATION_ID));
-            scheduleExec.setOperation_desc(mdAux.get(OPERATION_DESC));
-            scheduleExec.setProduct_id(mdAux.get(PRODUCT_ID));
-            scheduleExec.setProduct_desc(mdAux.get(PRODUCT_DESC));
-            scheduleExec.setRequire_serial(ToolBox_Inf.convertStringToInt(mdAux.get(REQUIRE_SERIAL)));
-            scheduleExec.setAllow_new_serial_cl(ToolBox_Inf.convertStringToInt(mdAux.get(ALLOW_NEW_SERIAL_CL)));
             scheduleExec.setRequire_serial_done(ToolBox_Inf.convertStringToInt(mdAux.get(REQUIRE_SERIAL_DONE)));
+            scheduleExec.setRequire_location(ToolBox_Inf.convertStringToInt(mdAux.get(REQUIRE_LOCATION)));
             scheduleExec.setCustom_form_type_desc(mdAux.get(CUSTOM_FORM_TYPE_DESC));
             scheduleExec.setCustom_form_desc(mdAux.get(CUSTOM_FORM_DESC));
         }
@@ -617,28 +632,51 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
      * LUCHE - 11/03/2020
      * Metodo que seleciona os dados de master data do agendamento do tipo TICKET
      * @param scheduleExec - Agendamento
-     * @param scheduleExecSiteList
-     * @param scheduleExecOperationList
-     * @param scheduleExecProductList
+     * @param scheduleExecSiteList - Lista de todos os site que são usado no agendamento. Dados relacionais
+     * @param scheduleExecOperationList- Lista de todos as operations que são usado no agendamento. Dados relacionais
+     * @param scheduleExecProductList- Lista de todos os produtos que são usado no agendamento. Dados relacionais
      */
     private void setTicketInfos(MD_Schedule_Exec scheduleExec, ArrayList<MD_Schedule_Exec_Site> scheduleExecSiteList, ArrayList<MD_Schedule_Exec_Operation> scheduleExecOperationList, ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList) {
-        //Tenta setar os dados do master data na tabela.a
-        HMAux mdAux = getByStringHM(
-            new MD_Schedule_Exec_Dao_Sql_002(
-                scheduleExec.getCustomer_code(),
-                scheduleExec.getSite_code(),
-                scheduleExec.getOperation_code(),
-                scheduleExec.getProduct_code()
-            ).toSqlQuery(), db
-        );
+        //Tenta setar os dados do master data na tabela.
+        MD_Schedule_Exec_Site execSite = getExecSiteInfo(scheduleExec.getCustomer_code(),scheduleExec.getSite_code(),scheduleExecSiteList);
+        MD_Schedule_Exec_Operation execOperation = getExecOperationInfo(scheduleExec.getCustomer_code(),scheduleExec.getOperation_code(),scheduleExecOperationList);
+        MD_Schedule_Exec_Product execProduct = getExecProductInfo(scheduleExec.getCustomer_code(),scheduleExec.getProduct_code(),scheduleExecProductList);
         //
-        if (mdAux != null && mdAux.size() > 0) {
-            scheduleExec.setSite_id(mdAux.get(SITE_ID));
-            scheduleExec.setSite_desc(mdAux.get(SITE_DESC));
-            scheduleExec.setOperation_id(mdAux.get(OPERATION_ID));
-            scheduleExec.setOperation_desc(mdAux.get(OPERATION_DESC));
-            scheduleExec.setProduct_id(mdAux.get(PRODUCT_ID));
-            scheduleExec.setProduct_desc(mdAux.get(PRODUCT_DESC));
+        //Tenta setar os dados do master data na tabela.a
+/*
+        METODOLOGIA ORIGINAL SUBSTITUIDA EM 13/04/2020  PARA USAR AS TABELAS RELACIONAIS TMP
+//        HMAux mdAux = getByStringHM(
+//            new MD_Schedule_Exec_Dao_Sql_002(
+//                scheduleExec.getCustomer_code(),
+//                scheduleExec.getSite_code(),
+//                scheduleExec.getOperation_code(),
+//                scheduleExec.getProduct_code()
+//            ).toSqlQuery(), db
+//        );
+//        //
+//        if (mdAux != null && mdAux.size() > 0) {
+//            scheduleExec.setSite_id(mdAux.get(SITE_ID));
+//            scheduleExec.setSite_desc(mdAux.get(SITE_DESC));
+//            scheduleExec.setOperation_id(mdAux.get(OPERATION_ID));
+//            scheduleExec.setOperation_desc(mdAux.get(OPERATION_DESC));
+//            scheduleExec.setProduct_id(mdAux.get(PRODUCT_ID));
+//            scheduleExec.setProduct_desc(mdAux.get(PRODUCT_DESC));
+//        }
+*/
+        //Se existir tenta colocar infos do site
+        if(execSite != null){
+            scheduleExec.setSite_id(execSite.getSite_id());
+            scheduleExec.setSite_desc(execSite.getSite_desc());
+        }
+        //Se existir tenta colocar infos da operacao
+        if(execOperation != null){
+            scheduleExec.setOperation_id(execOperation.getOperation_id());
+            scheduleExec.setOperation_desc(execOperation.getOperation_desc());
+        }
+        //Se existir tenta colocar infos do produto
+        if(execProduct != null){
+            scheduleExec.setProduct_id(execProduct.getProduct_id());
+            scheduleExec.setProduct_desc(execProduct.getProduct_desc());
         }
     }
 
