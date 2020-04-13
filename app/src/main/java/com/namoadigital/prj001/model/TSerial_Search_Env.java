@@ -13,6 +13,7 @@ public class TSerial_Search_Env extends Main_Header_Env  {
     private int serial_exact;
     private String tracking;
     private String site_code;
+    private int profile_check;
 
     public String getProduct_code() {
         return product_code;
@@ -68,5 +69,13 @@ public class TSerial_Search_Env extends Main_Header_Env  {
 
     public void setSite_code(String site_code) {
         this.site_code = site_code;
+    }
+
+    public int getProfile_check() {
+        return profile_check;
+    }
+
+    public void setProfile_check(int profile_check) {
+        this.profile_check = profile_check;
     }
 }

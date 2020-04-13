@@ -37,6 +37,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act008_003;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -530,7 +531,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     @Override
-    public void executeSerialSearch(String product_id, String serial_id) {
+    public void executeSerialSearch(String product_id, String serial_id, boolean scheduled_profile_check) {
         mView.setWsProcess(WS_Serial_Search.class.getName());
         //
         mView.showPD(
@@ -546,6 +547,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
         bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, "");
         bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
+        bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, scheduled_profile_check);
         //
         mIntent.putExtras(bundle);
         //

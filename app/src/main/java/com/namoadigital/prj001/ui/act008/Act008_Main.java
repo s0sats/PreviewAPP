@@ -57,6 +57,7 @@ import java.util.List;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SCHEDULED_PROFILE_CHECK;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -98,6 +99,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private String customFormVersion;
     private String customFormCodeDesc;
     private boolean bundle_from_offline_source;
+    private boolean scheduled_profile_check;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -439,7 +441,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         if (ToolBox_Con.isOnline(context)) {
             mPresenter.executeSerialSearch(
                     product_id,
-                    serial_id
+                    serial_id,
+                    scheduled_profile_check
             );
         } else {
             mPresenter.searchLocalSerial(mdProduct.getProduct_code(), serial_id);
@@ -453,6 +456,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             if (bundle.containsKey(ACT_SELECTED_DATE)) {
                 isSchedule = true;
             }
+            scheduled_profile_check = bundle.getBoolean(SCHEDULED_PROFILE_CHECK, true);
             //Chamada vinda Act013 quando agendamento
             if ( bundle.containsKey(Constant.MAIN_REQUESTING_ACT)
                  && bundle.getString(Constant.MAIN_REQUESTING_ACT).equals(Constant.ACT013)
