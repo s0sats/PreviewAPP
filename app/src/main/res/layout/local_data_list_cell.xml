@@ -125,14 +125,33 @@
         android:layout_weight="1"
         tools:text="Comments" />
 
-    <ImageView
-        android:id="@+id/local_data_list_cell_01_iv_schedule_warning_infos"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        app:srcCompat="@drawable/ic_info"
+        android:orientation="horizontal"
         android:layout_gravity="end"
-        android:visibility="gone"
-        />
+        >
+        <ImageView
+            android:id="@+id/local_data_list_cell_01_iv_nc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            app:srcCompat="@drawable/ic_non_compliance_on"
+            android:layout_gravity="end"
+            android:visibility="visible"
+            />
+        <View
+            android:layout_width="5dp"
+            android:layout_height="match_parent"/>
+        <ImageView
+            android:id="@+id/local_data_list_cell_01_iv_schedule_warning_infos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            app:srcCompat="@drawable/ic_info"
+            android:layout_gravity="end"
+            android:visibility="visible"
+            />
+    </LinearLayout>
 
 </LinearLayout>
