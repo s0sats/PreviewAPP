@@ -5,27 +5,25 @@
     android:id="@+id/local_data_list_cell_01_ll_bg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/namoa_cell_8_states"
     android:orientation="vertical"
-    android:padding="15dp"
-    android:background="@drawable/namoa_cell_8_states">
+    android:padding="15dp">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/local_data_list_cell_01_cl_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
         <TextView
             android:id="@+id/local_data_list_cell_01_tv_schedule_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
-            tools:text="2020.2.1"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/local_data_list_cell_01_tv_date_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            />
+            tools:text="2020.2.1" />
 
         <TextView
             android:id="@+id/local_data_list_cell_01_tv_status_val"
@@ -72,8 +70,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Site:"
-        android:textStyle="bold"
-        android:textColor="@color/namoa_color_red"/>
+        android:textColor="@color/namoa_color_red"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/local_data_list_cell_01_tv_id_label"
@@ -81,7 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Produto"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/local_data_list_cell_01_tv_serial_label"
@@ -89,7 +87,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="S/N"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <!--Dados SO-->
     <LinearLayout
@@ -103,21 +101,21 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            tools:text="SO:"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="SO:" />
 
         <TextView
             android:id="@+id/local_data_list_cell_01_tv_so_code_val"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="8"
-            tools:text="123.456"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="123.456" />
 
     </LinearLayout>
-<!--Dados Comentário-->
+    <!--Dados Comentário-->
     <TextView
         android:id="@+id/local_data_list_cell_01_tv_schedule_comment_ttl"
         android:layout_width="match_parent"
@@ -126,32 +124,34 @@
         tools:text="Comments" />
 
     <LinearLayout
+        android:id="@+id/local_data_list_cell_01_ll_icons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="end"
-        >
+        android:orientation="horizontal"
+        android:visibility="gone">
+
         <ImageView
             android:id="@+id/local_data_list_cell_01_iv_nc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            app:srcCompat="@drawable/ic_non_compliance_on"
             android:layout_gravity="end"
-            android:visibility="visible"
-            />
+            android:padding="5dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_non_compliance_on" />
+
         <View
             android:layout_width="5dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
+
         <ImageView
             android:id="@+id/local_data_list_cell_01_iv_schedule_warning_infos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            app:srcCompat="@drawable/ic_info"
             android:layout_gravity="end"
-            android:visibility="visible"
-            />
+            android:padding="5dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_info" />
     </LinearLayout>
 
 </LinearLayout>

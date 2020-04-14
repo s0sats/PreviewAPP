@@ -226,10 +226,11 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
             tv_so_code_val.setText("");
         }
         //
+        LinearLayout llIcons = convertView.findViewById(R.id.local_data_list_cell_01_ll_icons);
         ImageView ivScheduleWarningInfos = convertView.findViewById(R.id.local_data_list_cell_01_iv_schedule_warning_infos);
+        ImageView ivNonConformity = convertView.findViewById(R.id.local_data_list_cell_01_iv_nc);
         //
         defineScheduleWarningInfos(ivScheduleWarningInfos,item);
-
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)) {
 
             case Constant.SYS_STATUS_IN_PROCESSING:
@@ -331,12 +332,31 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                 );
                 break;
         }
-
+        //
+        defineLlIconsVisibility(llIcons,ivScheduleWarningInfos,ivNonConformity);
+        //
         return convertView;
     }
 
+    /**
+     * LUCHE - 14/04/2020
+     * <p></p>
+     * Metodo que defini visibilidade do linear layout que contem os icones.
+     * Se um dos icone visiveis, exibe linear, caso contrario, esconde.
+     * @param llIcons LinearLayout que contem os icones
+     * @param ivScheduleWarningInfos Icone de infos do agendamento
+     * @param ivNonConformity Icone de se existe não conformidade.
+     */
+    private void defineLlIconsVisibility(LinearLayout llIcons, ImageView ivScheduleWarningInfos, ImageView ivNonConformity) {
+        if(ivScheduleWarningInfos.getVisibility() == View.VISIBLE || ivNonConformity.getVisibility() == View.VISIBLE ){
+            llIcons.setVisibility(View.VISIBLE);
+        }else{
+            llIcons.setVisibility(View.GONE);
+        }
+    }
+
     private void defineScheduleWarningInfos(ImageView ivScheduleWarningInfos, final HMAux item) {
-        ivScheduleWarningInfos.setVisibility(View.GONE);
+        ivScheduleWarningInfos.setVisibility(View.INVISIBLE);
         ivScheduleWarningInfos.setOnClickListener(null);
         //
         if(item.hasConsistentValue(MD_Schedule_ExecDao.FCM_NEW_STATUS)
@@ -350,7 +370,6 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                 int color = !item.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG).isEmpty()
                     ? R.color.namoa_color_danger_red
                     : R.color.light_to_dark_blue_color;
-
                 ivScheduleWarningInfos.setVisibility(View.VISIBLE);
                 ivScheduleWarningInfos.setColorFilter(context.getResources().getColor(color), PorterDuff.Mode.SRC_ATOP);
                 ivScheduleWarningInfos.setOnClickListener(new View.OnClickListener() {
