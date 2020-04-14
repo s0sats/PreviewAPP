@@ -73,6 +73,8 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public static final String MODULE_TICKET_EXEC_CONFIRM = "module_ticket_exec_confirm" ;
     public static final String MODULE_SCHEDULE_TICKET_CREATION_ERROR = "module_schedule_ticket_creation_error" ;
     public static final String MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN = "module_schedule_status_prevent_to_open" ;
+    public static final String PROFILE_PRJ001_AP_NOT_FOUND = "profile_prj001_ap_not_found" ;
+    public static final String PROFILE_MENU_TICKET_NOT_FOUND = "profile_menu_ticket_not_found" ;
 
     private ListView lv_schedules;
     private Bundle bundle;
@@ -206,6 +208,10 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         //
         translateList.add("alert_schedule_status_prevents_to_open_ttl");
         translateList.add("alert_schedule_status_prevents_to_open_msg");
+        //
+        translateList.add("alert_menu_app_profile_not_found_ttl");
+        translateList.add("alert_form_ap_menu_profile_not_found_msg");
+        translateList.add("alert_ticket_menu_profile_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -495,6 +501,17 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 msg = hmAux_Trans.get("alert_schedule_status_prevents_to_open_msg");
                 btnNegative = 0;
                 break;
+            case PROFILE_PRJ001_AP_NOT_FOUND:
+                title = hmAux_Trans.get("alert_menu_app_profile_not_found_ttl");
+                msg = hmAux_Trans.get("alert_form_ap_menu_profile_not_found_msg");
+                btnNegative = 0;
+                break;
+            case PROFILE_MENU_TICKET_NOT_FOUND:
+                title = hmAux_Trans.get("alert_menu_app_profile_not_found_ttl");
+                msg = hmAux_Trans.get("alert_ticket_menu_profile_not_found_msg");
+                btnNegative = 0;
+                break;
+
         }
 
         if (btnNegative != null) {
@@ -569,6 +586,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         Intent mIntent = new Intent(context, Act020_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {
+            bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT017);
             mIntent.putExtras(bundle);
         }
         startActivity(mIntent);
@@ -657,7 +675,6 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
-
         progressDialog.dismiss();
     }
 

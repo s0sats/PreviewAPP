@@ -28,7 +28,7 @@ public class GE_Custom_Form_Data_Sql_006 implements Specification {
                         "   d.customer_code = '"+s_customer_code+"'\n" +
                         "      AND d."+GE_Custom_Form_DataDao.LOCATION_PENDENCY  + " = 1"+
                         "      AND d."+GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS +
-                                                       "  = '" + Constant.SYS_STATUS_FINALIZED+"' ;"
+                                                       "  = '" + Constant.SYS_STATUS_WAITING_SYNC+"' ;"
                 ).toString();
     }
 }

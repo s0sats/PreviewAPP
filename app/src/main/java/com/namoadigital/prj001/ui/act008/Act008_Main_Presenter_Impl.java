@@ -13,11 +13,13 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
@@ -34,9 +36,11 @@ import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act008_003;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -66,6 +70,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private String requesting_process;
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
+    private MD_Schedule_ExecDao scheduleExecDao;
 
     public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, GE_Custom_Form_LocalDao geCustomFormLocalDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule, String requesting_process, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao, boolean isFinishPlusNew) {
         this.context = context;
@@ -81,6 +86,11 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         this.serialDao = serialDao;
         this.trackingDao = trackingDao;
         this.isFinishPlusNew = isFinishPlusNew;
+        this.scheduleExecDao = new MD_Schedule_ExecDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
     }
 
     @Override
@@ -91,25 +101,57 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         if (isSchedule) {
             String serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
             //se não veio serial, seta serial_id GAMBIS
-            serial_id = !serial_id.equals("") ? serial_id :Constant.KEY_NO_SERIAL;
-            //
-            GE_Custom_Form_Local geCustomFormLocal =
+            serial_id = !serial_id.equals("") ? serial_id : Constant.KEY_NO_SERIAL;
+            //LUCHE - 03/04/2020
+            //Add tentativa de busca do produto antes de gerar o fake.Caso não encontre
+            //Gera o fake.
+            //Todo verificar a necessidade de colocar essas infos na md_schedule_exec
+            md_product  = getMDProduct(product_code);
+            if(md_product == null) {
+                /**
+                 /**
+                 * LUCHE - 13/04/2020
+                 * Devido a falta de tempo do hotfix do hotfix do hotfix para ser publicado ainda nesta data
+                 * reaproveitei o que ja tinha.
+                 * O ideial era fazer usando o bundle.getString(MD_Schedule_ExecDao.SCHEDULE_PK), porem como existem muitas
+                 * validação pelo split , foi deixada esse esquema meio portugues:
+                 * Primeiro seleciona o customForm para depois pegar o agendamento.
+                 */
+                //
+                GE_Custom_Form_Local geCustomFormLocal =
                     geCustomFormLocalDao.getByString(
-                            new Sql_Act008_003(
-                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                    bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE),
-                                    bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE),
-                                    bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION),
-                                    bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA)
-                            ).toSqlQuery()
+                        new Sql_Act008_003(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                            bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE),
+                            bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE),
+                            bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION),
+                            bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA)
+                        ).toSqlQuery()
                     );
-            //
-            md_product  = createMdProduct(geCustomFormLocal);
+                //
+                MD_Schedule_Exec scheduleExec = getMdScheduleExec(
+                    geCustomFormLocal.getSchedule_prefix(),
+                    geCustomFormLocal.getSchedule_code(),
+                    geCustomFormLocal.getSchedule_exec()
+                );
+                //
+                md_product = createMdProduct(scheduleExec);
+            }
             if(ToolBox_Inf.isValidProduct(md_product)){
-                MD_Product_Serial scheduledSerial = getSerialInfo(
+                 /*MD_Product_Serial scheduledSerial = getSerialInfo(
                                                         product_code,
                                                         serial_id
-                                                    );
+                                                    );*/
+                //
+                MD_Product_Serial scheduledSerial;
+                if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
+                    scheduledSerial = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);
+                } else {
+                    scheduledSerial = getSerialInfo(
+                        product_code,
+                        serial_id
+                    );
+                }
                 //
                 if(scheduledSerial != null){
                     mView.setMdProductSerial(scheduledSerial);
@@ -120,12 +162,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
         } else {
             md_product =
-                    mdProductDao.getByString(
-                            new MD_Product_Sql_001(
-                                    ToolBox_Con.getPreference_Customer_Code(context),
-                                    product_code
-                            ).toSqlQuery()
-                    );
+                getMDProduct(product_code);
         }
         //
         if (ToolBox_Inf.isValidProduct(md_product)) {
@@ -138,6 +175,53 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 //                    hmAux_Trans.get("alert_product_not_found_msg")
 //            );
         }
+    }
+
+    private MD_Product createMdProduct(MD_Schedule_Exec scheduleExec) {
+        MD_Product product = new MD_Product();
+        product.setCustomer_code(scheduleExec.getCustomer_code());
+        product.setProduct_code(scheduleExec.getProduct_code());
+        product.setProduct_id(scheduleExec.getProduct_id());
+        product.setProduct_desc(scheduleExec.getProduct_desc());
+        product.setRequire_serial(scheduleExec.getRequire_serial());
+        product.setAllow_new_serial_cl(scheduleExec.getAllow_new_serial_cl());
+        product.setUn("TST");
+        product.setSketch_code(0);
+        product.setSketch_url("");
+        product.setSketch_url_local("");
+        product.setSketch_lines(0);
+        product.setSketch_columns(0);
+        product.setSketch_color("#FFFFFF");
+        product.setFlag_offline(1);
+        product.setLocal_control(scheduleExec.getLocal_control());
+        product.setIo_control(scheduleExec.getIo_control());
+        product.setSerial_rule(scheduleExec.getSerial_rule());
+        product.setSerial_min_length(scheduleExec.getSerial_min_length());
+        product.setSerial_max_length(scheduleExec.getSerial_max_length());
+        product.setSite_restriction(scheduleExec.getSite_restriction());
+        product.setProduct_icon_name(scheduleExec.getProduct_icon_name());
+        product.setProduct_icon_url(scheduleExec.getProduct_icon_url());
+        return product;
+    }
+
+    private MD_Schedule_Exec getMdScheduleExec(int schedulePrefix, int scheduleCode, int scheduleExec) {
+        return scheduleExecDao.getByString(
+            new MD_Schedule_Exec_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                schedulePrefix,
+                scheduleCode,
+                scheduleExec
+            ).toSqlQuery()
+        );
+    }
+
+    private MD_Product getMDProduct(Long product_code) {
+        return mdProductDao.getByString(
+            new MD_Product_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                product_code
+            ).toSqlQuery()
+        );
     }
 
     private MD_Product createMdProduct(GE_Custom_Form_Local geCustomFormLocal) {
@@ -509,7 +593,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     @Override
-    public void executeSerialSearch(String product_id, String serial_id) {
+    public void executeSerialSearch(String product_id, String serial_id, boolean scheduled_profile_check) {
         mView.setWsProcess(WS_Serial_Search.class.getName());
         //
         mView.showPD(
@@ -525,6 +609,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
         bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, "");
         bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
+        bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, scheduled_profile_check);
         //
         mIntent.putExtras(bundle);
         //
@@ -560,12 +645,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                 String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
                 String status = item.getValue();
 
-                MD_Product mdProduct = mdProductDao.getByString(
-                        new MD_Product_Sql_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                Long.parseLong(pk[0])
-                        ).toSqlQuery()
-                );
+                MD_Product mdProduct = getMDProduct(Long.parseLong(pk[0]));
                 //
                 if (mdProduct != null) {
                     aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mdProduct.getProduct_code() + " - " + mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc());

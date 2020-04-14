@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -23,20 +24,30 @@ import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.StatusFilterDialog;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Act015_Main extends Base_Activity implements Act015_Main_View {
 
+
+    public static final String FILTER_CHK_IS_DONE = "FILTER_CHK_IS_DONE";
+    public static final String FILTER_CHK_IS_NOT_EXEC = "FILTER_CHK_IS_NOT_EXEC";
+    public static final String FILTER_CHK_IS_CANCELLED = "FILTER_CHK_IS_CANCELLED";
+    public static final String FILTER_CHK_IS_IGNORED = "FILTER_CHK_IS_IGNORED";
     private Act015_Main_Presenter mPresenter;
     private ListView lv_sent;
+    private ImageView iv_filter;
     private MKEditTextNM mket_filter;
     private Local_Data_List_Adapter mAdapter;
     public static final String FILTER_SEARCH_KEY = "filter_search_key";
     public static final String FORM_SELECTED_INDEX_KEY = "form_selected_index";
     private int form_selected_index = -1;
-
+    private boolean is_done;
+    private boolean is_not_exec;
+    private boolean is_cancelled;
+    private boolean is_ignored;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +99,8 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         translateList.add("alert_form_status_prevents_to_open_ttl");
         translateList.add("alert_form_status_prevents_to_open_msg");
         //
+        translateList.add("alert_filter_status_dialog_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -105,6 +118,15 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         if (bundle != null) {
             filter_search = bundle.getString(FILTER_SEARCH_KEY);
             form_selected_index = bundle.getInt(FORM_SELECTED_INDEX_KEY, -1);
+            is_done =  bundle.getBoolean(FILTER_CHK_IS_DONE, true);
+            is_not_exec =  bundle.getBoolean(FILTER_CHK_IS_NOT_EXEC, true);
+            is_cancelled = bundle.getBoolean(FILTER_CHK_IS_CANCELLED, false);
+            is_ignored =  bundle.getBoolean(FILTER_CHK_IS_IGNORED, false);
+        }else{
+            is_done = true ;
+            is_not_exec = true;
+            is_cancelled = false;
+            is_ignored = false;
         }
         //
         mPresenter =
@@ -119,6 +141,7 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
                         hmAux_Trans
                 );
 
+        iv_filter = findViewById(R.id.act015_iv_filter);
         lv_sent = (ListView) findViewById(R.id.act015_lv_sent_data);
         mket_filter = (MKEditTextNM) findViewById(R.id.act015_mket_filter);
         mket_filter.setHint(hmAux_Trans.get("lbl_filter"));
@@ -126,8 +149,13 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
             mket_filter.setText(filter_search);
         }
         mket_filter.clearFocus();
-        mPresenter.getSentData();
+        /**
+         * BARRIONUEVO - 30-03-2020
+         * Default da tela sao os filtros done e not_exec como true e cancelled e ignored como falso
+         */
 
+        mPresenter.getSentData(is_done, is_not_exec, is_cancelled, is_ignored);
+        updateIvFilterState();
     }
 
     private void iniUIFooter() {
@@ -174,6 +202,37 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
                 applySearchFilter();
             }
         });
+
+
+        iv_filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterDialog();
+            }
+        });
+    }
+
+    private void showFilterDialog() {
+        final StatusFilterDialog alert = new StatusFilterDialog(
+                context,
+                hmAux_Trans,
+                is_done,
+                is_not_exec,
+                is_cancelled,
+                is_ignored,
+                new StatusFilterDialog.OnApplyFilterListener() {
+                    @Override
+                    public void onApply(boolean isDone, boolean isNotExec, boolean isCancelled, boolean isIgnored) {
+                        mPresenter.getSentData(isDone, isNotExec, isCancelled, isIgnored);
+                        is_done = isDone ;
+                        is_not_exec = isNotExec;
+                        is_cancelled = isCancelled;
+                        is_ignored = isIgnored;
+                        updateIvFilterState();
+                    }
+                });
+        //
+        alert.show();
     }
 
     @Override
@@ -223,6 +282,10 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
             bundle.putString(FILTER_SEARCH_KEY,mket_filter.getText().toString());
         }
         bundle.putInt(FORM_SELECTED_INDEX_KEY, form_selected_index);
+        bundle.putBoolean(FILTER_CHK_IS_DONE, is_done);
+        bundle.putBoolean(FILTER_CHK_IS_NOT_EXEC, is_not_exec);
+        bundle.putBoolean(FILTER_CHK_IS_CANCELLED, is_cancelled);
+        bundle.putBoolean(FILTER_CHK_IS_IGNORED, is_ignored);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -263,5 +326,13 @@ public class Act015_Main extends Base_Activity implements Act015_Main_View {
         if (mAdapter != null) {
             mAdapter.getFilter().filter(mket_filter.getText().toString().trim());
         }
-    };
+    }
+
+    private void updateIvFilterState() {
+        if (is_done || is_cancelled || is_ignored ||is_not_exec) {
+            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
+        } else {
+            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
+        }
+    }
 }

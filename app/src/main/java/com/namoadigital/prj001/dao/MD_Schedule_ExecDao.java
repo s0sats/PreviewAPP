@@ -5,14 +5,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.support.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MD_Schedule_Exec_Operation;
+import com.namoadigital.prj001.model.MD_Schedule_Exec_Product;
+import com.namoadigital.prj001.model.MD_Schedule_Exec_Site;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Dao_Sql_001;
-import com.namoadigital.prj001.sql.MD_Schedule_Exec_Dao_Sql_002;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_003;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_006;
@@ -54,6 +57,16 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public static final String TICKET_TYPE = "ticket_type";
     public static final String TICKET_TYPE_ID = "ticket_type_id";
     public static final String TICKET_TYPE_DESC = "ticket_type_desc";
+    public static final String LOCAL_CONTROL = "local_control";
+    public static final String IO_CONTROL = "io_control";
+    public static final String SERIAL_RULE = "serial_rule";
+    public static final String SERIAL_MIN_LENGTH = "serial_min_length";
+    public static final String SERIAL_MAX_LENGTH = "serial_max_length";
+    public static final String SITE_RESTRICTION = "site_restriction";
+    public static final String PRODUCT_ICON_NAME = "product_icon_name";
+    public static final String PRODUCT_ICON_URL = "product_icon_url";
+    public static final String PRODUCT_ICON_URL_LOCAL = "product_icon_url_local";
+    public static final String REQUIRE_LOCATION = "require_location";
     public static final String DATE_START = "date_start";
     public static final String DATE_END  = "date_end";
     public static final String COMMENTS  = "comments";
@@ -66,6 +79,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public static final String FCM_USER_NICK = "fcm_user_nick";
     public static final String SCHEDULE_ERRO_MSG = "schedule_erro_msg";
     public static final String CLOSE_DATE = "close_date";
+
     //NÃO SÃO CAMPOS DA TABELA, mas são usados em queries
     public static final String SCHEDULE_DATE_START_FORMAT = "schedule_date_start_format";
     public static final String SCHEDULE_DATE_END_FORMAT = "schedule_date_end_format";
@@ -371,9 +385,12 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
      *  - Atualiza agendamentos ja existentes e que NÃO foram iniciados ou executados
      *  - Exclui agendamentos que NÃO foram recebidos no sincronismo e que NÃO foram iniciados ou executados
      * @param receivedScheduleExecs - Agendamentos recebidos no sincronismo.
+     * @param scheduleExecSiteList
+     * @param scheduleExecOperationList
+     * @param scheduleExecProductList
      * @return
      */
-    public DaoObjReturn processConciliation(ArrayList<MD_Schedule_Exec> receivedScheduleExecs) {
+    public DaoObjReturn processConciliation(ArrayList<MD_Schedule_Exec> receivedScheduleExecs, ArrayList<MD_Schedule_Exec_Site> scheduleExecSiteList, ArrayList<MD_Schedule_Exec_Operation> scheduleExecOperationList, ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.DELETE;
@@ -418,10 +435,20 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                             //
                             switch (scheduleType){
                                 case ConstantBaseApp.MD_SCHEDULE_TYPE_FORM:
-                                    setFormsInfos(scheduleExec);
+                                    setFormsInfos(
+                                        scheduleExec,
+                                        scheduleExecSiteList,
+                                        scheduleExecOperationList,
+                                        scheduleExecProductList
+                                    );
                                     break;
                                 case ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET:
-                                    setTicketInfos(scheduleExec);
+                                    setTicketInfos(
+                                        scheduleExec,
+                                        scheduleExecSiteList,
+                                        scheduleExecOperationList,
+                                        scheduleExecProductList
+                                    );
                                     break;
                             }
                         }
@@ -508,61 +535,148 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
 
     /**
      * LUCHE - 11/03/2020
+     * <p></p>
      * Metodo que seleciona os dados de master data do agendamento do tipo FORM
      * @param scheduleExec - Agendamento
+     * @param scheduleExecSiteList - Lista de todos os site que são usado no agendamento. Dados relacionais
+     * @param scheduleExecOperationList- Lista de todos as operations que são usado no agendamento. Dados relacionais
+     * @param scheduleExecProductList- Lista de todos os produtos que são usado no agendamento. Dados relacionais
      */
-    private void setFormsInfos(MD_Schedule_Exec scheduleExec) {
+    private void setFormsInfos(MD_Schedule_Exec scheduleExec, ArrayList<MD_Schedule_Exec_Site> scheduleExecSiteList, ArrayList<MD_Schedule_Exec_Operation> scheduleExecOperationList, ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList) {
         //Tenta setar os dados do master data na tabela.
+        MD_Schedule_Exec_Site execSite = getExecSiteInfo(scheduleExec.getCustomer_code(),scheduleExec.getSite_code(),scheduleExecSiteList);
+        MD_Schedule_Exec_Operation execOperation = getExecOperationInfo(scheduleExec.getCustomer_code(),scheduleExec.getOperation_code(),scheduleExecOperationList);
+        MD_Schedule_Exec_Product execProduct = getExecProductInfo(scheduleExec.getCustomer_code(),scheduleExec.getProduct_code(),scheduleExecProductList);
+        //
         HMAux mdAux = getByStringHM(
             new MD_Schedule_Exec_Dao_Sql_001(
                 scheduleExec.getCustomer_code(),
-                scheduleExec.getSite_code(),
-                scheduleExec.getOperation_code(),
-                scheduleExec.getProduct_code(),
                 scheduleExec.getCustom_form_type(),
                 scheduleExec.getCustom_form_code(),
-                scheduleExec.getCustom_form_version()
+                scheduleExec.getCustom_form_version(),
+                ToolBox_Con.getPreference_Translate_Code(context)
             ).toSqlQuery(), db
         );
-        //
+        //Se existir tenta colocar infos do site
+        if(execSite != null){
+            scheduleExec.setSite_id(execSite.getSite_id());
+            scheduleExec.setSite_desc(execSite.getSite_desc());
+        }
+        //Se existir tenta colocar infos da operacao
+        if(execOperation != null){
+            scheduleExec.setOperation_id(execOperation.getOperation_id());
+            scheduleExec.setOperation_desc(execOperation.getOperation_desc());
+        }
+        //Se existir tenta colocar infos do produto
+        if(execProduct != null){
+            scheduleExec.setProduct_id(execProduct.getProduct_id());
+            scheduleExec.setProduct_desc(execProduct.getProduct_desc());
+            scheduleExec.setRequire_serial(execProduct.getRequire_serial());
+            scheduleExec.setAllow_new_serial_cl(execProduct.getAllow_new_serial_cl());
+            scheduleExec.setSerial_rule(execProduct.getSerial_rule());
+            scheduleExec.setSerial_max_length(execProduct.getSerial_max_length());
+            scheduleExec.setSerial_min_length(execProduct.getSerial_min_length());
+            scheduleExec.setLocal_control(execProduct.getLocal_control());
+            scheduleExec.setIo_control(execProduct.getIo_control());
+            scheduleExec.setSite_restriction(execProduct.getSite_restriction());
+            scheduleExec.setProduct_icon_name(execProduct.getProduct_icon_name());
+            scheduleExec.setProduct_icon_url(execProduct.getProduct_icon_url());
+        }
+        //Se existir tenta colocar infos do form
         if (mdAux != null && mdAux.size() > 0) {
-            scheduleExec.setSite_id(mdAux.get(SITE_ID));
-            scheduleExec.setSite_desc(mdAux.get(SITE_DESC));
-            scheduleExec.setOperation_id(mdAux.get(OPERATION_ID));
-            scheduleExec.setOperation_desc(mdAux.get(OPERATION_DESC));
-            scheduleExec.setProduct_id(mdAux.get(PRODUCT_ID));
-            scheduleExec.setProduct_desc(mdAux.get(PRODUCT_DESC));
-            scheduleExec.setRequire_serial(ToolBox_Inf.convertStringToInt(mdAux.get(REQUIRE_SERIAL)));
-            scheduleExec.setAllow_new_serial_cl(ToolBox_Inf.convertStringToInt(mdAux.get(ALLOW_NEW_SERIAL_CL)));
             scheduleExec.setRequire_serial_done(ToolBox_Inf.convertStringToInt(mdAux.get(REQUIRE_SERIAL_DONE)));
+            scheduleExec.setRequire_location(ToolBox_Inf.convertStringToInt(mdAux.get(REQUIRE_LOCATION)));
             scheduleExec.setCustom_form_type_desc(mdAux.get(CUSTOM_FORM_TYPE_DESC));
             scheduleExec.setCustom_form_desc(mdAux.get(CUSTOM_FORM_DESC));
         }
+    }
+
+    private MD_Schedule_Exec_Product getExecProductInfo(long customer_code, int product_code, ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList) {
+        for (MD_Schedule_Exec_Product scheduleExecProduct : scheduleExecProductList) {
+            if( customer_code == scheduleExecProduct.getCustomer_code()
+                && product_code ==  scheduleExecProduct.getProduct_code()
+            ){
+                return scheduleExecProduct;
+            }
+        }
+        //JAMAIS DEVERIA ACONTECER......
+        return null;
+    }
+
+    private MD_Schedule_Exec_Operation getExecOperationInfo(long customer_code, int operation_code, ArrayList<MD_Schedule_Exec_Operation> scheduleExecOperationList) {
+        for (MD_Schedule_Exec_Operation scheduleExecOperation : scheduleExecOperationList) {
+            if( customer_code == scheduleExecOperation.getCustomer_code()
+                && operation_code ==  scheduleExecOperation.getOperation_code()
+            ){
+                return scheduleExecOperation;
+            }
+        }
+        //JAMAIS DEVERIA ACONTECER......
+        return null;
+    }
+
+    @Nullable
+    private MD_Schedule_Exec_Site getExecSiteInfo(long customer_code, int site_code, ArrayList<MD_Schedule_Exec_Site> scheduleExecSiteList) {
+        for (MD_Schedule_Exec_Site scheduleExecSite : scheduleExecSiteList) {
+            if( customer_code == scheduleExecSite.getCustomer_code()
+                && site_code ==  scheduleExecSite.getSite_code()
+            ){
+                return scheduleExecSite;
+            }
+        }
+        //JAMAIS DEVERIA ACONTECER......
+        return null;
     }
 
     /**
      * LUCHE - 11/03/2020
      * Metodo que seleciona os dados de master data do agendamento do tipo TICKET
      * @param scheduleExec - Agendamento
+     * @param scheduleExecSiteList - Lista de todos os site que são usado no agendamento. Dados relacionais
+     * @param scheduleExecOperationList- Lista de todos as operations que são usado no agendamento. Dados relacionais
+     * @param scheduleExecProductList- Lista de todos os produtos que são usado no agendamento. Dados relacionais
      */
-    private void setTicketInfos(MD_Schedule_Exec scheduleExec) {
-        //Tenta setar os dados do master data na tabela.a
-        HMAux mdAux = getByStringHM(
-            new MD_Schedule_Exec_Dao_Sql_002(
-                scheduleExec.getCustomer_code(),
-                scheduleExec.getSite_code(),
-                scheduleExec.getOperation_code(),
-                scheduleExec.getProduct_code()
-            ).toSqlQuery(), db
-        );
+    private void setTicketInfos(MD_Schedule_Exec scheduleExec, ArrayList<MD_Schedule_Exec_Site> scheduleExecSiteList, ArrayList<MD_Schedule_Exec_Operation> scheduleExecOperationList, ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList) {
+        //Tenta setar os dados do master data na tabela.
+        MD_Schedule_Exec_Site execSite = getExecSiteInfo(scheduleExec.getCustomer_code(),scheduleExec.getSite_code(),scheduleExecSiteList);
+        MD_Schedule_Exec_Operation execOperation = getExecOperationInfo(scheduleExec.getCustomer_code(),scheduleExec.getOperation_code(),scheduleExecOperationList);
+        MD_Schedule_Exec_Product execProduct = getExecProductInfo(scheduleExec.getCustomer_code(),scheduleExec.getProduct_code(),scheduleExecProductList);
         //
-        if (mdAux != null && mdAux.size() > 0) {
-            scheduleExec.setSite_id(mdAux.get(SITE_ID));
-            scheduleExec.setSite_desc(mdAux.get(SITE_DESC));
-            scheduleExec.setOperation_id(mdAux.get(OPERATION_ID));
-            scheduleExec.setOperation_desc(mdAux.get(OPERATION_DESC));
-            scheduleExec.setProduct_id(mdAux.get(PRODUCT_ID));
-            scheduleExec.setProduct_desc(mdAux.get(PRODUCT_DESC));
+        //Tenta setar os dados do master data na tabela.a
+/*
+        METODOLOGIA ORIGINAL SUBSTITUIDA EM 13/04/2020  PARA USAR AS TABELAS RELACIONAIS TMP
+//        HMAux mdAux = getByStringHM(
+//            new MD_Schedule_Exec_Dao_Sql_002(
+//                scheduleExec.getCustomer_code(),
+//                scheduleExec.getSite_code(),
+//                scheduleExec.getOperation_code(),
+//                scheduleExec.getProduct_code()
+//            ).toSqlQuery(), db
+//        );
+//        //
+//        if (mdAux != null && mdAux.size() > 0) {
+//            scheduleExec.setSite_id(mdAux.get(SITE_ID));
+//            scheduleExec.setSite_desc(mdAux.get(SITE_DESC));
+//            scheduleExec.setOperation_id(mdAux.get(OPERATION_ID));
+//            scheduleExec.setOperation_desc(mdAux.get(OPERATION_DESC));
+//            scheduleExec.setProduct_id(mdAux.get(PRODUCT_ID));
+//            scheduleExec.setProduct_desc(mdAux.get(PRODUCT_DESC));
+//        }
+*/
+        //Se existir tenta colocar infos do site
+        if(execSite != null){
+            scheduleExec.setSite_id(execSite.getSite_id());
+            scheduleExec.setSite_desc(execSite.getSite_desc());
+        }
+        //Se existir tenta colocar infos da operacao
+        if(execOperation != null){
+            scheduleExec.setOperation_id(execOperation.getOperation_id());
+            scheduleExec.setOperation_desc(execOperation.getOperation_desc());
+        }
+        //Se existir tenta colocar infos do produto
+        if(execProduct != null){
+            scheduleExec.setProduct_id(execProduct.getProduct_id());
+            scheduleExec.setProduct_desc(execProduct.getProduct_desc());
         }
     }
 
@@ -774,6 +888,50 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             }else{
                 md_schedule_exec.setTicket_type_desc(cursor.getString(cursor.getColumnIndex(TICKET_TYPE_DESC)));
             }
+
+
+            //region new fields
+            md_schedule_exec.setLocal_control(cursor.getInt(cursor.getColumnIndex(LOCAL_CONTROL)));
+            md_schedule_exec.setIo_control(cursor.getInt(cursor.getColumnIndex(IO_CONTROL)));
+
+            if(cursor.isNull(cursor.getColumnIndex(SERIAL_RULE))){
+                md_schedule_exec.setSerial_rule(null);
+            }else{
+                md_schedule_exec.setSerial_rule(cursor.getString(cursor.getColumnIndex(SERIAL_RULE)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(SERIAL_MIN_LENGTH))){
+                md_schedule_exec.setSerial_min_length(null);
+            }else{
+                md_schedule_exec.setSerial_min_length(cursor.getInt(cursor.getColumnIndex(SERIAL_MIN_LENGTH)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(SERIAL_MAX_LENGTH))){
+                md_schedule_exec.setSerial_max_length(null);
+            }else{
+                md_schedule_exec.setSerial_max_length(cursor.getInt(cursor.getColumnIndex(SERIAL_MAX_LENGTH)));
+            }
+
+            md_schedule_exec.setSite_restriction(cursor.getInt(cursor.getColumnIndex(SITE_RESTRICTION)));
+
+
+            if(cursor.isNull(cursor.getColumnIndex(PRODUCT_ICON_NAME))){
+                md_schedule_exec.setProduct_icon_name(null);
+            }else{
+                md_schedule_exec.setProduct_icon_name(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_NAME)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(PRODUCT_ICON_URL ))){
+                md_schedule_exec.setProduct_icon_url(null);
+            }else{
+                md_schedule_exec.setProduct_icon_url(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_URL)));
+            }
+
+            md_schedule_exec.setProduct_icon_url_local(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_URL_LOCAL)));
+            md_schedule_exec.setRequire_location(cursor.getInt(cursor.getColumnIndex(REQUIRE_LOCATION)));
+
+            //endregion
+
             md_schedule_exec.setDate_start(cursor.getString(cursor.getColumnIndex(DATE_START)));
             md_schedule_exec.setDate_end(cursor.getString(cursor.getColumnIndex(DATE_END)));
             if(cursor.isNull(cursor.getColumnIndex(COMMENTS))){
@@ -868,6 +1026,36 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             if(md_schedule_exec.getDate_end() != null){
                 contentValues.put(DATE_END,md_schedule_exec.getDate_end());
             }
+            //region new fields
+
+            if(md_schedule_exec.getLocal_control() > -1){
+                contentValues.put(LOCAL_CONTROL,md_schedule_exec.getLocal_control());
+            }
+
+            if(md_schedule_exec.getIo_control() > -1){
+                contentValues.put(IO_CONTROL,md_schedule_exec.getIo_control());
+            }
+
+            contentValues.put(SERIAL_RULE,md_schedule_exec.getSerial_rule());
+            contentValues.put(SERIAL_MIN_LENGTH,md_schedule_exec.getSerial_min_length());
+            contentValues.put(SERIAL_MAX_LENGTH,md_schedule_exec.getSerial_max_length());
+
+            if(md_schedule_exec.getSite_restriction() > -1){
+                contentValues.put(SITE_RESTRICTION ,md_schedule_exec.getSite_restriction());
+            }
+
+            contentValues.put(PRODUCT_ICON_NAME,md_schedule_exec.getProduct_icon_name());
+            contentValues.put(PRODUCT_ICON_URL ,md_schedule_exec.getProduct_icon_url());
+
+            if(md_schedule_exec.getProduct_icon_url_local() != null){
+                contentValues.put(PRODUCT_ICON_URL_LOCAL,md_schedule_exec.getProduct_icon_url_local());
+            }
+
+            if(md_schedule_exec.getRequire_location() > -1){
+                contentValues.put(REQUIRE_LOCATION ,md_schedule_exec.getRequire_location());
+            }
+            //endregion
+
             contentValues.put(COMMENTS,md_schedule_exec.getComments());
             if(md_schedule_exec.getRequire_serial() > -1){
                 contentValues.put(REQUIRE_SERIAL,md_schedule_exec.getRequire_serial());

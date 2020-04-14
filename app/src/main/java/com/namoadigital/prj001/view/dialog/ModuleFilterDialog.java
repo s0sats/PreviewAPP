@@ -90,18 +90,15 @@ public class ModuleFilterDialog extends AlertDialog {
 
     private void initValues() {
         chk_site.setChecked(ToolBox_Con.getBooleanPreferencesByKey(context, String.valueOf(chk_site.getTag()), false));
-        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_CHECKLIST,null)){
-            chk_form.setChecked(
-                ToolBox_Con.getBooleanPreferencesByKey(
-                    context,
-                    String.valueOf(chk_form.getTag()),
-                    true
-                )
-            );
-        }else{
-            chk_form.setChecked(false);
-            chk_form.setVisibility(View.GONE);
-        }
+
+        chk_form.setChecked(
+            ToolBox_Con.getBooleanPreferencesByKey(
+                context,
+                String.valueOf(chk_form.getTag()),
+                true
+            )
+        );
+
         if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP,null)){
             chk_form_ap.setChecked(
                 ToolBox_Con.getBooleanPreferencesByKey(

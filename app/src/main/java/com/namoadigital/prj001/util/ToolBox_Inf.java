@@ -2706,15 +2706,8 @@ public class ToolBox_Inf {
             ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
         );
         //Tratativa para status que só existe no Checklist.
-        String testStatus = currentStatus;
-        switch (testStatus){
-            case ConstantBaseApp.SYS_STATUS_IN_PROCESSING:
-                currentStatus = ConstantBaseApp.SYS_STATUS_PROCESS;
-                break;
-            case ConstantBaseApp.SYS_STATUS_FINALIZED:
-                currentStatus = ConstantBaseApp.SYS_STATUS_DONE;
-                break;
-            default:
+        if (ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(currentStatus)) {
+            currentStatus = ConstantBaseApp.SYS_STATUS_PROCESS;
         }
         //
         List<String> transList = new ArrayList<>();
@@ -5191,11 +5184,18 @@ public class ToolBox_Inf {
 
     @Deprecated
     /**
+     * <p></p>
      * Metodo que retorno do color referente ao status passado
+     * <p></p>
      * LUCHE - 27/12/2019
      * O Metodo foi depreciado, pois foi criado o getStatusColorV2 que usa o mesmo switch deste metodo
      * mas ao inves de retornar o R.color, retorna o recurso da cor e , sendo assim, pode ser usado
      * diretamente no setTextColor();
+     * <p></p>
+     * LUCHE - 30/03/2020
+     * <p></p>
+     * Comentando os status do form que não existirão mais(Finalized e Sent) e modificando a cor dos
+     * status schedule e waiting_sync
      *
      * @param status - Status
      * @return - R.color do status passado.
@@ -5209,6 +5209,8 @@ public class ToolBox_Inf {
                 return R.color.namoa_status_stop;
             case Constant.SYS_STATUS_PENDING:
                 return R.color.namoa_status_pending;
+            case Constant.SYS_STATUS_SCHEDULE:
+                return R.color.namoa_status_scheduled;
             case Constant.SYS_STATUS_PROCESS:
             case Constant.SYS_STATUS_IN_PROCESSING:
             case Constant.SYS_STATUS_PUT_AWAY:
@@ -5224,21 +5226,19 @@ public class ToolBox_Inf {
             case Constant.SYS_STATUS_WAITING_CLIENT:
             case Constant.SYS_STATUS_WAITING_ACTION:
                 return R.color.namoa_status_waiting_client;
-            case Constant.SYS_STATUS_WAITING_SYNC:
-                return R.color.namoa_status_waiting_sync;
             case Constant.SYS_STATUS_DONE:
-            case Constant.SYS_STATUS_FINALIZED:
+            case Constant.SYS_STATUS_FINALIZED://Remover após certeza que não é mais usado
                 return R.color.namoa_status_done;
             case Constant.SYS_STATUS_NOT_EXECUTED:
-            case Constant.SYS_STATUS_SENT:
+            case Constant.SYS_STATUS_SENT://30/03/2020 - Ainda usado na O.S express
                 return R.color.namoa_status_not_executed;
             case Constant.SYS_STATUS_CANCELLED:
             case Constant.SYS_STATUS_DELETED:
                 return R.color.namoa_status_cancelled;
             case Constant.SYS_STATUS_INCONSISTENT:
                 return R.color.namoa_status_inconsistent;
-            case Constant.SYS_STATUS_SCHEDULE:
-                return R.color.namoa_status_scheduled;
+            case Constant.SYS_STATUS_WAITING_SYNC:
+                return R.color.namoa_status_waiting_sync;
             case Constant.SYS_STATUS_ERROR:
             case Constant.SYS_STATUS_IGNORED:
                 return R.color.namoa_status_error;

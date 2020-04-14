@@ -35,17 +35,20 @@ public class Act015_Main_Presenter_Impl implements Act015_Main_Presenter {
     }
 
     @Override
-    public void getSentData() {
+    public void getSentData( boolean isDone, boolean isNotExec, boolean isCancelled, boolean isIgnored) {
         List<HMAux> sent_datas =
                 customFormLocalDao.query_HM(
                         new Sql_Act015_001(
                                 ToolBox_Con.getPreference_Customer_Code(context),
-                                context
+                                context,
+                                isDone,
+                                isNotExec,
+                                isCancelled,
+                                isIgnored
                         ).toSqlQuery()
                 );
         //
         mView.loadSentData(sent_datas);
-
     }
 
     @Override

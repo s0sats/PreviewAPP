@@ -109,6 +109,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.namoadigital.prj001.sql.Sql_Act005_009.PENDING_QTY;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
 
@@ -429,13 +430,17 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                             qtySO = "0";
                         }
                         //
-                        try {
-                            qtyAP = customFormApDao.getByStringHM(
+                        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP, null)) {
+                            try {
+                                qtyAP = customFormApDao.getByStringHM(
                                     new GE_Custom_Form_Ap_Sql_001(
-                                            ToolBox_Con.getPreference_Customer_Code(context)
+                                        ToolBox_Con.getPreference_Customer_Code(context)
                                     ).toSqlQuery()
-                            ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
-                        } catch (Exception e) {
+                                ).get(GE_Custom_Form_Ap_Sql_001.BADGE_IN_PROCESSING_QTY);
+                            } catch (Exception e) {
+                                qtyAP = "0";
+                            }
+                        } else{
                             qtyAP = "0";
                         }
                         //24/08/2018 - Add validação se usr tem acesso a S.O Express
@@ -454,12 +459,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         }
 
                         qtyAssets = handleAssetsPendency();
+                        //
+                        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
+                            qtyTicket = handleTicketPendency();
+                        }
+                        //
                         //Soma Qtd de n-form ,n_service, n_form_ap, so_express e assets que era io
                         menu.addInBadge1(qty);
                         menu.addInBadge1(qtySO);
                         menu.addInBadge1(qtyAP);
                         menu.addInBadge1(qtySO_Express);
                         menu.addInBadge1(qtyAssets);
+                        menu.addInBadge1(qtyTicket);
 //                        qty = String.valueOf(
 //                                Integer.parseInt(qty)
 //                                        + Integer.parseInt(qtySO)
@@ -492,7 +503,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                     new Sql_Act005_002(
                                             String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                                     ).toSqlQuery()
-                            ).get(Sql_Act005_002.BADGE_FINALIZED_QTY);
+                            ).get(Sql_Act005_002.BADGE_WAITING_SYNC_QTY);
                         } catch (Exception e) {
                             qty = "0";
                         }
@@ -565,12 +576,17 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         }
                         //
                         try {
-                            qtyAP = customFormApDao.getByStringHM(
+                            //LUCHE - 08/04/2020 - So contabilza se tem acesso ao modulo.
+                            if(ToolBox_Inf.profileExists(context,ConstantBaseApp.PROFILE_PRJ001_AP,null)) {
+                                qtyAP = customFormApDao.getByStringHM(
                                     new Sql_Act005_006(
-                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                            forward_hour
+                                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                                        forward_hour
                                     ).toSqlQuery()
-                            ).get(Sql_Act005_006.BADGE_SCHEDULED_QTY);
+                                ).get(Sql_Act005_006.BADGE_SCHEDULED_QTY);
+                            }else{
+                                qtyAP = "0";
+                            }
                         } catch (Exception e) {
                             qtyAP = "0";
                         }
@@ -684,6 +700,33 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         //
         //mView.loadMenuV2(menuList);
         mView.loadMenuV2(grantedMenus,calculateNumColumns());
+    }
+
+    private String handleTicketPendency() {
+
+        TK_TicketDao tk_ticketdao = new TK_TicketDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        HMAux ticketPendencies = tk_ticketdao.getByStringHM(
+                new Sql_Act005_009(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        true,
+                        true,
+                        true,
+                        false,
+                        false,
+                        false
+                ).toSqlQuery()
+        );
+        //
+        if(ticketPendencies.hasConsistentValue(PENDING_QTY)){
+            return ticketPendencies.get(Sql_Act005_009.PENDING_QTY);
+        }else{
+            return "0";
+        }
     }
 
     /**
@@ -1818,5 +1861,44 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             return true;
         }
         return false;
+    }
+    @Override
+    public int countInboundItemSaveReturnTotal(String jsonRet, String io_item_lbl) {
+        ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn> actReturnList = null;
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        int okInboundItem= 0;
+        try {
+            actReturnList = gson.fromJson(
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+                    }.getType());
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+
+        if(actReturnList != null){
+           return actReturnList.size();
+        }
+        return okInboundItem;
+    }
+
+    @Override
+    public int countOutboundItemSaveReturnTotal(String jsonRet, String io_item_lbl) {
+        ArrayList<WS_IO_Outbound_Item_Save.OutboundItemSaveActReturn> actReturnList = null;
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        int okInboundItem= 0;
+        try {
+            actReturnList = gson.fromJson(
+                    jsonRet,
+                    new TypeToken<ArrayList<WS_IO_Inbound_Item_Save.InboundItemSaveActReturn>>() {
+                    }.getType());
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+
+        if(actReturnList != null){
+            return actReturnList.size();
+        }
+        return okInboundItem;
     }
 }

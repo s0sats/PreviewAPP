@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SCHEDULED_PROFILE_CHECK;
 
 /**
  * Created by d.luche on 17/05/2017.
@@ -107,6 +108,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private Bundle scheduleBundle = new Bundle();
     private Bundle act013Bundle = new Bundle();
     private String requestingAct;
+    private boolean scheduled_profile_check;
 
 
     @Override
@@ -309,6 +311,12 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //
         if (bundle != null) {
             from_offline_source = bundle.getBoolean(FROM_OFFLINE_SOURCE, false);
+            /*
+             * BARRIONUEVO 13-04-2020
+             * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
+             */
+            scheduled_profile_check = bundle.getBoolean(SCHEDULED_PROFILE_CHECK, true);
+
             if (bundle.containsKey(Constant.MAIN_MD_PRODUCT_SERIAL)) {
 
                 mJump = bundle.getBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP);
@@ -369,6 +377,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 scheduleBundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,""));
                 scheduleBundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,""));
                 scheduleBundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK,bundle.getString(MD_Schedule_ExecDao.SCHEDULE_PK,""));
+                scheduleBundle.putString(Constant.ACT017_SCHEDULED_SITE,bundle.getString(Constant.ACT017_SCHEDULED_SITE,""));
             }
             //
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT006);
@@ -376,7 +385,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             if(requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT013)){
                 act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, true));
                 act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, false));
-                act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED,false));
+                act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,false));
             }
         }
     }
@@ -609,6 +618,13 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //Adicao de imagem informativa que o serial escolhido veio de fonte offline.
         if(from_offline_source){
             bundle.putBoolean(FROM_OFFLINE_SOURCE, from_offline_source);
+        }
+        /*
+         * BARRIONUEVO 13-04-2020
+         * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
+         */
+        if(!scheduled_profile_check){
+            bundle.putBoolean(SCHEDULED_PROFILE_CHECK, scheduled_profile_check);
         }
         bundle.putAll(scheduleBundle);
         bundle.putAll(act013Bundle);

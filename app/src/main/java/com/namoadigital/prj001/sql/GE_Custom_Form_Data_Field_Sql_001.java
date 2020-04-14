@@ -37,7 +37,7 @@ public class GE_Custom_Form_Data_Field_Sql_001 implements Specification {
                         "       and df.custom_form_data = f.custom_form_data " +
                         "        " +
                         "       and f.customer_code = '"+s_customer_code+"' " +
-                        "       and f.custom_form_status = '"+ Constant.SYS_STATUS_FINALIZED+"' " +
+                        "       and f.custom_form_status = '"+ Constant.SYS_STATUS_WAITING_SYNC+"' " +
                         "       AND f."+GE_Custom_Form_DataDao.TOKEN+" != '' " +
                         "        " +
                         "  ORDER BY " +

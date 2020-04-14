@@ -127,6 +127,8 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
     @Override
     public void getSchedules(String selected_date, boolean filter_form, boolean filter_form_ap, boolean filter_ticket, String serial_id, boolean late, boolean filter_site_logged, String schedulePk) {
+        boolean formApMenuAccess = ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP,null);
+        boolean ticketMenuAccess = ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET,null);
         ArrayList<HMAux> schedules = new ArrayList<>();
         //Se atrasado, ignora data
         if (late) {
@@ -150,7 +152,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             }
         }
         //
-        if (filter_form_ap || (!filter_form && !filter_form_ap && !filter_ticket)) {
+        if (formApMenuAccess && (filter_form_ap || (!filter_form && !filter_form_ap && !filter_ticket))) {
             ArrayList<HMAux> schedulesFormAP =
                 (ArrayList<HMAux>) formApDao.query_HM(
                     new Sql_Act017_002(
@@ -167,7 +169,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         }
         //LUCHE - 11/03/2020
         //Busca ticket agendados.
-        if (filter_ticket || (!filter_form && !filter_form_ap && !filter_ticket)) {
+        if (ticketMenuAccess && (filter_ticket || (!filter_form && !filter_form_ap && !filter_ticket))) {
             ArrayList<HMAux> schedulesTicket =
                 (ArrayList<HMAux>) ticketDao.query_HM(
                     new Sql_Act017_004(
@@ -263,10 +265,24 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 processFormFlow(item);
                 break;
             case Constant.MODULE_FORM_AP:
-                prepareOpenFormAP(item);
+                if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP,null)) {
+                    prepareOpenFormAP(item);
+                }else{
+                    mView.showMsg(
+                        Act017_Main.PROFILE_PRJ001_AP_NOT_FOUND,
+                        item
+                    );
+                }
                 break;
             case ConstantBaseApp.PROFILE_MENU_TICKET:
-                processTicketFlow(item);
+                if(ToolBox_Inf.profileExists(context,ConstantBaseApp.PROFILE_MENU_TICKET,null)) {
+                    processTicketFlow(item);
+                }else{
+                    mView.showMsg(
+                        Act017_Main.PROFILE_MENU_TICKET_NOT_FOUND,
+                        item
+                    );
+                }
                 break;
         }
     }
@@ -827,6 +843,9 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
      * @param productId - Id do produto
      * @param serialID - Id do serial
      * @param searchExact - Verdadeiro, busca serial exato, se falso, busca por like
+     *
+     * BARRIONUEVO 13-04-2020
+     * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
      */
     private void executeSerialSearch(String productCode, String productId, String serialID, boolean searchExact) {
         if (ToolBox_Con.isOnline(context)) {
@@ -844,6 +863,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID,productId);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serialID);
             bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, searchExact ? 1 : 0);
+            bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false);
             //
             mIntent.putExtras(bundle);
             //
@@ -862,7 +882,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         HMAux item = serialDialog.getAuxSchedule();
         ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(
             item.get(MD_Schedule_ExecDao.PRODUCT_ID),
-            item.hasConsistentValue(MD_Schedule_ExecDao.SERIAL_ID) ? item.get(MD_Schedule_ExecDao.SERIAL_ID) : serialDialog.getSerialId()
+            item.hasConsistentValue(MD_Schedule_ExecDao.SERIAL_ID) && !item.get(MD_Schedule_ExecDao.SERIAL_ID).isEmpty() ? item.get(MD_Schedule_ExecDao.SERIAL_ID) : serialDialog.getSerialId()
         );
         //
         if (serial_list.size() > 0) {
@@ -957,8 +977,14 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
             bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
+            bundle.putString(Constant.ACT017_SCHEDULED_SITE, item.get(MD_Schedule_ExecDao.SITE_CODE));
             //
             if(createFormLocalForSchedule(item,bundle)){
+                /*
+                 * BARRIONUEVO 13-04-2020
+                 * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
+                 */
+                bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false);
                 mView.callAct020(context, bundle);
             }else{
                 mView.showMsg(Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, item);

@@ -64,15 +64,21 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
         pendencies.addAll(NFormPendencies);
         //
         //Pendencias FORM AP
-        GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
-        List<HMAux> NFormAPPendencies = formApDao.query_HM(
-                new Sql_Act012_003(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        label_translation
-                ).toSqlQuery()
-        );
-        //
-        pendencies.addAll(NFormAPPendencies);
+        /**
+         *   BARRIONUEVO 07-04-2020
+         *   Verifica perfil para form-ap
+         */
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_AP, null)) {
+            GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
+            List<HMAux> NFormAPPendencies = formApDao.query_HM(
+                    new Sql_Act012_003(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            label_translation
+                    ).toSqlQuery()
+            );
+            //
+            pendencies.addAll(NFormAPPendencies);
+        }
         if (ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,null)) {
             //Seleciona "pendencias do usr"
             HMAux soMyPendencies = soDao.getByStringHM(

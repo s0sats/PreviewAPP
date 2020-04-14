@@ -32,8 +32,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * metodo getDeviceGMT().
  *
  * LUCHE - 13/02/2020
- *
  * Modificado query para usar a nova tabela de agendamento
+ *
+ * LUCHE - 30/03/2020
+ * Modificado query substituindo o status FINALIZED pelo WAITING_SYNC
  */
 
 public class Sql_Act017_001 implements Specification {
@@ -113,22 +115,30 @@ public class Sql_Act017_001 implements Specification {
                         "  WHERE\n" +
                         "      s."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' \n" +
                         "      AND s.schedule_type = '"+ConstantBaseApp.MD_SCHEDULE_TYPE_FORM+"'\n"+
-                        "      AND s.status <>'"+ ConstantBaseApp.SYS_STATUS_CANCELLED+"'\n" +
+                        //"      AND s.status <>'"+ ConstantBaseApp.SYS_STATUS_CANCELLED+"'\n" +
+                        "      AND s.status in(" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"',\n" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"',\n" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"',\n" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"',\n" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_DONE+"',\n" +
+                        "                       '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"'\n" +
+                        "                      )\n " +
                         "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"') = '"+selected_date+"') \n" +
                         "      AND ('"+serial_id+"' is null or s.serial_id like '%"+serial_id+"%' or d.serial_id like '%"+serial_id+"%' ) \n" +
                         "      AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') \n" +
-                        "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))  and s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"')) \n" +
+                        "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))  and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"')) \n" +
                         "  ORDER BY\n" +
                         "      strftime('%Y-%m-%d %H:%M',s.date_start,'"+customerGMT+"'), \n" +
-                        "      CASE WHEN s.status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN 0\n" +
-                        "           WHEN s.status = '"+Constant.SYS_STATUS_FINALIZED+"' THEN 1\n" +
-                        "           WHEN s.status = '"+Constant.SYS_STATUS_SCHEDULE+"' THEN 2\n" +
+                        "      CASE WHEN s.status = '"+ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"' THEN 0\n" +
+                        "           WHEN s.status = '"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"' THEN 1\n" +
+                        "           WHEN s.status = '"+ConstantBaseApp.SYS_STATUS_SCHEDULE+"' THEN 2\n" +
                         "           ELSE 3\n" +
                         "      END \n," +
-                        "      (CASE WHEN s.status = '"+Constant.SYS_STATUS_IN_PROCESSING+"' THEN d.date_start\n" +
+                        "      (CASE WHEN s.status = '"+ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"' THEN d.date_start\n" +
                         "            ELSE  '31/12/9999 23:59'\n" +
                         "       END) ASC,\n" +
-                        "      (CASE WHEN s.status = '"+Constant.SYS_STATUS_FINALIZED+"' THEN d.date_end\n" +
+                        "      (CASE WHEN s.status = '"+ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"' THEN d.date_end\n" +
                         "            ELSE  '01/01/1900 00:00'\n" +
                         "       END) DESC , \n" +
                         "      s.custom_form_type, \n" +

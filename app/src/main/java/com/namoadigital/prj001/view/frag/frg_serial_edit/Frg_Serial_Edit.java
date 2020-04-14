@@ -3451,4 +3451,9 @@ public class Frg_Serial_Edit extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
     }
+
+
+    public Button getBtn_action() {
+        return btn_action;
+    }
 }

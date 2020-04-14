@@ -7,7 +7,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -25,10 +25,29 @@ public class Sql_Act015_001 implements Specification {
 
     private long s_customer_code;
     private String sqlite_date_format;
+    private String statusFilter = "";
 
-    public Sql_Act015_001(long s_customer_code, Context context) {
+    public Sql_Act015_001(long s_customer_code, Context context, boolean isDone, boolean isNotExec, boolean isCancelled, boolean isIgnored) {
         this.s_customer_code = s_customer_code;
         this.sqlite_date_format = ToolBox_Inf.nlsDate2SqliteDate(context);
+
+        if (isDone || isNotExec || isCancelled|| isIgnored) {
+            statusFilter = "   and l.custom_form_status in(";
+            statusFilter += isDone ? "'" + ConstantBaseApp.SYS_STATUS_DONE + "', " : "";
+            statusFilter += isNotExec ? "'" + ConstantBaseApp.SYS_STATUS_NOT_EXECUTED + "', " : "";
+            statusFilter += isCancelled ? "'" + ConstantBaseApp.SYS_STATUS_CANCELLED + "', " : "";
+            statusFilter += isIgnored ? "'" + ConstantBaseApp.SYS_STATUS_IGNORED + "', " : "";
+            statusFilter = statusFilter.substring(0, statusFilter.length() - ", ".length());
+            statusFilter += " )\n";
+        } else {
+            statusFilter = "   and l.custom_form_status in (\n" +
+                    "                           '" + ConstantBaseApp.SYS_STATUS_DONE + "',\n" +
+                    "                           '" + ConstantBaseApp.SYS_STATUS_NOT_EXECUTED + "',\n" +
+                    "                           '" + ConstantBaseApp.SYS_STATUS_CANCELLED + "',\n" +
+                    "                           '" + ConstantBaseApp.SYS_STATUS_IGNORED + "'\n" +
+                    "                           )\n";
+        }
+
     }
 
     @Override
@@ -87,11 +106,7 @@ public class Sql_Act015_001 implements Specification {
                         "      AND l.custom_form_version = d.custom_form_version\n" +
                         "      AND l.custom_form_data = d.custom_form_data\n" +
                         "      AND l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"'\n " +
-                        "      AND l.custom_form_status in ( '"+ Constant.SYS_STATUS_SENT+"'\n" +
-                        "                                    ,'"+ Constant.SYS_STATUS_NOT_EXECUTED+"'\n" +
-                        "                                    ,'"+ Constant.SYS_STATUS_CANCELLED+"'\n" +
-                        "                                    ,'"+ Constant.SYS_STATUS_IGNORED+"'\n" +
-                        "                                   )\n " +
+                                statusFilter +
                         "  ORDER BY" +
                         "    d.date_end desc,\n" +
                         "    l.custom_form_type,\n " +

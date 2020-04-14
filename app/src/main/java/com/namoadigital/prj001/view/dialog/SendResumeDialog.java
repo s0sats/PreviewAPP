@@ -100,12 +100,12 @@ public class SendResumeDialog extends AlertDialog {
 
             module_status.setVisibility(View.VISIBLE);
             if (isDone) {
-                Drawable unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_check_circle_white_24dp);
+                Drawable unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_check_white_24dp);
                 Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
                 DrawableCompat.setTint(wrappedDrawable, ContextCompat.getColor(context, android.R.color.holo_green_light) );
                 module_status.setBackground(wrappedDrawable);
             }else{
-                Drawable unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_close_circle_black_24dp);
+                Drawable unwrappedDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_clear_white_24dp);
                 Drawable wrappedDrawable = DrawableCompat.wrap(unwrappedDrawable);
                 DrawableCompat.setTint(wrappedDrawable,  ContextCompat.getColor(context, android.R.color.holo_red_light));
                 module_status.setBackground(wrappedDrawable);
@@ -119,17 +119,12 @@ public class SendResumeDialog extends AlertDialog {
         tvTitle.setText(hmAux_trans.get("alert_resume_title"));
         btnOK.setText(R.string.sys_alert_btn_ok);
         btnOK.setEnabled(false);
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST, null)) {
-            nFormItem.setVisibility(View.VISIBLE);
-            nFormItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
-            nFormItem.findViewById(R.id.send_resume_iv_ready).setVisibility(View.GONE);
-            tv_module_nform = nFormItem.findViewById(R.id.send_resume_tv_module);
-            tv_module_nform.setText(hmAux_trans.get("alert_resume_nform"));
-            nFormItem.findViewById(R.id.send_resume_amount);
-        } else {
-            nFormItem.setVisibility(View.GONE);
-        }
-
+        /**
+         *  BARRIONUEVO - 07-04-2020
+         *  O N-Form nao possui
+         */
+        setNFormMenuResmue();
+        //
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, null)) {
             serialItem.setVisibility(View.VISIBLE);
             serialItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
@@ -202,6 +197,15 @@ public class SendResumeDialog extends AlertDialog {
             ticketItem.setVisibility(View.GONE);
         }
 
+    }
+
+    private void setNFormMenuResmue() {
+        nFormItem.setVisibility(View.VISIBLE);
+        nFormItem.findViewById(R.id.send_resume_pb).setVisibility(View.VISIBLE);
+        nFormItem.findViewById(R.id.send_resume_iv_ready).setVisibility(View.GONE);
+        tv_module_nform = nFormItem.findViewById(R.id.send_resume_tv_module);
+        tv_module_nform.setText(hmAux_trans.get("alert_resume_nform"));
+        nFormItem.findViewById(R.id.send_resume_amount);
     }
 
     private void setViewsById() {

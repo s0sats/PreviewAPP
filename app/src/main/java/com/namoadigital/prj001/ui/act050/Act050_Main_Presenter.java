@@ -16,6 +16,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SO_Creation_Obj;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Client_List;
 import com.namoadigital.prj001.receiver.WBR_SO_Creation_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Favorite_List;
@@ -149,6 +150,8 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
                             bundle.putString(SM_SODao.SO_PREFIX,hmAuxRet.get(SM_SODao.SO_PREFIX));
                             bundle.putString(SM_SODao.SO_CODE,hmAuxRet.get(SM_SODao.SO_CODE));
                             //
+                            callDownloadPicture();
+                            //
                             mView.callAct027(context,bundle);
                         }
                     },
@@ -164,6 +167,15 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
                     0
             );
         }
+    }
+
+    private void callDownloadPicture() {
+        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
+        mIntentPIC.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntentPIC);
     }
 
     @Override

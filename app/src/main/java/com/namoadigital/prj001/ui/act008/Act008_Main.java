@@ -57,6 +57,7 @@ import java.util.List;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SCHEDULED_PROFILE_CHECK;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -98,6 +99,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private String customFormVersion;
     private String customFormCodeDesc;
     private boolean bundle_from_offline_source;
+    private boolean scheduled_profile_check;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -242,8 +244,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         initFrag();
         //
         contentMain.setVisibility(View.VISIBLE);
-        //
-        checkForHideSerialFlow();
+        /**
+         *  BARRIONUEVO 09-04-2020
+         *  Verifica se deve ocultar os dados do serial.
+         */
+        checkForHideSerialFlow(false);
         //
         if(hasNFormSelected()){
             vNFormSelected.setVisibility(View.VISIBLE);
@@ -256,13 +261,22 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
      * Metodo que concentra a verificação se deve seguir o fluxo do hide serial
      *
      */
-    private void checkForHideSerialFlow() {
+    private void checkForHideSerialFlow(boolean checkFlow) {
         if(!bundle_new_serial &&
             ToolBox_Inf.hasForceNotShowSerialInfo(context)) {
             contentMain.setVisibility(View.INVISIBLE);
             //LUCHE - 10/01/2020
             //Independentemente de estar ou não online, deve seguir para checkflow
-            mPresenter.checkFlow();
+            /**
+             *  BARRIONUEVO 09-04-2020
+             *  Verifica se deve ocultar os dados do serial.
+             */
+            if(checkFlow) {
+//                mPresenter.checkFlow();
+                if(frgSerialEdit.getBtn_action() != null){
+                    frgSerialEdit.getBtn_action().performClick();
+                }
+            }
         }
     }
 
@@ -379,7 +393,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
                             );
 
+                        }else{
+                            checkForHideSerialFlow(true);
                         }
+                    }else{
+                        checkForHideSerialFlow(true);
                     }
 //                    //Se é verificação força true, força verificação
 //                    //dos dados dos serial.
@@ -393,6 +411,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 //                                ""
 //                        );
 //                    }
+                }else {
+                    checkForHideSerialFlow(true);
                 }
             }
 
@@ -421,7 +441,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         if (ToolBox_Con.isOnline(context)) {
             mPresenter.executeSerialSearch(
                     product_id,
-                    serial_id
+                    serial_id,
+                    scheduled_profile_check
             );
         } else {
             mPresenter.searchLocalSerial(mdProduct.getProduct_code(), serial_id);
@@ -435,6 +456,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             if (bundle.containsKey(ACT_SELECTED_DATE)) {
                 isSchedule = true;
             }
+            scheduled_profile_check = bundle.getBoolean(SCHEDULED_PROFILE_CHECK, true);
             //Chamada vinda Act013 quando agendamento
             if ( bundle.containsKey(Constant.MAIN_REQUESTING_ACT)
                  && bundle.getString(Constant.MAIN_REQUESTING_ACT).equals(Constant.ACT013)
@@ -881,7 +903,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         Bundle act013Bundle = new Bundle();
         act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_IN_PROCESSING));
         act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE));
-        act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_FINALIZED));
+        act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC));
         mIntent.putExtras(act013Bundle);
         startActivity(mIntent);
         finish();

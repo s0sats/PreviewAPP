@@ -278,10 +278,10 @@ public class WS_Save extends IntentService {
                 List<GE_Custom_Form_Local> formLocals = new ArrayList<>();
                 List<MD_Schedule_Exec> formSchedules = new ArrayList<>();
                 boolean isScheduleForm = false;
-                //Se enviado com sucesso, atualiza Status para SENT
+                //Se enviado com sucesso, atualiza Status para DONE
                 for (GE_Custom_Form_Data form_data : form_datas){
-                    //Se status SENT
-                    form_data.setCustom_form_status(Constant.SYS_STATUS_SENT);
+                    //Se status DONE
+                    form_data.setCustom_form_status(Constant.SYS_STATUS_DONE);
                     //Vars do novo agendamento
                     TSave_Rec.Error_Process errorProcess = null;
                     isScheduleForm = ToolBox_Inf.isScheduleForm(form_data);
@@ -408,8 +408,8 @@ public class WS_Save extends IntentService {
                     schedule_exec
                 ).toSqlQuery()
             );
-
-        auxSchedule.setStatus(Constant.SYS_STATUS_SENT);
+        //
+        auxSchedule.setStatus(Constant.SYS_STATUS_DONE);
         //
         return auxSchedule;
     }
@@ -431,7 +431,7 @@ public class WS_Save extends IntentService {
                 ).toSqlQuery()
             );
         //
-        aux.setCustom_form_status(Constant.SYS_STATUS_SENT);
+        aux.setCustom_form_status(Constant.SYS_STATUS_DONE);
         //
         return aux;
     }

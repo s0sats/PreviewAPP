@@ -1,21 +1,17 @@
 package com.namoadigital.prj001.service;
 
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
@@ -26,10 +22,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -199,7 +193,7 @@ public class SV_LocationTracker extends Service {
             ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, false);
         }
 
-        debugNotificacao();
+//        debugNotificacao();
 
     }
 
@@ -243,7 +237,7 @@ public class SV_LocationTracker extends Service {
         }
 
 
-        debugNotificacao();
+//        debugNotificacao();
 
         mLocation_Type = "";
         mLocation_Latitude = "";
@@ -253,50 +247,54 @@ public class SV_LocationTracker extends Service {
 
         return START_STICKY;
     }
-    //TODO remover após testes
-    private void debugNotificacao() {
-        String latloc, longloc,typeloc, dateloc;
 
-        latloc = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LAT, "Nao ha");
-        longloc = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LNG, "Nao ha");
-        typeloc = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_TYPE, "Nao ha");
-        dateloc = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(ToolBox_Con.getLongPreferencesByKey(getApplicationContext(), Constant.LOCATION_DATE, 0)));
-        String freqLoc = "NDa";
-        switch (async_gps){
-            //Parametrizacao para recuperar localizacao durante a exec do N-FORM no intervalo de 5min
-            case LOCATION_NFORM_ON:
-                freqLoc = "5 min";
-                break;
-            //Parametrizacao para recuperar localizacao apos finalizacao do N-FORM
-            case LOCATION_BACKGROUND:
-                freqLoc = "1 min";
-                break;
-
-        }
-
-        String msg =
-                "latloc: " + latloc +
-                "\nlongloc: " + longloc +
-                "\ntypeloc: " + typeloc +
-                "\ndateloc: " + dateloc+
-                "\nFrequancia: " + freqLoc;
-
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(getApplicationContext())
-                        .setSmallIcon(R.drawable.namoa_logo)
-                        .setContentTitle("Preferencias de Localizacao")
-                        .setContentText("Expanda para ver as infos")
-                        .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(msg));
-
-        NotificationManager nm = (NotificationManager)
-                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            nm.notify(123401234, mBuilder.build());
-        } else {
-            nm.notify(123401234, mBuilder.getNotification());
-        }
-    }
+    /**
+     *  BARRIONUEVO - 02-04-2020
+     *  METODO PARA TESTES
+     */
+//    private void debugNotificacao() {
+//        String latloc, longloc,typeloc, dateloc;
+//
+//        latloc = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LAT, "Nao ha");
+//        longloc = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LNG, "Nao ha");
+//        typeloc = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_TYPE, "Nao ha");
+//        dateloc = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(ToolBox_Con.getLongPreferencesByKey(getApplicationContext(), Constant.LOCATION_DATE, 0)));
+//        String freqLoc = "NDa";
+//        switch (async_gps){
+//            //Parametrizacao para recuperar localizacao durante a exec do N-FORM no intervalo de 5min
+//            case LOCATION_NFORM_ON:
+//                freqLoc = "5 min";
+//                break;
+//            //Parametrizacao para recuperar localizacao apos finalizacao do N-FORM
+//            case LOCATION_BACKGROUND:
+//                freqLoc = "1 min";
+//                break;
+//
+//        }
+//
+//        String msg =
+//                "latloc: " + latloc +
+//                "\nlongloc: " + longloc +
+//                "\ntypeloc: " + typeloc +
+//                "\ndateloc: " + dateloc+
+//                "\nFrequancia: " + freqLoc;
+//
+//        NotificationCompat.Builder mBuilder =
+//                new NotificationCompat.Builder(getApplicationContext())
+//                        .setSmallIcon(R.drawable.namoa_logo)
+//                        .setContentTitle("Preferencias de Localizacao")
+//                        .setContentText("Expanda para ver as infos")
+//                        .setStyle(new NotificationCompat.BigTextStyle()
+//                                .bigText(msg));
+//
+//        NotificationManager nm = (NotificationManager)
+//                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+//            nm.notify(123401234, mBuilder.build());
+//        } else {
+//            nm.notify(123401234, mBuilder.getNotification());
+//        }
+//    }
 
     private void setServiceTimeout() {
         mHandler = new Handler();
@@ -340,8 +338,7 @@ public class SV_LocationTracker extends Service {
     public void onDestroy() {
         status = false;
         ToolBox_Inf.callPendencyNotification(getApplicationContext());
-        NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-        manager.cancel(123401234);
+
         removeLocationListeners();
 //        ToolBox.toastMSG(getApplicationContext(), "onDestroy");
         super.onDestroy();

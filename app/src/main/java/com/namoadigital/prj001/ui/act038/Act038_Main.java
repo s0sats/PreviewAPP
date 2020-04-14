@@ -1148,6 +1148,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                         mCustom_Form_Data,
                         mAp_Code
                 );
+                ToolBox_Inf.callPendencyNotification(context);
             }
 
             //mPresenter.loadSSStatus(mGe_custom_form_ap.getAp_status());

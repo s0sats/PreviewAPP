@@ -54,7 +54,7 @@
                     android:visibility="visible" />
 
                 <CheckBox
-                    android:id="@+id/act013_chk_finalized"
+                    android:id="@+id/act013_chk_waiting_sync"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:buttonTint="@color/namoa_color_light_green4" />

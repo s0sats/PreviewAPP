@@ -205,6 +205,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private String move_planned[];
     private String blinds[];
     ArrayList<HMAux> inbound_items;
+    int inboundItensTotal=0;
+    int outboundItensTotal=0;
     ArrayList<HMAux> outbound_items;
 
     @Override
@@ -1639,7 +1641,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             mPresenter.executeMoveSave();  // 6
         } else if (wsSoProcess.equalsIgnoreCase(WS_IO_Move_Save.class.getSimpleName())) {
             setWsSoProcess("");
-
+            assetsProcessErrorAmount=0;
             move_planned = hmAux.get(WS_IO_Move_Save.MOVE_RETURN_LIST).split(Constant.MAIN_CONCAT_STRING);
 
             if (move_planned.length > 0 && !move_planned[0].isEmpty()) {
@@ -1689,9 +1691,21 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             setWsSoProcess("");
 
             inbound_items = mPresenter.processInboundItemSaveReturn(mLink, WS_RESULT_TYPE_ASSETS_INBOUND_ITEM);
+//            inboundItensOk = mPresenter.countInboundItemSaveReturnOk(mLink, WS_RESULT_TYPE_ASSETS_INBOUND_ITEM);
+            inboundItensTotal=0;
 
+            inboundItensTotal = mPresenter.countInboundItemSaveReturnTotal(mLink, WS_RESULT_TYPE_ASSETS_INBOUND_ITEM);
             if(inbound_items != null) {
                 wsResults.addAll(inbound_items);
+                for (HMAux item :inbound_items) {
+                    if(item != null
+                    && item.hasConsistentValue("status"))
+                    if( "OK".equalsIgnoreCase(item.get("status"))){
+
+                    }else{
+                        assetsProcessErrorAmount++;
+                    }
+                }
             }else{
                 inbound_items = new ArrayList<>();
             }
@@ -1702,13 +1716,25 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             setWsSoProcess("");
 
             outbound_items = mPresenter.processOutboundItemSaveReturn(mLink, WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM);
+//            outboundItensOk = mPresenter.countOutboundItemSaveReturnOk(mLink, WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM);
+            outboundItensTotal=0;
 
+            outboundItensTotal = mPresenter.countOutboundItemSaveReturnTotal(mLink, WS_RESULT_TYPE_ASSETS_OUTBOUND_ITEM);
             if(outbound_items != null) {
                 wsResults.addAll(outbound_items);
+                for (HMAux item :outbound_items) {
+                    if(item != null
+                            && item.hasConsistentValue("status"))
+                        if( "OK".equalsIgnoreCase(item.get("status"))){
+
+                        }else{
+                            assetsProcessErrorAmount++;
+                        }
+                }
             }else{
                 outbound_items = new ArrayList<>();
             }
-
+            assetsProcessErrorAmount = assetsProcessErrorAmount + outbound_items.size();
             setAssetsResume();
             mPresenter.executeTicketSave(); //10
 
@@ -1735,27 +1761,39 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             ArrayList<HMAux> ticket_items = mPresenter.processTicketSaveReturn(mLink, WS_RESULT_TYPE_TICKET);
             int total_tickets_amount = 0;
             boolean isDone = true;
+            int ticket_errors = 0;
+
             if (total_tickets != null) {
                 total_tickets_amount = total_tickets.size();
             }
 
             if (ticket_items != null && ticket_items.size() > 0) {
                 wsResults.addAll(ticket_items);
-                total_tickets_amount = total_tickets_amount - ticket_items.size();
-                isDone  = false;
+                for (HMAux item :ticket_items) {
+                    if(item != null
+                            && item.hasConsistentValue("status"))
+                        if(!"OK".equalsIgnoreCase(item.get("status"))){
+                            isDone  = false;
+                            ticket_errors++;
+                        }
+                }
+
             }
 
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
             try {
-                sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, isDone, total_tickets_amount, total_tickets_amount);
+                sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, isDone, total_tickets_amount - ticket_errors, total_tickets_amount);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            sendResumeDialog.setBtnOKEnable(true);
+            if(sendResumeDialog != null) {
+                sendResumeDialog.setBtnOKEnable(true);
+            }
         } else {
-            sendResumeDialog.setBtnOKEnable(true);
+            if(sendResumeDialog != null) {
+                sendResumeDialog.setBtnOKEnable(true);
+            }
             setWsSoProcess("");
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
@@ -1779,7 +1817,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             moveBlindLenght=0;
         }
 
-        int totalAmount = movePlannedLenght + moveBlindLenght + inbound_items.size() + outbound_items.size();
+        int totalAmount = movePlannedLenght + moveBlindLenght + inboundItensTotal + outboundItensTotal;
         if(assetsProcessErrorAmount >0){
             try {
                 sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_assets, false, totalAmount - assetsProcessErrorAmount, totalAmount);
@@ -1924,6 +1962,23 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         });
     }
 
+    @Override
+    protected void processError_http() {
+        super.processError_http();
+        if(sendResumeDialog != null) {
+            sendResumeDialog.dismiss();
+        }
+    }
+
+
+    @Override
+    protected void processError_Resume() {
+        super.processError_Resume();
+        if(sendResumeDialog != null) {
+            sendResumeDialog.dismiss();
+        }
+    }
+
     /**
      * LUCHE - 07/01/2020
      * <p>
@@ -1939,7 +1994,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
      */
     @Override
     protected void processError_1(String mLink, String mRequired) {
-        sendResumeDialog.dismiss();
+        if(sendResumeDialog != null) {
+            sendResumeDialog.dismiss();
+        }
         setSyncAfterSave(false);
         mPresenter.getMenuItensV2(hmAux_Trans);
 //        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
@@ -1988,7 +2045,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
-        sendResumeDialog.dismiss();
+        if(sendResumeDialog != null) {
+            sendResumeDialog.dismiss();
+        }
         if (wsSoProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL)) {
             processError_1(mLink, mRequired);
         } else if (wsProcess.equalsIgnoreCase(Act005_Main.WS_PROCESS_SYNC)) {
@@ -2122,6 +2181,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             sendResumeDialog.cancel();
             sendResumeDialog = getSendResumeDialog();
         }
+        sendResumeDialog.setCancelable(false);
         sendResumeDialog.show();
         if (wsResults != null) {
             wsResults.clear();
@@ -2135,8 +2195,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         return new SendResumeDialog(context, hmAux_Trans, new SendResumeDialog.OnDialogClickListener() {
             @Override
             public void onConfirm() {
-
-                sendResumeDialog.dismiss();
+                if(sendResumeDialog != null) {
+                    sendResumeDialog.dismiss();
+                }
                 progressDialog.dismiss();
 
                 if (wsResults.size() > 0) {

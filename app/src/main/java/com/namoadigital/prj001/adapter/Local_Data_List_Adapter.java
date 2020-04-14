@@ -184,8 +184,11 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
         tv_form_lbl.setText(hmAux_Trans.get("lbl_form") + " " + item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
         //
         TextView tv_site_lbl = (TextView) convertView.findViewById(R.id.local_data_list_cell_01_tv_site_lbl);
-        //Tratativa para caso o de não encontrar o site no left join
-        if(item.get(MD_Schedule_ExecDao.SITE_CODE).equals(String.valueOf(ToolBox_Con.getPreference_Site_Code(context)))){
+        //Tratativa para caso site diferente do logado.
+        //Caso caso seja 0, considera igual tb....
+        if( item.get(MD_Schedule_ExecDao.SITE_CODE).equals("0")
+            || item.get(MD_Schedule_ExecDao.SITE_CODE).equals(String.valueOf(ToolBox_Con.getPreference_Site_Code(context)))
+        ){
             tv_site_lbl.setVisibility(View.GONE);
         }else{
             tv_site_lbl.setVisibility(View.VISIBLE);
@@ -249,7 +252,7 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                 );
                 break;
             //
-            case Constant.SYS_STATUS_FINALIZED:
+            case Constant.SYS_STATUS_WAITING_SYNC:
 
                 tv_date_lbl.setText(
                         hmAux_Trans.get("lbl_date") + " " +
@@ -259,12 +262,12 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                                 )
                 );
 
-                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_DONE));
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_WAITING_SYNC));
                 tv_status_val.setTextColor(
-                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_DONE))
+                        ToolBox_Inf.getStatusColorV2(context,Constant.SYS_STATUS_WAITING_SYNC)
                 );
                 break;
-            case Constant.SYS_STATUS_SENT:
+            case Constant.SYS_STATUS_DONE:
                 tv_date_lbl.setText(
                         hmAux_Trans.get("lbl_date") + " " +
                         ToolBox_Inf.millisecondsToString(
@@ -272,9 +275,9 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                         )
                 );
-                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_SENT));
+                tv_status_val.setText(hmAux_Trans.get(Constant.SYS_STATUS_DONE));
                 tv_status_val.setTextColor(
-                        context.getResources().getColor(ToolBox_Inf.getStatusColor(Constant.SYS_STATUS_SENT))
+                    ToolBox_Inf.getStatusColorV2(context,Constant.SYS_STATUS_DONE)
                 );
 
                 break;
@@ -390,7 +393,7 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
     private void setSchedulePk(HMAux item, TextView tv_schedule_lbl) {
         try {
             if ((item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX) + item.get(MD_Schedule_ExecDao.SCHEDULE_CODE) + item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)).isEmpty()) {
-                tv_schedule_lbl.setVisibility(View.GONE);
+                tv_schedule_lbl.setVisibility(View.INVISIBLE);
                 isScheduled = false;
             } else {
                 isScheduled = true;

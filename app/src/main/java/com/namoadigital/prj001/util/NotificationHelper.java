@@ -10,6 +10,8 @@ import android.widget.RemoteViews;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.CH_FileDao;
+import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -17,8 +19,11 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
+import com.namoadigital.prj001.model.CH_File;
+import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.sql.CH_File_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_006;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
@@ -26,6 +31,7 @@ import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_007;
 import com.namoadigital.prj001.sql.Sql_Act005_008;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
+import com.namoadigital.prj001.sql.Sql_Chat_Notification_Helper_001;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +78,8 @@ public class NotificationHelper {
 
 
         int locationPendencies = getLocationPendencies();
-        int fileUploadPendencies = getFileUploadPendencies();
+        //int fileUploadPendencies = getFileUploadPendencies();
+        int fileUploadPendencies = getTotalUploadPendencies();
         int updatePendenciesCount = getUpdatePendencies(locationPendencies,fileUploadPendencies );
         String formatLocationPendencies = String.valueOf(locationPendencies);
         String formatFileUploadPendencies = String.valueOf(fileUploadPendencies);
@@ -130,7 +137,7 @@ public class NotificationHelper {
         }
         String qtyTicket = "0";
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET, null)) {
-            Log.i("TESTE", "PROFILE_MENU_TICKET");
+
             moduleShowCount++;
             qtyTicket = ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context));
             notificationLayoutExpanded.setViewVisibility(R.id.tv_ticket, View.VISIBLE);
@@ -177,7 +184,7 @@ public class NotificationHelper {
                 Constant.DB_VERSION_CUSTOM
         );
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_EXPRESS)) {
-            Log.i("TESTE", "PROFILE_PRJ001_SO");
+
             notificationLayoutExpanded.setViewVisibility(R.id.tv_express_services, View.VISIBLE);
             try {
                 qtySO_Express = soPackExpressLocalDao.getByStringHM(
@@ -203,7 +210,7 @@ public class NotificationHelper {
                 Constant.DB_VERSION_CUSTOM
         );
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_PRODUCT_SERIAL, null)) {
-            Log.i("TESTE", "PROFILE_PRJ001_PRODUCT_SERIAL");
+
             moduleShowCount++;
             notificationLayoutExpanded.setViewVisibility(R.id.tv_serial, View.VISIBLE);
             try {
@@ -215,6 +222,7 @@ public class NotificationHelper {
             } catch (Exception e) {
                 qtySerial = "0";
             }
+            qtySerial =  String.valueOf(Integer.valueOf(qtySerial)  + ToolBox_Inf.isSerialWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context)));
         }else{
             notificationLayoutExpanded.setViewVisibility(R.id.tv_serial, View.GONE);
         }
@@ -226,7 +234,7 @@ public class NotificationHelper {
         String qtyAP="0";
         GE_Custom_Form_ApDao customFormApDao = new GE_Custom_Form_ApDao(context);
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_AP, null)) {
-            Log.i("TESTE", "PROFILE_PRJ001_AP");
+
             moduleShowCount++;
             notificationLayoutExpanded.setViewVisibility(R.id.tv_form_ap, View.VISIBLE);
             try {
@@ -253,22 +261,18 @@ public class NotificationHelper {
                 Constant.DB_VERSION_CUSTOM
         );
 
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST, null)) {
-            Log.i("TESTE", "PROFILE_PRJ001_CHECKLIST");
-            moduleShowCount++;
-            notificationLayoutExpanded.setViewVisibility(R.id.tv_form, View.VISIBLE);
-            try {
-                qty = customFormLocalDao.getByStringHM(
-                        new Sql_Act005_002(
-                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                        ).toSqlQuery()
-                ).get(Sql_Act005_002.BADGE_FINALIZED_QTY);
-            } catch (Exception e) {
-                qty = "0";
-            }
-        } else {
-            notificationLayoutExpanded.setViewVisibility(R.id.tv_form, View.GONE);
+        moduleShowCount++;
+        notificationLayoutExpanded.setViewVisibility(R.id.tv_form, View.VISIBLE);
+        try {
+            qty = customFormLocalDao.getByStringHM(
+                    new Sql_Act005_002(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                    ).toSqlQuery()
+            ).get(Sql_Act005_002.BADGE_WAITING_SYNC_QTY);
+        } catch (Exception e) {
+            qty = "0";
         }
+
         return qty;
     }
 
@@ -282,7 +286,7 @@ public class NotificationHelper {
         );
 
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
-            Log.i("TESTE", "PROFILE_PRJ001_SO");
+
             notificationLayoutExpanded.setViewVisibility(R.id.tv_services, View.VISIBLE);
             moduleShowCount++;
             try {
@@ -294,6 +298,7 @@ public class NotificationHelper {
             } catch (Exception e) {
                 qtySO = "0";
             }
+            qtySO = String.valueOf(Integer.valueOf(qtySO)  + ToolBox_Inf.isSoWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context)));
         } else {
             notificationLayoutExpanded.setViewVisibility(R.id.tv_services, View.GONE);
         }
@@ -314,6 +319,55 @@ public class NotificationHelper {
             return geFiles.size();
         }
         return 0;
+    }
+
+    /**
+     * LUCHE - 02/04/2020
+     * Criado metodo que retorna a qtd de fotos pendentes de envio do chat.
+     * Verifica a tabela ch_files e tb msg, buscando imagen sem pk do server.(antes de ir para a ch_files)
+     * @return Qtd de foto pendentes de envio do chat
+     */
+    private int getChatUploadPendencies(){
+        int qtdImgs = 0;
+        try {
+            CH_FileDao chFileDao = new CH_FileDao(
+                context
+            );
+            CH_MessageDao chMessageDao = new CH_MessageDao(
+                context
+            );
+            //Lista imgs de msgs que JA POSSUEM prefixo e code, mas que não foram envadas
+            ArrayList<CH_File> chFiles = (ArrayList<CH_File>) chFileDao.query(
+                new CH_File_Sql_001().toSqlQuery()
+            );
+            //
+            if (chFiles != null) {
+                qtdImgs += chFiles.size();
+            }
+            //Lista imgs de msgs que NÃO POSSUEM prefixo e code, mas que não foram enviadas
+            List<CH_Message> chImgMsgs = chMessageDao.query(
+                new Sql_Chat_Notification_Helper_001(
+                    ToolBox_Con.getPreference_User_Code(context)
+                ).toSqlQuery()
+            );
+            //
+            if (chImgMsgs != null) {
+                qtdImgs += chImgMsgs.size();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        //
+        return qtdImgs;
+    }
+
+    /**
+     * LUCHE - 02/04/2020
+     * Metodo que soma as imagens pendente de envio do banco c_customer e chat
+     * @return Qtd total de imgs pendentes de envio.
+     */
+    private int getTotalUploadPendencies(){
+        return getFileUploadPendencies() + getChatUploadPendencies();
     }
 
     private int getLocationPendencies() {

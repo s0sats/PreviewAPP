@@ -24,6 +24,7 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.sql.Act027_Product_List_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.HashMap;
 import java.util.List;
@@ -142,6 +143,11 @@ public class Act027_Product_List extends BaseFragment {
         //
         btn_add_event.setText(hmAux_Trans.get("btn_add_event"));
         btn_service_preview.setText(hmAux_Trans.get("btn_search_service"));
+        if (ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)) {
+            btn_service_preview.setVisibility(View.VISIBLE);
+        }else{
+            btn_service_preview.setVisibility(View.GONE);
+        }
     }
 
     private void iniAction() {

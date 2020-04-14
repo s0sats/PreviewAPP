@@ -113,6 +113,10 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
+import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_CANCELLED;
+import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_DONE;
+import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_IGNORED;
+import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_NOT_EXEC;
 import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_SEARCH_KEY;
 import static com.namoadigital.prj001.ui.act015.Act015_Main.FORM_SELECTED_INDEX_KEY;
 
@@ -156,6 +160,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private String dtCustomer_Format;
 
     private Bundle bundle;
+    private Bundle bundle_act015;
 
     private HMAux hmPages = new HMAux();
 
@@ -390,6 +395,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         transList.add("alert_warning_user_nick_lbl");
         transList.add("alert_erro_on_cancel_schedule_form_ttl");
         transList.add("alert_erro_on_cancel_schedule_form_msg");
+        //
+        transList.add("alert_form_turn_gps_on_title");
+        transList.add("alert_form_turn_gps_on_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -731,7 +739,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         if (formLocal != null
                 && formLocal.getRequire_location() == 1
-                && ConstantBase.SYS_STATUS_IN_PROCESSING.equals(formLocal.getCustom_form_status())) {
+                && ConstantBase.SYS_STATUS_IN_PROCESSING.equals(formLocal.getCustom_form_status())
+                && !SV_LocationTracker.status) {
             getLocation();
         }
     }
@@ -1113,6 +1122,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     private void recoverGetIntents() {
         bundle = getIntent().getExtras();
+        bundle_act015 = new Bundle();
         if (bundle != null) {
             product_code = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
             //product_code = bundle.getString(Constant.ACT007_PRODUCT_CODE, "");
@@ -1141,6 +1151,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             mOperation_Code = bundle.getString(SM_SODao.OPERATION_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.OPERATION_CODE, null));
             filter_search = bundle.getString(FILTER_SEARCH_KEY, null);
             form_selected_index = bundle.getInt(FORM_SELECTED_INDEX_KEY, -1);
+            bundle_act015.putBoolean(FILTER_CHK_IS_DONE, bundle.getBoolean(FILTER_CHK_IS_DONE, true));
+            bundle_act015.putBoolean(FILTER_CHK_IS_NOT_EXEC, bundle.getBoolean(FILTER_CHK_IS_NOT_EXEC, true));
+            bundle_act015.putBoolean(FILTER_CHK_IS_CANCELLED, bundle.getBoolean(FILTER_CHK_IS_CANCELLED, false));
+            bundle_act015.putBoolean(FILTER_CHK_IS_IGNORED, bundle.getBoolean(FILTER_CHK_IS_IGNORED, false));
         } else {
             mSo_Prefix = null;
             mSo_Code = null;
@@ -1200,7 +1214,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     @Override
     public void loadFragment_CF_Fields(List<HMAux> cf_fields, boolean bNew, GE_Custom_Form_Local formLocal, GE_Custom_Form_Data formData, String prefix, List<HMAux> pdfs, int indexF, int signature, int require_serial_done) {
-
         this.prefix = prefix;
         this.bNew = bNew;
         this.formLocal = formLocal;
@@ -1454,6 +1467,34 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 saveV2(false);
             }
         }
+        //LUCHE - 31/03/2020
+        //Caso GPS desligado e form dependa de GPS exibe dialog
+        //
+        mPresenter.validateGPSResource(formLocal);
+
+
+    }
+    @Override
+    public void alertActiveGPSResource() {
+        ToolBox.alertMSG(
+            this,
+            hmAux_Trans.get("alert_form_turn_gps_on_title"),
+            hmAux_Trans.get("alert_form_turn_gps_on_msg"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mPresenter.validateGPSResource(formLocal);
+                }
+            },
+            2,
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //LUCHE - 31/03/2020 - Gambi para evitar msg de deseja sair ao forçar volta
+                    checkBackFlow();
+                }
+            }
+        );
 
     }
 
@@ -1561,8 +1602,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         mkEditTextNMFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             mkEditTextNMFF.setmEnabled(false);
@@ -1598,8 +1639,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         comboBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             comboBoxFF.setmEnabled(false);
@@ -1648,8 +1689,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         checkBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
         ) {
             checkBoxFF.setmEnabled(false);
@@ -1686,8 +1727,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         ratingImageFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             ratingImageFF.setmEnabled(false);
@@ -1722,8 +1763,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         ratingBarFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             ratingBarFF.setmEnabled(false);
@@ -1759,8 +1800,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         pictureFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //               || formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             pictureFF.setmEnabled(false);
@@ -1800,8 +1841,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
         //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_FINALIZED) ||
-                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_SENT)
+        if (formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC) ||
+                formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
 //              ||  formData.getCustom_form_status().equalsIgnoreCase(Constant.SYS_STATUS_DELETED)
                 ) {
             photoFF.setmEnabled(false);
@@ -2027,6 +2068,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if(form_selected_index > -1) {
             bundle.putInt(Act015_Main.FORM_SELECTED_INDEX_KEY, form_selected_index);
         }
+        bundle.putAll(bundle_act015);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -2422,14 +2464,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
                 exitAlert();
             }else {
-                if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_SENT)) {
-                    callAct015();
-                }else{
-                    callAct005(Act011_Main.this);
-                }
+                checkBackFlow();
             }
         } else {
                 callAct005(Act011_Main.this);
+        }
+    }
+
+    /**
+     * LUCHE - 31/03/2020
+     * Extraido metodo que verifica o fluxo de voltar
+     * Feito isso para poder executar o fluxo de voltar sem exibir a msg de confirmação no fluxo
+     * do bvoltar por GPS desligado.
+     *
+     */
+    private void checkBackFlow() {
+        if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_DONE)) {
+            callAct015();
+        }else{
+            callAct005(Act011_Main.this);
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
+import android.support.constraint.Group;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,6 +47,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
     public static final String FILTER_TEXT = "FILTER_TEXT";
     public static final String FILTER_PARTNER_EMPTY = "FILTER_PARTNER_EMPTY";
     public static final String FILTER_PARTNER_PROFILE = "FILTER_PARTNER_PROFILE";
+    public static final String FILTER_PARTNER_NO_PROFILE = "FILTER_PARTNER_NO_PROFILE";
 
     private MKEditTextNM mketFilter;
     private ImageView ivFilters;
@@ -60,11 +62,17 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
     private boolean bStatusDone;
     private boolean bParterEmpty;
     private boolean bParterProfile;
+    private boolean bParterNoProfile;
     private String requestingAct;
     private String wsProcess;
     //
     private long ticketProductCode = -1;
     private long ticketSerialCode = -1;
+    //Novos Filtros do historico
+    private boolean bStatusNotExecuted;
+    private boolean bStatusIgnored;
+    private boolean bStatusCanceled;
+    private boolean bStatusRejected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +117,8 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         transList.add("dialog_status_lbl");
         transList.add("dialog_partner_lbl");
         transList.add("chk_allow_no_partner_lbl");
-        transList.add("chk_hide_other_partner_lbl");
+        transList.add("chk_my_partner_lbl");
+        transList.add("chk_partner_no_profile_lbl");
         //
         transList.add("alert_ticket_to_send_ttl");
         transList.add("alert_ticket_to_send_msg");
@@ -146,6 +155,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         updateIvFilterState();
         //
         mPresenter.getTicketList(
+            requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT014),
             bStatusPending,
             bStatusProcess,
             bStatusWaitingSync,
@@ -153,8 +163,13 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
             bParterEmpty,
             bParterProfile,
             ticketProductCode,
-            ticketSerialCode
-        );
+            ticketSerialCode,
+            bStatusNotExecuted,
+            bStatusIgnored,
+            bStatusCanceled,
+            bStatusRejected,
+            bParterNoProfile
+            );
         //
         setBtnSyncVisibility();
     }
@@ -175,18 +190,26 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
             bStatusWaitingSync = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,true);
             bParterEmpty = bundle.getBoolean(FILTER_PARTNER_EMPTY,true);
             bParterProfile= bundle.getBoolean(FILTER_PARTNER_PROFILE,true);
+            bParterNoProfile= bundle.getBoolean(FILTER_PARTNER_NO_PROFILE,false);
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
             //
             ticketProductCode = bundle.getLong(TK_TicketDao.CURRENT_PRODUCT_CODE, -1);
             ticketSerialCode = bundle.getLong(TK_TicketDao.CURRENT_SERIAL_CODE, -1);
-            //
+            //Aplica inicialização pelo historico
             if(ConstantBaseApp.ACT014 .equalsIgnoreCase(requestingAct)){
                 bStatusPending = false;
                 bStatusProcess = false;
                 bStatusWaitingSync = false;
-                bStatusDone = true;
                 bParterEmpty = false;
                 bParterProfile = false;
+                bParterNoProfile = false;
+                //
+                //LUCHE - 31/03/2020
+                bStatusDone = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_DONE,true);
+                bStatusNotExecuted = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED,true);
+                bStatusIgnored = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_IGNORED,false);
+                bStatusCanceled = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_CANCELLED,false);
+                bStatusRejected = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_REJECTED,false);
             }
         }else{
             requestingAct = ConstantBaseApp.ACT068;
@@ -214,9 +237,15 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         bStatusPending = true;
         bStatusProcess = true;
         bStatusWaitingSync = true;
-        bStatusDone = false;
         bParterEmpty = true;
         bParterProfile = true;
+        bParterNoProfile = false;
+        bStatusDone = false;
+        //LUCHE - 31/03/2020
+        bStatusNotExecuted = false;
+        bStatusIgnored = false;
+        bStatusCanceled = false;
+        bStatusRejected = false;
     }
 
     @Override
@@ -363,36 +392,81 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         TextView tvTitle = view.findViewById(R.id.act069_filter_dialog_tv_title);
         TextView tvStatusLbl = view.findViewById(R.id.act069_filter_dialog_tv_status_lbl);
         TextView tvPartnerLbl = view.findViewById(R.id.act069_filter_dialog_tv_partner_lbl);
-        final CheckBox chkPending = view.findViewById(R.id.act069_filter_dialog_chk_pending);
-        final CheckBox chkProcess = view.findViewById(R.id.act069_filter_dialog_chk_process);
-        final CheckBox chkWaitingSync = view.findViewById(R.id.act069_filter_dialog_chk_waiting_sync);
+        final CheckBox chkStatusPending = view.findViewById(R.id.act069_filter_dialog_chk_pending);
+        final CheckBox chkStatusProcess = view.findViewById(R.id.act069_filter_dialog_chk_process);
+        final CheckBox chkStatusWaitingSync = view.findViewById(R.id.act069_filter_dialog_chk_waiting_sync);
         final CheckBox chkPartnerEmpty = view.findViewById(R.id.act069_filter_dialog_chk_no_partner);
         final CheckBox chkPartnerProfile = view.findViewById(R.id.act069_filter_dialog_chk_profile_partner);
+        final CheckBox chkPartnerNoProfile = view.findViewById(R.id.act069_filter_dialog_chk_profile_partner_others);
+        final CheckBox chkStatusDone = view.findViewById(R.id.act069_filter_dialog_chk_done);
+        final CheckBox chkStatusNotExecuted = view.findViewById(R.id.act069_filter_dialog_chk_not_exec);
+        final CheckBox chkStatusIgnored = view.findViewById(R.id.act069_filter_dialog_chk_ignored);
+        final CheckBox chkStatusCanceled = view.findViewById(R.id.act069_filter_dialog_chk_canceled);
+        final CheckBox chkStatusRejected = view.findViewById(R.id.act069_filter_dialog_chk_rejected);
+        Group gpPending = view.findViewById(R.id.act069_filter_dialog_gp_pending);
+        Group gpHistoric = view.findViewById(R.id.act069_filter_dialog_gp_historic);
         //
         tvTitle.setText(hmAux_Trans.get("dialog_filter_title"));
         tvStatusLbl.setText(hmAux_Trans.get("dialog_status_lbl"));
-            tvPartnerLbl.setText(hmAux_Trans.get("dialog_partner_lbl"));
+        tvPartnerLbl.setText(hmAux_Trans.get("dialog_partner_lbl"));
         //
-        chkPending.setText(hmAux_Trans.get(Constant.SYS_STATUS_PENDING));
-        chkPending.setChecked(bStatusPending);
-        chkPending.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PENDING))));
-        chkPending.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PENDING))));
+        chkStatusPending.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_PENDING));
+        chkStatusPending.setChecked(bStatusPending);
+        chkStatusPending.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_PENDING))));
+        chkStatusPending.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_PENDING))));
         //
-        chkProcess.setText(hmAux_Trans.get(Constant.SYS_STATUS_PROCESS));
-        chkProcess.setChecked(bStatusProcess);
-        chkProcess.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
-        chkProcess.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_PROCESS))));
+        chkStatusProcess.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_PROCESS));
+        chkStatusProcess.setChecked(bStatusProcess);
+        chkStatusProcess.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_PROCESS))));
+        chkStatusProcess.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_PROCESS))));
         //Esse ultimo stats só existe no quando lista origem do pendentes.
-        chkWaitingSync.setText(hmAux_Trans.get(Constant.SYS_STATUS_WAITING_SYNC));
-        chkWaitingSync.setChecked(bStatusWaitingSync);
-        chkWaitingSync.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
-        chkWaitingSync.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(Constant.SYS_STATUS_WAITING_SYNC))));
+        chkStatusWaitingSync.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC));
+        chkStatusWaitingSync.setChecked(bStatusWaitingSync);
+        chkStatusWaitingSync.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_WAITING_SYNC))));
+        chkStatusWaitingSync.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_WAITING_SYNC))));
         //
         chkPartnerEmpty.setText(hmAux_Trans.get("chk_allow_no_partner_lbl"));
         chkPartnerEmpty.setChecked(bParterEmpty);
         //
-        chkPartnerProfile.setText(hmAux_Trans.get("chk_hide_other_partner_lbl"));
+        chkPartnerProfile.setText(hmAux_Trans.get("chk_my_partner_lbl"));
         chkPartnerProfile.setChecked(bParterProfile);
+        //
+        chkPartnerNoProfile.setText(hmAux_Trans.get("chk_partner_no_profile_lbl"));
+        chkPartnerNoProfile.setChecked(bParterNoProfile);
+        //Dados do historico
+        chkStatusDone.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_DONE));
+        chkStatusDone.setChecked(bStatusDone);
+        chkStatusDone.setButtonTintList(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_DONE)));
+        chkStatusDone.setTextColor(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_DONE));
+        //
+        chkStatusNotExecuted.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED));
+        chkStatusNotExecuted.setChecked(bStatusNotExecuted);
+        chkStatusNotExecuted.setButtonTintList(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_NOT_EXECUTED)));
+        chkStatusNotExecuted.setTextColor(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_NOT_EXECUTED));
+        chkStatusNotExecuted.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED));
+        //
+        chkStatusIgnored.setChecked(bStatusIgnored);
+        chkStatusIgnored.setButtonTintList(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_IGNORED)));
+        chkStatusIgnored.setTextColor(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_IGNORED));
+        chkStatusIgnored.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_IGNORED));
+        //
+        chkStatusCanceled.setChecked(bStatusCanceled);
+        chkStatusCanceled.setButtonTintList(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_CANCELLED)));
+        chkStatusCanceled.setTextColor(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_CANCELLED));
+        chkStatusCanceled.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_CANCELLED));
+        //
+        chkStatusRejected.setChecked(bStatusRejected);
+        chkStatusRejected.setButtonTintList(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_REJECTED)));
+        chkStatusRejected.setTextColor(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_REJECTED));
+        chkStatusRejected.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_REJECTED));
+        //Seta quais filtros serão exibidos
+        if(requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT014)){
+            gpPending.setVisibility(View.GONE);
+            gpHistoric.setVisibility(View.VISIBLE);
+        }else{
+            gpPending.setVisibility(View.VISIBLE);
+            gpHistoric.setVisibility(View.GONE);
+        }
         //
         builder
             .setView(view)
@@ -402,15 +476,35 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        bStatusPending = chkPending.isChecked();
-                        bStatusProcess = chkProcess.isChecked();
-                        bStatusWaitingSync = chkWaitingSync.isChecked();
+                        bStatusPending = chkStatusPending.isChecked();
+                        bStatusProcess = chkStatusProcess.isChecked();
+                        bStatusWaitingSync = chkStatusWaitingSync.isChecked();
                         bParterEmpty = chkPartnerEmpty.isChecked();
                         bParterProfile = chkPartnerProfile.isChecked();
+                        bParterNoProfile = chkPartnerNoProfile.isChecked();
+                        //historico
+                        bStatusDone = chkStatusDone.isChecked();
+                        bStatusNotExecuted = chkStatusNotExecuted.isChecked();
+                        bStatusIgnored = chkStatusIgnored.isChecked();
+                        bStatusCanceled = chkStatusCanceled.isChecked();
+                        bStatusRejected = chkStatusRejected.isChecked();
                         //
                         updateIvFilterState();
                         //
-                        mPresenter.getTicketList(bStatusPending,bStatusProcess,bStatusWaitingSync, bStatusDone, bParterEmpty, bParterProfile, ticketProductCode, ticketSerialCode);
+                        mPresenter.getTicketList(
+                            requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT014), bStatusPending,
+                            bStatusProcess,
+                            bStatusWaitingSync,
+                            bStatusDone,
+                            bParterEmpty,
+                            bParterProfile,
+                            ticketProductCode,
+                            ticketSerialCode,
+                            bStatusNotExecuted,
+                            bStatusIgnored,
+                            bStatusCanceled,
+                            bStatusRejected,
+                            bParterNoProfile);
                     }
                 }
             )
@@ -424,9 +518,14 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
 
     private void updateIvFilterState() {
         if(requestingAct.equals(ConstantBaseApp.ACT014)){
-            ivFilters.setVisibility(View.GONE);
+            //ivFilters.setVisibility(View.GONE);
+            if (bStatusDone || bStatusNotExecuted || bStatusIgnored ||bStatusCanceled || bStatusRejected) {
+                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
+            } else {
+                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
+            }
         }else {
-            if (bStatusPending || bStatusProcess || bStatusWaitingSync ||bParterEmpty || bParterProfile) {
+            if (bStatusPending || bStatusProcess || bStatusWaitingSync ||bParterEmpty || bParterProfile || bParterNoProfile) {
                 ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
             } else {
                 ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
@@ -441,7 +540,14 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         bundle.putBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,bStatusWaitingSync);
         bundle.putBoolean(FILTER_PARTNER_EMPTY,bParterEmpty);
         bundle.putBoolean(FILTER_PARTNER_PROFILE,bParterProfile);
+        bundle.putBoolean(FILTER_PARTNER_NO_PROFILE,bParterNoProfile);
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingAct);
+        //LUCHE - 31/03/2020
+        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_DONE, bStatusDone);
+        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED,bStatusNotExecuted);
+        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_IGNORED,bStatusIgnored);
+        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_CANCELLED,bStatusCanceled);
+        bundle.putBoolean(ConstantBaseApp.SYS_STATUS_REJECTED,bStatusRejected);
         //
         return bundle;
     }

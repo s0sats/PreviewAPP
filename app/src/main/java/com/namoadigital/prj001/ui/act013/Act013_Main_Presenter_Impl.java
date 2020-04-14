@@ -71,13 +71,13 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
     }
 
     @Override
-    public void getPendencies(boolean filter_in_processing, boolean filter_finalized, boolean filter_scheduled) {
+    public void getPendencies(boolean filter_in_processing, boolean filter_waiting_sync, boolean filter_scheduled) {
         List<HMAux> pendencies =
             formLocalDao.query_HM(
                 new Sql_Act013_001(
                     ToolBox_Con.getPreference_Customer_Code(context),
                     filter_in_processing,
-                    filter_finalized,
+                    filter_waiting_sync,
                     filter_scheduled,
                     context
                 ).toSqlQuery()
@@ -204,7 +204,8 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 scheduleItem.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE),
                 scheduleItem.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID),
                 scheduleItem.get(MD_Schedule_ExecDao.SERIAL_ID),
-                true
+                true,
+                false
             );
         } else {
             //Cria e exibe dialog que requer serial.
@@ -239,7 +240,7 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
      * @param serialID - Id do serial
      * @param searchExact - Verdadeiro, busca serial exato, se falso, busca por like
      */
-    private void executeSerialSearch(String productCode, String productId, String serialID, boolean searchExact) {
+    private void executeSerialSearch(String productCode, String productId, String serialID, boolean searchExact, boolean scheduledProfileCheck) {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_Serial_Search.class.getName());
             //
@@ -255,6 +256,7 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
             bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID,productId);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serialID);
             bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, searchExact ? 1 : 0);
+            bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, scheduledProfileCheck);
             //
             mIntent.putExtras(bundle);
             //
@@ -365,6 +367,7 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
             bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_VERSION));
             bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
+            bundle.putString(Constant.ACT017_SCHEDULED_SITE, item.get(MD_Schedule_ExecDao.SITE_CODE));
             //
             if(createFormLocalForSchedule(item,bundle)){
                 mView.callAct020(context, bundle);
@@ -438,6 +441,7 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                         item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE),
                         item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID),
                         serialID,
+                        false,
                         false);
                 }
 
@@ -672,15 +676,24 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 }
             } else {
                 //addFormInfoToBundle(item);
-                if(isStatusPossibleToOpen(item)){
-                    prepareOpenForm(item);
-                }else{
-                    mView.showMsg(
-                        Act013_Main.FORM_STATUS_PREVENT_TO_OPEN,
-                        item
-                    );
+             /*
+                Barrionuevo - 17/03/2020
+                Validacao de Recurso de GPS ativo para formularios pendentes.
+             */
+                if(item.hasConsistentValue(GE_Custom_Form_LocalDao.REQUIRE_LOCATION)
+                        && item.get(GE_Custom_Form_LocalDao.REQUIRE_LOCATION).equals("1")
+                        && !ToolBox_Con.hasGPSResourceActive(context)){
+                    mView.alertActiveGPSResource(item);
+                }else {
+                    if (isStatusPossibleToOpen(item)) {
+                        prepareOpenForm(item);
+                    } else {
+                        mView.showMsg(
+                                Act013_Main.FORM_STATUS_PREVENT_TO_OPEN,
+                                item
+                        );
+                    }
                 }
-
             }
         } else {
             mView.alertFormNotReady();

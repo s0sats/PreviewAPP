@@ -8,6 +8,8 @@ import com.namoadigital.prj001.util.Constant;
 
 /**
  * Created by DANIEL.LUCHE on 24/02/2017.
+ * LUCHE - 31/03/2020
+ * Adicionado os novos status de historico
  */
 
 public class Sql_Act014_001 implements Specification {
@@ -33,10 +35,14 @@ public class Sql_Act014_001 implements Specification {
                         " FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+" l\n " +
                         " WHERE\n" +
-                        "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' " +
-                        "   AND l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS+"" +
-                        "    = '"+ Constant.SYS_STATUS_SENT +"' ;")
-                //.append(SENT_QTY+"#"+TYPE)
+                        "   l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"' \n" +
+                        "   AND l."+GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS+" in (\n" +
+                        "                                        '"+ Constant.SYS_STATUS_DONE +"',\n" +
+                        "                                        '"+ Constant.SYS_STATUS_NOT_EXECUTED +"',\n" +
+                        "                                        '"+ Constant.SYS_STATUS_CANCELLED +"',\n" +
+                        "                                        '"+ Constant.SYS_STATUS_IGNORED +"'\n" +
+                        "                                        )\n "
+                )
                 .toString();
     }
 

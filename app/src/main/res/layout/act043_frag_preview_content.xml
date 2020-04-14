@@ -112,7 +112,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/namoa_cell_3_states"
+            android:background="@drawable/namoa_cell_11_states"
             android:text="Add Service"
             android:textColor="@color/padrao_WHITE" />
 

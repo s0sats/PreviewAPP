@@ -15,6 +15,7 @@ public class ConstantBaseApp extends ConstantBase {
      */
     public static final String PRJ001_CODE = "PRJ001";
     public static final String AVOID_SERIAL_HIDE = "AVOID_SERIAL_HIDE";
+    public static final String SCHEDULED_PROFILE_CHECK = "SCHEDULED_PROFILE_CHECK";
     //As 3 variaveis abaixo são preenchidas pela classe AppBase
     public static String PRJ001_VERSION = "";
     public static int PRJ001_VERSION_CODE = -1;
