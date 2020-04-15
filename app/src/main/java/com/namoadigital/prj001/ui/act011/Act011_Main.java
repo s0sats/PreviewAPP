@@ -113,6 +113,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
+import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_HAS_NON_CONFORMITY;
 import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_CANCELLED;
 import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_DONE;
 import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_IGNORED;
@@ -1155,6 +1156,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             bundle_act015.putBoolean(FILTER_CHK_IS_NOT_EXEC, bundle.getBoolean(FILTER_CHK_IS_NOT_EXEC, true));
             bundle_act015.putBoolean(FILTER_CHK_IS_CANCELLED, bundle.getBoolean(FILTER_CHK_IS_CANCELLED, false));
             bundle_act015.putBoolean(FILTER_CHK_IS_IGNORED, bundle.getBoolean(FILTER_CHK_IS_IGNORED, false));
+            bundle_act015.putBoolean(FILTER_CHK_HAS_NON_CONFORMITY, bundle.getBoolean(FILTER_CHK_HAS_NON_CONFORMITY, false));
         } else {
             mSo_Prefix = null;
             mSo_Code = null;

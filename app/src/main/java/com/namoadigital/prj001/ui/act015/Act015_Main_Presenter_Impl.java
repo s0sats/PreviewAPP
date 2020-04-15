@@ -35,7 +35,7 @@ public class Act015_Main_Presenter_Impl implements Act015_Main_Presenter {
     }
 
     @Override
-    public void getSentData( boolean isDone, boolean isNotExec, boolean isCancelled, boolean isIgnored) {
+    public void getSentData(boolean isDone, boolean isNotExec, boolean isCancelled, boolean isIgnored, boolean hasNonConformity) {
         List<HMAux> sent_datas =
                 customFormLocalDao.query_HM(
                         new Sql_Act015_001(
@@ -44,7 +44,8 @@ public class Act015_Main_Presenter_Impl implements Act015_Main_Presenter {
                                 isDone,
                                 isNotExec,
                                 isCancelled,
-                                isIgnored
+                                isIgnored,
+                                hasNonConformity
                         ).toSqlQuery()
                 );
         //

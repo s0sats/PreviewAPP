@@ -21,6 +21,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.sql.Sql_Act015_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -226,10 +227,11 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
             tv_so_code_val.setText("");
         }
         //
+        LinearLayout llIcons = convertView.findViewById(R.id.local_data_list_cell_01_ll_icons);
         ImageView ivScheduleWarningInfos = convertView.findViewById(R.id.local_data_list_cell_01_iv_schedule_warning_infos);
+        ImageView ivNonConformity = convertView.findViewById(R.id.local_data_list_cell_01_iv_nc);
         //
         defineScheduleWarningInfos(ivScheduleWarningInfos,item);
-
         switch (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)) {
 
             case Constant.SYS_STATUS_IN_PROCESSING:
@@ -331,12 +333,64 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                 );
                 break;
         }
-
+        //
+        defineIvNonConformityVisibility(ivNonConformity,item);
+        defineLlIconsVisibility(llIcons,ivScheduleWarningInfos,ivNonConformity);
+        //
         return convertView;
     }
 
+    /**
+     * LUCHE - 15/04/2020
+     * <p></p>
+     * Metodo que define a visibilidade do icone de nao conformidade.
+     * Somente visivel se a chave existe e seu valor for maior que 0
+     * @param ivNonConformity ImageView do Icone
+     * @param item HmAux do item
+     */
+    private void defineIvNonConformityVisibility(ImageView ivNonConformity, HMAux item) {
+        ivNonConformity.setVisibility(View.GONE);
+        //
+        if( valueExists(item,Sql_Act015_001.HAS_NONCONFORMITY_FIELD)
+            && ToolBox_Inf.convertStringToInt(item.get(Sql_Act015_001.HAS_NONCONFORMITY_FIELD)) > 0
+        ){
+            ivNonConformity.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * LUCHE - 15/04/2020
+     * <p></p>
+     * Metodo que valida se chave existe e é !- da string null
+     * @param item HmAux do item
+     * @param key Chave do HmAux
+     * @return - Verdadeiro se Chave existir, não for null, nem vazia e nem "null"
+     */
+    private boolean valueExists(HMAux item, String key) {
+        return  item.hasConsistentValue(key)
+            && !item.get(key).isEmpty()
+            && !item.get(key).equalsIgnoreCase("null");
+    }
+
+    /**
+     * LUCHE - 14/04/2020
+     * <p></p>
+     * Metodo que defini visibilidade do linear layout que contem os icones.
+     * Se um dos icone visiveis, exibe linear, caso contrario, esconde.
+     * @param llIcons LinearLayout que contem os icones
+     * @param ivScheduleWarningInfos Icone de infos do agendamento
+     * @param ivNonConformity Icone de se existe não conformidade.
+     */
+    private void defineLlIconsVisibility(LinearLayout llIcons, ImageView ivScheduleWarningInfos, ImageView ivNonConformity) {
+        if(ivScheduleWarningInfos.getVisibility() == View.VISIBLE || ivNonConformity.getVisibility() == View.VISIBLE ){
+            llIcons.setVisibility(View.VISIBLE);
+        }else{
+            llIcons.setVisibility(View.GONE);
+        }
+    }
+
     private void defineScheduleWarningInfos(ImageView ivScheduleWarningInfos, final HMAux item) {
-        ivScheduleWarningInfos.setVisibility(View.GONE);
+        ivScheduleWarningInfos.setVisibility(View.INVISIBLE);
         ivScheduleWarningInfos.setOnClickListener(null);
         //
         if(item.hasConsistentValue(MD_Schedule_ExecDao.FCM_NEW_STATUS)
@@ -350,7 +404,6 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                 int color = !item.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG).isEmpty()
                     ? R.color.namoa_color_danger_red
                     : R.color.light_to_dark_blue_color;
-
                 ivScheduleWarningInfos.setVisibility(View.VISIBLE);
                 ivScheduleWarningInfos.setColorFilter(context.getResources().getColor(color), PorterDuff.Mode.SRC_ATOP);
                 ivScheduleWarningInfos.setOnClickListener(new View.OnClickListener() {
