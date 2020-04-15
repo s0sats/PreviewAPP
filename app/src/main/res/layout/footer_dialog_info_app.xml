@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/footer_dialog_app_ll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -89,6 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
+
                     android:text="MOSOLF"
                     android:textColor="@color/namoa_color_light_blue_lib"
                     android:textSize="@dimen/font_size_item_md_lib" />
@@ -100,28 +102,67 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-                    android:id="@+id/footer_dialog_app_ss_site"
+                <TextView
+                    android:id="@+id/footer_dialog_app_tv_site_lbl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    />
+                    android:layout_marginTop="10dp"
+                    android:text="SITE"
+                    android:textColor="@color/namoa_color_dark_blue_lib"
+                    android:textSize="@dimen/font_size_title_md_lib"
+                    android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/footer_dialog_app_tv_site_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+
+                    android:text="Stuttgart"
+                    android:textColor="@color/namoa_color_light_blue_lib"
+                    android:textSize="@dimen/font_size_item_md_lib" />
             </LinearLayout>
+
+            <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                android:id="@+id/footer_dialog_app_ss_site"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                />
 
             <LinearLayout
                 android:id="@+id/footer_dialog_app_ll_zone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-                    android:id="@+id/footer_dialog_app_ss_zone"
+                <TextView
+                    android:id="@+id/footer_dialog_app_tv_zone_lbl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"/>
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="10dp"
+                    android:text="ZONE"
+                    android:textColor="@color/namoa_color_dark_blue_lib"
+                    android:textSize="@dimen/font_size_title_md_lib"
+                    android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/footer_dialog_app_tv_zone_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+
+                    android:text="Viellgiehn"
+                    android:textColor="@color/namoa_color_light_blue_lib"
+                    android:textSize="@dimen/font_size_item_md_lib" />
             </LinearLayout>
+
+            <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                android:id="@+id/footer_dialog_app_ss_zone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"/>
 
             <LinearLayout
                 android:id="@+id/footer_dialog_app_ll_operation"
@@ -129,12 +170,33 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
-                    android:id="@+id/footer_dialog_app_ss_operation"
+                <TextView
+                    android:id="@+id/footer_dialog_app_tv_operation_lbl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"/>
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="10dp"
+                    android:text="OPERATION"
+                    android:textColor="@color/namoa_color_dark_blue_lib"
+                    android:textSize="@dimen/font_size_title_md_lib"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/footer_dialog_app_tv_operation_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+
+                    android:text="BMW"
+                    android:textColor="@color/namoa_color_light_blue_lib"
+                    android:textSize="@dimen/font_size_item_md_lib" />
             </LinearLayout>
+
+            <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                android:id="@+id/footer_dialog_app_ss_operation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"/>
 
             <LinearLayout
                 android:id="@+id/footer_dialog_app_ll_imei"
@@ -210,5 +272,30 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/footer_dialog_app_action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/footer_dialog_app_action_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="CANCEL"
+            android:layout_marginRight="4dp"
+            android:textColor="@color/namoa_color_red"
+            android:background="@drawable/namoa_icon_bg_states" />
+
+        <Button
+            android:id="@+id/footer_dialog_app_action_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="OK"
+            android:textColor="@color/namoa_color_green_2"
+            android:background="@drawable/namoa_icon_bg_states" />
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -352,7 +352,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     @Override
     protected void footerCreateDialog() {
         //super.footerCreateDialog();
-        ToolBox_Inf.buildFooterDialog(context);
+        ToolBox_Inf.buildFooterDialog(context, true);
     }
 
     private void initAction() {

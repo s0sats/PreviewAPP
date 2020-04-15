@@ -232,7 +232,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     @Override
     protected void footerCreateDialog() {
         //super.footerCreateDialog();
-        ToolBox_Inf.buildFooterDialog(context);
+        ToolBox_Inf.buildFooterDialog(context, true);
     }
 
     private void initActions() {

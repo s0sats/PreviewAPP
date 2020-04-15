@@ -1006,7 +1006,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void footerCreateDialog() {
         //super.footerCreateDialog();
-        ToolBox_Inf.buildFooterDialog(context);
+        ToolBox_Inf.buildFooterDialog(context, true);
     }
 
     @Override
