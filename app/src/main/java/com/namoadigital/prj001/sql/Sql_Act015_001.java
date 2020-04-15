@@ -3,6 +3,7 @@ package com.namoadigital.prj001.sql;
 import android.content.Context;
 
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
@@ -19,15 +20,25 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  *
  * LUCHE - 25/03/2020
  * Modificado query do para retornar tb as informações de fcm e error_msg
+ *
+ * LUCHE - 15/04/2020
+ * Modificado query adicionando join com a tabela GE_Custom_Form_Data_FieldDao.TABLE e group by pela
+ * pk do form, para que fosse possivel criar campo que identifica se existe ou não NC no form e
+ * que fosse possivel filtrar apenas forms com NC.
+ * Add no construtor param que indica se filtro on ou off.
+ * Add prorpriedade nonConformityFilter que recebe o filtro ,HAVING caso filtro ativo.
  */
 
 public class Sql_Act015_001 implements Specification {
 
+    private static final String CONST_NONCONFORMITY_LIKE_SEARCH = "%\",\"AP\":1,\"%";
+    public static final String HAS_NONCONFORMITY_FIELD = "hasNonConformity";
     private long s_customer_code;
     private String sqlite_date_format;
     private String statusFilter = "";
+    private String nonConformityFilter = "";
 
-    public Sql_Act015_001(long s_customer_code, Context context, boolean isDone, boolean isNotExec, boolean isCancelled, boolean isIgnored) {
+    public Sql_Act015_001(long s_customer_code, Context context, boolean isDone, boolean isNotExec, boolean isCancelled, boolean isIgnored, boolean onlyNonConformity) {
         this.s_customer_code = s_customer_code;
         this.sqlite_date_format = ToolBox_Inf.nlsDate2SqliteDate(context);
 
@@ -46,6 +57,15 @@ public class Sql_Act015_001 implements Specification {
                     "                           '" + ConstantBaseApp.SYS_STATUS_CANCELLED + "',\n" +
                     "                           '" + ConstantBaseApp.SYS_STATUS_IGNORED + "'\n" +
                     "                           )\n";
+        }
+        //Se filtra apenas não conformidade, adiciona having na query
+        if (onlyNonConformity) {
+            nonConformityFilter =
+                "  HAVING\n" +
+                "     IFNULL(SUM(CASE WHEN df.value_extra like '"+CONST_NONCONFORMITY_LIKE_SEARCH+"'\n" +
+                "                     THEN 1\n" +
+                "                     ELSE 0\n" +
+                "                END),0) > 0 \n";
         }
 
     }
@@ -85,10 +105,15 @@ public class Sql_Act015_001 implements Specification {
                         "  l.schedule_exec,\n"+
                         "  sc.fcm_new_status,\n"+
                         "  sc.fcm_user_nick,\n"+
-                        "  sc.schedule_erro_msg\n"+
+                        "  sc.schedule_erro_msg,\n" +
+                        "  IFNULL(SUM(CASE WHEN df.value_extra like '"+CONST_NONCONFORMITY_LIKE_SEARCH+"'\n" +
+                        "        THEN 1\n" +
+                        "        ELSE 0\n" +
+                        "   END),0) "+HAS_NONCONFORMITY_FIELD+"\n"+
                         "  FROM\n" +
                         GE_Custom_Form_LocalDao.TABLE+ " l,\n" +
-                        GE_Custom_Form_DataDao.TABLE+ " d\n " +
+                        GE_Custom_Form_DataDao.TABLE+ " d,\n " +
+                        GE_Custom_Form_Data_FieldDao.TABLE+ " df\n " +
                         "  LEFT JOIN\n" +
                         MD_SiteDao.TABLE +" s ON\n" +
                         "               d.customer_code = s.customer_code\n" +
@@ -105,9 +130,24 @@ public class Sql_Act015_001 implements Specification {
                         "      AND l.custom_form_code = d.custom_form_code\n" +
                         "      AND l.custom_form_version = d.custom_form_version\n" +
                         "      AND l.custom_form_data = d.custom_form_data\n" +
+                        " \n" +
+                        "      AND d.customer_code = df.customer_code\n" +
+                        "      AND d.custom_form_type = df.custom_form_type\n" +
+                        "      AND d.custom_form_code = df.custom_form_code\n" +
+                        "      AND d.custom_form_version = df.custom_form_version\n" +
+                        "      AND d.custom_form_data = df.custom_form_data\n" +
+                        " \n" +
                         "      AND l."+GE_Custom_Form_LocalDao.CUSTOMER_CODE+" = '"+s_customer_code+"'\n " +
                                 statusFilter +
-                        "  ORDER BY" +
+                        "  GROUP BY\n" +
+                        "    d.customer_code,\n" +
+                        "    d.custom_form_type,\n" +
+                        "    d.custom_form_code,\n" +
+                        "    d.custom_form_version,\n" +
+                        "    d.custom_form_data\n" +
+                        //nonConformityFilter é um HAVING, então sempre deve vir DEPOIS DO GROUP BY
+                        nonConformityFilter +
+                        "  ORDER BY \n" +
                         "    d.date_end desc,\n" +
                         "    l.custom_form_type,\n " +
                         "    l.custom_product_code,\n " +

@@ -21,6 +21,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.sql.Sql_Act015_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -333,9 +334,42 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                 break;
         }
         //
+        defineIvNonConformityVisibility(ivNonConformity,item);
         defineLlIconsVisibility(llIcons,ivScheduleWarningInfos,ivNonConformity);
         //
         return convertView;
+    }
+
+    /**
+     * LUCHE - 15/04/2020
+     * <p></p>
+     * Metodo que define a visibilidade do icone de nao conformidade.
+     * Somente visivel se a chave existe e seu valor for maior que 0
+     * @param ivNonConformity ImageView do Icone
+     * @param item HmAux do item
+     */
+    private void defineIvNonConformityVisibility(ImageView ivNonConformity, HMAux item) {
+        ivNonConformity.setVisibility(View.GONE);
+        //
+        if( valueExists(item,Sql_Act015_001.HAS_NONCONFORMITY_FIELD)
+            && ToolBox_Inf.convertStringToInt(item.get(Sql_Act015_001.HAS_NONCONFORMITY_FIELD)) > 0
+        ){
+            ivNonConformity.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * LUCHE - 15/04/2020
+     * <p></p>
+     * Metodo que valida se chave existe e é !- da string null
+     * @param item HmAux do item
+     * @param key Chave do HmAux
+     * @return - Verdadeiro se Chave existir, não for null, nem vazia e nem "null"
+     */
+    private boolean valueExists(HMAux item, String key) {
+        return  item.hasConsistentValue(key)
+            && !item.get(key).isEmpty()
+            && !item.get(key).equalsIgnoreCase("null");
     }
 
     /**

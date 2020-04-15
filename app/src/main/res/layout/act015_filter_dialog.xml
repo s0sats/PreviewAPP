@@ -10,11 +10,37 @@
         android:id="@+id/act015_filter_dialog_tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/font_size_title"
+        android:textSize="@dimen/font_size_item_md"
         tools:text="Filtros - trad"
         android:textStyle="bold"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="20dp"
         />
+
+    <TextView
+        android:id="@+id/act015_filter_dialog_tv_nc_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Não Conformidade"
+        android:layout_marginBottom="20dp"
+        android:textStyle="bold"/>
+
+    <CheckBox
+        android:id="@+id/act015_filter_dialog_chk_only_nc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/namoa_color_danger_red_lib"
+        android:layout_marginBottom="20dp"
+        tools:text="Somente Execuções com NC"
+        android:checked="true"
+        />
+
+    <TextView
+        android:id="@+id/act015_filter_dialog_tv_status_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Status"
+        android:layout_marginBottom="20dp"
+        android:textStyle="bold"/>
 
     <CheckBox
         android:id="@+id/act015_filter_dialog_chk_done"

@@ -8,7 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act015_Main_Presenter {
 
-    void getSentData(boolean isDone, boolean isNotExec, boolean isCancelled, boolean isIgnored);
+    void getSentData(boolean isDone, boolean isNotExec, boolean isCancelled, boolean isIgnored, boolean hasNonConformity);
 
     void addFormInfoToBundle(HMAux item);
 
