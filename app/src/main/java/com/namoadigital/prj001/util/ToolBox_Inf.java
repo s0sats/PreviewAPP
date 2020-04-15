@@ -2045,12 +2045,13 @@ public class ToolBox_Inf {
                         ss_site.setBackground(context.getResources().getDrawable(R.drawable.shape_error));
                     }
                     //
-                    if(ss_zone.getmValue()!= null && ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-                        ss_zone.setBackground(context.getResources().getDrawable(R.drawable.shape_ok));
-
-                    }else{
-                        result_ok = false;
-                        ss_zone.setBackground(context.getResources().getDrawable(R.drawable.shape_error));
+                    if(ss_zone.getVisibility() == View.VISIBLE){
+                        if (ss_zone.getmValue() != null && ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                            ss_zone.setBackground(context.getResources().getDrawable(R.drawable.shape_ok));
+                        } else {
+                            result_ok = false;
+                            ss_zone.setBackground(context.getResources().getDrawable(R.drawable.shape_error));
+                        }
                     }
                     //
                     if(ss_operation.getmValue()!= null && ss_operation.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
@@ -2063,7 +2064,10 @@ public class ToolBox_Inf {
 
                     if(result_ok) {
                         ToolBox_Con.setPreference_Site_Code(context, ss_site.getmValue().get(SearchableSpinner.CODE));
-                        ToolBox_Con.setPreference_Zone_Code(context, Integer.parseInt(ss_zone.getmValue().get(SearchableSpinner.CODE)));
+                        if(ss_zone.getVisibility() == View.VISIBLE
+                        && ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                            ToolBox_Con.setPreference_Zone_Code(context, Integer.parseInt(ss_zone.getmValue().get(SearchableSpinner.CODE)));
+                        }
                         ToolBox_Con.setPreference_Operation_Code(context, Long.parseLong(ss_operation.getmValue().get(SearchableSpinner.CODE)));
                         Intent mIntent = new Intent(ToolBox.SW_TYPE_BR_REFRESH);
                         mIntent.addCategory(Intent.CATEGORY_DEFAULT);

@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui.act006;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -330,11 +329,22 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+        if(hasNFormSelected()){
+            setFooter_iv_edit_site_zone_op_visibility(View.GONE);
+        }else {
+            setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
+        }
     }
 
     @Override
     protected void footerCreateDialog() {
-        ToolBox_Inf.buildFooterDialog(context);
+        if(hasNFormSelected()){
+            ToolBox_Inf.buildFooterDialog(context, false);
+            setFooter_iv_edit_site_zone_op_visibility(View.GONE);
+        }else {
+            setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
+            ToolBox_Inf.buildFooterDialog(context, true);
+        }
     }
 
     private void initActions() {
@@ -346,6 +356,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                 public void onClick(View v) {
                     vNFormSelected.setVisibility(View.GONE);
                     recoverInitialNFormState();
+                    setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
                 }
             });
             tvNFormSelected.setText(customFormCodeDesc);
