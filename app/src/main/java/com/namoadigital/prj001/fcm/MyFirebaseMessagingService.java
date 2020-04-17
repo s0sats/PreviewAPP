@@ -56,6 +56,51 @@ import java.util.Calendar;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
+    /**
+     * LUCHE - 16/04/2020
+     * <p></p>
+     * Metodo onde o google notifica a troca token do serviço FCM.
+     * Antes, esse processo era feito pela classe MyFirebaseInstanceIDService, que perdeu totalmente
+     * sua utilizada já que sua classe pai FirebaseInstanceIdService, não existe mais.
+     * @param token Novo token de identificação na google.
+     */
+    @Override
+    public void onNewToken(String token) {
+        //super.onNewToken(token);
+        updateGooglePreferences(token);
+        startWsGoogle();
+        Log.d("FCM_New_Token", "Refreshed token: " + token);
+    }
+
+    /**
+     * LUCHE - 16/04/2020
+     * <p></p>
+     * Metodo que atualiza a preferencia Google_ID com o novo token e reseta a preferencia Google_ID_OK
+     * Essa segunda preferencia indica que ela foi atualiza e precisa ser informada ao servidor.
+     * @param token Novo token de identificação na google.
+     */
+    private void updateGooglePreferences(String token) {
+        ToolBox_Con.setPreference_Google_ID(
+            getApplicationContext(),
+            token);
+
+        ToolBox_Con.setPreference_Google_ID_OK(
+            getApplicationContext(),
+            ""
+        );
+    }
+
+    /**
+     * LUCHE - 16/04/2020
+     * <p></p>
+     * Metodo que chama o serviço WS_Google que informará ao servidor o novo token
+     */
+    private void startWsGoogle() {
+        Intent mIntent = new Intent(getApplicationContext(), WS_Google.class);
+        startService(mIntent);
+    }
+
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 

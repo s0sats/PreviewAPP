@@ -94,7 +94,7 @@ dependencies {
     productionImplementation namoaLibVersion
 
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.google.firebase:firebase-messaging:10.0.1'
+    implementation 'com.google.firebase:firebase-messaging:18.0.0'
     testImplementation 'junit:junit:4.12'
 
     //implementation ('io.socket:socket.io-client:0.8.3') {

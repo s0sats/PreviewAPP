@@ -23,7 +23,7 @@ import java.util.Calendar;
 public class WS_Google extends IntentService {
 
     public WS_Google() {
-        super("WS_Cleanning");
+        super("WS_Google");
     }
 
     @Override

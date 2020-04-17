@@ -1,19 +1,11 @@
 package com.namoadigital.prj001.fcm;
 
-import android.content.Intent;
-import android.util.Log;
-
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.FirebaseInstanceIdService;
-import com.namoadigital.prj001.util.ToolBox_Con;
-
-import static com.google.android.gms.internal.zzs.TAG;
-
 /**
  * Created by neomatrix on 29/03/17.
  */
 
-public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
+public class MyFirebaseInstanceIDService{}
+/*public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
 
     @Override
@@ -38,3 +30,4 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
     }
 }
+ */
