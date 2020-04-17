@@ -2074,6 +2074,20 @@ public class ToolBox_Inf {
                         //
                         Bundle bundle = new Bundle();
                         bundle.putString(ConstantBaseApp.SW_TYPE, ConstantBase.MSG_SPECIAL_NOTIFICATION);
+                        /*
+                           BARRIONUEVO 17-04-2020
+                           Parametriza a chamada do localbroadcast
+                        */
+                        if (context != null)
+                        {
+                            if (context instanceof Base_Activity_Frag)
+                            {
+                                bundle.putString(ToolBox.SW_ACTIVITY, "Base_Activity_Frag");
+                            }else{
+                                bundle.putString(ToolBox.SW_ACTIVITY, "Base_Activity");
+                            }
+                        }
+
                         mIntent.putExtras(bundle);
                         //
                         LocalBroadcastManager.getInstance(context).sendBroadcast(mIntent);

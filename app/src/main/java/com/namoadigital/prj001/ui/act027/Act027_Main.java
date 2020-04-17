@@ -1245,6 +1245,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
         mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
         //
+        setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
@@ -1254,7 +1255,27 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     @Override
     protected void footerCreateDialog() {
         //super.footerCreateDialog();
-        ToolBox_Inf.buildFooterDialog(context, true);
+     /*
+        BARRIONUEVO 17-04-2020
+            - Verifica qual fragmento atual para aplicar form de atualizacao de site, zona e operação.
+       */
+        if(currentFrag.equalsIgnoreCase(act027_services_.getTag())) {
+            ToolBox_Inf.buildFooterDialog(context, true);
+            setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
+        }else{
+            ToolBox_Inf.buildFooterDialog(context, false);
+            setFooter_iv_edit_site_zone_op_visibility(View.GONE);
+        }
+    }
+    /*
+            BARRIONUEVO 17-04-2020
+            Atualiza info do footer e info da lista
+    */
+    @Override
+    protected void processRefreshMessage(String mType, String mValue, String mActivity) {
+        super.processRefreshMessage(mType, mValue, mActivity);
+        act027_services_.loadDataToScreen();
+        iniUIFooter();
     }
 
     private void initActions() {
@@ -2098,9 +2119,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
             case Act027_Main.SELECTION_PRODUCT_LIST:
                 setFrag(act027_product_list_, Act027_Main.SELECTION_PRODUCT_LIST);
+                setFooter_iv_edit_site_zone_op_visibility(View.GONE);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
             case Act027_Main.SELECTION_SERVICES:
+                setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
                 setFrag(act027_services_, Act027_Main.SELECTION_SERVICES);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
@@ -2109,10 +2132,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 loadProductSerialIntoFragment();
                 setFrag(frgSerialEdit, Act027_Main.SELECTION_SERIAL);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
+                setFooter_iv_edit_site_zone_op_visibility(View.GONE);
                 break;
             case Act027_Main.SELECTION_HEADER:
                 setFrag(act027_header_, Act027_Main.SELECTION_HEADER);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
+                setFooter_iv_edit_site_zone_op_visibility(View.GONE);
                 break;
             case Act027_Main.SELECTION_APPROVAL:
 
@@ -2143,7 +2168,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 }
-
+                setFooter_iv_edit_site_zone_op_visibility(View.GONE);
                 break;
             case Act027_Main.SELECTION_SERVICE_EDITION:
                 if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)) {
@@ -2169,6 +2194,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 }
                 break;
             default:
+                setFooter_iv_edit_site_zone_op_visibility(View.GONE);
                 setFrag(act027_header_, Act027_Main.SELECTION_HEADER);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
