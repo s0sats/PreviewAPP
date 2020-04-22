@@ -643,4 +643,13 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     public boolean hasHideSerialInfoChk() {
         return true;
     }
+    /*
+        BARRIONUEVO 17-04-2020
+        Atualiza info do footer
+     */
+    @Override
+    protected void processRefreshMessage(String mType, String mValue, String mActivity) {
+        super.processRefreshMessage(mType, mValue, mActivity);
+        iniUIFooter();
+    }
 }
