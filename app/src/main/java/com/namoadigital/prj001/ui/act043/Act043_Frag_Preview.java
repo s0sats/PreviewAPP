@@ -18,6 +18,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act043_Adapter_Services_Preview;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_ServiceDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.model.SM_SO;
@@ -25,6 +26,7 @@ import com.namoadigital.prj001.receiver.WBR_SO_Service_Cancel;
 import com.namoadigital.prj001.receiver.WBR_SO_Service_Search;
 import com.namoadigital.prj001.service.WS_SO_Service_Cancel;
 import com.namoadigital.prj001.service.WS_SO_Service_Search;
+import com.namoadigital.prj001.sql.Act027_Product_List_Sql_002;
 import com.namoadigital.prj001.sql.Sql_Act043_001;
 import com.namoadigital.prj001.sql.Sql_Act043_002;
 import com.namoadigital.prj001.sql.Sql_Act043_003;
@@ -34,6 +36,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Act043_Frag_Preview extends BaseFragment {
 
@@ -217,7 +220,12 @@ public class Act043_Frag_Preview extends BaseFragment {
         tv_so_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
         //
         btn_search_service.setText(hmAux_Trans.get("btn_search_service"));
-        btn_product_event.setText(hmAux_Trans.get("btn_product_event"));
+
+
+        String btn_product_event_label = hmAux_Trans.get("btn_product_event");
+        btn_product_event_label = getBtnProductEventLabel(btn_product_event_label);
+        btn_product_event.setText(btn_product_event_label);
+
         if( mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS)
             || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
             || mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_BUDGET)
@@ -263,6 +271,14 @@ public class Act043_Frag_Preview extends BaseFragment {
         lv_service_pack.setAdapter(mAdapter);
     }
 
+    private String getBtnProductEventLabel(String btn_product_event_label) {
+        int productEventPendancy = getProductEventPendancy();
+        if(productEventPendancy > 0){
+            btn_product_event_label = btn_product_event_label + " (" + productEventPendancy + ")";
+        }
+        return btn_product_event_label;
+    }
+
     private String getTotalPrice(){
         String totalVal = "-1";
 
@@ -279,6 +295,27 @@ public class Act043_Frag_Preview extends BaseFragment {
         }
         //
         return totalVal;
+    }
+
+    private int getProductEventPendancy() {
+        SM_SO_Product_EventDao sm_so_product_eventDao = new SM_SO_Product_EventDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        List<HMAux> eventList = sm_so_product_eventDao.query_HM(
+                new Act027_Product_List_Sql_002(
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code()
+                ).toSqlQuery()
+        );
+        //
+        if (eventList != null && eventList.size() > 0) {
+            return eventList.size();
+        }
+        return 0;
     }
 
     /**
