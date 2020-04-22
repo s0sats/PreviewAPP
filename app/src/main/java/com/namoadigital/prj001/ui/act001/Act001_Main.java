@@ -16,7 +16,6 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -52,9 +51,12 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
         int version = BuildConfig.VERSION_CODE;
         String name = BuildConfig.VERSION_NAME;
 
-        // Hugo Remover
+        //LUCHE - 22/04/2020
+        //Já existia um comentario antigo dizendo para remover essa chamada.
+        //Fiz novos testes e de fato parece que essa chamada não faz sentido.
+        /*// Hugo Remover
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
-        startService(mIntent);
+        startService(mIntent);*/
 
         context = Act001_Main.this;
 
