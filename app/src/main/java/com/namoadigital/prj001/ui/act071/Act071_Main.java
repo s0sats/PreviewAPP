@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -637,7 +638,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         tvSeq.setText(mPresenter.getFormattedSeqText(String.valueOf(mTicketCtrl.getTicket_seq())));
         definePartner();
         defineComments();
-        defineActionPhotoMetrics();
+        defineActionPhotoMetrics(0.8,0.3);
         defineActionPhoto();
         defineDoneInfo();
         defineCheckinAlert();
@@ -705,6 +706,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         actionPhotoLocalPath = mPresenter.generateActionPhotoLocalPath(mTicketCtrl.getAction());
         //
         if (mTicketCtrl.getAction().getAction_photo() == null && mTicketCtrl.getAction().getAction_photo_local() == null) {
+            //Define tamanho menor do imageView caso não exista imagem
+            defineActionPhotoMetrics(0.8,0.2);
             if(!bReadOnly) {
                 deletePhotoFile(TEMP_SUFIX_FILE + actionPhotoLocalPath);
             }else{
@@ -714,13 +717,12 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             //Se photo name null, de fato não há foto, mas se photo name != null
             //significa q a imagem foi inserida por outro user
             if(mTicketCtrl.getAction().getAction_photo_name() == null) {
-                placeHolder = getResources().getDrawable(android.R.drawable.ic_menu_camera);
+                placeHolder = getNoPhotoDrawable();
             }else{
                 placeHolder = getResources().getDrawable(R.drawable.sand_watch_transp);
             }
             //
             ivActionPhoto.setImageDrawable(placeHolder);
-
         } else {
             String path = mTicketCtrl.getAction().getAction_photo();
             boolean saveBitmap = false;
@@ -791,6 +793,14 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         }
     }
 
+    @NonNull
+    private Drawable getNoPhotoDrawable() {
+        Drawable placeHolder;
+        placeHolder = getResources().getDrawable(R.drawable.ic_foto_ns_black);
+        placeHolder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
+        return placeHolder;
+    }
+
     private void applyTooLargeImgListener(String path) {
         if(photoClickListener != null && !ToolBox_Inf.isImageUnder4kLimit(path)){
             ivActionPhoto.setOnClickListener(new View.OnClickListener() {
@@ -806,8 +816,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         }
     }
 
-    private void defineActionPhotoMetrics() {
-        int[] percentMetrics = ToolBox_Inf.getPercentageWidthAndHeight(context,0.8,0.3);
+    private void defineActionPhotoMetrics(double widthPercent, double heightPercent) {
+        //int[] percentMetrics = ToolBox_Inf.getPercentageWidthAndHeight(context,0.8,0.3);
+        int[] percentMetrics = ToolBox_Inf.getPercentageWidthAndHeight(context,widthPercent,heightPercent);
         ivActionPhoto.getLayoutParams().width = percentMetrics[0];
         ivActionPhoto.getLayoutParams().height = percentMetrics[1];
     }
@@ -818,7 +829,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             Bitmap bitmap = BitmapFactory.decodeFile(path);
             ivActionPhoto.setImageBitmap(bitmap);
         }else {
-            ivActionPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
+            //ivActionPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
+            ivActionPhoto.setImageDrawable(getNoPhotoDrawable());
         }
 
     }
