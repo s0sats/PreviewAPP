@@ -162,9 +162,9 @@ public class Act018_Adapter_Messages extends BaseAdapter {
             tv_customer.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     context.getResources().getDimension(R.dimen.font_size_font_16));
 
-//            Drawable bgDrawble = context.getDrawable(R.drawable.namoa_cell_8_states);
-//            ll_background.setBackground(bgDrawble);
-
+            Drawable bgDrawble = context.getDrawable(R.drawable.lib_custom_cell_bg_base);
+            ll_background.setBackground(bgDrawble);
+            iv_007.setVisibility(View.INVISIBLE);
 
 //            tv_customer.setTextColor(context.getResources().getColor(R.color.font_required));
 //            tv_title.setTextColor(context.getResources().getColor(R.color.font_required));
