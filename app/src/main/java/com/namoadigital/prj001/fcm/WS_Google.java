@@ -11,6 +11,7 @@ import com.google.gson.GsonBuilder;
 import com.namoadigital.prj001.model.TGoogle_Env;
 import com.namoadigital.prj001.model.TGoogle_Rec;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -57,12 +58,11 @@ public class WS_Google extends IntentService {
                         TGoogle_Rec.class
                 );
 
-                if (rec.getRet().equalsIgnoreCase("OK")) {
+                if (rec.getRet().equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_OK)) {
                     ToolBox_Con.setPreference_Google_ID_OK(
                             getApplicationContext(),
-                            "OK"
+                        ConstantBaseApp.MAIN_RESULT_OK
                     );
-
                 } else {
                     programAlarm(getApplicationContext());
                 }
