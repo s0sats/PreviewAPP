@@ -162,6 +162,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/act071_iv_exec" />
 
+                <!-- A cor do icone é definida via code-->
                 <ImageView
                     android:id="@+id/act071_iv_action_photo"
                     android:layout_width="0dp"
@@ -173,7 +174,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/act071_tv_photo_lbl"
                     app:srcCompat="@drawable/ic_foto_ns_black"
-                    android:tint="@color/namoa_dark_blue"
                     />
 
                 <TextView

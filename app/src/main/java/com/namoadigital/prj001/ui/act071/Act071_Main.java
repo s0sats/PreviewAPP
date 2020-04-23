@@ -63,6 +63,11 @@ import java.util.List;
 public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I_View {
 
     public static final String TEMP_SUFIX_FILE = "temp-";
+    private final double IV_PHOTO_EXISTS_WIDTH_PERCENT = 0.8;
+    private final double IV_PHOTO_EXISTS_HEIGHT_PERCENT = 0.3;
+    private final double IV_PHOTO_NOT_EXISTS_WIDTH_PERCENT = 0.8;
+    private final double IV_PHOTO_NOT_EXISTS_HEIGHT_PERCENT = 0.2;
+
     private Act071_Main_Presenter mPresenter;
     private ScrollView svMain;
     private TextView tvTicketId;
@@ -638,7 +643,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         tvSeq.setText(mPresenter.getFormattedSeqText(String.valueOf(mTicketCtrl.getTicket_seq())));
         definePartner();
         defineComments();
-        defineActionPhotoMetrics(0.8,0.3);
+        //Define tamanho imageView., considerand que img já existe.
+        defineActionPhotoMetrics(IV_PHOTO_EXISTS_WIDTH_PERCENT,IV_PHOTO_EXISTS_HEIGHT_PERCENT);
         defineActionPhoto();
         defineDoneInfo();
         defineCheckinAlert();
@@ -706,8 +712,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         actionPhotoLocalPath = mPresenter.generateActionPhotoLocalPath(mTicketCtrl.getAction());
         //
         if (mTicketCtrl.getAction().getAction_photo() == null && mTicketCtrl.getAction().getAction_photo_local() == null) {
-            //Define tamanho menor do imageView caso não exista imagem
-            defineActionPhotoMetrics(0.8,0.2);
+            //Redefine tamanho imageView. Neste caso menor pois img não existe
+            defineActionPhotoMetrics(IV_PHOTO_NOT_EXISTS_WIDTH_PERCENT,IV_PHOTO_NOT_EXISTS_HEIGHT_PERCENT);
             if(!bReadOnly) {
                 deletePhotoFile(TEMP_SUFIX_FILE + actionPhotoLocalPath);
             }else{
@@ -793,6 +799,12 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         }
     }
 
+    /**
+     * LUCHE - 22/04/2020
+     * Metodo retorna o drawable referente a sem foto.
+     * Usa icone do resource e aplica filtro para cor azul.
+     * @return Drawable do icone com a cor de filtro aplicada.
+     */
     @NonNull
     private Drawable getNoPhotoDrawable() {
         Drawable placeHolder;
@@ -816,8 +828,19 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         }
     }
 
+    /**
+     * LUCHE
+     * <p></p>
+     * Metodo que define o tamanho do imageView para usa 80% da largura e 30% da altura da tela do device
+     * <p></p>
+     * LUCHE - 23/04/2020
+     * Modificado metodo para receber via parametro a porcentagem de largura e altura a serem usados,
+     * pois, agora haverá uma diferença de tamanho entre foto tirada e sem foto.
+     *
+     * @param widthPercent Porcentagem da largura
+     * @param heightPercent Porcentagem da altura
+     */
     private void defineActionPhotoMetrics(double widthPercent, double heightPercent) {
-        //int[] percentMetrics = ToolBox_Inf.getPercentageWidthAndHeight(context,0.8,0.3);
         int[] percentMetrics = ToolBox_Inf.getPercentageWidthAndHeight(context,widthPercent,heightPercent);
         ivActionPhoto.getLayoutParams().width = percentMetrics[0];
         ivActionPhoto.getLayoutParams().height = percentMetrics[1];
@@ -827,12 +850,14 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         if(mPresenter.fileExists(pathSufix)) {
             String path = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + pathSufix;
             Bitmap bitmap = BitmapFactory.decodeFile(path);
+            //Redefine tamanho imageView. Neste caso MAIOR pois img existe
+            defineActionPhotoMetrics(IV_PHOTO_EXISTS_WIDTH_PERCENT,IV_PHOTO_EXISTS_HEIGHT_PERCENT);
             ivActionPhoto.setImageBitmap(bitmap);
         }else {
-            //ivActionPhoto.setImageDrawable(getResources().getDrawable(android.R.drawable.ic_menu_camera));
+            //Redefine tamanho imageView. Neste caso MENOR pois img não existe
+            defineActionPhotoMetrics(IV_PHOTO_NOT_EXISTS_WIDTH_PERCENT,IV_PHOTO_NOT_EXISTS_HEIGHT_PERCENT);
             ivActionPhoto.setImageDrawable(getNoPhotoDrawable());
         }
-
     }
 
     private void defineDoneInfo() {
