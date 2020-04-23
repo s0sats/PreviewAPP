@@ -470,6 +470,17 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                                 scheduleExec.setRequire_serial_done(dbSchedule.getRequire_serial_done());
                                 scheduleExec.setCustom_form_type_desc(dbSchedule.getCustom_form_type_desc());
                                 scheduleExec.setCustom_form_desc(dbSchedule.getCustom_form_desc());
+                                //LUCHE - 23/04/2020
+                                //Adicionado set das novas informações de produto.
+                                scheduleExec.setSerial_rule(dbSchedule.getSerial_rule());
+                                scheduleExec.setSerial_max_length(dbSchedule.getSerial_max_length());
+                                scheduleExec.setSerial_min_length(dbSchedule.getSerial_min_length());
+                                scheduleExec.setLocal_control(dbSchedule.getLocal_control());
+                                scheduleExec.setIo_control(dbSchedule.getIo_control());
+                                scheduleExec.setSite_restriction(dbSchedule.getSite_restriction());
+                                scheduleExec.setProduct_icon_name(dbSchedule.getProduct_icon_name());
+                                scheduleExec.setProduct_icon_url(dbSchedule.getProduct_icon_url());
+                                scheduleExec.setRequire_location(dbSchedule.getRequire_location());
                                 break;
                             case ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET:
                             default:
