@@ -263,6 +263,11 @@ public class Act031_Main extends Base_Activity implements Act031_Main_View {
             public void onAddressSuggestionRequired(String site_code, long product_code) {
                 
             }
+
+            @Override
+            public void onHideSerialInfoErrorListner() {
+
+            }
         });
 
     }

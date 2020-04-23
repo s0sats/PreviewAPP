@@ -168,9 +168,7 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
         //
         initFrag();
         //
-        contentMain.setVisibility(View.VISIBLE);
-        //
-        checkForHideSerialFlow();
+        checkForHideSerialFlow(false);
     }
 
     private void recoverIntentsInfo() {
@@ -253,6 +251,7 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
             @Override
             public void onFragIsReady() {
                 //Sem ação nesse caso
+                checkForHideSerialFlow(true);
             }
 
             @Override
@@ -273,6 +272,12 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
             public void onAddressSuggestionRequired(String site_code, long product_code) {
                 //sem ação nesse caso
             }
+            @Override
+            public void onHideSerialInfoErrorListner() {
+                if(contentMain.getVisibility() == View.INVISIBLE){
+                    mPresenter.onBackPressedClicked();
+                }
+            }
         });
 
     }
@@ -287,24 +292,19 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
         }
     }
 
-    private void checkForHideSerialFlow() {
+    private void checkForHideSerialFlow(boolean checkFlow) {
         if(!bundle_new_serial &&
             ToolBox_Inf.hasForceNotShowSerialInfo(context)) {
             contentMain.setVisibility(View.INVISIBLE);
             //
-            if(ToolBox_Con.isOnline(context)) {
-                mPresenter.updateSerialData(mdProductSerial);
-                mPresenter.executeTicketDownload(mdProductSerial.getProduct_code(),mdProductSerial.getSerial_code(),mdProductSerial.getSerial_id());
-            }else{
-                ToolBox_Inf.showNoConnectionDialogWithInteraction(context, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if(ToolBox_Inf.hasForceNotShowSerialInfo(context)){
-                            onBackPressed();
-                        }
-                    }
-                });
+            if(checkFlow) {
+//                mPresenter.checkFlow();
+                if(frgSerialEdit.getBtn_action() != null){
+                    frgSerialEdit.getBtn_action().performClick();
+                }
             }
+        }else{
+            contentMain.setVisibility(View.VISIBLE);
         }
     }
 

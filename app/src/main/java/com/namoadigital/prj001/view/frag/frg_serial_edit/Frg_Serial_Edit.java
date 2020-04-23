@@ -139,6 +139,7 @@ public class Frg_Serial_Edit extends BaseFragment {
     private View.OnClickListener checkExistSerialListner;
     private View.OnClickListener saveSerialListner;
     private DialogInterface.OnClickListener productOrSerialNullListner;
+    private DialogInterface.OnClickListener hideSerialInfoErrorListner;
     private LinearLayout ll_tracking;
     private TextView tv_tracking;
     private ImageView iv_add_tracking;
@@ -299,6 +300,13 @@ public class Frg_Serial_Edit extends BaseFragment {
          * @param product_code
          */
         void onAddressSuggestionRequired(String site_code, long product_code);
+
+        /**
+         * BARRIONUEVO - 22-04-2020
+         * Interaface chamada ao encontrar algum erro no perform click
+         * Inicialmente sera tratado se o fragmento esta invisivel para forca navegacao de volta
+         */
+        void onHideSerialInfoErrorListner();
     }
     //endregion
 
@@ -1366,6 +1374,16 @@ public class Frg_Serial_Edit extends BaseFragment {
                 }
             }
         };
+
+        hideSerialInfoErrorListner = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //
+                if (delegate != null ) {
+                    delegate.onHideSerialInfoErrorListner();
+                }
+            }
+        };
         //
 
     }
@@ -1400,7 +1418,8 @@ public class Frg_Serial_Edit extends BaseFragment {
                         } else {
                             showAlertDialog(
                                     hmAux_Trans.get("alert_serial_validation_ttl"),
-                                    hmAux_Trans.get("alert_site_restriction_violation_msg")
+                                    hmAux_Trans.get("alert_site_restriction_violation_msg"),
+                                    hideSerialInfoErrorListner
                             );
                         }
                     }else{
