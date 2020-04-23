@@ -31,6 +31,7 @@ import com.namoadigital.prj001.ui.act008.Act008_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
+import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -44,6 +45,7 @@ import java.util.List;
  */
 
 public class Act013_Main extends Base_Activity implements Act013_Main_View {
+    private static final int PROCESSO_SELECAO_ZONA = 10;
 
     public static final String FORM_IN_PROCESSING = "form_in_processing";
     public static final String START_FORM = "start_form";
@@ -69,6 +71,11 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     private boolean filterInProcessing;
     private boolean filterSchedule;
     private boolean filterWaitingSync;
+    //LUCHE - 23/04/2020
+    //Implementação troca de site
+    private String site_code_back;
+    private int zone_code_back;
+    private HMAux item_selected;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -134,6 +141,10 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         //
         translateList.add("alert_form_turn_gps_on_title");
         translateList.add("alert_form_turn_gps_on_msg");
+        //
+        translateList.add("alert_form_site_restriction_ttl");
+        translateList.add("alert_form_site_restriction_no_access_msg");
+        translateList.add("alert_form_site_restriction_confirm");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -217,7 +228,10 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
             filterSchedule = false;
             filterWaitingSync = false;
         }
-
+        // Cópia do Site_Code e do Zone_Code para o mudanca no Agendamento
+        site_code_back = ToolBox_Con.getPreference_Site_Code(context);
+        zone_code_back = ToolBox_Con.getPreference_Zone_Code(context);
+        item_selected = new HMAux();
     }
 
     private void iniUIFooter() {
@@ -249,6 +263,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
+                item_selected.putAll(item);
                 mPresenter.validateOpenForm(item);
             }
         });
@@ -469,6 +484,24 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case PROCESSO_SELECAO_ZONA:
+                if (resultCode == RESULT_OK){
+                    filterApply();
+                    iniUIFooter();
+                    mPresenter.validateOpenForm(item_selected);
+                } else {
+                    ToolBox_Con.setPreference_Site_Code(context, site_code_back);
+                    ToolBox_Con.setPreference_Zone_Code(context, zone_code_back);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
     public void callAct011(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -519,6 +552,16 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         }
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public void callAct033(Context context) {
+        Intent mIntent = new Intent(context, Act033_Main.class);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT013);
+        mIntent.putExtras(bundle);
+        startActivityForResult(mIntent, PROCESSO_SELECAO_ZONA);
     }
 
     @Override
