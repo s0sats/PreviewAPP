@@ -210,8 +210,8 @@
 
                 <ImageView
                     android:id="@+id/act071_iv_exec"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_ok_ns_states" />

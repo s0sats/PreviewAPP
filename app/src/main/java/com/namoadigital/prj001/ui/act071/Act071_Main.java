@@ -66,7 +66,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private final double IV_PHOTO_EXISTS_WIDTH_PERCENT = 0.8;
     private final double IV_PHOTO_EXISTS_HEIGHT_PERCENT = 0.3;
     private final double IV_PHOTO_NOT_EXISTS_WIDTH_PERCENT = 0.8;
-    private final double IV_PHOTO_NOT_EXISTS_HEIGHT_PERCENT = 0.2;
+    private final double IV_PHOTO_NOT_EXISTS_HEIGHT_PERCENT = 0.13;
 
     private Act071_Main_Presenter mPresenter;
     private ScrollView svMain;
