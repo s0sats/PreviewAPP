@@ -98,6 +98,7 @@ public class WS_GetCustomer extends IntentService {
         env.setEmail_p(user);
         env.setPassword(password);
         env.setNfc_code(nfc);
+        env.setStatus_jump(statusjump);
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_GETCUSTOMERS,
@@ -129,26 +130,11 @@ public class WS_GetCustomer extends IntentService {
             && rec.getLogin().equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_OK)
             && rec.getVersion().equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_UPDATE_REQUIRED)
         ){
-            downloadAndUnpackZip(rec.getZip());
             //
-            File[] files_Users = ToolBox_Inf.getListOfFiles_v2("ev_user-");
-            //
-            if(files_Users.length > 0){
-                File _file = files_Users[0];
-                //
-                ArrayList<EV_User> users = gson.fromJson(
-                    ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
-                    ),
-                    new TypeToken<ArrayList<EV_User>>() {
-                    }.getType()
-                );
-                EV_User userInfo = users.get(0);
-                //
-                if(userInfo.getUser_code() == Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()))){
-                    rec.setVersion(ConstantBaseApp.MAIN_RESULT_UPDATE_REQUIRED_WARNING);
-                }
+            if(rec.getUser_code() == Long.parseLong(ToolBox_Con.getPreference_Last_User_Logged(getApplicationContext()))){
+                rec.setVersion(ConstantBaseApp.MAIN_RESULT_UPDATE_REQUIRED_WARNING);
             }
+
         }
         //
         if (!ToolBox_Inf.processWSCheck_GC(
