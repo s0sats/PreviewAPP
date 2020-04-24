@@ -2033,13 +2033,18 @@ public class ToolBox_Inf {
                 }
             });
 
+            final String original_site = hmDialogInfo.get(Constant.FOOTER_SITE);
+            final String original_zone = hmDialogInfo.get(Constant.FOOTER_ZONE);
+            final String original_operation = hmDialogInfo.get(Constant.FOOTER_OPERATION);
+
             footer_dialog_app_action_ok.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     boolean result_ok = true;
+                    boolean has_changes = false;
                     if(ss_site.getmValue()!= null && ss_site.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
-
                         ss_site.setBackground(context.getResources().getDrawable(R.drawable.shape_ok));
+                        has_changes = checkForChange(has_changes, original_site, ss_site);
                     }else{
                         result_ok = false;
                         ss_site.setBackground(context.getResources().getDrawable(R.drawable.shape_error));
@@ -2048,6 +2053,7 @@ public class ToolBox_Inf {
                     if(ss_zone.getVisibility() == View.VISIBLE){
                         if (ss_zone.getmValue() != null && ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                             ss_zone.setBackground(context.getResources().getDrawable(R.drawable.shape_ok));
+                            has_changes = checkForChange(has_changes, original_zone, ss_zone);
                         } else {
                             result_ok = false;
                             ss_zone.setBackground(context.getResources().getDrawable(R.drawable.shape_error));
@@ -2056,13 +2062,15 @@ public class ToolBox_Inf {
                     //
                     if(ss_operation.getmValue()!= null && ss_operation.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                         ss_operation.setBackground(context.getResources().getDrawable(R.drawable.shape_ok));
-
+                        has_changes = checkForChange(has_changes, original_operation, ss_operation);
                     }else{
                         ss_operation.setBackground(context.getResources().getDrawable(R.drawable.shape_error));
                         result_ok = false;
                     }
 
-                    if(result_ok) {
+                    if(!has_changes){
+                        customDialog.dismiss();
+                    }else if(result_ok) {
                         ToolBox_Con.setPreference_Site_Code(context, ss_site.getmValue().get(SearchableSpinner.CODE));
                         if(ss_zone.getVisibility() == View.VISIBLE
                         && ss_zone.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
@@ -2167,6 +2175,14 @@ public class ToolBox_Inf {
 //            }
 //        });
 
+    }
+
+    private static boolean checkForChange(boolean has_changes, String original_code, SearchableSpinner searchableSpinner) {
+        String original_code_split[] = original_code.split(" - ");
+        if (!searchableSpinner.getmValue().get(SearchableSpinner.CODE).equals(original_code_split[0])) {
+            has_changes = true;
+        }
+        return has_changes;
     }
 
     private static void setEnableUserInfo(Context context, HMAux hmDialogInfo,SearchableSpinner ss_site,SearchableSpinner ss_zone, SearchableSpinner ss_operation) {
