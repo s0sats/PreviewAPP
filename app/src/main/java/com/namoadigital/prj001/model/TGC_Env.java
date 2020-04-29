@@ -10,6 +10,7 @@ public class TGC_Env extends Main_Header_Env {
     private String email_p;
     private String password;
     private String nfc_code;
+    private int status_jump;
 
 
     public String getDevice_code() {
@@ -42,5 +43,13 @@ public class TGC_Env extends Main_Header_Env {
 
     public void setNfc_code(String nfc_code) {
         this.nfc_code = nfc_code;
+    }
+
+    public int getStatus_jump() {
+        return status_jump;
+    }
+
+    public void setStatus_jump(int status_jump) {
+        this.status_jump = status_jump;
     }
 }

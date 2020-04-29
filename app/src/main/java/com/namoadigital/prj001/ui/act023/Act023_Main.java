@@ -194,22 +194,24 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 O correto era tratar antes da chamada dessa ACT, porem eh nesta ACT onde estah a chamada
                 do servico de OS.
         */
+        checkForHideSerialFlow(false);
+        initFrag();
+    }
+    /**
+     *  BARRIONUEVO 23-04-2020
+     *  Trata a visibilidade do fragmento antes de carregar as informacoes
+     *  É chamado na interface onFragIsReady para performar o click e verificar a possibilidade
+     *  de avançar.
+     */
+    private void checkForHideSerialFlow(boolean checkFlow) {
         if(!bundle_new_serial &&
                 ToolBox_Inf.hasForceNotShowSerialInfo(context) && hide_serial_info &&
                 !ConstantBaseApp.ACT026.equalsIgnoreCase(requesting_process)){
             contentMain.setVisibility(View.INVISIBLE);
-            if(ToolBox_Con.isOnline(context)) {
-                mPresenter.updateSerialData(mdProductSerial);
-                mPresenter.executeSoDownload(mdProduct.getProduct_code(),bundle_serial_id);
-            }else{
-                ToolBox_Inf.showNoConnectionDialogWithInteraction(context, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if(ToolBox_Inf.hasForceNotShowSerialInfo(context)){
-                            onBackPressed();
-                        }
-                    }
-                });
+            if(checkFlow) {
+                if(frgSerialEdit.getBtn_action() != null){
+                    frgSerialEdit.getBtn_action().performClick();
+                }
             }
         }else{
             contentMain.setVisibility(View.VISIBLE);
@@ -217,7 +219,6 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
                 mPresenter.onBackPressedClicked();
             }
         }
-        initFrag();
     }
 
     private void initFrag() {
@@ -279,7 +280,7 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
 
             @Override
             public void onFragIsReady() {
-
+                checkForHideSerialFlow(true);
             }
 
             @Override
@@ -299,6 +300,13 @@ public class Act023_Main extends Base_Activity_Frag implements Act023_Main_View 
             @Override
             public void onAddressSuggestionRequired(String site_code, long product_code) {
 
+            }
+
+            @Override
+            public void onHideSerialInfoErrorListner() {
+                if(contentMain.getVisibility() == View.INVISIBLE){
+                    mPresenter.onBackPressedClicked();
+                }
             }
         });
     }

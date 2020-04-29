@@ -821,6 +821,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             public void onAddressSuggestionRequired(String site_code, long product_code) {
 
             }
+            @Override
+            public void onHideSerialInfoErrorListner() {
+
+            }
         });
     }
 
@@ -1245,6 +1249,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
         mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
         //
+        if(currentFrag.equalsIgnoreCase(act027_services_.getTag())) {
+            setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
+        }else{
+            setFooter_iv_edit_site_zone_op_visibility(View.GONE);
+        }
+        //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
@@ -1254,7 +1264,27 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     @Override
     protected void footerCreateDialog() {
         //super.footerCreateDialog();
-        ToolBox_Inf.buildFooterDialog(context);
+     /*
+        BARRIONUEVO 17-04-2020
+            - Verifica qual fragmento atual para aplicar form de atualizacao de site, zona e operação.
+       */
+        if(currentFrag.equalsIgnoreCase(act027_services_.getTag())) {
+            ToolBox_Inf.buildFooterDialog(context, true);
+            setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
+        }else{
+            ToolBox_Inf.buildFooterDialog(context, false);
+            setFooter_iv_edit_site_zone_op_visibility(View.GONE);
+        }
+    }
+    /*
+            BARRIONUEVO 17-04-2020
+            Atualiza info do footer e info da lista
+    */
+    @Override
+    protected void processRefreshMessage(String mType, String mValue, String mActivity) {
+        super.processRefreshMessage(mType, mValue, mActivity);
+        act027_services_.loadDataToScreen();
+        iniUIFooter();
     }
 
     private void initActions() {
@@ -2143,7 +2173,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                     setFrag(act027_approval_, Act027_Main.SELECTION_APPROVAL);
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 }
-
                 break;
             case Act027_Main.SELECTION_SERVICE_EDITION:
                 if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT)) {
@@ -2172,6 +2201,20 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 setFrag(act027_header_, Act027_Main.SELECTION_HEADER);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
+        }
+        /**
+         * BARRIONUEVO 22-04-2020
+         * Tratamento para quando é selecionado algum fragmento da act027 via act043
+         * Neste fluxo, o imageview do footer sempre sera nulo pois o footer ainda nao foi setado.
+         */
+        try {
+            if (currentFrag.equalsIgnoreCase(act027_services_.getTag())) {
+                setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
+            } else {
+                setFooter_iv_edit_site_zone_op_visibility(View.GONE);
+            }
+        }catch (NullPointerException e ){
+            e.printStackTrace();
         }
     }
 

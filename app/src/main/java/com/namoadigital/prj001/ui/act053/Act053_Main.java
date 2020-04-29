@@ -179,9 +179,24 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
         //
         initFrag();
         //
-        if(ToolBox_Inf.hasForceNotShowSerialInfo(context) && !bundle_new_serial && !avoid_serial_hide){
+        checkForHideSerialFlow(false);
+
+    }
+
+    /**
+     *  BARRIONUEVO 23-04-2020
+     *  Trata a visibilidade do fragmento antes de carregar as informacoes
+     *  É chamado na interface onFragIsReady para performar o click e verificar a possibilidade
+     *  de avançar.
+     */
+    private void checkForHideSerialFlow(boolean performClick) {
+        if(ToolBox_Inf.hasForceNotShowSerialInfo(context) && !bundle_new_serial && !avoid_serial_hide) {
             contentMain.setVisibility(View.INVISIBLE);
-            checkFlow();
+            if (performClick) {
+                if (frgSerialEdit.getBtn_action() != null) {
+                    frgSerialEdit.getBtn_action().performClick();
+                }
+            }
         }else{
             contentMain.setVisibility(View.VISIBLE);
         }
@@ -285,6 +300,7 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
             @Override
             public void onFragIsReady() {
                //
+                checkForHideSerialFlow(true);
             }
 
             @Override
@@ -307,6 +323,12 @@ public class Act053_Main extends Base_Activity implements Act053_Main_Contract.I
                     mPresenter.executeAddressSuggestion(site_code, product_code);
                 }
 
+            }
+            @Override
+            public void onHideSerialInfoErrorListner() {
+                if(contentMain.getVisibility() == View.INVISIBLE){
+                    mPresenter.onBackPressedClicked(requesting_act);
+                }
             }
         });
     }

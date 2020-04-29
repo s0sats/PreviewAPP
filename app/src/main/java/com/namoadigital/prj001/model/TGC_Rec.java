@@ -12,6 +12,7 @@ public class TGC_Rec {
     private String login;
     private String zip;
     private Integer db_version;
+    private Integer user_code;
 
     public String getApp() {
         return app;
@@ -67,5 +68,13 @@ public class TGC_Rec {
 
     public void setDb_version(Integer db_version) {
         this.db_version = db_version;
+    }
+
+    public Integer getUser_code() {
+        return user_code;
+    }
+
+    public void setUser_code(Integer user_code) {
+        this.user_code = user_code;
     }
 }

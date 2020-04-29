@@ -1410,6 +1410,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
         menuTaskCreated(task);
         //
+        executeSerialSave();
+        //
         act028_task_list.loadDataToScreen();
 
     }
@@ -1487,7 +1489,8 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         setMTASK_STATUS(Act028_Main.CREATE_NOT_EXEC);
 
         setmTaskCall(false);
-        executeSoSave(true);
+        //
+        executeSerialSave();
     }
 
     //region Drawer Visibility

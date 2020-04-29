@@ -419,6 +419,7 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
         mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
         //
+        setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
@@ -428,7 +429,7 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
     @Override
     protected void footerCreateDialog() {
         //super.footerCreateDialog();
-        ToolBox_Inf.buildFooterDialog(context);
+        ToolBox_Inf.buildFooterDialog(context, true);
     }
 
     private void initActions() {
@@ -556,5 +557,14 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
     @Override
     public boolean hasHideSerialInfoChk() {
         return true;
+    }
+    /*
+        BARRIONUEVO 17-04-2020
+            Atualiza info do footer e info da lista
+   */
+    @Override
+    protected void processRefreshMessage(String mType, String mValue, String mActivity) {
+        super.processRefreshMessage(mType, mValue, mActivity);
+        iniUIFooter();
     }
 }

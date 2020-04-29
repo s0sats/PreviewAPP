@@ -222,6 +222,11 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
         mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
         //
+        /*
+            BARRIONUEVO 17-04-2020
+            Atualiza info do footer
+        */
+        setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
@@ -232,7 +237,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
     @Override
     protected void footerCreateDialog() {
         //super.footerCreateDialog();
-        ToolBox_Inf.buildFooterDialog(context);
+        ToolBox_Inf.buildFooterDialog(context, true);
     }
 
     private void initActions() {
@@ -417,7 +422,20 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         startActivity(mIntent);
         finish();
     }
-
+    /*
+        BARRIONUEVO 17-04-2020
+            - Atualiza info do footer
+            - Recarrega lista e aplica filtro
+    */
+    @Override
+    protected void processRefreshMessage(String mType, String mValue, String mActivity) {
+        super.processRefreshMessage(mType, mValue, mActivity);
+        mPresenter.getSOListTotalCount(product_code, serial_id);
+        //mPresenter.getSOList(product_code, serial_id, sw_filter.isChecked());
+        mPresenter.getSOList(product_code, serial_id, false);
+        setAvailableFilter(sw_filter.isChecked());
+        iniUIFooter();
+    }
 
 
     @Override

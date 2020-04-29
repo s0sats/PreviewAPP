@@ -970,6 +970,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
         mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
         //
+        /*
+            BARRIONUEVO 17-04-2020
+            Mostra ícone de mudanca de site.
+         */
+        setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
@@ -1006,7 +1011,25 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     @Override
     protected void footerCreateDialog() {
         //super.footerCreateDialog();
-        ToolBox_Inf.buildFooterDialog(context);
+
+        ToolBox_Inf.buildFooterDialog(context, true);
+    }
+    /*
+        BARRIONUEVO 17-04-2020
+            - Atualiza info do footer
+            - Recarrega gridview com site, zona e operação aplicados.
+     */
+    @Override
+    protected void processRefreshMessage(String mType, String mValue, String mActivity) {
+        super.processRefreshMessage(mType, mValue, mActivity);
+        /*
+            BARRIONUEVO 17-04-2020
+            desabilita acesso a modulos enquanto atuliza tela.
+         */
+        gv_menu.setClickable(false);
+        mPresenter.getMenuItensV2(hmAux_Trans);
+        iniUIFooter();
+        gv_menu.setClickable(true);
     }
 
     @Override
@@ -2409,6 +2432,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
         }
     }
+
 
     @Override
     protected void processNotification_close(String mValue, String mActivity) {

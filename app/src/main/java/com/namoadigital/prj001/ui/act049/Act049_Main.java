@@ -267,6 +267,11 @@ public class Act049_Main extends Base_Activity_Frag implements Act049_Main_Contr
                   public void onAddressSuggestionRequired(String site_code, long product_code) {
 
                   }
+
+                @Override
+                public void onHideSerialInfoErrorListner() {
+
+                }
               }
         );
     }

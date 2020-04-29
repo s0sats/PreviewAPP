@@ -279,6 +279,10 @@ public class Teste2 extends Base_Activity {
             public void onAddressSuggestionRequired(String site_code, long product_code) {
 
             }
+            @Override
+            public void onHideSerialInfoErrorListner() {
+
+            }
         });
         //
         iv_serial_log = (ImageView) findViewById(R.id.act_test2_iv_tst);

@@ -319,6 +319,7 @@ public class WS_Sync extends IntentService {
         env.setSession_app(session_app);
         env.setData_package(dataPackage);
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+        env.setStatus_jump(jump_validation);
 
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
         //LUCHE - 07/06/2019

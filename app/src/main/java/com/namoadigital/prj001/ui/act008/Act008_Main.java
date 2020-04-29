@@ -260,6 +260,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
      *
      * Metodo que concentra a verificação se deve seguir o fluxo do hide serial
      *
+     * BARRIONUEVO 23-04-2020
+     *    Trata a visibilidade do fragmento antes de carregar as informacoes
+     *    É chamado na interface onFragIsReady para performar o click e verificar a possibilidade
+     *    de avançar.
      */
     private void checkForHideSerialFlow(boolean checkFlow) {
         if(!bundle_new_serial &&
@@ -433,6 +437,13 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             @Override
             public void onAddressSuggestionRequired(String site_code, long product_code) {
 
+            }
+
+            @Override
+            public void onHideSerialInfoErrorListner() {
+                if(contentMain.getVisibility() == View.INVISIBLE){
+                    mPresenter.onBackPressedClicked();
+                }
             }
         });
     }
