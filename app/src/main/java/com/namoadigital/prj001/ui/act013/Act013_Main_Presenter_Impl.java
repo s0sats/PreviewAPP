@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,12 +20,14 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
@@ -35,6 +38,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_006;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.sql.Sql_Act013_001;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
@@ -61,6 +65,7 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
     private GE_Custom_Form_LocalDao formLocalDao;
     private HMAux hmAux_Trans;
     private ScheduleRequestSerialDialog serialDialog;
+    private MD_SiteDao siteDao;
 
     //
     public Act013_Main_Presenter_Impl(Context context, Act013_Main mView, GE_Custom_Form_LocalDao formLocalDao, HMAux hmAux_Trans) {
@@ -68,6 +73,11 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
         this.mView = mView;
         this.formLocalDao = formLocalDao;
         this.hmAux_Trans = hmAux_Trans;
+        this.siteDao = new MD_SiteDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
     }
 
     @Override
@@ -84,76 +94,6 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
             );
 
         mView.loadPendencies(pendencies);
-
-    }
-
-    @Override
-    public void addFormInfoToBundle(final HMAux item) {
-        final Bundle bundle = new Bundle();
-        bundle.putString(MD_ProductDao.PRODUCT_CODE, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
-        //bundle.putString(Constant.ACT007_PRODUCT_CODE, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE));
-        bundle.putString(MD_ProductDao.PRODUCT_ID, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
-        bundle.putString(MD_ProductDao.PRODUCT_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
-        //bundle.putString(Constant.ACT008_PRODUCT_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID, item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
-        //bundle.putString(Constant.ACT008_SERIAL_ID, item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE));
-        //bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE));
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
-        //bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE));
-        //bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE));
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION));
-        //bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION));
-        // DIFERENTE VERIFICAR
-        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
-        bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA));
-        //bundle.putString(Constant.ACT013_CUSTOM_FORM_DATA,item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA));
-        //mView.callAct011(context,bundle);
-        //17/08/18
-        bundle.putString(Constant.ACT017_SCHEDULED_SITE, item.get(GE_Custom_Form_LocalDao.SITE_CODE));
-        //
-        if (!item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(Constant.SYS_STATUS_SCHEDULE)) {
-            mView.callAct011(context, bundle);
-        } else if (!item.get(GE_Custom_Form_LocalDao.SERIAL_ID).isEmpty()) {
-            mView.callAct008(context, bundle);
-        } else {
-            if (item.get(GE_Custom_Form_LocalDao.REQUIRE_SERIAL).equals("0")
-                && item.get(GE_Custom_Form_LocalDao.ALLOW_NEW_SERIAL_CL).equals("1")
-            ) {
-                //16/08/18
-                //Se o form agendado requer aprovação via serial, joga user para act008
-                //
-                if (item.get(GE_Custom_Form_LocalDao.REQUIRE_SERIAL_DONE).equalsIgnoreCase("1")) {
-                    bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
-                    //
-                    mView.callAct008(context, bundle);
-                } else {
-                    ToolBox.alertMSG_YES_NO(
-                        context,
-                        hmAux_Trans.get("alert_define_serial_ttl"),
-                        hmAux_Trans.get("alert_define_serial_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                bundle.putBoolean(Constant.MAIN_SERIAL_CREATION, true);
-                                //
-                                mView.callAct008(context, bundle);
-                            }
-                        },
-                        2,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mView.callAct011(context, bundle);
-                            }
-                        }
-                    );
-                }
-            } else {
-                mView.callAct011(context, bundle);
-            }
-        }
     }
 
     /**
@@ -196,7 +136,6 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
         if(hasSerialDefined(scheduleItem)){
             buildRequestSerialDialog(
                 scheduleItem,
-                getProduct(Long.parseLong(scheduleItem.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE))),
                 false
             );
             //
@@ -211,7 +150,6 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
             //Cria e exibe dialog que requer serial.
             buildRequestSerialDialog(
                 scheduleItem,
-                getProduct(Long.parseLong(scheduleItem.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE))),
                 true
             );
         }
@@ -407,17 +345,23 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
      * Metodo que  construi dialog para coletar o serial e exibe somente se showDialog for true.
      * Foi feito dessa maneira para aproveitar o dialog como holder da informação do item seleconado,
      * já após retorno do WS é necessario comparar os serial seleciona com os retornados.
-     * @param item - Item selecionado
-     * @param product - Obj Produto
+     * LUCHE - 29/04/2020
+     * Removido parametro Md_Product que não será mais usado. Agora os dados são resgatadas do proprio item.
+     *
+     * @param item - Item selecionado*
      * @param showDialog - Flag que indica se o dialog deve ser exibido após criado ou não
-     */
-    private void buildRequestSerialDialog(final HMAux item, MD_Product product, boolean showDialog) {
+     **/
+    private void buildRequestSerialDialog(final HMAux item, boolean showDialog) {
+        //Define props do Produto
+        String serialRule = item.hasConsistentValue(GE_Custom_Form_LocalDao.SERIAL_RULE) ? item.get(GE_Custom_Form_LocalDao.SERIAL_RULE) : null;
+        Integer serialMinLength = item.hasConsistentValue(GE_Custom_Form_LocalDao.SERIAL_MIN_LENGTH) ? ToolBox_Inf.convertStringToInt(item.get(GE_Custom_Form_LocalDao.SERIAL_MIN_LENGTH)): null;
+        Integer serialMaxLength = item.hasConsistentValue(GE_Custom_Form_LocalDao.SERIAL_MAX_LENGTH) ? ToolBox_Inf.convertStringToInt(item.get(GE_Custom_Form_LocalDao.SERIAL_MAX_LENGTH)): null;
         serialDialog = new ScheduleRequestSerialDialog(
             context,
             item,
-            product.getSerial_rule(),
-            product.getSerial_min_length(),
-            product.getSerial_max_length(),
+            serialRule,
+            serialMinLength,
+            serialMaxLength,
             new ScheduleRequestSerialDialog.OnScheduleRequestSerialDialogListeners() {
                 @Override
                 public void processToForm() {
@@ -512,9 +456,6 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 customFormLocal.setCustom_product_code(ToolBox_Inf.convertStringToInt(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)));
                 customFormLocal.setCustom_product_desc(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
                 customFormLocal.setCustom_product_id(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
-                customFormLocal.setCustom_product_icon_name(productInfo.getProduct_icon_name());
-                customFormLocal.setCustom_product_icon_url(productInfo.getProduct_icon_url());
-                customFormLocal.setCustom_product_icon_url_local(productInfo.getProduct_icon_url_local());
                 customFormLocal.setCustom_form_type_desc(item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
                 customFormLocal.setCustom_form_desc(item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
                 customFormLocal.setSerial_id(item.get(MD_Schedule_ExecDao.SERIAL_ID));
@@ -533,6 +474,21 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 customFormLocal.setSite_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SITE_CODE)));
                 customFormLocal.setSite_id(item.get(MD_Schedule_ExecDao.SITE_ID));
                 customFormLocal.setSite_desc(item.get(MD_Schedule_ExecDao.SITE_DESC));
+                //LUCHE - 29/04/2020
+                //Após alteração onde o servidor manda "tabelas" temporarias com as infos relacionais
+                //do agendamento, agora a informação DEVE ser setado na criação do form.
+                customFormLocal.setAllow_new_serial_cl(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.ALLOW_NEW_SERIAL_CL)));
+                customFormLocal.setRequire_serial(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.REQUIRE_SERIAL)));
+                customFormLocal.setSerial_rule(item.get(MD_Schedule_ExecDao.SERIAL_RULE));
+                customFormLocal.setSerial_max_length(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SERIAL_MAX_LENGTH)));
+                customFormLocal.setSerial_min_length(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SERIAL_MIN_LENGTH)));
+                customFormLocal.setLocal_control(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.LOCAL_CONTROL)));
+                customFormLocal.setProduct_io_control(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.IO_CONTROL)));
+                customFormLocal.setSite_restriction(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SITE_RESTRICTION)));
+                customFormLocal.setCustom_product_icon_name(item.get(MD_Schedule_ExecDao.PRODUCT_ICON_NAME));
+                customFormLocal.setCustom_product_icon_url(item.get(MD_Schedule_ExecDao.PRODUCT_ICON_URL));
+                customFormLocal.setCustom_product_icon_url_local(productInfo.getProduct_icon_url_local());
+                customFormLocal.setRequire_location(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.REQUIRE_LOCATION)));
                 //
                 //LUCHE -  14/03/2019
                 //Alteração Dao de insert com exception NOVO METODO DAO
@@ -669,7 +625,9 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
         )
         ) {
             if (item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equals(Constant.SYS_STATUS_SCHEDULE)) {
-                if (isAnyFormInProcessing(item)) {
+                if (isScheduleSiteDifferentThanLogged(item)) {
+                    startSiteChangeFlow(item);
+                } else if (isAnyFormInProcessing(item)) {
                     mView.showMsg(Act013_Main.FORM_IN_PROCESSING, item);
                 } else {
                     mView.showMsg(Act013_Main.START_FORM, item);
@@ -700,6 +658,92 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
         }
     }
 
+    /**
+     * LUCHE - 12/03/2020
+     * <p></p>
+     * Metodo que verifica se o site do agendamento é diferente do site logado
+     * @param item - Agendamento selecionado
+     * @return - Verdadeiro se o site do agendamento for diferente do site logado.
+     */
+    private boolean isScheduleSiteDifferentThanLogged(HMAux item) {
+        return item.get(MD_Schedule_ExecDao.SITE_CODE) != null &&
+            !item.get(MD_Schedule_ExecDao.SITE_CODE).equalsIgnoreCase("null") &&
+            !item.get(MD_Schedule_ExecDao.SITE_CODE).equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(context));
+    }
+
+    /**
+     * LUCHE - 12/03/2020
+     * <p></p>
+     * Metodo que inicia fluxo para troca de site.
+     * @param item - Agendamento selecionado
+     */
+    private void startSiteChangeFlow(final HMAux item) {
+        //Verifica se o usuario possui acesso ao site do form com restrição
+        //Se possuir, da opção do usr alterar para o site se não, apenas informa
+        //sobre a restrição.
+        if (hasScheduleSiteAccess(item.get(MD_Schedule_ExecDao.SITE_CODE))) {
+            ToolBox.alertMSG_YES_NO(
+                context,
+                hmAux_Trans.get("alert_form_site_restriction_ttl"),
+                hmAux_Trans.get("alert_form_site_restriction_confirm"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
+                            && !ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
+                        ) {
+                            ToolBox_Con.setPreference_Site_Code(context, item.get(MD_Schedule_ExecDao.SITE_CODE));
+                            ToolBox_Con.setPreference_Zone_Code(context, -1);
+                            //
+                            validateOpenForm(item);
+                        } else {
+                            ToolBox_Con.setPreference_Site_Code(context, item.get(MD_Schedule_ExecDao.SITE_CODE));
+                            ToolBox_Con.setPreference_Zone_Code(context, -1);
+                            mView.callAct033(context);
+                        }
+                    }
+                },
+                1
+            );
+        } else {
+            ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_form_site_restriction_ttl"),
+                hmAux_Trans.get("alert_form_site_restriction_no_access_msg"),
+                null,
+                0
+            );
+        }
+    }
+
+    private boolean hasScheduleSiteAccess(String site_code) {
+        boolean access = false;
+        //
+        MD_Site formSite = getSiteObj(site_code);
+        //
+        if (formSite != null && formSite.getSite_code().equalsIgnoreCase(site_code)) {
+            access = true;
+        }
+        //
+        return access;
+    }
+
+    /**
+     * LUCHE - 12/03/2020
+     * <p></p>
+     * Metodo que resgata obj com dados do site.
+     * @param site_code - Codigo do Site
+     * @return - MD_Site com dados do site ou null se site não encontrado.
+     */
+    @Nullable
+    private MD_Site getSiteObj(String site_code) {
+        return siteDao.getByString(
+            new MD_Site_Sql_003(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                site_code
+            ).toSqlQuery()
+        );
+    }
     private boolean isStatusPossibleToOpen(HMAux item) {
         return item.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
             && !item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS).equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_CANCELLED)

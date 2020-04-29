@@ -39,4 +39,6 @@ public interface Act013_Main_View {
     void callAct020(Context context, Bundle bundle);
 
     void alertActiveGPSResource(HMAux item);
+
+    void callAct033(Context context);
 }

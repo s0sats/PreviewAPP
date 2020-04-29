@@ -103,8 +103,8 @@ public class Act033_Main_Presenter_Impl implements Act033_Main_Presenter {
     public void defineForwardFlow() {
         if (requestingAct.equals(Constant.ACT005)) {
             mView.callAct005(context);
-        } else if (requestingAct.equals(Constant.ACT017)) {
-            mView.callAct017(context);
+        } else if (requestingAct.equals(Constant.ACT013) || requestingAct.equals(Constant.ACT017)) {
+            mView.sendResultOkToRequestingAct(context);
         } else {
             mView.callAct004(context);
         }

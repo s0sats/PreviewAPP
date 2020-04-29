@@ -25,5 +25,5 @@ public interface Act033_Main_View {
 
     void callAct005(Context context);
 
-    void callAct017(Context context);
+    void sendResultOkToRequestingAct(Context context);
 }
