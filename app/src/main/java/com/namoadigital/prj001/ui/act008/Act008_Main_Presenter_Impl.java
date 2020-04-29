@@ -223,33 +223,6 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         );
     }
 
-    private MD_Product createMdProduct(GE_Custom_Form_Local geCustomFormLocal) {
-        MD_Product product = new MD_Product();
-        product.setCustomer_code(geCustomFormLocal.getCustomer_code());
-        product.setProduct_code(geCustomFormLocal.getCustom_product_code());
-        product.setProduct_id(geCustomFormLocal.getCustom_product_id());
-        product.setProduct_desc(geCustomFormLocal.getCustom_product_desc());
-        product.setRequire_serial(geCustomFormLocal.getRequire_serial());
-        product.setAllow_new_serial_cl(geCustomFormLocal.getAllow_new_serial_cl());
-        product.setUn("TST");
-        product.setSketch_code(0);
-        product.setSketch_url("");
-        product.setSketch_url_local("");
-        product.setSketch_lines(0);
-        product.setSketch_columns(0);
-        product.setSketch_color("#FFFFFF");
-        product.setFlag_offline(1);
-        product.setLocal_control(geCustomFormLocal.getLocal_control());
-        product.setIo_control(geCustomFormLocal.getIo_control());
-        product.setSerial_rule(geCustomFormLocal.getSerial_rule());
-        product.setSerial_min_length(geCustomFormLocal.getSerial_min_length());
-        product.setSerial_max_length(geCustomFormLocal.getSerial_max_length());
-        product.setSite_restriction(geCustomFormLocal.getSite_restriction());
-        product.setProduct_icon_name(null);
-        product.setProduct_icon_url(null);
-        return product;
-    }
-
     @Override
     public void validateSerial(String serial, int required, int allow_new) {
         serial = serial.trim();

@@ -36,6 +36,9 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  *
  * LUCHE - 30/03/2020
  * Modificado query substituindo o status FINALIZED pelo WAITING_SYNC
+ *
+ * LUCHE - 29/04/2020
+ * Modificado query adicionando os novos campos de produto do MD_Schedule_Exec.
  */
 
 public class Sql_Act017_001 implements Specification {
@@ -92,15 +95,24 @@ public class Sql_Act017_001 implements Specification {
                         "  s.require_serial,\n"+
                         "  s.allow_new_serial_cl,\n"+
                         "  s.require_serial_done,\n"+
-                        "  s.comments\n,"+
+                        "  s.comments,\n"+
                         "  s.schedule_prefix||'.'||s.schedule_code||'.'||s.schedule_exec schedule_pk, \n "+
                         "  s.schedule_prefix,\n" +
                         "  s.schedule_code,\n" +
                         "  s.schedule_desc,\n" +
                         "  s.schedule_exec,\n "+
                         "  s.fcm_new_status,\n "+
-                        "  s.fcm_user_nick\n,"+
-                        "  s.schedule_erro_msg\n "+
+                        "  s.fcm_user_nick,\n"+
+                        "  s.schedule_erro_msg,\n "+
+                        "  s.serial_rule,\n" +
+                        "  s.serial_max_length,\n" +
+                        "  s.serial_min_length,\n" +
+                        "  s.local_control,\n" +
+                        "  s.io_control,\n" +
+                        "  s.site_restriction,\n" +
+                        "  s.product_icon_name,\n" +
+                        "  s.product_icon_url,\n" +
+                        "  s.require_location\n" +
                         " \n" +
                         "  FROM\n" +
                         "   " + MD_Schedule_ExecDao.TABLE+ " s\n" +

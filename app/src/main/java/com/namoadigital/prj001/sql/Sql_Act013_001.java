@@ -23,6 +23,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  *
  * LUCHE - 30/03/2020
  * Modificado query substituindo o status de finalized pelo waiting_sync e status sent pelo done
+ *
+ * LUCHE - 29/04/2020
+ * Modificado queries para usar os novos campos de produto do MD_Schedule_Exec.
  */
 
 public class Sql_Act013_001 implements Specification {
@@ -85,17 +88,7 @@ public class Sql_Act013_001 implements Specification {
             "    e.product_desc custom_product_desc,\n" +
             "    e.product_id custom_product_id, \n" +
             "    null custom_form_data,\n" +
-            //Paleativo até mudar Dao do agendamento
-            "    ( SELECT\n" +
-            "        ifnull(g.require_location,0) require_location\n" +
-            "      FROM\n" +
-            "        ge_custom_forms g\n" +
-            "      WHERE\n" +
-            "         e.customer_code = g.customer_code\n" +
-            "         AND e.custom_form_type = g.custom_form_type\n" +
-            "         AND e.custom_form_code = g.custom_form_code\n" +
-            "         AND e.custom_form_version = g.custom_form_version     \n" +
-            "    ) require_location," +
+            "    e.require_location,\n" +
             "    e.status custom_form_status, \n" +
             "    e.serial_id,\n" +
             "    null so_prefix,\n" +
@@ -116,21 +109,27 @@ public class Sql_Act013_001 implements Specification {
             "    e.schedule_exec,\n" +
             "    e.fcm_new_status,\n" +
             "    e.fcm_user_nick,\n" +
-            "    e.schedule_erro_msg\n" +
+            "    e.schedule_erro_msg\n," +
+            "    e.serial_rule\n," +
+            "    e.serial_max_length\n," +
+            "    e.serial_min_length\n," +
+            "    e.local_control\n," +
+            "    e.io_control\n," +
+            "    e.site_restriction\n," +
+            "    e.product_icon_name\n," +
+            "    e.product_icon_url\n" +
             "  FROM\n" +
             "   "+ MD_Schedule_ExecDao.TABLE +" e     \n" +
             "  WHERE\n" +
             "    e.customer_code = '"+s_customer_code+"'       \n" +
-            "    AND e.custom_form_type is not null \n" +
-            "    AND e.custom_form_code is not null \n" +
-            "    AND e.custom_form_version is not null \n" +
+            "    AND e.schedule_type = '"+ConstantBaseApp.MD_SCHEDULE_TYPE_FORM+"' \n" +
             "    AND NOT EXISTS (SELECT 1\n" +
             "                    FROM ge_custom_forms_local l\n" +
             "                    WHERE l.customer_code = e.customer_code\n" +
             "                          AND l.schedule_prefix = e.schedule_prefix\n" +
             "                          AND l.schedule_code = e.schedule_code \n" +
             "                          AND l.schedule_exec =  e.schedule_exec\n" +
-            "                          AND l.custom_form_status <> '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"'\n" +
+            //"                          AND l.custom_form_status <> '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"'\n" +
             "                       )";
     }
 
@@ -182,7 +181,16 @@ public class Sql_Act013_001 implements Specification {
             "  l.schedule_exec,\n"+
             "  sc.fcm_new_status,\n" +
             "  sc.fcm_user_nick,\n" +
-            "  sc.schedule_erro_msg\n" +
+            "  sc.schedule_erro_msg,\n" +
+            "  l.serial_rule,\n" +
+            "  l.serial_max_length,\n" +
+            "  l.serial_min_length,\n" +
+            "  l.local_control,\n" +
+            //O Alias no campo abaixo é apenas pois na tabela de agendamento não há prefixo product
+            "  l.product_io_control "+GE_Custom_Form_LocalDao.IO_CONTROL+",\n" +
+            "  l.site_restriction,\n" +
+            "  l.custom_product_icon_name "+MD_Schedule_ExecDao.PRODUCT_ICON_NAME+",\n" +
+            "  l.custom_product_icon_url "+MD_Schedule_ExecDao.PRODUCT_ICON_URL+"\n" +
             "  FROM\n" +
             "   " + GE_Custom_Form_LocalDao.TABLE+ " l\n" +
             "  LEFT JOIN " + GE_Custom_Form_DataDao.TABLE+ " d ON \n" +

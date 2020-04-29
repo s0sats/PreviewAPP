@@ -136,7 +136,6 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
         if(hasSerialDefined(scheduleItem)){
             buildRequestSerialDialog(
                 scheduleItem,
-                getProduct(Long.parseLong(scheduleItem.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE))),
                 false
             );
             //
@@ -151,7 +150,6 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
             //Cria e exibe dialog que requer serial.
             buildRequestSerialDialog(
                 scheduleItem,
-                getProduct(Long.parseLong(scheduleItem.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE))),
                 true
             );
         }
@@ -347,17 +345,23 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
      * Metodo que  construi dialog para coletar o serial e exibe somente se showDialog for true.
      * Foi feito dessa maneira para aproveitar o dialog como holder da informação do item seleconado,
      * já após retorno do WS é necessario comparar os serial seleciona com os retornados.
-     * @param item - Item selecionado
-     * @param product - Obj Produto
+     * LUCHE - 29/04/2020
+     * Removido parametro Md_Product que não será mais usado. Agora os dados são resgatadas do proprio item.
+     *
+     * @param item - Item selecionado*
      * @param showDialog - Flag que indica se o dialog deve ser exibido após criado ou não
-     */
-    private void buildRequestSerialDialog(final HMAux item, MD_Product product, boolean showDialog) {
+     **/
+    private void buildRequestSerialDialog(final HMAux item, boolean showDialog) {
+        //Define props do Produto
+        String serialRule = item.hasConsistentValue(GE_Custom_Form_LocalDao.SERIAL_RULE) ? item.get(GE_Custom_Form_LocalDao.SERIAL_RULE) : null;
+        Integer serialMinLength = item.hasConsistentValue(GE_Custom_Form_LocalDao.SERIAL_MIN_LENGTH) ? ToolBox_Inf.convertStringToInt(item.get(GE_Custom_Form_LocalDao.SERIAL_MIN_LENGTH)): null;
+        Integer serialMaxLength = item.hasConsistentValue(GE_Custom_Form_LocalDao.SERIAL_MAX_LENGTH) ? ToolBox_Inf.convertStringToInt(item.get(GE_Custom_Form_LocalDao.SERIAL_MAX_LENGTH)): null;
         serialDialog = new ScheduleRequestSerialDialog(
             context,
             item,
-            product.getSerial_rule(),
-            product.getSerial_min_length(),
-            product.getSerial_max_length(),
+            serialRule,
+            serialMinLength,
+            serialMaxLength,
             new ScheduleRequestSerialDialog.OnScheduleRequestSerialDialogListeners() {
                 @Override
                 public void processToForm() {
@@ -452,9 +456,6 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 customFormLocal.setCustom_product_code(ToolBox_Inf.convertStringToInt(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)));
                 customFormLocal.setCustom_product_desc(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
                 customFormLocal.setCustom_product_id(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
-                customFormLocal.setCustom_product_icon_name(productInfo.getProduct_icon_name());
-                customFormLocal.setCustom_product_icon_url(productInfo.getProduct_icon_url());
-                customFormLocal.setCustom_product_icon_url_local(productInfo.getProduct_icon_url_local());
                 customFormLocal.setCustom_form_type_desc(item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
                 customFormLocal.setCustom_form_desc(item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
                 customFormLocal.setSerial_id(item.get(MD_Schedule_ExecDao.SERIAL_ID));
@@ -473,6 +474,21 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 customFormLocal.setSite_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SITE_CODE)));
                 customFormLocal.setSite_id(item.get(MD_Schedule_ExecDao.SITE_ID));
                 customFormLocal.setSite_desc(item.get(MD_Schedule_ExecDao.SITE_DESC));
+                //LUCHE - 29/04/2020
+                //Após alteração onde o servidor manda "tabelas" temporarias com as infos relacionais
+                //do agendamento, agora a informação DEVE ser setado na criação do form.
+                customFormLocal.setAllow_new_serial_cl(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.ALLOW_NEW_SERIAL_CL)));
+                customFormLocal.setRequire_serial(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.REQUIRE_SERIAL)));
+                customFormLocal.setSerial_rule(item.get(MD_Schedule_ExecDao.SERIAL_RULE));
+                customFormLocal.setSerial_max_length(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SERIAL_MAX_LENGTH)));
+                customFormLocal.setSerial_min_length(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SERIAL_MIN_LENGTH)));
+                customFormLocal.setLocal_control(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.LOCAL_CONTROL)));
+                customFormLocal.setProduct_io_control(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.IO_CONTROL)));
+                customFormLocal.setSite_restriction(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SITE_RESTRICTION)));
+                customFormLocal.setCustom_product_icon_name(item.get(MD_Schedule_ExecDao.PRODUCT_ICON_NAME));
+                customFormLocal.setCustom_product_icon_url(item.get(MD_Schedule_ExecDao.PRODUCT_ICON_URL));
+                customFormLocal.setCustom_product_icon_url_local(productInfo.getProduct_icon_url_local());
+                customFormLocal.setRequire_location(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.REQUIRE_LOCATION)));
                 //
                 //LUCHE -  14/03/2019
                 //Alteração Dao de insert com exception NOVO METODO DAO

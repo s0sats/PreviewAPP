@@ -1061,9 +1061,6 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 customFormLocal.setCustom_product_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.PRODUCT_CODE)));
                 customFormLocal.setCustom_product_desc(item.get(MD_Schedule_ExecDao.PRODUCT_DESC));
                 customFormLocal.setCustom_product_id(item.get(MD_Schedule_ExecDao.PRODUCT_ID));
-                customFormLocal.setCustom_product_icon_name(productInfo.getProduct_icon_name());
-                customFormLocal.setCustom_product_icon_url(productInfo.getProduct_icon_url());
-                customFormLocal.setCustom_product_icon_url_local(productInfo.getProduct_icon_url_local());
                 customFormLocal.setCustom_form_type_desc(item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
                 customFormLocal.setCustom_form_desc(item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
                 customFormLocal.setSerial_id(item.get(MD_Schedule_ExecDao.SERIAL_ID));
@@ -1082,6 +1079,21 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 customFormLocal.setSite_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SITE_CODE)));
                 customFormLocal.setSite_id(item.get(MD_Schedule_ExecDao.SITE_ID));
                 customFormLocal.setSite_desc(item.get(MD_Schedule_ExecDao.SITE_DESC));
+                //LUCHE - 29/04/2020
+                //Após alteração onde o servidor manda "tabelas" temporarias com as infos relacionais
+                //do agendamento, agora a informação DEVE ser setado na criação do form.
+                customFormLocal.setAllow_new_serial_cl(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.ALLOW_NEW_SERIAL_CL)));
+                customFormLocal.setRequire_serial(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.REQUIRE_SERIAL)));
+                customFormLocal.setSerial_rule(item.get(MD_Schedule_ExecDao.SERIAL_RULE));
+                customFormLocal.setSerial_max_length(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SERIAL_MAX_LENGTH)));
+                customFormLocal.setSerial_min_length(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SERIAL_MIN_LENGTH)));
+                customFormLocal.setLocal_control(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.LOCAL_CONTROL)));
+                customFormLocal.setProduct_io_control(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.IO_CONTROL)));
+                customFormLocal.setSite_restriction(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SITE_RESTRICTION)));
+                customFormLocal.setCustom_product_icon_name(item.get(MD_Schedule_ExecDao.PRODUCT_ICON_NAME));
+                customFormLocal.setCustom_product_icon_url(item.get(MD_Schedule_ExecDao.PRODUCT_ICON_URL));
+                customFormLocal.setCustom_product_icon_url_local(productInfo.getProduct_icon_url_local());
+                customFormLocal.setRequire_location(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.REQUIRE_LOCATION)));
                 //
                 //LUCHE -  14/03/2019
                 //Alteração Dao de insert com exception NOVO METODO DAO
