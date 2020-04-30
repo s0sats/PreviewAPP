@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.util.Constant;
@@ -33,6 +34,8 @@ public class WBR_Connections_Change extends BroadcastReceiver {
                 //activeChatService(context);
                 //Add disparo do serviço de UnsentImgs
                 activateUnsentUpload(context);
+                //
+                activateLocationService(context);
                 //
                 ToolBox_Inf.cleanOldSyncChecklistData(context);
             }
@@ -117,6 +120,20 @@ public class WBR_Connections_Change extends BroadcastReceiver {
         Intent mIntent = new Intent(context, WBR_Upload_Other_User_Img.class);
         context.sendBroadcast(mIntent);
     }
-
+    /**
+     * BARRIONUEVO - 30/04/2020
+     * Metodo que chama serviço de localizacao caso usuario esteja logado, o servico parado e pende
+     * cias de envio.
+     * @param context
+     */
+    private void activateLocationService(Context context) {
+        if (!SV_LocationTracker.status
+        && ToolBox_Inf.isUsrAppLogged(context)) {
+            int pendencies = ToolBox_Inf.getLocationPendencies(context);
+            if(pendencies>0) {
+                ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
+            }
+        }
+    }
 
 }

@@ -54,6 +54,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
@@ -254,6 +255,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
          */
         if (ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_SESSION_NOT_FOUND)) {
             forceLogoutBySessionNotFound();
+        }
+        /**
+         * BARRIONUEVO - 30/04/2020
+         * Metodo que chama serviço de localizacao caso usuario esteja logado, o servico parado e
+         * pendecias de envio.
+         */
+        if (!SV_LocationTracker.status && ToolBox_Inf.isUsrAppLogged(context)) {
+            int pendencies = ToolBox_Inf.getLocationPendencies(context);
+            if(pendencies>0) {
+                ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
+            }
         }
 
         ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);

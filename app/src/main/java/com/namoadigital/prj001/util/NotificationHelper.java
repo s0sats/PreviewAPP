@@ -13,7 +13,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.CH_FileDao;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -21,10 +20,8 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.CH_File;
 import com.namoadigital.prj001.model.CH_Message;
-import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.sql.CH_File_Sql_001;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_006;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
@@ -77,7 +74,7 @@ public class NotificationHelper {
         RemoteViews notificationLayout = new RemoteViews(context.getPackageName(), R.layout.namoa_notification_small);
 
 
-        int locationPendencies = getLocationPendencies();
+        int locationPendencies = ToolBox_Inf.getLocationPendencies(context);
         //int fileUploadPendencies = getFileUploadPendencies();
         int fileUploadPendencies = getTotalUploadPendencies();
         int updatePendenciesCount = getUpdatePendencies(locationPendencies,fileUploadPendencies );
@@ -368,21 +365,5 @@ public class NotificationHelper {
      */
     private int getTotalUploadPendencies(){
         return getFileUploadPendencies() + getChatUploadPendencies();
-    }
-
-    private int getLocationPendencies() {
-        GE_Custom_Form_DataDao ge_custom_form_dataDao = new GE_Custom_Form_DataDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
-
-        List<GE_Custom_Form_Data> formDataList = getFormDataList(ToolBox_Con.getPreference_Customer_Code(context), ge_custom_form_dataDao);
-        if (formDataList != null) {
-            return formDataList.size();
-        }
-        return 0;
-    }
-
-    private List<GE_Custom_Form_Data> getFormDataList(long customer_code, GE_Custom_Form_DataDao ge_custom_form_dataDao) {
-        return ge_custom_form_dataDao.query(
-                new GE_Custom_Form_Data_Sql_006(customer_code).toSqlQuery()
-        );
     }
 }

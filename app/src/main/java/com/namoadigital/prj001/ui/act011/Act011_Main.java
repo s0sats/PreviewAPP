@@ -945,12 +945,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     formData.setLocation_pendency(0);
                     String gps_date_formatted = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(locationDate));
                     formData.setDate_gps(gps_date_formatted);
+                }else{
+                    formData.setLocation_pendency(1);
+                    ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, true);
                 }
-//                ToolBox_Con.setBooleanPreference(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false);
             }
-            startCheckIN();
-        } else {
-            startCheckIN();
         }
     }
 

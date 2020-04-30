@@ -69,6 +69,7 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.Ev_User_Customer_ParameterDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
@@ -159,6 +160,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_010;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_011;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_004;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_006;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Field_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_010;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
@@ -6178,6 +6180,20 @@ public class ToolBox_Inf {
         }
         //
         return false;
+    }
+    /**
+     * BARRIONUEVO - 30/04/2020
+     * Metodo que contabiliza pendencias de localizacao no N-FORM.
+     */
+    public static int getLocationPendencies(Context context) {
+        GE_Custom_Form_DataDao ge_custom_form_dataDao = new GE_Custom_Form_DataDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
+        List<GE_Custom_Form_Data> formDataList =  ge_custom_form_dataDao.query(
+                new GE_Custom_Form_Data_Sql_006(ToolBox_Con.getPreference_Customer_Code(context)).toSqlQuery()
+        );
+        if (formDataList != null) {
+            return formDataList.size();
+        }
+        return 0;
     }
 
     /**
