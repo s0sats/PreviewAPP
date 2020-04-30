@@ -950,6 +950,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, true);
                 }
             }
+            startCheckIN();
+        } else {
+            startCheckIN();
         }
     }
 
