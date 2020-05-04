@@ -29,7 +29,6 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.IO_Inbound_ItemDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
@@ -41,7 +40,6 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DataPackage;
-import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
@@ -80,7 +78,6 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_005;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_006;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_001;
@@ -1143,7 +1140,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 );
             }catch (Exception e){
                 //TODO quando não há dados para enviar o ws ta retornando uam string e cai no catch rever
-                ToolBox_Inf.registerException(getClass().getName(),e);
+                e.printStackTrace();
+//                ToolBox_Inf.registerException(getClass().getName(),e);
             }
             //
             if(errorProcesses != null && errorProcesses.size() > 0){
@@ -1164,17 +1162,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 }
                 //
                 mView.addWsResults(auxResults);
-            }else{
-                GE_Custom_Form_DataDao ge_custom_form_dataDao = new GE_Custom_Form_DataDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
-
-                List<GE_Custom_Form_Data> query = ge_custom_form_dataDao.query(
-                        new GE_Custom_Form_Data_Sql_006(ToolBox_Con.getPreference_Customer_Code(context)).toSqlQuery()
-                );
-                if(query != null && query.size() > 0){
-                    pendencyCount = query.size();
-                    isDone = false;
-                }
             }
+        }
+        int locationPendencies = ToolBox_Inf.getLocationPendencies(context);
+        if(locationPendencies > 0){
+            pendencyCount = locationPendencies;
+            isDone = false;
         }
         if(pendencyCount > 0){
             isDone = false;
