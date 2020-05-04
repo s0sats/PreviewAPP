@@ -53,7 +53,10 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -667,7 +670,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void checkData(GE_Custom_Form_Data formData, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok) {
+    public void checkData(GE_Custom_Form_Data formData, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location) {
         if (require_serial_done == 1 && !require_serial_done_ok.equalsIgnoreCase("OK")){
             mView.callNFCResults();
             //
@@ -694,6 +697,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             );
         }
         //
+        checkGpsFlow(formData, require_location);
         formData.setCustom_form_status(Constant.SYS_STATUS_WAITING_SYNC);
         formData.setDate_end(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
 
@@ -723,6 +727,48 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
 
     }
+
+    private void checkGpsFlow(GE_Custom_Form_Data formData, int require_location){
+
+        final int GPS_VALID_INTERVAL = 300000;
+
+        if (require_location == 1) {
+            String latitude = ToolBox_Con.getStringPreferencesByKey(context, Constant.LOCATION_LAT, "");
+            String longitude = ToolBox_Con.getStringPreferencesByKey(context, Constant.LOCATION_LNG, "");
+            long locationDate = ToolBox_Con.getLongPreferencesByKey(context, Constant.LOCATION_DATE, 0);
+            String location_type = ToolBox_Con.getStringPreferencesByKey(context, Constant.LOCATION_TYPE, "");
+            long currentTime = Calendar.getInstance().getTime().getTime();
+            long diff = currentTime - locationDate;
+
+            if (diff >= GPS_VALID_INTERVAL) {
+//                String dataRecorded = "\ncheckGpsFlow: " +
+//                                      "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
+//                                      "\ndiff: " + diff;
+//                recordProcess(dataRecorded);
+                formData.setLocation_pendency(1);
+                ToolBox_Con.setBooleanPreference(context, Constant.HAS_PENDING_LOCATION, true);
+            } else {
+//                String dataRecorded = "\ncheckGpsFlow: " +
+//                        "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
+//                        "\ngps_date_formatted: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(locationDate)) +
+//                        "\ndiff: " + diff;
+//                recordProcess(dataRecorded);
+                if (latitude != null && !latitude.isEmpty()
+                        && longitude != null && !longitude.isEmpty()) {
+                    formData.setLocation_type(location_type);
+                    formData.setLocation_lat(latitude);
+                    formData.setLocation_lng(longitude);
+                    formData.setLocation_pendency(0);
+                    String gps_date_formatted = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(locationDate));
+                    formData.setDate_gps(gps_date_formatted);
+                }else{
+                    formData.setLocation_pendency(1);
+                    ToolBox_Con.setBooleanPreference(context, Constant.HAS_PENDING_LOCATION, true);
+                }
+            }
+        }
+    }
+
 
     /**
      * LUCHE - 14/02/2020
@@ -760,12 +806,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void checkSignature(GE_Custom_Form_Data formData, int signature, int opc, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok) {
+    public void checkSignature(GE_Custom_Form_Data formData, int signature, int opc, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location) {
 
         switch (signature) {
             case 1:
                 if (ToolBox.validationCheckFile(Constant.CACHE_PATH_PHOTO + "/" + formData.getSignature()) && formData.getSignature_name() != null && !formData.getSignature_name().isEmpty()) {
-                    checkData(formData, geFiles, require_serial_done, require_serial_done_ok);
+                    checkData(formData, geFiles, require_serial_done, require_serial_done_ok, require_location);
                 } else {
 //                    mView.showMsg(
 //                            hmAux_Trans.get("alert_finalize_title"),//"Finalizar Registro",
@@ -779,7 +825,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 formData.setSignature("");
                 formData.setSignature_name("");
                 //
-                checkData(formData, geFiles, require_serial_done, require_serial_done_ok);
+                checkData(formData, geFiles, require_serial_done, require_serial_done_ok, require_location);
 
 //                if (opc == 1) {
 //                    checkData(formData, geFiles);

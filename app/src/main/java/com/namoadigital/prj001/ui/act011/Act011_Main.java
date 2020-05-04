@@ -103,10 +103,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -128,8 +125,6 @@ import static com.namoadigital.prj001.ui.act015.Act015_Main.FORM_SELECTED_INDEX_
 public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
-    public static final String LOCATION_REFRESH = "location_refresh";
-    public static final int GPS_VALID_INTERVAL = 300000;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR = 5;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR = 6;
 
@@ -863,7 +858,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                checkGpsFlow();
+                                startCheckIN();
+//                                checkGpsFlow();
                             }
                         },
                         1
@@ -913,47 +909,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         }
 
         return false;
-    }
-
-    private void checkGpsFlow(){
-        if (formLocal.getRequire_location() == 1) {
-            String latitude = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LAT, "");
-            String longitude = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_LNG, "");
-            long locationDate = ToolBox_Con.getLongPreferencesByKey(getApplicationContext(), Constant.LOCATION_DATE, 0);
-            String location_type = ToolBox_Con.getStringPreferencesByKey(getApplicationContext(), Constant.LOCATION_TYPE, "");
-            long currentTime = Calendar.getInstance().getTime().getTime();
-            long diff = currentTime - locationDate;
-
-            if (diff >= GPS_VALID_INTERVAL) {
-//                String dataRecorded = "\ncheckGpsFlow: " +
-//                                      "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
-//                                      "\ndiff: " + diff;
-//                recordProcess(dataRecorded);
-                formData.setLocation_pendency(1);
-                ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, true);
-            } else {
-//                String dataRecorded = "\ncheckGpsFlow: " +
-//                        "\nGPS_VALID_INTERVAL: " + GPS_VALID_INTERVAL +
-//                        "\ngps_date_formatted: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(locationDate)) +
-//                        "\ndiff: " + diff;
-//                recordProcess(dataRecorded);
-                if (latitude != null && !latitude.isEmpty()
-                        && longitude != null && !longitude.isEmpty()) {
-                    formData.setLocation_type(location_type);
-                    formData.setLocation_lat(latitude);
-                    formData.setLocation_lng(longitude);
-                    formData.setLocation_pendency(0);
-                    String gps_date_formatted = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z").format(new Date(locationDate));
-                    formData.setDate_gps(gps_date_formatted);
-                }else{
-                    formData.setLocation_pendency(1);
-                    ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, true);
-                }
-            }
-            startCheckIN();
-        } else {
-            startCheckIN();
-        }
     }
 
     private void nservCall() {
@@ -1061,7 +1016,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         formData.setSignature(mSignature);
 
-        mPresenter.checkSignature(formData, signature, 0, geFiles, require_serial_done, require_serial_done_ok);
+        mPresenter.checkSignature(formData, signature, 0, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
     }
 
     private void deleteFormLocal() {
@@ -2239,7 +2194,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                                 formData.setSignature("");
                                 formData.setSignature_name("");
 
-                                mPresenter.checkData(formData, geFiles, require_serial_done, require_serial_done_ok);
+                                mPresenter.checkData(formData, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
                                 bNew = false;
                             }
                         }
@@ -2515,7 +2470,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 geFiles.add(geFile);
                 //
 
-                mPresenter.checkData(formData, geFiles, require_serial_done, require_serial_done_ok);
+                mPresenter.checkData(formData, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
                 bNew = false;
             } else {
                 formData.setSignature_name("");
@@ -2573,7 +2528,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if (sResults.trim().length() != 0 && sResults.equalsIgnoreCase("OK")) {
             require_serial_done_ok = "OK";
             formData.setDate_end(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-            mPresenter.checkData(formData, geFiles, require_serial_done, require_serial_done_ok);
+            mPresenter.checkData(formData, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
             //
             bNew = false;
         } else {
@@ -3013,7 +2968,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                                 //Seta valor var que controla se fluxo é finaliza ou finaliza mais novo.
                                 finalizeNewFlow = rdgFinalize.getCheckedRadioButtonId() == R.id.act011_dialog_finalize_option_rdo_finalize_new;
                                 //
-                                checkGpsFlow();
+                                startCheckIN();
+//                                checkGpsFlow();
                             }
                         }
 
