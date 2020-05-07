@@ -121,7 +121,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        tools:text="Comments" />
+        tools:text="Comments"
+        android:textColor="@color/namoa_color_light_blue2"
+        />
 
     <LinearLayout
         android:id="@+id/local_data_list_cell_01_ll_icons"
