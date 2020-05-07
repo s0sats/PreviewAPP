@@ -26,6 +26,10 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  *
  * LUCHE - 29/04/2020
  * Modificado queries para usar os novos campos de produto do MD_Schedule_Exec.
+ *
+ * LUCHE - 07/05/2020
+ * Modificado query de md_schedule_exec, adcionando filtro somente pelo status schedule pois,
+ * caso um agendamento tenha seu status alterado pelo FCM, ele acabava sendo exibido.
  */
 
 public class Sql_Act013_001 implements Specification {
@@ -130,7 +134,8 @@ public class Sql_Act013_001 implements Specification {
             "                          AND l.schedule_code = e.schedule_code \n" +
             "                          AND l.schedule_exec =  e.schedule_exec\n" +
             //"                          AND l.custom_form_status <> '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"'\n" +
-            "                       )";
+            "                       )" +
+            "    AND e.status = '"+ConstantBaseApp.SYS_STATUS_SCHEDULE+"' \n";
     }
 
 

@@ -429,8 +429,17 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
         constraintSet.applyTo(clHeader);
     }
 
+    /**
+     * L.BARRIONUEVO - 05/03/2020
+     * Metodo que identifica a necessidade de exibir ou não a informção de comentario do agendamento.
+     *
+     * LUCHE - 07/05/2020
+     * Modificado metodo, alterado a chave buscado no HmAux, pois estava buscando pela chama errada.
+     * @param item HmAux com dados do item
+     * @param tv_schedule_comments_lbl TextView onde sera aplicado o texto e visibilidade.
+     */
     private void setScheduleComments(HMAux item, TextView tv_schedule_comments_lbl) {
-        String schedule_comments = item.get(MD_Schedule_ExecDao.COMMENTS);
+        String schedule_comments = item.get(GE_Custom_Form_LocalDao.SCHEDULE_COMMENTS);
         try {
             if (schedule_comments.isEmpty()) {
                 tv_schedule_comments_lbl.setVisibility(View.GONE);

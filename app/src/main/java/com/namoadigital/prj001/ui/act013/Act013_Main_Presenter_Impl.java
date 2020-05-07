@@ -467,7 +467,9 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 customFormLocal.setSchedule_date_end_format_ms(ToolBox_Inf.dateToMilliseconds(item.get(MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT)));
                 customFormLocal.setRequire_location(customForm.getRequire_location());
                 customFormLocal.setRequire_serial_done(customForm.getRequire_serial_done());
-                customFormLocal.setSchedule_comments(item.get(MD_Schedule_ExecDao.COMMENTS));
+                //customFormLocal.setSchedule_comments(item.get(MD_Schedule_ExecDao.COMMENTS));
+                //LUCHE - 07/05/2020 - Corrigido a chave buscada no item, estava uscando a chave errada.
+                customFormLocal.setSchedule_comments(item.get(GE_Custom_Form_LocalDao.SCHEDULE_COMMENTS));
                 customFormLocal.setSchedule_prefix(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX)));
                 customFormLocal.setSchedule_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_CODE)));
                 customFormLocal.setSchedule_exec(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)));
