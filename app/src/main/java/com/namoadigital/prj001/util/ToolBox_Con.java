@@ -1233,6 +1233,11 @@ public class ToolBox_Con {
                 Constant.PREFERENCE_HIDE_SERIAL_INFO,
                 false
         ).apply();
+
+         sharedPreferences.edit().putBoolean(
+                Constant.HAS_PENDING_LOCATION,
+                false
+        ).apply();
         //Adicionar reset das preferencias da act054?
         //
         sharedPreferences.edit().putString(
