@@ -463,6 +463,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_site_no_io_control_msg");
         transList.add("alert_unsent_img_copy_error_ttl");
         transList.add("alert_unsent_img_copy_error_msg");
+        transList.add("alert_unsent_gps_nform_ttl");
+        transList.add("alert_unsent_gps_nform_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1981,11 +1983,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     //
                 }
                 //
-                if (syncAfterSave) {
-                    setSyncAfterSave(false);
-                    //
-                    mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
-                }
+                executeSync();
             }
         });
     }
@@ -2231,14 +2229,35 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 if (wsResults.size() > 0) {
                     showResults(wsResults);
                 } else {
-                    if (syncAfterSave) {
-                        setSyncAfterSave(false);
-                        //
-                        mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
-                    }
+                    executeSync();
                 }
             }
         });
+    }
+
+    /**
+     *       BARRIONUEVO 11-02-2020
+     *
+     *       Correção de verificação de n-forms com localização pendente no
+     *       fluxo de sincronização do app, evitando que o usuario atualize o
+     *       app e perca dados.
+     */
+    private void executeSync() {
+        if (syncAfterSave) {
+            setSyncAfterSave(false);
+            if(ToolBox_Inf.getLocationPendencies(context) == 0) {
+                //
+                mPresenter.accessMenuItem(Act005_Main.MENU_ID_SYNC_DATA, 0);
+            }else{
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_unsent_gps_nform_ttl"),
+                        hmAux_Trans.get("alert_unsent_gps_nform_msg"),
+                        null,
+                        0
+                );
+            }
+        }
     }
 
     @Override
