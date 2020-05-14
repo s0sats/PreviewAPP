@@ -465,22 +465,13 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                         String scheduleType = scheduleExec.getSchedule_type();
                         switch (scheduleType){
                             case ConstantBaseApp.MD_SCHEDULE_TYPE_FORM:
-                                scheduleExec.setRequire_serial(dbSchedule.getRequire_serial());
-                                scheduleExec.setAllow_new_serial_cl(dbSchedule.getAllow_new_serial_cl());
-                                scheduleExec.setRequire_serial_done(dbSchedule.getRequire_serial_done());
                                 scheduleExec.setCustom_form_type_desc(dbSchedule.getCustom_form_type_desc());
                                 scheduleExec.setCustom_form_desc(dbSchedule.getCustom_form_desc());
-                                //LUCHE - 23/04/2020
-                                //Adicionado set das novas informações de produto.
-                                scheduleExec.setSerial_rule(dbSchedule.getSerial_rule());
-                                scheduleExec.setSerial_max_length(dbSchedule.getSerial_max_length());
-                                scheduleExec.setSerial_min_length(dbSchedule.getSerial_min_length());
-                                scheduleExec.setLocal_control(dbSchedule.getLocal_control());
-                                scheduleExec.setIo_control(dbSchedule.getIo_control());
-                                scheduleExec.setSite_restriction(dbSchedule.getSite_restriction());
-                                scheduleExec.setProduct_icon_name(dbSchedule.getProduct_icon_name());
-                                scheduleExec.setProduct_icon_url(dbSchedule.getProduct_icon_url());
+                                scheduleExec.setRequire_serial_done(dbSchedule.getRequire_serial_done());
                                 scheduleExec.setRequire_location(dbSchedule.getRequire_location());
+                                //LUCHE - 15/05/2020
+                                //Atualiza dados do produto diretamente do produto enviado.
+                                updateScheduleExecProductInfos(scheduleExecProductList, scheduleExec, dbSchedule);
                                 break;
                             case ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET:
                             default:
@@ -542,6 +533,37 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         closeDB();
         //
         return daoObjReturn;
+    }
+
+    private void updateScheduleExecProductInfos(ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList, MD_Schedule_Exec scheduleExec, MD_Schedule_Exec dbSchedule) {
+        MD_Schedule_Exec_Product execProductInfo = getExecProductInfo(scheduleExec.getCustomer_code(), scheduleExec.getProduct_code(), scheduleExecProductList);
+        //
+        if(execProductInfo != null) {
+            scheduleExec.setRequire_serial(execProductInfo.getRequire_serial());
+            scheduleExec.setAllow_new_serial_cl(execProductInfo.getAllow_new_serial_cl());
+            scheduleExec.setSerial_rule(execProductInfo.getSerial_rule());
+            scheduleExec.setSerial_max_length(execProductInfo.getSerial_max_length());
+            scheduleExec.setSerial_min_length(execProductInfo.getSerial_min_length());
+            scheduleExec.setLocal_control(execProductInfo.getLocal_control());
+            scheduleExec.setIo_control(execProductInfo.getIo_control());
+            scheduleExec.setSite_restriction(execProductInfo.getSite_restriction());
+            scheduleExec.setProduct_icon_name(execProductInfo.getProduct_icon_name());
+            scheduleExec.setProduct_icon_url(execProductInfo.getProduct_icon_url());
+        }else{
+            //LUCHE - 14/05/2020
+            //Isso nunca deveria acontecer, mas como o nunca é o novo amanha, ta aqui.
+            //Melhor parecer um bug que quebrar...
+            scheduleExec.setRequire_serial(dbSchedule.getRequire_serial());
+            scheduleExec.setAllow_new_serial_cl(dbSchedule.getAllow_new_serial_cl());
+            scheduleExec.setSerial_rule(dbSchedule.getSerial_rule());
+            scheduleExec.setSerial_max_length(dbSchedule.getSerial_max_length());
+            scheduleExec.setSerial_min_length(dbSchedule.getSerial_min_length());
+            scheduleExec.setLocal_control(dbSchedule.getLocal_control());
+            scheduleExec.setIo_control(dbSchedule.getIo_control());
+            scheduleExec.setSite_restriction(dbSchedule.getSite_restriction());
+            scheduleExec.setProduct_icon_name(dbSchedule.getProduct_icon_name());
+            scheduleExec.setProduct_icon_url(dbSchedule.getProduct_icon_url());
+        }
     }
 
     /**
