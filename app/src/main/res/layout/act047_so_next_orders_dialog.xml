@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="5dp"
                     android:gravity="start|center_vertical"
-                    tools:text="Service 666 - Trad" />
+                    tools:text="Service 123 - Trad" />
 
             </LinearLayout>
 
@@ -91,7 +91,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
-                        android:layout_weight="4"
+                        android:layout_weight="6"
                         android:layout_marginStart="5dp"
                         android:orientation="horizontal">
 
@@ -101,7 +101,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="start|center_vertical"
-                            android:textSize="@dimen/font_size_title"
                             tools:text="Site - Trad" />
 
                         <TextView
@@ -109,9 +108,9 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_marginStart="5dp"
-                            android:layout_weight="3"
+                            android:layout_weight="5"
                             android:gravity="start|center_vertical"
-                            tools:text="Service 666 - Trad" />
+                            tools:text="Service 123 - Trad" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -120,6 +119,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_weight="6"
                         android:orientation="horizontal">
 
                         <TextView
@@ -128,7 +128,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="start|center_vertical"
-                            android:textSize="@dimen/font_size_title"
                             tools:text="Zona - Trad" />
 
                         <TextView
@@ -136,9 +135,9 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_marginStart="5dp"
-                            android:layout_weight="3"
+                            android:layout_weight="5"
                             android:gravity="start|center_vertical"
-                            tools:text="Service 666 - Trad" />
+                            tools:text="Service 123 - Trad" />
                     </LinearLayout>
 
 
@@ -148,6 +147,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="5dp"
                         android:layout_marginStart="5dp"
+                        android:layout_weight="6"
                         android:orientation="horizontal">
 
                         <TextView
@@ -156,7 +156,6 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="start|center_vertical"
-                            android:textSize="@dimen/font_size_title"
                             tools:text="Posicao- Trad" />
 
                         <TextView
@@ -164,9 +163,9 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_marginStart="5dp"
-                            android:layout_weight="3"
+                            android:layout_weight="5"
                             android:gravity="start|center_vertical"
-                            tools:text="Service 666 - Trad" />
+                            tools:text="Service 123 - Trad" />
                     </LinearLayout>
 
 
