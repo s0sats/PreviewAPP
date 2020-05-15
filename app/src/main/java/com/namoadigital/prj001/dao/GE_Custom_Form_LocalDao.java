@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -234,6 +235,201 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
         //
         return daoObjReturn;
     }
+
+
+    //region SCHEDULE_EXEC
+    /**
+     * LUCHE - 15/05/2020
+     *
+     * Metodo que executa insert / update do obj usando instance de banco de dados comparilhada
+     * @param custom_form_local
+     * @param dbInstance
+     * @return - DaoObjReturn com informações
+     */
+    public DaoObjReturn addUpdateThrowExceptionWithSharedDbInstance(GE_Custom_Form_Local custom_form_local , SQLiteDatabase dbInstance){
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+        //
+        if(dbInstance == null) {
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+
+        try{
+            curAction = DaoObjReturn.UPDATE;
+            //Where para update
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustomer_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_type())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data())).append("'");
+            //Tenta update e armazena retorno
+            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
+            //Se nenhuma linha afetada, tenta insert
+            if(addUpdateRet == 0){
+                curAction = DaoObjReturn.INSERT;
+                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(custom_form_local));
+            }
+
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+
+        }catch (Exception e){
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+
+        if (dbInstance == null) {
+            closeDB();
+        }
+        return daoObjReturn;
+    }
+
+    /**
+     * LUCHE - 15/05/2020
+     *
+     * Metodo que executa insert / update de lista usando instance de banco de dados comparilhada
+     * @param custom_form_locals
+     * @param status
+     * @param dbInstance
+     * @return - DaoObjReturn com informações
+     */
+    public DaoObjReturn addUpdateThrowExceptionWithSharedDbInstance(Iterable<GE_Custom_Form_Local> custom_form_locals, boolean status, SQLiteDatabase dbInstance){
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+        //
+        if(dbInstance == null){
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+
+        try{
+            //Se db não foi passado, inicializa transaction
+            if(dbInstance == null) {
+                db.beginTransaction();
+            }
+
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+
+            for (GE_Custom_Form_Local custom_form_local : custom_form_locals) {
+                curAction = DaoObjReturn.UPDATE;
+                //Where para update
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustomer_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_TYPE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_type())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_CODE).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_code())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_VERSION).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_version())).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(CUSTOM_FORM_DATA).append(" = '").append(String.valueOf(custom_form_local.getCustom_form_data())).append("'");
+                //
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(custom_form_local), sbWhere.toString(), null);
+                //Se nenhuma linha afetada, tenta insert
+                if (addUpdateRet == 0) {
+                    curAction = DaoObjReturn.INSERT;
+                    addUpdateRet = db.insertOrThrow(TABLE, null, toContentValuesMapper.map(custom_form_local));
+                }
+            }
+            //Se db não foi passado, finaliza transaction com sucesso
+            if(dbInstance == null) {
+                db.setTransactionSuccessful();
+            }
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            if(dbInstance == null) {
+                db.endTransaction();
+            }
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
+        //
+        return daoObjReturn;
+    }
+
+    /**
+     * LUCHE - 15/05/2020
+     * <p></p>
+     * Criado metodo que busca GE_Custom_Form_Local usando instancia de banco de dados compartilhada
+     * @param s_query
+     * @param dbInstance
+     * @return Obj GE_Custom_Form_Local ou null
+     */
+    public GE_Custom_Form_Local getByStringSharedDbInstance(String s_query, SQLiteDatabase dbInstance) {
+        GE_Custom_Form_Local custom_form_local = null;
+        if (dbInstance == null) {
+            openDB();
+        } else {
+            this.db = dbInstance;
+        }
+
+        try {
+            Cursor cursor = db.rawQuery(s_query, null);
+            while (cursor.moveToNext()) {
+                custom_form_local = toGE_Custom_Form_LocalMapper.map(cursor);
+            }
+            cursor.close();
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+        }
+
+        if(dbInstance == null) {
+            closeDB();
+        }
+        //
+        return custom_form_local;
+    }
+
+    //endregion
 
     @Override
     public void addUpdate(GE_Custom_Form_Local custom_form_local) {

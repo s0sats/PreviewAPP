@@ -721,7 +721,6 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         } else if(hasSerialDefined(item)){
                 buildRequestSerialDialog(
                     item,
-                    getProduct(Long.parseLong(item.get(MD_Schedule_ExecDao.PRODUCT_CODE))),
                     false
                 );
                 executeSerialSearch(
@@ -734,7 +733,6 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             //Cria e exibe dialog que requer serial.
             buildRequestSerialDialog(
                 item,
-                getProduct(Long.parseLong(item.get(MD_Schedule_ExecDao.PRODUCT_CODE))),
                 true
             );
         }
@@ -782,16 +780,20 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
      * Foi feito dessa maneira para aproveitar o dialog como holder da informação do item seleconado,
      * já após retorno do WS é necessario comparar os serial seleciona com os retornados.
      * @param item - Item selecionado
-     * @param product - Obj Produto
      * @param showDialog - Flag que indica se o dialog deve ser exibido após criado ou não
      */
-    private void buildRequestSerialDialog(final HMAux item, MD_Product product, boolean showDialog) {
+    private void buildRequestSerialDialog(final HMAux item, boolean showDialog) {
+        //Define props do Produto
+        String serialRule = item.hasConsistentValue(GE_Custom_Form_LocalDao.SERIAL_RULE) ? item.get(GE_Custom_Form_LocalDao.SERIAL_RULE) : null;
+        Integer serialMinLength = item.hasConsistentValue(GE_Custom_Form_LocalDao.SERIAL_MIN_LENGTH) ? ToolBox_Inf.convertStringToInt(item.get(GE_Custom_Form_LocalDao.SERIAL_MIN_LENGTH)): null;
+        Integer serialMaxLength = item.hasConsistentValue(GE_Custom_Form_LocalDao.SERIAL_MAX_LENGTH) ? ToolBox_Inf.convertStringToInt(item.get(GE_Custom_Form_LocalDao.SERIAL_MAX_LENGTH)): null;
+        //
         serialDialog = new ScheduleRequestSerialDialog(
             context,
             item,
-            product.getSerial_rule(),
-            product.getSerial_min_length(),
-            product.getSerial_max_length(),
+            serialRule,
+            serialMinLength,
+            serialMaxLength,
             new ScheduleRequestSerialDialog.OnScheduleRequestSerialDialogListeners() {
                 @Override
                 public void processToForm() {
@@ -1047,7 +1049,9 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                     ).toSqlQuery().toLowerCase()
 
                 );
-                MD_Product productInfo = getProduct(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.PRODUCT_CODE)));
+                //LUCHE - 15/05/2020 - Comentado pois só era usado para definir url_locla o icone do produto.
+                //Add metodo que verifica se img existe local e definir valor.
+                //MD_Product productInfo = getProduct(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.PRODUCT_CODE)));
                 //
                 GE_Custom_Form_Local customFormLocal = new GE_Custom_Form_Local();
                 //
@@ -1092,7 +1096,9 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 customFormLocal.setSite_restriction(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SITE_RESTRICTION)));
                 customFormLocal.setCustom_product_icon_name(item.get(MD_Schedule_ExecDao.PRODUCT_ICON_NAME));
                 customFormLocal.setCustom_product_icon_url(item.get(MD_Schedule_ExecDao.PRODUCT_ICON_URL));
-                customFormLocal.setCustom_product_icon_url_local(productInfo.getProduct_icon_url_local());
+                customFormLocal.setCustom_product_icon_url_local(
+                    getProductIconLocalPath(item.get(MD_Schedule_ExecDao.PRODUCT_ICON_NAME).toLowerCase())
+                );
                 customFormLocal.setRequire_location(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.REQUIRE_LOCATION)));
                 //
                 //LUCHE -  14/03/2019
@@ -1136,6 +1142,19 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
 
         //
         return creationOk;
+    }
+
+    /**
+     * Metodo que verifica se o icone do produto existe e se sim retorno o url_local
+     * @param product_icon_name
+     * @return
+     */
+    @Nullable
+    private String getProductIconLocalPath(String product_icon_name) {
+        return
+            product_icon_name != null && ToolBox_Inf.verifyDownloadFileInf(product_icon_name, Constant.CACHE_PATH)
+            ? product_icon_name
+            : null;
     }
 
     /**
