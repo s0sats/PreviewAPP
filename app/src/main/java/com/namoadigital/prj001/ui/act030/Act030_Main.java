@@ -279,7 +279,6 @@ public class Act030_Main extends Base_Activity_Frag_NFC_Geral implements Act030_
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
         mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
         //
-        setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();

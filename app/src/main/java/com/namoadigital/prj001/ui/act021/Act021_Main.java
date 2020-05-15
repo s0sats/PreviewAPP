@@ -625,11 +625,6 @@ public class Act021_Main extends Base_Activity_Frag_NFC_Geral implements Act021_
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
         mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
         //
-        /*
-            BARRIONUEVO 17-04-2020
-            Mostra ícone de mudanca de site.
-         */
-        setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();

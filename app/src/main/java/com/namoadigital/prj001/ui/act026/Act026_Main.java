@@ -222,11 +222,6 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
         mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
         //
-        /*
-            BARRIONUEVO 17-04-2020
-            Atualiza info do footer
-        */
-        setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();

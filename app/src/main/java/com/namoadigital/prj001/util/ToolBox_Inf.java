@@ -1985,7 +1985,7 @@ public class ToolBox_Inf {
         LinearLayout ll_offline_mode = (LinearLayout) customView.findViewById(R.id.footer_dialog_ll_offline_mode);
         //
         LinearLayout ll_customer = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_customer);
-        TextView tv_customer_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_lbl);
+//        TextView tv_customer_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_lbl);
         TextView tv_customer_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_value);
         //
         LinearLayout ll_site = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_site);
@@ -2125,7 +2125,7 @@ public class ToolBox_Inf {
         //
         tv_offline_lbl.setText(hmDialogInfo.get(Constant.FOOTER_OFFLINE_MODE_LBL));
 
-        tv_customer_lbl.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER_LBL));
+//        tv_customer_lbl.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER_LBL));
         tv_customer_value.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER));
 
         if(editMode){

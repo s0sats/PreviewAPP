@@ -1249,12 +1249,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
         mOperation_Value = mFooter.get(Constant.FOOTER_OPERATION);
         //
-        if(currentFrag.equalsIgnoreCase(act027_services_.getTag())) {
-            setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
-        }else{
-            setFooter_iv_edit_site_zone_op_visibility(View.GONE);
-        }
-        //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
@@ -1270,10 +1264,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
        */
         if(currentFrag.equalsIgnoreCase(act027_services_.getTag())) {
             ToolBox_Inf.buildFooterDialog(context, true);
-            setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
         }else{
             ToolBox_Inf.buildFooterDialog(context, false);
-            setFooter_iv_edit_site_zone_op_visibility(View.GONE);
         }
     }
     /*
@@ -2201,20 +2193,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 setFrag(act027_header_, Act027_Main.SELECTION_HEADER);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 break;
-        }
-        /**
-         * BARRIONUEVO 22-04-2020
-         * Tratamento para quando é selecionado algum fragmento da act027 via act043
-         * Neste fluxo, o imageview do footer sempre sera nulo pois o footer ainda nao foi setado.
-         */
-        try {
-            if (currentFrag.equalsIgnoreCase(act027_services_.getTag())) {
-                setFooter_iv_edit_site_zone_op_visibility(View.VISIBLE);
-            } else {
-                setFooter_iv_edit_site_zone_op_visibility(View.GONE);
-            }
-        }catch (NullPointerException e ){
-            e.printStackTrace();
         }
     }
 
