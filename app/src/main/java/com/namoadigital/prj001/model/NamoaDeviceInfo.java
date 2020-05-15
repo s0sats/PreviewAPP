@@ -8,6 +8,8 @@ import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 
+import com.namoadigital.prj001.service.SV_LocationTracker;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
@@ -420,10 +422,25 @@ public class NamoaDeviceInfo {
                 ;
     }
 
+    public String getResourcesInfo() {
+        String txt = "Recursos: \n\t\t";
+
+        try {
+            txt +=
+                    "Status do Servico de Localizacao: " + SV_LocationTracker.status + "\n\t\t" +
+                     "Status do Funcao de GPS : " + ToolBox_Con.hasGPSResourceActive(context);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return txt;
+    }
+
     public String getFormattedInfo(){
         String data =   getAboutDeviceInfo() +"\n\n" +
                         getHardwareInfo() +"\n\n" +
-                        getPermissionsGrant();
+                        getPermissionsGrant() +"\n\n" +
+                        getResourcesInfo();
         return data;
     }
 

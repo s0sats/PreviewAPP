@@ -973,7 +973,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                                 String.valueOf(custom_form_data)
                         ).toSqlQuery().toLowerCase()
                 );
-        return Constant.SYS_STATUS_WAITING_SYNC.equals(form_data.getCustom_form_status());
+        return Constant.SYS_STATUS_WAITING_SYNC.equals(form_data.getCustom_form_status()) && form_data.getLocation_pendency() == 1;
     }
 
     /**

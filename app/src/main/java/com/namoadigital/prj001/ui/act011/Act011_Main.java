@@ -3192,7 +3192,28 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             showResults(wsResults);
         } else {
             progressDialog.dismiss();
-            flowControl();
+            if(mPresenter.hasGpsPendecy(
+                    formLocal.getCustomer_code(),
+                    formLocal.getCustom_form_type(),
+                    formLocal.getCustom_form_code(),
+                    formLocal.getCustom_form_version(),
+                    formLocal.getCustom_form_data()
+            )){
+                ToolBox.alertMSG(
+                        Act011_Main.this,
+                        hmAux_Trans.get("dialog_has_gps_pendency_ttl"),
+                        hmAux_Trans.get("dialog_has_gps_pendency_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                flowControl();
+                            }
+                        },
+                        0
+                );
+            }else {
+                flowControl();
+            }
         }
     }
 
