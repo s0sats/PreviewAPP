@@ -111,6 +111,13 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("serial_hint");
         transList.add("serial_no_match_hint");
         //
+        transList.add("dialog_so_serial_position_lbl");
+        transList.add("dialog_so_site_lbl");
+        transList.add("dialog_so_zone_lbl");
+        transList.add("dialog_so_local_lbl");
+        transList.add("dialog_so_created_by_lbl");
+        transList.add("dialog_so_approved_by_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -301,19 +308,102 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         LinearLayout ll_so_comments =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_comment);
         TextView tv_so_comment_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_lbl);
         TextView tv_so_comment_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_val);
+
+        LinearLayout ll_so_position =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_position);
+        LinearLayout ll_so_position_site =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_position_site);
+        TextView tv_position_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_position_lbl);
+        TextView tv_so_position_site_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_position_site_lbl);
+        TextView tv_so_position_site_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_position_site_val);
+        TextView tv_so_position_zone_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_position_zone_lbl);
+        TextView tv_so_position_zone_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_position_zone_val);
+        TextView tv_so_position_local_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_position_local_lbl);
+        TextView tv_so_position_local_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_position_local_val);
+
+        LinearLayout ll_so_created_by =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_created_by);
+        TextView tv_so_created_by_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_created_by_lbl);
+        TextView tv_so_created_by_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_created_by_val);
+
+        LinearLayout ll_so_approved_by =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_approved_by);
+        TextView tv_so_approved_by_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_approved_by_lbl);
+        TextView tv_so_approved_by_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_approved_by_val);
+
+
+
+
         final TextView tv_error =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_error);
         final MKEditTextNM mket_serial =  view.findViewById(R.id.act047_so_next_orders_dialog_mket_serial_confirm);
         //Seta data
         //ll_title.setVisibility(View.GONE);
         tv_title.setText((hmAux_Trans.get("dialog_so_details_ttl")+" "+ item.getSo_prefix()+"."+item.getSo_code()));
-        tv_so_desc_lbl.setText(hmAux_Trans.get("dialog_so_desc_lbl"));
-        tv_so_desc_val.setText(item.getSo_desc());
+
+
+        if (item.getSo_desc()==null || item.getSo_desc().isEmpty()) {
+            ll_so_desc.setVisibility(View.GONE);
+        }else{
+            ll_so_desc.setVisibility(View.VISIBLE);
+            tv_so_desc_lbl.setText(hmAux_Trans.get("dialog_so_desc_lbl"));
+            tv_so_desc_val.setText(item.getSo_desc());
+        }
+         if (item.getComments()==null || item.getComments().isEmpty()) {
+             ll_so_comments.setVisibility(View.GONE);
+        }else{
+            ll_so_comments.setVisibility(View.VISIBLE);
+            tv_so_comment_lbl.setText(hmAux_Trans.get("dialog_so_comment_lbl"));
+            tv_so_comment_val.setText(item.getComments());
+        }
+
         tv_services_lbl.setText(hmAux_Trans.get("dialog_services_lbl"));
         tv_services_val.setText(item.getService());
-        tv_so_comment_lbl.setText(hmAux_Trans.get("dialog_so_comment_lbl"));
-        tv_so_comment_val.setText(item.getComments());
+
         mket_serial.setHint(hmAux_Trans.get("serial_hint"));
         tv_error.setText(hmAux_Trans.get("serial_no_match_hint"));
+
+        tv_position_lbl.setText(hmAux_Trans.get("dialog_so_serial_position_lbl"));
+        if(item.getSerial_site_code() != null) {
+            ll_so_position.setVisibility(View.VISIBLE);
+            if (item.getSerial_site_code().equals(ToolBox_Con.getPreference_Site_Code(context))) {
+                ll_so_position_site.setVisibility(View.GONE);
+                tv_so_position_site_val.setTextColor(getResources().getColor(R.color.font_normal));
+                tv_so_position_zone_val.setTextColor(getResources().getColor(R.color.font_normal));
+                tv_so_position_local_val.setTextColor(getResources().getColor(R.color.font_normal));
+            } else {
+                ll_so_position_site.setVisibility(View.VISIBLE);
+                tv_so_position_site_val.setTextColor(getResources().getColor(R.color.namoa_status_error));
+                tv_so_position_zone_val.setTextColor(getResources().getColor(R.color.namoa_status_error));
+                tv_so_position_local_val.setTextColor(getResources().getColor(R.color.namoa_status_error));
+            }
+        }else{
+            ll_so_position.setVisibility(View.GONE);
+            ll_so_position_site.setVisibility(View.GONE);
+        }
+
+        tv_so_position_site_lbl.setText(hmAux_Trans.get("dialog_so_site_lbl"));
+        tv_so_position_site_val.setText(item.getSerial_site_desc());
+        tv_so_position_zone_lbl.setText(hmAux_Trans.get("dialog_so_zone_lbl"));
+        tv_so_position_zone_val.setText(item.getSerial_zone_desc());
+        tv_so_position_local_lbl.setText(hmAux_Trans.get("dialog_so_local_lbl"));
+        tv_so_position_local_val.setText(item.getSerial_local_desc());
+
+
+
+        if (item.getLast_approval_budget_user()==null
+                || item.getLast_approval_budget_user().isEmpty()) {
+            ll_so_approved_by.setVisibility(View.GONE);
+        }else{
+            ll_so_approved_by.setVisibility(View.VISIBLE);
+            tv_so_approved_by_lbl.setText(hmAux_Trans.get("dialog_so_approved_by_lbl"));
+            tv_so_approved_by_val.setText(item.getLast_approval_budget_user());
+        }
+
+        if (item.getCreate_user()==null
+        || item.getCreate_user().isEmpty()) {
+            ll_so_created_by.setVisibility(View.GONE);
+        }else{
+            ll_so_created_by.setVisibility(View.VISIBLE);
+            tv_so_created_by_lbl.setText(hmAux_Trans.get("dialog_so_created_by_lbl"));
+            tv_so_created_by_val.setText(item.getCreate_user());
+        }
+
         //Config TIl e Mket do seria
         configSerialViews(tv_error,mket_serial,item);
         //

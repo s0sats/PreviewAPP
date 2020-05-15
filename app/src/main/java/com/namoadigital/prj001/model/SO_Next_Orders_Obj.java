@@ -17,6 +17,13 @@ public class SO_Next_Orders_Obj {
     private String brand_model_color;
     private String comments;
     private String service;
+    private String serial_site_code;
+    private String serial_site_desc;
+    private String serial_zone_desc;
+    private String serial_local_desc;
+    private String create_user;
+    private String last_approval_budget_user;
+
 
     public String getSo_prefix() {
         return so_prefix;
@@ -136,5 +143,53 @@ public class SO_Next_Orders_Obj {
 
     public void setService(String service) {
         this.service = service;
+    }
+
+    public String getSerial_site_code() {
+        return serial_site_code;
+    }
+
+    public void setSerial_site_code(String serial_site_code) {
+        this.serial_site_code = serial_site_code;
+    }
+
+    public String getSerial_site_desc() {
+        return serial_site_desc;
+    }
+
+    public void setSerial_site_desc(String serial_site_desc) {
+        this.serial_site_desc = serial_site_desc;
+    }
+
+    public String getSerial_zone_desc() {
+        return serial_zone_desc;
+    }
+
+    public void setSerial_zone_desc(String serial_zone_desc) {
+        this.serial_zone_desc = serial_zone_desc;
+    }
+
+    public String getSerial_local_desc() {
+        return serial_local_desc;
+    }
+
+    public void setSerial_local_desc(String serial_local_desc) {
+        this.serial_local_desc = serial_local_desc;
+    }
+
+    public String getCreate_user() {
+        return create_user;
+    }
+
+    public void setCreate_user(String create_user) {
+        this.create_user = create_user;
+    }
+
+    public String getLast_approval_budget_user() {
+        return last_approval_budget_user;
+    }
+
+    public void setLast_approval_budget_user(String last_approval_budget_user) {
+        this.last_approval_budget_user = last_approval_budget_user;
     }
 }
