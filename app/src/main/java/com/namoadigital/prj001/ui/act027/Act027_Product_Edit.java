@@ -255,8 +255,6 @@ public class Act027_Product_Edit extends BaseFragment {
             ll_delete_prod_event = view.findViewById(R.id.act027_product_edit_content_ll_delete_prod_event);
             btn_delete_prod_event = view.findViewById(R.id.act027_product_edit_content_btn_delete_prod_event);
 
-            setProductEventDeleteFuction();
-
             md_all_productDao = new MD_All_ProductDao(context);
 
             sm_so_product_eventDao = new SM_SO_Product_EventDao(
@@ -342,6 +340,8 @@ public class Act027_Product_Edit extends BaseFragment {
             if (mSm_so_product_event.getQty_apply() != null) {
                 mSm_so_product_event.setQty_apply(mSm_so_product_event.getQty_apply().replace(",", "."));
             }
+
+            setProductEventDeleteFuction();
 
             controls_iv.add(iv_gallery);
             controls_sta.add(mk_comments);
@@ -497,7 +497,10 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     private void setProductEventDeleteFuction() {
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_PRODUCT_EVENT_CANCEL)) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_PRODUCT_EVENT_CANCEL)
+        && (Constant.SYS_STATUS_PENDING.equals(mSm_so_product_event.getStatus())
+                ||Constant.SYS_STATUS_DONE.equals(mSm_so_product_event.getStatus()) )
+        ){
             ll_delete_prod_event.setVisibility(View.VISIBLE);
             btn_delete_prod_event.setVisibility(View.VISIBLE);
         }else{
