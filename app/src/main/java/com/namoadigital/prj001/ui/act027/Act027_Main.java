@@ -133,6 +133,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     public static final String WS_PROCESS_SO_SYNC = "WS_PROCESS_SO_SYNC";
     public static final String WS_PROCESS_SO_SAVE = "WS_PROCESS_SO_SAVE";
     public static final String WS_PROCESS_N_FORM_SYNC = "WS_PROCESS_N_FORM_SYNC";
+    public static final String WS_SO_PRODUCT_EVENT_CANCEL = "WS_SO_PRODUCT_EVENT_CANCEL";
 
     public static final int WS_PROCESS_APPROVAL_NOT = 0;
     public static final int WS_PROCESS_APPROVAL_ON_SIGNATURE = 1;

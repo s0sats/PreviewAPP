@@ -249,6 +249,28 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/act027_product_edit_content_ll_delete_prod_event"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="10"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/act027_product_edit_content_btn_delete_prod_event"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="8"
+                android:background="@drawable/namoa_danger_bg_states"
+                android:drawableLeft="@drawable/ic_delete_black_24px"
+                android:drawableTint="@color/padrao_WHITE"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/padrao_WHITE"
+                tools:text="Cancelar Produto Evento" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"

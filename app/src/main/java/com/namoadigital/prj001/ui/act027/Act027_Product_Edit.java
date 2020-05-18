@@ -12,11 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.ApplyRepairImageFF;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.PictureFF;
@@ -38,6 +41,8 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Product_Event;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_File;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_Sketch;
+import com.namoadigital.prj001.model.TSO_Save_Env;
+import com.namoadigital.prj001.receiver.WBR_SO_Product_Event_Cancel;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.MD_All_Product_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_002;
@@ -45,12 +50,15 @@ import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static com.namoadigital.prj001.ui.act027.Act027_Main.WS_SO_PRODUCT_EVENT_CANCEL;
 
 /**
  * Created by neomatrix on 31/10/17.
@@ -107,6 +115,8 @@ public class Act027_Product_Edit extends BaseFragment {
 
     private boolean bStatusNew = false;
     private OnRecoveryFragmentState delegate;
+    private LinearLayout ll_delete_prod_event;
+    private Button btn_delete_prod_event;
 
     public void setmSm_so(SM_SO mSm_so) {
         this.mSm_so = mSm_so;
@@ -241,6 +251,11 @@ public class Act027_Product_Edit extends BaseFragment {
             ll_log = view.findViewById(R.id.act027_product_edit_content_ll_log);
             tv_nick = view.findViewById(R.id.act027_product_edit_content_tv_nick);
             tv_date = view.findViewById(R.id.act027_product_edit_content_tv_date);
+
+            ll_delete_prod_event = view.findViewById(R.id.act027_product_edit_content_ll_delete_prod_event);
+            btn_delete_prod_event = view.findViewById(R.id.act027_product_edit_content_btn_delete_prod_event);
+
+            setProductEventDeleteFuction();
 
             md_all_productDao = new MD_All_ProductDao(context);
 
@@ -481,6 +496,59 @@ public class Act027_Product_Edit extends BaseFragment {
         }
     }
 
+    private void setProductEventDeleteFuction() {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_PRODUCT_EVENT_CANCEL)) {
+            ll_delete_prod_event.setVisibility(View.VISIBLE);
+            btn_delete_prod_event.setVisibility(View.VISIBLE);
+        }else{
+            ll_delete_prod_event.setVisibility(View.GONE);
+            btn_delete_prod_event.setVisibility(View.GONE);
+        }
+
+    }
+
+    /**
+     * BARRIONUEVO 18-05-2020
+     * METODO CRIADO NA CORRERIA PARA ATENDER UM PROJETO ESQUECIDO PELO DEMANDANTE.
+     * @return
+     */
+    private boolean isSoWithinTokenFile() {
+        try {
+            File[] soToken =
+                    ToolBox_Inf.getListOfFiles_v5(
+                            ConstantBaseApp.TOKEN_PATH,
+                            ToolBox_Inf.buildTokenPrefixWithCustomer(context,ConstantBaseApp.TOKEN_SO_PREFIX)
+                    );
+            if (soToken.length > 0) {
+                Gson gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
+                //
+                ArrayList<SM_SO> token_so_list =
+                        gsonEnv.fromJson(
+                                ToolBox_Inf.getContents(soToken[0]),
+                                TSO_Save_Env.class
+                        ).getSo();
+                //
+                if (token_so_list.size() == 0) {
+                    return false;
+                }
+                //
+                for (SM_SO so : token_so_list) {
+                    if (
+                            so.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                                    && so.getSo_prefix() == mSm_so.getSo_prefix()
+                                    && so.getSo_code() == mSm_so.getSo_code()
+                    ) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+        return false;
+    }
+
+
     private void setMk_comments_refreshing_layout(String comment) {
         //Remove counter
         tilComment.setCounterEnabled(false);
@@ -518,6 +586,58 @@ public class Act027_Product_Edit extends BaseFragment {
 
             }
         });
+
+        btn_delete_prod_event.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mSm_so_product_event.getSeq() == 0){
+                    //TODO Implementar rotina de delete local
+                }else {
+                    if(ToolBox_Con.isOnline(context)) {
+                        Act027_Main mMain = (Act027_Main) getActivity();
+                        if (mSm_so.getSync_required() == 0 && mSm_so.getUpdate_required() == 0 && !isSoWithinTokenFile()) {
+                            callProdEventDeleteService();
+                        } else {
+                            ToolBox.alertMSG(context,
+                                    hmAux_Trans.get("alert_sync_before_cancel_product_event_ttl"),
+                                    hmAux_Trans.get("alert_sync_before_cancel_product_event_msg"),
+                                    null,
+                                    0
+                            );
+                        }
+                    }else{
+                        ToolBox_Inf.showNoConnectionDialog(context);
+                    }
+                }
+            }
+        });
+    }
+
+    private void callProdEventDeleteService() {
+        Act027_Main mMain = (Act027_Main) getActivity();
+        mMain.setWs_process(WS_SO_PRODUCT_EVENT_CANCEL);
+        //
+        mMain.enableProgressDialog(
+                hmAux_Trans.get("progress_alert_product_event_cancel_ttl"),
+                hmAux_Trans.get("progress_product_event_cancel_msg"),
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Product_Event_Cancel.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(SM_SO_Product_EventDao.SO_PREFIX, mSm_so_product_event.getSo_prefix());
+        bundle.putInt(SM_SO_Product_EventDao.SO_CODE, mSm_so_product_event.getSo_code());
+        int prodEventSeq = mSm_so_product_event.getSeq();
+        if(prodEventSeq == 0){
+            prodEventSeq = mSm_so_product_event.getSeq_tmp();
+        }
+        bundle.putInt(SM_SO_Product_EventDao.SEQ, prodEventSeq);
+        bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
+        bundle.putString(SM_SODao.TOKEN, mSm_so.getToken());
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     @Override
