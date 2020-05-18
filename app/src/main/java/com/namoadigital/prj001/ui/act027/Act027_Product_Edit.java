@@ -35,6 +35,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_Event_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_Event_SketchDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_All_Product;
 import com.namoadigital.prj001.model.SM_SO;
@@ -593,27 +594,60 @@ public class Act027_Product_Edit extends BaseFragment {
         btn_delete_prod_event.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mSm_so_product_event.getSeq() == 0){
-                    //TODO Implementar rotina de delete local
-                }else {
-                    if(ToolBox_Con.isOnline(context)) {
-                        Act027_Main mMain = (Act027_Main) getActivity();
-                        if (mSm_so.getSync_required() == 0 && mSm_so.getUpdate_required() == 0 && !isSoWithinTokenFile()) {
-                            callProdEventDeleteService();
-                        } else {
-                            ToolBox.alertMSG(context,
-                                    hmAux_Trans.get("alert_sync_before_cancel_product_event_ttl"),
-                                    hmAux_Trans.get("alert_sync_before_cancel_product_event_msg"),
-                                    null,
-                                    0
-                            );
+                ToolBox.alertMSG(context,
+                    hmAux_Trans.get("alert_cancel_product_event_ttl"),
+                    hmAux_Trans.get("alert_cancel_product_event_confirm"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            cancelProdEventFlow();
                         }
-                    }else{
-                        ToolBox_Inf.showNoConnectionDialog(context);
-                    }
-                }
+                    },
+                    0
+                );
             }
         });
+    }
+
+    private void cancelProdEventFlow() {
+        if(mSm_so_product_event.getSeq() == 0){
+
+            DaoObjReturn daoObjReturn = sm_so_product_eventDao.removeByTmp(mSm_so_product_event);
+            if(!daoObjReturn.hasError()) {
+                removeEventPhotosOnLeave();
+                if(getActivity() != null && getActivity() instanceof Act027_Main){
+                    //TODO REVISAR ESSES 2 COMANDO
+                    //O refresh da tela é necessario para atualizar o "status" de update_required no drawer
+                    ((Act027_Main) getActivity()).refreshUI();
+                    //Necessario para sair da tela
+                    getActivity().onBackPressed();
+                }
+            } else {
+                ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_error_on_cancel_product_event_ttl"),
+                    hmAux_Trans.get("alert_error_on_cancel_product_event_msg"),
+                    null,
+                    0
+                );
+            }
+        }else {
+            if(ToolBox_Con.isOnline(context)) {
+                Act027_Main mMain = (Act027_Main) getActivity();
+                if (mSm_so.getSync_required() == 0 && mSm_so.getUpdate_required() == 0 && !isSoWithinTokenFile()) {
+                    callProdEventDeleteService();
+                } else {
+                    ToolBox.alertMSG(context,
+                            hmAux_Trans.get("alert_sync_before_cancel_product_event_ttl"),
+                            hmAux_Trans.get("alert_sync_before_cancel_product_event_msg"),
+                            null,
+                            0
+                    );
+                }
+            }else{
+                ToolBox_Inf.showNoConnectionDialog(context);
+            }
+        }
     }
 
     private void callProdEventDeleteService() {

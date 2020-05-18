@@ -3,10 +3,12 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.SM_SO_Product_Event;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_File;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_Sketch;
@@ -316,6 +318,81 @@ public class SM_SO_Product_EventDao extends BaseDao implements Dao<SM_SO_Product
         }
 
         closeDB();
+    }
+
+    /**
+     * LUCHE - 18/05/2020
+     * <p></p>
+     * Metodo que deleta produto evento e files usando os dados do obj passado.
+     * @param sm_so_product_event Produto evento a ser deletado.
+     * @return Obj Dao com informações da operação
+     */
+    public DaoObjReturn removeByTmp(SM_SO_Product_Event sm_so_product_event) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long delRetCounter = 0;
+        String curAction = DaoObjReturn.DELETE;
+
+        openDB();
+        try{
+            db.beginTransaction();
+            //
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(sm_so_product_event.getCustomer_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SO_PREFIX).append(" = '").append(sm_so_product_event.getSo_prefix()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SO_CODE).append(" = '").append(sm_so_product_event.getSo_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SEQ).append(" = '").append(sm_so_product_event.getSeq()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(SEQ_TMP).append(" = '").append(sm_so_product_event.getSeq_tmp()).append("'");
+            //Se produto evento possui file, deleta os registros.
+            if(sm_so_product_event.getFile() != null && sm_so_product_event.getFile().size() > 0){
+                daoObjReturn.setTable(SM_SO_Product_Event_FileDao.TABLE);
+                delRetCounter = db.delete(SM_SO_Product_Event_FileDao.TABLE, sbWhere.toString(), null);
+                //Se tinha file e qtd deleteda foi 0, lança exception indicando erro.
+                if(delRetCounter <= 0){
+                    daoObjReturn.setRawMessage(daoObjReturn.DELETE_ERROR_0_ROWS_AFFECTED);
+                    throw new Exception(daoObjReturn.getErrorMsg());
+                }
+                //Reseta contador para validação do delete da propria table.
+                delRetCounter = 0;
+            }
+            //
+            daoObjReturn.setTable(TABLE);
+            delRetCounter = db.delete(TABLE, sbWhere.toString(), null);
+            if(delRetCounter <= 0){
+                daoObjReturn.setRawMessage(daoObjReturn.DELETE_ERROR_0_ROWS_AFFECTED);
+                throw new Exception(daoObjReturn.getErrorMsg());
+            }
+            db.setTransactionSuccessful();
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+
+        } catch (Exception e) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        } finally {
+            db.endTransaction();
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(delRetCounter);
+        }
+        //
+        closeDB();
+        //
+        return daoObjReturn;
     }
 
     @Override
