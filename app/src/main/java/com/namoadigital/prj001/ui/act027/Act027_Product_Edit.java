@@ -48,6 +48,7 @@ import com.namoadigital.prj001.sql.MD_All_Product_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_003;
+import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -503,6 +504,7 @@ public class Act027_Product_Edit extends BaseFragment {
         ){
             ll_delete_prod_event.setVisibility(View.VISIBLE);
             btn_delete_prod_event.setVisibility(View.VISIBLE);
+            btn_delete_prod_event.setText(hmAux_Trans.get("btn_product_event_cancel"));
         }else{
             ll_delete_prod_event.setVisibility(View.GONE);
             btn_delete_prod_event.setVisibility(View.GONE);
@@ -514,8 +516,9 @@ public class Act027_Product_Edit extends BaseFragment {
      * BARRIONUEVO 18-05-2020
      * METODO CRIADO NA CORRERIA PARA ATENDER UM PROJETO ESQUECIDO PELO DEMANDANTE.
      * @return
+     * @param mSm_so_refreshed
      */
-    private boolean isSoWithinTokenFile() {
+    private boolean isSoWithinTokenFile(SM_SO mSm_so_refreshed) {
         try {
             File[] soToken =
                     ToolBox_Inf.getListOfFiles_v5(
@@ -538,8 +541,8 @@ public class Act027_Product_Edit extends BaseFragment {
                 for (SM_SO so : token_so_list) {
                     if (
                             so.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
-                                    && so.getSo_prefix() == mSm_so.getSo_prefix()
-                                    && so.getSo_code() == mSm_so.getSo_code()
+                                    && so.getSo_prefix() == mSm_so_refreshed.getSo_prefix()
+                                    && so.getSo_code() == mSm_so_refreshed.getSo_code()
                     ) {
                         return true;
                     }
@@ -597,8 +600,8 @@ public class Act027_Product_Edit extends BaseFragment {
                     //TODO Implementar rotina de delete local
                 }else {
                     if(ToolBox_Con.isOnline(context)) {
-                        Act027_Main mMain = (Act027_Main) getActivity();
-                        if (mSm_so.getSync_required() == 0 && mSm_so.getUpdate_required() == 0 && !isSoWithinTokenFile()) {
+                        SM_SO mSm_so_refreshed = getSm_so_updated();
+                        if (mSm_so_refreshed.getSync_required() == 0 && mSm_so_refreshed.getUpdate_required() == 0 && !isSoWithinTokenFile(mSm_so_refreshed)) {
                             callProdEventDeleteService();
                         } else {
                             ToolBox.alertMSG(context,
@@ -616,13 +619,35 @@ public class Act027_Product_Edit extends BaseFragment {
         });
     }
 
+    /**
+     * BARRIONUEVO 18-05-2020
+     *     - Metodo que consulta objeto de OS mais atual, como nao ha tempo habil, nao foi possivel
+     *     reaproeitar o objeto padrao da OS (mSm_so)
+     *
+     * @return
+     */
+    private SM_SO getSm_so_updated() {
+        SM_SODao sm_soDao = new SM_SODao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        return sm_soDao.getByString(
+                new SM_SO_Sql_001(
+                        mSm_so.getCustomer_code(),
+                        mSm_so.getSo_prefix(),
+                        mSm_so.getSo_code()
+                ).toSqlQuery()
+        );
+    }
+
     private void callProdEventDeleteService() {
         Act027_Main mMain = (Act027_Main) getActivity();
         mMain.setWs_process(WS_SO_PRODUCT_EVENT_CANCEL);
         //
         mMain.enableProgressDialog(
                 hmAux_Trans.get("progress_alert_product_event_cancel_ttl"),
-                hmAux_Trans.get("progress_product_event_cancel_msg"),
+                hmAux_Trans.get("progress_alert_product_event_cancel_msg"),
                 hmAux_Trans.get("sys_alert_btn_cancel"),
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
@@ -637,7 +662,6 @@ public class Act027_Product_Edit extends BaseFragment {
         }
         bundle.putInt(SM_SO_Product_EventDao.SEQ, prodEventSeq);
         bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
-        bundle.putString(SM_SODao.TOKEN, mSm_so.getToken());
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);

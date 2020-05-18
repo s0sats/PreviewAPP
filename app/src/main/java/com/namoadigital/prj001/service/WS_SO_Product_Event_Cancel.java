@@ -31,7 +31,6 @@ public class WS_SO_Product_Event_Cancel extends IntentService {
     private int so_code;
     private int so_scn;
     private int seq;
-    private String token;
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = ConstantBaseApp.APP_MODULE;
@@ -51,7 +50,8 @@ public class WS_SO_Product_Event_Cancel extends IntentService {
             so_code = bundle.getInt(SM_SO_Product_EventDao.SO_CODE, -1);
             seq = bundle.getInt(SM_SO_Product_EventDao.SEQ, -1);
             so_scn = bundle.getInt(SM_SODao.SO_SCN, -1);
-            token = bundle.getString(SM_SODao.TOKEN);
+            //
+            loadTranslation();
             //
             processSO_Product_Event_Cancel();
         } catch (Exception e) {
@@ -72,13 +72,20 @@ public class WS_SO_Product_Event_Cancel extends IntentService {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_so_data"), "", "0");
         //
+        String mToken = ToolBox_Inf.getToken(getApplicationContext());
         TSO_Product_Event_Cancel_Env env = new TSO_Product_Event_Cancel_Env();
         env.setSo_code(so_code);
         env.setSo_prefix(so_prefix);
         env.setSo_scn(so_scn);
         env.setSeq(seq);
-        env.setToken(token);
+        env.setToken(mToken);
         Gson gson = new GsonBuilder().serializeNulls().create();
+
+        //set Header
+        env.setApp_code(Constant.PRJ001_CODE);
+        env.setApp_version(Constant.PRJ001_VERSION);
+        env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
+        env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SO_PRODUCT_EVENT_CANCEL,
@@ -134,12 +141,19 @@ public class WS_SO_Product_Event_Cancel extends IntentService {
             //
             hmAuxRet.put(so_pk, "0");
             //
+            hmAuxRet.put("label", so_pk );
+            hmAuxRet.put("type", "S.O.");
+
+            String status;
             if (!so_ret.getRet_status().equalsIgnoreCase("OK")) {
-                hmAuxRet.put(so_pk, so_ret.getRet_msg());
+                status = so_ret.getRet_msg();
             } else {
-                hmAuxRet.put(so_pk, "OK");
+                status = "OK";
             }
+            hmAuxRet.put("status", status);
+            hmAuxRet.put("final_status",so_pk  + " / " + status);
         }
+
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAuxRet, "", "0");
 
     }
