@@ -554,6 +554,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("alert_error_on_cancel_product_event_ttl");
         transList.add("alert_error_on_cancel_product_event_msg");
         //
+        transList.add("alert_product_edit_sync_for_photo_ttl");
+        transList.add("alert_product_edit_sync_for_photo_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -1901,6 +1904,12 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
+                }
+                if (auxSo.containsKey("status")) {
+                    if (auxSo.get("status").equalsIgnoreCase("Ok")) {
+                        //
+                        act027_product_edit_.setStatusCancelled();
+                    }
                 }
                 //
                 refreshUI();

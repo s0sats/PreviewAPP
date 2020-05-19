@@ -795,9 +795,40 @@ public class Act027_Product_Edit extends BaseFragment {
         iv_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callCamera();
+
+                boolean hasPhotoFiles = checkPhotoFiles();
+
+                if(!hasPhotoFiles){
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_product_edit_sync_for_photo_ttl"),
+                            hmAux_Trans.get("alert_product_edit_sync_for_photo_msg"),
+                            null,
+                            0);
+                }else{
+                    callCamera();
+                }
             }
         });
+    }
+
+    /**
+     * BARRIONUEVO  19-05-2020
+     * Metodo que verifica se todas as fotos estao no device para exibicao de galeria.
+     * Se houver uma foto que ainda nao foi baixada impede a visualizacao.
+     * @return
+     */
+    private boolean checkPhotoFiles() {
+        String[] photos= ((String) iv_gallery.getTag()).split("#");
+        boolean isLocal = true;
+        for(int i=0; i < photos.length; i++){
+            String photo = photos[i];
+            File temp = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + photo);
+            if (!temp.exists()) {
+                isLocal = false;
+            }
+        }
+        return isLocal;
     }
 
     /**
@@ -1195,4 +1226,12 @@ public class Act027_Product_Edit extends BaseFragment {
         }
     }
 
+    /**
+     * BARRIONUEVO 19-05-2020
+     *  Quando em Roma, aja como romanos.
+     *  Metodo que garante que nao havera mensagem de confirmacao de perda de dados na saida da lista
+     */
+    public void setStatusCancelled() {
+        mSm_so_product_event.setStatus(Constant.SYS_STATUS_CANCELLED);
+    }
 }
