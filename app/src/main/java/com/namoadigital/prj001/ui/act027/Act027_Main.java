@@ -539,8 +539,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("alert_sync_before_cancel_product_event_msg");
         transList.add("progress_alert_product_event_cancel_ttl");
         transList.add("progress_alert_product_event_cancel_msg");
-        transList.add("alert_cancel_product_event_confirm_ttl");
-        transList.add("alert_cancel_product_event_confirm_msg");
 
         transList.add("event_inspection_lbl");
         transList.add("event_comments_lbl");
