@@ -296,7 +296,6 @@ public class Act027_Product_Edit extends BaseFragment {
                     ).toSqlQuery()
                 );
 
-
                 HMAux hmTmp = sm_so_product_eventDao.getByStringHM(
                     new SM_SO_Product_Event_Sql_002(
                         mSm_so.getCustomer_code(),
@@ -619,7 +618,6 @@ public class Act027_Product_Edit extends BaseFragment {
                 removeEventPhotosOnLeave();
                 if(getActivity() != null && getActivity() instanceof Act027_Main){
                     Act027_Main mMain = (Act027_Main) getActivity();
-                    //TODO REVISAR ESSES 2 COMANDO
                     //O refresh da tela é necessario para atualizar o "status" de update_required no drawer
                     mMain.refreshUI();
                     //Necessario para sair da tela
@@ -1119,6 +1117,7 @@ public class Act027_Product_Edit extends BaseFragment {
             mMain.executeSoSave();
         } else {
             //ToolBox_Inf.showNoConnectionDialog(context);
+            mMain.refreshUI();
             //
             mMain.setProductListFragOffLine();
         }
