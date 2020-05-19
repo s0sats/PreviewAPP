@@ -606,7 +606,7 @@ public class Act027_Product_Edit extends BaseFragment {
                             cancelProdEventFlow();
                         }
                     },
-                    0
+                    1
                 );
             }
         });
@@ -614,16 +614,16 @@ public class Act027_Product_Edit extends BaseFragment {
 
     private void cancelProdEventFlow() {
         if(mSm_so_product_event.getSeq() == 0){
-
             DaoObjReturn daoObjReturn = sm_so_product_eventDao.removeByTmp(mSm_so_product_event);
             if(!daoObjReturn.hasError()) {
                 removeEventPhotosOnLeave();
                 if(getActivity() != null && getActivity() instanceof Act027_Main){
+                    Act027_Main mMain = (Act027_Main) getActivity();
                     //TODO REVISAR ESSES 2 COMANDO
                     //O refresh da tela é necessario para atualizar o "status" de update_required no drawer
-                    ((Act027_Main) getActivity()).refreshUI();
+                    mMain.refreshUI();
                     //Necessario para sair da tela
-                    getActivity().onBackPressed();
+                    mMain.setProductListFragOffLine();
                 }
             } else {
                 ToolBox.alertMSG(

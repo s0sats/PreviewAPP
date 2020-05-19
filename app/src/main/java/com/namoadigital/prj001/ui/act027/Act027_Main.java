@@ -551,6 +551,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("alert_starting_pdf_not_supported_ttl");
         transList.add("alert_starting_pdf_not_supported_msg");
         //
+        transList.add("alert_cancel_product_event_ttl");
+        transList.add("alert_cancel_product_event_confirm");
+        transList.add("alert_error_on_cancel_product_event_ttl");
+        transList.add("alert_error_on_cancel_product_event_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
