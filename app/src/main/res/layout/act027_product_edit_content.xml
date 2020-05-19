@@ -254,14 +254,15 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal"
-            android:weightSum="10"
-            android:visibility="gone">
+            android:layout_marginTop="8dp"
+            android:padding="5dp"
+            android:visibility="visible">
 
             <Button
                 android:id="@+id/act027_product_edit_content_btn_delete_prod_event"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="8"
+                android:layout_weight="1"
                 android:background="@drawable/namoa_danger_bg_states"
                 android:drawableLeft="@drawable/ic_delete_black_24px"
                 android:drawableTint="@color/padrao_WHITE"
