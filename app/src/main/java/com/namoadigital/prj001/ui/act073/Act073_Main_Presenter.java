@@ -80,11 +80,6 @@ public class Act073_Main_Presenter implements Act073_Main_Contract.I_Presenter {
             mView.setProductValues(md_product);
         } else {
             mView.setProductValues(null);
-            //
-            mView.showAlert(
-                hmAux_Trans.get("alert_product_not_found_title"),
-                hmAux_Trans.get("alert_product_not_found_msg")
-            );
         }
     }
 

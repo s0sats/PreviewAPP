@@ -367,14 +367,23 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
 
     @Override
     public void showAlert(String ttl, String msg) {
-        ToolBox.alertMSG(
-            context,
-            ttl,
-            msg,
-            null,
-            0
-        );
 
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(contentMain.getVisibility() == View.INVISIBLE) {
+                            onBackPressed();
+                        }else{
+                            dialog.dismiss();
+                        }
+                    }
+                },
+                0
+        );
     }
 
     @Override
