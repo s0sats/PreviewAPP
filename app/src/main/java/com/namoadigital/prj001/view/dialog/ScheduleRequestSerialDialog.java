@@ -277,7 +277,6 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
             tvQuestion.setText(hmAux_Trans.get("serial_required_lbl"));
             rgConfirm.setVisibility(View.GONE);
             rdoNo.setEnabled(false);
-            tilSerial.setHelperText(getFormattedRuleHelper());
             mketSerial.setHint(hmAux_Trans.get("inform_serial_required"));
         }
     }
@@ -291,11 +290,13 @@ public class ScheduleRequestSerialDialog extends AlertDialog {
             btnText =  hmAux_Trans.get("btn_open_form");
             tilSerial.setErrorEnabled(false);
             tilSerial.setError(null);
+            tilSerial.setHelperText(null);
         } else{
             searchIcon =  context.getResources().getDrawable(R.drawable.icon_lupa_ns);
             searchIcon.setColorFilter(context.getResources().getColor(R.color.padrao_WHITE), PorterDuff.Mode.SRC_ATOP);
             mketSerial.setVisibility(View.VISIBLE);
             btnText =  hmAux_Trans.get("btn_search_serial");
+            tilSerial.setHelperText(getFormattedRuleHelper());
         }
         //
         btnAction.setCompoundDrawablesWithIntrinsicBounds(null,null,searchIcon,null);
