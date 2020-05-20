@@ -795,18 +795,21 @@ public class Act027_Product_Edit extends BaseFragment {
         iv_gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                boolean hasPhotoFiles = checkPhotoFiles();
-
-                if(!hasPhotoFiles){
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_product_edit_sync_for_photo_ttl"),
-                            hmAux_Trans.get("alert_product_edit_sync_for_photo_msg"),
-                            null,
-                            0);
-                }else{
+                if (mSm_so_product_event.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_PENDING) ||
+                        mSm_so_product_event.getStatus().equalsIgnoreCase("")) {
                     callCamera();
+                }else {
+                    boolean hasPhotoFiles = checkPhotoFiles();
+                    if (!hasPhotoFiles) {
+                        ToolBox.alertMSG(
+                                context,
+                                hmAux_Trans.get("alert_product_edit_sync_for_photo_ttl"),
+                                hmAux_Trans.get("alert_product_edit_sync_for_photo_msg"),
+                                null,
+                                0);
+                    } else {
+                        callCamera();
+                    }
                 }
             }
         });
