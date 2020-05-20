@@ -2102,14 +2102,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
     @Override
     public void onBackPressed() {
-
-
         switch (currentFrag) {
             case SELECTION_PRODUCT_EDIT:
                 if (act027_product_edit_.getEventStatus().equalsIgnoreCase(
                         Act027_Product_Edit.EVENT_EDIT_MODE)
                 ) {
-
                     ToolBox.alertMSG(
                             context,
                             hmAux_Trans.get("alert_event_lose_data_ttl"),
@@ -2156,14 +2153,29 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 );
                 break;
             default:
+                /**
+                 * LUCHE - 19/05/2020
+                 * Para evitar que a msg de alert_event_lose_data_ttl seja exibida quando o user
+                 * NÃO ESTA no fragmento de edição do produto evento,adicionando a validação abaixo.
+                 * Verifica se o frag atual NÃO É o edição e se a "flag" de MODO EDIÇÃO do frag edit é verdadeira.
+                 * Se essa louca condição foi satisfeita, reseta a "flag" de MODO EDIÇÃO para false.
+                 * Essa situação acontecia quando usr estava no frag de edição do produto evento, em modo edição
+                 * e clicava em sincronizar a O.S. ao final do sincronismo o usr era direcionado para a lista
+                 * de produto evento, porem a "flag" de edição não era resetada.
+                 * Para evitar q outras situações caissem no mesmo problema, coloquei a tratativa nesse ponto.
+                 */
+                if( !currentFrag.equalsIgnoreCase(SELECTION_PRODUCT_EDIT)
+                    && eventEditOpenStatus == true
+                ){
+                    eventEditOpenStatusTypeDialog = false;
+                    setEventEditOpenStatus(false);
+                }
                 act027_opc_.perfomClickInOption(Act027_Main.SELECTION_SERVICES);
-
         }
     }
 
     @Override
     public void menuOptionsSelected(String type) {
-
         eventEditOpenStatusType = type;
 
         if (eventEditOpenStatus) {
@@ -2199,9 +2211,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                         }
                 );
             }
-
             return;
-
         } else {
         }
 

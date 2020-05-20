@@ -5,12 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Schedule_Exec_Operation;
 import com.namoadigital.prj001.model.MD_Schedule_Exec_Product;
@@ -18,7 +20,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec_Site;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Dao_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_003;
-import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_006;
+import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_008;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -384,6 +386,12 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
      *  - Inclui novos agendamentos
      *  - Atualiza agendamentos ja existentes e que NÃO foram iniciados ou executados
      *  - Exclui agendamentos que NÃO foram recebidos no sincronismo e que NÃO foram iniciados ou executados
+     *
+     * LUCHE - 15/05/2020
+     * Modificado metodo , adicionando a atualização de informações sempre que o agendamento ainda estiver no status SCHEDULE.
+     * Antigamente, como os dados não se alteravam e só era possivel criar agendamento pra produtos que o usr tem,
+     * os dados relacionais eram inseridos apenas no insert.
+     *
      * @param receivedScheduleExecs - Agendamentos recebidos no sincronismo.
      * @param scheduleExecSiteList
      * @param scheduleExecOperationList
@@ -399,6 +407,8 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         //
         try {
             db.beginTransaction();
+            //Lista de form_locals a serem atualizados.
+            ArrayList<GE_Custom_Form_Local> formLocalsToUpdate = new ArrayList<>();
             //
             for (int i = 0; i < receivedScheduleExecs.size(); i++) {
                 MD_Schedule_Exec scheduleExec = receivedScheduleExecs.get(i);
@@ -410,6 +420,8 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                         scheduleExec.getSchedule_exec()
                     ).toSqlQuery(),db
                 );
+                //Conciliação até 14/05/2020
+                /*
                 //Se existir o agendamento e ele ja tiver sido iniciado, seta sync_process para 1 e
                 // substitui o agendamento do server pelo do banco de dados, evitando a substituição.
                 if( dbSchedule != null
@@ -422,7 +434,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                             )
                 ){
                     dbSchedule.setSync_process(1);
-                    receivedScheduleExecs.set(i,dbSchedule);
+                    receivedScheduleExecs.set(i, dbSchedule);
                 }else{
                     //Se agendamento não existia ou existia com status pending, seta sync_process e
                     //mantem o agendamento do server para atualização.
@@ -465,11 +477,10 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                         String scheduleType = scheduleExec.getSchedule_type();
                         switch (scheduleType){
                             case ConstantBaseApp.MD_SCHEDULE_TYPE_FORM:
-                                scheduleExec.setRequire_serial(dbSchedule.getRequire_serial());
-                                scheduleExec.setAllow_new_serial_cl(dbSchedule.getAllow_new_serial_cl());
-                                scheduleExec.setRequire_serial_done(dbSchedule.getRequire_serial_done());
                                 scheduleExec.setCustom_form_type_desc(dbSchedule.getCustom_form_type_desc());
                                 scheduleExec.setCustom_form_desc(dbSchedule.getCustom_form_desc());
+                                scheduleExec.setRequire_serial_done(dbSchedule.getRequire_serial_done());
+                                scheduleExec.setRequire_location(dbSchedule.getRequire_location());
                                 //LUCHE - 23/04/2020
                                 //Adicionado set das novas informações de produto.
                                 scheduleExec.setSerial_rule(dbSchedule.getSerial_rule());
@@ -487,6 +498,95 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                                 break;
                         }
                     }
+                }*/
+                //LUCHE - 15/05/2020
+                //Alterado conciliação para atualiza tb os dados de agendamento ja existentes desde
+                // que seu status seja schedule. Além disso, incluido atualiação do registro de
+                //form local, caso exista.
+                //Se a existe o agendamento, verifica necessidade atualização do ddados.
+                if(dbSchedule != null){
+                    //Se o agendamento esta em status schedule atualiza os dados do produto e caso
+                    //ja exista formLocal, atualiza os dados do produto la tb.
+                    //Se status diferente de SYS_STATUS_SCHEDULE, não atualiza nenhuma info,
+                    //só substitui o obj vendo do server pelo do bd
+                    if(dbSchedule.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_SCHEDULE)){
+                        scheduleExec.setSync_process(1);
+                        scheduleExec.setStatus(dbSchedule.getStatus());
+                        //Se agendamento ja existe, pega os dados "realacionais" e atualiza no obj vindo do server.
+                        //Seta infos gerais a todos agendamentos
+                        //Até 15/05/2020, dados de site e oper NUNCA SE ALTERAM no agendamento.
+                        scheduleExec.setSite_id(dbSchedule.getSite_id());
+                        scheduleExec.setSite_desc(dbSchedule.getSite_desc());
+                        scheduleExec.setOperation_id(dbSchedule.getOperation_id());
+                        scheduleExec.setOperation_desc(dbSchedule.getOperation_desc());
+                        //Seta informações especifica por tipo
+                        String scheduleType = scheduleExec.getSchedule_type();
+                        switch (scheduleType){
+                            case ConstantBaseApp.MD_SCHEDULE_TYPE_FORM:
+                                GE_Custom_Form_Local customFormLocal = getCustomFormLocal(
+                                    scheduleExec.getCustomer_code(),
+                                    scheduleExec.getSchedule_prefix(),
+                                    scheduleExec.getSchedule_code(),
+                                    scheduleExec.getSchedule_exec(),
+                                    db
+                                );
+                                //Até 15/05/2020, os dados do form no agendamento NUNCA SE ALTERAM
+                                scheduleExec.setCustom_form_type_desc(dbSchedule.getCustom_form_type_desc());
+                                scheduleExec.setCustom_form_desc(dbSchedule.getCustom_form_desc());
+                                scheduleExec.setRequire_serial_done(dbSchedule.getRequire_serial_done());
+                                scheduleExec.setRequire_location(dbSchedule.getRequire_location());
+                                //LUCHE - 15/05/2020
+                                //Atualiza dados do produto diretamente do produto enviado.
+                                updateScheduleExecProductInfos(scheduleExecProductList, scheduleExec, dbSchedule);
+                                //Caso o agendamento ja possua o form_local,atualiza dados do produto nele tb
+                                //e adiciona form para ser atualizado.
+                                if(scheduelFormLocalExists(customFormLocal)){
+                                    updateCustomFormLocalProductsInfos(scheduleExec,customFormLocal);
+                                    formLocalsToUpdate.add(customFormLocal);
+                                }
+                                break;
+                            case ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET:
+                                //LUCHE - 15/05/2020
+                                //Atualiza dados do produto diretamente do produto enviado.
+                                updateScheduleExecProductInfos(scheduleExecProductList, scheduleExec, dbSchedule);
+                            default:
+                                break;
+                        }
+                        //ATENÇÃO, COMO AGENDAMENTO NO STATUS SCHEDULE, O OBJETO VINDO DO SERVER É
+                        //ATUALIZADO COM AS INFORMAÇÕES RELACIONAIS ENTÃO NÃO É NECESSARIO TROCAR O ITEM
+                        //USADO NA LISTA COMO NO CASO DO ELSE ABAIXO.
+                    }else{
+                        //Se agendamento em status diferente do de agendado, usa dados vindo do banco
+                        dbSchedule.setSync_process(1);
+                        receivedScheduleExecs.set(i, dbSchedule);
+                    }
+
+                }else{
+                    scheduleExec.setSync_process(1);
+                    //Caso seja um novo agendamento, seta as informações no obj para ser inserido no banco.
+                    scheduleExec.setStatus(ConstantBaseApp.SYS_STATUS_SCHEDULE);
+                    if (scheduleExec.getSchedule_type() != null) {
+                        String scheduleType = scheduleExec.getSchedule_type();
+                        //
+                        switch (scheduleType){
+                            case ConstantBaseApp.MD_SCHEDULE_TYPE_FORM:
+                                setFormsInfos(
+                                    scheduleExec,
+                                    scheduleExecSiteList,
+                                    scheduleExecOperationList,
+                                    scheduleExecProductList
+                                );
+                                break;
+                            case ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET:
+                                setTicketInfos(
+                                    scheduleExec,
+                                    scheduleExecSiteList,
+                                    scheduleExecOperationList,
+                                    scheduleExecProductList
+                                );
+                                break;
+                        }
+                    }
                 }
             }
             //Atualiza/ Insere lista no banco
@@ -494,6 +594,14 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             //Se erro ao inserir, dispara exception que por sua vez executa rollback
             if (daoObjReturn.hasError()) {
                 throw new Exception(daoObjReturn.getRawMessage());
+            }
+            //Atualiza os FormLocal caso exista.
+            if(formLocalsToUpdate != null && formLocalsToUpdate.size() > 0){
+                daoObjReturn = getFormLocalDao().addUpdateThrowExceptionWithSharedDbInstance(formLocalsToUpdate, false, db);
+                //Se erro ao atualizar, dispara exception que por sua vez executa rollback
+                if (daoObjReturn.hasError()) {
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
             }
             //Se sucesso ao inserir  / atualizar , deleta agedamentos que não foram enviados.
             ArrayList<MD_Schedule_Exec> scheduleToDell = (ArrayList<MD_Schedule_Exec>)
@@ -542,6 +650,56 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         closeDB();
         //
         return daoObjReturn;
+    }
+
+    private void updateScheduleExecProductInfos(ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList, MD_Schedule_Exec scheduleExec, MD_Schedule_Exec dbSchedule) {
+        MD_Schedule_Exec_Product execProductInfo = getExecProductInfo(scheduleExec.getCustomer_code(), scheduleExec.getProduct_code(), scheduleExecProductList);
+        //
+        if(execProductInfo != null) {
+            scheduleExec.setProduct_id(execProductInfo.getProduct_id());
+            scheduleExec.setProduct_desc(execProductInfo.getProduct_desc());
+            scheduleExec.setRequire_serial(execProductInfo.getRequire_serial());
+            scheduleExec.setAllow_new_serial_cl(execProductInfo.getAllow_new_serial_cl());
+            scheduleExec.setSerial_rule(execProductInfo.getSerial_rule());
+            scheduleExec.setSerial_max_length(execProductInfo.getSerial_max_length());
+            scheduleExec.setSerial_min_length(execProductInfo.getSerial_min_length());
+            scheduleExec.setLocal_control(execProductInfo.getLocal_control());
+            scheduleExec.setIo_control(execProductInfo.getIo_control());
+            scheduleExec.setSite_restriction(execProductInfo.getSite_restriction());
+            scheduleExec.setProduct_icon_name(execProductInfo.getProduct_icon_name());
+            scheduleExec.setProduct_icon_url(execProductInfo.getProduct_icon_url());
+        }else{
+            //LUCHE - 14/05/2020
+            //Isso nunca deveria acontecer, mas como o nunca é o novo amanha, ta aqui.
+            //Melhor parecer um bug que quebrar...
+            scheduleExec.setProduct_id(dbSchedule.getProduct_id());
+            scheduleExec.setProduct_desc(dbSchedule.getProduct_desc());
+            scheduleExec.setRequire_serial(dbSchedule.getRequire_serial());
+            scheduleExec.setAllow_new_serial_cl(dbSchedule.getAllow_new_serial_cl());
+            scheduleExec.setSerial_rule(dbSchedule.getSerial_rule());
+            scheduleExec.setSerial_max_length(dbSchedule.getSerial_max_length());
+            scheduleExec.setSerial_min_length(dbSchedule.getSerial_min_length());
+            scheduleExec.setLocal_control(dbSchedule.getLocal_control());
+            scheduleExec.setIo_control(dbSchedule.getIo_control());
+            scheduleExec.setSite_restriction(dbSchedule.getSite_restriction());
+            scheduleExec.setProduct_icon_name(dbSchedule.getProduct_icon_name());
+            scheduleExec.setProduct_icon_url(dbSchedule.getProduct_icon_url());
+        }
+    }
+
+    private void updateCustomFormLocalProductsInfos(MD_Schedule_Exec scheduleExec, GE_Custom_Form_Local customFormLocal) {
+        customFormLocal.setCustom_product_id(scheduleExec.getProduct_id());
+        customFormLocal.setCustom_product_desc(scheduleExec.getProduct_desc());
+        customFormLocal.setRequire_serial(scheduleExec.getRequire_serial());
+        customFormLocal.setAllow_new_serial_cl(scheduleExec.getAllow_new_serial_cl());
+        customFormLocal.setSerial_rule(scheduleExec.getSerial_rule());
+        customFormLocal.setSerial_max_length(scheduleExec.getSerial_max_length());
+        customFormLocal.setSerial_min_length(scheduleExec.getSerial_min_length());
+        customFormLocal.setLocal_control(scheduleExec.getLocal_control());
+        customFormLocal.setIo_control(scheduleExec.getIo_control());
+        customFormLocal.setSite_restriction(scheduleExec.getSite_restriction());
+        customFormLocal.setCustom_product_icon_name(scheduleExec.getProduct_icon_name());
+        customFormLocal.setCustom_product_icon_url(scheduleExec.getProduct_icon_url());
     }
 
     /**
@@ -707,23 +865,90 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
      * @return - Verdadeiro se o form_local ja existir
      */
     private boolean scheduelFormLocalExists(long customer_code, int schedule_prefix, int schedule_code, int schedule_exec, SQLiteDatabase db) {
-        HMAux mdAux = getByStringHM(
-            new MD_Schedule_Exec_Sql_006(
-                String.valueOf(customer_code),
-                String.valueOf(schedule_prefix),
-                String.valueOf(schedule_code),
-                String.valueOf(schedule_exec)
-            ).toSqlQuery(), db
+//        HMAux mdAux = getByStringHM(
+//            new MD_Schedule_Exec_Sql_006(
+//                String.valueOf(customer_code),
+//                String.valueOf(schedule_prefix),
+//                String.valueOf(schedule_code),
+//                String.valueOf(schedule_exec)
+//            ).toSqlQuery(), db
+//        );
+//        //
+//        if (mdAux != null && mdAux.size() > 0
+//            && mdAux.hasConsistentValue(SCHEDULE_PREFIX)
+//            && mdAux.hasConsistentValue(SCHEDULE_CODE)
+//            && mdAux.hasConsistentValue(SCHEDULE_EXEC)
+//        ) {
+//            return true;
+//        }
+//        return false;
+        GE_Custom_Form_Local formLocal = getCustomFormLocal( customer_code,
+            schedule_prefix,
+            schedule_code,
+            schedule_exec,
+            db
         );
         //
-        if (mdAux != null && mdAux.size() > 0
-            && mdAux.hasConsistentValue(SCHEDULE_PREFIX)
-            && mdAux.hasConsistentValue(SCHEDULE_CODE)
-            && mdAux.hasConsistentValue(SCHEDULE_EXEC)
-        ) {
+        if(formLocal != null && schedule_prefix > 0 && schedule_code > 0 && schedule_exec > 0 ){
             return true;
         }
         return false;
+    }
+
+    /**
+     * LUCHE - 15/05/2020
+     *
+     * Metodo que verifica se o GE_Custom_Form_Local carregado possui agendamentos.
+     * @param customFormLocal - Custom form retornado pela query. Pode ser null, por isso existe
+     * esse metodo
+     * @return True se GE_Custom_Form_Local != null e valores inteiros maiores que 0 ou seja, preenchidos.
+     */
+    private boolean scheduelFormLocalExists(GE_Custom_Form_Local customFormLocal) {
+       return
+           customFormLocal != null
+               && customFormLocal.getSchedule_prefix() != null
+               && customFormLocal.getSchedule_prefix() > 0
+               && customFormLocal.getSchedule_code() != null
+               && customFormLocal.getSchedule_code() > 0
+               && customFormLocal.getSchedule_exec() != null
+               && customFormLocal.getSchedule_exec() > 0
+           ;
+    }
+
+    /**
+     * LUCHE - 15/05/2020
+     *
+     * Metodo que busca tenta buscar o GE_Custom_Form_Local relacionado ao agendamento.
+     * @param customer_code
+     * @param schedule_prefix
+     * @param schedule_code
+     * @param schedule_exec
+     * @param dbInstance
+     * @return Retorno o GE_Custom_Form_Local encontrado ou null caso não encontre
+     */
+    private GE_Custom_Form_Local getCustomFormLocal(long customer_code, int schedule_prefix, int schedule_code, int schedule_exec, SQLiteDatabase dbInstance){
+        GE_Custom_Form_LocalDao formLocalDao = getFormLocalDao();
+        return formLocalDao.getByStringSharedDbInstance(
+            new MD_Schedule_Exec_Sql_008(
+                customer_code,
+                schedule_prefix,
+                schedule_code,
+                schedule_exec
+            ).toSqlQuery(),dbInstance
+        );
+    }
+
+    @NonNull
+    /**
+     * LUCHE - 15/05/2020
+     * Metodo que gera instancia do GE_Custom_Form_LocalDao
+     */
+    private GE_Custom_Form_LocalDao getFormLocalDao() {
+        return new GE_Custom_Form_LocalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
     }
 
     /**
