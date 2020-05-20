@@ -70,7 +70,7 @@ public class WS_SO_Product_Event_Cancel extends IntentService {
 
     private void processSO_Product_Event_Cancel() throws Exception {
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_sending_so_data"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //
         String mToken = ToolBox_Inf.getToken(getApplicationContext());
         TSO_Product_Event_Cancel_Env env = new TSO_Product_Event_Cancel_Env();
@@ -92,7 +92,7 @@ public class WS_SO_Product_Event_Cancel extends IntentService {
                 gson.toJson(env)
         );
         //
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_receiving_so_data"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
         //
         TSO_Product_Event_Cancel_Rec rec = gson.fromJson(
                 resultado,
@@ -154,34 +154,27 @@ public class WS_SO_Product_Event_Cancel extends IntentService {
             hmAuxRet.put("final_status",so_pk  + " / " + status);
         }
 
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAuxRet, "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), hmAuxRet, "", "0");
 
     }
 
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
-        //
-        translist.add("msg_preparing_so_data");
-        translist.add("msg_loading_so_from_token");
-        translist.add("msg_sending_so_data");
-        translist.add("msg_receiving_so_data");
-        translist.add("msg_processing_from_to_data");
-        translist.add("msg_re_processing_so_data");
-        translist.add("msg_token_file_error");
-        translist.add("error_from_to_processing");
 
-        //
-        mResource_Code = ToolBox_Inf.getResourceCode(
-                getApplicationContext(),
-                mModule_Code,
-                mResource_Name
-        );
-        //
+        translist.add("generic_sending_data_msg");
+        translist.add("generic_receiving_data_msg");
+        translist.add("generic_process_finalized_msg");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 getApplicationContext(),
                 mModule_Code,
-                mResource_Code,
+                ToolBox_Inf.getResourceCode(
+                        getApplicationContext(),
+                        mModule_Code,
+                        ""
+                ),
                 ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
-                translist);
+                translist
+        );
     }
 }
