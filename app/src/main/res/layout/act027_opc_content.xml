@@ -27,7 +27,7 @@
             android:orientation="vertical"
             android:padding="10dp">
 
-            <LinearLayout
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
@@ -41,45 +41,92 @@
                     android:gravity="left|center_vertical"
                     android:text="S.O"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
-
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
+                <!--
+                layout_constraintWidth_default
+                    Define o comportamento do layout, sendo assim:
+                    layout_width: 0dp, define que respeitará a constraint
+                    layout_constraintWidth_default: wrap, o layout sera exibido como se fosse wrap.
+                    O MELHOR DOS DOIS MUNDOS
+                -->
                 <LinearLayout
                     android:id="@+id/act027_opc_ll_so_sync"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    app:layout_constraintWidth_default="wrap"
                     android:background="@drawable/stroke_blue2_states"
                     android:clickable="true"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:paddingBottom="4dp"
                     android:paddingLeft="15dp"
+                    android:paddingTop="4dp"
                     android:paddingRight="15dp"
-                    android:paddingTop="4dp">
+                    android:paddingBottom="4dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/act027_opc_ll_so_chat"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@id/act027_opc_tv_so_ttl"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="8dp"
+                    >
 
                     <TextView
                         android:id="@+id/act027_opc_tv_so_prefix_code"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginRight="5dp"
+                        android:layout_weight="1"
                         android:clickable="false"
                         android:focusable="false"
                         android:gravity="center"
-                        android:text="2017.2001"
+                        android:text="2017.200"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <ImageView
                         android:id="@+id/act027_opc_iv_sync_so"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:clickable="false"
                         android:focusable="false"
                         android:src="@drawable/ic_sync_black_24dp"
                         android:tint="@color/namoa_dark_blue" />
 
                 </LinearLayout>
-            </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/act027_opc_ll_so_chat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_gravity="right"
+                    android:background="@drawable/stroke_blue2_states"
+                    android:clickable="true"
+                    android:orientation="horizontal"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="4dp"
+                    android:paddingRight="15dp"
+                    android:paddingBottom="4dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/act027_opc_ll_so_sync">
+
+                    <ImageView
+                        android:id="@+id/act027_opc_iv_so_chat"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:src="@drawable/ic_n_chat"
+                        />
+                </LinearLayout>
+            </android.support.constraint.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/act027_opc_ll_so_id"

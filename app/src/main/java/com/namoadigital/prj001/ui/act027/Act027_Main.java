@@ -29,6 +29,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
@@ -40,6 +42,8 @@ import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -49,6 +53,7 @@ import com.namoadigital.prj001.dao.SM_SO_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Product_EventDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Product;
@@ -60,6 +65,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
+import com.namoadigital.prj001.receiver.WBR_SO_Create_Room;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
@@ -67,8 +73,10 @@ import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
+import com.namoadigital.prj001.service.WS_SO_Create_Room;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Search;
+import com.namoadigital.prj001.sql.CH_Room_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -85,6 +93,7 @@ import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
+import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act043.Act043_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -121,6 +130,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     public static final String SELECTION_PRODUCT_SELECTION = "PRODUCT_SELECTION";
     public static final String SELECTION_SERVICE_EDITION = "SERVICE_EDITION";
     public static final String SELECTION_SYNC_SERVICE = "SYNC_SERVICE";
+    public static final String SELECTION_CHAT_FLOW = "CHAT_FLOW";
 
     public static final String SELECTION_EXPRESS = "EXPRESS";
     public static final String SELECTION_NORMAL = "NORMAL";
@@ -134,6 +144,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     public static final String WS_PROCESS_SO_SAVE = "WS_PROCESS_SO_SAVE";
     public static final String WS_PROCESS_N_FORM_SYNC = "WS_PROCESS_N_FORM_SYNC";
     public static final String WS_SO_PRODUCT_EVENT_CANCEL = "WS_SO_PRODUCT_EVENT_CANCEL";
+    public static final String WS_PROCESS_SO_CREATE_CHAT_ROOM = "WS_PROCESS_SO_CREATE_CHAT_ROOM";
 
     public static final int WS_PROCESS_APPROVAL_NOT = 0;
     public static final int WS_PROCESS_APPROVAL_ON_SIGNATURE = 1;
@@ -553,6 +564,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("alert_cancel_product_event_confirm");
         transList.add("alert_error_on_cancel_product_event_ttl");
         transList.add("alert_error_on_cancel_product_event_msg");
+        //
+        transList.add("so_room_not_found_ttl");
+        transList.add("so_room_not_found_msg");
+        transList.add("so_usr_not_room_member_ttl");
+        transList.add("so_usr_not_room_member_msg");
+        transList.add("progress_so_create_chat_room_ttl");
+        transList.add("progress_so_create_chat_room_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1412,9 +1430,54 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             wsResults.add(hmAux);
             showNewOptDialogProductEvent(wsResults);
             progressDialog.dismiss();
+        } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_CREATE_CHAT_ROOM)){
+            setWs_process("");
+            processSoCreateChatRoomReturn(mLink);
+            progressDialog.dismiss();
         } else {
             setWs_process("");
             progressDialog.dismiss();
+        }
+    }
+
+    private void processSoCreateChatRoomReturn(String mLink) {
+        if(mLink == null || mLink.isEmpty()){
+            showAlertDialog(
+                hmAux_Trans.get("creation_room_return_not_found_ttl"),
+                hmAux_Trans.get("creation_room_return_not_found_msg")
+            );
+        }else{
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            WS_SO_Create_Room.SoCreateRoomReturn soCreateRoomReturn = null;
+            try{
+                soCreateRoomReturn = gson.fromJson(
+                    mLink,
+                    WS_SO_Create_Room.SoCreateRoomReturn.class
+                );
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            //
+            if(soCreateRoomReturn != null){
+                if(soCreateRoomReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK)){
+                    if(soCreateRoomReturn.isRetSync_full()){
+                        executeSoSync(mSm_so.getSo_prefix(),mSm_so.getSo_code());
+                    }else{
+                        refreshUI();
+                        checkSoRoomExists(mSm_so.getRoom_code());
+                    }
+                }else{
+                    showAlertDialog(
+                        hmAux_Trans.get("creation_room_return_error_ttl"),
+                        soCreateRoomReturn.getRetMsg()
+                    );
+                }
+            }else{
+                showAlertDialog(
+                    hmAux_Trans.get("creation_room_return_not_found_ttl"),
+                    hmAux_Trans.get("creation_room_return_not_found_msg")
+                );
+            }
         }
     }
 
@@ -2043,6 +2106,31 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         }
     }
 
+    private void executeSoCreateRoom() {
+        setWs_process(WS_PROCESS_SO_CREATE_CHAT_ROOM);
+        //
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        //
+        enableProgressDialog(
+            hmAux_Trans.get("progress_so_create_chat_room_ttl"),
+            hmAux_Trans.get("progress_so_create_chat_room_msg"),
+            hmAux_Trans.get("sys_alert_btn_cancel"),
+            hmAux_Trans.get("sys_alert_btn_ok")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_SO_Create_Room.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(SM_SODao.SO_PREFIX,mSm_so.getSo_prefix());
+        bundle.putInt(SM_SODao.SO_CODE, mSm_so.getSo_code());
+        bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
     //Metodo chamado ao finalizar o download da atualização.
     @Override
     protected void processCloseAPP(String mLink, String mRequired) {
@@ -2326,6 +2414,62 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         );
 
         // refreshUI();
+    }
+
+    /**
+     * LUCHE - 02/06/2020
+     */
+    @Override
+    public void soChatClick() {
+        if(mSm_so.getRoom_member() == 1){
+            if(mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty()){
+                checkSoRoomExists(mSm_so.getRoom_code());
+            }else{
+                if (ToolBox_Con.isOnline(context)) {
+                    executeSoCreateRoom();
+                }else{
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                }
+            }
+        }else{
+            showAlertDialog(
+                hmAux_Trans.get("so_usr_not_room_member_ttl"),
+                hmAux_Trans.get("so_usr_not_room_member_msg")
+            );
+        }
+    }
+
+    private void checkSoRoomExists(String room_code) {
+        CH_RoomDao chRoomDao = new CH_RoomDao(context);
+        CH_Room chRoom = chRoomDao.getByString(
+            new CH_Room_Sql_001(
+                room_code
+            ).toSqlQuery()
+        );
+        //
+        if( chRoom != null && chRoom.getCustomer_code() == mSm_so.getCustomer_code()){
+            callAct035();
+        }else{
+            showAlertDialog(
+                hmAux_Trans.get("so_room_not_found_ttl"),
+                hmAux_Trans.get("so_room_not_found_msg")
+            );
+        }
+
+    }
+
+    private void callAct035() {
+        Intent mIntent = new Intent(context, Act035_Main.class);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(CH_MessageDao.ROOM_CODE, mSm_so.getRoom_code());
+        bundle.putLong(CH_RoomDao.CUSTOMER_CODE, mSm_so.getCustomer_code());
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT027);
+        //
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 
     private void recoverApprovalState() {

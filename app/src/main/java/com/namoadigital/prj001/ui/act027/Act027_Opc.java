@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -62,6 +63,10 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_so_prefix_code;
     private LinearLayout ll_so_sync;
 
+    //LUCHE - 02/06/2020
+    private LinearLayout ll_so_chat;
+    private ImageView iv_so_chat;
+
     private LinearLayout ll_so_id;
     private TextView tv_so_id_label;
     private TextView tv_so_id_value;
@@ -107,6 +112,8 @@ public class Act027_Opc extends BaseFragment {
         void menuOptionsSelected(String type);
 
         void soSyncClick();
+
+        void soChatClick();
 
     }
 
@@ -163,6 +170,9 @@ public class Act027_Opc extends BaseFragment {
         ll_so_sync = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_sync);
         tv_so_prefix_code = (TextView) view.findViewById(R.id.act027_opc_tv_so_prefix_code);
         iv_so_sync = (ImageView) view.findViewById(R.id.act027_opc_iv_sync_so);
+
+        ll_so_chat = view.findViewById(R.id.act027_opc_ll_so_chat);
+        iv_so_chat = view.findViewById(R.id.act027_opc_iv_so_chat);
 
         ll_so_id = (LinearLayout) view.findViewById(R.id.act027_opc_ll_so_id);
         tv_so_id_label = (TextView) view.findViewById(R.id.act027_opc_tv_so_id_label);
@@ -236,6 +246,15 @@ public class Act027_Opc extends BaseFragment {
                 }
             }
         });
+
+        ll_so_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (delegate != null) {
+                    delegate.soChatClick();
+                }
+            }
+        });
     }
 
     private View.OnClickListener menuOnClickListener = new View.OnClickListener() {
@@ -305,6 +324,9 @@ public class Act027_Opc extends BaseFragment {
             case Act027_Main.SELECTION_SYNC_SERVICE:
                 ll_services.performClick();
                 ll_so_sync.performClick();
+            case Act027_Main.SELECTION_CHAT_FLOW:
+                ll_services.performClick();
+                ll_so_chat.performClick();
         }
     }
 
@@ -377,6 +399,8 @@ public class Act027_Opc extends BaseFragment {
 
                 tv_so_label.setText(hmAux_Trans.get("so_lbl"));
                 tv_so_prefix_code.setText(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code());
+
+                defineSoChatLayout();
 
                 if (!mSm_so.getSo_id().equals(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code())) {
                     tv_so_id_label.setText(hmAux_Trans.get("so_id_lbl"));
@@ -514,6 +538,24 @@ public class Act027_Opc extends BaseFragment {
 
                 changeTabColor();
             }
+        }
+    }
+
+    private void defineSoChatLayout() {
+        if(mSm_so.getRoom_member() == 1){
+            ll_so_chat.setVisibility(View.VISIBLE);
+        }else{
+            ll_so_chat.setVisibility(View.GONE);
+        }
+        //
+        defineSoChatIcon();
+    }
+
+    private void defineSoChatIcon() {
+        if(mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty()){
+            iv_so_chat.setImageDrawable(getResources().getDrawable(R.drawable.ic_n_chat));
+        }else{
+            iv_so_chat.setImageDrawable(getResources().getDrawable(R.drawable.ic_chat_desativado_24x24));
         }
     }
 
