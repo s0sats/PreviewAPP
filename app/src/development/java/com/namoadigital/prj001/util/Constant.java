@@ -93,6 +93,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_SERIAL_LOG = "https://dev.namoadigital.com/ws/prj001/server_serial_log.ws";
     public static final String WS_GENERATE_FORM_PDF = "https://dev.namoadigital.com/ws/prj001/server_checklist_url.ws";
     public static final String WS_SO_NEXT_ORDERS = "https://dev.namoadigital.com/ws/prj001/server_sm_so_to_be_executed.ws";
+    public static final String WS_SO_CREATE_ROOM = "https://dev.namoadigital.com/ws/prj001/server_sm_so_create_room.ws";
 
     // Connection Test
     public static final String WS_HOST = "dev.namoadigital.com";

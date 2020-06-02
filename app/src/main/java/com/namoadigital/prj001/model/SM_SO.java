@@ -134,6 +134,9 @@ public class SM_SO {
     @Expose
     private String product_icon_url;
     private String product_icon_url_local;
+    //LUCHE - 02/06/2020 - Chat integration
+    private int room_member;
+    private String room_code;
 
     public void setPK() {
         for (int i = 0; i < so_file.size(); i++) {
@@ -811,5 +814,21 @@ public class SM_SO {
 
     public void setProduct_icon_url_local(String product_icon_url_local) {
         this.product_icon_url_local = product_icon_url_local;
+    }
+
+    public int getRoom_member() {
+        return room_member;
+    }
+
+    public void setRoom_member(int room_member) {
+        this.room_member = room_member;
+    }
+
+    public String getRoom_code() {
+        return room_code;
+    }
+
+    public void setRoom_code(String room_code) {
+        this.room_code = room_code;
     }
 }

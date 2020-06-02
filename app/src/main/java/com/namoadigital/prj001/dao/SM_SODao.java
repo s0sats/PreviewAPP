@@ -112,6 +112,8 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String PRODUCT_ICON_NAME = "product_icon_name";
     public static final String PRODUCT_ICON_URL = "product_icon_url";
     public static final String PRODUCT_ICON_URL_LOCAL = "product_icon_url_local";
+    public static final String ROOM_MEMBER = "room_member";
+    public static final String ROOM_CODE = "room_code";
 
     public static String[] columns = {CUSTOMER_CODE, SO_PREFIX, SO_CODE, SO_ID, SO_SCN, SO_DESC, PRODUCT_CODE, PRODUCT_ID,
             PRODUCT_DESC, SERIAL_CODE, SERIAL_ID, CATEGORY_PRICE_CODE, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC,
@@ -122,7 +124,7 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             CLIENT_APPROVAL_IMAGE_NAME, CLIENT_APPROVAL_IMAGE_URL, CLIENT_APPROVAL_DATE, CLIENT_APPROVAL_USER, CLIENT_APPROVAL_USER_NICK,
             CLIENT_APPROVAL_TYPE_SIG, ORIGIN_CHANGE, STARTED_FLAG, EDIT_ORIGIN, EDIT_USER, EDIT_USER_NICK, TOTAL_QTY_SERVICE, TOTAL_PRICE,
             ADD_INF1, ADD_INF2, ADD_INF3, APPROVE_BUDGET, APPROVE_CLIENT, UPDATE_REQUIRED, APPROVAL_REQUIRED, SYNC_REQUIRED, LOG_DATE, TOKEN,
-            PRODUCT_ICON_NAME, PRODUCT_ICON_URL, PRODUCT_ICON_URL_LOCAL
+            PRODUCT_ICON_NAME, PRODUCT_ICON_URL, PRODUCT_ICON_URL_LOCAL,ROOM_MEMBER,ROOM_CODE
     };
 
     public SM_SODao(Context context) {
@@ -779,6 +781,14 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             }
 
             so.setProduct_icon_url_local(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_URL_LOCAL)));
+            //
+            so.setRoom_member(cursor.getInt(cursor.getColumnIndex(ROOM_MEMBER)));
+            //
+            if(cursor.isNull(cursor.getColumnIndex(ROOM_CODE))) {
+                so.setRoom_code(null);
+            }else{
+                so.setRoom_code(cursor.getString(cursor.getColumnIndex(ROOM_CODE)));
+            }
 
             return so;
         }
@@ -1101,7 +1111,13 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             if (sm_so.getProduct_icon_url_local() != null) {
                 contentValues.put(PRODUCT_ICON_URL_LOCAL, sm_so.getProduct_icon_url_local());
             }
-
+            //
+            if(sm_so.getRoom_member() > -1) {
+                contentValues.put(ROOM_MEMBER, sm_so.getRoom_member());
+            }
+            //
+            contentValues.put(ROOM_CODE, sm_so.getRoom_code());
+            //
             return contentValues;
         }
     }
