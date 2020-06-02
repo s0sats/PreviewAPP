@@ -555,7 +555,7 @@ public class Act043_Main extends Base_Activity_Frag_NFC_Geral
      * LUCHE - 02/06/2020
      */
     @Override
-    public void perfomClickInOption() {
+    public void soChatClick() {
         callAct027(context,Act027_Main.SELECTION_CHAT_FLOW);
     }
 
