@@ -17,6 +17,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_Ref_Json;
@@ -27,7 +28,9 @@ import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_018;
@@ -501,6 +504,77 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         }catch (Exception e){
             ToolBox_Inf.registerException(getClass().getName(), e);
             return false;
+        }
+    }
+
+    @Override
+    public void executeSoDownload(String soPrefix, String soCode) {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWSProcess(WS_SO_Search.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_so_download_ttl"),
+                    hmAux_Trans.get("dialog_so_download_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_SO_Search.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.WS_SO_SEARCH_SO_MULT, soPrefix + "." + soCode);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+//            mView.showNoConnecionMsg();
+        }
+    }
+
+    /**
+     * Barrionuevo - 02/06/2020
+     *
+     * Trata retorno do WS de Download de O.S - Retirado da act047
+     *
+     * @param soDownloadResult - HmAux com as chaves de qty de itens e o.s concatenadas
+     * @param soPrefix
+     * @param soCode
+     */
+    @Override
+    public void processSoDownloadResult(HMAux soDownloadResult, String soPrefix, String soCode) {
+        if (soDownloadResult.containsKey(WS_SO_Search.SO_PREFIX_CODE)
+                && soDownloadResult.containsKey(WS_SO_Search.SO_LIST_QTY)
+        ) {
+            if (Integer.parseInt(soDownloadResult.get(WS_SO_Search.SO_LIST_QTY)) == 0) {
+                mView.showAlert(
+                        hmAux_Trans.get("alert_no_so_returned_ttl"),
+                        hmAux_Trans.get("alert_no_so_returned_msg")
+                );
+            } else {
+                if (soDownloadResult.get(WS_SO_Search.SO_PREFIX_CODE).contains(Constant.MAIN_CONCAT_STRING)) {
+                    String searchedSo = soPrefix + Constant.MAIN_CONCAT_STRING + soCode;
+                    if(soDownloadResult.get(WS_SO_Search.SO_PREFIX_CODE).contains(searchedSo)){
+                        //
+                        Bundle bundle = new Bundle();
+                        bundle.putString(SM_SODao.SO_PREFIX, soPrefix);
+                        bundle.putString(SM_SODao.SO_CODE, soCode);
+                        mView.callAct027(bundle);
+                    }else{
+                        mView.showAlert(
+                                hmAux_Trans.get("alert_so_not_returned_ttl"),
+                                hmAux_Trans.get("alert_so_not_returned_msg")
+                        );
+                    }
+                } else {
+                    mView.showAlert(
+                            hmAux_Trans.get("alert_so_download_param_error_ttl"),
+                            hmAux_Trans.get("alert_so_download_param_error_msg")
+                    );
+                }
+            }
+        } else {
+            mView.showAlert(
+                    hmAux_Trans.get("alert_so_download_param_error_ttl"),
+                    hmAux_Trans.get("alert_so_download_param_error_msg")
+            );
         }
     }
 

@@ -18,6 +18,10 @@ public interface Act035_Main_Presenter {
 
     void onOnItemClicked(HMAux item);
 
+    void executeSoDownload(String soPrefix, String soCode);
+
+    void processSoDownloadResult(HMAux soDownloadResult, String soPrefix, String soCode);
+
     void onBackPressedClicked();
 
     void updateReadStatus(ArrayList<HMAux> hmAuxs);
