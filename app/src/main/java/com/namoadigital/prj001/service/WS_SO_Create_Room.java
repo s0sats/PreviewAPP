@@ -125,6 +125,7 @@ public class WS_SO_Create_Room extends IntentService {
                 if(rec.getRet_sync_full() != null){
                     //Define variavel bool se necessita de sincronismo full da o.s
                     actReturn.setRetSync_full(rec.getRet_sync_full() == 1);
+                    actReturn.setRetRoom_code(rec.getRet_msg());
                     //Se não precisa de sync full, atualiza dados no cabeçalho
                     //Se precisa,NENHUMA AÇÃO É NECESSARIA. A tela deverá analisar o rtorno e
                     //impedir que o processo continue
