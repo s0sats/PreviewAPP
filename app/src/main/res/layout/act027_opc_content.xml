@@ -123,7 +123,7 @@
                         android:layout_weight="1"
                         android:clickable="false"
                         android:focusable="false"
-                        android:src="@drawable/ic_n_chat"
+                        android:src="@drawable/ic_forum_black_24dp"
                         />
                 </LinearLayout>
             </android.support.constraint.ConstraintLayout>

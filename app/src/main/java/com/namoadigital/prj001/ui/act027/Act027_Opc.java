@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.ui.act027;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -552,11 +554,14 @@ public class Act027_Opc extends BaseFragment {
     }
 
     private void defineSoChatIcon() {
-        if(mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty()){
-            iv_so_chat.setImageDrawable(getResources().getDrawable(R.drawable.ic_n_chat));
-        }else{
-            iv_so_chat.setImageDrawable(getResources().getDrawable(R.drawable.ic_chat_desativado_24x24));
-        }
+        //Define cor
+        int iconColor =
+            mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty()
+                ? R.color.namoa_status_process
+                : R.color.namoa_status_pending;
+        Drawable drawable = getResources().getDrawable(R.drawable.ic_forum_black_24dp);
+        drawable.setColorFilter(context.getResources().getColor(iconColor), PorterDuff.Mode.SRC_ATOP);
+        iv_so_chat.setImageDrawable(drawable);
     }
 
     private void setSerialBrandModelColor() {
