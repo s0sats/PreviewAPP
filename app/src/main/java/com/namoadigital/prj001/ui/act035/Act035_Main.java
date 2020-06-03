@@ -212,6 +212,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private String custom_form_url_pdf;
 
     private int colorName;
+    private String mRequest_act = "";
+    private String mSoPrefix;
+    private String mSoCode;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -503,6 +506,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             startReceivers(true);
         } else {
             callAct034(context);
+        }
+
+        if (mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SO)) {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            final Chat_Room_Obj_SO roomObjSo = getRoomObjSo(gson);
+            mSoPrefix = String.valueOf(roomObjSo.getSo_prefix());
+            mSoCode = String.valueOf(roomObjSo.getSo_code());
         }
     }
 
@@ -945,6 +955,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         if (bundle != null) {
             mRoom_code = bundle.getString(CH_MessageDao.ROOM_CODE);
             mCustomer_code = bundle.getLong(CH_RoomDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
+            mRequest_act = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, "");
             //
             ArrayList<HMAux> mCustomers = ToolBox_Inf.getSessionCustomerChatList(getBaseContext());
             //
@@ -1267,7 +1278,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     @Override
     public void onBackPressed() {
-        mPresenter.onBackPressedClicked();
+        mPresenter.onBackPressedClicked(mRequest_act);
     }
 
     @Override
@@ -2470,7 +2481,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     Gson gson = new GsonBuilder().serializeNulls().create();
                     final Chat_Room_Obj_SO roomObjSo = getRoomObjSo(gson);
                     if(hasLocalSO(roomObjSo)){
-                        callAct027(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
+                        callAct027(context);
                     }else {
                         mPresenter.executeSoDownload(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
                     }
@@ -2564,7 +2575,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             @Override
             public void onClick(View v) {
                 if(hasLocalSO(roomObjSo)){
-                    callAct027(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
+                    callAct027(context);
                 }else {
                     mPresenter.executeSoDownload(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
                 }
@@ -2897,13 +2908,16 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     @Override
-    public void callAct027(String soPrefix, String soCode) {
+    public void callAct027(Context context) {
         Intent mIntent = new Intent(context, Act027_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
-        bundle.putString(SM_SODao.SO_PREFIX, soPrefix);
-        bundle.putString(SM_SODao.SO_CODE, soCode);
-        bundle.putString(CH_RoomDao.ROOM_CODE, mRoom_code);
+        bundle.putString(SM_SODao.SO_PREFIX, mSoPrefix);
+        bundle.putString(SM_SODao.SO_CODE, mSoCode);
+        if(mRequest_act == null
+         || !mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT027)) {
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT035);
+        }
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -3059,7 +3073,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             Gson gson = new GsonBuilder().serializeNulls().create();
             final Chat_Room_Obj_SO roomObjSo = getRoomObjSo(gson);
             //
-            mPresenter.processSoDownloadResult(hmAux, String.valueOf(roomObjSo.getSo_prefix()),String.valueOf(roomObjSo.getSo_code()));
+            mPresenter.processSoDownloadResult(hmAux, mSoPrefix,mSoCode);
         }else {
             setWSProcess("");
         }

@@ -22,8 +22,6 @@ public interface Act035_Main_Presenter {
 
     void processSoDownloadResult(HMAux soDownloadResult, String soPrefix, String soCode);
 
-    void onBackPressedClicked();
-
     void updateReadStatus(ArrayList<HMAux> hmAuxs);
 
     void updateReadStatus(ArrayList<HMAux> hmAuxs, String type);
@@ -40,5 +38,7 @@ public interface Act035_Main_Presenter {
     String[] getSplitedPk(String pk, String splitter);
 
     boolean validateTicketPk(String ticketPk);
+
+    void onBackPressedClicked(String act_request);
     //endregion
 }

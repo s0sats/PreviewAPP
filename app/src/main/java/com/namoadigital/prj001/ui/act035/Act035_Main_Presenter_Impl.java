@@ -552,7 +552,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                     String searchedSo = soPrefix + Constant.MAIN_CONCAT_STRING + soCode;
                     if(soDownloadResult.get(WS_SO_Search.SO_PREFIX_CODE).contains(searchedSo)){
                         //
-                        mView.callAct027(soPrefix, soCode);
+                        mView.callAct027(context);
                     }else{
                         mView.showAlert(
                                 hmAux_Trans.get("alert_so_not_returned_ttl"),
@@ -575,7 +575,12 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     }
 
     @Override
-    public void onBackPressedClicked() {
-        mView.callAct034(context);
+    public void onBackPressedClicked(String act_request) {
+        if (act_request != null
+                && act_request.equalsIgnoreCase(ConstantBaseApp.ACT027)) {
+            mView.callAct027(context);
+        }else {
+            mView.callAct034(context);
+        }
     }
 }
