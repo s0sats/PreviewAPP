@@ -40,6 +40,7 @@ import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act028_Results_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
@@ -85,6 +86,7 @@ import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.ui.act032.Act032_Main;
+import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act043.Act043_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -196,7 +198,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     //Receiver do que captura disparo do FCM
     //LUCHE - 16/07/2019
     private FCMReceiver fcmReceiver;
-
+    public String mRoom_code;
     public void setWs_process(String ws_process) {
         this.ws_process = ws_process;
     }
@@ -1220,7 +1222,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             }
             //Ajuste para clique no drawer da act043
             request_set_frag = bundle.getString(REQUEST_SET_FRAG, "");
+            mRoom_code = bundle.getString(CH_MessageDao.ROOM_CODE);
         } else {
+            mRoom_code = null;
             mSm_so = null;
         }
     }
@@ -2136,12 +2140,26 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Intent mIntent = new Intent(context, Act005_Main.class);
-                                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                //
-                                startActivity(mIntent);
-                                finish();
-
+                                /**
+                                 *  BARRIONUEVO     03-06-2020
+                                 *  Fluxo para voltar para sala se navegacao fora feita via chat
+                                 */
+                                if(mRoom_code !=null){
+                                    Intent mIntent = new Intent(context, Act035_Main.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString(CH_MessageDao.ROOM_CODE, mRoom_code);
+                                    mIntent.putExtras(bundle);
+                                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    //
+                                    startActivity(mIntent);
+                                    finish();
+                                }else {
+                                    Intent mIntent = new Intent(context, Act005_Main.class);
+                                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    //
+                                    startActivity(mIntent);
+                                    finish();
+                                }
                             }
                         },
                         1,

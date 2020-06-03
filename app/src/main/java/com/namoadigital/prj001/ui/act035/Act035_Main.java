@@ -54,6 +54,7 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.CH_Room;
@@ -90,6 +91,7 @@ import com.namoadigital.prj001.sql.CH_Room_Sql_005;
 import com.namoadigital.prj001.sql.CH_Room_Sql_006;
 import com.namoadigital.prj001.sql.CH_Room_Sql_013;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
+import com.namoadigital.prj001.sql.SM_SO_Sql_001;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
 import com.namoadigital.prj001.ui.act038.Act038_Main;
@@ -2467,7 +2469,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 if(mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SO)){
                     Gson gson = new GsonBuilder().serializeNulls().create();
                     final Chat_Room_Obj_SO roomObjSo = getRoomObjSo(gson);
-                    mPresenter.executeSoDownload(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
+                    if(hasLocalSO(roomObjSo)){
+                        callAct027(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
+                    }else {
+                        mPresenter.executeSoDownload(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
+                    }
                 }
                 break;
 
@@ -2557,7 +2563,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         so_btn_join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.executeSoDownload(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
+                if(hasLocalSO(roomObjSo)){
+                    callAct027(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
+                }else {
+                    mPresenter.executeSoDownload(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
+                }
             }
         });
 
@@ -2610,6 +2620,24 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 .setCancelable(true);
         //
         builder.show();
+    }
+
+    private boolean hasLocalSO(Chat_Room_Obj_SO roomObjSo) {
+        SM_SODao sm_soDao = new SM_SODao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        SM_SO mSm_so = sm_soDao.getByString(
+                new SM_SO_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        roomObjSo.getSo_prefix(),
+                        roomObjSo.getSo_code()
+                ).toSqlQuery()
+        );
+
+        return mSm_so != null;
     }
 
     private Chat_Room_Obj_SO getRoomObjSo(Gson gson) {
@@ -2869,9 +2897,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     @Override
-    public void callAct027(Bundle bundle) {
+    public void callAct027(String soPrefix, String soCode) {
         Intent mIntent = new Intent(context, Act027_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(SM_SODao.SO_PREFIX, soPrefix);
+        bundle.putString(SM_SODao.SO_CODE, soCode);
+        bundle.putString(CH_RoomDao.ROOM_CODE, mRoom_code);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

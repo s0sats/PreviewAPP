@@ -34,5 +34,5 @@ public interface Act035_Main_View {
 
     void callAct070(Bundle bundle);
 
-    void callAct027(Bundle bundle);
+    void callAct027(String soPrefix, String soCode);
 }

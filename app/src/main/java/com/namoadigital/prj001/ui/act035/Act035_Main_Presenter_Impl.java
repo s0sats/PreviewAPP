@@ -17,7 +17,6 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_Ref_Json;
@@ -553,10 +552,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                     String searchedSo = soPrefix + Constant.MAIN_CONCAT_STRING + soCode;
                     if(soDownloadResult.get(WS_SO_Search.SO_PREFIX_CODE).contains(searchedSo)){
                         //
-                        Bundle bundle = new Bundle();
-                        bundle.putString(SM_SODao.SO_PREFIX, soPrefix);
-                        bundle.putString(SM_SODao.SO_CODE, soCode);
-                        mView.callAct027(bundle);
+                        mView.callAct027(soPrefix, soCode);
                     }else{
                         mView.showAlert(
                                 hmAux_Trans.get("alert_so_not_returned_ttl"),

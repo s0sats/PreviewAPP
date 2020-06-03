@@ -4,7 +4,6 @@
     android:id="@+id/namoa_so_ll_bg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/namoa_cell_8_states"
     android:orientation="vertical"
     android:padding="15dp">
 
