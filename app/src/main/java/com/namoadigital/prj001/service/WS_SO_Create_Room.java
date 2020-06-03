@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WS_SO_Create_Room extends IntentService {
+    public static final String ABORT_BY_CHAINED_CALL = "ABORT_BY_CHAINED_CALL";
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -64,6 +65,18 @@ public class WS_SO_Create_Room extends IntentService {
     private void processWsSoCreateRoom(int so_prefix, int so_code, int so_scn) throws Exception {
         //Seleciona traduções
         loadTranslation();
+        //LUCHE - 03/6/2020
+        //Escape para chamada encadeada
+        //Caso todos param 0, entende que é chamad encadeada e retorna close act.
+        if(isChainedCall(so_prefix, so_code, so_scn)){
+            //Gera obj que indica que deve apenas seguir o fluxo para proxima etapa
+            WS_SO_Create_Room.SoCreateRoomReturn aReturn = new SoCreateRoomReturn();
+            aReturn.setRetStatus(ABORT_BY_CHAINED_CALL);
+            aReturn.setRetSync_full(false);
+            //Chama closeact como bj
+            callCloseAct(aReturn);
+            return;
+        }
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //
@@ -77,7 +90,7 @@ public class WS_SO_Create_Room extends IntentService {
         env.setSo_code(so_code);
         env.setSo_scn(so_scn);
         //
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
         //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SO_CREATE_ROOM,
@@ -108,6 +121,10 @@ public class WS_SO_Create_Room extends IntentService {
         //
         processCreateRoomReturn(rec,so_prefix,so_code);
         //
+    }
+
+    private boolean isChainedCall(int so_prefix, int so_code, int so_scn) {
+        return so_prefix == 0 && so_code == 0 && so_scn == 0;
     }
 
     private void processCreateRoomReturn(TSO_Create_Room_Rec rec, int so_prefix, int so_code) {

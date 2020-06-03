@@ -208,6 +208,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     //LUCHE - 16/07/2019
     private FCMReceiver fcmReceiver;
     public String mRoom_code;
+    //LUCHE - 03/06/2020
+    private boolean isSoCreateRoomCall = false;
+
     public void setWs_process(String ws_process) {
         this.ws_process = ws_process;
     }
@@ -571,6 +574,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("so_usr_not_room_member_msg");
         transList.add("progress_so_create_chat_room_ttl");
         transList.add("progress_so_create_chat_room_msg");
+        transList.add("so_create_room_ttl");
+        transList.add("so_create_room_confirm");
+        transList.add("creation_room_return_error_ttl");
+        transList.add("creation_room_return_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1433,9 +1440,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             showNewOptDialogProductEvent(wsResults);
             progressDialog.dismiss();
         } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_CREATE_CHAT_ROOM)){
+            progressDialog.dismiss();
             setWs_process("");
             processSoCreateChatRoomReturn(mLink);
-            progressDialog.dismiss();
         } else {
             setWs_process("");
             progressDialog.dismiss();
@@ -1445,7 +1452,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     private void processSoCreateChatRoomReturn(String mLink) {
         if(mLink == null || mLink.isEmpty()){
             showAlertDialog(
-                hmAux_Trans.get("creation_room_return_not_found_ttl"),
+                hmAux_Trans.get("creation_room_return_error_ttl"),
                 hmAux_Trans.get("creation_room_return_not_found_msg")
             );
         }else{
@@ -1461,22 +1468,26 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             }
             //
             if(soCreateRoomReturn != null){
-                if(soCreateRoomReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK)){
-                    if(soCreateRoomReturn.isRetSync_full()){
-                        executeSoSync(mSm_so.getSo_prefix(),mSm_so.getSo_code());
-                    }else{
-                        refreshUI();
-                        checkSoRoomExists(mSm_so.getRoom_code());
-                    }
+                if( soCreateRoomReturn.getRetStatus().equals(WS_SO_Create_Room.ABORT_BY_CHAINED_CALL)){
+                    executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
                 }else{
-                    showAlertDialog(
-                        hmAux_Trans.get("creation_room_return_error_ttl"),
-                        soCreateRoomReturn.getRetMsg()
-                    );
+                    if (soCreateRoomReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK)) {
+                        if (soCreateRoomReturn.isRetSync_full()) {
+                            executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                        } else {
+                            refreshUI();
+                            checkSoRoomExists(mSm_so.getRoom_code());
+                        }
+                    } else {
+                        showAlertDialog(
+                            hmAux_Trans.get("creation_room_return_error_ttl"),
+                            soCreateRoomReturn.getRetMsg()
+                        );
+                    }
                 }
             }else{
                 showAlertDialog(
-                    hmAux_Trans.get("creation_room_return_not_found_ttl"),
+                    hmAux_Trans.get("creation_room_return_error_ttl"),
                     hmAux_Trans.get("creation_room_return_not_found_msg")
                 );
             }
@@ -1763,7 +1774,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             if (!only_approval) {
                 ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_starting_sync"), "", "0");
                 //
-                executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
+                executeSoCreateRoom();
+                //executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
             } else {
                 only_approval = false;
             }
@@ -2109,7 +2121,21 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     }
 
     private void executeSoCreateRoom() {
+        int so_prefix = 0;
+        int so_code = 0;
+        int so_scn = 0;
+        //
         setWs_process(WS_PROCESS_SO_CREATE_CHAT_ROOM);
+        //Somente quando a camada for iniciado pelo btn soChat é que as infos devem ser setada.
+        //Se o WS receber tudo 0 , entenderá que é uma chamada encadeada e que não deve ser executado.
+        if(isSoCreateRoomCall){
+            //reseta var
+            isSoCreateRoomCall = false;
+            //define valores para o WS
+            so_prefix = mSm_so.getSo_prefix();
+            so_code = mSm_so.getSo_code();
+            so_scn = mSm_so.getSo_scn();
+        }
         //
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
@@ -2124,9 +2150,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         //
         Intent mIntent = new Intent(context, WBR_SO_Create_Room.class);
         Bundle bundle = new Bundle();
-        bundle.putInt(SM_SODao.SO_PREFIX,mSm_so.getSo_prefix());
-        bundle.putInt(SM_SODao.SO_CODE, mSm_so.getSo_code());
-        bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
+        bundle.putInt(SM_SODao.SO_PREFIX, so_prefix);
+        bundle.putInt(SM_SODao.SO_CODE, so_code);
+        bundle.putInt(SM_SODao.SO_SCN, so_scn);
         //
         mIntent.putExtras(bundle);
         //
@@ -2406,24 +2432,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (ToolBox_Con.isOnline(context)) {
-                            //Seta S.O como update required.
-                            /*sm_soDao.addUpdate(
-                                    new SM_SO_Sql_009(
-                                            ToolBox_Con.getPreference_Customer_Code(context),
-                                            mSm_so.getSo_prefix(),
-                                            mSm_so.getSo_code()
-                                    ).toSqlQuery()
-                            );*/
-                            //
-                            setWs_process(WS_PROCESS_SO_SAVE);
-                            //
-                            executeSerialSave(true);
-                            // Hugo
-                            //executeSoSave();
-                        } else {
-                            ToolBox_Inf.showNoConnectionDialog(context);
-                        }
+                        startWsChainedCall(true);
                     }
                 },
                 1
@@ -2441,17 +2450,36 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             if(mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty()){
                 checkSoRoomExists(mSm_so.getRoom_code());
             }else{
-                if (ToolBox_Con.isOnline(context)) {
-                    executeSoCreateRoom();
-                }else{
-                    ToolBox_Inf.showNoConnectionDialog(context);
-                }
+                ToolBox.alertMSG_YES_NO(
+                    context,
+                    hmAux_Trans.get("so_create_room_ttl"),
+                    hmAux_Trans.get("so_create_room_confirm"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            isSoCreateRoomCall = true;
+                            //
+                            startWsChainedCall(true);
+                        }
+                    },
+                    1
+                );
             }
         }else{
             showAlertDialog(
                 hmAux_Trans.get("so_usr_not_room_member_ttl"),
                 hmAux_Trans.get("so_usr_not_room_member_msg")
             );
+        }
+    }
+
+    private void startWsChainedCall(boolean isSoSaveLinked) {
+        if (ToolBox_Con.isOnline(context)) {
+            setWs_process(WS_PROCESS_SO_SAVE);
+            //
+            executeSerialSave(isSoSaveLinked);
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
