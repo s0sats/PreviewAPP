@@ -207,7 +207,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     //Receiver do que captura disparo do FCM
     //LUCHE - 16/07/2019
     private FCMReceiver fcmReceiver;
-
+    public String mRoom_code;
     public void setWs_process(String ws_process) {
         this.ws_process = ws_process;
     }
@@ -1238,7 +1238,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             }
             //Ajuste para clique no drawer da act043
             request_set_frag = bundle.getString(REQUEST_SET_FRAG, "");
+            mRoom_code = bundle.getString(CH_MessageDao.ROOM_CODE);
         } else {
+            mRoom_code = null;
             mSm_so = null;
         }
     }
@@ -2224,12 +2226,26 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Intent mIntent = new Intent(context, Act005_Main.class);
-                                mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                //
-                                startActivity(mIntent);
-                                finish();
-
+                                /**
+                                 *  BARRIONUEVO     03-06-2020
+                                 *  Fluxo para voltar para sala se navegacao fora feita via chat
+                                 */
+                                if(mRoom_code !=null){
+                                    Intent mIntent = new Intent(context, Act035_Main.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString(CH_MessageDao.ROOM_CODE, mRoom_code);
+                                    mIntent.putExtras(bundle);
+                                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    //
+                                    startActivity(mIntent);
+                                    finish();
+                                }else {
+                                    Intent mIntent = new Intent(context, Act005_Main.class);
+                                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    //
+                                    startActivity(mIntent);
+                                    finish();
+                                }
                             }
                         },
                         1,

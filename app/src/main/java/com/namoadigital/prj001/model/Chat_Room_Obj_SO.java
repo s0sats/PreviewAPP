@@ -10,14 +10,18 @@ public class Chat_Room_Obj_SO {
     private Integer so_prefix;
     private Integer so_code;
     private String so_desc;
+    private String so_id;
+    private String so_client;
     private String so_priority;
     private String so_status;
     private String so_deadline;
+    private String so_pipeline;
     private String so_site;
     private String so_operation;
     private String so_contract;
     private String so_product;
     private String so_serial;
+    private String so_brand_model_color;
     private String so_segment;
     private String so_category_price;
 
@@ -53,6 +57,22 @@ public class Chat_Room_Obj_SO {
         this.so_desc = so_desc;
     }
 
+    public String getSo_id() {
+        return so_id;
+    }
+
+    public void setSo_id(String so_id) {
+        this.so_id = so_id;
+    }
+
+    public String getSo_client() {
+        return so_client;
+    }
+
+    public void setSo_client(String so_client) {
+        this.so_client = so_client;
+    }
+
     public String getSo_priority() {
         return so_priority;
     }
@@ -75,6 +95,14 @@ public class Chat_Room_Obj_SO {
 
     public void setSo_deadline(String so_deadline) {
         this.so_deadline = so_deadline;
+    }
+
+    public String getSo_pipeline() {
+        return so_pipeline;
+    }
+
+    public void setSo_pipeline(String so_pipeline) {
+        this.so_pipeline = so_pipeline;
     }
 
     public String getSo_site() {
@@ -115,6 +143,14 @@ public class Chat_Room_Obj_SO {
 
     public void setSo_serial(String so_serial) {
         this.so_serial = so_serial;
+    }
+
+    public String getSo_brand_model_color() {
+        return so_brand_model_color;
+    }
+
+    public void setSo_brand_model_color(String so_brand_model_color) {
+        this.so_brand_model_color = so_brand_model_color;
     }
 
     public String getSo_segment() {

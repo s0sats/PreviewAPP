@@ -33,4 +33,6 @@ public interface Act035_Main_View {
     void showAlert(String ttl, String msg);
 
     void callAct070(Bundle bundle);
+
+    void callAct027(String soPrefix, String soCode);
 }
