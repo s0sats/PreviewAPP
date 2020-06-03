@@ -1137,15 +1137,9 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             contentValues.put(CATEGORY_PRICE_CODE, md_product_serial.getCategory_price_code());
             contentValues.put(CATEGORY_PRICE_ID, md_product_serial.getCategory_price_id());
             contentValues.put(CATEGORY_PRICE_DESC, md_product_serial.getCategory_price_desc());
-            if (md_product_serial.getAdd_inf1() != null) {
-                contentValues.put(ADD_INF1, md_product_serial.getAdd_inf1());
-            }
-            if (md_product_serial.getAdd_inf2() != null) {
-                contentValues.put(ADD_INF2, md_product_serial.getAdd_inf2());
-            }
-            if (md_product_serial.getAdd_inf3() != null) {
-                contentValues.put(ADD_INF3, md_product_serial.getAdd_inf3());
-            }
+            contentValues.put(ADD_INF1, md_product_serial.getAdd_inf1());
+            contentValues.put(ADD_INF2, md_product_serial.getAdd_inf2());
+            contentValues.put(ADD_INF3, md_product_serial.getAdd_inf3());
             if (md_product_serial.getUpdate_required() > -1) {
                 contentValues.put(UPDATE_REQUIRED, md_product_serial.getUpdate_required());
             }
