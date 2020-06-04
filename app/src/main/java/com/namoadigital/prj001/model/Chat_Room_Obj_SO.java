@@ -19,7 +19,8 @@ public class Chat_Room_Obj_SO {
     private String so_site;
     private String so_operation;
     private String so_contract;
-    private String so_product;
+    private String so_product_id;
+    private String so_product_desc;
     private String so_serial;
     private String so_brand_model_color;
     private String so_segment;
@@ -129,12 +130,20 @@ public class Chat_Room_Obj_SO {
         this.so_contract = so_contract;
     }
 
-    public String getSo_product() {
-        return so_product;
+    public String getSo_product_id() {
+        return so_product_id;
     }
 
-    public void setSo_product(String so_product) {
-        this.so_product = so_product;
+    public void setSo_product_id(String so_product_id) {
+        this.so_product_id = so_product_id;
+    }
+
+    public String getSo_product_desc() {
+        return so_product_desc;
+    }
+
+    public void setSo_product_desc(String so_product_desc) {
+        this.so_product_desc = so_product_desc;
     }
 
     public String getSo_serial() {

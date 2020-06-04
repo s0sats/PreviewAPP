@@ -207,7 +207,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     //Receiver do que captura disparo do FCM
     //LUCHE - 16/07/2019
     private FCMReceiver fcmReceiver;
-    public String mRoom_code;
+    public String mRequest_act;
     //LUCHE - 03/06/2020
     //Var que indica se o o processo de criação de room deve ser chamado. Somente o setada para verdadeiro
     //se o clique vier do botão de soChat
@@ -1247,9 +1247,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             }
             //Ajuste para clique no drawer da act043
             request_set_frag = bundle.getString(REQUEST_SET_FRAG, "");
-            mRoom_code = bundle.getString(CH_MessageDao.ROOM_CODE);
+            mRequest_act = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT);
         } else {
-            mRoom_code = null;
+            mRequest_act = null;
             mSm_so = null;
         }
     }
@@ -2279,15 +2279,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                                  *  BARRIONUEVO     03-06-2020
                                  *  Fluxo para voltar para sala se navegacao fora feita via chat
                                  */
-                                if(mRoom_code !=null){
-                                    Intent mIntent = new Intent(context, Act035_Main.class);
-                                    Bundle bundle = new Bundle();
-                                    bundle.putString(CH_MessageDao.ROOM_CODE, mRoom_code);
-                                    mIntent.putExtras(bundle);
-                                    mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    //
-                                    startActivity(mIntent);
-                                    finish();
+                                if(mRequest_act !=null
+                                && mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT035)
+                                && mSm_so.getRoom_code() != null){
+                                    callAct035();
                                 }else {
                                     Intent mIntent = new Intent(context, Act005_Main.class);
                                     mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -2541,7 +2536,22 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
     }
 
-
+    private void callAct035() {
+        Intent mIntent = new Intent(context, Act035_Main.class);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(CH_MessageDao.ROOM_CODE, mSm_so.getRoom_code());
+        bundle.putLong(CH_RoomDao.CUSTOMER_CODE, mSm_so.getCustomer_code());
+        if(mRequest_act == null
+            || !mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT035)) {
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT027);
+        }
+        //
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
 
     private void recoverApprovalState() {
         //mSm_so.setStatus(Constant.SYS_STATUS_WAITING_CLIENT);
@@ -2663,25 +2673,6 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         mIntent.putExtras(bundle);
         startActivity(mIntent);
 
-        finish();
-    }
-
-    /**
-     * LUCHE - 04/06/2020
-     * <p></p>
-     * Metodo que chama act035 usando o customer e room code da o.s
-     */
-    private void callAct035() {
-        Intent mIntent = new Intent(context, Act035_Main.class);
-        //
-        Bundle bundle = new Bundle();
-        bundle.putString(CH_MessageDao.ROOM_CODE, mSm_so.getRoom_code());
-        bundle.putLong(CH_RoomDao.CUSTOMER_CODE, mSm_so.getCustomer_code());
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT027);
-        //
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
         finish();
     }
 

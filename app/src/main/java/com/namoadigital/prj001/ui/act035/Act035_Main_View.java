@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act035;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -34,5 +35,9 @@ public interface Act035_Main_View {
 
     void callAct070(Bundle bundle);
 
-    void callAct027(String soPrefix, String soCode);
+    void callAct027(Context context);
+
+    void cleanWsTmpItem();
+
+    void showAlertWithAction(String ttl, String msg, DialogInterface.OnClickListener listener);
 }

@@ -78,6 +78,7 @@ import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
 import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.service.WS_AP_Search;
 import com.namoadigital.prj001.service.WS_SO_Search;
+import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service_chat.WS_Room_AP;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -212,6 +213,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private String custom_form_url_pdf;
 
     private int colorName;
+    private String mRequest_act = "";
+    private Chat_Room_Obj_SO roomObjSo;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -349,6 +352,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("alert_no_so_returned_msg");
         transList.add("alert_so_download_param_error_ttl");
         transList.add("alert_so_download_param_error_msg");
+        transList.add("dialog_serial_download_ttl");
+        transList.add("dialog_serial_download_start");
+        transList.add("alert_serial_not_returned_ttl");
+        transList.add("alert_serial_not_returned_msg");
+        transList.add("dialog_product_not_found_ttl");
+        transList.add("dialog_product_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -503,6 +512,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             startReceivers(true);
         } else {
             callAct034(context);
+        }
+
+        if (mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SO)) {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            roomObjSo = getRoomObjSo(gson);
         }
     }
 
@@ -945,6 +959,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         if (bundle != null) {
             mRoom_code = bundle.getString(CH_MessageDao.ROOM_CODE);
             mCustomer_code = bundle.getLong(CH_RoomDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
+            mRequest_act = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, "");
             //
             ArrayList<HMAux> mCustomers = ToolBox_Inf.getSessionCustomerChatList(getBaseContext());
             //
@@ -1267,7 +1282,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     @Override
     public void onBackPressed() {
-        mPresenter.onBackPressedClicked();
+        mPresenter.onBackPressedClicked(mRequest_act);
     }
 
     @Override
@@ -2467,19 +2482,32 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 break;
             case 2:
                 if(mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SO)){
-                    Gson gson = new GsonBuilder().serializeNulls().create();
-                    final Chat_Room_Obj_SO roomObjSo = getRoomObjSo(gson);
-                    if(hasLocalSO(roomObjSo)){
-                        callAct027(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
-                    }else {
-                        mPresenter.executeSoDownload(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
-                    }
+                    callSOFlow();
                 }
                 break;
-
         }
-
         return true;
+    }
+
+    /**
+     * Barrionuevo 04-06-2020
+     * Se houver SO no device navega offline, caso nao haja, baixa o serial antes.
+     */
+    private void callSOFlow() {
+        if (hasLocalSO(roomObjSo)) {
+            callAct027(context);
+        } else {
+            /**
+             *  Barrionuevo 04-06-2020
+             *  Validacao necessaria pos mudanca de formado de so_product para
+             *  so_product_id e so_product_desc.
+             */
+            if(roomObjSo.getSo_product_id() != null && !roomObjSo.getSo_product_id().isEmpty()) {
+                mPresenter.executeSerialDownload(roomObjSo.getSo_product_id(), roomObjSo.getSo_serial());
+            }else{
+                showAlert(hmAux_Trans.get("dialog_product_not_found_ttl"), hmAux_Trans.get("dialog_product_not_found_msg"));
+            }
+        }
     }
 
     private void showSOInfo() {
@@ -2538,8 +2566,6 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         Button so_btn_join = view.findViewById(R.id.namoa_so_btn_join);
         so_btn_join.setText(hmAux_Trans.get("service_so_lbl"));
         //
-        final Chat_Room_Obj_SO roomObjSo = getRoomObjSo(gson);
-        //
         so_tv_code_val.setText(roomObjSo.getSo_prefix() +"." + roomObjSo.getSo_code());
 
         if(roomObjSo.getSo_id() == null || roomObjSo.getSo_id().isEmpty()){
@@ -2563,11 +2589,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         so_btn_join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(hasLocalSO(roomObjSo)){
-                    callAct027(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
-                }else {
-                    mPresenter.executeSoDownload(String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
-                }
+                callSOFlow();
             }
         });
 
@@ -2609,8 +2631,16 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             so_tv_external_customer_val.setText(roomObjSo.getSo_client());
         }
 
+        if(roomObjSo.getSo_product_id() == null || roomObjSo.getSo_product_id().isEmpty()){
+            so_tv_product_lbl.setVisibility(View.GONE);
+            so_tv_product_val.setVisibility(View.GONE);
+        }else {
+            so_tv_product_lbl.setVisibility(View.VISIBLE);
+            so_tv_product_val.setVisibility(View.VISIBLE);
+            so_tv_product_val.setText(roomObjSo.getSo_product_id() + " - " + roomObjSo.getSo_product_desc());
+        }
+
         so_tv_serial_val.setText(roomObjSo.getSo_serial());
-        so_tv_product_val.setText(roomObjSo.getSo_product());
         so_tv_segment_val.setText(roomObjSo.getSo_segment());
         so_tv_category_val.setText(roomObjSo.getSo_category_price());
 
@@ -2897,16 +2927,30 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     @Override
-    public void callAct027(String soPrefix, String soCode) {
+    public void callAct027(Context context) {
         Intent mIntent = new Intent(context, Act027_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
-        bundle.putString(SM_SODao.SO_PREFIX, soPrefix);
-        bundle.putString(SM_SODao.SO_CODE, soCode);
-        bundle.putString(CH_RoomDao.ROOM_CODE, mRoom_code);
+        bundle.putString(SM_SODao.SO_PREFIX, String.valueOf(roomObjSo.getSo_prefix()));
+        bundle.putString(SM_SODao.SO_CODE, String.valueOf(roomObjSo.getSo_code()));
+        if(mRequest_act == null
+         || !mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT027)) {
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT035);
+        }
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    public void cleanWsTmpItem() {
+        ws_process ="";
+        disableProgressDialog();
+    }
+
+    @Override
+    public void showAlertWithAction(String ttl, String msg, DialogInterface.OnClickListener listener) {
+        ToolBox.alertMSG(context, ttl, msg, listener, 0);
     }
 
     public void executeApSyncWs(String type) {
@@ -3002,22 +3046,26 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        //
-        HMAux hmAuxAP = new HMAux();
-        //
-        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOMER_CODE, mCustomer_Code);
-        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, mCustom_Form_Type);
-        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, mCustom_Form_Code);
-        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, mCustom_Form_Version);
-        hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, mCustom_Form_Data);
-        hmAuxAP.put(GE_Custom_Form_ApDao.AP_CODE, mAp_Code);
-        //
-        if (ws_process.equalsIgnoreCase(WS_AP_Search.class.getSimpleName() + "-join")) {
-            executeWsRoomAp(hmAuxAP);
-        } else {
-            callAct038(context, hmAuxAP);
+        if(ws_process.equals(WS_Serial_Search.class.getName())){
+            processCloseACT(mLink, mRequired, new HMAux());
+        }else {
             //
-            progressDialog.dismiss();
+            HMAux hmAuxAP = new HMAux();
+            //
+            hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOMER_CODE, mCustomer_Code);
+            hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, mCustom_Form_Type);
+            hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, mCustom_Form_Code);
+            hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, mCustom_Form_Version);
+            hmAuxAP.put(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, mCustom_Form_Data);
+            hmAuxAP.put(GE_Custom_Form_ApDao.AP_CODE, mAp_Code);
+            //
+            if (ws_process.equalsIgnoreCase(WS_AP_Search.class.getSimpleName() + "-join")) {
+                executeWsRoomAp(hmAuxAP);
+            } else {
+                callAct038(context, hmAuxAP);
+                //
+                progressDialog.dismiss();
+            }
         }
 
     }
@@ -3055,11 +3103,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             }
             //
             callAct070(bundle);
+        }else if(ws_process.equals(WS_Serial_Search.class.getName())){
+            mPresenter.extractSearchResult(mLink, roomObjSo);
         } else if (ws_process.equalsIgnoreCase(WS_SO_Search.class.getName())) {
-            Gson gson = new GsonBuilder().serializeNulls().create();
-            final Chat_Room_Obj_SO roomObjSo = getRoomObjSo(gson);
-            //
-            mPresenter.processSoDownloadResult(hmAux, String.valueOf(roomObjSo.getSo_prefix()),String.valueOf(roomObjSo.getSo_code()));
+            mPresenter.processSoDownloadResult(hmAux, String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
         }else {
             setWSProcess("");
         }

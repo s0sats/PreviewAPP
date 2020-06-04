@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act035;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.Chat_Room_Obj_SO;
 
 import java.util.ArrayList;
 
@@ -18,11 +19,13 @@ public interface Act035_Main_Presenter {
 
     void onOnItemClicked(HMAux item);
 
+    void executeSerialDownload(String productId, String serialId);
+
+    void extractSearchResult(String result, Chat_Room_Obj_SO roomObjSo);
+
     void executeSoDownload(String soPrefix, String soCode);
 
     void processSoDownloadResult(HMAux soDownloadResult, String soPrefix, String soCode);
-
-    void onBackPressedClicked();
 
     void updateReadStatus(ArrayList<HMAux> hmAuxs);
 
@@ -40,5 +43,7 @@ public interface Act035_Main_Presenter {
     String[] getSplitedPk(String pk, String splitter);
 
     boolean validateTicketPk(String ticketPk);
+
+    void onBackPressedClicked(String act_request);
     //endregion
 }
