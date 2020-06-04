@@ -16,20 +16,26 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_Ref_Json;
+import com.namoadigital.prj001.model.Chat_Room_Obj_SO;
 import com.namoadigital.prj001.model.Chat_S_Historical_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
+import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_SO_Search;
+import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_018;
@@ -504,6 +510,130 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
             ToolBox_Inf.registerException(getClass().getName(), e);
             return false;
         }
+    }
+
+
+    @Override
+    public void executeSerialDownload(String productId, String serialId) {
+        mView.setWSProcess(WS_Serial_Search.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_serial_download_ttl"),
+                hmAux_Trans.get("dialog_serial_download_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Serial_Search.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, "");
+        bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, productId);
+        bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serialId);
+        bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, "");
+        bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    /**
+     * LUCHE - 16/01/2020
+     *
+     * Trata retorno do ws do serial.
+     * @param result - Json enviado pelo WS
+     * @param roomObjSo - SO da sala.
+     */
+    @Override
+    public void extractSearchResult(String result, Chat_Room_Obj_SO roomObjSo) {
+        if (result != null && !result.isEmpty()) {
+            ArrayList<MD_Product_Serial> serial_list;
+            try {
+                Gson gson = new GsonBuilder().serializeNulls().create();
+                TSerial_Search_Rec rec = gson.fromJson(
+                        result,
+                        TSerial_Search_Rec.class);
+                //
+                serial_list = rec.getRecord();
+            } catch (Exception e) {
+                serial_list = new ArrayList<>();
+            }
+            //
+            boolean serialInList = false;
+            //
+            if (serial_list != null && serial_list.size() > 0) {
+                //
+                for (MD_Product_Serial serial : serial_list) {
+                    if (
+                            serial.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                                    && serial.getProduct_id().equalsIgnoreCase(roomObjSo.getSo_product_id())
+                                    && serial.getSerial_id().equalsIgnoreCase(roomObjSo.getSo_serial())
+                    ) {
+                        serialInList = true;
+                        saveSerialInDb(serial);
+                        break;
+                    }
+                }
+                //
+                if(serialInList){
+                    executeSoDownload(
+                            String.valueOf(roomObjSo.getSo_prefix()),
+                            String.valueOf(roomObjSo.getSo_code())
+                    );
+                }else{
+                    mView.showAlertWithAction(
+                            hmAux_Trans.get("alert_serial_not_returned_ttl"),
+                            hmAux_Trans.get("alert_serial_not_returned_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mView.cleanWsTmpItem();
+                                }
+                            }
+                    );
+                }
+                //
+            } else {
+                mView.showAlertWithAction(
+                        hmAux_Trans.get("alert_no_serial_returned_ttl"),
+                        hmAux_Trans.get("alert_no_serial_returned_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mView.cleanWsTmpItem();
+                            }
+                        }
+                );
+            }
+        } else {
+            mView.showAlertWithAction(
+                    hmAux_Trans.get("alert_no_serial_returned_ttl"),
+                    hmAux_Trans.get("alert_no_serial_returned_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.cleanWsTmpItem();
+                        }
+                    }
+            );
+        }
+    }
+
+    /**
+     * LUCHE - 16/01/2020
+     *
+     * Salva Serial retornado no banco de dados.
+     *
+     * @param serial
+     */
+    private void saveSerialInDb(MD_Product_Serial serial) {
+        MD_Product_SerialDao serialDao =
+                new MD_Product_SerialDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                );
+        //
+        serialDao.addUpdateTmp(serial);
     }
 
     @Override

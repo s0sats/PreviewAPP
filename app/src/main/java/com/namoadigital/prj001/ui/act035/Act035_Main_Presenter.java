@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act035;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.Chat_Room_Obj_SO;
 
 import java.util.ArrayList;
 
@@ -17,6 +18,10 @@ public interface Act035_Main_Presenter {
     void sendRead(ArrayList<HMAux> hmAuxs);
 
     void onOnItemClicked(HMAux item);
+
+    void executeSerialDownload(String productId, String serialId);
+
+    void extractSearchResult(String result, Chat_Room_Obj_SO roomObjSo);
 
     void executeSoDownload(String soPrefix, String soCode);
 
