@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WS_SO_Create_Room extends IntentService {
-    public static final String ABORT_BY_CHAINED_CALL = "ABORT_BY_CHAINED_CALL";
-
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
@@ -65,18 +63,6 @@ public class WS_SO_Create_Room extends IntentService {
     private void processWsSoCreateRoom(int so_prefix, int so_code, int so_scn) throws Exception {
         //Seleciona traduções
         loadTranslation();
-        //LUCHE - 03/6/2020
-        //Escape para chamada encadeada
-        //Caso todos param 0, entende que é chamad encadeada e retorna close act.
-        if(isChainedCall(so_prefix, so_code, so_scn)){
-            //Gera obj que indica que deve apenas seguir o fluxo para proxima etapa
-            WS_SO_Create_Room.SoCreateRoomReturn aReturn = new SoCreateRoomReturn();
-            aReturn.setRetStatus(ABORT_BY_CHAINED_CALL);
-            aReturn.setRetSync_full(false);
-            //Chama closeact como bj
-            callCloseAct(aReturn);
-            return;
-        }
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //
@@ -123,28 +109,33 @@ public class WS_SO_Create_Room extends IntentService {
         //
     }
 
-    private boolean isChainedCall(int so_prefix, int so_code, int so_scn) {
-        return so_prefix == 0 && so_code == 0 && so_scn == 0;
-    }
-
+    /**
+     * LUCHE - 04/06/2020
+     * <p></p>
+     * Metodo que trata o retorno do WS de criação de room
+     * @param rec Response
+     * @param so_prefix Prefixo da S.O
+     * @param so_code Codigo da S.O
+     */
     private void processCreateRoomReturn(TSO_Create_Room_Rec rec, int so_prefix, int so_code) {
+        //Se existe codigo de retorno, segue , se não chama metodo error_1
         if(rec.getRet_code() != null){
+            //Cria ob que será retornado para a act e seta o retorno
             SoCreateRoomReturn actReturn = new SoCreateRoomReturn();
             actReturn.setRetStatus(rec.getRet_code());
-            //
             if (rec.getRet_code().equals(ConstantBaseApp.MAIN_RESULT_OK)){
                 SM_SODao soDao = new SM_SODao(
                     getApplicationContext(),
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                     Constant.DB_VERSION_CUSTOM
                 );
-                //
+                //Se o retorno for OK, verifica o sync_full. Se existir segue se não se não chama metodo error_1
                 if(rec.getRet_sync_full() != null){
                     //Define variavel bool se necessita de sincronismo full da o.s
                     actReturn.setRetSync_full(rec.getRet_sync_full() == 1);
                     actReturn.setRetRoom_code(rec.getRet_msg());
-                    //Se não precisa de sync full, atualiza dados no cabeçalho
-                    //Se precisa,NENHUMA AÇÃO É NECESSARIA. A tela deverá analisar o rtorno e
+                    //Se NÃO precisa de sync full, atualiza dados no cabeçalho
+                    //Se PRECISA,NENHUMA AÇÃO É NECESSARIA, pois a tela deverá analisar o rtorno e
                     //impedir que o processo continue
                     if(rec.getRet_sync_full() == 0){
                         //Atualiza SCN e Room Code
@@ -170,14 +161,13 @@ public class WS_SO_Create_Room extends IntentService {
                         "0");
                 }
             }else{
-                //Se erro, seta dados para tela.
+                //Se retorno do processamento for diferente de OK,
+                //atualiza dados no obj que será enviado para tela.
                 actReturn.setRetMsg(rec.getRet_msg());
                 actReturn.setRetSync_full(false);
                 //
                 callCloseAct(actReturn);
             }
-            //
-
         }else{
             //não deveria acontecer, exibir msg de erro
             ToolBox.sendBCStatus(
@@ -225,6 +215,11 @@ public class WS_SO_Create_Room extends IntentService {
                 translist);
     }
 
+    /**
+     * LUCHE - 04/06/2020
+     * <p></p>
+     * Classe que representa o JSON retornado a tela.
+     */
     public class SoCreateRoomReturn{
         private String retStatus;
         private String retRoom_code;

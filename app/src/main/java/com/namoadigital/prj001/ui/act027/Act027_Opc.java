@@ -248,7 +248,8 @@ public class Act027_Opc extends BaseFragment {
                 }
             }
         });
-
+        //LUCHE - 04/06/2020
+        //Clique no novo btn soChat
         ll_so_chat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -305,8 +306,10 @@ public class Act027_Opc extends BaseFragment {
         //
         changeTabColor();
     }
+    //LUCHE - 04/06/2020
+    //Add case SELECTION_CHAT_FLOW para tratar o fluxo do botão chat
+    //Só é chamado aqui quando o clique vier da act043
     public void perfomClickInOption(String selection_type){
-
         switch (selection_type){
             case Act027_Main.SELECTION_PRODUCT_LIST:
                 ll_product.performClick();
@@ -543,6 +546,11 @@ public class Act027_Opc extends BaseFragment {
         }
     }
 
+    /**
+     * LUCHE - 04/06/2020
+     * <p></p>
+     * Metodo define a visibilidade do botão de chat chama metodo que define sua cor.
+     */
     private void defineSoChatLayout() {
         if(mSm_so.getRoom_member() == 1){
             ll_so_chat.setVisibility(View.VISIBLE);
@@ -552,7 +560,11 @@ public class Act027_Opc extends BaseFragment {
         //
         defineSoChatIcon();
     }
-
+    /**
+     * LUCHE - 04/06/2020
+     * <p></p>
+     * Metodo define a cor do botão de chat
+     */
     private void defineSoChatIcon() {
         //Define cor
         int iconColor =

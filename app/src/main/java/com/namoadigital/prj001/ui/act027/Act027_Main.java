@@ -209,6 +209,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     private FCMReceiver fcmReceiver;
     public String mRoom_code;
     //LUCHE - 03/06/2020
+    //Var que indica se o o processo de criação de room deve ser chamado. Somente o setada para verdadeiro
+    //se o clique vier do botão de soChat
     private boolean isSoCreateRoomCall = false;
 
     public void setWs_process(String ws_process) {
@@ -1440,6 +1442,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             showNewOptDialogProductEvent(wsResults);
             progressDialog.dismiss();
         } else if (ws_process.equalsIgnoreCase(WS_PROCESS_SO_CREATE_CHAT_ROOM)){
+            //LUCHE - 04/06/2020
+            //Trata o retorno do WS de criação de room
             progressDialog.dismiss();
             setWs_process("");
             processSoCreateChatRoomReturn(mLink);
@@ -1449,8 +1453,16 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         }
     }
 
-    private void processSoCreateChatRoomReturn(String mLink) {
-        if(mLink == null || mLink.isEmpty()){
+    /**
+     * LUCHE - 04/06/2020
+     * <P></P>
+     * Metodo que trata o retorno do WS_SO_Create_Room que cria a room.
+     * Caso não haja retorno ou erro ao gerar obj from json, exibe msg de erro.
+     * @param wsReturn Json retornado pelo Ws com informações da response.
+     *
+     */
+    private void processSoCreateChatRoomReturn(String wsReturn) {
+        if(wsReturn == null || wsReturn.isEmpty()){
             showAlertDialog(
                 hmAux_Trans.get("creation_room_return_error_ttl"),
                 hmAux_Trans.get("creation_room_return_not_found_msg")
@@ -1460,32 +1472,35 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             WS_SO_Create_Room.SoCreateRoomReturn soCreateRoomReturn = null;
             try{
                 soCreateRoomReturn = gson.fromJson(
-                    mLink,
+                    wsReturn,
                     WS_SO_Create_Room.SoCreateRoomReturn.class
                 );
             }catch (Exception e){
                 e.printStackTrace();
+                ToolBox_Inf.registerException(getClass().getName(),e);
             }
-            //
+            //Se obj gerado, segue tratativa
             if(soCreateRoomReturn != null){
-                if( soCreateRoomReturn.getRetStatus().equals(WS_SO_Create_Room.ABORT_BY_CHAINED_CALL)){
-                    executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
-                }else{
-                    if (soCreateRoomReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK)) {
-                        if (soCreateRoomReturn.isRetSync_full()) {
-                            executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
-                        } else {
-                            refreshUI();
-                            checkSoRoomExists(mSm_so.getRoom_code());
-                        }
+                //Se OK, valida se deve ou não chamar WS de sincronia para S.O full
+                //O sync_full é necessario que o usr estava com o SCN desatualizado.
+                if (soCreateRoomReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK)) {
+                    //Se S.O Full, apenas chama WS de sincronia da O.S
+                    if (soCreateRoomReturn.isRetSync_full()) {
+                        executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
                     } else {
-                        showAlertDialog(
-                            hmAux_Trans.get("creation_room_return_error_ttl"),
-                            soCreateRoomReturn.getRetMsg()
-                        );
+                        //Se não há necessidade de sincronia, atualiza UI e chama processo para
+                        //navegação para o chat.
+                        refreshUI();
+                        checkSoRoomExists(mSm_so.getRoom_code());
                     }
+                } else {
+                    showAlertDialog(
+                        hmAux_Trans.get("creation_room_return_error_ttl"),
+                        soCreateRoomReturn.getRetMsg()
+                    );
                 }
             }else{
+                //Se obj null, houve erro ao gerar obj json
                 showAlertDialog(
                     hmAux_Trans.get("creation_room_return_error_ttl"),
                     hmAux_Trans.get("creation_room_return_not_found_msg")
@@ -1658,6 +1673,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     refreshUI();
+                                    if(isSoCreateRoomCall) {
+                                       executeSoCreateRoom();
+                                    }
                                 }
                             },
                             0
@@ -2120,43 +2138,48 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         }
     }
 
+    /**
+     * LUCHE - 04/06/2020
+     * <p></p>
+     * Metodo que chama o serviço de criaçao de room.
+     * O Metodo sempre é chamado no encadeamento dos WS ja criado e o que define se ele deve chamar
+     * efetivamente o serviço é a flag isSoCreateRoomCall.
+     * Caso seja true, chama o serviço para criação da room, caso contrario, pula para o proximo WS
+     * que, atualmente, é o de sincronismo da O.S
+     *
+     */
     private void executeSoCreateRoom() {
-        int so_prefix = 0;
-        int so_code = 0;
-        int so_scn = 0;
-        //
-        setWs_process(WS_PROCESS_SO_CREATE_CHAT_ROOM);
-        //Somente quando a camada for iniciado pelo btn soChat é que as infos devem ser setada.
-        //Se o WS receber tudo 0 , entenderá que é uma chamada encadeada e que não deve ser executado.
         if(isSoCreateRoomCall){
+            //Somente quando a camada for iniciado pelo btn soChat é que as infos devem ser setada.
+            //Se o WS receber tudo 0 , entenderá que é uma chamada encadeada e que não deve ser executado.
             //reseta var
             isSoCreateRoomCall = false;
-            //define valores para o WS
-            so_prefix = mSm_so.getSo_prefix();
-            so_code = mSm_so.getSo_code();
-            so_scn = mSm_so.getSo_scn();
+            //
+            setWs_process(WS_PROCESS_SO_CREATE_CHAT_ROOM);
+            //
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            //
+            enableProgressDialog(
+                hmAux_Trans.get("progress_so_create_chat_room_ttl"),
+                hmAux_Trans.get("progress_so_create_chat_room_msg"),
+                hmAux_Trans.get("sys_alert_btn_cancel"),
+                hmAux_Trans.get("sys_alert_btn_ok")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_SO_Create_Room.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(SM_SODao.SO_PREFIX, mSm_so.getSo_prefix());
+            bundle.putInt(SM_SODao.SO_CODE, mSm_so.getSo_code());
+            bundle.putInt(SM_SODao.SO_SCN, mSm_so.getSo_scn());
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            executeSoSync(mSm_so.getSo_prefix(), mSm_so.getSo_code());
         }
-        //
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-        //
-        enableProgressDialog(
-            hmAux_Trans.get("progress_so_create_chat_room_ttl"),
-            hmAux_Trans.get("progress_so_create_chat_room_msg"),
-            hmAux_Trans.get("sys_alert_btn_cancel"),
-            hmAux_Trans.get("sys_alert_btn_ok")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_SO_Create_Room.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(SM_SODao.SO_PREFIX, so_prefix);
-        bundle.putInt(SM_SODao.SO_CODE, so_code);
-        bundle.putInt(SM_SODao.SO_SCN, so_scn);
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
     }
 
     //Metodo chamado ao finalizar o download da atualização.
@@ -2473,6 +2496,15 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         }
     }
 
+    /**
+     * LUCHE - 04/06/2020
+     * <p></p>
+     * Metodo criado a partir do codigo que era chamado da implementação do metodo soSyncClick, pois
+     * agora o mesmo trecho de codigo será chamada pelo metodo soChatClick
+     * O metodo verifica a conexão e caso ela exista, dispara chamada do primeiro WS service,serial_save.
+     * O retono desse WS gera a chama em cadeia dos demas.
+     * @param isSoSaveLinked Indica se após o save do serial, deve ser disparado o WS de So Save e demais
+     */
     private void startWsChainedCall(boolean isSoSaveLinked) {
         if (ToolBox_Con.isOnline(context)) {
             setWs_process(WS_PROCESS_SO_SAVE);
@@ -2483,6 +2515,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         }
     }
 
+    /**
+     * LUCHE - 04/06/2020
+     * <P></P>
+     * Metodo que verifica se a sala da o.s já existe localmente.
+     * Se exste, navega para o chat, se não, exibe msg informando que a sala não foi encontrada.
+     * @param room_code RoomCode da O.S
+     */
     private void checkSoRoomExists(String room_code) {
         CH_RoomDao chRoomDao = new CH_RoomDao(context);
         CH_Room chRoom = chRoomDao.getByString(
@@ -2502,19 +2541,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
     }
 
-    private void callAct035() {
-        Intent mIntent = new Intent(context, Act035_Main.class);
-        //
-        Bundle bundle = new Bundle();
-        bundle.putString(CH_MessageDao.ROOM_CODE, mSm_so.getRoom_code());
-        bundle.putLong(CH_RoomDao.CUSTOMER_CODE, mSm_so.getCustomer_code());
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT027);
-        //
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
-        finish();
-    }
+
 
     private void recoverApprovalState() {
         //mSm_so.setStatus(Constant.SYS_STATUS_WAITING_CLIENT);
@@ -2637,7 +2664,25 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         startActivity(mIntent);
 
         finish();
+    }
 
+    /**
+     * LUCHE - 04/06/2020
+     * <p></p>
+     * Metodo que chama act035 usando o customer e room code da o.s
+     */
+    private void callAct035() {
+        Intent mIntent = new Intent(context, Act035_Main.class);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(CH_MessageDao.ROOM_CODE, mSm_so.getRoom_code());
+        bundle.putLong(CH_RoomDao.CUSTOMER_CODE, mSm_so.getCustomer_code());
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT027);
+        //
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 
     @Override
