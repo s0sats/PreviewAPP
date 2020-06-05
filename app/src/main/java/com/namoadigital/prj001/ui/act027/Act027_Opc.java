@@ -563,15 +563,19 @@ public class Act027_Opc extends BaseFragment {
     /**
      * LUCHE - 04/06/2020
      * <p></p>
-     * Metodo define a cor do botão de chat
+     * Metodo define a cor do botão de chat.
+     * LUCHE - 05/06/2020
+     * Modificado metodo defineSoChatIcon, pois agora o icone de sala criada e sala ja existente serão diferentes.
      */
     private void defineSoChatIcon() {
-        //Define cor
-        int iconColor =
-            mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty()
-                ? R.color.namoa_status_process
-                : R.color.namoa_status_pending;
-        Drawable drawable = getResources().getDrawable(R.drawable.ic_forum_black_24dp);
+        Drawable drawable = getResources().getDrawable(R.drawable.ic_outline_forum_black_24dp);
+        int iconColor = R.color.namoa_status_pending;
+        //Define cor e icone
+        if(mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty()){
+            drawable = getResources().getDrawable(R.drawable.ic_forum_black_24dp);
+            iconColor = R.color.namoa_status_process;
+        }
+        //Seta filtro de cor no icone
         drawable.setColorFilter(context.getResources().getColor(iconColor), PorterDuff.Mode.SRC_ATOP);
         iv_so_chat.setImageDrawable(drawable);
     }
