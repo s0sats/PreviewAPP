@@ -2435,11 +2435,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 menu.findItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
             } else if (mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SO)) {
                 //
-                if(ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
-                    menu.add(0, 2, Menu.FIRST + 1, hmAux_Trans.get("room_so_shortcut_lbl"));
-                    menu.findItem(2).setIcon(R.drawable.ic_baseline_description);
-                    menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-                }
+                menu.add(0, 2, Menu.FIRST + 1, hmAux_Trans.get("room_so_shortcut_lbl"));
+                menu.findItem(2).setIcon(R.drawable.ic_baseline_description);
+                menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
                 //
                 menu.add(0, 0, Menu.FIRST + 2, hmAux_Trans.get("room_so_info_menu_lbl"));
                 menu.findItem(0).setIcon(R.drawable.ic_info);
@@ -2483,8 +2481,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 }
                 break;
             case 2:
-                if(mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SO)
-                && ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)){
+                if(mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SO)){
                     callSOFlow();
                 }
                 break;
@@ -2589,17 +2586,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             so_tv_pipeline_val.setText(roomObjSo.getSo_pipeline());
         }
 
-        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)){
-            so_btn_join.setVisibility(View.VISIBLE);
-            so_btn_join.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    callSOFlow();
-                }
-            });
-        }else{
-            so_btn_join.setVisibility(View.GONE);
-        }
+        so_btn_join.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callSOFlow();
+            }
+        });
 
         if(roomObjSo.getSo_desc() == null || roomObjSo.getSo_desc().isEmpty()){
             so_tv_desc_lbl.setVisibility(View.GONE);
@@ -2621,13 +2613,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         so_tv_site_val.setText(roomObjSo.getSo_site());
         so_tv_operation_val.setText(roomObjSo.getSo_operation());
 
-        if(roomObjSo.getSo_contract() == null || roomObjSo.getSo_contract().isEmpty()){
+        if(roomObjSo.getSo_contract_po() == null || roomObjSo.getSo_contract_po().isEmpty()){
             so_tv_purchase_order_lbl.setVisibility(View.GONE);
             so_tv_purchase_order_val.setVisibility(View.GONE);
         }else {
             so_tv_purchase_order_lbl.setVisibility(View.VISIBLE);
             so_tv_purchase_order_val.setVisibility(View.VISIBLE);
-            so_tv_purchase_order_val.setText(roomObjSo.getSo_contract());
+            so_tv_purchase_order_val.setText(roomObjSo.getSo_contract_po());
         }
 
         if(roomObjSo.getSo_client() == null || roomObjSo.getSo_client().isEmpty()){
@@ -2942,7 +2934,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         bundle.putString(SM_SODao.SO_PREFIX, String.valueOf(roomObjSo.getSo_prefix()));
         bundle.putString(SM_SODao.SO_CODE, String.valueOf(roomObjSo.getSo_code()));
         if(mRequest_act == null
-         || !mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT027)) {
+                || !mRequest_act.equalsIgnoreCase(ConstantBaseApp.ACT027)) {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT035);
         }
         mIntent.putExtras(bundle);

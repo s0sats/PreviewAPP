@@ -18,7 +18,7 @@ public class Chat_Room_Obj_SO {
     private String so_pipeline;
     private String so_site;
     private String so_operation;
-    private String so_contract;
+    private String so_contract_po;
     private String so_product_id;
     private String so_product_desc;
     private String so_serial;
@@ -122,12 +122,12 @@ public class Chat_Room_Obj_SO {
         this.so_operation = so_operation;
     }
 
-    public String getSo_contract() {
-        return so_contract;
+    public String getSo_contract_po() {
+        return so_contract_po;
     }
 
-    public void setSo_contract(String so_contract) {
-        this.so_contract = so_contract;
+    public void setSo_contract_po(String so_contract_po) {
+        this.so_contract_po = so_contract_po;
     }
 
     public String getSo_product_id() {
