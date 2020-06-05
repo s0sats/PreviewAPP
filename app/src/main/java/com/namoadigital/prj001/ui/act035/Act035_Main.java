@@ -2435,9 +2435,11 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 menu.findItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
             } else if (mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SO)) {
                 //
-                menu.add(0, 2, Menu.FIRST + 1, hmAux_Trans.get("room_so_shortcut_lbl"));
-                menu.findItem(2).setIcon(R.drawable.ic_baseline_description);
-                menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                if(ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
+                    menu.add(0, 2, Menu.FIRST + 1, hmAux_Trans.get("room_so_shortcut_lbl"));
+                    menu.findItem(2).setIcon(R.drawable.ic_baseline_description);
+                    menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                }
                 //
                 menu.add(0, 0, Menu.FIRST + 2, hmAux_Trans.get("room_so_info_menu_lbl"));
                 menu.findItem(0).setIcon(R.drawable.ic_info);
@@ -2481,7 +2483,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 }
                 break;
             case 2:
-                if(mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SO)){
+                if(mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SO)
+                && ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)){
                     callSOFlow();
                 }
                 break;
@@ -2586,12 +2589,17 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             so_tv_pipeline_val.setText(roomObjSo.getSo_pipeline());
         }
 
-        so_btn_join.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callSOFlow();
-            }
-        });
+        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)){
+            so_btn_join.setVisibility(View.VISIBLE);
+            so_btn_join.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    callSOFlow();
+                }
+            });
+        }else{
+            so_btn_join.setVisibility(View.GONE);
+        }
 
         if(roomObjSo.getSo_desc() == null || roomObjSo.getSo_desc().isEmpty()){
             so_tv_desc_lbl.setVisibility(View.GONE);

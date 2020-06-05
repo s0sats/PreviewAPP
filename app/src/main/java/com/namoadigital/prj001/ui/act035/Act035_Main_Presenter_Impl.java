@@ -537,7 +537,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     }
 
     /**
-     * LUCHE - 16/01/2020
+     * BARRIONUEVO - 05/06/2020
      *
      * Trata retorno do ws do serial.
      * @param result - Json enviado pelo WS
@@ -619,7 +619,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     }
 
     /**
-     * LUCHE - 16/01/2020
+     * BARRIONUEVO - 05/06/2020
      *
      * Salva Serial retornado no banco de dados.
      *
@@ -636,6 +636,12 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         serialDao.addUpdateTmp(serial);
     }
 
+    /**
+     * BARRIONUEVO - 05/06/2020
+     * Chama serviço para baixar SO em devices
+     * @param soPrefix
+     * @param soCode
+     */
     @Override
     public void executeSoDownload(String soPrefix, String soCode) {
         if (ToolBox_Con.isOnline(context)) {
@@ -704,6 +710,11 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         }
     }
 
+    /**
+     *  BARRIONUEVO - 05/06/2020
+     *  Controla fluxo de volta quando user vier da SO.
+     * @param act_request
+     */
     @Override
     public void onBackPressedClicked(String act_request) {
         if (act_request != null
