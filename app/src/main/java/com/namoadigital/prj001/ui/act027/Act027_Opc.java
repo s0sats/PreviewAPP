@@ -329,6 +329,7 @@ public class Act027_Opc extends BaseFragment {
             case Act027_Main.SELECTION_SYNC_SERVICE:
                 ll_services.performClick();
                 ll_so_sync.performClick();
+                break;
             case Act027_Main.SELECTION_CHAT_FLOW:
                 ll_services.performClick();
                 ll_so_chat.performClick();
@@ -553,7 +554,11 @@ public class Act027_Opc extends BaseFragment {
      */
     private void defineSoChatLayout() {
         if(mSm_so.getRoom_member() == 1){
-            ll_so_chat.setVisibility(View.VISIBLE);
+            if(!mSm_so.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE) || (mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty())) {
+                ll_so_chat.setVisibility(View.VISIBLE);
+            }else{
+                ll_so_chat.setVisibility(View.GONE);
+            }
         }else{
             ll_so_chat.setVisibility(View.GONE);
         }
@@ -573,7 +578,9 @@ public class Act027_Opc extends BaseFragment {
         //Define cor e icone
         if(mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty()){
             drawable = getResources().getDrawable(R.drawable.ic_forum_black_24dp);
-            iconColor = R.color.namoa_status_process;
+            iconColor = mSm_so.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)
+                ? R.color.namoa_status_done
+                : R.color.namoa_status_process;
         }
         //Seta filtro de cor no icone
         drawable.setColorFilter(context.getResources().getColor(iconColor), PorterDuff.Mode.SRC_ATOP);

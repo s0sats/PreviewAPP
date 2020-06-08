@@ -581,6 +581,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("creation_room_return_error_ttl");
         transList.add("creation_room_return_not_found_msg");
         //
+        transList.add("so_done_chat_room_ttl");
+        transList.add("so_done_chat_room_msg");
+        transList.add("invalid_status_for_room_creation_ttl");
+        transList.add("invalid_status_for_room_creation_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -1348,10 +1353,11 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                 executeSoSave();
             }
         }
-
+        //LUCHE - 08/06/2020
+        resetSoCreateRoomFlag();
+        //
         progressDialog.dismiss();
     }
-
 
     @Override
     protected void processError_1(String mLink, String mRequired) {
@@ -1367,6 +1373,17 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             loadProductSerialIntoFragment();
             refreshFragUI();
         }
+        //LUCHE - 08/06/2020
+        resetSoCreateRoomFlag();
+
+    }
+    //LUCHE - 08/06/2020
+    //Se erro durante em qualquer WS reseta var que indica que a room precisa criada.
+    //Como a chamada de WS é encadeada, caso de erro em algum WS e essa var não seja resetada,
+    //ao chamar alguma outra ação, por exemplo envio de dados ou sincronismo, a criação da sala
+    //e navegação da para a sala será feita...
+    private void resetSoCreateRoomFlag() {
+        isSoCreateRoomCall = false;
     }
 
     // TRATAVIA DE ENCERRAMENTO SEM PROBLEMAS DO SERVICO
@@ -2153,7 +2170,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             //Somente quando a camada for iniciado pelo btn soChat é que as infos devem ser setada.
             //Se o WS receber tudo 0 , entenderá que é uma chamada encadeada e que não deve ser executado.
             //reseta var
-            isSoCreateRoomCall = false;
+            resetSoCreateRoomFlag();
             //
             setWs_process(WS_PROCESS_SO_CREATE_CHAT_ROOM);
             //
@@ -2466,22 +2483,37 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
     public void soChatClick() {
         if(mSm_so.getRoom_member() == 1){
             if(mSm_so.getRoom_code() != null && !mSm_so.getRoom_code().isEmpty()){
-                checkSoRoomExists(mSm_so.getRoom_code());
+                if(mSm_so.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)) {
+                    showAlertDialog(
+                        hmAux_Trans.get("so_done_chat_room_ttl"),
+                        hmAux_Trans.get("so_done_chat_room_msg")
+                    );
+                }else{
+                    checkSoRoomExists(mSm_so.getRoom_code());
+                }
             }else{
-                ToolBox.alertMSG_YES_NO(
-                    context,
-                    hmAux_Trans.get("so_create_room_ttl"),
-                    hmAux_Trans.get("so_create_room_confirm"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            isSoCreateRoomCall = true;
-                            //
-                            startWsChainedCall(true);
-                        }
-                    },
-                    1
-                );
+                //Esse cenário de sem sala e status done não deveria acontecer, mas esta tratado
+                if(mSm_so.getStatus().equals(ConstantBaseApp.SYS_STATUS_DONE)) {
+                    showAlertDialog(
+                        hmAux_Trans.get("invalid_status_for_room_creation_ttl"),
+                        hmAux_Trans.get("invalid_status_for_room_creation_msg")
+                    );
+                }else {
+                    ToolBox.alertMSG_YES_NO(
+                        context,
+                        hmAux_Trans.get("so_create_room_ttl"),
+                        hmAux_Trans.get("so_create_room_confirm"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                isSoCreateRoomCall = true;
+                                //
+                                startWsChainedCall(true);
+                            }
+                        },
+                        1
+                    );
+                }
             }
         }else{
             showAlertDialog(
