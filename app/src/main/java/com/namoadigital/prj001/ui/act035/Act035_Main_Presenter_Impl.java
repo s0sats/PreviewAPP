@@ -594,8 +594,8 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
                 //
             } else {
                 mView.showAlertWithAction(
-                        hmAux_Trans.get("alert_no_serial_returned_ttl"),
-                        hmAux_Trans.get("alert_no_serial_returned_msg"),
+                        hmAux_Trans.get("alert_serial_not_returned_ttl"),
+                        hmAux_Trans.get("alert_serial_not_returned_msg"),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -606,8 +606,8 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
             }
         } else {
             mView.showAlertWithAction(
-                    hmAux_Trans.get("alert_no_serial_returned_ttl"),
-                    hmAux_Trans.get("alert_no_serial_returned_msg"),
+                    hmAux_Trans.get("alert_serial_not_returned_ttl"),
+                    hmAux_Trans.get("alert_serial_not_returned_msg"),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -647,7 +647,7 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWSProcess(WS_SO_Search.class.getName());
             //
-            mView.showPD(
+            mView.updatePD(
                     hmAux_Trans.get("dialog_so_download_ttl"),
                     hmAux_Trans.get("dialog_so_download_start")
             );

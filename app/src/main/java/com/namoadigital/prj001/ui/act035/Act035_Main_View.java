@@ -27,6 +27,8 @@ public interface Act035_Main_View {
 
     void showPD(String ttl, String msg);
 
+    void updatePD(String ttl, String msg);
+
     void setWSProcess(String ws_process);
 
     void executeApSyncWsViaInfo(HMAux hmAux);
