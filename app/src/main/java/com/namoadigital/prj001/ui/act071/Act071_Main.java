@@ -962,6 +962,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         bundle.putBoolean(ConstantBase.PENABLED, !bReadOnly);
         bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
         bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false);
+        bundle.putString(ConstantBase.FILE_AUTHORITIES, ConstantBase.AUTHORITIES_FOR_PROVIDER);
         //
         Intent mIntent = new Intent(context, Camera_Activity.class);
         mIntent.putExtras(bundle);

@@ -233,7 +233,10 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        Log.d("Permissao","onCreate - Act027");
+        if(savedInstanceState != null) {
+            Log.d("Permissao", "bundle - Act027 \n " + savedInstanceState.toString());
+        }
         iniSetup();
         initVars();
         iniUIFooter();
@@ -271,6 +274,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         ToolBox_Con.setApproval_Type(context, "");
         //Para receiver que ouve o FCM
         startStopFCMReceiver(false);
+        Log.d("Permissao","onDestroy - Act027");
 
         super.onDestroy();
     }
