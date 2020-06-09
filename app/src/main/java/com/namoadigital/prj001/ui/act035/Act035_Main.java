@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
@@ -344,6 +345,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("so_product_lbl");
         transList.add("so_segment_lbl");
         transList.add("so_category_lbl");
+        transList.add("so_brand_model_color_lbl");
         transList.add("service_so_lbl");
         //service
         transList.add("dialog_so_download_ttl");
@@ -2531,6 +2533,17 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         TextView so_tv_product_lbl = view.findViewById(R.id.namoa_so_tv_product_lbl);
         TextView so_tv_segment_lbl = view.findViewById(R.id.namoa_so_tv_segment_lbl);
         TextView so_tv_category_lbl = view.findViewById(R.id.namoa_so_tv_category_lbl);
+        TextView so_tv_brand_model_color_lbl = view.findViewById(R.id.namoa_so_tv_brand_model_color_lbl);
+        //
+
+        LinearLayout so_ll_brand_model_color = view.findViewById(R.id.namoa_so_ll_brand_model_color);
+        LinearLayout so_ll_product = view.findViewById(R.id.namoa_so_ll_product);
+        LinearLayout so_ll_external_customer = view.findViewById(R.id.namoa_so_ll_external_customer);
+        ConstraintLayout so_cl_purchase_order = view.findViewById(R.id.namoa_so_cl_purchase_order);
+        LinearLayout so_ll_desc = view.findViewById(R.id.namoa_so_ll_desc);
+        LinearLayout so_ll_pipeline = view.findViewById(R.id.namoa_so_ll_pipeline);
+        LinearLayout so_ll_id = view.findViewById(R.id.namoa_so_ll_id);
+
         //
         so_tv_ttl.setText(hmAux_Trans.get("so_ttl"));
         so_tv_code_label.setText(hmAux_Trans.get("so_code_lbl"));
@@ -2547,6 +2560,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         so_tv_product_lbl.setText(hmAux_Trans.get("so_product_lbl"));
         so_tv_segment_lbl.setText(hmAux_Trans.get("so_segment_lbl"));
         so_tv_category_lbl.setText(hmAux_Trans.get("so_category_lbl"));
+        so_tv_brand_model_color_lbl.setText(hmAux_Trans.get("so_brand_model_color_lbl"));
         //
         TextView so_tv_code_val = view.findViewById(R.id.namoa_so_tv_code_val);
         TextView so_tv_id_val = view.findViewById(R.id.namoa_so_tv_id_val);
@@ -2562,92 +2576,84 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         TextView so_tv_product_val = view.findViewById(R.id.namoa_so_tv_product_val);
         TextView so_tv_segment_val = view.findViewById(R.id.namoa_so_tv_segment_val);
         TextView so_tv_category_val = view.findViewById(R.id.namoa_so_tv_category_val);
+        TextView so_tv_brand_model_color_val = view.findViewById(R.id.namoa_so_tv_brand_model_color_val);
         //
         Button so_btn_join = view.findViewById(R.id.namoa_so_btn_join);
         so_btn_join.setText(hmAux_Trans.get("service_so_lbl"));
         //
         so_tv_code_val.setText(roomObjSo.getSo_prefix() +"." + roomObjSo.getSo_code());
-
+        //
         if(roomObjSo.getSo_id() == null || roomObjSo.getSo_id().isEmpty()){
-            so_tv_id_label.setVisibility(View.GONE);
-            so_tv_id_val.setVisibility(View.GONE);
+            so_ll_id.setVisibility(View.GONE);
         }else {
-            so_tv_id_label.setVisibility(View.VISIBLE);
-            so_tv_id_val.setVisibility(View.VISIBLE);
+            so_ll_id.setVisibility(View.VISIBLE);
             so_tv_id_val.setText(roomObjSo.getSo_id());
         }
-
+        //
         if(roomObjSo.getSo_pipeline() == null || roomObjSo.getSo_pipeline().isEmpty()){
-            so_tv_pipeline_lbl.setVisibility(View.GONE);
-            so_tv_pipeline_val.setVisibility(View.GONE);
+            so_ll_pipeline.setVisibility(View.GONE);
         }else {
-            so_tv_pipeline_lbl.setVisibility(View.VISIBLE);
-            so_tv_pipeline_val.setVisibility(View.VISIBLE);
+            so_ll_pipeline.setVisibility(View.VISIBLE);
             so_tv_pipeline_val.setText(roomObjSo.getSo_pipeline());
         }
-
+        //
+        if(roomObjSo.getSo_desc() == null || roomObjSo.getSo_desc().isEmpty()){
+            so_ll_desc.setVisibility(View.GONE);
+        }else {
+            so_ll_desc.setVisibility(View.VISIBLE);
+            so_tv_desc_val.setText(roomObjSo.getSo_desc());
+        }
+        //
+        if(roomObjSo.getSo_brand_model_color() == null || roomObjSo.getSo_brand_model_color().isEmpty()){
+            so_ll_brand_model_color.setVisibility(View.GONE);
+        }else {
+            so_ll_brand_model_color.setVisibility(View.VISIBLE);
+            so_tv_brand_model_color_val.setText(roomObjSo.getSo_brand_model_color());
+        }
+        //
+        so_tv_status_val.setText(roomObjSo.getSo_status());
+        //
+        so_tv_deadline_val.setText(ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(roomObjSo.getSo_deadline()),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+        ));
+        //
+        so_tv_site_val.setText(roomObjSo.getSo_site());
+        so_tv_operation_val.setText(roomObjSo.getSo_operation());
+        //
+        if(roomObjSo.getSo_contract_po() == null || roomObjSo.getSo_contract_po().isEmpty()){
+            so_cl_purchase_order.setVisibility(View.GONE);
+        }else {
+            so_cl_purchase_order.setVisibility(View.VISIBLE);
+            so_tv_purchase_order_val.setText(roomObjSo.getSo_contract_po());
+        }
+        //
+        if(roomObjSo.getSo_client() == null || roomObjSo.getSo_client().isEmpty()){
+            so_ll_external_customer.setVisibility(View.GONE);
+        }else {
+            so_ll_external_customer.setVisibility(View.VISIBLE);
+            so_tv_external_customer_val.setText(roomObjSo.getSo_client());
+        }
+        //
+        if(roomObjSo.getSo_product_id() == null || roomObjSo.getSo_product_id().isEmpty()){
+            so_ll_product.setVisibility(View.GONE);
+        }else {
+            so_ll_product.setVisibility(View.VISIBLE);
+            so_tv_product_val.setText(roomObjSo.getSo_product_id() + " - " + roomObjSo.getSo_product_desc());
+        }
+        //
+        so_tv_serial_val.setText(roomObjSo.getSo_serial());
+        so_tv_segment_val.setText(roomObjSo.getSo_segment());
+        so_tv_category_val.setText(roomObjSo.getSo_category_price());
+        //
         so_btn_join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callSOFlow();
             }
         });
-
-        if(roomObjSo.getSo_desc() == null || roomObjSo.getSo_desc().isEmpty()){
-            so_tv_desc_lbl.setVisibility(View.GONE);
-            so_tv_desc_val.setVisibility(View.GONE);
-        }else {
-            so_tv_desc_lbl.setVisibility(View.VISIBLE);
-            so_tv_desc_val.setVisibility(View.VISIBLE);
-            so_tv_desc_val.setText(roomObjSo.getSo_desc());
-        }
-
-
-        so_tv_status_val.setText(roomObjSo.getSo_status());
-
-        so_tv_deadline_val.setText(ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(roomObjSo.getSo_deadline()),
-                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-        ));
-
-        so_tv_site_val.setText(roomObjSo.getSo_site());
-        so_tv_operation_val.setText(roomObjSo.getSo_operation());
-
-        if(roomObjSo.getSo_contract_po() == null || roomObjSo.getSo_contract_po().isEmpty()){
-            so_tv_purchase_order_lbl.setVisibility(View.GONE);
-            so_tv_purchase_order_val.setVisibility(View.GONE);
-        }else {
-            so_tv_purchase_order_lbl.setVisibility(View.VISIBLE);
-            so_tv_purchase_order_val.setVisibility(View.VISIBLE);
-            so_tv_purchase_order_val.setText(roomObjSo.getSo_contract_po());
-        }
-
-        if(roomObjSo.getSo_client() == null || roomObjSo.getSo_client().isEmpty()){
-            so_tv_external_customer_lbl.setVisibility(View.GONE);
-            so_tv_external_customer_val.setVisibility(View.GONE);
-        }else {
-            so_tv_external_customer_lbl.setVisibility(View.VISIBLE);
-            so_tv_external_customer_val.setVisibility(View.VISIBLE);
-            so_tv_external_customer_val.setText(roomObjSo.getSo_client());
-        }
-
-        if(roomObjSo.getSo_product_id() == null || roomObjSo.getSo_product_id().isEmpty()){
-            so_tv_product_lbl.setVisibility(View.GONE);
-            so_tv_product_val.setVisibility(View.GONE);
-        }else {
-            so_tv_product_lbl.setVisibility(View.VISIBLE);
-            so_tv_product_val.setVisibility(View.VISIBLE);
-            so_tv_product_val.setText(roomObjSo.getSo_product_id() + " - " + roomObjSo.getSo_product_desc());
-        }
-
-        so_tv_serial_val.setText(roomObjSo.getSo_serial());
-        so_tv_segment_val.setText(roomObjSo.getSo_segment());
-        so_tv_category_val.setText(roomObjSo.getSo_category_price());
-
-        builder
-//                .setTitle(hmAux_Trans.get("alert_so_info_ttl"))
-                .setView(view)
-                .setCancelable(true);
+        //
+        builder.setView(view).setCancelable(true);
         //
         builder.show();
     }
@@ -3028,8 +3034,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 hmAux_Trans.get("sys_alert_btn_ok")
         );
     }
-
-    private void updatePD(String ttl, String msg) {
+    @Override
+    public void updatePD(String ttl, String msg) {
         progressDialog.setTitle(ttl);
         progressDialog.setMessage(msg);
     }
@@ -3084,6 +3090,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     null,
                     0
             );
+            //
+            progressDialog.dismiss();
         } else if (ws_process.equalsIgnoreCase(WS_Room_AP.class.getSimpleName())) {
             setWSProcess("");
 
@@ -3091,6 +3099,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             bundle.putString(Constant.CHAT_RELOAD, "1");
             //
             callAct034(context);
+            //
+            progressDialog.dismiss();
         } else if (ws_process.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())) {
             setWSProcess("");
             //
@@ -3103,15 +3113,17 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             }
             //
             callAct070(bundle);
+            //
+            progressDialog.dismiss();
         }else if(ws_process.equals(WS_Serial_Search.class.getName())){
             mPresenter.extractSearchResult(mLink, roomObjSo);
         } else if (ws_process.equalsIgnoreCase(WS_SO_Search.class.getName())) {
             mPresenter.processSoDownloadResult(hmAux, String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
+            progressDialog.dismiss();
         }else {
             setWSProcess("");
+            progressDialog.dismiss();
         }
-
-        progressDialog.dismiss();
     }
 
     @Override
