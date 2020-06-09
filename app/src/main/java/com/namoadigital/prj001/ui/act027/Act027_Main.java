@@ -2539,6 +2539,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             executeSerialSave(isSoSaveLinked);
         } else {
             ToolBox_Inf.showNoConnectionDialog(context);
+            resetSoCreateRoomFlag();
         }
     }
 
