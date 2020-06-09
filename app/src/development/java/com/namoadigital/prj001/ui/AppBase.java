@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui;
 
 import android.app.Application;
-import android.os.Environment;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
@@ -71,8 +70,7 @@ public class AppBase extends Application {
         });
         //
         // Infra PATH
-        DB_PATH = Environment
-                .getExternalStorageDirectory().getPath() + "/namoa";
+        DB_PATH = getApplicationContext().getExternalFilesDir(null) + "/namoa";
         ZIP_PATH = DB_PATH + "/zips";
         IMG_PATH = DB_PATH + "/imgs";
         THU_PATH = DB_PATH + "/thumbnail";
