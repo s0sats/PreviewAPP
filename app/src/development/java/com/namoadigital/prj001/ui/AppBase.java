@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui;
 
 import android.app.Application;
-import android.os.Environment;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
@@ -71,8 +70,7 @@ public class AppBase extends Application {
         });
         //
         // Infra PATH
-        DB_PATH = Environment
-                .getExternalStorageDirectory().getPath() + "/namoa";
+        DB_PATH = getApplicationContext().getExternalFilesDir(null) + "/namoa";
         ZIP_PATH = DB_PATH + "/zips";
         IMG_PATH = DB_PATH + "/imgs";
         THU_PATH = DB_PATH + "/thumbnail";
@@ -98,10 +96,10 @@ public class AppBase extends Application {
         CHAT_PREFIX = "chat_";
         CHAT_NAME_FULL = CHAT_PATH + "/" + CHAT_PREFIX;
 
-        CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";
-        CACHE_PATH_PHOTO = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PHOTO";
-        CACHE_CHAT_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_CHAT";
-        CACHE_PDF = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PDF";
+        CACHE_PATH = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE";
+        CACHE_PATH_PHOTO = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE_PHOTO";
+        CACHE_CHAT_PATH = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE_CHAT";
+        CACHE_PDF = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE_PDF";
 
         DB_NAME_BASE = "namoa_sms.db3";
         DB_VERSION_BASE = 10;
