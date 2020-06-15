@@ -37,6 +37,8 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_SO_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save_so.ws";
     public static final String WS_SO_PACK_SERVICE = "https://portal.namoadigital.com/ws/prj001/server_sm_so_pack_service_new_app.ws";
     public static final String WS_SO_PRODUCT_EVENT_CANCEL = "https://portal.namoadigital.com/ws/prj001/server_sm_so_product_event_cancel.ws";
+    public static final String WS_SO_NEXT_ORDERS = "https://portal.namoadigital.com/ws/prj001/server_sm_so_to_be_executed.ws";
+    public static final String WS_SO_CREATE_ROOM = "https://portal.namoadigital.com/ws/prj001/server_sm_so_create_room.ws";
     //IO
     public static final String WS_IO_SERIAL_PROCESS_SEARCH = "https://portal.namoadigital.com/ws/prj001/io/server_product_serial.ws";
     public static final String WS_IO_SERIAL_PROCESS_DOWNLOAD = "https://portal.namoadigital.com/ws/prj001/io/server_product_serial_obj.ws";
@@ -73,7 +75,6 @@ public class Constant extends ConstantBaseApp {
 
     public static final String WS_SERIAL_LOG = "https://portal.namoadigital.com/ws/prj001/server_serial_log.ws";
     public static final String WS_GENERATE_FORM_PDF = "https://portal.namoadigital.com/ws/prj001/server_checklist_url.ws";
-    public static final String WS_SO_NEXT_ORDERS = "https://portal.namoadigital.com/ws/prj001/server_sm_so_to_be_executed.ws";
 
     public static final String WEB_SOCKET_CHAT = "https://nchat.namoadigital.com";
     public static final String WS_UPLOAD_NODE_CHAT = "https://nchat.namoadigital.com/messageFile";
