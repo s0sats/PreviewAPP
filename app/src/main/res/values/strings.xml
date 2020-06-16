@@ -110,5 +110,7 @@
     <string name="msg_update_required_warning">New version available!\nTo update, please submit pending data.</string>
     <string name="notification_channel_name">Channel Name</string>
     <string name="notification_channel_description">Channel Description</string>
+    <string name="pendency_channel_name">Pendencias de envio</string>
+    <string name="pendency_channel_description">Pendencias de envio dexc</string>
 
 </resources>

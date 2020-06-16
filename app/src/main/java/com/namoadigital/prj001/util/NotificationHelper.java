@@ -99,6 +99,7 @@ public class NotificationHelper {
         builder.setCustomContentView(notificationLayout);
         builder.setCustomBigContentView(notificationLayoutExpanded);
 
+
 //        RemoteViews view = new RemoteViews(context.context.getPackageName(), R.layout.sv_resume_notification);
         String gps_searching_location = hmAux_Trans.get("gps_searching_location");
         //
@@ -119,14 +120,14 @@ public class NotificationHelper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = notificationManager.getNotificationChannel(ConstantBaseApp.GENERIC_CHANNEL_ID);
             if (notificationChannel == null) {
-                CharSequence name = context.getString(R.string.notification_channel_name);
-                String description = context.getString(R.string.notification_channel_description);
-                int importance = NotificationManager.IMPORTANCE_DEFAULT;
-                NotificationChannel channel = new NotificationChannel(ConstantBaseApp.GENERIC_CHANNEL_ID, name, importance);
+                CharSequence name = context.getString(R.string.pendency_channel_name);
+                String description = context.getString(R.string.pendency_channel_description);
+                int importance = NotificationManager.IMPORTANCE_LOW;
+                NotificationChannel channel = new NotificationChannel(ConstantBaseApp.PENDENCY_CHANNEL_ID, name, importance);
                 channel.setDescription(description);
                 notificationManager.createNotificationChannel(channel);
             }
-            builder = new NotificationCompat.Builder(context, ConstantBaseApp.GENERIC_CHANNEL_ID);
+            builder = new NotificationCompat.Builder(context, ConstantBaseApp.PENDENCY_CHANNEL_ID);
         } else {
             builder = new NotificationCompat.Builder(context);
         }
