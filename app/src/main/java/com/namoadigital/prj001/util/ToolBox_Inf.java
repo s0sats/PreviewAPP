@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -241,6 +242,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 
 /**
@@ -399,6 +401,7 @@ public class ToolBox_Inf {
      */
     @Nullable
     private static String CarrierInfo(Context context) {
+        //todo permission check READ_PHONE_STATE
         try {
             TelephonyManager tm = (TelephonyManager) context
                 .getSystemService(Context.TELEPHONY_SERVICE);
@@ -1640,7 +1643,7 @@ public class ToolBox_Inf {
                 0
         );
         //
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder builder = getNotificationBuilder(context, nm);
         builder.setSmallIcon(R.drawable.sync_notification_animation);
         builder.setAutoCancel(false);
         builder.setContentTitle(context.getString(R.string.title_notification_generic));
@@ -1656,6 +1659,29 @@ public class ToolBox_Inf {
         } else {
             nm.notify(id, builder.getNotification());
         }
+    }
+
+    @NonNull
+    public static NotificationCompat.Builder getNotificationBuilder(Context context, NotificationManager notificationManager) {
+        NotificationCompat.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(GENERIC_CHANNEL_ID);
+            if(notificationChannel == null) {
+                CharSequence name = context.getString(R.string.notification_channel_name);
+                String description = context.getString(R.string.notification_channel_description);
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                NotificationChannel channel = new NotificationChannel(GENERIC_CHANNEL_ID, name, importance);
+                channel.setDescription(description);
+                notificationManager.createNotificationChannel(channel);
+            }
+            notificationChannel.setName(context.getString(R.string.notification_channel_name));
+            notificationChannel.setDescription(context.getString(R.string.notification_channel_description));
+            notificationManager.createNotificationChannel(notificationChannel);
+            builder = new NotificationCompat.Builder(context, GENERIC_CHANNEL_ID);
+        }else{
+            builder = new NotificationCompat.Builder(context);
+        }
+        return builder;
     }
 
     public static String getResourceCode(Context context, String module_code, String resource_name) {
@@ -2805,7 +2831,7 @@ public class ToolBox_Inf {
         for (HMAux cust : customers_vs_total) {
             StringBuilder sbFinal = new StringBuilder();
             //
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+            NotificationCompat.Builder builder = getNotificationBuilder(context, nm);
             builder.setSmallIcon(R.drawable.ic_calendario);
             builder.setAutoCancel(true);
             //
@@ -2900,7 +2926,7 @@ public class ToolBox_Inf {
         NotificationManager nm = (NotificationManager)
             context.getSystemService(NOTIFICATION_SERVICE);
         //
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder builder = getNotificationBuilder(context, nm);
         builder.setSmallIcon(R.drawable.ic_calendario);
         builder.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
         builder.setCustomContentView(notificationLayoutSmall);
@@ -3117,15 +3143,17 @@ public class ToolBox_Inf {
                 }
                 break;
         }
+        NotificationManager mNotifyManager =
+                (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         //Se Id encontrado gera notificação, se não, não.
         if (animation != -1) {
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(context)
-                            .setSmallIcon(animation)
-                            .setContentTitle(title)
-                            .setContentText(msg)
-                            .setTicker("");
-
+            NotificationCompat.Builder mBuilder = getNotificationBuilder(context, mNotifyManager);
+            //
+            mBuilder.setSmallIcon(animation)
+                    .setContentTitle(title)
+                    .setContentText(msg)
+                    .setTicker("");
+            //
             mBuilder.setAutoCancel(true);
             //18/07/2018
             //A notificação de upload agoranão é mais cancelavel
@@ -3133,9 +3161,6 @@ public class ToolBox_Inf {
                 mBuilder.setAutoCancel(false);
                 mBuilder.setOngoing(true);
             }
-
-            NotificationManager mNotifyManager =
-                    (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
 
             mNotifyManager.notify(notification_id, mBuilder.build());
 
@@ -4731,7 +4756,7 @@ public class ToolBox_Inf {
         //
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         //
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder builder = getNotificationBuilder(context, nm);
         builder.setAutoCancel(true);
         builder.setSmallIcon(R.drawable.ic_chat_24x24);
         builder.setColor(context.getResources().getColor(R.color.namoa_color_success_green));
@@ -4797,7 +4822,7 @@ public class ToolBox_Inf {
                 mIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder builder = getNotificationBuilder(context, nm);
         builder.setAutoCancel(true);
         builder.setSmallIcon(R.drawable.ic_chat_24x24);
         builder.setColor(context.getResources().getColor(R.color.namoa_color_success_green));

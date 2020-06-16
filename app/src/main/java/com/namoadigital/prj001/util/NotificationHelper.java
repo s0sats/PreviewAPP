@@ -1,8 +1,10 @@
 package com.namoadigital.prj001.util;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
@@ -87,8 +89,9 @@ public class NotificationHelper {
         notificationLayout.setTextViewText(R.id.tv_location_val, formatLocationPendencies);
         notificationLayout.setTextViewText(R.id.tv_file_upload_val, formatFileUploadPendencies);
         notificationLayout.setTextViewText(R.id.tv_update_required_val, updatePendencies);
+        NotificationCompat.Builder builder;
+        builder = getNotificationBuilder(nm);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.drawable.namoa_logo_white24x24);
         builder.setOngoing(true);
         builder.setContentTitle(context.getString(R.string.title_notification_generic));
@@ -104,14 +107,30 @@ public class NotificationHelper {
         int totalPendency = locationPendencies + fileUploadPendencies + updatePendenciesCount;
         //
         if (totalPendency > 0) {
-            if (versao >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                nm.notify(LOCATION_NOTIFICATION_ID, builder.build());
-            } else {
-                nm.notify(LOCATION_NOTIFICATION_ID, builder.getNotification());
-            }
+            nm.notify(LOCATION_NOTIFICATION_ID, builder.build());
         } else {
             ToolBox_Inf.cancelNotification(context, LOCATION_NOTIFICATION_ID);
         }
+    }
+
+    @NonNull
+    private NotificationCompat.Builder getNotificationBuilder(NotificationManager notificationManager) {
+        NotificationCompat.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(ConstantBaseApp.GENERIC_CHANNEL_ID);
+            if (notificationChannel == null) {
+                CharSequence name = context.getString(R.string.notification_channel_name);
+                String description = context.getString(R.string.notification_channel_description);
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                NotificationChannel channel = new NotificationChannel(ConstantBaseApp.GENERIC_CHANNEL_ID, name, importance);
+                channel.setDescription(description);
+                notificationManager.createNotificationChannel(channel);
+            }
+            builder = new NotificationCompat.Builder(context, ConstantBaseApp.GENERIC_CHANNEL_ID);
+        } else {
+            builder = new NotificationCompat.Builder(context);
+        }
+        return builder;
     }
 
 
