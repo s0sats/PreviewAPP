@@ -105,8 +105,8 @@
     <string name="install_app_error_msg"> Fehler bei der Aktualisierung der App!\nBitte erneut über die Synchronisation versuchen.</string>
     <string name="msg_customer_pendencies_list">Account :\n</string>
     <string name="msg_update_required_warning">Neue Version verfügbar!\nSenden Sie bitte die ausstehende Daten, um aktualisieren zu können.</string>
-    <string name="notification_channel_name">Kanal Name</string>
-    <string name="notification_channel_description">Kanal Beschreibung</string>
-    <string name="pendency_channel_name">Pendencias de envio</string>
-    <string name="pendency_channel_description">Pendencias de envio dexc</string>
+    <string name="notification_channel_name">Namoa Benachrichtigungsinfo</string>
+    <string name="notification_channel_description">Allgemeine Benachrichtigungsinformationen für Namoa</string>
+    <string name="pendency_channel_name">Namoa Abhängigkeitsinfo</string>
+    <string name="pendency_channel_description">Einstellungen für die Namoa-Abhängigkeitsbenachrichtigung</string>
 </resources>

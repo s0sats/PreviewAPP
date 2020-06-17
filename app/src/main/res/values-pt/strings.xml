@@ -107,9 +107,9 @@
     <string name="install_app_error_msg">Erro ao atualizar o aplicativo!\nTente novamente !</string>
     <string name="msg_customer_pendencies_list">Cliente :\n</string>
     <string name="msg_update_required_warning">Nova versão disponível!\nPara atualizar, envie os dados pendentes.</string>
-    <string name="notification_channel_name">Nome do Canal</string>
-    <string name="notification_channel_description">Descrição de Canal</string>
-    <string name="pendency_channel_name">Pendencias de envio</string>
-    <string name="pendency_channel_description">Pendencias de envio dexc</string>
+    <string name="notification_channel_name">Informações de Notificação</string>
+    <string name="notification_channel_description">Preferencias para Notificações.</string>
+    <string name="pendency_channel_name">Pendencias de Envio Namoa</string>
+    <string name="pendency_channel_description">Configurações de notificação de pendência da Namoa</string>
 
 </resources>
