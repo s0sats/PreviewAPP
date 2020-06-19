@@ -1,10 +1,13 @@
 package com.namoadigital.prj001.ui;
 
 import android.app.Application;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.receiver.WBR_Connections_Change;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -154,5 +157,13 @@ public class AppBase extends Application {
          * Migração target28+
          */
         ConstantBase.AUTHORITIES_FOR_PROVIDER = BuildConfig.APPLICATION_ID + ".fileprovider";
+        registerConnectionsChanges();
     }
+
+    private void registerConnectionsChanges() {
+        WBR_Connections_Change connectionsChange = new WBR_Connections_Change();
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(connectionsChange,intentFilter);
+    }
+
 }
