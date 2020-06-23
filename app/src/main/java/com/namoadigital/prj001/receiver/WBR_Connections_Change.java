@@ -25,7 +25,11 @@ public class WBR_Connections_Change extends BroadcastReceiver {
 
         if (!status.equalsIgnoreCase("NO_SERVICE")) {
             if (!ToolBox_Con.getPreference_Service(context).equals("NO_SERVICE")) {
-                activateUpload(context);
+                /**
+                 * TESTE UPLOAD VIA WORKER
+                 * APENAS TESTES , REMOVER APÓS TESTAR 22/06/2020
+                 */
+                //activateUpload(context);
                 activateCleanning(context);
                 //
                 activateDownLoadPDF(context);

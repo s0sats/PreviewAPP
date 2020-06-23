@@ -48,6 +48,14 @@ import android.widget.RemoteViews;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.work.BackoffPolicy;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -193,6 +201,7 @@ import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
+import com.namoadigital.prj001.worker.Work_Upload_Img;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -232,6 +241,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -3045,7 +3055,8 @@ public class ToolBox_Inf {
     }
 
     public static boolean isUploadRunning() {
-        if (WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING || WBR_Upload_Img_Chat.IS_RUNNING || WBR_Upload_Other_User_Img.IS_RUNNING) {
+      //  if (WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING || WBR_Upload_Img_Chat.IS_RUNNING || WBR_Upload_Other_User_Img.IS_RUNNING) {
+        if (Work_Upload_Img.IS_RUNNING || WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING || WBR_Upload_Img_Chat.IS_RUNNING || WBR_Upload_Other_User_Img.IS_RUNNING) {
             return true;
         }
         return false;
@@ -7091,5 +7102,36 @@ public class ToolBox_Inf {
             formmattedTicketSeqExec += " ["+ticketPrefix+"."+ticketCode+"]";
         }
         return formmattedTicketSeqExec;
+    }
+
+    public static void scheduleUploadImgWork(Context context){
+        Data inputData =
+            new Data.Builder().putLong(
+                Constant.LOGIN_CUSTOMER_CODE,
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).build();
+        //
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workUploadImgRequest =
+                new OneTimeWorkRequest.Builder(Work_Upload_Img.class)
+                    .setInputData(inputData)
+                    .setBackoffCriteria(
+                        BackoffPolicy.LINEAR,
+                        5,
+                        TimeUnit.MINUTES
+                    )
+                    .setConstraints(constraints)
+                    .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_Upload_Img.WORKER_TAG,
+                ExistingWorkPolicy.KEEP,
+                workUploadImgRequest
+            );
     }
 }

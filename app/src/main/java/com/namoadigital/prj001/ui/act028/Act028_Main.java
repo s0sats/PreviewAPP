@@ -58,7 +58,6 @@ import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Set_Service_For_Edit;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.WS_SO_Get_Service_For_Edit;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Set_Service_For_Edit;
@@ -839,12 +838,22 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     }
 
     private void activateUpload(Context context) {
-        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
+        /**
+         *
+
+         * TESTE UPLOAD VIA WORKER
+         *
+         * APENAS TESTES , REMOVER APÓS TESTAR 22/06/2020
+         *
+         *
+         */
+        /*Intent mIntent = new Intent(context, WBR_Upload_Img.class);
         Bundle bundle = new Bundle();
         bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
         mIntent.putExtras(bundle);
         //
-        context.sendBroadcast(mIntent);
+        context.sendBroadcast(mIntent);*/
+        ToolBox_Inf.scheduleUploadImgWork(context);
     }
 
     @Override
