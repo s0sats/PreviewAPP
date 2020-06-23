@@ -1668,14 +1668,11 @@ public class ToolBox_Inf {
             NotificationChannel notificationChannel = notificationManager.getNotificationChannel(GENERIC_CHANNEL_ID);
             if(notificationChannel == null) {
                 CharSequence name = context.getString(R.string.notification_channel_name);
-                String description = context.getString(R.string.notification_channel_description);
                 int importance = NotificationManager.IMPORTANCE_DEFAULT;
                 NotificationChannel channel = new NotificationChannel(GENERIC_CHANNEL_ID, name, importance);
-                channel.setDescription(description);
                 notificationManager.createNotificationChannel(channel);
             }
             notificationChannel.setName(context.getString(R.string.notification_channel_name));
-            notificationChannel.setDescription(context.getString(R.string.notification_channel_description));
             notificationManager.createNotificationChannel(notificationChannel);
             builder = new NotificationCompat.Builder(context, GENERIC_CHANNEL_ID);
         }else{

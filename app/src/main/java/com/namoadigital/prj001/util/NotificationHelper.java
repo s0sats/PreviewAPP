@@ -121,10 +121,8 @@ public class NotificationHelper {
             NotificationChannel notificationChannel = notificationManager.getNotificationChannel(ConstantBaseApp.GENERIC_CHANNEL_ID);
             if (notificationChannel == null) {
                 CharSequence name = context.getString(R.string.pendency_channel_name);
-                String description = context.getString(R.string.pendency_channel_description);
                 int importance = NotificationManager.IMPORTANCE_LOW;
                 NotificationChannel channel = new NotificationChannel(ConstantBaseApp.PENDENCY_CHANNEL_ID, name, importance);
-                channel.setDescription(description);
                 notificationManager.createNotificationChannel(channel);
             }
             builder = new NotificationCompat.Builder(context, ConstantBaseApp.PENDENCY_CHANNEL_ID);
