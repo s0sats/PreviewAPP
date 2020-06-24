@@ -21,7 +21,8 @@ public class WBR_BootCompleted extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         ToolBox_Inf.reprogramAlarms(context);
-        ToolBox_Inf.reprogramAlarms_Full_Quarter(context);
+        //TODO APAGAR APÓS SUBSTITUIR PELOS WORKERS
+        //ToolBox_Inf.reprogramAlarms_Full_Quarter(context);
 
         if(/*ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) && */ToolBox_Inf.isUsrAppLogged(context) && ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_OK)){
             if(!AppBackgroundService.isRunning) {

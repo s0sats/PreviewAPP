@@ -52,9 +52,11 @@ import android.widget.TextView;
 import androidx.work.BackoffPolicy;
 import androidx.work.Constraints;
 import androidx.work.Data;
+import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import com.google.gson.Gson;
@@ -202,6 +204,7 @@ import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
+import com.namoadigital.prj001.worker.Work_Quarter_Schedule_Notification;
 import com.namoadigital.prj001.worker.Work_Upload_Img;
 
 import org.json.JSONException;
@@ -2652,105 +2655,106 @@ public class ToolBox_Inf {
     }
 
     public static void reprogramAlarms_Full_Quarter(Context context) {
-        AlarmManager am = (AlarmManager)
-                context.getSystemService(Context.ALARM_SERVICE);
-
-        Calendar calendarAux = Calendar.getInstance();
-        //
-        calendarAux.set(
-                Calendar.HOUR,
-                calendarAux.get(Calendar.HOUR) + 1
-        );
-        //
-        calendarAux.set(
-                Calendar.MINUTE,
-                0
-        );
-        //
-        calendarAux.set(
-                Calendar.SECOND,
-                0
-        );
-        //Para Debug
+//        AlarmManager am = (AlarmManager)
+//                context.getSystemService(Context.ALARM_SERVICE);
+//
+//        Calendar calendarAux = Calendar.getInstance();
+//        //
+//        calendarAux.set(
+//                Calendar.HOUR,
+//                calendarAux.get(Calendar.HOUR) + 1
+//        );
+//        //
+//        calendarAux.set(
+//                Calendar.MINUTE,
+//                0
+//        );
+//        //
 //        calendarAux.set(
 //                Calendar.SECOND,
-//                calendarAux.get(Calendar.SECOND) + 10
+//                0
 //        );
+//        //Para Debug
+////        calendarAux.set(
+////                Calendar.SECOND,
+////                calendarAux.get(Calendar.SECOND) + 10
+////        );
+//
+//        /**
+//         * Alarme a cada 4 horas
+//         */
+//        Intent mIntent_Full = new Intent(context,
+//                WBR_AL_Full.class
+//        );
+//        //
+//        boolean isWorking = (PendingIntent.getBroadcast(
+//                context,
+//                //100,
+//                ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
+//                mIntent_Full,
+//                PendingIntent.FLAG_NO_CREATE) != null
+//        );
+//
+//        Log.d("ALARM", String.valueOf(isWorking));
+//
+//        if (!isWorking) {
+//            PendingIntent pi_full = PendingIntent.getBroadcast(
+//                    context,
+//                    //100,
+//                    ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
+//                    mIntent_Full,
+//                    0
+//            );
+//            //
+//            am.setInexactRepeating(
+//                    AlarmManager.RTC_WAKEUP,
+//                    calendarAux.getTimeInMillis(),
+//                    (1000 * 60 * 60 * 4),
+//                    pi_full
+//            );
+//        }
+//
+//        calendarAux = Calendar.getInstance();
+//
+//        calendarAux.set(
+//                Calendar.SECOND,
+//                calendarAux.get(Calendar.SECOND) + 15
+//        );
+//
+//        /**
+//         * Alarme a cada 15 minutos
+//         */
+//        Intent mIntent_Quarter = new Intent(context,
+//                WBR_AL_Quarter.class
+//        );
+//        //
+//        isWorking = (PendingIntent.getBroadcast(
+//                            context,
+//                        //200,
+//                        ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
+//                        mIntent_Quarter,
+//                        PendingIntent.FLAG_NO_CREATE) != null
+//                    );
+//
+//        Log.d("ALARM", String.valueOf(isWorking));
+//
+//        if (!isWorking) {
+//            PendingIntent pi_Quarter = PendingIntent.getBroadcast(
+//                    context,
+//                    //200,
+//                    ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
+//                    mIntent_Quarter,
+//                    0
+//            );
+//            //
+//            am.setInexactRepeating(
+//                    AlarmManager.RTC_WAKEUP,
+//                    calendarAux.getTimeInMillis(),
+//                    (1000 * 60 * 15),
+//                    pi_Quarter
+//            );
+//        }
 
-        /**
-         * Alarme a cada 4 horas
-         */
-        Intent mIntent_Full = new Intent(context,
-                WBR_AL_Full.class
-        );
-        //
-        boolean isWorking = (PendingIntent.getBroadcast(
-                context,
-                //100,
-                ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
-                mIntent_Full,
-                PendingIntent.FLAG_NO_CREATE) != null
-        );
-
-        Log.d("ALARM", String.valueOf(isWorking));
-
-        if (!isWorking) {
-            PendingIntent pi_full = PendingIntent.getBroadcast(
-                    context,
-                    //100,
-                    ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
-                    mIntent_Full,
-                    0
-            );
-            //
-            am.setInexactRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    calendarAux.getTimeInMillis(),
-                    (1000 * 60 * 60 * 4),
-                    pi_full
-            );
-        }
-
-        calendarAux = Calendar.getInstance();
-
-        calendarAux.set(
-                Calendar.SECOND,
-                calendarAux.get(Calendar.SECOND) + 15
-        );
-
-        /**
-         * Alarme a cada 15 minutos
-         */
-        Intent mIntent_Quarter = new Intent(context,
-                WBR_AL_Quarter.class
-        );
-        //
-        isWorking = (PendingIntent.getBroadcast(
-                            context,
-                        //200,
-                        ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
-                        mIntent_Quarter,
-                        PendingIntent.FLAG_NO_CREATE) != null
-                    );
-
-        Log.d("ALARM", String.valueOf(isWorking));
-
-        if (!isWorking) {
-            PendingIntent pi_Quarter = PendingIntent.getBroadcast(
-                    context,
-                    //200,
-                    ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
-                    mIntent_Quarter,
-                    0
-            );
-            //
-            am.setInexactRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    calendarAux.getTimeInMillis(),
-                    (1000 * 60 * 15),
-                    pi_Quarter
-            );
-        }
     }
 
     /**
@@ -7146,8 +7150,8 @@ public class ToolBox_Inf {
                     .setInputData(inputData)
                     .setBackoffCriteria(
                         BackoffPolicy.LINEAR,
-                        5,
-                        TimeUnit.MINUTES
+                        10,
+                        TimeUnit.SECONDS
                     )
                     .setConstraints(constraints)
                     .build();
@@ -7155,8 +7159,32 @@ public class ToolBox_Inf {
         WorkManager.getInstance()
             .enqueueUniqueWork(
                 Work_Upload_Img.WORKER_TAG,
-                ExistingWorkPolicy.KEEP,
+                ExistingWorkPolicy.REPLACE,
                 workUploadImgRequest
+            );
+    }
+
+
+    public static void reprogramQuarterScheduleNotification(){
+        //Periodicidade
+        //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
+        PeriodicWorkRequest  workQuarterScheduleNotification =
+             new PeriodicWorkRequest.Builder(
+                 Work_Quarter_Schedule_Notification.class,
+                 15 , TimeUnit.MINUTES //Periodicidade
+                 //,5,  TimeUnit.MINUTES //Flexibilidade
+             )
+             .setBackoffCriteria(
+                 BackoffPolicy.LINEAR,
+                 PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                 TimeUnit.MILLISECONDS)
+             .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniquePeriodicWork(
+                Work_Quarter_Schedule_Notification.WORKER_TAG,
+                ExistingPeriodicWorkPolicy.KEEP,
+                workQuarterScheduleNotification
             );
     }
 }

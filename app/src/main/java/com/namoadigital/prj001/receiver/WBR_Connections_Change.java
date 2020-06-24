@@ -25,11 +25,12 @@ public class WBR_Connections_Change extends BroadcastReceiver {
 
         if (!status.equalsIgnoreCase("NO_SERVICE")) {
             if (!ToolBox_Con.getPreference_Service(context).equals("NO_SERVICE")) {
+                //TODO DESCOMENTAR E REVISAR APÓS CRIAÇÃO DOS WORKERS
                 /**
                  * TESTE UPLOAD VIA WORKER
                  * APENAS TESTES , REMOVER APÓS TESTAR 22/06/2020
-                 */
-                //activateUpload(context);
+
+                activateUpload(context);
                 activateCleanning(context);
                 //
                 activateDownLoadPDF(context);
@@ -42,12 +43,13 @@ public class WBR_Connections_Change extends BroadcastReceiver {
                 activateLocationService(context);
                 //
                 ToolBox_Inf.cleanOldSyncChecklistData(context);
+                 */
             }
         }
 
         if (ToolBox_Inf.isUsrAppLogged(context) && !ScreenStatusService.isRunning) {
             Intent mIntent = new Intent(context, ScreenStatusService.class);
-            context.startService(mIntent);
+//            context.startService(mIntent);
         }
         ToolBox_Inf.callPendencyNotification(context);
     }

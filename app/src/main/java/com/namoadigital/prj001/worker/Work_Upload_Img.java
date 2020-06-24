@@ -2,6 +2,7 @@ package com.namoadigital.prj001.worker;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
@@ -30,6 +31,7 @@ public class Work_Upload_Img extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        Log.d("workerTsts", WORKER_TAG + ": doWork");
         long customer_code = -1L;
         try {
             customer_code = getInputData().getLong(Constant.LOGIN_CUSTOMER_CODE,-1);
@@ -56,6 +58,7 @@ public class Work_Upload_Img extends Worker {
             );
             //SE NENHUM ITEM A ENVIAR, SAI DO SERVIÇO SEM CHAMAR NOTIFICAÇÃO
             if (geFiles.size() == 0) {
+                Log.d("workerTsts", WORKER_TAG + ": Nothing to send");
                 return Result.success();
             }
             //Verifica necessida de notificação de upload
@@ -102,9 +105,11 @@ public class Work_Upload_Img extends Worker {
                 }
             }
             //
+            Log.d("workerTsts", WORKER_TAG + ": Img sent");
             return Result.success();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
+            Log.d("workerTsts", WORKER_TAG + ": Error retry");
             return Result.retry();
         } finally {
             ToolBox_Inf.callPendencyNotification(getApplicationContext());
@@ -125,4 +130,9 @@ public class Work_Upload_Img extends Worker {
         );
     }
 
+    @Override
+    public void onStopped() {
+        super.onStopped();
+        Log.d("workerTsts", WORKER_TAG + ": onStopped");
+    }
 }
