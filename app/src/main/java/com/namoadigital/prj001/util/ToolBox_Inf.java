@@ -131,8 +131,6 @@ import com.namoadigital.prj001.model.T_IO_Inbound_Item_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
 import com.namoadigital.prj001.receiver.NotificationReceiver;
-import com.namoadigital.prj001.receiver.WBR_AL_Full;
-import com.namoadigital.prj001.receiver.WBR_AL_Quarter;
 import com.namoadigital.prj001.receiver.WBR_Cleanning;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
@@ -204,6 +202,8 @@ import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
+import com.namoadigital.prj001.worker.Work_Cleanning_Data;
+import com.namoadigital.prj001.worker.Work_Four_Hour_Schedule_Notification;
 import com.namoadigital.prj001.worker.Work_Quarter_Schedule_Notification;
 import com.namoadigital.prj001.worker.Work_Upload_Img;
 
@@ -7165,7 +7165,7 @@ public class ToolBox_Inf {
     }
 
 
-    public static void reprogramQuarterScheduleNotification(){
+    public static void scheduleQuarterScheduleNotification(){
         //Periodicidade
         //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
         PeriodicWorkRequest  workQuarterScheduleNotification =
@@ -7185,6 +7185,53 @@ public class ToolBox_Inf {
                 Work_Quarter_Schedule_Notification.WORKER_TAG,
                 ExistingPeriodicWorkPolicy.KEEP,
                 workQuarterScheduleNotification
+            );
+    }
+
+    public static void schedule4HoursScheduleNotification(){
+        //Periodicidade
+        //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
+        PeriodicWorkRequest  work4HoursScheduleNotification =
+            new PeriodicWorkRequest.Builder(
+                Work_Four_Hour_Schedule_Notification.class,
+                4 , TimeUnit.HOURS //Periodicidade
+                //,5,  TimeUnit.MINUTES //Flexibilidade
+            )
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                    TimeUnit.MILLISECONDS)
+                .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniquePeriodicWork(
+                Work_Four_Hour_Schedule_Notification.WORKER_TAG,
+                ExistingPeriodicWorkPolicy.KEEP,
+                work4HoursScheduleNotification
+            );
+    }
+
+    public static void scheduleCleanningWork(){
+        //Periodicidade
+        //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
+        PeriodicWorkRequest  workCleanningRequest =
+            new PeriodicWorkRequest.Builder(
+                Work_Cleanning_Data.class,
+                12 , TimeUnit.HOURS //Periodicidade
+                //,5,  TimeUnit.MINUTES //Flexibilidade
+            )
+            .setBackoffCriteria(
+                BackoffPolicy.LINEAR,
+                1,
+                TimeUnit.HOURS
+            )
+            .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniquePeriodicWork(
+                Work_Cleanning_Data.WORKER_TAG,
+                ExistingPeriodicWorkPolicy.KEEP,
+                workCleanningRequest
             );
     }
 }

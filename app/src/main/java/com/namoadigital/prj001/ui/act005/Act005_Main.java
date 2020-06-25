@@ -217,7 +217,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //TODO APAGAR APÓS SUBSTITUIR PELOS WORKERS
         //ToolBox_Inf.reprogramAlarms_Full_Quarter(Act005_Main.this);
         //LUCHE - 24/06/2020 Worker de agendamento
-        ToolBox_Inf.reprogramQuarterScheduleNotification();
+        ToolBox_Inf.scheduleQuarterScheduleNotification();
+        ToolBox_Inf.schedule4HoursScheduleNotification();
+        ToolBox_Inf.scheduleCleanningWork();
         //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
