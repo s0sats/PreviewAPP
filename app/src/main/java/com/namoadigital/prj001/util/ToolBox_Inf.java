@@ -1681,6 +1681,24 @@ public class ToolBox_Inf {
         return builder;
     }
 
+    @NonNull
+    public static NotificationCompat.Builder getLowImportanceBuilder(Context context, NotificationManager notificationManager) {
+        NotificationCompat.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(ConstantBaseApp.GENERIC_CHANNEL_ID);
+            if (notificationChannel == null) {
+                CharSequence name = context.getString(R.string.pendency_channel_name);
+                int importance = NotificationManager.IMPORTANCE_LOW;
+                NotificationChannel channel = new NotificationChannel(ConstantBaseApp.PENDENCY_CHANNEL_ID, name, importance);
+                notificationManager.createNotificationChannel(channel);
+            }
+            builder = new NotificationCompat.Builder(context, ConstantBaseApp.PENDENCY_CHANNEL_ID);
+        }else{
+            builder = new NotificationCompat.Builder(context);
+        }
+        return builder;
+    }
+
     public static String getResourceCode(Context context, String module_code, String resource_name) {
         return getResourceCode(context, module_code, resource_name, ToolBox_Con.getPreference_Customer_Code(context));
     }
@@ -3714,7 +3732,11 @@ public class ToolBox_Inf {
     public static void call_Location_Tracker_On_Background(Context context, int mode) {
         Intent mIntent = new Intent(context, SV_LocationTracker.class);
         mIntent.putExtra(SV_LocationTracker.ASYNC_GPS, mode);
-        context.startService(mIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(mIntent);
+        }else {
+            context.startService(mIntent);
+        }
     }
 
     public static void call_Location_Tracker(Context context) {

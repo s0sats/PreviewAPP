@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.service;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -8,10 +10,12 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
@@ -35,7 +39,7 @@ public class SV_LocationTracker extends Service {
     public static final int LOCATION_DEFAULT = 0;
     public static final int LOCATION_NFORM_ON = 1;
     public static final int LOCATION_BACKGROUND = 2;
-
+    public static final int LOCATION_FOREGROUND_ID = 9990;
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Code = "0";
@@ -310,9 +314,31 @@ public class SV_LocationTracker extends Service {
 
     @Override
     public void onCreate() {
+        setNotificationForForegroundService();
         loadTranslation();
         initializeLocationManager();
         status = true;
+    }
+
+    /**
+     *  BARRIONUEVO 26-06-2020
+     *  Seta notification responsavel por segurar o servico de busca de posicao GPS.
+     */
+    private void setNotificationForForegroundService() {
+        NotificationManager nm = (NotificationManager)
+                getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+        //
+        Notification notification;
+        NotificationCompat.Builder builder;
+
+        builder = ToolBox_Inf.getLowImportanceBuilder(getApplicationContext(), nm);
+        builder.setSmallIcon(R.drawable.namoa_logo_white24x24);
+        builder.setOngoing(true);
+        builder.setContentTitle(getApplicationContext().getString(R.string.title_notification_generic));
+        builder.setContentText(hmAux_Trans.get("gps_searching_location"));
+        notification = builder.build();
+        nm.notify(LOCATION_FOREGROUND_ID, notification);
+        startForeground(LOCATION_FOREGROUND_ID, notification);
     }
 
     private void setLocationListeners(long location_interval) {
