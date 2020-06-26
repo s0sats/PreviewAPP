@@ -1323,14 +1323,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
-                        activateUpload(context);
+                        ToolBox_Inf.scheduleUploadImgWork(context);
                     }
                 },
                 2,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        activateUpload(context);
+                        ToolBox_Inf.scheduleUploadImgWork(context);
                         //
                         ToolBox_Con.getPreference_MessageClear(getApplicationContext()).equalsIgnoreCase("");
                         //
@@ -1352,22 +1352,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                         if (ToolBox_Con.isOnline(context)) {
                             mDrawerLayout.closeDrawer(GravityCompat.START);
                             mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
-                            activateUpload(context);
+                            ToolBox_Inf.scheduleUploadImgWork(context);
                         }
                     }
                 },
                 -1,
                 null
         );
-    }
-
-    private void activateUpload(Context context) {
-        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
     }
 
     //TRATA UPDATE_REQUIRED - CANCEL
@@ -1378,7 +1369,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         if(ToolBox_Con.getPreference_BkpUnsentImg(context)){
             ToolBox_Con.setPreference_BkpUnsentImg(context,false);
             //
-            activateUpload(context);
+            ToolBox_Inf.scheduleUploadImgWork(context);
         }
 
         mPresenter.executeSyncProcess(1);

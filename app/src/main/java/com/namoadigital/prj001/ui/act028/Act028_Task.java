@@ -29,7 +29,6 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_004;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Sql_005;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
@@ -1202,16 +1201,6 @@ public class Act028_Task extends BaseFragment {
         sm_so_service_exec_task_fileDao.addUpdateTmp(task_file);
         //
         return task_file;
-    }
-
-    private void activateUpload(Context context) {
-        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
-        //
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
     }
 
     private void setExecStatusColor(TextView tv_status, String status) {

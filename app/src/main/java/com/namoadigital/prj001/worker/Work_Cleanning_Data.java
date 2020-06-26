@@ -85,7 +85,7 @@ public class Work_Cleanning_Data extends Worker {
             return Result.success();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
-            Log.d("workerTsts", WORKER_TAG+" :doWork");
+            Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
             return Result.retry();
         }
     }

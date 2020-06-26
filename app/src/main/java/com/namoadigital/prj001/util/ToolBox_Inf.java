@@ -2,7 +2,6 @@ package com.namoadigital.prj001.util;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -131,7 +130,6 @@ import com.namoadigital.prj001.model.T_IO_Inbound_Item_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
 import com.namoadigital.prj001.receiver.NotificationReceiver;
-import com.namoadigital.prj001.receiver.WBR_Cleanning;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
@@ -2627,133 +2625,6 @@ public class ToolBox_Inf {
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                 ).toSqlQuery()
         );
-
-    }
-
-    public static void reprogramAlarms(Context context) {
-
-        AlarmManager am = (AlarmManager)
-                context.getSystemService(Context.ALARM_SERVICE);
-
-        Intent mIntent = new Intent(context,
-                WBR_Cleanning.class
-        );
-        //
-        PendingIntent pi = PendingIntent.getBroadcast(
-                context,
-                0,
-                mIntent,
-                0
-        );
-        //
-        am.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + (5 * 60 * 1000),
-                (43200000),
-                pi
-        );
-    }
-
-    public static void reprogramAlarms_Full_Quarter(Context context) {
-//        AlarmManager am = (AlarmManager)
-//                context.getSystemService(Context.ALARM_SERVICE);
-//
-//        Calendar calendarAux = Calendar.getInstance();
-//        //
-//        calendarAux.set(
-//                Calendar.HOUR,
-//                calendarAux.get(Calendar.HOUR) + 1
-//        );
-//        //
-//        calendarAux.set(
-//                Calendar.MINUTE,
-//                0
-//        );
-//        //
-//        calendarAux.set(
-//                Calendar.SECOND,
-//                0
-//        );
-//        //Para Debug
-////        calendarAux.set(
-////                Calendar.SECOND,
-////                calendarAux.get(Calendar.SECOND) + 10
-////        );
-//
-//        /**
-//         * Alarme a cada 4 horas
-//         */
-//        Intent mIntent_Full = new Intent(context,
-//                WBR_AL_Full.class
-//        );
-//        //
-//        boolean isWorking = (PendingIntent.getBroadcast(
-//                context,
-//                //100,
-//                ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
-//                mIntent_Full,
-//                PendingIntent.FLAG_NO_CREATE) != null
-//        );
-//
-//        Log.d("ALARM", String.valueOf(isWorking));
-//
-//        if (!isWorking) {
-//            PendingIntent pi_full = PendingIntent.getBroadcast(
-//                    context,
-//                    //100,
-//                    ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
-//                    mIntent_Full,
-//                    0
-//            );
-//            //
-//            am.setInexactRepeating(
-//                    AlarmManager.RTC_WAKEUP,
-//                    calendarAux.getTimeInMillis(),
-//                    (1000 * 60 * 60 * 4),
-//                    pi_full
-//            );
-//        }
-//
-//        calendarAux = Calendar.getInstance();
-//
-//        calendarAux.set(
-//                Calendar.SECOND,
-//                calendarAux.get(Calendar.SECOND) + 15
-//        );
-//
-//        /**
-//         * Alarme a cada 15 minutos
-//         */
-//        Intent mIntent_Quarter = new Intent(context,
-//                WBR_AL_Quarter.class
-//        );
-//        //
-//        isWorking = (PendingIntent.getBroadcast(
-//                            context,
-//                        //200,
-//                        ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
-//                        mIntent_Quarter,
-//                        PendingIntent.FLAG_NO_CREATE) != null
-//                    );
-//
-//        Log.d("ALARM", String.valueOf(isWorking));
-//
-//        if (!isWorking) {
-//            PendingIntent pi_Quarter = PendingIntent.getBroadcast(
-//                    context,
-//                    //200,
-//                    ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
-//                    mIntent_Quarter,
-//                    0
-//            );
-//            //
-//            am.setInexactRepeating(
-//                    AlarmManager.RTC_WAKEUP,
-//                    calendarAux.getTimeInMillis(),
-//                    (1000 * 60 * 15),
-//                    pi_Quarter
-//            );
-//        }
 
     }
 
@@ -7195,7 +7066,7 @@ public class ToolBox_Inf {
             new PeriodicWorkRequest.Builder(
                 Work_Four_Hour_Schedule_Notification.class,
                 4 , TimeUnit.HOURS //Periodicidade
-                //,5,  TimeUnit.MINUTES //Flexibilidade
+                ,1,  TimeUnit.HOURS //Flexibilidade
             )
                 .setBackoffCriteria(
                     BackoffPolicy.LINEAR,
@@ -7218,7 +7089,7 @@ public class ToolBox_Inf {
             new PeriodicWorkRequest.Builder(
                 Work_Cleanning_Data.class,
                 12 , TimeUnit.HOURS //Periodicidade
-                //,5,  TimeUnit.MINUTES //Flexibilidade
+                ,1,  TimeUnit.HOURS //Flexibilidade
             )
             .setBackoffCriteria(
                 BackoffPolicy.LINEAR,

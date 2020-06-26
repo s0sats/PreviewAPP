@@ -1,8 +1,6 @@
 package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,7 +29,6 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TSave_Rec;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_MULTI_SqlSpecification;
@@ -711,13 +708,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         );
 
         geFileDao.addUpdate(geFiles, false);
-
-        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+        //LUCHE - 26/06/2020 - Substituido IntentService pel worker de upload de imagem
+        ToolBox_Inf.scheduleUploadImgWork(context);
         /*Fim da fila de upload */
         //
         mView.showMsg(

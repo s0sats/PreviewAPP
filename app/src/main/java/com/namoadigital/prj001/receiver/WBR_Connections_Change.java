@@ -26,11 +26,13 @@ public class WBR_Connections_Change extends BroadcastReceiver {
         if (!status.equalsIgnoreCase("NO_SERVICE")) {
             if (!ToolBox_Con.getPreference_Service(context).equals("NO_SERVICE")) {
                 //TODO DESCOMENTAR E REVISAR APÓS CRIAÇÃO DOS WORKERS
+                //TODO Verificar necessidade colocar chamada do Work_Upload_Img aqui.
+                //Como antigamente havia o trigger do upload_img aqui, algumas rotinas só chamavam o upload
+                //se tivesse conexão. Com o worker, devemos sempre chamar, pois quem verifica a conexão será o
+                //workmanager.
                 /**
                  * TESTE UPLOAD VIA WORKER
                  * APENAS TESTES , REMOVER APÓS TESTAR 22/06/2020
-
-                activateUpload(context);
                 activateCleanning(context);
                 //
                 activateDownLoadPDF(context);
@@ -83,25 +85,6 @@ public class WBR_Connections_Change extends BroadcastReceiver {
         Intent mIntent = new Intent(context, WBR_DownLoad_Picture.class);
         Bundle bundle = new Bundle();
         bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-    }
-
-    private void activateUpload(Context context) {
-        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-    }
-
-    private void activateCleanning(Context context) {
-        Intent mIntent = new Intent(context, WBR_Cleanning.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);

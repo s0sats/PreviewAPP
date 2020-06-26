@@ -71,7 +71,6 @@ import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
 import com.namoadigital.prj001.service.WS_SO_Create_Room;
 import com.namoadigital.prj001.service.WS_SO_Save;
@@ -2825,17 +2824,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         geFiles.add(geFile);
 
         geFileDao.addUpdate(geFiles, false);
-
-        activateUpload(context);
-    }
-
-    private void activateUpload(Context context) {
-        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+        //LUCHE - 26/06/2020
+        //Substituido chamada do conjunto WBR e WS_Upload_img, pelo Worker_Upload_img
+        ToolBox_Inf.scheduleUploadImgWork(context);
     }
 
     private class DownloadSignature extends AsyncTask<String, Void, Void> {

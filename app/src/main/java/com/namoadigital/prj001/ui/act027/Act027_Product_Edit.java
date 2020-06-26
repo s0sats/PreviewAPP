@@ -44,7 +44,6 @@ import com.namoadigital.prj001.model.SM_SO_Product_Event_File;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_Sketch;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.receiver.WBR_SO_Product_Event_Cancel;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.MD_All_Product_Sql_001;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_002;
@@ -1105,8 +1104,9 @@ public class Act027_Product_Edit extends BaseFragment {
         );
 
         uploadFiles(eventFiles);
-
-        activateUpload(context);
+        //LUCHE - 26/06/2020
+        //Substituido chamada do conjunto WBR e WS_Upload_img, pelo Worker_Upload_img
+        ToolBox_Inf.scheduleUploadImgWork(context);
 
         Act027_Main mMain = (Act027_Main) getActivity();
 
@@ -1150,15 +1150,6 @@ public class Act027_Product_Edit extends BaseFragment {
 
         geFileDao.addUpdate(geFiles, false);
 
-    }
-
-    private void activateUpload(Context context) {
-        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
     }
 
     private void informEventError(String msg) {

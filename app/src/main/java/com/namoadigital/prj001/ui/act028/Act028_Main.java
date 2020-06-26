@@ -827,33 +827,15 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             mIntent.putExtras(bundle);
 
             context.sendBroadcast(mIntent);
-
-            activateUpload(context);
+            //LUCHE - 26/06/2020
+            //Substituido chamada do conjunto WBR e WS_Upload_img, pelo Worker_Upload_img
+            ToolBox_Inf.scheduleUploadImgWork(context);
         } else {
             if (mTaskCall) {
                 mTaskCall = false;
                 offLineProcess();
             }
         }
-    }
-
-    private void activateUpload(Context context) {
-        /**
-         *
-
-         * TESTE UPLOAD VIA WORKER
-         *
-         * APENAS TESTES , REMOVER APÓS TESTAR 22/06/2020
-         *
-         *
-         */
-        /*Intent mIntent = new Intent(context, WBR_Upload_Img.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);*/
-        ToolBox_Inf.scheduleUploadImgWork(context);
     }
 
     @Override
