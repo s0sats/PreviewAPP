@@ -130,9 +130,6 @@ import com.namoadigital.prj001.model.T_IO_Inbound_Item_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
 import com.namoadigital.prj001.receiver.NotificationReceiver;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_Upload_Other_User_Img;
@@ -201,6 +198,9 @@ import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
+import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
+import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
+import com.namoadigital.prj001.worker.Work_DownLoad_Picture;
 import com.namoadigital.prj001.worker.Work_Four_Hour_Schedule_Notification;
 import com.namoadigital.prj001.worker.Work_Quarter_Schedule_Notification;
 import com.namoadigital.prj001.worker.Work_Upload_Img;
@@ -2945,11 +2945,11 @@ public class ToolBox_Inf {
     }
 
     public static boolean isDownloadRunning() {
-        if (WBR_DownLoad_Customer_Logo.IS_RUNNING
-                || WBR_DownLoad_PDF.IS_RUNNING
-                || WBR_DownLoad_Picture.IS_RUNNING
+        if (   Work_DownLoad_Customer_Logo.IS_RUNNING
+                || Work_DownLoad_PDF.IS_RUNNING
+                || Work_DownLoad_Picture.IS_RUNNING
                 || WBR_UpdateSoftware.IS_RUNNING
-                ) {
+        ) {
             return true;
         }
         return false;
@@ -7105,4 +7105,108 @@ public class ToolBox_Inf {
                 workCleanningRequest
             );
     }
+
+    public static void scheduleDownloadCustomerLogoWork(Context context){
+        Data inputData =
+            new Data.Builder()
+                .putLong(
+                    Constant.LOGIN_CUSTOMER_CODE,
+                    ToolBox_Con.getPreference_Customer_Code(context)
+                )
+                .putString(
+                    Constant.LOGIN_USER_CODE,
+                    ToolBox_Con.getPreference_User_Code(context)
+                )
+                .build();
+        //
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workDownloadCustomerLogoRequest =
+            new OneTimeWorkRequest.Builder(Work_DownLoad_Customer_Logo.class)
+                .setInputData(inputData)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    10,
+                    TimeUnit.SECONDS
+                )
+                .setConstraints(constraints)
+                .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_DownLoad_Customer_Logo.WORKER_TAG,
+                ExistingWorkPolicy.REPLACE,
+                workDownloadCustomerLogoRequest
+            );
+    }
+
+    public static void scheduleDownloadPdfWork(Context context){
+        Data inputData =
+            new Data.Builder()
+                .putLong(
+                    Constant.LOGIN_CUSTOMER_CODE,
+                    ToolBox_Con.getPreference_Customer_Code(context)
+                )
+                .build();
+        //
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workDownloadPdfRequest =
+            new OneTimeWorkRequest.Builder(Work_DownLoad_PDF.class)
+                .setInputData(inputData)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    10,
+                    TimeUnit.SECONDS
+                )
+                .setConstraints(constraints)
+                .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_DownLoad_PDF.WORKER_TAG,
+                ExistingWorkPolicy.REPLACE,
+                workDownloadPdfRequest
+            );
+    }
+
+    public static void scheduleDownloadPictureWork(Context context){
+        Data inputData =
+            new Data.Builder()
+                .putLong(
+                    Constant.LOGIN_CUSTOMER_CODE,
+                    ToolBox_Con.getPreference_Customer_Code(context)
+                )
+                .build();
+        //
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workDownloadPictureRequest =
+            new OneTimeWorkRequest.Builder(Work_DownLoad_Picture.class)
+                .setInputData(inputData)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    10,
+                    TimeUnit.SECONDS
+                )
+                .setConstraints(constraints)
+                .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_DownLoad_Picture.WORKER_TAG,
+                ExistingWorkPolicy.REPLACE,
+                workDownloadPictureRequest
+            );
+    }
+
 }

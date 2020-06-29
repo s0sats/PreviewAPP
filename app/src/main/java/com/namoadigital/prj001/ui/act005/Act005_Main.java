@@ -49,11 +49,8 @@ import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MenuMainNamoa;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_AP_Save;
@@ -2377,7 +2374,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     public void startDownloadServices() {
 
-        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
+       /* Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
         Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
         Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
         Bundle bundle = new Bundle();
@@ -2390,7 +2387,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         context.sendBroadcast(mIntentPDF);
         context.sendBroadcast(mIntentPIC);
-        context.sendBroadcast(mIntentLogo);
+        context.sendBroadcast(mIntentLogo);*/
+
+       ToolBox_Inf.scheduleDownloadPdfWork(context);
+       //ToolBox_Inf.scheduleDownloadPictureWork(context);
+       //ToolBox_Inf.scheduleDownloadCustomerLogoWork(context);
     }
 
     @Override

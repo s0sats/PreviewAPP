@@ -18,8 +18,6 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.EV_User_Customer_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -359,7 +357,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
 
     public void startDownloadServices() {
 
-        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
+        //TODO comentado para testes dos novos workers
+        /*Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
         Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
         Bundle bundle = new Bundle();
         //
@@ -369,7 +368,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         mIntentPIC.putExtras(bundle);
         //
         context.sendBroadcast(mIntentPDF);
-        context.sendBroadcast(mIntentPIC);
+        context.sendBroadcast(mIntentPIC);*/
     }
 
     @Override
