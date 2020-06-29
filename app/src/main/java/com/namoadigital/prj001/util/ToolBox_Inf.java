@@ -30,7 +30,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -399,20 +398,24 @@ public class ToolBox_Inf {
      * @param context
      * @return - String com IMEI ou NULL em caso de exception
      */
-    @Nullable
-    private static String CarrierInfo(Context context) {
-        //todo permission check READ_PHONE_STATE
-        try {
-            TelephonyManager tm = (TelephonyManager) context
-                .getSystemService(Context.TELEPHONY_SERVICE);
-            //
-            return tm.getDeviceId();
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
-    }
-
+      /*
+                BARRIONUEVO  29-06-2020
+                Projeto de atualizacao do app para target 10, devido a qtde de pontos onde esta per
+                missao deve ser tratada, foi decidido nao usar mais o IMEI.
+             */
+//    @Nullable
+//    private static String CarrierInfo(Context context) {
+//        try {
+//            TelephonyManager tm = (TelephonyManager) context
+//                .getSystemService(Context.TELEPHONY_SERVICE);
+//            //
+//
+//            return tm.getDeviceId();
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
     /**
      * LUCHE - 06/02/2020
      *
@@ -455,17 +458,25 @@ public class ToolBox_Inf {
      */
     @Nullable
     public static String uniqueIDv2(Context context){
+        Log.d("IMEI", "uniqueIDv2");
         String phone_uuid_code = ToolBox_Con.getPreference_PHONE_UNIQUE_ID(context);
         //Se preferencia setada, a retorna
+        Log.d("IMEI", "getPreference_PHONE_UNIQUE_ID phone_uuid_code: " + phone_uuid_code);
         if(phone_uuid_code.trim().length() != 0){
             return phone_uuid_code;
         }else{
+            /*
+                BARRIONUEVO  29-06-2020
+                Projeto de atualizacao do app para target 10, devido a qtde de pontos onde esta per
+                missao deve ser tratada, foi decidido nao usar mais o IMEI.
+             */
             //Se não tem preferencia, pegar IMEI
-            phone_uuid_code = CarrierInfo(context);
+//            phone_uuid_code = CarrierInfo(context);
             //Se não IMEI não retornado, tenta gerar UUID
-            if(phone_uuid_code == null || phone_uuid_code.trim().isEmpty() ){
-                phone_uuid_code = getPhoneUUID(context);
-            }
+//            if(phone_uuid_code == null || phone_uuid_code.trim().isEmpty() ){
+            phone_uuid_code = getPhoneUUID(context);
+//            }
+            Log.d("IMEI", " getPhoneUUID phone_uuid_code: " + phone_uuid_code);
             //Grava valor na preferencia
             ToolBox_Con.setPreference_PHONE_UNIQUE_ID(context, phone_uuid_code != null ? phone_uuid_code : "");
             //Retorna preferencia.

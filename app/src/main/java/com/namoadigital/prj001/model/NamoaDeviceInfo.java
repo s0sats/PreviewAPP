@@ -33,7 +33,7 @@ public class NamoaDeviceInfo {
     private String build_manufacturer;
     private String build_model;
     private String build_product;
-    private String build_serial;
+//    private String build_serial;
     private String[] build_supported_32_bit_abis;
     private String[] build_supported_64_bit_abis;
     private String[] build_supported_abis;
@@ -159,13 +159,13 @@ public class NamoaDeviceInfo {
         this.build_product = build_product;
     }
 
-    public String getBuild_serial() {
-        return build_serial;
-    }
-
-    public void setBuild_serial(String build_serial) {
-        this.build_serial = build_serial;
-    }
+//    public String getBuild_serial() {
+//        return build_serial;
+//    }
+//
+//    public void setBuild_serial(String build_serial) {
+//        this.build_serial = build_serial;
+//    }
 
     public String[] getBuild_supported_32_bit_abis() {
         return build_supported_32_bit_abis;
@@ -253,7 +253,7 @@ public class NamoaDeviceInfo {
         build_manufacturer = Build.MANUFACTURER;
         build_model = Build.MODEL;
         build_product = Build.PRODUCT;
-        build_serial = Build.SERIAL;
+//        build_serial = Build.SERIAL;
         build_supported_32_bit_abis = Build.SUPPORTED_32_BIT_ABIS;
         build_supported_64_bit_abis = Build.SUPPORTED_64_BIT_ABIS;
         build_supported_abis = Build.SUPPORTED_ABIS;
@@ -408,7 +408,7 @@ public class NamoaDeviceInfo {
                 "\n build_manufacturer -> " + build_manufacturer +
                 "\n build_model -> " + build_model +
                 "\n build_product -> " + build_product +
-                "\n build_serial -> " + build_serial +
+//                "\n build_serial -> " + build_serial +
                 "\n build_supported_32_bit_abis -> " + (build_supported_32_bit_abis.length > 0 ? build_supported_32_bit_abis[0] : "") +
                 "\n build_supported_64_bit_abis -> " + (build_supported_64_bit_abis.length > 0 ? build_supported_64_bit_abis[0] : "") +
                 "\n build_supported_abis -> " + (build_supported_abis.length > 0 ? build_supported_abis[0] : "") +
