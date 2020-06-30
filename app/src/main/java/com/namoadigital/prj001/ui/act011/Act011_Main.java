@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act011;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -51,6 +52,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.NamoaPermissionRequest;
 import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
@@ -3375,7 +3377,85 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     private void getLocation() {
-        ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_NFORM_ON);
+        requestPermissions(
+                Act011_Main.this,
+                NamoaPermissionRequest.MULTIIPLE_PERMISSION_REQUEST,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                new NamoaPermissionRequest() {
+                    @Override
+                    public void accessGranted() {
+
+                        ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_NFORM_ON);
+
+                    }
+
+                    @Override
+                    public void accessDenied(final String[] permissions) {
+                        showPermissionRationaleDialog(
+                                Act011_Main.this,
+                                com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
+                                hmAux_Trans.get(""),
+                                hmAux_Trans.get(""),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,permissions);
+                                    }
+                                },
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        onBackPressed();
+                                    }
+                                }
+                        );
+                    }
+
+                    @Override
+                    public void requestPermissionRationale(final String[] permissions) {
+
+                        showPermissionRationaleDialog(
+                                Act011_Main.this,
+                                com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
+                                hmAux_Trans.get(""),
+                                hmAux_Trans.get(""),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,permissions);
+                                    }
+                                },
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        onBackPressed();
+                                    }
+                                }
+                        );
+                    }
+
+                    @Override
+                    public void accessDeniedNeverAskAgain(String[] permissions) {
+
+                        showPermissionNeverAskAgainDialog(
+                                com.namoa_digital.namoa_library.R.drawable.ic_camera_on,
+                                hmAux_Trans.get(""),
+                                hmAux_Trans.get(""),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        onBackPressed();
+                                    }
+                                }
+                        );
+                    }
+
+                    @Override
+                    public void informAppDetailSettingsReturn() {
+                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION});
+                    }
+                }
+        );
     }
 
 }
