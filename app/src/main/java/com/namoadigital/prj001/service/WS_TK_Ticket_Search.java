@@ -19,7 +19,6 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Search_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Search_Serial_PK_Env;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Search;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
@@ -211,7 +210,7 @@ public class WS_TK_Ticket_Search extends IntentService {
                     //
                     daoObjReturn = ticketDao.addUpdate(ticketList, false);
                     if (!daoObjReturn.hasError()) {
-                        startDownloadServices();
+                        startDownloadWorkers();
                         //
                         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), hmAux, "", "0");
                     } else {
@@ -270,14 +269,15 @@ public class WS_TK_Ticket_Search extends IntentService {
             );
     }
 
-    private void startDownloadServices() {
+    /**
+     * LUCHE - 30/06/2020
+     * <p></p>
+     * Alterado metodo que chamava serviços de download de img para chamar o Worker
+     */
+    private void startDownloadWorkers() {
         //Como será possivel baixar ticket do customer logado, pode ser chamada a rotina de download.
         //Esse as definição mudar, rever, pois seria necessario chamar essa serviço para cada customer code diferente.
-        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
-        mIntentPIC.putExtras(bundle);
-        getApplicationContext().sendBroadcast(mIntentPIC);
+        ToolBox_Inf.scheduleDownloadPictureWork(getApplicationContext());
     }
 
     private void loadTranslation() {

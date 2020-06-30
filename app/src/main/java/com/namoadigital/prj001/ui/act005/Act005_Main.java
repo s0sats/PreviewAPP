@@ -229,11 +229,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
         startService(mIntent);
         //
-        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntentPIC.putExtras(bundle);
-        context.sendBroadcast(mIntentPIC);
+        ToolBox_Inf.scheduleDownloadPictureWork(context);
         //
         if (ToolBox_Inf.isUsrAppLogged(context) && !ScreenStatusService.isRunning) {
             Intent mScreenStatusService = new Intent(context, ScreenStatusService.class);
@@ -2122,8 +2118,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             case Act005_Main.WS_PROCESS_SYNC:
                 alertTitle = hmAux_Trans.get("alert_sync_finish_ttl");
                 alertMsg = hmAux_Trans.get("alert_sync_finish_msg");
-                //
-                startDownloadServices();
+                //LUCHE - 30/06/2020
+                //Substituido o metodo antigo pelo metodo que agenda todos os workers.
+                ToolBox_Inf.scheduleAllDownloadWorkers(context);
                 //
                 break;
             case Act005_Main.WS_PROCESS_ENABLE_NFC:
@@ -2370,28 +2367,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //abre uma noticação do app e é enviado para act019
         //Rever isso no momento propicio
         mPresenter.getMenuItensV2(hmAux_Trans);
-    }
-
-    public void startDownloadServices() {
-
-       /* Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
-        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-        Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
-        mIntentPDF.putExtras(bundle);
-        mIntentPIC.putExtras(bundle);
-        //
-        bundle.putString(Constant.LOGIN_USER_CODE, ToolBox_Con.getPreference_User_Code(context));
-        mIntentLogo.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntentPDF);
-        context.sendBroadcast(mIntentPIC);
-        context.sendBroadcast(mIntentLogo);*/
-
-       ToolBox_Inf.scheduleDownloadPdfWork(context);
-       //ToolBox_Inf.scheduleDownloadPictureWork(context);
-       //ToolBox_Inf.scheduleDownloadCustomerLogoWork(context);
     }
 
     @Override

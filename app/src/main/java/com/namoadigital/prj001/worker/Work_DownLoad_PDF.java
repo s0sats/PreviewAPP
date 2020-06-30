@@ -235,25 +235,11 @@ public class Work_DownLoad_PDF extends Worker {
                     );
 
                 } catch (Exception e) {
+                    //LUCHE - 30/06/2020
+                    //Removido tdo o treche referente ao broacastReceiver com aact038 pois não será
+                    //mais usado. Causava bug que abertura de PDF sem o usr solicita caso ele estivesse
+                    //com Form AP carregado no momento em q o PDF fosse baixado.
                     ToolBox_Inf.registerException(getClass().getName(), e);
-                    //ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", "AP_DOWNLOAD_ERROR", "", "0");
-                    //Como esse serviço pode ser chamado pela act038 e concorrendo com um AsyncTask
-                    //da tela, tanto o sucesso quando a exception do download de um pdf, é enviado
-                    //broadcast para a tela para verificar se é necessario ação dela.
-                    HMAux auxPDF = new HMAux();
-                    auxPDF.put("pk",
-                        hmAux.get(GE_Custom_Form_ApDao.CUSTOMER_CODE) + "." +
-                            hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE) + "." +
-                            hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE) + "." +
-                            hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION) + "." +
-                            hmAux.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA)
-                    );
-                    //
-                    ToolBox.sendBCStatusPDF(
-                        getApplicationContext(),
-                        Constant.TYPE_BR_AP_ERROR,
-                        auxPDF
-                    );
                 }
             }
             //endregion

@@ -3,7 +3,6 @@ package com.namoadigital.prj001.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.SV_LocationTracker;
@@ -30,14 +29,14 @@ public class WBR_Connections_Change extends BroadcastReceiver {
                 //Como antigamente havia o trigger do upload_img aqui, algumas rotinas só chamavam o upload
                 //se tivesse conexão. Com o worker, devemos sempre chamar, pois quem verifica a conexão será o
                 //workmanager.
+                //LUCHE - 30/06/2020
+                //Substituido o antigo serviço pelo Worker de Download de Img
+                //ToolBox_Inf.scheduleAllDownloadWorkers(context);
                 /**
                  * TESTE UPLOAD VIA WORKER
                  * APENAS TESTES , REMOVER APÓS TESTAR 22/06/2020
                 activateCleanning(context);
                 //
-                activateDownLoadPDF(context);
-                activateDownLoadPicture(context);
-                activateLogo(context);
                 //activeChatService(context);
                 //Add disparo do serviço de UnsentImgs
                 activateUnsentUpload(context);
@@ -71,35 +70,6 @@ public class WBR_Connections_Change extends BroadcastReceiver {
         }
 
     }
-
-    private void activateDownLoadPDF(Context context) {
-        Intent mIntent = new Intent(context, WBR_DownLoad_PDF.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-    }
-
-    private void activateDownLoadPicture(Context context) {
-        Intent mIntent = new Intent(context, WBR_DownLoad_Picture.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-    }
-
-    private void activateLogo(Context context){
-        Intent mIntentLogo =  new Intent(context,WBR_DownLoad_Customer_Logo.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
-        mIntentLogo.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntentLogo);
-    }
-
     /**
      * LUCHE - 14/05/2019
      * Metodo que chama serviço de upload das imagens do diretorio UnsentImgs

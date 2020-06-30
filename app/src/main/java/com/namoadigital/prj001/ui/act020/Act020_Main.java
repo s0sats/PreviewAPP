@@ -743,7 +743,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
         if (ws_process.equals(WS_Sync.class.getName())) {
             mPresenter.updateSyncChecklist();
-            mPresenter.startDownloadServices();
+            mPresenter.startDownloadWorkers();
             //
             progressDialog.dismiss();
             //

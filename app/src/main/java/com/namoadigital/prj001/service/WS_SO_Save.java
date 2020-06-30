@@ -28,7 +28,6 @@ import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task_File;
 import com.namoadigital.prj001.model.SO_Save_Return;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.TSO_Save_Rec;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.sql.GE_File_Sql_006;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_003;
@@ -391,10 +390,10 @@ public class WS_SO_Save extends IntentService {
     }
 
     private void callFinishProcessing(HMAux hmAuxRet) {
-        //
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAuxRet, "", "0");
-        //
-        startDownloadServices();
+        //LUCHE - 30/06/2020
+        //Substituido o antigo serviço pelo Worker de Download de Img
+        ToolBox_Inf.scheduleDownloadPictureWork(getApplicationContext());
     }
 
 
@@ -406,15 +405,6 @@ public class WS_SO_Save extends IntentService {
         } else {
             return false;
         }
-    }
-
-
-    private void startDownloadServices() {
-        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(ConstantBaseApp.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
-        mIntentPIC.putExtras(bundle);
-        getApplicationContext().sendBroadcast(mIntentPIC);
     }
 
     private boolean processFromTo(TSO_Save_Rec.So_From_To so_from_to, ArrayList<SO_Save_Return> so_save_returns) {

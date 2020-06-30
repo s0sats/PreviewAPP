@@ -19,7 +19,7 @@ public interface Act024_Main_Presenter {
 
     void executeSODownload(String product_code ,String serial_id , String so_list);
 
-    void startDownloadServices();
+    void startDownloadWorkers();
 
     void onBackPressedClicked();
 

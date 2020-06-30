@@ -20,7 +20,6 @@ import com.namoadigital.prj001.model.Chat_Room_Obj_Form_AP;
 import com.namoadigital.prj001.model.Chat_Room_Obj_SO;
 import com.namoadigital.prj001.model.Chat_S_Historical_Message;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Room;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_013;
@@ -153,8 +152,9 @@ public class WS_C_Room extends IntentService {
         cleanUPRooms(chRooms);
         //Chama limpa Ap's desnecessarios.
         ToolBox_Inf.deleteUnnecessaryAP(getApplicationContext());
-        //
-        startDownloadService();
+        //LUCHE - 30/06/2020
+        //Substituido o antigo serviço pelo Worker de Download de Img
+        ToolBox_Inf.scheduleDownloadPictureWork(getApplicationContext());
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
         //
@@ -251,15 +251,4 @@ public class WS_C_Room extends IntentService {
         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(getApplicationContext());
         singletonWebSocket.attemptSendHistoricalMessages(ToolBox_Inf.setWebSocketJsonParam(sHistoricalMessage));
     }
-
-    private void startDownloadService() {
-        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
-        mIntentPIC.putExtras(bundle);
-        //
-        getApplicationContext().sendBroadcast(mIntentPIC);
-
-    }
-
 }

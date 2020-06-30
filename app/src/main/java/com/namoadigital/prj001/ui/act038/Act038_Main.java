@@ -6,11 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,7 +38,6 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_User;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_AP_Search;
 import com.namoadigital.prj001.service_chat.WS_Room_AP;
@@ -56,7 +53,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoa_digital.namoa_library.util.ToolBox.SW_TYPE_BR_AP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_FORM_AP;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_FILTER_LATE;
@@ -161,8 +157,6 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
     private boolean no_selected_date;
     private String filter_serial_id;
 
-    private PDFStatusReceiver mPdfStatusReceiver;
-
     private pdfDownload mPdfDownload;
 
     private int repeatTry = 0;
@@ -193,13 +187,6 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         );
 
         loadTranslation();
-    }
-
-    @Override
-    protected void onDestroy() {
-        startReceivers(false);
-        //
-        super.onDestroy();
     }
 
     private void loadTranslation() {
@@ -462,8 +449,6 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             mPresenter.loadSSUsers();
             mPresenter.loadSSDepartments();
             //
-            startReceivers(true);
-            //
             if (mGe_custom_form_ap.getSync_required() == 1) {
                 if (ToolBox_Con.isOnline(context)) {
                     mPresenter.executeApSyncWs();
@@ -487,13 +472,19 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
                     //ToolBox_Inf.showNoConnectionDialog(context);
                 }
             }
-            //
-            if (mGe_custom_form_ap.getCustom_form_url_local() == null && mGe_custom_form_ap.getCustom_form_url_local().isEmpty()) {
-                if (WBR_DownLoad_PDF.IS_RUNNING == false && ToolBox_Con.isOnline(context)) {
-                    activateDownLoadPDF(context);
-                }
-            }
-
+            //LUCHE - 30/06/2020
+            //Trecho foi comentado pois:
+            // - Esse trecho nunca era acessado já que a logico no IF esta errada e sempre é falsa
+            // - Tanto o processo de download via WBR_DownLoad_PDF quando do AsyncTask, ao final
+            // do processamento,chamam a abertura do PDF, sendo assim , o download só deve ser iniciado
+            // explicitamente se o usr clicar no botão de baixar pois assim, ele espera que ao final
+            // do processo o PDF seja aberto.
+            // Também foi removido o broadcastReceiver do PDF e os comandos relacionados a ele.
+//            if (mGe_custom_form_ap.getCustom_form_url_local() == null && mGe_custom_form_ap.getCustom_form_url_local().isEmpty()) {
+//                if (WBR_DownLoad_PDF.IS_RUNNING == false && ToolBox_Con.isOnline(context)) {
+//                    activateDownLoadPDF(context);
+//                }
+//            }
         }
     }
 
@@ -1873,32 +1864,6 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             //
             btn_pdf.performClick();
         }
-    }
-
-    @Override
-    public void startReceivers(boolean start_stop) {
-        if (mPdfStatusReceiver == null) {
-            mPdfStatusReceiver = new PDFStatusReceiver();
-        }
-        IntentFilter mPdfStatusFilter = new IntentFilter(SW_TYPE_BR_AP);
-        mPdfStatusFilter.addCategory(Intent.CATEGORY_DEFAULT);
-
-        if (start_stop) {
-            LocalBroadcastManager.getInstance(Act038_Main.this).registerReceiver(mPdfStatusReceiver, mPdfStatusFilter);
-        } else {
-            LocalBroadcastManager.getInstance(Act038_Main.this).unregisterReceiver(mPdfStatusReceiver);
-            //
-            mPdfStatusReceiver = null;
-        }
-    }
-
-    private void activateDownLoadPDF(Context context) {
-        Intent mIntent = new Intent(context, WBR_DownLoad_PDF.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
     }
 
     private void openPDF() {

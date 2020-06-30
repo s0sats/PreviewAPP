@@ -28,6 +28,7 @@ public class WBR_DownLoad_PDF extends WakefulBroadcastReceiver {
             mService.putExtras(new Bundle());
         }
 
-        startWakefulService(context, mService);
+        //TODO Comentado para testar download somnete via wokrker
+       // startWakefulService(context, mService);
     }
 }

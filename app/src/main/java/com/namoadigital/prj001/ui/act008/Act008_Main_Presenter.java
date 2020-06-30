@@ -23,7 +23,7 @@ public interface Act008_Main_Presenter {
 
     //void executeSerialProcess(String serial);
 
-    void startDownloadServices();
+    void startDownloadWorkers();
 
     void onBackPressedClicked();
 

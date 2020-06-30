@@ -309,15 +309,12 @@ public class Work_DownLoad_Picture extends Worker {
             }
             //POSSUI ITEM NA LISTA, AI SIM VERIFICA NECESSIDADE DE NOTIFICAÇÃO E INICIA DOWNLOADS
             if (!ToolBox_Inf.isDownloadRunning()) {
-                //Log.v("WS_DownLoad_Picture","true");
-                //WBR_DownLoad_Picture.IS_RUNNING = true;
                 ToolBox_Inf.showNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
             IS_RUNNING = true;
             //
             // PROCESSAMENTO DAS LISTAS
             //
-
             /**Download de files do N-FORM*/
             processNFormDownloads(form_fieldDao, form_fieldLocalDao ,dados_geral,dados);
             /** Download croquis de MD Produtos e MD ALL Products*/

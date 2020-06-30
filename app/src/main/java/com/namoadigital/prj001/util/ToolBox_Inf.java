@@ -29,7 +29,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -413,15 +412,16 @@ public class ToolBox_Inf {
     @Nullable
     private static String CarrierInfo(Context context) {
         //todo permission check READ_PHONE_STATE
-        try {
-            TelephonyManager tm = (TelephonyManager) context
-                .getSystemService(Context.TELEPHONY_SERVICE);
-            //
-            return tm.getDeviceId();
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
+//        try {
+//            TelephonyManager tm = (TelephonyManager) context
+//                .getSystemService(Context.TELEPHONY_SERVICE);
+//            //
+//            return tm.getDeviceId();
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return null;
+//        }
+        return null;
     }
 
     /**
@@ -7207,6 +7207,12 @@ public class ToolBox_Inf {
                 ExistingWorkPolicy.REPLACE,
                 workDownloadPictureRequest
             );
+    }
+    //TODO Comentar os metodos que chamam os Workers
+    public static void scheduleAllDownloadWorkers(Context context) {
+        ToolBox_Inf.scheduleDownloadPdfWork(context);
+        ToolBox_Inf.scheduleDownloadPictureWork(context);
+        ToolBox_Inf.scheduleDownloadCustomerLogoWork(context);
     }
 
 }

@@ -21,7 +21,6 @@ import com.namoadigital.prj001.model.Chat_Message_Obj_Form_Ap;
 import com.namoadigital.prj001.model.Chat_S_Delivered;
 import com.namoadigital.prj001.model.Chat_S_Read;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Process_Form_Ap;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
@@ -199,7 +198,7 @@ public class WS_C_Message extends IntentService {
                 }
                 //
                 if (startDownloadService) {
-                    startDownloadService();
+                    startDownloadWorker();
                 }
                 //
                 if(startFormApService){
@@ -347,7 +346,7 @@ public class WS_C_Message extends IntentService {
             }
             //
             if (startDownloadService) {
-                startDownloadService();
+                startDownloadWorker();
             }
             //
             if(startFormApService){
@@ -525,14 +524,12 @@ public class WS_C_Message extends IntentService {
         getApplicationContext().sendBroadcast(cMessageTmpIntent);
     }
 
-    private void startDownloadService() {
-        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
-        mIntentPIC.putExtras(bundle);
-        //
-        getApplicationContext().sendBroadcast(mIntentPIC);
-
+    /**
+     * LUCHE - 30/06/2020
+     * Alterado metodo que chamava serviço de download de IMG para chamar o respectivo Worker
+     */
+    private void startDownloadWorker() {
+        ToolBox_Inf.scheduleDownloadPictureWork(getApplicationContext());
     }
 
     private void startFormApService() {
