@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.util;
 
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
@@ -118,14 +117,7 @@ public class NotificationHelper {
     private NotificationCompat.Builder getNotificationBuilder(NotificationManager notificationManager) {
         NotificationCompat.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(ConstantBaseApp.GENERIC_CHANNEL_ID);
-            if (notificationChannel == null) {
-                CharSequence name = context.getString(R.string.pendency_channel_name);
-                int importance = NotificationManager.IMPORTANCE_LOW;
-                NotificationChannel channel = new NotificationChannel(ConstantBaseApp.PENDENCY_CHANNEL_ID, name, importance);
-                notificationManager.createNotificationChannel(channel);
-            }
-            builder = new NotificationCompat.Builder(context, ConstantBaseApp.PENDENCY_CHANNEL_ID);
+            builder = ToolBox_Inf.getLowImportanceBuilder(context, notificationManager);
         } else {
             builder = new NotificationCompat.Builder(context);
         }
