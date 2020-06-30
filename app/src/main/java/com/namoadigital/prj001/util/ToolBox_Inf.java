@@ -1672,8 +1672,6 @@ public class ToolBox_Inf {
                 NotificationChannel channel = new NotificationChannel(GENERIC_CHANNEL_ID, name, importance);
                 notificationManager.createNotificationChannel(channel);
             }
-            notificationChannel.setName(context.getString(R.string.notification_channel_name));
-            notificationManager.createNotificationChannel(notificationChannel);
             builder = new NotificationCompat.Builder(context, GENERIC_CHANNEL_ID);
         }else{
             builder = new NotificationCompat.Builder(context);
