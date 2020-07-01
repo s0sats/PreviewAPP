@@ -108,7 +108,6 @@
     <string name="install_app_error_msg">Error on trying app update !\nPlease try again !</string>
     <string name="msg_customer_pendencies_list">Customer :\n</string>
     <string name="msg_update_required_warning">New version available!\nTo update, please submit pending data.</string>
-    <string name="notification_channel_name" translatable="false">Namoa Notif. Info.</string>
-    <string name="pendency_channel_name" translatable="false">Namoa Pend. Info.</string>
+
 
 </resources>

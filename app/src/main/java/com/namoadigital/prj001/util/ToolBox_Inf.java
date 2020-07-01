@@ -238,6 +238,8 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.namoadigital.prj001.ui.AppBase.NAMOA_NOTIF_INFO;
+import static com.namoadigital.prj001.ui.AppBase.NAMOA_PEND_INFO;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
@@ -1667,10 +1669,7 @@ public class ToolBox_Inf {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = notificationManager.getNotificationChannel(GENERIC_CHANNEL_ID);
             if(notificationChannel == null) {
-                CharSequence name = context.getString(R.string.notification_channel_name);
-                int importance = NotificationManager.IMPORTANCE_DEFAULT;
-                NotificationChannel channel = new NotificationChannel(GENERIC_CHANNEL_ID, name, importance);
-                notificationManager.createNotificationChannel(channel);
+                createChannelNotification(context, notificationManager, NAMOA_NOTIF_INFO, NotificationManager.IMPORTANCE_DEFAULT, GENERIC_CHANNEL_ID);
             }
             builder = new NotificationCompat.Builder(context, GENERIC_CHANNEL_ID);
         }else{
@@ -1679,16 +1678,23 @@ public class ToolBox_Inf {
         return builder;
     }
 
+    public static void createChannelNotification(Context context, NotificationManager notificationManager, String channelName, int importanceDefault, String genericChannelId) {
+        CharSequence name = channelName;
+        int importance = importanceDefault;
+        NotificationChannel channel = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            channel = new NotificationChannel(genericChannelId, name, importance);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
     @NonNull
     public static NotificationCompat.Builder getLowImportanceBuilder(Context context, NotificationManager notificationManager) {
         NotificationCompat.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = notificationManager.getNotificationChannel(ConstantBaseApp.GENERIC_CHANNEL_ID);
             if (notificationChannel == null) {
-                CharSequence name = context.getString(R.string.pendency_channel_name);
-                int importance = NotificationManager.IMPORTANCE_LOW;
-                NotificationChannel channel = new NotificationChannel(ConstantBaseApp.PENDENCY_CHANNEL_ID, name, importance);
-                notificationManager.createNotificationChannel(channel);
+                createChannelNotification(context, notificationManager, NAMOA_PEND_INFO, NotificationManager.IMPORTANCE_LOW, ConstantBaseApp.PENDENCY_CHANNEL_ID);
             }
             builder = new NotificationCompat.Builder(context, ConstantBaseApp.PENDENCY_CHANNEL_ID);
         }else{
