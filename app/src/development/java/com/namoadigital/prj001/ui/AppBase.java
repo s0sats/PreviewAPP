@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui;
 
 import android.app.Application;
 import android.app.NotificationManager;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
@@ -67,6 +68,9 @@ public class AppBase extends Application {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable ex) {
+                Log.d("ERRORZACO", ex.toString());
+                Log.d("ERRORZACO", ex.getMessage());
+                Log.d("ERRORZACO", ex.getStackTrace().toString());
                 ToolBox_Inf.registerException(ex);
                 //
                 mDefaultUncaughtExceptionHandler.uncaughtException(thread, ex);
@@ -105,6 +109,8 @@ public class AppBase extends Application {
         CACHE_PATH_PHOTO = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE_PHOTO";
         CACHE_CHAT_PATH = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE_CHAT";
         CACHE_PDF = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE_PDF";
+        ConstantBaseApp.APK_PATH = getApplicationContext().getExternalFilesDir(null) + "/namoa_apk";
+        ConstantBaseApp.CAM_TEST_PATH = getApplicationContext().getExternalFilesDir(null) + "/camtest";
 
         DB_NAME_BASE = "namoa_sms.db3";
         DB_VERSION_BASE = 10;

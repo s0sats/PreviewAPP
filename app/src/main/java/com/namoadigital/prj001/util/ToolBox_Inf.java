@@ -351,7 +351,7 @@ public class ToolBox_Inf {
             dirChatImage.mkdir();
         }
 
-        File dirCamTest = new File(System.getenv("EXTERNAL_STORAGE") + "/camtest");
+        File dirCamTest = new File(Constant.CAM_TEST_PATH);
         if (!dirCamTest.exists()) {
             dirCamTest.mkdir();
         }

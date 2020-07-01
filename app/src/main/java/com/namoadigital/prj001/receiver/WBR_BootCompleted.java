@@ -21,8 +21,8 @@ public class WBR_BootCompleted extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        ToolBox_Inf.reprogramAlarms(context);
-        ToolBox_Inf.reprogramAlarms_Full_Quarter(context);
+//        ToolBox_Inf.reprogramAlarms(context);
+//        ToolBox_Inf.reprogramAlarms_Full_Quarter(context);
         /*
             Barrionuevo 26-06-2020
             Start de servico de localizacao ao iniciar device e estando com pendencia de gps.

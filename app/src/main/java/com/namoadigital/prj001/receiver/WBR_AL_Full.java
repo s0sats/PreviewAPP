@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoadigital.prj001.service.WS_AL_Full;
-import com.namoadigital.prj001.service.WS_Cleanning;
 
 /**
  * Created by neomatrix on 20/02/17.
@@ -26,6 +25,6 @@ public class WBR_AL_Full extends BroadcastReceiver {
 
         mIntent.putExtras(bundle);
         //
-        context.startService(mIntent);
+//        context.startService(mIntent);
     }
 }
