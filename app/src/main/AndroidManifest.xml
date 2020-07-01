@@ -585,8 +585,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_AL_Quarter" />
 
         <service android:name=".service.WS_AL_Quarter" />
-        <service android:name=".service.SV_LocationTracker"
-            android:foregroundServiceType="location"/>
+        <service android:name=".service.SV_LocationTracker"/>
 
         <service android:name=".fcm.MyFirebaseMessagingService">
             <intent-filter>
