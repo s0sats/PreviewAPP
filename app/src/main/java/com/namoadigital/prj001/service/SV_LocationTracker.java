@@ -347,6 +347,8 @@ public class SV_LocationTracker extends Service {
                     LocationManager.NETWORK_PROVIDER, location_interval, LOCATION_DISTANCE,
                     mLocationListeners[1]);
         } catch (SecurityException ex) {
+            status = false;
+            stopSelf();
         } catch (IllegalArgumentException ex) {
         }
         try {
@@ -354,6 +356,8 @@ public class SV_LocationTracker extends Service {
                     LocationManager.GPS_PROVIDER, location_interval, LOCATION_DISTANCE,
                     mLocationListeners[0]);
         } catch (SecurityException ex) {
+            status = false;
+            stopSelf();
         } catch (IllegalArgumentException ex) {
         } catch (Exception e) {
             status = false;
@@ -380,6 +384,8 @@ public class SV_LocationTracker extends Service {
                 } catch (Exception ex) {
 //                    recordProcess("removeLocationListener exception: " + ex.toString());
                     ToolBox_Inf.registerException(ex);
+                    status = false;
+                    stopSelf();
                 }
             }
         }else{
