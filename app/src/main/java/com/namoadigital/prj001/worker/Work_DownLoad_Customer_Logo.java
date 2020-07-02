@@ -89,10 +89,15 @@ public class Work_DownLoad_Customer_Logo extends Worker {
             return Result.failure();
         } finally {
             IS_RUNNING = false;
-            //Log.v("WS_Customer_Logo","false");
             if (!ToolBox_Inf.isDownloadRunning()) {
                 ToolBox_Inf.cancelNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
         }
+    }
+
+    @Override
+    public void onStopped() {
+        super.onStopped();
+        Log.d("workerTsts", WORKER_TAG+" : onStopped");
     }
 }

@@ -31,7 +31,6 @@ import java.util.ArrayList;
 public class Work_DownLoad_PDF extends Worker {
     public static final String WORKER_TAG = "Work_DownLoad_PDF";
     public static boolean IS_RUNNING = false;
-    private boolean hasStopped = false;
 
     public Work_DownLoad_PDF(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -142,7 +141,7 @@ public class Work_DownLoad_PDF extends Worker {
             //
             for (HMAux hmAux : dados) {
                 try {
-                    if(hasStopped){
+                    if(isStopped()){
                         break;
                     }
                     //
@@ -192,7 +191,7 @@ public class Work_DownLoad_PDF extends Worker {
             //region FORM AP
             for (HMAux hmAux : formAplist) {
                 try {
-                    if(hasStopped){
+                    if(isStopped()){
                         break;
                     }
                     if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(GE_Custom_Form_Ap_Sql_007.FILE_LOCAL_NAME).toLowerCase() + ".pdf")) {
@@ -253,7 +252,7 @@ public class Work_DownLoad_PDF extends Worker {
                 String splitKey = "@#My#@Key#@";
                 for (HMAux hmAux : so_file_list) {
                     try {
-                        if(hasStopped){
+                        if(isStopped()){
                             break;
                         }
                         String fileName = hmAux.get(SM_SO_FileDao.FILE_NAME).replace(".", splitKey);
@@ -304,6 +303,6 @@ public class Work_DownLoad_PDF extends Worker {
     @Override
     public void onStopped() {
         super.onStopped();
-        hasStopped = true;
+        Log.d("workerTsts", WORKER_TAG+" : onStopped");
     }
 }

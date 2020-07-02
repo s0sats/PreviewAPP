@@ -7134,11 +7134,14 @@ public class ToolBox_Inf {
                 )
                 .setConstraints(constraints)
                 .build();
-        //
+        //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
+        //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
+        //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
+        //isStopped(), foi adicionado nos loop
         WorkManager.getInstance()
             .enqueueUniqueWork(
                 Work_DownLoad_Customer_Logo.WORKER_TAG,
-                ExistingWorkPolicy.REPLACE,
+                ExistingWorkPolicy.KEEP,
                 workDownloadCustomerLogoRequest
             );
     }
@@ -7168,10 +7171,14 @@ public class ToolBox_Inf {
                 .setConstraints(constraints)
                 .build();
         //
+        //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
+        //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
+        //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
+        //isStopped(), foi adicionado nos loop
         WorkManager.getInstance()
             .enqueueUniqueWork(
                 Work_DownLoad_PDF.WORKER_TAG,
-                ExistingWorkPolicy.REPLACE,
+                ExistingWorkPolicy.KEEP,
                 workDownloadPdfRequest
             );
     }
@@ -7200,11 +7207,14 @@ public class ToolBox_Inf {
                 )
                 .setConstraints(constraints)
                 .build();
-        //
+        //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
+        //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
+        //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
+        //isStopped(), foi adicionado nos loop
         WorkManager.getInstance()
             .enqueueUniqueWork(
                 Work_DownLoad_Picture.WORKER_TAG,
-                ExistingWorkPolicy.REPLACE,
+                ExistingWorkPolicy.KEEP,
                 workDownloadPictureRequest
             );
     }

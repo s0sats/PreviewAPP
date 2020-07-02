@@ -61,7 +61,6 @@ import java.util.ArrayList;
 public class Work_DownLoad_Picture extends Worker {
     public static final String WORKER_TAG = "Work_DownLoad_Picture";
     public static boolean IS_RUNNING = false;
-    private boolean hasStopped = false;
     private long customer_code = -1;
     //
     public Work_DownLoad_Picture(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -289,7 +288,7 @@ public class Work_DownLoad_Picture extends Worker {
             //}
             //APÓS GERAR TODAS AS LISTA , SE NÃO HOUVER REGISTROS PARA DOWNLOAD
             //SAI DO SERVIÇO SEM EXIBIR NOTIFICAÇÃO DE DOWNLOAD.
-            if (hasStopped
+            if (isStopped()
                 ||  (dados_geral.size() == 0
                     && so_file_list.size() == 0
                     && so_client_approval_image.size() == 0
@@ -364,9 +363,14 @@ public class Work_DownLoad_Picture extends Worker {
         }
     }
 
+    @Override
+    public void onStopped() {
+        super.onStopped();
+        Log.d("workerTsts", WORKER_TAG+" : onStopped");
+    }
     private void processTicketDownloads(TK_TicketDao ticketDao, TK_Ticket_ActionDao ticketActionDao, ArrayList<HMAux> ticketImgList, ArrayList<HMAux> ticketActionImgList) throws Exception {
         for (HMAux hmAux : ticketImgList) {
-            if(hasStopped){
+            if(isStopped()){
                 break;
             }
             try {
@@ -408,7 +412,7 @@ public class Work_DownLoad_Picture extends Worker {
         }
         //
         for (HMAux hmAux : ticketActionImgList) {
-            if(hasStopped){
+            if(isStopped()){
                 break;
             }
             try {
@@ -454,7 +458,7 @@ public class Work_DownLoad_Picture extends Worker {
 
     private void processChatDownloads(CH_RoomDao roomDao, CH_MessageDao messageDao, ArrayList<HMAux> roomImgList, ArrayList<HMAux> messageImgList) throws Exception {
         for (HMAux hmAux : roomImgList) {
-            if(hasStopped){
+            if(isStopped()){
                 break;
             }
             try {
@@ -495,7 +499,7 @@ public class Work_DownLoad_Picture extends Worker {
 
         // Messages
         for (HMAux hmAux : messageImgList) {
-            if(hasStopped){
+            if(isStopped()){
                 break;
             }
             try {
@@ -539,7 +543,7 @@ public class Work_DownLoad_Picture extends Worker {
 
     private void processSODownloads(SM_SODao smSoDao, SM_SO_Service_Exec_Task_FileDao taskFileDao, SM_SO_Product_EventDao eventDao, MD_ProductDao productDao, ArrayList<HMAux> so_client_approval_image, ArrayList<HMAux> so_file_list, ArrayList<HMAux> event_sketch_list, ArrayList<HMAux> event_file_list) throws Exception {
         for (HMAux hmAux : so_client_approval_image) {
-            if(hasStopped){
+            if(isStopped()){
                 break;
             }
             try {
@@ -569,7 +573,7 @@ public class Work_DownLoad_Picture extends Worker {
         }
         //
         for (HMAux hmAux : so_file_list) {
-            if(hasStopped){
+            if(isStopped()){
                 break;
             }
             try {
@@ -612,7 +616,7 @@ public class Work_DownLoad_Picture extends Worker {
          */
         //
         for (HMAux hmAux : event_sketch_list) {
-            if(hasStopped){
+            if(isStopped()){
                 break;
             }
             try {
@@ -647,7 +651,7 @@ public class Work_DownLoad_Picture extends Worker {
          */
         //
         for (HMAux hmAux : event_file_list) {
-            if(hasStopped){
+            if(isStopped()){
                 break;
             }
             try {
@@ -683,7 +687,7 @@ public class Work_DownLoad_Picture extends Worker {
 
     private void processProductDownloads(MD_ProductDao productDao, MD_All_ProductDao allProductDao, ArrayList<HMAux> product_sketch_list, ArrayList<HMAux> all_product_sketch_list, ArrayList<HMAux> product_icon_list) throws Exception {
         for (HMAux hmAux : product_sketch_list) {
-            if(hasStopped){
+            if(isStopped()){
                 break;
             }
             try {
@@ -712,7 +716,7 @@ public class Work_DownLoad_Picture extends Worker {
         }
 
         for (HMAux hmAux : all_product_sketch_list) {
-            if(hasStopped){
+            if(isStopped()){
                 break;
             }
             try {
@@ -741,7 +745,7 @@ public class Work_DownLoad_Picture extends Worker {
         }//FIM CROQUI
 
         for (HMAux hmAux : product_icon_list) {
-            if(hasStopped){
+            if(isStopped()){
                 break;
             }
             String file_address = "";
@@ -757,10 +761,14 @@ public class Work_DownLoad_Picture extends Worker {
                     );
                     //
                     ToolBox_Inf.renameDownloadFileInf(hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase(), "");
-
+                    //
+                    file_address = hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase();
+                }else{
+                    //LUCHE - 01/07/2020
+                    //Add preenchimento do nome da foto caso ela já exista localmente.
+                    //CORREÇÃO DE BUG.
                     file_address = hmAux.get(MD_ProductDao.PRODUCT_ICON_NAME).toLowerCase();
                 }
-
                 //Atualiza campo com url local
                 productDao.addUpdate(
                     new MD_Product_Sql_008(
@@ -786,7 +794,7 @@ public class Work_DownLoad_Picture extends Worker {
         }
         //
         for (HMAux hmAux : dados) {
-            if(hasStopped){
+            if(isStopped()){
                 break;
             }
             //
