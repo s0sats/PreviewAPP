@@ -203,6 +203,8 @@ import com.namoadigital.prj001.worker.Work_DownLoad_Picture;
 import com.namoadigital.prj001.worker.Work_Four_Hour_Schedule_Notification;
 import com.namoadigital.prj001.worker.Work_Quarter_Schedule_Notification;
 import com.namoadigital.prj001.worker.Work_Upload_Img;
+import com.namoadigital.prj001.worker.Work_Upload_Img_Chat;
+import com.namoadigital.prj001.worker.Work_Upload_Other_User_Img;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7034,6 +7036,56 @@ public class ToolBox_Inf {
                 workUploadImgRequest
             );
     }
+
+    public static void scheduleUploadOtherUserImgWork(){
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workUploadOtherUsrImgRequest =
+            new OneTimeWorkRequest.Builder(Work_Upload_Other_User_Img.class)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    60,
+                    TimeUnit.SECONDS
+                )
+                .setConstraints(constraints)
+                .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_Upload_Other_User_Img.WORKER_TAG,
+                ExistingWorkPolicy.REPLACE,
+                workUploadOtherUsrImgRequest
+            );
+    }
+
+    public static void scheduleUploadImgChat(){
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workUploadImgChatRequest =
+            new OneTimeWorkRequest.Builder(Work_Upload_Img_Chat.class)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    60,
+                    TimeUnit.SECONDS
+                )
+                .setConstraints(constraints)
+                .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_Upload_Img_Chat.WORKER_TAG,
+                ExistingWorkPolicy.REPLACE,
+                workUploadImgChatRequest
+            );
+    }
+
+
 
 
     public static void scheduleQuarterScheduleNotification(){
