@@ -397,6 +397,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         transList.add("alert_form_turn_gps_on_title");
         transList.add("alert_form_turn_gps_on_msg");
         //
+        transList.add("alert_gps_rationale_permission_ttl");
+        transList.add("alert_gps_rationale_permission_msg");
+        transList.add("alert_gps_denied_permission_ttl");
+        transList.add("alert_gps_denied_permission_msg");
+        transList.add("alert_gps_never_ask_again_permission_ttl");
+        transList.add("alert_gps_never_ask_again_permission_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -727,14 +734,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     }
 
-
     @Override
-    protected void onResume() {
-        super.onResume();
-//        String dataRecorded = "\nonResume ACT011\n Require_local: " + formLocal.getRequire_location()
-//        + "\nonResume ACT011\n status: " + SV_LocationTracker.status;
-//        recordProcess(dataRecorded);
-
+    protected void onStart() {
+        super.onStart();
         if (formLocal != null
                 && formLocal.getRequire_location() == 1
                 && ConstantBase.SYS_STATUS_IN_PROCESSING.equals(formLocal.getCustom_form_status())
@@ -3379,7 +3381,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private void getLocation() {
         requestPermissions(
                 Act011_Main.this,
-                NamoaPermissionRequest.MULTIIPLE_PERMISSION_REQUEST,
+                NamoaPermissionRequest.MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,
                 new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                 new NamoaPermissionRequest() {
                     @Override
@@ -3394,8 +3396,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         showPermissionRationaleDialog(
                                 Act011_Main.this,
                                 com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
-                                hmAux_Trans.get(""),
-                                hmAux_Trans.get(""),
+                                hmAux_Trans.get("alert_gps_denied_permission_ttl"),
+                                hmAux_Trans.get("alert_gps_denied_permission_msg"),
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -3405,7 +3407,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        onBackPressed();
+                                        callAct005(Act011_Main.this);
                                     }
                                 }
                         );
@@ -3417,8 +3419,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         showPermissionRationaleDialog(
                                 Act011_Main.this,
                                 com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
-                                hmAux_Trans.get(""),
-                                hmAux_Trans.get(""),
+                                hmAux_Trans.get("alert_gps_rationale_permission_ttl"),
+                                hmAux_Trans.get("alert_gps_rationale_permission_msg"),
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -3428,7 +3430,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        onBackPressed();
+                                        callAct005(Act011_Main.this);
                                     }
                                 }
                         );
@@ -3438,13 +3440,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     public void accessDeniedNeverAskAgain(String[] permissions) {
 
                         showPermissionNeverAskAgainDialog(
-                                com.namoa_digital.namoa_library.R.drawable.ic_camera_on,
-                                hmAux_Trans.get(""),
-                                hmAux_Trans.get(""),
+                                R.drawable.ic_location_on_24,
+                                hmAux_Trans.get("alert_gps_never_ask_again_permission_ttl"),
+                                hmAux_Trans.get("alert_gps_never_ask_again_permission_msg"),
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        onBackPressed();
+                                        callAct005(Act011_Main.this);
                                     }
                                 }
                         );

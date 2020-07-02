@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act005;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
+import com.namoa_digital.namoa_library.view.NamoaPermissionRequest;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
@@ -264,12 +266,92 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         if (!SV_LocationTracker.status && ToolBox_Inf.isUsrAppLogged(context)) {
             int pendencies = ToolBox_Inf.getLocationPendencies(context);
             if(pendencies>0) {
-                ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
+                retryGetLocation();
             }
         }
 
         ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
 
+    }
+
+    private void retryGetLocation() {
+        requestPermissions(
+                Act005_Main.this,
+                NamoaPermissionRequest.MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,
+                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                new NamoaPermissionRequest() {
+                    @Override
+                    public void accessGranted() {
+                        ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
+                    }
+
+                    @Override
+                    public void accessDenied(final String[] permissions) {
+                        showPermissionRationaleDialog(
+                                Act005_Main.this,
+                                com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
+                                hmAux_Trans.get("alert_gps_denied_permission_ttl"),
+                                hmAux_Trans.get("alert_gps_denied_permission_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,permissions);
+                                    }
+                                },
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                }
+                        );
+                    }
+
+                    @Override
+                    public void requestPermissionRationale(final String[] permissions) {
+
+                        showPermissionRationaleDialog(
+                                Act005_Main.this,
+                                com.namoa_digital.namoa_library.R.drawable.ic_alert_n,
+                                hmAux_Trans.get("alert_gps_rationale_permission_ttl"),
+                                hmAux_Trans.get("alert_gps_rationale_permission_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,permissions);
+                                    }
+                                },
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                }
+                        );
+                    }
+
+                    @Override
+                    public void accessDeniedNeverAskAgain(String[] permissions) {
+
+                        showPermissionNeverAskAgainDialog(
+                                R.drawable.ic_location_on_24,
+                                hmAux_Trans.get("alert_gps_never_ask_again_permission_ttl"),
+                                hmAux_Trans.get("alert_gps_never_ask_again_permission_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    }
+                                }
+                        );
+                    }
+
+                    @Override
+                    public void informAppDetailSettingsReturn() {
+                        callRequestPermission(MULTIIPLE_PERMISSION_REQUEST_WITHOUT_RATIONALE,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION});
+                    }
+                }
+        );
     }
 
     private void forceLogoutBySessionNotFound() {
@@ -465,6 +547,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_unsent_img_copy_error_msg");
         transList.add("alert_unsent_gps_nform_ttl");
         transList.add("alert_unsent_gps_nform_msg");
+        //
+        transList.add("alert_gps_rationale_permission_ttl");
+        transList.add("alert_gps_rationale_permission_msg");
+        transList.add("alert_gps_denied_permission_ttl");
+        transList.add("alert_gps_denied_permission_msg");
+        transList.add("alert_gps_never_ask_again_permission_ttl");
+        transList.add("alert_gps_never_ask_again_permission_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
