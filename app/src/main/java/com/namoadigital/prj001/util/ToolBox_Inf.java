@@ -7092,4 +7092,15 @@ public class ToolBox_Inf {
         }
         return formmattedTicketSeqExec;
     }
+
+    /**
+     * LUCHE - 08/07/2020
+     * <p></p>
+     * Metodo que valida string tem um valor diferente de null ou vazia
+     * @param value Texto
+     * @return True se string != null e != de vazia
+     */
+    public static boolean hasConsistentValueString(String value) {
+        return value != null && !value.isEmpty();
+    }
 }
