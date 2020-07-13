@@ -12,7 +12,7 @@
         android:background="@color/namoa_color_dark_blue"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/gl_start"
+        app:layout_constraintEnd_toStartOf="@id/step_approval_gd_start"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
@@ -26,12 +26,12 @@
         android:src="@drawable/step_dashed_vertical_line"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/gl_start"
+        app:layout_constraintEnd_toStartOf="@id/step_approval_gd_start"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/gl_start"
+        android:id="@+id/step_approval_gd_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -42,7 +42,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="@id/gl_start"
+        app:layout_constraintStart_toStartOf="@id/step_approval_gd_start"
         app:layout_constraintEnd_toEndOf="parent"
         >
 
@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.85" />
+            app:layout_constraintGuide_end="8dp" />
 
         <TextView
             android:id="@+id/step_approval_tv_question"
@@ -183,18 +183,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/step_approval_tv_status"
             tools:text="Rejeitado pois a norma não foi seguida no item 2 nem no item 3, també não foi seguida a norma no item 4 " />
-
-        <ImageView
-            android:id="@+id/step_approval_iv_process_icon"
-            android:layout_width="12dp"
-            android:layout_height="12dp"
-            android:tint="@color/namoa_color_gray_4"
-            app:layout_constraintBottom_toBottomOf="@+id/step_approval_tv_question"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/step_approval_gd_end"
-            app:layout_constraintTop_toTopOf="@+id/step_approval_tv_question"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/ic_baseline_history_24_black" />
 
         <ImageView
             android:id="@+id/step_approval_iv_partner"

@@ -148,7 +148,7 @@
     <color name="font_required"> #ffa500 </color>
     <color name="namoa_cancel_red">#e30613</color>
     <color name="namoa_icon_petrol_blue">#054b60</color>
-    <color name="namoa_color_ticket_process_highlight">#22ffc41d</color>
+    <color name="namoa_color_ticket_process_highlight">#fff4d2</color>
 
 
 </resources>

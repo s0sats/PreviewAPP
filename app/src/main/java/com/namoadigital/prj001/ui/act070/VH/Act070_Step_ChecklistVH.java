@@ -21,18 +21,13 @@ public class Act070_Step_ChecklistVH extends RecyclerView.ViewHolder {
     private TextView tvProduct;
     private TextView tvSerial;
     private TextView tvSite;
-    private TextView tvOperation;
     private ImageView ivStartDateIcon;
     private TextView tvStartDate;
     private ImageView ivEndDateIcon;
     private TextView tvEndDate;
     private ImageView ivUserIcon;
     private TextView tvUser;
-    private ImageView ivActionIcon;
-    private ImageView ivBtnAction;
     private View vDivider;
-    private ImageView ivWorkgroupIcon;
-    private TextView tvWorkgroup;
     private ImageView ivPartner;
     private TextView tvPartner;
 
@@ -49,19 +44,14 @@ public class Act070_Step_ChecklistVH extends RecyclerView.ViewHolder {
         tvProduct =  this.itemView.findViewById(R.id.step_checklist_tv_prod);
         tvSerial =  this.itemView.findViewById(R.id.step_checklist_tv_serial);
         tvSite =  this.itemView.findViewById(R.id.step_checklist_tv_site);
-        tvOperation =  this.itemView.findViewById(R.id.step_checklist_tv_operation);
         ivStartDateIcon =  this.itemView.findViewById(R.id.step_checklist_iv_start_date);
         tvStartDate =  this.itemView.findViewById(R.id.step_checklist_tv_start_date);
         ivEndDateIcon =  this.itemView.findViewById(R.id.step_checklist_iv_end_date);
         tvEndDate =  this.itemView.findViewById(R.id.step_checklist_tv_end_date);
         ivUserIcon =  this.itemView.findViewById(R.id.step_checklist_iv_user);
         tvUser =  this.itemView.findViewById(R.id.step_checklist_tv_user);
-        ivActionIcon =  this.itemView.findViewById(R.id.step_checklist_iv_process_icon);
-        ivBtnAction =  this.itemView.findViewById(R.id.step_checklist_iv_action);
         vDivider =  this.itemView.findViewById(R.id.step_checklist_v_divider);
-        ivWorkgroupIcon =  this.itemView.findViewById(R.id.step_checklist_iv_workgroup);
-        tvWorkgroup =  this.itemView.findViewById(R.id.step_checklist_tv_workgroup);
-        ivPartner =  this.itemView.findViewById(R.id.step_action_iv_partner);
+        ivPartner =  this.itemView.findViewById(R.id.step_checklist_iv_partner);
         tvPartner =  this.itemView.findViewById(R.id.step_checklist_tv_partner);
     }
 
@@ -80,10 +70,6 @@ public class Act070_Step_ChecklistVH extends RecyclerView.ViewHolder {
         if(ToolBox_Inf.hasConsistentValueString(stepChecklist.getSiteDesc())) {
             tvSite.setVisibility(View.VISIBLE);
             tvSite.setText(stepChecklist.getSiteDesc());
-        }
-        if(ToolBox_Inf.hasConsistentValueString(stepChecklist.getOperationDesc())) {
-            tvOperation.setVisibility(View.VISIBLE);
-            tvOperation.setText(stepChecklist.getOperationDesc());
         }
         if(ToolBox_Inf.hasConsistentValueString(stepChecklist.getStartDate())) {
             tvStartDate.setText(stepChecklist.getStartDate());
@@ -116,13 +102,10 @@ public class Act070_Step_ChecklistVH extends RecyclerView.ViewHolder {
         tvProduct.setVisibility(View.GONE);
         tvSerial.setVisibility(View.GONE);
         tvSite.setVisibility(View.GONE);
-        tvOperation.setVisibility(View.GONE);
         ivEndDateIcon.setVisibility(View.GONE);
         tvEndDate.setVisibility(View.GONE);
         ivUserIcon.setVisibility(View.GONE);
         tvUser.setVisibility(View.GONE);
-        ivWorkgroupIcon.setVisibility(View.GONE);
-        tvWorkgroup.setVisibility(View.GONE);
         ivPartner.setVisibility(View.VISIBLE);
         tvPartner.setVisibility(View.GONE);
     }

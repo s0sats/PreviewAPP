@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act070.VH;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -18,10 +19,10 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
     private View vTopStepLine;
     private View vBottomStepLine;
     private TextView tvDesc;
-    private TextView tvStepStatus;
     private ImageView ivToggleIcon;
     private ImageView ivEndDate;
     private TextView tvEndDate;
+    private View vBottomDivider;
     private boolean childShown = false;
     private final Act070_Steps_Adapter.onMainClickListener onClickListener;
 
@@ -40,7 +41,7 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
         ivToggleIcon = this.itemView.findViewById(R.id.step_main_iv_toggle_icon);
         tvEndDate = this.itemView.findViewById(R.id.step_main_tv_end_date);
         ivEndDate = this.itemView.findViewById(R.id.step_main_iv_end_date);
-        tvStepStatus = this.itemView.findViewById(R.id.step_main_tv_step_status);
+        vBottomDivider = this.itemView.findViewById(R.id.step_main_v_divider);
         //
         this.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +54,7 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
                     //
                     childShown = !childShown;
                 }
+                setToggleIcon();
             }
         });
     }
@@ -66,22 +68,31 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
     }
 
     public void bindData(StepMain stepMain){
-        /*if(getAdapterPosition() == 0){
-            vTopStepLine.setVisibility(View.GONE);
-        }*/
         resetVisibility();
         setToggleIcon();
+        if(ToolBox_Inf.hasConsistentValueString(stepMain.getStepNum())){
+            tvStepNum.setVisibility(View.VISIBLE);
+            tvStepNum.setText(stepMain.getStepNum());
+        }
+
         if(ToolBox_Inf.hasConsistentValueString(stepMain.getStepDescription())){
             tvDesc.setVisibility(View.VISIBLE);
             tvDesc.setText(stepMain.getStepDescription());
         }
         if(ToolBox_Inf.hasConsistentValueString(stepMain.getEndDate())){
+            ivEndDate.setVisibility(View.VISIBLE);
             tvEndDate.setVisibility(View.VISIBLE);
             tvEndDate.setText(stepMain.getEndDate());
         }
+        //
+        setStatusColorChanges(stepMain);
+    }
+
+    private void setStatusColorChanges(StepMain stepMain) {
         if(ToolBox_Inf.hasConsistentValueString(stepMain.getStepStatus())){
-            tvStepStatus.setVisibility(View.VISIBLE);
-            tvStepStatus.setText(stepMain.getStepStatus());
+            tvStepNum.getBackground().setColorFilter(
+                ToolBox_Inf.getStatusColorV2(context,stepMain.getStepStatus()), PorterDuff.Mode.SRC_ATOP
+            );
         }
     }
 
@@ -93,16 +104,18 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
                 : R.drawable.ic_baseline_keyboard_arrow_down_24_black
             )
         );
+        vBottomDivider.setVisibility(childShown ? View.VISIBLE : View.GONE );
+        //
     }
 
     private void resetVisibility() {
-        vTopStepLine.setVisibility(View.GONE);
-        vBottomStepLine.setVisibility(View.GONE);
+        vTopStepLine.setVisibility(View.VISIBLE);
+        vBottomStepLine.setVisibility(View.VISIBLE);
         tvStepNum.setVisibility(View.GONE);
         tvDesc.setVisibility(View.GONE);
-        ivToggleIcon.setVisibility(View.GONE);
+        ivToggleIcon.setVisibility(View.VISIBLE);
         tvEndDate.setVisibility(View.GONE);
         ivEndDate.setVisibility(View.GONE);
-        tvStepStatus.setVisibility(View.GONE);
+        vBottomDivider.setVisibility(View.GONE);
     }
 }

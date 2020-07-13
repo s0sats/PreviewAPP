@@ -11,19 +11,18 @@
         android:id="@+id/step_main_tv_step_num"
         android:layout_width="32dp"
         android:layout_height="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/step_status"
         android:gravity="center"
+        android:text="1"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gl_start"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:layout_constraintWidth_default="wrap"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:text="1"
-        />
+        app:layout_constraintWidth_default="wrap" />
 
     <View
         android:id="@+id/step_main_v_bottom_step_line"
@@ -52,19 +51,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15" />
+        app:layout_constraintGuide_percent="0.15"  />
 
     <TextView
         android:id="@+id/step_main_tv_desc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="1 -Planejamento"
+        android:layout_marginBottom="8dp"
+        android:text="1 -Planejamento 1 -Planejamento "
         android:textSize="18sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/step_main_tv_step_num"
         app:layout_constraintEnd_toStartOf="@+id/step_main_iv_toggle_icon"
         app:layout_constraintStart_toStartOf="@+id/gl_start"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/step_main_tv_step_num" />
 
     <TextView
         android:id="@+id/step_main_tv_end_date"
@@ -73,19 +73,10 @@
         android:layout_marginStart="8dp"
         android:text="20/05/2020 17:00"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/step_main_tv_desc"
         app:layout_constraintStart_toEndOf="@+id/step_main_iv_end_date"
         app:layout_constraintTop_toBottomOf="@+id/step_main_tv_desc" />
 
-    <TextView
-        android:id="@+id/step_main_tv_step_status"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="APROVADO"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/step_main_tv_desc"
-        app:layout_constraintStart_toEndOf="@+id/step_main_tv_end_date"
-        app:layout_constraintTop_toBottomOf="@+id/step_main_tv_desc" />
 
     <ImageView
         android:id="@+id/step_main_iv_end_date"
@@ -94,7 +85,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/gl_start"
         app:layout_constraintTop_toBottomOf="@+id/step_main_tv_desc"
-        app:srcCompat="@drawable/ic_check_white_24dp"
+        android:src="@drawable/ic_check_white_24dp"
         android:tint="@color/namoa_color_success_green"
         />
 
@@ -106,7 +97,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/step_main_tv_desc"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_down_24_black" />
+        android:src="@drawable/ic_baseline_keyboard_arrow_down_24_black"
+        />
+
+    <View
+        android:id="@+id/step_main_v_divider"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/namoa_color_gray3"
+        app:layout_constraintStart_toStartOf="@id/gl_start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/step_main_tv_end_date"
+        />
 
 
 </android.support.constraint.ConstraintLayout>

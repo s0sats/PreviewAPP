@@ -27,6 +27,7 @@ import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act072.Act072_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -157,7 +158,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                         processPendencies();
                         break;
                     case Frg_Serial_Search.BTN_OPTION_03:
-                        processGraphics();
+                        //processGraphics();
+                        callAct070(new Bundle());
                         break;
                     default:
                         break;
@@ -172,7 +174,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies"));
         mFrgSerialSearch.setBtn_Option_03_BackGround(R.drawable.namoa_cell_2_states);
         mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_graphics"));
-        mFrgSerialSearch.setBtn_Option_03_Visibility(View.GONE);
+        mFrgSerialSearch.setBtn_Option_03_Visibility(View.VISIBLE);
         mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
         //
@@ -368,6 +370,19 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     @Override
     public void callAct069(Bundle bundle){
         Intent intent = new Intent(context, Act069_Main.class);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
+    }
+
+    /**
+     *
+     * CRIADO PARA TESTAR NOVA ACT070 EM QUANTO NÃO TEMOS JSON
+     * @param bundle
+     */
+    private void callAct070(Bundle bundle){
+        Intent intent = new Intent(context, Act070_Main.class);
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
         intent.putExtras(bundle);
         startActivity(intent);

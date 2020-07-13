@@ -5,6 +5,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,20 +25,17 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
     private TextView tvProduct;
     private TextView tvSerial;
     private TextView tvSite;
-    private TextView tvOperation;
     private ImageView ivStartDateIcon;
     private TextView tvStartDate;
     private ImageView ivEndDateIcon;
     private TextView tvEndDate;
     private ImageView ivUserIcon;
     private TextView tvUser;
-    private ImageView ivActionIcon;
-    private ImageView ivBtnAction;
     private View vDivider;
-    private ImageView ivWorkgroupIcon;
-    private TextView tvWorkgroup;
     private ImageView ivPartner;
     private TextView tvPartner;
+    private ImageView ivProcessAction;
+    private TextView tvProcessAction;
 
     public Act070_Step_ActionVH(Context context, @NonNull View itemView) {
         super(itemView);
@@ -53,20 +51,17 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
         tvProduct =  this.itemView.findViewById(R.id.step_action_tv_prod);
         tvSerial =  this.itemView.findViewById(R.id.step_action_tv_serial);
         tvSite =  this.itemView.findViewById(R.id.step_action_tv_site);
-        tvOperation =  this.itemView.findViewById(R.id.step_action_tv_operation);
         ivStartDateIcon =  this.itemView.findViewById(R.id.step_action_iv_start_date);
         tvStartDate =  this.itemView.findViewById(R.id.step_action_tv_start_date);
         ivEndDateIcon =  this.itemView.findViewById(R.id.step_action_iv_end_date);
         tvEndDate =  this.itemView.findViewById(R.id.step_action_tv_end_date);
         ivUserIcon =  this.itemView.findViewById(R.id.step_action_iv_user);
         tvUser =  this.itemView.findViewById(R.id.step_action_tv_user);
-        ivActionIcon =  this.itemView.findViewById(R.id.step_action_iv_process_icon);
-        ivBtnAction =  this.itemView.findViewById(R.id.step_action_iv_action);
         vDivider =  this.itemView.findViewById(R.id.step_action_v_divider);
-        ivWorkgroupIcon =  this.itemView.findViewById(R.id.step_action_iv_workgroup);
-        tvWorkgroup =  this.itemView.findViewById(R.id.step_action_tv_workgroup);
         ivPartner =  this.itemView.findViewById(R.id.step_action_iv_partner);
         tvPartner =  this.itemView.findViewById(R.id.step_action_tv_partner);
+        ivProcessAction =  this.itemView.findViewById(R.id.step_action_iv_process_action);
+        tvProcessAction =  this.itemView.findViewById(R.id.step_action_tv_process_action);
     }
 
     public void bindData(StepAction stepAction){
@@ -81,13 +76,11 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
             tvSerial.setVisibility(View.VISIBLE);
             tvSerial.setText(stepAction.getSerialId());
         }
-        if(ToolBox_Inf.hasConsistentValueString(stepAction.getSiteDesc())) {
+        //Sem necessidade de chamar o hasConsistentValueString, pois já é chamado internamento
+        // no metodo equalsToLoggedSite
+        if(ToolBox_Inf.equalsToLoggedSite(context,stepAction.getSiteDesc())) {
             tvSite.setVisibility(View.VISIBLE);
             tvSite.setText(stepAction.getSiteDesc());
-        }
-        if(ToolBox_Inf.hasConsistentValueString(stepAction.getOperationDesc())) {
-            tvOperation.setVisibility(View.VISIBLE);
-            tvOperation.setText(stepAction.getOperationDesc());
         }
         if(ToolBox_Inf.hasConsistentValueString(stepAction.getStartDate())) {
             tvStartDate.setText(stepAction.getStartDate());
@@ -104,11 +97,6 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
             tvUser.setVisibility(View.VISIBLE);
             tvUser.setText(stepAction.getEndUser());
         }
-        /*if(ToolBox_Inf.hasConsistentValueString(stepAction.getWorkgroupDesc())) {
-            ivWorkgroupIcon.setVisibility(View.VISIBLE);
-            tvWorkgroup.setVisibility(View.VISIBLE);
-            tvWorkgroup.setText(stepAction.getWorkgroupDesc());
-        }*/
         if(ToolBox_Inf.hasConsistentValueString(stepAction.getPartnerDesc())) {
             ivPartner.setVisibility(View.VISIBLE);
             tvPartner.setVisibility(View.VISIBLE);
@@ -117,6 +105,35 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
         //
         applyHistoryLayout(stepAction);
         applyHighlightBackground(stepAction.isCurrentStep());
+        configProcessAction(stepAction);
+    }
+
+
+
+
+    private void configProcessAction(StepAction stepAction) {
+        if(stepAction.isCurrentStep()){
+            int tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PROCESS);
+            Drawable drawable = null;
+            switch (stepAction.getProcessStatus()){
+                case ConstantBaseApp.SYS_STATUS_PENDING:
+                case ConstantBaseApp.SYS_STATUS_PROCESS:
+                    drawable = context.getDrawable(R.drawable.ic_baseline_play_arrow_24dp);
+                    break;
+                case ConstantBaseApp.SYS_STATUS_DONE:
+                    drawable = context.getDrawable(R.drawable.ic_baseline_open_in_new_24dp);
+                    tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PENDING);
+                    break;
+            }
+            //
+            if(drawable != null){
+                drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP);
+            }
+            ivProcessAction.setImageDrawable(drawable);
+            tvProcessAction.setTextColor(tintColor);
+            ivProcessAction.setVisibility(View.VISIBLE);
+            tvProcessAction.setVisibility(View.VISIBLE);
+        }
     }
 
     private void applyHighlightBackground(boolean currentStep) {
@@ -127,42 +144,43 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
                 : R.color.padrao_TRANSPARENT
             )
         );
+        //
+        if(currentStep){
+            vStepContinousLine.setVisibility(View.GONE);
+            ivStepDashedLine.setVisibility(View.VISIBLE);
+        }else{
+            vStepContinousLine.setVisibility(View.VISIBLE);
+            ivStepDashedLine.setVisibility(View.GONE);
+        }
     }
 
     private void applyHistoryLayout(StepAction stepAction) {
         int fontColor = R.color.namoa_color_dark_blue;
-        int processIcon = R.drawable.ic_edit_black_24dp;
         //
         if(!ConstantBaseApp.SYS_STATUS_PENDING.equals(stepAction.getProcessStatus())){
-            fontColor = R.color.namoa_color_gray3;
-            processIcon = R.drawable.ic_baseline_history_24_black;
+            fontColor = R.color.namoa_color_gray_4;
         }
-        tvProduct.setTextColor(fontColor);
-        tvSerial.setTextColor(fontColor);
-        tvSite.setTextColor(fontColor);
-        tvOperation.setTextColor(fontColor);
-        tvEndDate.setTextColor(fontColor);
-        tvUser.setTextColor(fontColor);
-        tvWorkgroup.setTextColor(fontColor);
-        tvPartner.setTextColor(fontColor);
-        Drawable drawable =  context.getDrawable(processIcon);
-        drawable.setColorFilter(context.getResources().getColor(R.color.namoa_color_gray3), PorterDuff.Mode.SRC_ATOP);
-        ivActionIcon.setImageDrawable(drawable);
+        tvActionDesc.setTextColor(ContextCompat.getColor(context, fontColor));
+        tvProduct.setTextColor(ContextCompat.getColor(context, fontColor));
+        tvSerial.setTextColor(ContextCompat.getColor(context, fontColor));
+        tvStartDate.setTextColor(ContextCompat.getColor(context, fontColor));
+        tvEndDate.setTextColor(ContextCompat.getColor(context, fontColor));
+        tvUser.setTextColor(ContextCompat.getColor(context, fontColor));
+        tvPartner.setTextColor(ContextCompat.getColor(context, fontColor));
     }
 
     private void resetVisibility() {
         tvProduct.setVisibility(View.GONE);
         tvSerial.setVisibility(View.GONE);
         tvSite.setVisibility(View.GONE);
-        tvOperation.setVisibility(View.GONE);
         ivEndDateIcon.setVisibility(View.GONE);
         tvEndDate.setVisibility(View.GONE);
         ivUserIcon.setVisibility(View.GONE);
         tvUser.setVisibility(View.GONE);
-        ivWorkgroupIcon.setVisibility(View.GONE);
-        tvWorkgroup.setVisibility(View.GONE);
         ivPartner.setVisibility(View.GONE);
         tvPartner.setVisibility(View.GONE);
+        ivProcessAction.setVisibility(View.GONE);
+        tvProcessAction.setVisibility(View.GONE);
     }
 
 }

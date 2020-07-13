@@ -11,6 +11,27 @@
     tools:context=".ui.act070.Act070_Main"
     tools:showIn="@layout/act070_main">
 
+    <include
+        android:id="@+id/header_include"
+        layout="@layout/act070_pipeline_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/act070_rv_pipeline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        tools:listitem="@layout/act070_step_main_cell"
+        app:layout_constraintTop_toBottomOf="@id/header_include"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/include"
+        app:layout_constraintVertical_bias="0"
+        />
+
     <ScrollView
         android:id="@+id/act070_sv_main"
         android:layout_width="0dp"
@@ -19,7 +40,8 @@
         app:layout_constraintBottom_toTopOf="@id/include"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/act070_cl_main"
@@ -413,6 +435,5 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/act070_sv_main" />
+        app:layout_constraintStart_toStartOf="parent" />
 </android.support.constraint.ConstraintLayout>

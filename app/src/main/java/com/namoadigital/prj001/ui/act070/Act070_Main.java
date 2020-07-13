@@ -14,6 +14,8 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,6 +44,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act070_Steps_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
@@ -53,6 +56,11 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
+import com.namoadigital.prj001.ui.act070.model.BaseStep;
+import com.namoadigital.prj001.ui.act070.model.StepAction;
+import com.namoadigital.prj001.ui.act070.model.StepChecklist;
+import com.namoadigital.prj001.ui.act070.model.StepFooter;
+import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -107,6 +115,14 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private View.OnClickListener photoListener;
     private Button btnCheckinCancel;
 
+    /**
+     * Iniciando terraplanagem e reinicio da tela.
+     * @param savedInstanceState
+     */
+    private RecyclerView rvTicketPipeline;
+    private Act070_Steps_Adapter mAdapter;
+    private ArrayList<BaseStep> sources = new ArrayList<>();
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -202,12 +218,12 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         );
         //
         recoverIntentsInfo();
-        //
-        if (mPresenter.validateBundleParams(mTkPrefix, mTkCode)) {
+        //COMENTADO PARA TESTES ENQUANTO NÃO TEMOS JSON
+        /*if (mPresenter.validateBundleParams(mTkPrefix, mTkCode)) {
             updateTicketData();
         } else {
             paramErrorFlow();
-        }
+        }*/
     }
 
     private void refreshUi() {
@@ -277,6 +293,146 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         llActions = findViewById(R.id.act070_ll_actions);
         //
         setTranslation();
+        /**
+         * LUCHE - 13/07/2020 - PIPELINE
+         */
+        rvTicketPipeline = findViewById(R.id.act070_rv_pipeline);
+        iniAdapter();
+        initRecycle();
+        //
+    }
+
+    private void initRecycle() {
+        rvTicketPipeline.setLayoutManager(new LinearLayoutManager(context));
+        rvTicketPipeline.setAdapter(mAdapter);
+    }
+
+    private void iniAdapter() {
+        generateFakePipeline();
+        //
+        mAdapter = new Act070_Steps_Adapter(
+            context,
+            sources,
+            new Act070_Steps_Adapter.onMainClickListener() {
+                @Override
+                public void onMainClick(boolean isShown, int mainPosition) {
+                    int targetPosition = mainPosition +1;
+                    if(isShown){
+                        sources.remove(
+                            targetPosition + 1
+                        );
+
+                        sources.remove(
+                            targetPosition
+                        );
+                        //mAdapter.notifyItemRemoved(targetPosition);
+                        mAdapter.notifyItemRangeRemoved(targetPosition,2);
+                    }else{
+                        String processStatus = "PENDING";
+                        boolean currentStep = false;
+                        try {
+                            StepMain stepMain = (StepMain) sources.get(mainPosition);
+                            processStatus = stepMain.getStepStatus();
+                            currentStep = stepMain.isCurrentStep();
+                        }catch (Exception e){
+                            processStatus = "PENDING";
+                        }
+
+                        sources.add(
+                            targetPosition,
+                            new StepAction(
+                                "Ação - Limpeza de banheiro",
+                                "btt4",
+                                "WBTT20200713001",
+                                "Viernheim",
+                                "06/07/2020 08:00",
+                                "",
+                                "",
+                                "",
+                                processStatus,
+                                currentStep
+                            )
+                        );
+                        sources.add(
+                            targetPosition + 1,
+                            new StepChecklist(
+                                "Checklist 3.0 - Insp.Bugs",
+                                "btt4",
+                                "WBTT20200713001",
+                                "Valhalla",
+                                "06/07/2020 08:00",
+                                "31/12/2999 23:59",
+                                "Luche",
+                                "22 - Namoa",
+                                processStatus,
+                                currentStep
+                            )
+                            //full desc
+                            /*"Checklist 3.0 - Insp.Bugs",
+                                "btt4",
+                                "WBTT20200713001",
+                                "FakeVierhiem",
+                                "06/07/2020 08:00",
+                                "31/12/2999 23:59",
+                                "Luche",
+                                "22 - Namoa",
+                                "PENDING",
+                                false*/
+
+                        );
+                        //mAdapter.notifyItemInserted(targetPosition);
+                        mAdapter.notifyItemRangeInserted(targetPosition,2);
+                    }
+                }
+            }
+        );
+
+        
+    }
+
+    private void generateFakePipeline() {
+        StepMain stepMain = new StepMain(
+            "1.Planejamento",
+            "1",
+            " 20/05/2020 17:05",
+            "DONE",
+            false);
+        StepMain stepMain2 = new StepMain(
+            "2.Retirada de peças",
+            "2",
+            "",
+            "PENDING",
+            true);
+        StepMain stepMain3 = new StepMain(
+            "3.1 Atendimento",
+            "3.1",
+            "",
+            "PROCESS",
+            false);
+        StepFooter stepFooter = new StepFooter(
+            "31/12/2199 23:59"
+        );
+        /*StepAction stepAction = new StepAction(
+            "Ação",
+            " 20/05/2020 17:05",
+            " 25/05/2020 18:05",
+            "Ronaldinho"
+        );
+        StepChecklist stepChecklist = new StepChecklist(
+            "Ação",
+            " 20/05/2020 17:05",
+            " 25/05/2020 18:05",
+            "Ronaldinho",
+            "BttXApp",
+            "22 - Namoa"
+        );*/
+        sources.add(stepMain);
+        sources.add(stepMain2);
+        sources.add(stepMain3);
+        sources.add(stepFooter);
+        /*sources.add(stepAction);
+        sources.add(stepChecklist);*/
+
     }
 
     private void setTranslation() {
