@@ -149,5 +149,8 @@
     <color name="namoa_cancel_red">#e30613</color>
     <color name="namoa_icon_petrol_blue">#054b60</color>
 
+    <!-- Cores PIPELINE -->
+    <color name="namoa_sync_pipeline_background_btn">#CCFDC620</color>
+    <color name="namoa_pipeline_background_icon">#CC656565</color>
 
 </resources>
