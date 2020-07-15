@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.model.VH_models.Act069_TicketVH;
+import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -29,8 +29,8 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
 
     private Context context;
     private int resource;
-    private ArrayList<Act069_TicketVH> mValues;
-    private ArrayList<Act069_TicketVH> mFilteredValues;
+    private ArrayList<Act074_TicketVH> mValues;
+    private ArrayList<Act074_TicketVH> mFilteredValues;
     private String mResource_Code;
     private HMAux hmAux_Trans;
     private String mResource_Name = "Act074_Next_Tickets_Adapter";
@@ -38,7 +38,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     private Act074_Next_Tickets_Adapter.OnTicketClickListener onTicketClickListener;
     private Act074_Next_Tickets_Adapter.OnScheduleWarningClickListener onScheduleWarningClickListener;
 
-    public Act074_Next_Tickets_Adapter(Context context, int resource, ArrayList<Act069_TicketVH> mValues) {
+    public Act074_Next_Tickets_Adapter(Context context, int resource, ArrayList<Act074_TicketVH> mValues) {
         this.context = context;
         this.resource = resource;
         this.mValues = mValues;
@@ -68,7 +68,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     public interface OnTicketClickListener {
-        void onTicketClickListner(Act069_TicketVH item);
+        void onTicketClickListner(Act074_TicketVH item);
     }
 
     public interface OnScheduleWarningClickListener {
@@ -120,12 +120,11 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
         private TextView tv_prod_desc;
         private TextView tv_site_desc;
         private TextView tv_serial;
-        private TextView tv_open_comment;
+        private TextView tv_desc_origin;
         private TextView tv_step_desc;
-        private TextView tv_open_date_val;
-        private ImageView iv_step_id;
+        private TextView tv_forecast_date_val;
+        private TextView tv_step_id;
         private ImageView iv_schedule_icon;
-        private TextView tv_other_steps_available;
 
         public TicketVH(View itemView) {
             super(itemView);
@@ -138,10 +137,10 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             tv_prod_desc = itemView.findViewById(R.id.act074_ticket_cell_tv_prod_desc);
             tv_site_desc = itemView.findViewById(R.id.act074_ticket_cell_tv_site_desc);
             tv_serial = itemView.findViewById(R.id.act074_ticket_cell_tv_serial);
-            tv_open_comment = itemView.findViewById(R.id.act074_ticket_cell_tv_desc_origin);
+            tv_desc_origin = itemView.findViewById(R.id.act074_ticket_cell_tv_desc_origin);
             tv_step_desc = itemView.findViewById(R.id.act074_ticket_cell_tv_step_desc);
-            tv_open_date_val = itemView.findViewById(R.id.act074_ticket_cell_tv_open_date_val);
-            iv_step_id = itemView.findViewById(R.id.act074_ticket_cell_iv_step_id);
+            tv_forecast_date_val = itemView.findViewById(R.id.act074_ticket_cell_tv_forecast_date_val);
+            tv_step_id = itemView.findViewById(R.id.act074_ticket_cell_tv_step_id);
             iv_schedule_icon = itemView.findViewById(R.id.act074_ticket_cell_iv_schedule_icon);
             //
             this.itemView.setOnClickListener(new View.OnClickListener() {
@@ -157,98 +156,32 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
         }
 
         private void setLabels() {
-            tv_other_steps_available.setText(hmAux_Trans.get("other_steps_available_lbl"));
+            tv_step_desc.setText(hmAux_Trans.get("other_steps_available_lbl"));
         }
 
-        public void bindData(Act069_TicketVH item) {
+        public void bindData(Act074_TicketVH item) {
             resetVisibility();
             //
             tv_ticket_id.setText(getFormattedTicketID(item));
-            setSyncIcon(item.getSync_required());
             tv_status.setText(hmAux_Trans.get(item.getTicket_status()));
             tv_status.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(item.getTicket_status())));
             //
-//            if (item.getType_path() != null && !item.getType_path().isEmpty()) {
-//                tvType_path.setVisibility(View.VISIBLE);
-//                tvType_path.setText(item.getType_path());
-//            }
-//            //
-//            if (item.getType_desc() != null && !item.getType_desc().isEmpty()) {
-//                tvType_desc.setVisibility(View.VISIBLE);
-//                tvType_desc.setText(item.getType_desc());
-//            }
-//            //
-//            if (item.getOpen_comments() != null && !item.getOpen_comments().isEmpty()) {
-//                tvOpen_comment.setVisibility(View.VISIBLE);
-//                tvOpen_comment.setText(item.getOpen_comments());
-//            }
-//            //
-//            if (item.getOpen_date() != null && !item.getOpen_date().isEmpty()) {
-//                tvOpen_date.setVisibility(View.VISIBLE);
-//                tvOpen_date_val.setVisibility(View.VISIBLE);
-//                tvOpen_date_val.setText(
-//                        ToolBox_Inf.millisecondsToString(
-//                                ToolBox_Inf.dateToMilliseconds(item.getOpen_date()),
-//                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-//                        )
-//                );
-//            }
-//            //
-//            if (item.getForecast_date() != null && !item.getForecast_date().isEmpty()) {
-//                tvForecast_date.setVisibility(View.VISIBLE);
-//                tvForecast_date_val.setVisibility(View.VISIBLE);
-//                tvForecast_date_val.setText(
-//                        ToolBox_Inf.millisecondsToString(
-//                                ToolBox_Inf.dateToMilliseconds(item.getForecast_date()),
-//                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-//                        )
-//                );
-//            }
-//            if (item.getCurrent_site_desc() != null && !item.getCurrent_site_desc().isEmpty()) {
-//                tv_site_desc.setVisibility(View.VISIBLE);
-//                tv_site_desc.setVisibility(View.VISIBLE);
-//                tv_site_desc.setText(
-//                        item.getCurrent_site_desc()
-//                );
-//            }
-//            if (item.getCurrent_product_desc() != null && !item.getCurrent_product_desc().isEmpty()) {
-//                tvProduct.setVisibility(View.VISIBLE);
-//                tvProduct.setText(
-//                        item.getCurrent_product_desc()
-//                );
-//            }
-//            if (item.getCurrent_serial_id() != null && !item.getCurrent_serial_id().isEmpty()) {
-//                tvSerial.setVisibility(View.VISIBLE);
-//                tvSerial.setText(
-//                        item.getCurrent_serial_id()
-//                );
-//            }
-            setIvScheduleWarning(item);
+            setVisibilityByContent(tv_status, item.getTicket_status());
+            setVisibilityByContent(tv_ticket_id, item.getTicket_id());
+            setVisibilityByContent(tv_step_id, item.getTicket_step_id());
+            setVisibilityByContent(tv_step_desc, item.getTicket_step_desc());
+            setVisibilityByContent(tv_prod_desc, item.getTicket_prod_desc());
+            setSiteVisibility(tv_site_desc, item.getTicket_site_desc());
+            setVisibilityByContent(tv_serial, item.getTicket_serial());
+            setVisibilityByContent(tv_desc_origin, item.getTicket_origin_desc());
+            setVisibilityByContent(tv_forecast_date_val, item.getTicket_forecast_date());
+            //
         }
 
-        private void setIvScheduleWarning(final Act069_TicketVH item) {
-            if ((item.getFcm_new_status() != null && !item.getFcm_new_status().isEmpty())
-                    || (item.getFcm_user_nick() != null && !item.getFcm_user_nick().isEmpty())
-                    || (item.getSchedule_erro_msg() != null && !item.getSchedule_erro_msg().isEmpty())
-            ) {
-                int color = item.getSchedule_erro_msg() != null && !item.getSchedule_erro_msg().isEmpty()
-                        ? R.color.namoa_color_danger_red
-                        : R.color.light_to_dark_blue_color;
-                //
-//                ivScheduleWarning.setVisibility(View.VISIBLE);
-//                ivScheduleWarning.setColorFilter(context.getResources().getColor(color), PorterDuff.Mode.SRC_ATOP);
-//                ivScheduleWarning.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (onScheduleWarningClickListener != null) {
-//                            onScheduleWarningClickListener.onScheduleWarningClick(
-//                                    item.getFcm_new_status(),
-//                                    item.getFcm_user_nick(),
-//                                    item.getSchedule_erro_msg()
-//                            );
-//                        }
-//                    }
-//                });
+        private void setVisibilityByContent(TextView tv_field, String tv_content) {
+            if (tv_content != null && tv_content.isEmpty()) {
+                tv_field.setVisibility(View.VISIBLE);
+                tv_field.setText(tv_content);
             }
         }
 
@@ -260,7 +193,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
          *
          * @param item - Obj View holder
          */
-        private String getFormattedTicketID(Act069_TicketVH item) {
+        private String getFormattedTicketID(Act074_TicketVH item) {
             String id = item.getTicket_id();
             if (item.getSchedulePk() != null && !item.getSchedulePk().isEmpty()) {
                 id = ToolBox_Inf.getFormattedTicketSeqExec(
@@ -288,13 +221,16 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             tv_prod_desc.setVisibility(View.GONE);
             tv_site_desc.setVisibility(View.GONE);
             tv_serial.setVisibility(View.GONE);
-            tv_open_comment.setVisibility(View.GONE);
+            tv_desc_origin.setVisibility(View.GONE);
             tv_step_desc.setVisibility(View.GONE);
-            tv_open_date_val.setVisibility(View.GONE);
-            iv_step_id.setVisibility(View.GONE);
+            tv_forecast_date_val.setVisibility(View.GONE);
+            tv_step_id.setVisibility(View.GONE);
             iv_schedule_icon.setVisibility(View.GONE);
-            tv_other_steps_available.setVisibility(View.GONE);
         }
+    }
+
+    private void setSiteVisibility(TextView tv_site_desc, String ticket_site_desc) {
+
     }
 
 
@@ -302,19 +238,19 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             String charString = ToolBox.AccentMapper(constraint.toString().toLowerCase());
-//            if (charString.isEmpty()) {
-//                mFilteredValues = mValues;
-//            } else {
-            ArrayList<Act069_TicketVH> filteredList = new ArrayList<>();
-            for (Act069_TicketVH row : mValues) {
-                //Resgata todos os campos concatenado e com remoção de acentuacao
-                String rowFields = ToolBox.AccentMapper(row.getAllFieldForFilter().toLowerCase());
-                if (rowFields.contains(charString)) {
-                    filteredList.add(row);
+            if (charString.isEmpty()) {
+                mFilteredValues = mValues;
+            } else {
+                ArrayList<Act074_TicketVH> filteredList = new ArrayList<>();
+                for (Act074_TicketVH row : mValues) {
+                    //Resgata todos os campos concatenado e com remoção de acentuacao
+                    String rowFields = ToolBox.AccentMapper(row.getAllFieldForFilter().toLowerCase());
+                    if (rowFields.contains(charString)) {
+                        filteredList.add(row);
+                    }
                 }
+                mFilteredValues = filteredList;
             }
-            mFilteredValues = filteredList;
-            //}
             FilterResults filterResults = new FilterResults();
             filterResults.count = mFilteredValues.size();
             filterResults.values = mFilteredValues;
@@ -323,7 +259,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            mFilteredValues = (ArrayList<Act069_TicketVH>) results.values;
+            mFilteredValues = (ArrayList<Act074_TicketVH>) results.values;
             notifyDataSetChanged();
         }
     }
