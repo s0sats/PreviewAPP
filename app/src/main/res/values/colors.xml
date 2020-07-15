@@ -148,6 +148,7 @@
     <color name="font_required"> #ffa500 </color>
     <color name="namoa_cancel_red">#e30613</color>
     <color name="namoa_icon_petrol_blue">#054b60</color>
+    <color name="namoa_color_ticket_process_highlight">#fff4d2</color>
 
     <!-- Cores PIPELINE -->
     <color name="namoa_sync_pipeline_background_btn">#CCFDC620</color>

@@ -11,6 +11,10 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  * Created by d.luche on 16/01/2018.
  * Seleciona as msg do remetente que tem all_delivered ou all_read 0
  *
+ * LUCHE - 25/06/2020
+ * Modificado query para trazer apenas os 100 ultimos registros mais recentes, para diminuir o processamento no
+ * servidor.(Como muitas salas os usr não visualizam as msg, toda vezes que o usr entra na sala o numero
+ * de msg retornadas na query era muito alto).
  */
 
 public class CH_Message_Sql_018 implements Specification {
@@ -29,7 +33,10 @@ public class CH_Message_Sql_018 implements Specification {
         this.user_code = user_code;
         this.room_codeFilter = "   and m.room_code = '"+room_code+"'\n";
     }
-
+    //LUCHE - 25/06/2020
+    //Essa assinatura era usada no cRoom e Act035(Scroll Up)
+    //Essas chamadas foram comentadas pois estavam sobrecarregando o processamento no servidor
+    //Com há um historico de "comenta,descomenta" será mantida.
     public CH_Message_Sql_018(Context context,String customer_filter_list, String user_code) {
         if(customer_filter_list != null && customer_filter_list.length() > 0){
             this.customer_filter_list = " r.customer_code in ("+customer_filter_list+") \n";
@@ -59,7 +66,9 @@ public class CH_Message_Sql_018 implements Specification {
                         "   and (m.all_delivered = 0 OR m.all_read = 0)\n" +
                         "   and instr(m.msg_obj, '"+translateMsgStr+"') = 0\n" +
                         " ORDER BY\n" +
-                        "   m.msg_pk ")
+                        "   m.msg_pk \n" +
+                        " LIMIT 100 "
+                )
                 .append(";")
                 //.append(CH_MessageDao.MSG_PREFIX+"#"+CH_MessageDao.MSG_CODE)
                 .toString();

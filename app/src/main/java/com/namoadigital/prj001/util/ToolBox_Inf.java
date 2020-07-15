@@ -7092,4 +7092,28 @@ public class ToolBox_Inf {
         }
         return formmattedTicketSeqExec;
     }
+
+    /**
+     * LUCHE - 08/07/2020
+     * <p></p>
+     * Metodo que valida string tem um valor diferente de null ou vazia
+     * @param value Texto
+     * @return True se string != null e != de vazia
+     */
+    public static boolean hasConsistentValueString(String value) {
+        return value != null && !value.isEmpty();
+    }
+
+    /**
+     * LUCHE - 13/07/2020
+     * <p></p>
+     * Metodo que retorna se o site passado é o mesmo que o site logado.
+     * @param context Contexto
+     * @param siteCode SiteCode a ser comparado
+     * @return Verdadeiro se siteCode != null ,!= vazio e igual ao site da preferencia.
+     */
+    public static boolean equalsToLoggedSite(Context context, String siteCode){
+        return  hasConsistentValueString(siteCode)
+                && siteCode.equals(ToolBox_Con.getPreference_Site_Code(context));
+    }
 }
