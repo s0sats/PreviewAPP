@@ -7,6 +7,18 @@
     android:layout_height="wrap_content"
     >
 
+    <ImageView
+        android:id="@+id/step_main_iv_bottom_step_dashed_line"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/step_dashed_vertical_line"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/gl_start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/step_main_tv_step_num" />
+
     <TextView
         android:id="@+id/step_main_tv_step_num"
         android:layout_width="32dp"
@@ -15,7 +27,7 @@
         android:layout_marginBottom="10dp"
         android:background="@drawable/step_status"
         android:gravity="center"
-        android:text="1"
+        tools:text="1"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gl_start"
@@ -26,18 +38,19 @@
 
     <View
         android:id="@+id/step_main_v_bottom_step_line"
-        android:layout_width="5dp"
+        android:layout_width="@dimen/pipeline_step_vertical_line_width"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="@id/gl_start"
         app:layout_constraintTop_toBottomOf="@id/step_main_tv_step_num"
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="@color/namoa_color_dark_blue"
+        android:visibility="visible"
         />
 
     <View
         android:id="@+id/step_main_v_top_step_line"
-        android:layout_width="5dp"
+        android:layout_width="@dimen/pipeline_step_vertical_line_width"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="@id/gl_start"
@@ -58,7 +71,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:text="1 -Planejamento 1 -Planejamento "
+        tools:text="1 -Planejamento 1 -Planejamento "
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/step_main_tv_step_num"
@@ -71,34 +84,32 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="20/05/2020 17:00"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
+        tools:text="20/05/2020 17:00"
         app:layout_constraintEnd_toEndOf="@+id/step_main_tv_desc"
         app:layout_constraintStart_toEndOf="@+id/step_main_iv_end_date"
-        app:layout_constraintTop_toBottomOf="@+id/step_main_tv_desc" />
+        app:layout_constraintTop_toBottomOf="@+id/step_main_tv_forecast_date" />
 
 
     <ImageView
         android:id="@+id/step_main_iv_end_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/gl_start"
-        app:layout_constraintTop_toBottomOf="@+id/step_main_tv_desc"
+        android:layout_width="@dimen/pipeline_step_icon_width"
+        android:layout_height="@dimen/pipeline_step_icon_width"
         android:src="@drawable/ic_check_white_24dp"
-        android:tint="@color/namoa_color_success_green"
-        />
+        android:tint="@color/namoa_color_gray_4"
+        app:layout_constraintBottom_toBottomOf="@+id/step_main_tv_end_date"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="@+id/step_main_tv_end_date" />
 
     <ImageView
         android:id="@+id/step_main_iv_toggle_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_keyboard_arrow_down_24_black"
         app:layout_constraintBottom_toBottomOf="@+id/step_main_tv_desc"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/step_main_tv_desc"
-        app:layout_constraintVertical_bias="0.0"
-        android:src="@drawable/ic_baseline_keyboard_arrow_down_24_black"
-        />
+        app:layout_constraintVertical_bias="0.0" />
 
     <View
         android:id="@+id/step_main_v_divider"
@@ -110,6 +121,29 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/step_main_tv_end_date"
         />
+
+    <ImageView
+        android:id="@+id/step_main_iv_forecast_date"
+        android:layout_width="@dimen/pipeline_step_icon_width"
+        android:layout_height="@dimen/pipeline_step_icon_width"
+        app:layout_constraintBottom_toBottomOf="@+id/step_main_tv_forecast_date"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="@+id/step_main_tv_forecast_date"
+        app:srcCompat="@drawable/ic_baseline_date_range_24_black"
+        android:tint="@color/namoa_color_gray_4"
+        />
+
+    <TextView
+        android:id="@+id/step_main_tv_forecast_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        tools:text="06/07/2020 08:00 - 31/12/2020 23:59"
+        app:layout_constraintEnd_toStartOf="@+id/step_main_iv_toggle_icon"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/step_main_iv_forecast_date"
+        app:layout_constraintTop_toBottomOf="@+id/step_main_tv_desc" />
 
 
 </android.support.constraint.ConstraintLayout>

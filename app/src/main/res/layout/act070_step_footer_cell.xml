@@ -25,7 +25,7 @@
 
     <View
         android:id="@+id/step_footer_v_top_step_line"
-        android:layout_width="5dp"
+        android:layout_width="@dimen/pipeline_step_vertical_line_width"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="@id/gl_start"

@@ -629,6 +629,11 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_TICKET_CRTL_TYPE_SERVICE ="SERVICE";
     public static final String TK_TICKET_CRTL_TYPE_MEASURE ="MEASURE";
     public static final String TK_TICKET_PREX_IMG ="tk_";
+    /*
+     * Constantes Pipeline
+     */
+    public static final String TK_PIPELINE_STEP_TYPE_ONE_TOUCH = "ONE_TOUCH";
+    public static final String TK_PIPELINE_STEP_TYPE_START_END = "START_END";
 
     /*
      * Constantes agendamento
