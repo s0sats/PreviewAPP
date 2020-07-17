@@ -45,25 +45,13 @@
             android:layout_height="wrap_content"
             android:hint="Search Desc - Trad"
             android:inputType="text"
-            app:layout_constraintEnd_toStartOf="@id/act074_iv_status_filter"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
             app:mBARCODE="false"
             app:mNFC="false"
             app:mOCR="false" />
-
-        <ImageView
-            android:id="@+id/act074_iv_status_filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:src="@drawable/ic_filter_black_24px"
-            android:tint="@color/namoa_color_gray_4"
-            app:layout_constraintBottom_toTopOf="@id/act074_rv_ticket_list"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/act074_tv_no_result"

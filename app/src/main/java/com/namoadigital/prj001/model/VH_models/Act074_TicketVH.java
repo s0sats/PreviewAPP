@@ -2,8 +2,10 @@ package com.namoadigital.prj001.model.VH_models;
 
 import android.support.annotation.Nullable;
 
+import com.namoa_digital.namoa_library.util.HMAux;
+
 public class Act074_TicketVH {
-    public static final String CTRLS_SERIAL_LIST = "CTRLS_SERIAL_LIST";
+//    public static final String CTRLS_SERIAL_LIST = "CTRLS_SERIAL_LIST";
 
     private int ticket_prefix;
     private int ticket_code;
@@ -30,6 +32,35 @@ public class Act074_TicketVH {
     private String fcm_user_nick;
     @Nullable
     private String schedule_erro_msg;
+
+
+    public Act074_TicketVH(int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_date, String ticket_step_id, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg) {
+        this.ticket_prefix = ticket_prefix;
+        this.ticket_code = ticket_code;
+        this.ticket_id = ticket_id;
+        this.ticket_status = ticket_status;
+        this.ticket_prod_desc = ticket_prod_desc;
+        this.ticket_site_desc = ticket_site_desc;
+        this.ticket_serial = ticket_serial;
+        this.ticket_step_desc = ticket_step_desc;
+        this.ticket_origin_desc = ticket_origin_desc;
+        this.ticket_forecast_date = ticket_forecast_date;
+        this.ticket_step_id = ticket_step_id;
+        this.schedulePk = schedulePk;
+        this.schedule_prefix = schedule_prefix;
+        this.schedule_code = schedule_code;
+        this.schedule_exec = schedule_exec;
+        this.fcm_new_status = fcm_new_status;
+        this.fcm_user_nick = fcm_user_nick;
+        this.schedule_erro_msg = schedule_erro_msg;
+    }
+
+    public static Act074_TicketVH getTicketVHObj(HMAux hmAux) {
+        //
+        return null;
+//                new Act074_TicketVH(
+//        );
+    }
 
     public int getTicket_prefix() {
         return ticket_prefix;

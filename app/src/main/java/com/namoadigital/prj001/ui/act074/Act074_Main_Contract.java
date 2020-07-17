@@ -1,11 +1,13 @@
 package com.namoadigital.prj001.ui.act074;
 
-import com.namoadigital.prj001.model.VH_models.Act069_TicketVH;
+import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 
 import java.util.ArrayList;
 
 public interface Act074_Main_Contract {
 
+
+    void loadTicketList(ArrayList<Act074_TicketVH> tickets);
 
     interface I_Presenter{
 
@@ -21,10 +23,12 @@ public interface Act074_Main_Contract {
 
         void onBackPressedClicked(String requestingAct);
 
-        void checkTicketFlow(Act069_TicketVH item);
+        void checkTicketFlow(Act074_TicketVH item);
     }
 
     interface I_View {
-        void loadTicketList(ArrayList<Act069_TicketVH> tickets);
+        void loadTicketList(ArrayList<Act074_TicketVH> tickets);
+
+        void showMsg(String alert_error_on_generate_list_ttl, String alert_error_on_generate_list_msg);
     }
 }

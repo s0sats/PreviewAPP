@@ -5,13 +5,13 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.constraint.Group;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -20,6 +20,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act074_Next_Tickets_Adapter;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -33,9 +34,8 @@ import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_PARTNER_NO_PR
 import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_PARTNER_PROFILE;
 import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_TEXT;
 
-public class Act074_Main extends Base_Activity implements Act074_Main_Contract{
+public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I_View{
     private MKEditTextNM mketFilter;
-    private ImageView ivFilters;
     private RecyclerView rvTickets;
     private TextView tvNoResult;
     Act074_Next_Tickets_Adapter mAdapter;
@@ -129,13 +129,11 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract{
         //
         recoverIntentsInfo();
         //
-//        mPresenter = new Act069_Main_Presenter(
-//                context,
-//                this,
-//                hmAux_Trans
-//        );
-        //
-        updateIvFilterState();
+        mPresenter = new Act074_Main_Presenter(
+                context,
+                this,
+                hmAux_Trans
+        );
         //
         mPresenter.getTicketList(
                 requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT014),
@@ -195,7 +193,6 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract{
 
     private void bindViews() {
         mketFilter = findViewById(R.id.act074_mket_filter);
-        ivFilters = findViewById(R.id.act074_iv_status_filter);
         rvTickets = findViewById(R.id.act074_rv_ticket_list);
         tvNoResult = findViewById(R.id.act074_tv_no_result);
         //
@@ -207,22 +204,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract{
         tvNoResult.setText(hmAux_Trans.get("no_record_lbl"));
     }
 
-    private void updateIvFilterState() {
-        if(requestingAct.equals(ConstantBaseApp.ACT014)){
-            //ivFilters.setVisibility(View.GONE);
-            if (bStatusDone || bStatusNotExecuted || bStatusIgnored ||bStatusCanceled || bStatusRejected) {
-                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
-            } else {
-                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
-            }
-        }else {
-            if (bStatusPending || bStatusProcess || bStatusWaitingSync ||bParterEmpty || bParterProfile || bParterNoProfile) {
-                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
-            } else {
-                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
-            }
-        }
-    }
+
 
     private void iniUIFooter() {
         iniFooter();
@@ -241,6 +223,43 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract{
         setFooter();
     }
 
+    @Override
+    public void loadTicketList(ArrayList<Act074_TicketVH> tickets){
+        if(tickets!= null && tickets.size() > 0) {
+            tvNoResult.setVisibility(View.GONE);
+            rvTickets.setVisibility(View.VISIBLE);
+            //
+            rvTickets.setLayoutManager(new LinearLayoutManager(context));
+            //
+            mAdapter = new Act074_Next_Tickets_Adapter(
+                    context,
+                    R.layout.act074_ticket_cell,
+                    tickets
+            );
+            //
+            if(mAdapter != null){
+                mAdapter.setOnTicketClickListener(new Act074_Next_Tickets_Adapter.OnTicketClickListener() {
+                    @Override
+                    public void onTicketClickListner(Act074_TicketVH item) {
+                        //LUCHE - 18/03/2020
+                        //Add chamada do metodo que define qual proximo step
+                        mPresenter.checkTicketFlow(item);
+                    }
+                });
+            }
+            //
+            rvTickets.setAdapter(mAdapter);
+            mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
+        }else{
+            tvNoResult.setVisibility(View.VISIBLE);
+            rvTickets.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void showMsg(String alert_error_on_generate_list_ttl, String alert_error_on_generate_list_msg) {
+
+    }
 
     @Override
     protected void footerCreateDialog() {
@@ -260,13 +279,6 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract{
                 if(mAdapter != null){
                     mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
                 }
-            }
-        });
-        //
-        ivFilters.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showFilterDialog();
             }
         });
         //
@@ -390,8 +402,6 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract{
                                 bStatusIgnored = chkStatusIgnored.isChecked();
                                 bStatusCanceled = chkStatusCanceled.isChecked();
                                 bStatusRejected = chkStatusRejected.isChecked();
-                                //
-                                updateIvFilterState();
                                 //
                                 mPresenter.getTicketList(
                                         requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT014), bStatusPending,

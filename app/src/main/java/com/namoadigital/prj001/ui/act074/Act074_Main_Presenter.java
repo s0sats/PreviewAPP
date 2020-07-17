@@ -4,10 +4,11 @@ import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.TK_TicketDao;
-import com.namoadigital.prj001.model.VH_models.Act069_TicketVH;
+import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.sql.Sql_Act069_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -54,7 +55,29 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
                 ).toSqlQuery()
         );
         //
-//        mView.loadTicketList(generateTicketVhList(auxTickets));
+        mView.loadTicketList(generateTicketVhList(auxTickets));
+    }
+
+    private ArrayList<Act074_TicketVH> generateTicketVhList(ArrayList<HMAux> auxTickets) {
+        ArrayList<Act074_TicketVH> tickets = new ArrayList<>();
+        if (auxTickets != null && auxTickets.size() > 0) {
+            try {
+                for (HMAux aux : auxTickets) {
+                    //
+                    tickets.add(
+                            Act074_TicketVH.getTicketVHObj(aux)
+                    );
+                }
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(getClass().getName(),e);
+                tickets = new ArrayList<>();
+                mView.showMsg(
+                        hmAux_Trans.get("alert_error_on_generate_list_ttl"),
+                        hmAux_Trans.get("alert_error_on_generate_list_msg")
+                );
+            }
+        }
+        return tickets;
     }
 
     @Override
@@ -83,7 +106,7 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void checkTicketFlow(Act069_TicketVH item) {
+    public void checkTicketFlow(Act074_TicketVH item) {
 
     }
 }

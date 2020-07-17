@@ -1,8 +1,6 @@
 package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -36,7 +34,6 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     private String mResource_Name = "Act074_Next_Tickets_Adapter";
     private Act074_Next_Tickets_Adapter.TicketFilter valueFilter;
     private Act074_Next_Tickets_Adapter.OnTicketClickListener onTicketClickListener;
-    private Act074_Next_Tickets_Adapter.OnScheduleWarningClickListener onScheduleWarningClickListener;
 
     public Act074_Next_Tickets_Adapter(Context context, int resource, ArrayList<Act074_TicketVH> mValues) {
         this.context = context;
@@ -71,16 +68,8 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
         void onTicketClickListner(Act074_TicketVH item);
     }
 
-    public interface OnScheduleWarningClickListener {
-        void onScheduleWarningClick(String fcm_new_status, String fcm_user_nick, String schedule_erro_msg);
-    }
-
     public void setOnTicketClickListener(Act074_Next_Tickets_Adapter.OnTicketClickListener onTicketClickListener) {
         this.onTicketClickListener = onTicketClickListener;
-    }
-
-    public void setOnScheduleWarningClickListener(Act074_Next_Tickets_Adapter.OnScheduleWarningClickListener onScheduleWarningClickListener) {
-        this.onScheduleWarningClickListener = onScheduleWarningClickListener;
     }
 
     @NonNull
@@ -173,7 +162,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             setVisibilityByContent(tv_prod_desc, item.getTicket_prod_desc());
             setSiteVisibility(tv_site_desc, item.getTicket_site_desc());
             setVisibilityByContent(tv_serial, item.getTicket_serial());
-            setVisibilityByContent(tv_desc_origin, item.getTicket_origin_desc());
+            setVisibilityByContent(tv_desc_origin, item.getTicket_origin_desc());   
             setVisibilityByContent(tv_forecast_date_val, item.getTicket_forecast_date());
             //
         }
@@ -203,16 +192,6 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
                 );
             }
             return id;
-        }
-
-        private void setSyncIcon(int sync_required) {
-            Drawable rightDraw = null;
-            if (sync_required == 1) {
-                rightDraw = context.getResources().getDrawable(R.drawable.ic_sync_black_24dp);
-                rightDraw.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
-            }
-            //
-            tv_ticket_id.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDraw, null);
         }
 
         private void resetVisibility() {
