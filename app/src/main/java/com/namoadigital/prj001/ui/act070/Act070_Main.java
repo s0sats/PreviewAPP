@@ -58,6 +58,7 @@ import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
+import com.namoadigital.prj001.ui.act070.model.StepApproval;
 import com.namoadigital.prj001.ui.act070.model.StepChecklist;
 import com.namoadigital.prj001.ui.act070.model.StepFooter;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
@@ -325,13 +326,16 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                     }
                     if (isShown) {
                         sources.remove(
+                            targetPosition + 2
+                        );
+                        sources.remove(
                             targetPosition + 1
                         );
                         sources.remove(
                             targetPosition
                         );
                         //mAdapter.notifyItemRemoved(targetPosition);
-                        mAdapter.notifyItemRangeRemoved(targetPosition, 2);
+                        mAdapter.notifyItemRangeRemoved(targetPosition, 3);
                     } else {
                         String processStatus = "PENDING";
                         String stepType = "ONE_TOUCH";
@@ -387,10 +391,24 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                                 "22 - Namoa",
                                 "PENDING",
                                 false*/
-
+                        );
+                        sources.add(
+                            targetPosition + 2,
+                            new StepApproval(
+                                "Trabalhos realizados conforme às normas ?",
+                                "aprovado",
+                                "Comentario",
+                                "2020-07-16 08:00:00 -03:00",
+                                "2020-07-17 14:00:00 -03:00",
+                                "Luche",
+                                "22 - Namoa",
+                                stepType,
+                                processStatus,
+                                currentStep
+                            )
                         );
                         //mAdapter.notifyItemInserted(targetPosition);
-                        mAdapter.notifyItemRangeInserted(targetPosition, 2);
+                        mAdapter.notifyItemRangeInserted(targetPosition, 3);
                     }
                 }
             },
@@ -411,10 +429,16 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                         "Checklist position: " + checklistPosition
                     );
                 }
-            }
-        );
-
-        
+            },
+            new Act070_Steps_Adapter.OnApprovalClickListener() {
+                @Override
+                public void onnApprovalClick(int approvalPosition) {
+                    ToolBox.toastMSG(
+                        context,
+                        "Approval position: " + approvalPosition
+                    );
+                }
+            });
     }
 
     private void generateFakePipeline() {

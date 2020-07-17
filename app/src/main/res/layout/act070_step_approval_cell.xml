@@ -66,29 +66,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Trabalhos realizado conforme Norma X ?" />
 
-        <ImageView
-            android:id="@+id/step_approval_iv_start_date"
-            android:layout_width="@dimen/pipeline_step_icon_width"
-            android:layout_height="@dimen/pipeline_step_icon_width"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/ic_baseline_date_range_24_black"
-            android:tint="@color/namoa_color_gray_4"
-            app:layout_constraintBottom_toBottomOf="@id/step_approval_tv_start_date"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/step_approval_tv_start_date" />
-
-        <TextView
-            android:id="@+id/step_approval_tv_start_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
-            app:layout_constraintEnd_toStartOf="@id/step_approval_gd_end"
-            app:layout_constraintStart_toEndOf="@id/step_approval_iv_start_date"
-            app:layout_constraintTop_toBottomOf="@+id/step_approval_tv_comments"
-            app:layout_constraintWidth_default="spread"
-            tools:text="20/05/2020 17:05" />
-
 
         <ImageView
             android:id="@+id/step_approval_iv_end_date"
@@ -147,7 +124,7 @@
             android:background="@color/namoa_color_gray3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/step_approval_tv_end_date" />
+            app:layout_constraintTop_toBottomOf="@+id/step_approval_tv_process_action" />
 
         <TextView
             android:id="@+id/step_approval_tv_partner"
@@ -157,7 +134,7 @@
             android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
             app:layout_constraintEnd_toStartOf="@id/step_approval_gd_end"
             app:layout_constraintStart_toEndOf="@+id/step_approval_iv_partner"
-            app:layout_constraintTop_toBottomOf="@id/step_approval_tv_start_date"
+            app:layout_constraintTop_toBottomOf="@+id/step_approval_tv_comments"
             tools:text="Partner" />
 
         <TextView
@@ -171,7 +148,9 @@
             app:layout_constraintEnd_toStartOf="@id/step_approval_gd_end"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/step_approval_tv_question"
-            tools:text="REJEITADO" />
+            tools:text="REJEITADO"
+            android:textColor="@color/namoa_color_success_green"
+            />
 
         <TextView
             android:id="@+id/step_approval_tv_comments"
@@ -195,6 +174,32 @@
             app:srcCompat="@drawable/ic_baseline_business_24_black"
             android:tint="@color/namoa_color_gray_4"
             />
+
+        <TextView
+            android:id="@+id/step_approval_tv_process_action"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/step_approval_gd_end"
+            app:layout_constraintStart_toEndOf="@+id/step_approval_iv_process_action"
+            app:layout_constraintTop_toBottomOf="@+id/step_approval_tv_end_date"
+            android:text="iniciar processo" />
+
+        <ImageView
+            android:id="@+id/step_approval_iv_process_action"
+            android:layout_width="@dimen/pipeline_step_icon_width"
+            android:layout_height="@dimen/pipeline_step_icon_height"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="3dp"
+            android:tint="@color/namoa_color_gray_4"
+            app:layout_constraintBottom_toBottomOf="@+id/step_approval_tv_process_action"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/step_approval_tv_process_action"
+            android:src="@drawable/ic_skip_next_white_24px" />
+
 
     </android.support.constraint.ConstraintLayout>
 
