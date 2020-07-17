@@ -623,17 +623,17 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             } else {
                 tk_ticket.setInternal_comments(cursor.getString(cursor.getColumnIndex(INTERNAL_COMMENTS)));
             }
-            tk_ticket.setCurrent_site_code(cursor.getInt(cursor.getColumnIndex(CURRENT_SITE_CODE)));
-            tk_ticket.setCurrent_site_id(cursor.getString(cursor.getColumnIndex(CURRENT_SITE_ID)));
-            tk_ticket.setCurrent_site_desc(cursor.getString(cursor.getColumnIndex(CURRENT_SITE_DESC)));
-            tk_ticket.setCurrent_operation_code(cursor.getInt(cursor.getColumnIndex(CURRENT_OPERATION_CODE)));
-            tk_ticket.setCurrent_operation_id(cursor.getString(cursor.getColumnIndex(CURRENT_OPERATION_ID)));
-            tk_ticket.setCurrent_operation_desc(cursor.getString(cursor.getColumnIndex(CURRENT_OPERATION_DESC)));
-            tk_ticket.setCurrent_product_code(cursor.getInt(cursor.getColumnIndex(CURRENT_PRODUCT_CODE)));
-            tk_ticket.setCurrent_product_id(cursor.getString(cursor.getColumnIndex(CURRENT_PRODUCT_ID)));
-            tk_ticket.setCurrent_product_desc(cursor.getString(cursor.getColumnIndex(CURRENT_PRODUCT_DESC)));
-            tk_ticket.setCurrent_serial_code(cursor.getInt(cursor.getColumnIndex(CURRENT_SERIAL_CODE)));
-            tk_ticket.setCurrent_serial_id(cursor.getString(cursor.getColumnIndex(CURRENT_SERIAL_ID)));
+            tk_ticket.setOpen_site_code(cursor.getInt(cursor.getColumnIndex(CURRENT_SITE_CODE)));
+            tk_ticket.setOpen_site_id(cursor.getString(cursor.getColumnIndex(CURRENT_SITE_ID)));
+            tk_ticket.setOpen_site_desc(cursor.getString(cursor.getColumnIndex(CURRENT_SITE_DESC)));
+            tk_ticket.setOpen_operation_code(cursor.getInt(cursor.getColumnIndex(CURRENT_OPERATION_CODE)));
+            tk_ticket.setOpen_operation_id(cursor.getString(cursor.getColumnIndex(CURRENT_OPERATION_ID)));
+            tk_ticket.setOpen_operation_desc(cursor.getString(cursor.getColumnIndex(CURRENT_OPERATION_DESC)));
+            tk_ticket.setOpen_product_code(cursor.getInt(cursor.getColumnIndex(CURRENT_PRODUCT_CODE)));
+            tk_ticket.setOpen_product_id(cursor.getString(cursor.getColumnIndex(CURRENT_PRODUCT_ID)));
+            tk_ticket.setOpen_product_desc(cursor.getString(cursor.getColumnIndex(CURRENT_PRODUCT_DESC)));
+            tk_ticket.setOpen_serial_code(cursor.getInt(cursor.getColumnIndex(CURRENT_SERIAL_CODE)));
+            tk_ticket.setOpen_serial_id(cursor.getString(cursor.getColumnIndex(CURRENT_SERIAL_ID)));
             if (cursor.isNull(cursor.getColumnIndex(FORECAST_DATE))) {
                 tk_ticket.setForecast_date(null);
             } else {
@@ -753,38 +753,38 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                 contentValues.put(OPEN_USER_NAME, tk_ticket.getOpen_user_name());
             }
             contentValues.put(INTERNAL_COMMENTS, tk_ticket.getInternal_comments());
-            if (tk_ticket.getCurrent_site_code() > -1) {
-                contentValues.put(CURRENT_SITE_CODE, tk_ticket.getCurrent_site_code());
+            if (tk_ticket.getOpen_site_code() > -1) {
+                contentValues.put(CURRENT_SITE_CODE, tk_ticket.getOpen_site_code());
             }
-            if (tk_ticket.getCurrent_site_id() != null) {
-                contentValues.put(CURRENT_SITE_ID, tk_ticket.getCurrent_site_id());
+            if (tk_ticket.getOpen_site_id() != null) {
+                contentValues.put(CURRENT_SITE_ID, tk_ticket.getOpen_site_id());
             }
-            if (tk_ticket.getCurrent_site_desc() != null) {
-                contentValues.put(CURRENT_SITE_DESC, tk_ticket.getCurrent_site_desc());
+            if (tk_ticket.getOpen_site_desc() != null) {
+                contentValues.put(CURRENT_SITE_DESC, tk_ticket.getOpen_site_desc());
             }
-            if (tk_ticket.getCurrent_operation_code() > -1) {
-                contentValues.put(CURRENT_OPERATION_CODE, tk_ticket.getCurrent_operation_code());
+            if (tk_ticket.getOpen_operation_code() > -1) {
+                contentValues.put(CURRENT_OPERATION_CODE, tk_ticket.getOpen_operation_code());
             }
-            if (tk_ticket.getCurrent_operation_id() != null) {
-                contentValues.put(CURRENT_OPERATION_ID, tk_ticket.getCurrent_operation_id());
+            if (tk_ticket.getOpen_operation_id() != null) {
+                contentValues.put(CURRENT_OPERATION_ID, tk_ticket.getOpen_operation_id());
             }
-            if (tk_ticket.getCurrent_operation_desc() != null) {
-                contentValues.put(CURRENT_OPERATION_DESC, tk_ticket.getCurrent_operation_desc());
+            if (tk_ticket.getOpen_operation_desc() != null) {
+                contentValues.put(CURRENT_OPERATION_DESC, tk_ticket.getOpen_operation_desc());
             }
-            if (tk_ticket.getCurrent_product_code() > -1) {
-                contentValues.put(CURRENT_PRODUCT_CODE, tk_ticket.getCurrent_product_code());
+            if (tk_ticket.getOpen_product_code() > -1) {
+                contentValues.put(CURRENT_PRODUCT_CODE, tk_ticket.getOpen_product_code());
             }
-            if (tk_ticket.getCurrent_product_id() != null) {
-                contentValues.put(CURRENT_PRODUCT_ID, tk_ticket.getCurrent_product_id());
+            if (tk_ticket.getOpen_product_id() != null) {
+                contentValues.put(CURRENT_PRODUCT_ID, tk_ticket.getOpen_product_id());
             }
-            if (tk_ticket.getCurrent_product_desc() != null) {
-                contentValues.put(CURRENT_PRODUCT_DESC, tk_ticket.getCurrent_product_desc());
+            if (tk_ticket.getOpen_product_desc() != null) {
+                contentValues.put(CURRENT_PRODUCT_DESC, tk_ticket.getOpen_product_desc());
             }
-            if (tk_ticket.getCurrent_serial_code() > -1) {
-                contentValues.put(CURRENT_SERIAL_CODE, tk_ticket.getCurrent_serial_code());
+            if (tk_ticket.getOpen_serial_code() > -1) {
+                contentValues.put(CURRENT_SERIAL_CODE, tk_ticket.getOpen_serial_code());
             }
-            if (tk_ticket.getCurrent_serial_id() != null) {
-                contentValues.put(CURRENT_SERIAL_ID, tk_ticket.getCurrent_serial_id());
+            if (tk_ticket.getOpen_serial_id() != null) {
+                contentValues.put(CURRENT_SERIAL_ID, tk_ticket.getOpen_serial_id());
             }
             contentValues.put(FORECAST_DATE, tk_ticket.getForecast_date());
             if (tk_ticket.getTicket_status() != null) {

@@ -47,6 +47,10 @@ public class TK_Ticket_Ctrl {
     private String partner_id;
     @Nullable
     private String partner_desc;
+    @Nullable
+    private Integer step_code;
+    private int step_order;
+    private int obj_planned;
     @Expose
     @Nullable
     private TK_Ticket_Action action;
@@ -302,5 +306,30 @@ public class TK_Ticket_Ctrl {
 
     public void setMeasure(TK_Ticket_Measure measure) {
         this.measure = measure;
+    }
+
+    @Nullable
+    public Integer getStep_code() {
+        return step_code;
+    }
+
+    public void setStep_code(@Nullable Integer step_code) {
+        this.step_code = step_code;
+    }
+
+    public int getStep_order() {
+        return step_order;
+    }
+
+    public void setStep_order(int step_order) {
+        this.step_order = step_order;
+    }
+
+    public int getObj_planned() {
+        return obj_planned;
+    }
+
+    public void setObj_planned(int obj_planned) {
+        this.obj_planned = obj_planned;
     }
 }

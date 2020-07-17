@@ -611,8 +611,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         defineForecastDate();
 
         //
-        tvProduct.setText(mTicket.getCurrent_product_desc());
-        tvSerial.setText(mTicket.getCurrent_serial_id());
+        tvProduct.setText(mTicket.getOpen_product_desc());
+        tvSerial.setText(mTicket.getOpen_serial_id());
         defineInnerCommentIcon();
         defineOpenPhotoImage();
         configCheckinInfos();

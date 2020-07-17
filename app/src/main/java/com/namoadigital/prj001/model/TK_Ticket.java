@@ -43,21 +43,56 @@ public class TK_Ticket {
     private String open_user_name;
     @Nullable
     private String internal_comments;
+    /**
+     * Remover campos para pipeline
+     *
+     * current_product_code
+     * current_product_id
+     * current_product_desc
+     *
+     * current_serial_code
+     * current_serial_id
+     * checkin_user
+     * checkin_date
+     * checkin_user_name
+     */
+
     @Expose
-    private int current_site_code;
-    private String current_site_id;
-    private String current_site_desc;
+    private int open_site_code;
+    private String open_site_id;
+    private String open_site_desc;
     @Expose
-    private int current_operation_code;
-    private String current_operation_id;
-    private String current_operation_desc;
+    private int open_operation_code;
+    private String open_operation_id;
+    private String open_operation_desc;
     @Expose
-    private int current_product_code;
-    private String current_product_id;
-    private String current_product_desc;
+    private int open_product_code;
+    private String open_product_id;
+    private String open_product_desc;
     @Expose
-    private int current_serial_code;
-    private String current_serial_id;
+    private int open_serial_code;
+    private String open_serial_id;
+
+    //Novo pipeline
+    //OS CAMPOS PREFIXO OPEN, SUBSTITUIRAM OS DE PREFIXO CURRENT
+//    @Expose
+//    private int open_site_code;
+//    private String open_site_id;
+//    private String open_site_desc;
+//
+//    @Expose
+//    private int open_operation_code;
+//    private String open_operation_id;
+//    private String open_operation_desc;
+//
+//    @Expose
+//    private int open_product_code;
+//    private String open_product_id;
+//    private String open_product_desc;
+//    //Novo pipeline - end
+//    @Expose
+//    private int open_serial_code;
+//    private String open_serial_id;
     @Nullable
     private String forecast_date;
     private String ticket_status;
@@ -68,6 +103,25 @@ public class TK_Ticket {
     private String close_user_name;
     private Integer duration_minutes;
     private Integer barcode_code;
+    @Expose
+    private Integer pc_code;
+    private String pc_id;
+    private String pc_desc;
+    @Expose
+    @Nullable
+    private Integer main_user;
+    private String main_user_nick;
+    @Expose
+    private Integer pipeline_code;
+    private String pipeline_id;
+    private String pipeline_desc;
+
+    private Integer current_step_order;
+    private int approval_rejected;
+    private String origin_type;
+    private int inventory_control;
+    private int user_focus;
+    private int allow_step_approval;
     @Expose
     @Nullable
     private Integer checkin_user;
@@ -258,92 +312,92 @@ public class TK_Ticket {
         this.internal_comments = internal_comments;
     }
 
-    public int getCurrent_site_code() {
-        return current_site_code;
+    public int getOpen_site_code() {
+        return open_site_code;
     }
 
-    public void setCurrent_site_code(int current_site_code) {
-        this.current_site_code = current_site_code;
+    public void setOpen_site_code(int open_site_code) {
+        this.open_site_code = open_site_code;
     }
 
-    public String getCurrent_site_id() {
-        return current_site_id;
+    public String getOpen_site_id() {
+        return open_site_id;
     }
 
-    public void setCurrent_site_id(String current_site_id) {
-        this.current_site_id = current_site_id;
+    public void setOpen_site_id(String open_site_id) {
+        this.open_site_id = open_site_id;
     }
 
-    public String getCurrent_site_desc() {
-        return current_site_desc;
+    public String getOpen_site_desc() {
+        return open_site_desc;
     }
 
-    public void setCurrent_site_desc(String current_site_desc) {
-        this.current_site_desc = current_site_desc;
+    public void setOpen_site_desc(String open_site_desc) {
+        this.open_site_desc = open_site_desc;
     }
 
-    public int getCurrent_operation_code() {
-        return current_operation_code;
+    public int getOpen_operation_code() {
+        return open_operation_code;
     }
 
-    public void setCurrent_operation_code(int current_operation_code) {
-        this.current_operation_code = current_operation_code;
+    public void setOpen_operation_code(int open_operation_code) {
+        this.open_operation_code = open_operation_code;
     }
 
-    public String getCurrent_operation_id() {
-        return current_operation_id;
+    public String getOpen_operation_id() {
+        return open_operation_id;
     }
 
-    public void setCurrent_operation_id(String current_operation_id) {
-        this.current_operation_id = current_operation_id;
+    public void setOpen_operation_id(String open_operation_id) {
+        this.open_operation_id = open_operation_id;
     }
 
-    public String getCurrent_operation_desc() {
-        return current_operation_desc;
+    public String getOpen_operation_desc() {
+        return open_operation_desc;
     }
 
-    public void setCurrent_operation_desc(String current_operation_desc) {
-        this.current_operation_desc = current_operation_desc;
+    public void setOpen_operation_desc(String open_operation_desc) {
+        this.open_operation_desc = open_operation_desc;
     }
 
-    public int getCurrent_product_code() {
-        return current_product_code;
+    public int getOpen_product_code() {
+        return open_product_code;
     }
 
-    public void setCurrent_product_code(int current_product_code) {
-        this.current_product_code = current_product_code;
+    public void setOpen_product_code(int open_product_code) {
+        this.open_product_code = open_product_code;
     }
 
-    public String getCurrent_product_id() {
-        return current_product_id;
+    public String getOpen_product_id() {
+        return open_product_id;
     }
 
-    public void setCurrent_product_id(String current_product_id) {
-        this.current_product_id = current_product_id;
+    public void setOpen_product_id(String open_product_id) {
+        this.open_product_id = open_product_id;
     }
 
-    public String getCurrent_product_desc() {
-        return current_product_desc;
+    public String getOpen_product_desc() {
+        return open_product_desc;
     }
 
-    public void setCurrent_product_desc(String current_product_desc) {
-        this.current_product_desc = current_product_desc;
+    public void setOpen_product_desc(String open_product_desc) {
+        this.open_product_desc = open_product_desc;
     }
 
-    public int getCurrent_serial_code() {
-        return current_serial_code;
+    public int getOpen_serial_code() {
+        return open_serial_code;
     }
 
-    public void setCurrent_serial_code(int current_serial_code) {
-        this.current_serial_code = current_serial_code;
+    public void setOpen_serial_code(int open_serial_code) {
+        this.open_serial_code = open_serial_code;
     }
 
-    public String getCurrent_serial_id() {
-        return current_serial_id;
+    public String getOpen_serial_id() {
+        return open_serial_id;
     }
 
-    public void setCurrent_serial_id(String current_serial_id) {
-        this.current_serial_id = current_serial_id;
+    public void setOpen_serial_id(String open_serial_id) {
+        this.open_serial_id = open_serial_id;
     }
 
     @Nullable
