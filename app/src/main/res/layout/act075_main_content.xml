@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <fragment
+        android:id="@+id/header_frg_pipeline_header"
+        android:name="com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ListView
+        android:id="@+id/lv_product"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/header_frg_pipeline_header"
+        tools:listfooter="@layout/act075_add_product_footer"
+        tools:listitem="@layout/act075_product_item">
+
+    </ListView>
+
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.namoa_digital.namoa_library.ctls.FabMenu
+        android:id="@+id/frg_serial_edit_fabMenu_anchor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        app:layout_constraintBottom_toBottomOf="@+id/lv_product"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:mButton_Back_Color="@color/namoa_sync_pipeline_background_btn"
+        app:mButton_Resource="@drawable/ic_menu_hamburger"
+        app:mButton_Resource_Color="@color/colorPrimary">
+
+    </com.namoa_digital.namoa_library.ctls.FabMenu>
+</android.support.constraint.ConstraintLayout>
