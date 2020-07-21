@@ -59,17 +59,21 @@ public class Frg_Pipeline_Header extends Fragment {
     LinearLayout ll_btn_sync;
     TextView btn_sync_description;
     ConstraintLayout frg_pipeline_header_ticket;
-    private OnPipelineFragmentInteractionListener mListener;
+    //step
+    ConstraintLayout cl_step_ticket;
+    TextView tv_step_main_step_num;
+    TextView tv_step_main_desc;
 
+    private OnPipelineFragmentInteractionListener mListener;
 
     public Frg_Pipeline_Header() {
         // Required empty public constructor
     }
 
-    public static Frg_Pipeline_Header newInstance(int header_profile, String ticket_id, String status, String prod_desc, String ticket_date, String site_desc, String serial, String desc_origin_param, String btn_sync_description_param) {
+    public static Frg_Pipeline_Header newInstance(String header_profile, String ticket_id, String status, String prod_desc, String ticket_date, String site_desc, String serial, String desc_origin_param, String btn_sync_description_param) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
-        args.putInt(HEADER_PROFILE_PARAM, header_profile);
+        args.putString(HEADER_PROFILE_PARAM, header_profile);
         args.putString(TICKET_ID_PARAM, ticket_id);
         args.putString(STATUS_PARAM, status);
         args.putString(PROD_DESC_PARAM, prod_desc);
@@ -112,6 +116,9 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_desc_origin = pipeline_header_view.findViewById(R.id.frg_ticket_tv_desc_origin);
         btn_sync_description = pipeline_header_view.findViewById(R.id.frg_ticket_btn_sync_description);
         ll_btn_sync = pipeline_header_view.findViewById(R.id.frg_ticket_ll_btn_sync);
+        cl_step_ticket = pipeline_header_view.findViewById(R.id.frg_pipeline_cl_step_ticket);
+        tv_step_main_step_num = pipeline_header_view.findViewById(R.id.frg_pipeline_tv_step_main_step_num);
+        tv_step_main_desc = pipeline_header_view.findViewById(R.id.frg_pipeline_tv_step_main_desc);
         //
         initializeLayoutVisibility();
         //
