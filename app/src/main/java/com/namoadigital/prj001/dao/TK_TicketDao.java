@@ -44,17 +44,17 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String OPEN_USER = "open_user";
     public static final String OPEN_USER_NAME = "open_user_name";
     public static final String INTERNAL_COMMENTS = "internal_comments";
-    public static final String CURRENT_SITE_CODE = "current_site_code";
-    public static final String CURRENT_SITE_ID = "current_site_id";
-    public static final String CURRENT_SITE_DESC = "current_site_desc";
-    public static final String CURRENT_OPERATION_CODE = "current_operation_code";
-    public static final String CURRENT_OPERATION_ID = "current_operation_id";
-    public static final String CURRENT_OPERATION_DESC = "current_operation_desc";
-    public static final String CURRENT_PRODUCT_CODE = "current_product_code";
-    public static final String CURRENT_PRODUCT_ID = "current_product_id";
-    public static final String CURRENT_PRODUCT_DESC = "current_product_desc";
-    public static final String CURRENT_SERIAL_CODE = "current_serial_code";
-    public static final String CURRENT_SERIAL_ID = "current_serial_id";
+    public static final String OPEN_SITE_CODE = "open_site_code";
+    public static final String OPEN_SITE_ID = "open_site_id";
+    public static final String OPEN_SITE_DESC = "open_site_desc";
+    public static final String OPEN_OPERATION_CODE = "open_operation_code";
+    public static final String OPEN_OPERATION_ID = "open_operation_id";
+    public static final String OPEN_OPERATION_DESC = "open_operation_desc";
+    public static final String OPEN_PRODUCT_CODE = "open_product_code";
+    public static final String OPEN_PRODUCT_ID = "open_product_id";
+    public static final String OPEN_PRODUCT_DESC = "open_product_desc";
+    public static final String OPEN_SERIAL_CODE = "open_serial_code";
+    public static final String OPEN_SERIAL_ID = "open_serial_id";
     public static final String FORECAST_DATE = "forecast_date";
     public static final String TICKET_STATUS = "ticket_status";
     public static final String CLOSE_DATE = "close_date";
@@ -62,6 +62,20 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String CLOSE_USER_NAME = "close_user_name";
     public static final String DURATION_MINUTES = "duration_minutes";
     public static final String BARCODE_CODE = "barcode_code";
+    public static final String PC_CODE = "pc_code";
+    public static final String PC_ID = "pc_id";
+    public static final String PC_DESC = "pc_desc";
+    public static final String MAIN_USER = "main_user";
+    public static final String MAIN_USER_NICK = "main_user_nick";
+    public static final String PIPELINE_CODE = "pipeline_code";
+    public static final String PIPELINE_ID = "pipeline_id";
+    public static final String PIPELINE_DESC = "pipeline_desc";
+    public static final String CURRENT_STEP_ORDER = "current_step_order";
+    public static final String APPROVAL_REJECTED = "approval_rejected";
+    public static final String ORIGIN_TYPE = "origin_type";
+    public static final String INVENTORY_CONTROL = "inventory_control";
+    public static final String USER_FOCUS = "user_focus";
+    public static final String ALLOW_STEP_APPROVAL = "allow_step_approval";
     public static final String CHECKIN_DATE = "checkin_date";
     public static final String CHECKIN_USER = "checkin_user";
     public static final String CHECKIN_USER_NAME = "checkin_user_name";
@@ -209,15 +223,28 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                     curAction = DaoObjReturn.INSERT;
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket));
                 }
-                //
+                //LUCHE - 21/07/2020
+                //Ctrl será dependendo do step e não do ticket.
                 //Tenta inserir action
-                TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
+//                TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
+//                    context,
+//                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                    Constant.DB_VERSION_CUSTOM
+//                );
+//                //Chama insertUpdate do Ctrl,passando db como param aguardando retorno.
+//                daoObjReturn = ticketCtrlDao.addUpdate(tk_ticket.getCtrl(), false, db);
+//                //Se erro durante insert, dispara exception abortando o processamento.
+//                if (daoObjReturn.hasError()) {
+//                    throw new Exception(daoObjReturn.getRawMessage());
+//                }
+                //Tenta inserir steps
+                TK_Ticket_StepDao ticketStepDao = new TK_Ticket_StepDao(
                     context,
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                     Constant.DB_VERSION_CUSTOM
                 );
                 //Chama insertUpdate do Ctrl,passando db como param aguardando retorno.
-                daoObjReturn = ticketCtrlDao.addUpdate(tk_ticket.getCtrl(), false, db);
+                daoObjReturn = ticketStepDao.addUpdate(tk_ticket.getStep(), false, db);
                 //Se erro durante insert, dispara exception abortando o processamento.
                 if (daoObjReturn.hasError()) {
                     throw new Exception(daoObjReturn.getRawMessage());
@@ -295,15 +322,26 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                 curAction = DaoObjReturn.INSERT;
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket));
             }
-            //
-            //Tenta inserir action
-            TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
+            //LUCHE - 21/07/2020
+            //Ctrl será dependendo do step e não do ticket.
+//            TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
+//                context,
+//                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                Constant.DB_VERSION_CUSTOM
+//            );
+//            //Chama insertUpdate do Ctrl,passando db como param aguardando retorno.
+//            daoObjReturn = ticketCtrlDao.addUpdate(tk_ticket.getCtrl(), false, db);
+//            //Se erro durante insert, dispara exception abortando o processamento.
+//            if (daoObjReturn.hasError()) {
+//                throw new Exception(daoObjReturn.getRawMessage());
+//            }
+            TK_Ticket_StepDao ticketStepDao = new TK_Ticket_StepDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
             );
-            //Chama insertUpdate do Ctrl,passando db como param aguardando retorno.
-            daoObjReturn = ticketCtrlDao.addUpdate(tk_ticket.getCtrl(), false, db);
+            //Chama insertUpdate do Step,passando db como param aguardando retorno.
+            daoObjReturn = ticketStepDao.addUpdate(tk_ticket.getStep(), false, db);
             //Se erro durante insert, dispara exception abortando o processamento.
             if (daoObjReturn.hasError()) {
                 throw new Exception(daoObjReturn.getRawMessage());
@@ -378,7 +416,13 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         String curAction = DaoObjReturn.DELETE;
         daoObjReturn.setTable(TABLE);
         //
-        TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
+        /*TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );*/
+
+        TK_Ticket_StepDao ticketStepDao = new TK_Ticket_StepDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
@@ -389,7 +433,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         try {
             db.beginTransaction();
             //Tenta o delete do ctrl e actions
-            daoObjReturn = ticketCtrlDao.removeFull(tk_ticket, db);
+            daoObjReturn = ticketStepDao.removeFull(tk_ticket, db);
             //verifica se erro ao remover itens
             if(daoObjReturn.hasError()){
                 throw new Exception(daoObjReturn.getRawMessage());
@@ -623,17 +667,17 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             } else {
                 tk_ticket.setInternal_comments(cursor.getString(cursor.getColumnIndex(INTERNAL_COMMENTS)));
             }
-            tk_ticket.setOpen_site_code(cursor.getInt(cursor.getColumnIndex(CURRENT_SITE_CODE)));
-            tk_ticket.setOpen_site_id(cursor.getString(cursor.getColumnIndex(CURRENT_SITE_ID)));
-            tk_ticket.setOpen_site_desc(cursor.getString(cursor.getColumnIndex(CURRENT_SITE_DESC)));
-            tk_ticket.setOpen_operation_code(cursor.getInt(cursor.getColumnIndex(CURRENT_OPERATION_CODE)));
-            tk_ticket.setOpen_operation_id(cursor.getString(cursor.getColumnIndex(CURRENT_OPERATION_ID)));
-            tk_ticket.setOpen_operation_desc(cursor.getString(cursor.getColumnIndex(CURRENT_OPERATION_DESC)));
-            tk_ticket.setOpen_product_code(cursor.getInt(cursor.getColumnIndex(CURRENT_PRODUCT_CODE)));
-            tk_ticket.setOpen_product_id(cursor.getString(cursor.getColumnIndex(CURRENT_PRODUCT_ID)));
-            tk_ticket.setOpen_product_desc(cursor.getString(cursor.getColumnIndex(CURRENT_PRODUCT_DESC)));
-            tk_ticket.setOpen_serial_code(cursor.getInt(cursor.getColumnIndex(CURRENT_SERIAL_CODE)));
-            tk_ticket.setOpen_serial_id(cursor.getString(cursor.getColumnIndex(CURRENT_SERIAL_ID)));
+            tk_ticket.setOpen_site_code(cursor.getInt(cursor.getColumnIndex(OPEN_SITE_CODE)));
+            tk_ticket.setOpen_site_id(cursor.getString(cursor.getColumnIndex(OPEN_SITE_ID)));
+            tk_ticket.setOpen_site_desc(cursor.getString(cursor.getColumnIndex(OPEN_SITE_DESC)));
+            tk_ticket.setOpen_operation_code(cursor.getInt(cursor.getColumnIndex(OPEN_OPERATION_CODE)));
+            tk_ticket.setOpen_operation_id(cursor.getString(cursor.getColumnIndex(OPEN_OPERATION_ID)));
+            tk_ticket.setOpen_operation_desc(cursor.getString(cursor.getColumnIndex(OPEN_OPERATION_DESC)));
+            tk_ticket.setOpen_product_code(cursor.getInt(cursor.getColumnIndex(OPEN_PRODUCT_CODE)));
+            tk_ticket.setOpen_product_id(cursor.getString(cursor.getColumnIndex(OPEN_PRODUCT_ID)));
+            tk_ticket.setOpen_product_desc(cursor.getString(cursor.getColumnIndex(OPEN_PRODUCT_DESC)));
+            tk_ticket.setOpen_serial_code(cursor.getInt(cursor.getColumnIndex(OPEN_SERIAL_CODE)));
+            tk_ticket.setOpen_serial_id(cursor.getString(cursor.getColumnIndex(OPEN_SERIAL_ID)));
             if (cursor.isNull(cursor.getColumnIndex(FORECAST_DATE))) {
                 tk_ticket.setForecast_date(null);
             } else {
@@ -665,6 +709,56 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             } else {
                 tk_ticket.setBarcode_code(cursor.getInt(cursor.getColumnIndex(BARCODE_CODE)));
             }
+            if (cursor.isNull(cursor.getColumnIndex(PC_CODE))) {
+                tk_ticket.setPc_code(null);
+            } else {
+                tk_ticket.setPc_code(cursor.getInt(cursor.getColumnIndex(PC_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(PC_ID))) {
+                tk_ticket.setPc_id(null);
+            } else {
+                tk_ticket.setPc_id(cursor.getString(cursor.getColumnIndex(PC_ID)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(PC_DESC))) {
+                tk_ticket.setPc_desc(null);
+            } else {
+                tk_ticket.setPc_desc(cursor.getString(cursor.getColumnIndex(PC_DESC)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(MAIN_USER))) {
+                tk_ticket.setMain_user(null);
+            } else {
+                tk_ticket.setMain_user(cursor.getInt(cursor.getColumnIndex(MAIN_USER)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(MAIN_USER_NICK))) {
+                tk_ticket.setMain_user_nick(null);
+            } else {
+                tk_ticket.setMain_user_nick(cursor.getString(cursor.getColumnIndex(MAIN_USER_NICK)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(PIPELINE_CODE))) {
+                tk_ticket.setPipeline_code(null);
+            } else {
+                tk_ticket.setPipeline_code(cursor.getInt(cursor.getColumnIndex(PIPELINE_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(PIPELINE_ID))) {
+                tk_ticket.setPipeline_id(null);
+            } else {
+                tk_ticket.setPipeline_id(cursor.getString(cursor.getColumnIndex(PIPELINE_ID)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(PIPELINE_DESC))) {
+                tk_ticket.setPipeline_desc(null);
+            } else {
+                tk_ticket.setPipeline_desc(cursor.getString(cursor.getColumnIndex(PIPELINE_DESC)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(CURRENT_STEP_ORDER))) {
+                tk_ticket.setCurrent_step_order(null);
+            } else {
+                tk_ticket.setCurrent_step_order(cursor.getInt(cursor.getColumnIndex(CURRENT_STEP_ORDER)));
+            }
+            tk_ticket.setApproval_rejected(cursor.getInt(cursor.getColumnIndex(APPROVAL_REJECTED)));
+            tk_ticket.setOrigin_type(cursor.getString(cursor.getColumnIndex(ORIGIN_TYPE)));
+            tk_ticket.setInventory_control(cursor.getInt(cursor.getColumnIndex(INVENTORY_CONTROL)));
+            tk_ticket.setUser_focus(cursor.getInt(cursor.getColumnIndex(USER_FOCUS)));
+            tk_ticket.setAllow_step_approval(cursor.getInt(cursor.getColumnIndex(ALLOW_STEP_APPROVAL)));
             if (cursor.isNull(cursor.getColumnIndex(CHECKIN_DATE))) {
                 tk_ticket.setCheckin_date(null);
             } else {
@@ -754,37 +848,37 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
             contentValues.put(INTERNAL_COMMENTS, tk_ticket.getInternal_comments());
             if (tk_ticket.getOpen_site_code() > -1) {
-                contentValues.put(CURRENT_SITE_CODE, tk_ticket.getOpen_site_code());
+                contentValues.put(OPEN_SITE_CODE, tk_ticket.getOpen_site_code());
             }
             if (tk_ticket.getOpen_site_id() != null) {
-                contentValues.put(CURRENT_SITE_ID, tk_ticket.getOpen_site_id());
+                contentValues.put(OPEN_SITE_ID, tk_ticket.getOpen_site_id());
             }
             if (tk_ticket.getOpen_site_desc() != null) {
-                contentValues.put(CURRENT_SITE_DESC, tk_ticket.getOpen_site_desc());
+                contentValues.put(OPEN_SITE_DESC, tk_ticket.getOpen_site_desc());
             }
             if (tk_ticket.getOpen_operation_code() > -1) {
-                contentValues.put(CURRENT_OPERATION_CODE, tk_ticket.getOpen_operation_code());
+                contentValues.put(OPEN_OPERATION_CODE, tk_ticket.getOpen_operation_code());
             }
             if (tk_ticket.getOpen_operation_id() != null) {
-                contentValues.put(CURRENT_OPERATION_ID, tk_ticket.getOpen_operation_id());
+                contentValues.put(OPEN_OPERATION_ID, tk_ticket.getOpen_operation_id());
             }
             if (tk_ticket.getOpen_operation_desc() != null) {
-                contentValues.put(CURRENT_OPERATION_DESC, tk_ticket.getOpen_operation_desc());
+                contentValues.put(OPEN_OPERATION_DESC, tk_ticket.getOpen_operation_desc());
             }
             if (tk_ticket.getOpen_product_code() > -1) {
-                contentValues.put(CURRENT_PRODUCT_CODE, tk_ticket.getOpen_product_code());
+                contentValues.put(OPEN_PRODUCT_CODE, tk_ticket.getOpen_product_code());
             }
             if (tk_ticket.getOpen_product_id() != null) {
-                contentValues.put(CURRENT_PRODUCT_ID, tk_ticket.getOpen_product_id());
+                contentValues.put(OPEN_PRODUCT_ID, tk_ticket.getOpen_product_id());
             }
             if (tk_ticket.getOpen_product_desc() != null) {
-                contentValues.put(CURRENT_PRODUCT_DESC, tk_ticket.getOpen_product_desc());
+                contentValues.put(OPEN_PRODUCT_DESC, tk_ticket.getOpen_product_desc());
             }
             if (tk_ticket.getOpen_serial_code() > -1) {
-                contentValues.put(CURRENT_SERIAL_CODE, tk_ticket.getOpen_serial_code());
+                contentValues.put(OPEN_SERIAL_CODE, tk_ticket.getOpen_serial_code());
             }
             if (tk_ticket.getOpen_serial_id() != null) {
-                contentValues.put(CURRENT_SERIAL_ID, tk_ticket.getOpen_serial_id());
+                contentValues.put(OPEN_SERIAL_ID, tk_ticket.getOpen_serial_id());
             }
             contentValues.put(FORECAST_DATE, tk_ticket.getForecast_date());
             if (tk_ticket.getTicket_status() != null) {
@@ -795,6 +889,29 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             contentValues.put(CLOSE_USER_NAME, tk_ticket.getClose_user_name());
             contentValues.put(DURATION_MINUTES, tk_ticket.getDuration_minutes());
             contentValues.put(BARCODE_CODE, tk_ticket.getBarcode_code());
+            contentValues.put(BARCODE_CODE, tk_ticket.getBarcode_code());
+            contentValues.put(PC_CODE,tk_ticket.getPc_code());
+            contentValues.put(PC_ID, tk_ticket.getPc_id());
+            contentValues.put(PC_DESC,tk_ticket.getPc_desc());
+            contentValues.put(MAIN_USER, tk_ticket.getMain_user());
+            contentValues.put(MAIN_USER_NICK,tk_ticket.getMain_user_nick());
+            contentValues.put(PIPELINE_CODE, tk_ticket.getPipeline_code());
+            contentValues.put(PIPELINE_ID, tk_ticket.getPipeline_id());
+            contentValues.put(PIPELINE_DESC, tk_ticket.getPipeline_desc());
+            contentValues.put(CURRENT_STEP_ORDER, tk_ticket.getCurrent_step_order());
+            if (tk_ticket.getApproval_rejected() > -1) {
+                contentValues.put(APPROVAL_REJECTED, tk_ticket.getApproval_rejected());
+            }
+            contentValues.put(ORIGIN_TYPE, tk_ticket.getOrigin_type());
+            if (tk_ticket.getApproval_rejected() > -1) {
+                contentValues.put(INVENTORY_CONTROL, tk_ticket.getInventory_control());
+            }
+            if (tk_ticket.getApproval_rejected() > -1) {
+                contentValues.put(USER_FOCUS, tk_ticket.getUser_focus());
+            }
+            if (tk_ticket.getApproval_rejected() > -1) {
+                contentValues.put(ALLOW_STEP_APPROVAL, tk_ticket.getAllow_step_approval());
+            }
             contentValues.put(CHECKIN_DATE, tk_ticket.getCheckin_date());
             contentValues.put(CHECKIN_USER, tk_ticket.getCheckin_user());
             contentValues.put(CHECKIN_USER_NAME, tk_ticket.getCheckin_user_name());

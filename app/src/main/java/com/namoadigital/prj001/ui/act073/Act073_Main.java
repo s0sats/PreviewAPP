@@ -546,8 +546,8 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
         //
         Bundle bundle = new Bundle();
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT073);
-        bundle.putLong(TK_TicketDao.CURRENT_PRODUCT_CODE,mdProductSerial.getProduct_code());
-        bundle.putLong(TK_TicketDao.CURRENT_SERIAL_CODE,mdProductSerial.getSerial_code());
+        bundle.putLong(TK_TicketDao.OPEN_PRODUCT_CODE,mdProductSerial.getProduct_code());
+        bundle.putLong(TK_TicketDao.OPEN_SERIAL_CODE,mdProductSerial.getSerial_code());
         //
         intent.putExtras(bundle);
         startActivity(intent);

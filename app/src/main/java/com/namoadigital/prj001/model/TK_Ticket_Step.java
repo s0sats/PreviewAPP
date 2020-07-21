@@ -260,4 +260,38 @@ public class TK_Ticket_Step {
     public void setStep_end_date(@Nullable String step_end_date) {
         this.step_end_date = step_end_date;
     }
+
+    @Nullable
+    public Integer getStep_end_user() {
+        return step_end_user;
+    }
+
+    public void setStep_end_user(@Nullable Integer step_end_user) {
+        this.step_end_user = step_end_user;
+    }
+
+    @Nullable
+    public String getStep_end_user_nick() {
+        return step_end_user_nick;
+    }
+
+    public void setStep_end_user_nick(@Nullable String step_end_user_nick) {
+        this.step_end_user_nick = step_end_user_nick;
+    }
+
+    public String getStep_status() {
+        return step_status;
+    }
+
+    public void setStep_status(String step_status) {
+        this.step_status = step_status;
+    }
+
+    public ArrayList<TK_Ticket_Ctrl> getCtrl() {
+        return ctrl;
+    }
+
+    public void setCtrl(ArrayList<TK_Ticket_Ctrl> ctrl) {
+        this.ctrl = ctrl;
+    }
 }
