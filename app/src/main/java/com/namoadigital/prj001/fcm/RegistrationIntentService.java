@@ -56,7 +56,7 @@ public class RegistrationIntentService extends IntentService {
                                 getApplicationContext(),
                                 sToken);
 
-                            Log.d("ID_GOOGLE", sToken);
+                            //Log.d("ID_GOOGLE", sToken);
                             //
                             Intent mIntent = new Intent(getApplicationContext(), WS_Google.class);
                             startService(mIntent);

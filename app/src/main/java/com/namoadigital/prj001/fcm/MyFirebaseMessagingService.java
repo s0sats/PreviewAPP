@@ -69,7 +69,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         //super.onNewToken(token);
         updateGooglePreferences(token);
         startWsGoogle();
-        Log.d("FCM_New_Token", "Refreshed token: " + token);
+        //Log.d("FCM_New_Token", "Refreshed token: " + token);
     }
 
     /**

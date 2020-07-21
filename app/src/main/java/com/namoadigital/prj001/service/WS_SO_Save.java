@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -848,7 +847,7 @@ public class WS_SO_Save extends IntentService {
                     ).toSqlQuery()
                 );
             }else if(ConstantBaseApp.GE_FILE_STATUS_SENT.equals(geFile.getFile_status())){
-                Log.d("del-PHOTO", "WsSoSave :" + geFile.getFile_path());
+                //Log.d("del-PHOTO", "WsSoSave :" + geFile.getFile_path());
                 ToolBox_Inf.deleteFileWithRet(
                     imgFileAbsolutePath(originalFileName)
                 );

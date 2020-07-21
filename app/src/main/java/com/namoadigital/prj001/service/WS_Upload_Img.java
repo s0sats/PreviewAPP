@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.namoadigital.prj001.dao.GE_FileDao;
@@ -130,7 +129,7 @@ public class WS_Upload_Img extends IntentService {
                         //
                         if(curGeFile.getFile_path_new() != null){
                             //TODO colocar verificação de se nova foto existe?????
-                            Log.d("del-PHOTO", "WsUpload :" + curGeFile.getFile_path());
+                            //Log.d("del-PHOTO", "WsUpload :" + curGeFile.getFile_path());
                             ToolBox_Inf.deleteDownloadFile(
                                 imgFileAbsolutePath(curGeFile.getFile_path())
                             );
