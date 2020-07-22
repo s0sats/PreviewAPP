@@ -4,9 +4,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.ctls.FabMenuItem;
@@ -14,6 +14,8 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act075_Product_List_Adapter;
+import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -27,19 +29,30 @@ public class Act075_Main extends Base_Activity_Frag {
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private String mResource_CodeFrg = "0";
     private HMAux hmAux_Trans_frg_pipeline_header;
-    ListView lvProduct;
+    public static final String VIEW_PROFILE  = "VIEW_PROFILE";
+    public static final int PRODUCT_VIEW_ID  = 1;
+    public static final int APPROVAL_VIEW_ID = 2;
+    /*
+        BARRIONUEVO - 22.07.2020
+        act_profile - 1 Produto
+                      2 Aprovacao
+     */
+    private int act_profile;
+    RecyclerView rvProduct;
     Button btnSave;
     FabMenu fabMenu;
     FabMenuItem fabStep;
     FabMenuItem fabProduct;
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
+    private ArrayList<TK_Ticket_Product> tk_ticket_products = new ArrayList<>();
+    private Act075_Product_List_Adapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act075_main);
         //
-        lvProduct = findViewById(R.id.act075_lv_product);
+        rvProduct = findViewById(R.id.act075_rv_product);
         btnSave = findViewById(R.id.act075_save_product);
         fabMenu = (FabMenu) findViewById(R.id.act075_fabMenu_anchor);
         fabMenu.setmIcons_Enabled(false);
@@ -59,7 +72,7 @@ public class Act075_Main extends Base_Activity_Frag {
                 mModule_Code,
                 Constant.ACT075
         );
-
+        //
         loadTranslation();
         //
         mResource_CodeFrg = ToolBox_Inf.getResourceCode(
@@ -82,6 +95,12 @@ public class Act075_Main extends Base_Activity_Frag {
         setHeaderFragment();
         //
         initFabMenuItens();
+        //
+        setProductList();
+    }
+
+    private void setProductList() {
+
     }
 
     private void setHeaderFragment() {
@@ -109,9 +128,11 @@ public class Act075_Main extends Base_Activity_Frag {
         Bundle bundle = getIntent().getExtras();
         //
         if (bundle != null) {
-
+            act_profile = bundle.getInt(VIEW_PROFILE, -1);
+            tk_ticket_products = (ArrayList<TK_Ticket_Product>) bundle.getSerializable("TK_Ticket_Product");
         } else {
-
+            act_profile = -1;
+            tk_ticket_products = new ArrayList<>();
         }
     }
 

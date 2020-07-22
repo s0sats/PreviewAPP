@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_product_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@+id/tv_product_info"
         tools:visibility="visible">
 
         <android.support.constraint.Guideline
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="#FB9C0E"
+            android:background="@drawable/tk_product_amount_controllers"
             android:tint="@color/colorFooterWhite"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/gdl_withdrawn"
@@ -62,25 +62,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:background="#FB9C0E"
+            android:background="@drawable/tk_product_amount_controllers"
             android:tint="@color/colorFooterWhite"
             app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_withdrawn_substract"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/product_cell_iv_withdrawn_substract"
             app:srcCompat="@drawable/ic_add_black_24px" />
-
-        <TextView
-            android:id="@+id/product_cell_tv_withdrawn_unity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="un"
-            android:textColor="@color/namoa_pipeline_product_lbl"
-            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_withdrawn_add"
-            app:layout_constraintEnd_toStartOf="@+id/product_cell_iv_withdrawn_add"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/product_cell_tv_withdrawn_qty"
-            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_withdrawn_add" />
 
         <TextView
             android:id="@+id/product_cell_tv_withdrawn_qty"
@@ -89,8 +76,7 @@
             android:text="1"
             android:textColor="@color/namoa_pipeline_product_lbl"
             app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_withdrawn_add"
-            app:layout_constraintEnd_toStartOf="@+id/product_cell_tv_withdrawn_unity"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/product_cell_iv_withdrawn_add"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/product_cell_iv_withdrawn_substract"
             app:layout_constraintTop_toTopOf="@+id/product_cell_iv_withdrawn_add" />
@@ -130,7 +116,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="#FB9C0E"
+            android:background="@drawable/tk_product_amount_controllers"
             android:tint="@color/colorFooterWhite"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/gdl_applied"
@@ -142,25 +128,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:background="#FB9C0E"
+            android:background="@drawable/tk_product_amount_controllers"
             android:tint="@color/colorFooterWhite"
             app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_applied_substract"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/product_cell_iv_applied_substract"
             app:srcCompat="@drawable/ic_add_black_24px" />
-
-        <TextView
-            android:id="@+id/product_cell_tv_applied_unity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="un"
-            android:textColor="@color/namoa_pipeline_product_lbl"
-            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_applied_add"
-            app:layout_constraintEnd_toStartOf="@+id/product_cell_iv_applied_add"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/product_cell_tv_applied_qty"
-            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_applied_add" />
 
         <TextView
             android:id="@+id/product_cell_tv_applied_qty"
@@ -169,8 +142,7 @@
             android:text="1"
             android:textColor="@color/namoa_pipeline_product_lbl"
             app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_applied_add"
-            app:layout_constraintEnd_toStartOf="@+id/product_cell_tv_applied_unity"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/product_cell_iv_applied_add"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/product_cell_iv_applied_substract"
             app:layout_constraintTop_toTopOf="@+id/product_cell_iv_applied_add" />
@@ -234,27 +206,13 @@
             app:srcCompat="@drawable/ic_check_white_24dp" />
 
         <TextView
-            android:id="@+id/product_cell_tv_returned_unity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="un"
-            android:textColor="@color/namoa_pipeline_product_lbl"
-            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_returned_add"
-            app:layout_constraintEnd_toStartOf="@+id/product_cell_iv_returned_add"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/product_cell_tv_returned_qty"
-            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_returned_add"
-            app:layout_constraintVertical_bias="0.6" />
-
-        <TextView
             android:id="@+id/product_cell_tv_returned_qty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="1"
             android:textColor="@color/namoa_pipeline_product_lbl"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/product_cell_tv_returned_unity"
+            app:layout_constraintEnd_toStartOf="@+id/product_cell_iv_returned_add"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/product_cell_iv_returned_substract"

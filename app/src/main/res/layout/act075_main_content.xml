@@ -14,16 +14,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ListView
-        android:id="@+id/act075_lv_product"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/act075_rv_product"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="4dp"
+        tools:listitem="@layout/act075_product_item"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_frg_pipeline_header"
-        tools:listfooter="@layout/act075_add_product_footer"
-        tools:listitem="@layout/act075_product_item" />
+        app:layout_constraintTop_toBottomOf="@+id/header_frg_pipeline_header" />
 
     <Button
         android:id="@+id/act075_save_product"
