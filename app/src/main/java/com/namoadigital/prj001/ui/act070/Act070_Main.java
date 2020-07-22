@@ -219,12 +219,12 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         );
         //
         recoverIntentsInfo();
-        //COMENTADO PARA TESTES ENQUANTO NÃO TEMOS JSON
-        /*if (mPresenter.validateBundleParams(mTkPrefix, mTkCode)) {
+        //
+        if (mPresenter.validateBundleParams(mTkPrefix, mTkCode)) {
             updateTicketData();
         } else {
             paramErrorFlow();
-        }*/
+        }
     }
 
     private void refreshUi() {
@@ -548,14 +548,14 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private void updateTicketData() {
         mTicket = mPresenter.getTicketObj(mTkPrefix, mTkCode);
         //
-        if (mTicket != null) {
+        /*if (mTicket != null) {
             setReadOnly();
             initFCMReceiver();
             setDataToViews();
             checkSyncNeeds();
         } else {
             paramErrorFlow();
-        }
+        }*/
     }
 
     private void checkSyncNeeds() {
