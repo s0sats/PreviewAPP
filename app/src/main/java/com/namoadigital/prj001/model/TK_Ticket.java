@@ -43,21 +43,56 @@ public class TK_Ticket {
     private String open_user_name;
     @Nullable
     private String internal_comments;
+    /**
+     * Remover campos para pipeline
+     *
+     * current_product_code
+     * current_product_id
+     * current_product_desc
+     *
+     * current_serial_code
+     * current_serial_id
+     * checkin_user
+     * checkin_date
+     * checkin_user_name
+     */
+
     @Expose
-    private int current_site_code;
-    private String current_site_id;
-    private String current_site_desc;
+    private int open_site_code;
+    private String open_site_id;
+    private String open_site_desc;
     @Expose
-    private int current_operation_code;
-    private String current_operation_id;
-    private String current_operation_desc;
+    private int open_operation_code;
+    private String open_operation_id;
+    private String open_operation_desc;
     @Expose
-    private int current_product_code;
-    private String current_product_id;
-    private String current_product_desc;
+    private int open_product_code;
+    private String open_product_id;
+    private String open_product_desc;
     @Expose
-    private int current_serial_code;
-    private String current_serial_id;
+    private int open_serial_code;
+    private String open_serial_id;
+
+    //Novo pipeline
+    //OS CAMPOS PREFIXO OPEN, SUBSTITUIRAM OS DE PREFIXO CURRENT
+//    @Expose
+//    private int open_site_code;
+//    private String open_site_id;
+//    private String open_site_desc;
+//
+//    @Expose
+//    private int open_operation_code;
+//    private String open_operation_id;
+//    private String open_operation_desc;
+//
+//    @Expose
+//    private int open_product_code;
+//    private String open_product_id;
+//    private String open_product_desc;
+//    //Novo pipeline - end
+//    @Expose
+//    private int open_serial_code;
+//    private String open_serial_id;
     @Nullable
     private String forecast_date;
     private String ticket_status;
@@ -70,11 +105,41 @@ public class TK_Ticket {
     private Integer barcode_code;
     @Expose
     @Nullable
+    private Integer pc_code;
+    @Nullable
+    private String pc_id;
+    @Nullable
+    private String pc_desc;
+    @Expose
+    @Nullable
+    private Integer main_user;
+    @Nullable
+    private String main_user_nick;
+    @Expose
+    private Integer pipeline_code;
+    @Nullable
+    private String pipeline_id;
+    @Nullable
+    private String pipeline_desc;
+    private Integer current_step_order;
+    private int approval_rejected;
+    private String origin_type;
+    private String origin_desc;
+    private int valid_structure_step;
+    private int inventory_control;
+    private int user_focus;
+    private int allow_step_approval;
+    @Expose
+    @Nullable
+    //TODO DEPOIS DE MODIFICAR REMOVE PROPRIEDADE DEPRECATED TB DO DATABASE
+    @Deprecated
     private Integer checkin_user;
     @Expose
+    @Deprecated
     private String checkin_date;
     @Expose
     @Nullable
+    @Deprecated
     private String checkin_user_name;
     private int sync_required;
     private int update_required;
@@ -91,10 +156,20 @@ public class TK_Ticket {
     private Integer schedule_exec;
     @Expose
     private ArrayList<TK_Ticket_Ctrl> ctrl = new ArrayList<>();
+    @Expose
+    private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
+    @Expose
+    private ArrayList<TK_Ticket_Product> product = new ArrayList<>();
 
     public void setPK() {
         for (int i = 0; i < ctrl.size(); i++) {
             ctrl.get(i).setPK(this);
+        }
+        for (int i = 0; i < step.size(); i++) {
+            step.get(i).setPK(this);
+        }
+        for (int i = 0; i < product.size(); i++) {
+            product.get(i).setPK(this);
         }
     }
 
@@ -258,92 +333,92 @@ public class TK_Ticket {
         this.internal_comments = internal_comments;
     }
 
-    public int getCurrent_site_code() {
-        return current_site_code;
+    public int getOpen_site_code() {
+        return open_site_code;
     }
 
-    public void setCurrent_site_code(int current_site_code) {
-        this.current_site_code = current_site_code;
+    public void setOpen_site_code(int open_site_code) {
+        this.open_site_code = open_site_code;
     }
 
-    public String getCurrent_site_id() {
-        return current_site_id;
+    public String getOpen_site_id() {
+        return open_site_id;
     }
 
-    public void setCurrent_site_id(String current_site_id) {
-        this.current_site_id = current_site_id;
+    public void setOpen_site_id(String open_site_id) {
+        this.open_site_id = open_site_id;
     }
 
-    public String getCurrent_site_desc() {
-        return current_site_desc;
+    public String getOpen_site_desc() {
+        return open_site_desc;
     }
 
-    public void setCurrent_site_desc(String current_site_desc) {
-        this.current_site_desc = current_site_desc;
+    public void setOpen_site_desc(String open_site_desc) {
+        this.open_site_desc = open_site_desc;
     }
 
-    public int getCurrent_operation_code() {
-        return current_operation_code;
+    public int getOpen_operation_code() {
+        return open_operation_code;
     }
 
-    public void setCurrent_operation_code(int current_operation_code) {
-        this.current_operation_code = current_operation_code;
+    public void setOpen_operation_code(int open_operation_code) {
+        this.open_operation_code = open_operation_code;
     }
 
-    public String getCurrent_operation_id() {
-        return current_operation_id;
+    public String getOpen_operation_id() {
+        return open_operation_id;
     }
 
-    public void setCurrent_operation_id(String current_operation_id) {
-        this.current_operation_id = current_operation_id;
+    public void setOpen_operation_id(String open_operation_id) {
+        this.open_operation_id = open_operation_id;
     }
 
-    public String getCurrent_operation_desc() {
-        return current_operation_desc;
+    public String getOpen_operation_desc() {
+        return open_operation_desc;
     }
 
-    public void setCurrent_operation_desc(String current_operation_desc) {
-        this.current_operation_desc = current_operation_desc;
+    public void setOpen_operation_desc(String open_operation_desc) {
+        this.open_operation_desc = open_operation_desc;
     }
 
-    public int getCurrent_product_code() {
-        return current_product_code;
+    public int getOpen_product_code() {
+        return open_product_code;
     }
 
-    public void setCurrent_product_code(int current_product_code) {
-        this.current_product_code = current_product_code;
+    public void setOpen_product_code(int open_product_code) {
+        this.open_product_code = open_product_code;
     }
 
-    public String getCurrent_product_id() {
-        return current_product_id;
+    public String getOpen_product_id() {
+        return open_product_id;
     }
 
-    public void setCurrent_product_id(String current_product_id) {
-        this.current_product_id = current_product_id;
+    public void setOpen_product_id(String open_product_id) {
+        this.open_product_id = open_product_id;
     }
 
-    public String getCurrent_product_desc() {
-        return current_product_desc;
+    public String getOpen_product_desc() {
+        return open_product_desc;
     }
 
-    public void setCurrent_product_desc(String current_product_desc) {
-        this.current_product_desc = current_product_desc;
+    public void setOpen_product_desc(String open_product_desc) {
+        this.open_product_desc = open_product_desc;
     }
 
-    public int getCurrent_serial_code() {
-        return current_serial_code;
+    public int getOpen_serial_code() {
+        return open_serial_code;
     }
 
-    public void setCurrent_serial_code(int current_serial_code) {
-        this.current_serial_code = current_serial_code;
+    public void setOpen_serial_code(int open_serial_code) {
+        this.open_serial_code = open_serial_code;
     }
 
-    public String getCurrent_serial_id() {
-        return current_serial_id;
+    public String getOpen_serial_id() {
+        return open_serial_id;
     }
 
-    public void setCurrent_serial_id(String current_serial_id) {
-        this.current_serial_id = current_serial_id;
+    public void setOpen_serial_id(String open_serial_id) {
+        this.open_serial_id = open_serial_id;
     }
 
     @Nullable
@@ -403,6 +478,135 @@ public class TK_Ticket {
 
     public void setBarcode_code(Integer barcode_code) {
         this.barcode_code = barcode_code;
+    }
+
+    public Integer getPc_code() {
+        return pc_code;
+    }
+
+    public void setPc_code(Integer pc_code) {
+        this.pc_code = pc_code;
+    }
+
+    public String getPc_id() {
+        return pc_id;
+    }
+
+    public void setPc_id(String pc_id) {
+        this.pc_id = pc_id;
+    }
+
+    public String getPc_desc() {
+        return pc_desc;
+    }
+
+    public void setPc_desc(String pc_desc) {
+        this.pc_desc = pc_desc;
+    }
+
+    @Nullable
+    public Integer getMain_user() {
+        return main_user;
+    }
+
+    public void setMain_user(@Nullable Integer main_user) {
+        this.main_user = main_user;
+    }
+
+    public String getMain_user_nick() {
+        return main_user_nick;
+    }
+
+    public void setMain_user_nick(String main_user_nick) {
+        this.main_user_nick = main_user_nick;
+    }
+
+    public Integer getPipeline_code() {
+        return pipeline_code;
+    }
+
+    public void setPipeline_code(Integer pipeline_code) {
+        this.pipeline_code = pipeline_code;
+    }
+
+    public String getPipeline_id() {
+        return pipeline_id;
+    }
+
+    public void setPipeline_id(String pipeline_id) {
+        this.pipeline_id = pipeline_id;
+    }
+
+    public String getPipeline_desc() {
+        return pipeline_desc;
+    }
+
+    public void setPipeline_desc(String pipeline_desc) {
+        this.pipeline_desc = pipeline_desc;
+    }
+
+    public Integer getCurrent_step_order() {
+        return current_step_order;
+    }
+
+    public void setCurrent_step_order(Integer current_step_order) {
+        this.current_step_order = current_step_order;
+    }
+
+    public int getApproval_rejected() {
+        return approval_rejected;
+    }
+
+    public void setApproval_rejected(int approval_rejected) {
+        this.approval_rejected = approval_rejected;
+    }
+
+    public String getOrigin_type() {
+        return origin_type;
+    }
+
+    public void setOrigin_type(String origin_type) {
+        this.origin_type = origin_type;
+    }
+
+    public String getOrigin_desc() {
+        return origin_desc;
+    }
+
+    public void setOrigin_desc(String origin_desc) {
+        this.origin_desc = origin_desc;
+    }
+
+    public int getValid_structure_step() {
+        return valid_structure_step;
+    }
+
+    public void setValid_structure_step(int valid_structure_step) {
+        this.valid_structure_step = valid_structure_step;
+    }
+
+    public int getInventory_control() {
+        return inventory_control;
+    }
+
+    public void setInventory_control(int inventory_control) {
+        this.inventory_control = inventory_control;
+    }
+
+    public int getUser_focus() {
+        return user_focus;
+    }
+
+    public void setUser_focus(int user_focus) {
+        this.user_focus = user_focus;
+    }
+
+    public int getAllow_step_approval() {
+        return allow_step_approval;
+    }
+
+    public void setAllow_step_approval(int allow_step_approval) {
+        this.allow_step_approval = allow_step_approval;
     }
 
     @Nullable
@@ -488,6 +692,22 @@ public class TK_Ticket {
 
     public void setSchedule_exec(@Nullable Integer schedule_exec) {
         this.schedule_exec = schedule_exec;
+    }
+
+    public ArrayList<TK_Ticket_Step> getStep() {
+        return step;
+    }
+
+    public void setStep(ArrayList<TK_Ticket_Step> step) {
+        this.step = step;
+    }
+
+    public ArrayList<TK_Ticket_Product> getProduct() {
+        return product;
+    }
+
+    public void setProduct(ArrayList<TK_Ticket_Product> product) {
+        this.product = product;
     }
 
     /**
@@ -610,7 +830,7 @@ public class TK_Ticket {
      */
     private boolean existsActionPhotoInServer(TK_Ticket_Ctrl ctrl) {
         return (ctrl.getAction().getAction_photo_name() != null && !ctrl.getAction().getAction_photo_name().isEmpty())
-            || (ctrl.getAction().getAction_photo() != null && !ctrl.getAction().getAction_photo().isEmpty());
+            || (ctrl.getAction().getAction_photo_url() != null && !ctrl.getAction().getAction_photo_url().isEmpty());
     }
 
     private static String getLocalPath(String imgLocalPath) {

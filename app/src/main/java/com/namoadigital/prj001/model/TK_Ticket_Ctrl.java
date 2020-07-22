@@ -17,19 +17,29 @@ public class TK_Ticket_Ctrl {
     @Expose
     private String ctrl_type;
     @Expose
+    @Deprecated
     private int site_code;
+    @Deprecated
     private String site_id;
+    @Deprecated
     private String site_desc;
     @Expose
     private int operation_code;
+    @Deprecated
     private String operation_id;
+    @Deprecated
     private String operation_desc;
     @Expose
-    private int product_code;
+    @Nullable
+    private Integer product_code;
+    @Nullable
     private String product_id;
+    @Nullable
     private String product_desc;
     @Expose
-    private int serial_code;
+    @Nullable
+    private Integer serial_code;
+    @Nullable
     private String serial_id;
     private String ctrl_start_date;
     private int ctrl_start_user;
@@ -47,6 +57,9 @@ public class TK_Ticket_Ctrl {
     private String partner_id;
     @Nullable
     private String partner_desc;
+    private int step_code;
+    private int step_order;
+    private int obj_planned;
     @Expose
     @Nullable
     private TK_Ticket_Action action;
@@ -59,12 +72,33 @@ public class TK_Ticket_Ctrl {
         this.ticket_prefix = -1;
         this.ticket_code = -1;
         this.ticket_seq = -1;
+        this.step_order = -1;
     }
 
     public void setPK(TK_Ticket tk_ticket) {
         this.customer_code = tk_ticket.getCustomer_code();
         this.ticket_prefix = tk_ticket.getTicket_prefix();
         this.ticket_code = tk_ticket.getTicket_code();
+        //Seta a PK no tipo do controle
+        switch (this.ctrl_type) {
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                if(this.action != null) {
+                    this.action.setPK(this);
+                }
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                if(this.measure != null) {
+                    this.measure.setPK(this);
+                }
+                break;
+        }
+    }
+
+    public void setPK(TK_Ticket_Step tk_ticket_step) {
+        this.customer_code = tk_ticket_step.getCustomer_code();
+        this.ticket_prefix = tk_ticket_step.getTicket_prefix();
+        this.ticket_code = tk_ticket_step.getTicket_code();
+        this.step_code = tk_ticket_step.getStep_code();
         //Seta a PK no tipo do controle
         switch (this.ctrl_type) {
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
@@ -164,43 +198,48 @@ public class TK_Ticket_Ctrl {
         this.operation_desc = operation_desc;
     }
 
-    public int getProduct_code() {
+    @Nullable
+    public Integer getProduct_code() {
         return product_code;
     }
 
-    public void setProduct_code(int product_code) {
+    public void setProduct_code(@Nullable Integer product_code) {
         this.product_code = product_code;
     }
 
+    @Nullable
     public String getProduct_id() {
         return product_id;
     }
 
-    public void setProduct_id(String product_id) {
+    public void setProduct_id(@Nullable String product_id) {
         this.product_id = product_id;
     }
 
+    @Nullable
     public String getProduct_desc() {
         return product_desc;
     }
 
-    public void setProduct_desc(String product_desc) {
+    public void setProduct_desc(@Nullable String product_desc) {
         this.product_desc = product_desc;
     }
 
-    public int getSerial_code() {
+    @Nullable
+    public Integer getSerial_code() {
         return serial_code;
     }
 
-    public void setSerial_code(int serial_code) {
+    public void setSerial_code(@Nullable Integer serial_code) {
         this.serial_code = serial_code;
     }
 
+    @Nullable
     public String getSerial_id() {
         return serial_id;
     }
 
-    public void setSerial_id(String serial_id) {
+    public void setSerial_id(@Nullable String serial_id) {
         this.serial_id = serial_id;
     }
 
@@ -302,5 +341,29 @@ public class TK_Ticket_Ctrl {
 
     public void setMeasure(TK_Ticket_Measure measure) {
         this.measure = measure;
+    }
+
+    public int getStep_code() {
+        return step_code;
+    }
+
+    public void setStep_code(int step_code) {
+        this.step_code = step_code;
+    }
+
+    public int getStep_order() {
+        return step_order;
+    }
+
+    public void setStep_order(int step_order) {
+        this.step_order = step_order;
+    }
+
+    public int getObj_planned() {
+        return obj_planned;
+    }
+
+    public void setObj_planned(int obj_planned) {
+        this.obj_planned = obj_planned;
     }
 }

@@ -29,6 +29,7 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
     public static final String TICKET_PREFIX = "ticket_prefix";
     public static final String TICKET_CODE = "ticket_code";
     public static final String TICKET_SEQ = "ticket_seq";
+    public static final String STEP_CODE = "step_code";
     public static final String MEASURE_TP_CODE = "measure_tp_code";
     public static final String MEASURE_TP_ID = "measure_tp_id";
     public static final String MEASURE_TP_DESC = "measure_tp_desc";
@@ -72,6 +73,8 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
             sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_measure.getTicket_code()).append("'");
             sbWhere.append(" and ");
             sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_measure.getTicket_seq()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_measure.getStep_code()).append("'");
             //Tenta update e armazena retorno
             addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_measure), sbWhere.toString(), null);
             //Se nenhuma linha afetada, tenta insert
@@ -149,6 +152,8 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
                 sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_measure.getTicket_code()).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_measure.getTicket_seq()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_measure.getStep_code()).append("'");
                 //Tenta update e armazena retorno
                 addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_measure), sbWhere.toString(), null);
                 //Se nenhuma linha afetada, tenta insert
@@ -239,6 +244,8 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
             sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_measure.getTicket_code()).append("'");
             sbWhere.append(" and ");
             sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_measure.getTicket_seq()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_measure.getStep_code()).append("'");
             //
             sqlRet = db.delete(TABLE,sbWhere.toString(),null);
         }catch (SQLiteException e){
@@ -370,6 +377,7 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
             tk_ticket_measure.setTicket_prefix(cursor.getInt(cursor.getColumnIndex(TICKET_PREFIX)));
             tk_ticket_measure.setTicket_code(cursor.getInt(cursor.getColumnIndex(TICKET_CODE)));
             tk_ticket_measure.setTicket_seq(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ)));
+            tk_ticket_measure.setStep_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
             tk_ticket_measure.setMeasure_tp_code(cursor.getInt(cursor.getColumnIndex(MEASURE_TP_CODE)));
             tk_ticket_measure.setMeasure_tp_id(cursor.getString(cursor.getColumnIndex(MEASURE_TP_ID)));
             tk_ticket_measure.setMeasure_tp_desc(cursor.getString(cursor.getColumnIndex(MEASURE_TP_DESC)));
@@ -407,6 +415,9 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
             }
             if(tk_ticket_measure.getTicket_seq() > -1){
                 contentValues.put(TICKET_SEQ, tk_ticket_measure.getTicket_seq());
+            }
+            if(tk_ticket_measure.getStep_code() > -1){
+                contentValues.put(STEP_CODE, tk_ticket_measure.getStep_code());
             }
             if(tk_ticket_measure.getMeasure_tp_code() > -1){
                 contentValues.put(MEASURE_TP_CODE, tk_ticket_measure.getMeasure_tp_code());

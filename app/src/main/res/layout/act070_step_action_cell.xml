@@ -7,7 +7,7 @@
 
     <View
         android:id="@+id/step_action_v_line"
-        android:layout_width="5dp"
+        android:layout_width="@dimen/pipeline_step_vertical_line_width"
         android:layout_height="0dp"
         android:background="@color/namoa_color_dark_blue"
         android:visibility="visible"
@@ -27,7 +27,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/step_action_gd_start"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <android.support.constraint.Guideline
         android:id="@+id/step_action_gd_start"
@@ -42,7 +43,6 @@
         android:layout_height="wrap_content"
         android:background="@color/namoa_color_ticket_process_highlight"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="wrap"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@id/step_action_gd_start"
         app:layout_constraintTop_toTopOf="parent">
@@ -59,7 +59,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/step_action_gd_end"
             app:layout_constraintHorizontal_bias="0.0"
@@ -67,35 +67,11 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Ação" />
 
-        <ImageView
-            android:id="@+id/step_action_iv_start_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/ic_baseline_date_range_24_black"
-            android:tint="@color/namoa_color_gray_4"
-            app:layout_constraintBottom_toBottomOf="@id/step_action_tv_start_date"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/step_action_tv_start_date" />
-
-        <TextView
-            android:id="@+id/step_action_tv_start_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toStartOf="@id/step_action_gd_end"
-            app:layout_constraintStart_toEndOf="@id/step_action_iv_start_date"
-            app:layout_constraintTop_toBottomOf="@+id/step_action_tv_serial"
-            app:layout_constraintWidth_default="spread"
-            tools:text="20/05/2020 17:05" />
-
 
         <ImageView
             android:id="@+id/step_action_iv_end_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/pipeline_step_icon_width"
+            android:layout_height="@dimen/pipeline_step_icon_width"
             android:layout_marginStart="8dp"
             android:src="@drawable/ic_check_white_24dp"
             android:tint="@color/namoa_color_gray_4"
@@ -108,7 +84,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
             app:layout_constraintEnd_toStartOf="@id/step_action_gd_end"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/step_action_iv_end_date"
@@ -118,8 +94,8 @@
 
         <ImageView
             android:id="@+id/step_action_iv_user"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/pipeline_step_icon_width"
+            android:layout_height="@dimen/pipeline_step_icon_width"
             android:layout_marginStart="8dp"
             android:src="@drawable/ic_person_black_24dp"
             android:tint="@color/namoa_color_gray_4"
@@ -132,7 +108,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
             app:layout_constraintEnd_toStartOf="@id/step_action_gd_end"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/step_action_iv_user"
@@ -144,7 +120,7 @@
             android:id="@+id/step_action_v_divider"
             android:layout_width="0dp"
             android:layout_height="2dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
             android:background="@color/namoa_color_gray3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -155,17 +131,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
             app:layout_constraintEnd_toStartOf="@id/step_action_gd_end"
             app:layout_constraintStart_toEndOf="@id/step_action_iv_partner"
-            app:layout_constraintTop_toBottomOf="@id/step_action_tv_start_date"
+            app:layout_constraintTop_toBottomOf="@+id/step_action_tv_serial"
             tools:text="Partner" />
 
         <TextView
             android:id="@+id/step_action_tv_prod"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
             android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/step_action_gd_end"
@@ -177,7 +153,7 @@
             android:id="@+id/step_action_tv_serial"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/step_action_gd_end"
             app:layout_constraintStart_toStartOf="@id/step_action_tv_prod"
@@ -188,7 +164,7 @@
             android:id="@+id/step_action_tv_site"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
             android:textColor="@color/namoa_color_danger_red"
             app:layout_constraintEnd_toStartOf="@id/step_action_gd_end"
             app:layout_constraintHorizontal_bias="0.50"
@@ -198,8 +174,8 @@
 
         <ImageView
             android:id="@+id/step_action_iv_partner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/pipeline_step_icon_width"
+            android:layout_height="@dimen/pipeline_step_icon_width"
             android:layout_marginStart="8dp"
             android:tint="@color/namoa_color_gray_4"
             app:layout_constraintBottom_toBottomOf="@id/step_action_tv_partner"
@@ -212,7 +188,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
             android:text="Iniciar Processo"
             app:layout_constraintEnd_toStartOf="@id/step_action_gd_end"
             app:layout_constraintHorizontal_bias="0.05"
@@ -224,8 +200,8 @@
 
         <ImageView
             android:id="@+id/step_action_iv_process_action"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/pipeline_step_icon_width"
+            android:layout_height="@dimen/pipeline_step_icon_width"
             android:layout_marginStart="8dp"
             android:tint="@color/namoa_color_gray_4"
             app:layout_constraintBottom_toBottomOf="@id/step_action_tv_process_action"

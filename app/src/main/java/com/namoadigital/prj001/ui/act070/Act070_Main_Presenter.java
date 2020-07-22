@@ -189,8 +189,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //
         TK_Ticket_Ctrl_Measure_V  measureCtrlView = new TK_Ticket_Ctrl_Measure_V(
             context,
-            mTicket.getCurrent_product_code(),
-            mTicket.getCurrent_serial_code(),
+            mTicket.getOpen_product_code(),
+            mTicket.getOpen_serial_code(),
             ctrl,
             hmAux_Trans,
             null
@@ -202,8 +202,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private TK_Ticket_Ctrl_Generic configSuperView(TK_Ticket mTicket, TK_Ticket_Ctrl ctrl) {
         TK_Ticket_Ctrl_Generic ctrlGeneric = new TK_Ticket_Ctrl_Generic(
             context,
-            mTicket.getCurrent_product_code(),
-            mTicket.getCurrent_serial_code(),
+            mTicket.getOpen_product_code(),
+            mTicket.getOpen_serial_code(),
             ctrl,
             hmAux_Trans,
             null
@@ -215,8 +215,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private TK_Ticket_Ctrl_Action_V configActionView(final TK_Ticket mTicket, final TK_Ticket_Ctrl ctrl) {
         TK_Ticket_Ctrl_Action_V actionCtrlView = new TK_Ticket_Ctrl_Action_V(
             context,
-            mTicket.getCurrent_product_code(),
-            mTicket.getCurrent_serial_code(),
+            mTicket.getOpen_product_code(),
+            mTicket.getOpen_serial_code(),
             ctrl,
             hmAux_Trans,
             new View.OnClickListener() {

@@ -625,12 +625,17 @@ public class ConstantBaseApp extends ConstantBase {
     /*
     * Constantes Ticket
     */
-
-    public static final String TK_TICKET_CRTL_TYPE_ACTION ="ACTION";
-    public static final String TK_TICKET_CRTL_TYPE_FORM ="FORM";
-    public static final String TK_TICKET_CRTL_TYPE_SERVICE ="SERVICE";
-    public static final String TK_TICKET_CRTL_TYPE_MEASURE ="MEASURE";
+    public static final String TK_TICKET_CRTL_TYPE_ACTION ="OBJ_ACTION";
+    public static final String TK_TICKET_CRTL_TYPE_FORM ="OBJ_FORM";
+    public static final String TK_TICKET_CRTL_TYPE_SERVICE ="OBJ_SERVICE";
+    public static final String TK_TICKET_CRTL_TYPE_MEASURE ="OBJ_MEASURE";
+    public static final String TK_TICKET_CRTL_TYPE_APPROVAL ="OBJ_APPROVAL";
     public static final String TK_TICKET_PREX_IMG ="tk_";
+    /*
+     * Constantes Pipeline
+     */
+    public static final String TK_PIPELINE_STEP_TYPE_ONE_TOUCH = "ONE_TOUCH";
+    public static final String TK_PIPELINE_STEP_TYPE_START_END = "START_END";
 
     /*
      * Constantes agendamento

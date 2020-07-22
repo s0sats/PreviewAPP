@@ -193,8 +193,8 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
             bParterNoProfile= bundle.getBoolean(FILTER_PARTNER_NO_PROFILE,false);
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
             //
-            ticketProductCode = bundle.getLong(TK_TicketDao.CURRENT_PRODUCT_CODE, -1);
-            ticketSerialCode = bundle.getLong(TK_TicketDao.CURRENT_SERIAL_CODE, -1);
+            ticketProductCode = bundle.getLong(TK_TicketDao.OPEN_PRODUCT_CODE, -1);
+            ticketSerialCode = bundle.getLong(TK_TicketDao.OPEN_SERIAL_CODE, -1);
             //Aplica inicialização pelo historico
             if(ConstantBaseApp.ACT014 .equalsIgnoreCase(requestingAct)){
                 bStatusPending = false;

@@ -109,8 +109,8 @@ public class TK_Ticket_Ctrl_Action_V extends TK_Ticket_Ctrl_Super {
 
     private boolean swithOnPhotoIcon() {
         return mTicketCtrl.getAction().getAction_photo_local() != null
-               ||( mTicketCtrl.getAction().getAction_photo_name() != null && mTicketCtrl.getAction().getAction_photo() == null)
-               || (mTicketCtrl.getAction().getAction_photo() != null && mTicketCtrl.getAction().getAction_photo_changed() == 0);
+               ||( mTicketCtrl.getAction().getAction_photo_name() != null && mTicketCtrl.getAction().getAction_photo_url() == null)
+               || (mTicketCtrl.getAction().getAction_photo_url() != null && mTicketCtrl.getAction().getAction_photo_changed() == 0);
 
     }
 

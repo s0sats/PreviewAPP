@@ -443,7 +443,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             //assim impede que a rotina de download baixe a imagem
             //e ferre o envio
             if(mTicketCtrl.getAction().getAction_photo_local() == null){
-                mTicketCtrl.getAction().setAction_photo(null);
+                mTicketCtrl.getAction().setAction_photo_url(null);
                 mTicketCtrl.getAction().setAction_photo_name(null);
                 deletePhotoFile(actionPhotoLocalPath);
                 //Se apagou a foto, limpa photo_code
@@ -615,7 +615,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //boolean photoReadOnly = isPhotoReadOnly();
         //
         if(bReadOnly){
-            if(mTicketCtrl.getAction().getAction_photo() == null && mTicketCtrl.getAction().getAction_photo_local() == null){
+            if(mTicketCtrl.getAction().getAction_photo_url() == null && mTicketCtrl.getAction().getAction_photo_local() == null){
                 ivActionPhoto.setEnabled(false);
                 defineActionPhotoListener(false);
             } else{
@@ -711,7 +711,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private void defineActionPhoto() {
         actionPhotoLocalPath = mPresenter.generateActionPhotoLocalPath(mTicketCtrl.getAction());
         //
-        if (mTicketCtrl.getAction().getAction_photo() == null && mTicketCtrl.getAction().getAction_photo_local() == null) {
+        if (mTicketCtrl.getAction().getAction_photo_url() == null && mTicketCtrl.getAction().getAction_photo_local() == null) {
             //Redefine tamanho imageView. Neste caso menor pois img não existe
             defineActionPhotoMetrics(IV_PHOTO_NOT_EXISTS_WIDTH_PERCENT,IV_PHOTO_NOT_EXISTS_HEIGHT_PERCENT);
             if(!bReadOnly) {
@@ -730,7 +730,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             //
             ivActionPhoto.setImageDrawable(placeHolder);
         } else {
-            String path = mTicketCtrl.getAction().getAction_photo();
+            String path = mTicketCtrl.getAction().getAction_photo_url();
             boolean saveBitmap = false;
             //
             if (mTicketCtrl.getAction().getAction_photo_local() != null) {

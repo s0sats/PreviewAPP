@@ -19,4 +19,9 @@
     <dimen name="namoa_icon_cell_so_height">20dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 
+    <dimen name="pipeline_step_vertical_line_width">2dp</dimen>
+    <dimen name="pipeline_step_icon_width">18dp</dimen>
+    <dimen name="pipeline_step_icon_height">18dp</dimen>
+    <dimen name="pipeline_step_info_margin_top">5dp</dimen>
+
 </resources>

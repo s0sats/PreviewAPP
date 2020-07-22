@@ -480,17 +480,17 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 ToolBox_Con.getPreference_User_Code(context)
             )
         );
-        tkTicket.setCurrent_site_code(ToolBox_Inf.convertStringToInt(md_site.getSite_code()));
-        tkTicket.setCurrent_site_id(md_site.getSite_id());
-        tkTicket.setCurrent_site_desc(md_site.getSite_desc());
-        tkTicket.setCurrent_operation_code( (int) mdOperation.getOperation_code());
-        tkTicket.setCurrent_operation_id(mdOperation.getOperation_id());
-        tkTicket.setCurrent_operation_desc(mdOperation.getOperation_desc());
-        tkTicket.setCurrent_product_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.PRODUCT_CODE)));
-        tkTicket.setCurrent_product_id(item.get(MD_Schedule_ExecDao.PRODUCT_ID));
-        tkTicket.setCurrent_product_desc(item.get(MD_Schedule_ExecDao.PRODUCT_DESC));
-        tkTicket.setCurrent_serial_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SERIAL_CODE)));
-        tkTicket.setCurrent_serial_id(item.get(MD_Schedule_ExecDao.SERIAL_ID));
+        tkTicket.setOpen_site_code(ToolBox_Inf.convertStringToInt(md_site.getSite_code()));
+        tkTicket.setOpen_site_id(md_site.getSite_id());
+        tkTicket.setOpen_site_desc(md_site.getSite_desc());
+        tkTicket.setOpen_operation_code( (int) mdOperation.getOperation_code());
+        tkTicket.setOpen_operation_id(mdOperation.getOperation_id());
+        tkTicket.setOpen_operation_desc(mdOperation.getOperation_desc());
+        tkTicket.setOpen_product_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.PRODUCT_CODE)));
+        tkTicket.setOpen_product_id(item.get(MD_Schedule_ExecDao.PRODUCT_ID));
+        tkTicket.setOpen_product_desc(item.get(MD_Schedule_ExecDao.PRODUCT_DESC));
+        tkTicket.setOpen_serial_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SERIAL_CODE)));
+        tkTicket.setOpen_serial_id(item.get(MD_Schedule_ExecDao.SERIAL_ID));
         tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PROCESS);
         tkTicket.setSchedule_prefix(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX)));
         tkTicket.setSchedule_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_CODE)));

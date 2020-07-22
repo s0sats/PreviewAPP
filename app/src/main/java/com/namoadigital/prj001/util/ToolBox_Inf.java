@@ -6965,7 +6965,7 @@ public class ToolBox_Inf {
         }
     }
 
-    private static boolean checkSameDayDate(String startDate, String endDate) {
+    public static boolean checkSameDayDate(String startDate, String endDate) {
         return startDate.substring(0, 9).equals(endDate.substring(0,9));
     }
 
@@ -7123,5 +7123,38 @@ public class ToolBox_Inf {
     public static boolean equalsToLoggedSite(Context context, String siteCode){
         return  hasConsistentValueString(siteCode)
                 && siteCode.equals(ToolBox_Con.getPreference_Site_Code(context));
+    }
+
+    /**
+     * LUCHE - 16/07/2020
+     * <p></p>
+     * Formata a data da seguinte maneira:
+     *  - Se apenas data de inicio, data hora
+     *  - Se inicio e fim no mesmo dia, exibe data hora_inicio - hora_fim
+     *  - Se inicio e fim em dias diferente, exibe das duas datas com hora, data_inicio hora_inicio - data_fim hora_fim
+     * @param context
+     * @param startDate Data Inicio
+     * @param endDate Data Fim
+     * @return - Retorna data formata
+     */
+    public static String getStepStartEndDateFormated(Context context, String startDate, String endDate ){
+        SimpleDateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+        SimpleDateFormat dateFormatStart = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
+        SimpleDateFormat dateFormatEnd = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
+        //
+        try {
+            if(ToolBox_Inf.hasConsistentValueString(startDate) && ToolBox_Inf.hasConsistentValueString(endDate)){
+                if (ToolBox_Inf.checkSameDayDate(startDate, endDate)) {
+                    dateFormatEnd = new SimpleDateFormat("HH:mm");
+                }
+                //
+                return dateFormatStart.format(dateFormatIn.parse(startDate)) + " - " + dateFormatEnd.format(dateFormatIn.parse(endDate));
+            }else{
+                return dateFormatStart.format(dateFormatIn.parse(startDate));
+            }
+        }catch (Exception e){
+            ToolBox_Inf.registerException(CLASS_NAME,e);
+            return "01-01-1900";
+        }
     }
 }

@@ -8,7 +8,7 @@
 
     <View
         android:id="@+id/step_add_process_v_line"
-        android:layout_width="5dp"
+        android:layout_width="@dimen/pipeline_step_vertical_line_width"
         android:layout_height="0dp"
         android:background="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"

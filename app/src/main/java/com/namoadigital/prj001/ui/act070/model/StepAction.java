@@ -8,20 +8,22 @@ public class StepAction extends BaseStep {
     private String endDate;
     private String endUser;
     private String partnerDesc;
+    private String stepType;
     private String processStatus;
     private boolean currentStep;
 
     public StepAction() {
     }
 
-    public StepAction(String stepDescription,String startDate, String endDate, String endUser) {
+    public StepAction(String stepDescription, String startDate, String endDate, String endUser, String stepType) {
         this.stepDescription = stepDescription;
         this.startDate = startDate;
         this.endDate = endDate;
         this.endUser = endUser;
+        this.stepType = stepType;
     }
 
-    public StepAction(String stepDescription, String productDesc, String serialId, String siteDesc, String startDate, String endDate, String endUser, String partnerDesc, String processStatus, boolean currentStep) {
+    public StepAction(String stepDescription, String productDesc, String serialId, String siteDesc, String startDate, String endDate, String endUser, String partnerDesc, String stepType, String processStatus, boolean currentStep) {
         this.stepDescription = stepDescription;
         this.productDesc = productDesc;
         this.serialId = serialId;
@@ -30,6 +32,7 @@ public class StepAction extends BaseStep {
         this.endDate = endDate;
         this.endUser = endUser;
         this.partnerDesc = partnerDesc;
+        this.stepType = stepType;
         this.processStatus = processStatus;
         this.currentStep = currentStep;
     }
@@ -104,5 +107,13 @@ public class StepAction extends BaseStep {
 
     public void setCurrentStep(boolean currentStep) {
         this.currentStep = currentStep;
+    }
+
+    public String getStepType() {
+        return stepType;
+    }
+
+    public void setStepType(String stepType) {
+        this.stepType = stepType;
     }
 }

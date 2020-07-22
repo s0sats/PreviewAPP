@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.Act070_Steps_Adapter;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -25,9 +26,7 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
     private TextView tvProduct;
     private TextView tvSerial;
     private TextView tvSite;
-    private ImageView ivStartDateIcon;
-    private TextView tvStartDate;
-    private ImageView ivEndDateIcon;
+    private ImageView ivStartEndDateIcon;
     private TextView tvEndDate;
     private ImageView ivUserIcon;
     private TextView tvUser;
@@ -36,10 +35,12 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
     private TextView tvPartner;
     private ImageView ivProcessAction;
     private TextView tvProcessAction;
+    private Act070_Steps_Adapter.OnActionClickListener actionClickListener;
 
-    public Act070_Step_ActionVH(Context context, @NonNull View itemView) {
+    public Act070_Step_ActionVH(Context context, @NonNull View itemView,Act070_Steps_Adapter.OnActionClickListener actionClickListener) {
         super(itemView);
         this.context = context;
+        this.actionClickListener = actionClickListener;
         bindViews();
     }
 
@@ -51,9 +52,7 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
         tvProduct =  this.itemView.findViewById(R.id.step_action_tv_prod);
         tvSerial =  this.itemView.findViewById(R.id.step_action_tv_serial);
         tvSite =  this.itemView.findViewById(R.id.step_action_tv_site);
-        ivStartDateIcon =  this.itemView.findViewById(R.id.step_action_iv_start_date);
-        tvStartDate =  this.itemView.findViewById(R.id.step_action_tv_start_date);
-        ivEndDateIcon =  this.itemView.findViewById(R.id.step_action_iv_end_date);
+        ivStartEndDateIcon =  this.itemView.findViewById(R.id.step_action_iv_end_date);
         tvEndDate =  this.itemView.findViewById(R.id.step_action_tv_end_date);
         ivUserIcon =  this.itemView.findViewById(R.id.step_action_iv_user);
         tvUser =  this.itemView.findViewById(R.id.step_action_tv_user);
@@ -62,6 +61,14 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
         tvPartner =  this.itemView.findViewById(R.id.step_action_tv_partner);
         ivProcessAction =  this.itemView.findViewById(R.id.step_action_iv_process_action);
         tvProcessAction =  this.itemView.findViewById(R.id.step_action_tv_process_action);
+        clBackground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(actionClickListener != null){
+                    actionClickListener.onActionClick(getAdapterPosition());
+                }
+            }
+        });
     }
 
     public void bindData(StepAction stepAction){
@@ -83,14 +90,12 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
             tvSite.setText(stepAction.getSiteDesc());
         }
         if(ToolBox_Inf.hasConsistentValueString(stepAction.getStartDate())) {
-            tvStartDate.setText(stepAction.getStartDate());
-        }else{
-            tvStartDate.setText("SEM PLANEJAMENTO -TRAD");
-        }
-        if(ToolBox_Inf.hasConsistentValueString(stepAction.getEndDate())) {
-            ivEndDateIcon.setVisibility(View.VISIBLE);
+            defineCheckInOutIcon(ToolBox_Inf.hasConsistentValueString(stepAction.getEndDate()));
+            ivStartEndDateIcon.setVisibility(View.VISIBLE);
             tvEndDate.setVisibility(View.VISIBLE);
-            tvEndDate.setText(stepAction.getEndDate());
+            tvEndDate.setText(
+                ToolBox_Inf.getStepStartEndDateFormated(context,stepAction.getStartDate(),stepAction.getEndDate())
+            );
         }
         if(ToolBox_Inf.hasConsistentValueString(stepAction.getEndUser())) {
             ivUserIcon.setVisibility(View.VISIBLE);
@@ -104,26 +109,30 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
         }
         //
         applyHistoryLayout(stepAction);
-        applyHighlightBackground(stepAction.isCurrentStep());
+        applyHighlightBackground(stepAction);
         configProcessAction(stepAction);
     }
 
-
-
+    private void defineCheckInOutIcon(boolean hasCheckOutDate) {
+        int drawableId =
+            hasCheckOutDate
+                ? R.drawable.ic_check_white_24dp
+                : R.drawable.ic_baseline_input_24dp_black;
+        Drawable drawable = context.getDrawable(drawableId);
+        ivStartEndDateIcon.setImageDrawable(drawable);
+    }
 
     private void configProcessAction(StepAction stepAction) {
+        int tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PENDING);
+        Drawable drawable = null;
         if(stepAction.isCurrentStep()){
-            int tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PROCESS);
-            Drawable drawable = null;
-            switch (stepAction.getProcessStatus()){
-                case ConstantBaseApp.SYS_STATUS_PENDING:
-                case ConstantBaseApp.SYS_STATUS_PROCESS:
-                    drawable = context.getDrawable(R.drawable.ic_baseline_play_arrow_24dp);
-                    break;
-                case ConstantBaseApp.SYS_STATUS_DONE:
+            if(ToolBox_Inf.hasConsistentValueString(stepAction.getStartDate())){
+                drawable = context.getDrawable(R.drawable.ic_baseline_play_arrow_24dp);
+                tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PROCESS);
+                if(ToolBox_Inf.hasConsistentValueString(stepAction.getEndDate())){
                     drawable = context.getDrawable(R.drawable.ic_baseline_open_in_new_24dp);
                     tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PENDING);
-                    break;
+                }
             }
             //
             if(drawable != null){
@@ -133,37 +142,63 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
             tvProcessAction.setTextColor(tintColor);
             ivProcessAction.setVisibility(View.VISIBLE);
             tvProcessAction.setVisibility(View.VISIBLE);
+        }else{
+            if(ToolBox_Inf.hasConsistentValueString(stepAction.getStartDate()) && ToolBox_Inf.hasConsistentValueString(stepAction.getEndDate()) ) {
+                drawable = context.getDrawable(R.drawable.ic_baseline_open_in_new_24dp);
+                drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP);
+                ivProcessAction.setImageDrawable(drawable);
+                tvProcessAction.setTextColor(tintColor);
+                ivProcessAction.setVisibility(View.VISIBLE);
+                tvProcessAction.setVisibility(View.VISIBLE);
+            }
         }
     }
 
-    private void applyHighlightBackground(boolean currentStep) {
-        clBackground.setBackgroundColor(
-            context.getResources().getColor(
-            currentStep
-                ? R.color.namoa_color_ticket_process_highlight
-                : R.color.padrao_TRANSPARENT
-            )
-        );
-        //
-        if(currentStep){
-            vStepContinousLine.setVisibility(View.GONE);
-            ivStepDashedLine.setVisibility(View.VISIBLE);
-        }else{
-            vStepContinousLine.setVisibility(View.VISIBLE);
-            ivStepDashedLine.setVisibility(View.GONE);
+    private void applyHighlightBackground(StepAction stepAction) {
+        int backgroundColor = R.color.padrao_TRANSPARENT;
+        Drawable drawable = context.getDrawable(R.drawable.pipeline_step_states);
+        //Se step atual, verifica o destaque
+        if(stepAction.isCurrentStep()) {
+            //Se start_end, se tiver checkin, fica amarelo , se não fica cinza indicando que falta q
+            //não é possivel mexer.
+            if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(stepAction.getStepType())) {
+                backgroundColor =
+                    ToolBox_Inf.hasConsistentValueString(stepAction.getStartDate())
+                        ? R.color.namoa_color_ticket_process_highlight
+                        : R.color.namoa_color_pipeline_cur_step_no_checkin ;
+                //
+                drawable =
+                    ToolBox_Inf.hasConsistentValueString(stepAction.getStartDate())
+                        ? context.getDrawable(R.drawable.pipeline_step_highligh_states)
+                        : context.getDrawable(R.drawable.pipeline_step_gray_states);
+            }else{
+                //Se ONE_TOUCH, fica amarelo.
+                backgroundColor = R.color.namoa_color_ticket_process_highlight;
+                drawable = context.getDrawable(R.drawable.pipeline_step_highligh_states);
+            }
+            //
+//        if(currentStep){
+//            vStepContinousLine.setVisibility(View.GONE);
+//            ivStepDashedLine.setVisibility(View.VISIBLE);
+//        }else{
+//            vStepContinousLine.setVisibility(View.VISIBLE);
+//            ivStepDashedLine.setVisibility(View.GONE);
+//        }
         }
+        //
+        //clBackground.setBackgroundColor(context.getResources().getColor(backgroundColor));
+        clBackground.setBackground(drawable);
     }
 
     private void applyHistoryLayout(StepAction stepAction) {
         int fontColor = R.color.namoa_color_dark_blue;
         //
-        if(!ConstantBaseApp.SYS_STATUS_PENDING.equals(stepAction.getProcessStatus())){
+        if(!stepAction.isCurrentStep()){
             fontColor = R.color.namoa_color_gray_4;
         }
         tvActionDesc.setTextColor(ContextCompat.getColor(context, fontColor));
         tvProduct.setTextColor(ContextCompat.getColor(context, fontColor));
         tvSerial.setTextColor(ContextCompat.getColor(context, fontColor));
-        tvStartDate.setTextColor(ContextCompat.getColor(context, fontColor));
         tvEndDate.setTextColor(ContextCompat.getColor(context, fontColor));
         tvUser.setTextColor(ContextCompat.getColor(context, fontColor));
         tvPartner.setTextColor(ContextCompat.getColor(context, fontColor));
@@ -173,7 +208,7 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
         tvProduct.setVisibility(View.GONE);
         tvSerial.setVisibility(View.GONE);
         tvSite.setVisibility(View.GONE);
-        ivEndDateIcon.setVisibility(View.GONE);
+        ivStartEndDateIcon.setVisibility(View.GONE);
         tvEndDate.setVisibility(View.GONE);
         ivUserIcon.setVisibility(View.GONE);
         tvUser.setVisibility(View.GONE);

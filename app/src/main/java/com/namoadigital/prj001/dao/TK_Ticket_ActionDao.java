@@ -29,6 +29,7 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
     public static final String TICKET_PREFIX = "ticket_prefix";
     public static final String TICKET_CODE = "ticket_code";
     public static final String TICKET_SEQ = "ticket_seq";
+    public static final String STEP_CODE = "step_code";
     public static final String ACTION_COMMENTS = "action_comments";
     public static final String ACTION_PHOTO = "action_photo";
     public static final String ACTION_PHOTO_LOCAL = "action_photo_local";
@@ -73,6 +74,8 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
             sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_action.getTicket_code()).append("'");
             sbWhere.append(" and ");
             sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_action.getTicket_seq()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_action.getStep_code()).append("'");
             //Tenta update e armazena retorno
             addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_action), sbWhere.toString(), null);
             //Se nenhuma linha afetada, tenta insert
@@ -150,6 +153,8 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
                 sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_action.getTicket_code()).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_action.getTicket_seq()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_action.getStep_code()).append("'");
                 //Tenta update e armazena retorno
                 addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_action), sbWhere.toString(), null);
                 //Se nenhuma linha afetada, tenta insert
@@ -228,6 +233,8 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
             sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_action.getTicket_code()).append("'");
             sbWhere.append(" and ");
             sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_action.getTicket_seq()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_action.getStep_code()).append("'");
             //
             sqlRet = db.delete(TABLE,sbWhere.toString(),null);
         }catch (SQLiteException e){
@@ -375,15 +382,16 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
             tk_ticket_action.setTicket_prefix(cursor.getInt(cursor.getColumnIndex(TICKET_PREFIX)));
             tk_ticket_action.setTicket_code(cursor.getInt(cursor.getColumnIndex(TICKET_CODE)));
             tk_ticket_action.setTicket_seq(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ)));
+            tk_ticket_action.setStep_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
             if(cursor.isNull(cursor.getColumnIndex(ACTION_COMMENTS))){
                 tk_ticket_action.setAction_comments(null);
             }else{
                 tk_ticket_action.setAction_comments(cursor.getString(cursor.getColumnIndex(ACTION_COMMENTS)));
             }
             if(cursor.isNull(cursor.getColumnIndex(ACTION_PHOTO))){
-                tk_ticket_action.setAction_photo(null);
+                tk_ticket_action.setAction_photo_url(null);
             }else{
-                tk_ticket_action.setAction_photo(cursor.getString(cursor.getColumnIndex(ACTION_PHOTO)));
+                tk_ticket_action.setAction_photo_url(cursor.getString(cursor.getColumnIndex(ACTION_PHOTO)));
             }
             if(cursor.isNull(cursor.getColumnIndex(ACTION_PHOTO_LOCAL))){
                 tk_ticket_action.setAction_photo_local(null);
@@ -428,8 +436,11 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
             if (tk_ticket_action.getTicket_seq() > -1) {
                 contentValues.put(TICKET_SEQ,tk_ticket_action.getTicket_seq());
             }
+            if (tk_ticket_action.getStep_code() > -1) {
+                contentValues.put(STEP_CODE,tk_ticket_action.getStep_code());
+            }
             contentValues.put(ACTION_COMMENTS,tk_ticket_action.getAction_comments());
-            contentValues.put(ACTION_PHOTO,tk_ticket_action.getAction_photo());
+            contentValues.put(ACTION_PHOTO,tk_ticket_action.getAction_photo_url());
             contentValues.put(ACTION_PHOTO_LOCAL,tk_ticket_action.getAction_photo_local());
             contentValues.put(ACTION_PHOTO_NAME,tk_ticket_action.getAction_photo_name());
             if (tk_ticket_action.getAction_photo_changed() > -1) {
