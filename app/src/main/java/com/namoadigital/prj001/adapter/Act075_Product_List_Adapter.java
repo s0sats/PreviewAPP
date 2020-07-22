@@ -32,6 +32,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     private HMAux hmAux_Trans;
     private String mResource_Name = "Act075_Product_List_Adapter";
     private Context context;
+    private boolean hasWithdrawApproved;
 
     public Act075_Product_List_Adapter(Context context, List<TK_Ticket_Product> mValues, int act_profile) {
         this.mValues = mValues;
@@ -50,6 +51,8 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         transList.add("product_returned_lbl");
         transList.add("product_amount_lbl");
         transList.add("product_extract_lbl");
+        transList.add("product_approve_option");
+        transList.add("product_decline_option");
         transList.add("add_product_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -107,21 +110,31 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mValues.size()) {
+        if (position == mValues.size() && !hasWithdrawApproved) {
             return FOOTER_VIEW;
         }
         return super.getItemViewType(position);
     }
 
+    private void setWithdrawApproved(boolean hasWithdrawApproved) {
+        this.hasWithdrawApproved = hasWithdrawApproved;
+    }
+
+
     @Override
     public int getItemCount() {
+
         if (mValues == null) {
             return 0;
         }
-        if (mValues.size() == 0) {
-            return 1;
+        if(act_profile == 1 && hasWithdrawApproved) {
+            return mValues.size();
+        }else{
+            if (mValues.size() == 0) {
+                return 1;
+            }
+            return mValues.size() + 1;
         }
-        return mValues.size() + 1;
     }
 
     public class ProductViewHolder extends RecyclerView.ViewHolder {
@@ -211,17 +224,37 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         RadioButton rg_approval;
         public ApprovalViewHolder(@NonNull View itemView) {
             super(itemView);
-            TextView tv_ask_confirm = itemView.findViewById(R.id.act075_approval_form_tv_ask_confirm);
-            TextView tv_comment_lbl = itemView.findViewById(R.id.act075_approval_form_tv_comment_lbl);
-            MKEditTextNM mket_comment = itemView.findViewById(R.id.act075_approval_form_mket_comment);
-            RadioGroup mRadioGroup = itemView.findViewById(R.id.act075_approval_form_rg);
-            RadioButton rg_decline = itemView.findViewById(R.id.act075_approval_form_rg_decline);
-            RadioButton rg_approval = itemView.findViewById(R.id.act075_approval_form_rg_approval);
-
+            tv_ask_confirm = itemView.findViewById(R.id.act075_approval_form_tv_ask_confirm);
+            tv_comment_lbl = itemView.findViewById(R.id.act075_approval_form_tv_comment_lbl);
+            mket_comment = itemView.findViewById(R.id.act075_approval_form_mket_comment);
+            mRadioGroup = itemView.findViewById(R.id.act075_approval_form_rg);
+            rg_approval = itemView.findViewById(R.id.act075_approval_form_rg_approval);
+            rg_decline = itemView.findViewById(R.id.act075_approval_form_rg_decline);
+            tv_ask_confirm.setText( hmAux_Trans.get("product_confirm_lbl"));
+            tv_comment_lbl.setText( hmAux_Trans.get("product_comment_lbl"));
+            rg_approval.setText( hmAux_Trans.get("product_approve_option"));
+            rg_decline.setText(hmAux_Trans.get("product_decline_option"));
         }
 
         public void onBind(TK_Ticket_Product tk_ticket_product) {
 
         }
+
+        public String getApprovalComment(){
+            return mket_comment.getText().toString();
+        }
+
+        public Boolean isApprovaed(){
+            if(!rg_approval.isChecked() && !rg_decline.isChecked()){
+                return null;
+            }
+            return rg_approval.isChecked();
+        }
+    }
+
+    interface OnProductInteract{
+        void onAddProduct();
+        void onApproveProduct();
+
     }
 }
