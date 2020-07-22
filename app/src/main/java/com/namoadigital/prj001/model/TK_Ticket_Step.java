@@ -27,12 +27,7 @@ public class TK_Ticket_Step {
     private String exec_type;
     private int scan_serial;
     private int allow_new_obj;
-    @Nullable
-    private Integer partner_code;
-    @Nullable
-    private String partner_id;
-    @Nullable
-    private String partner_desc;
+    private int move_next_step;
     @Nullable
     private String ap_question;
     @Nullable
@@ -171,31 +166,12 @@ public class TK_Ticket_Step {
         this.allow_new_obj = allow_new_obj;
     }
 
-    @Nullable
-    public Integer getPartner_code() {
-        return partner_code;
+    public int getMove_next_step() {
+        return move_next_step;
     }
 
-    public void setPartner_code(@Nullable Integer partner_code) {
-        this.partner_code = partner_code;
-    }
-
-    @Nullable
-    public String getPartner_id() {
-        return partner_id;
-    }
-
-    public void setPartner_id(@Nullable String partner_id) {
-        this.partner_id = partner_id;
-    }
-
-    @Nullable
-    public String getPartner_desc() {
-        return partner_desc;
-    }
-
-    public void setPartner_desc(@Nullable String partner_desc) {
-        this.partner_desc = partner_desc;
+    public void setMove_next_step(int move_next_step) {
+        this.move_next_step = move_next_step;
     }
 
     @Nullable

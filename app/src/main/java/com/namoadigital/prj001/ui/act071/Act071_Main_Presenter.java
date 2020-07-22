@@ -188,7 +188,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      */
     @Override
     public String generateActionPhotoLocalPath(TK_Ticket_Action action) {
-        if (action.getAction_photo() == null && action.getAction_photo_local() == null) {
+        if (action.getAction_photo_url() == null && action.getAction_photo_local() == null) {
             return ToolBox_Inf.buildTicketActionImgPath(action);
         }
         //

@@ -389,9 +389,9 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
                 tk_ticket_action.setAction_comments(cursor.getString(cursor.getColumnIndex(ACTION_COMMENTS)));
             }
             if(cursor.isNull(cursor.getColumnIndex(ACTION_PHOTO))){
-                tk_ticket_action.setAction_photo(null);
+                tk_ticket_action.setAction_photo_url(null);
             }else{
-                tk_ticket_action.setAction_photo(cursor.getString(cursor.getColumnIndex(ACTION_PHOTO)));
+                tk_ticket_action.setAction_photo_url(cursor.getString(cursor.getColumnIndex(ACTION_PHOTO)));
             }
             if(cursor.isNull(cursor.getColumnIndex(ACTION_PHOTO_LOCAL))){
                 tk_ticket_action.setAction_photo_local(null);
@@ -440,7 +440,7 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
                 contentValues.put(STEP_CODE,tk_ticket_action.getStep_code());
             }
             contentValues.put(ACTION_COMMENTS,tk_ticket_action.getAction_comments());
-            contentValues.put(ACTION_PHOTO,tk_ticket_action.getAction_photo());
+            contentValues.put(ACTION_PHOTO,tk_ticket_action.getAction_photo_url());
             contentValues.put(ACTION_PHOTO_LOCAL,tk_ticket_action.getAction_photo_local());
             contentValues.put(ACTION_PHOTO_NAME,tk_ticket_action.getAction_photo_name());
             if (tk_ticket_action.getAction_photo_changed() > -1) {

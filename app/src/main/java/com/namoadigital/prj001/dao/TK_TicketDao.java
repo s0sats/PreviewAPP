@@ -12,7 +12,10 @@ import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Product;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_002;
+import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -73,7 +76,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String CURRENT_STEP_ORDER = "current_step_order";
     public static final String APPROVAL_REJECTED = "approval_rejected";
     public static final String ORIGIN_TYPE = "origin_type";
+    public static final String ORIGIN_DESC = "origin_desc";
     public static final String INVENTORY_CONTROL = "inventory_control";
+    public static final String VALID_STRUCTURE_STEP = "valid_structure_step";
     public static final String USER_FOCUS = "user_focus";
     public static final String ALLOW_STEP_APPROVAL = "allow_step_approval";
     public static final String CHECKIN_DATE = "checkin_date";
@@ -130,15 +135,28 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                 curAction = DaoObjReturn.INSERT;
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket));
             }
-            //
+            //LUCHE - 21/07/2020
+            //Ctrl será dependendo do step e não do ticket.
             //Tenta inserir action
-            TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-            );
-            //Chama insertUpdate do Ctrl,passando db como param aguardando retorno.
-            daoObjReturn = ticketCtrlDao.addUpdate(tk_ticket.getCtrl(), false, db);
+//                TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
+//                    context,
+//                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                    Constant.DB_VERSION_CUSTOM
+//                );
+//                //Chama insertUpdate do Ctrl,passando db como param aguardando retorno.
+//                daoObjReturn = ticketCtrlDao.addUpdate(tk_ticket.getCtrl(), false, db);
+//                //Se erro durante insert, dispara exception abortando o processamento.
+//                if (daoObjReturn.hasError()) {
+//                    throw new Exception(daoObjReturn.getRawMessage());
+//                }
+            //Tenta inserir steps
+            daoObjReturn = tryAddUpdateSteps(tk_ticket.getStep(),db);
+            //Se erro durante insert, dispara exception abortando o processamento.
+            if (daoObjReturn.hasError()) {
+                throw new Exception(daoObjReturn.getRawMessage());
+            }
+            //Chama insertUpdate de Produtos, passando db como param aguardando retorno.
+            daoObjReturn = tryAddUpdateProducts(tk_ticket.getProduct(),db);
             //Se erro durante insert, dispara exception abortando o processamento.
             if (daoObjReturn.hasError()) {
                 throw new Exception(daoObjReturn.getRawMessage());
@@ -147,7 +165,6 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (dbInstance == null) {
                 db.setTransactionSuccessful();
             }
-
         } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -237,14 +254,14 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
 //                if (daoObjReturn.hasError()) {
 //                    throw new Exception(daoObjReturn.getRawMessage());
 //                }
-                //Tenta inserir steps
-                TK_Ticket_StepDao ticketStepDao = new TK_Ticket_StepDao(
-                    context,
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                    Constant.DB_VERSION_CUSTOM
-                );
                 //Chama insertUpdate do Ctrl,passando db como param aguardando retorno.
-                daoObjReturn = ticketStepDao.addUpdate(tk_ticket.getStep(), false, db);
+                daoObjReturn = tryAddUpdateSteps(tk_ticket.getStep(),db);
+                //Se erro durante insert, dispara exception abortando o processamento.
+                if (daoObjReturn.hasError()) {
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
+                //Chama insertUpdate de Produtos, passando db como param aguardando retorno.
+                daoObjReturn = tryAddUpdateProducts(tk_ticket.getProduct(),db);
                 //Se erro durante insert, dispara exception abortando o processamento.
                 if (daoObjReturn.hasError()) {
                     throw new Exception(daoObjReturn.getRawMessage());
@@ -335,13 +352,13 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
 //            if (daoObjReturn.hasError()) {
 //                throw new Exception(daoObjReturn.getRawMessage());
 //            }
-            TK_Ticket_StepDao ticketStepDao = new TK_Ticket_StepDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-            );
-            //Chama insertUpdate do Step,passando db como param aguardando retorno.
-            daoObjReturn = ticketStepDao.addUpdate(tk_ticket.getStep(), false, db);
+            daoObjReturn = tryAddUpdateSteps(tk_ticket.getStep(),db);
+            //Se erro durante insert, dispara exception abortando o processamento.
+            if (daoObjReturn.hasError()) {
+                throw new Exception(daoObjReturn.getRawMessage());
+            }
+            //Chama insertUpdate de Produtos, passando db como param aguardando retorno.
+            daoObjReturn = tryAddUpdateProducts(tk_ticket.getProduct(),db);
             //Se erro durante insert, dispara exception abortando o processamento.
             if (daoObjReturn.hasError()) {
                 throw new Exception(daoObjReturn.getRawMessage());
@@ -350,7 +367,6 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (dbInstance == null) {
                 db.setTransactionSuccessful();
             }
-
         } catch (SQLiteException e) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -401,9 +417,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public void remove(String sQuery) {
         openDB();
         try {
-
             db.execSQL(sQuery);
-
         } catch (Exception e) {
         } finally {
         }
@@ -416,13 +430,12 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         String curAction = DaoObjReturn.DELETE;
         daoObjReturn.setTable(TABLE);
         //
-        /*TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
+        TK_Ticket_StepDao ticketStepDao = new TK_Ticket_StepDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
-        );*/
-
-        TK_Ticket_StepDao ticketStepDao = new TK_Ticket_StepDao(
+        );
+        TK_Ticket_ProductDao ticketProductDao = new TK_Ticket_ProductDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
@@ -432,8 +445,14 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
 
         try {
             db.beginTransaction();
-            //Tenta o delete do ctrl e actions
+            //Tenta o delete dos steps e actions
             daoObjReturn = ticketStepDao.removeFull(tk_ticket, db);
+            //verifica se erro ao remover itens
+            if(daoObjReturn.hasError()){
+                throw new Exception(daoObjReturn.getRawMessage());
+            }
+            //Tenta o delete dos produtos e actions
+            daoObjReturn = ticketProductDao.removeFull(tk_ticket, db);
             //verifica se erro ao remover itens
             if(daoObjReturn.hasError()){
                 throw new Exception(daoObjReturn.getRawMessage());
@@ -496,9 +515,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
             //
             if (tk_ticket != null) {
-                getTicketCtrls(tk_ticket);
+                getTicketSteps(tk_ticket);
+                getTicketProducts(tk_ticket);
             }
-
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
@@ -533,19 +552,70 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         );
     }
 
+    private void getTicketSteps(TK_Ticket tk_ticket) {
+        TK_Ticket_StepDao ticketStepDao = new TK_Ticket_StepDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        tk_ticket.setStep(
+            (ArrayList<TK_Ticket_Step>) ticketStepDao.query(
+                new TK_Ticket_Step_Sql_002(
+                    tk_ticket.getCustomer_code(),
+                    tk_ticket.getTicket_prefix(),
+                    tk_ticket.getTicket_code()
+                ).toSqlQuery()
+            )
+        );
+    }
+
+    private void getTicketProducts(TK_Ticket tk_ticket) {
+        TK_Ticket_ProductDao ticketProductDao = new TK_Ticket_ProductDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        tk_ticket.setProduct(
+            (ArrayList<TK_Ticket_Product>) ticketProductDao.query(
+                new TK_Ticket_Step_Sql_002(
+                    tk_ticket.getCustomer_code(),
+                    tk_ticket.getTicket_prefix(),
+                    tk_ticket.getTicket_code()
+                ).toSqlQuery()
+            )
+        );
+    }
+
+    private DaoObjReturn tryAddUpdateSteps(ArrayList<TK_Ticket_Step> tk_ticket_steps, SQLiteDatabase db) {
+        TK_Ticket_StepDao ticketStepDao = new TK_Ticket_StepDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //Chama insertUpdate do Step,passando db como param aguardando retorno.
+        return ticketStepDao.addUpdate(tk_ticket_steps, false, db);
+    }
+
+    private DaoObjReturn tryAddUpdateProducts(ArrayList<TK_Ticket_Product> tk_ticket_products, SQLiteDatabase db) {
+        TK_Ticket_ProductDao ticketProductDao = new TK_Ticket_ProductDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //Chama insertUpdate do Step,passando db como param aguardando retorno.
+        return ticketProductDao.addUpdate(tk_ticket_products, false, db);
+    }
     @Override
     public HMAux getByStringHM(String sQuery) {
         HMAux hmAux = null;
         openDB();
-
         try {
-
             Cursor cursor = db.rawQuery(sQuery, null);
-
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
-
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
@@ -563,27 +633,23 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         openDB();
 
         try {
-
             Cursor cursor = db.rawQuery(sQuery, null);
-
             while (cursor.moveToNext()) {
                 TK_Ticket uAux = toTK_TicketMapper.map(cursor);
                 //
                 if (uAux != null) {
-                    getTicketCtrls(uAux);
+                    getTicketSteps(uAux);
+                    getTicketProducts(uAux);
                 }
                 //
                 tk_tickets.add(uAux);
             }
-
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
-
         closeDB();
-
         return tk_tickets;
     }
 
@@ -593,21 +659,16 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         openDB();
 
         try {
-
             Cursor cursor = db.rawQuery(sQuery, null);
-
             while (cursor.moveToNext()) {
                 tk_tickets.add(CursorToHMAuxMapper.mapN(cursor));
             }
-
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
-
         closeDB();
-
         return tk_tickets;
     }
 
@@ -756,6 +817,8 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
             tk_ticket.setApproval_rejected(cursor.getInt(cursor.getColumnIndex(APPROVAL_REJECTED)));
             tk_ticket.setOrigin_type(cursor.getString(cursor.getColumnIndex(ORIGIN_TYPE)));
+            tk_ticket.setOrigin_desc(cursor.getString(cursor.getColumnIndex(ORIGIN_DESC)));
+            tk_ticket.setValid_structure_step(cursor.getInt(cursor.getColumnIndex(VALID_STRUCTURE_STEP)));
             tk_ticket.setInventory_control(cursor.getInt(cursor.getColumnIndex(INVENTORY_CONTROL)));
             tk_ticket.setUser_focus(cursor.getInt(cursor.getColumnIndex(USER_FOCUS)));
             tk_ticket.setAllow_step_approval(cursor.getInt(cursor.getColumnIndex(ALLOW_STEP_APPROVAL)));
@@ -902,7 +965,15 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (tk_ticket.getApproval_rejected() > -1) {
                 contentValues.put(APPROVAL_REJECTED, tk_ticket.getApproval_rejected());
             }
-            contentValues.put(ORIGIN_TYPE, tk_ticket.getOrigin_type());
+            if (tk_ticket.getOrigin_type() != null) {
+                contentValues.put(ORIGIN_TYPE, tk_ticket.getOrigin_type());
+            }
+            if (tk_ticket.getOrigin_desc() != null) {
+                contentValues.put(ORIGIN_DESC, tk_ticket.getOrigin_desc());
+            }
+            if (tk_ticket.getValid_structure_step() > -1) {
+                contentValues.put(VALID_STRUCTURE_STEP, tk_ticket.getValid_structure_step());
+            }
             if (tk_ticket.getApproval_rejected() > -1) {
                 contentValues.put(INVENTORY_CONTROL, tk_ticket.getInventory_control());
             }

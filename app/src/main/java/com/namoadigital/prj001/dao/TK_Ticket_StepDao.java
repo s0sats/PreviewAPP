@@ -38,9 +38,7 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String EXEC_TYPE = "exec_type";
     public static final String SCAN_SERIAL = "scan_serial";
     public static final String ALLOW_NEW_OBJ = "allow_new_obj";
-    public static final String PARTNER_CODE = "partner_code";
-    public static final String PARTNER_ID = "partner_id";
-    public static final String PARTNER_DESC = "partner_desc";
+    public static final String MOVE_NEXT_STEP = "move_next_step";
     public static final String AP_QUESTION = "ap_question";
     public static final String AP_TYPE = "ap_type";
     public static final String AP_COMMENTS = "ap_comments";
@@ -54,7 +52,7 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
 
     public TK_Ticket_StepDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
-        toContentValuesMapper = new TK_Ticket_SteptoContentValuesMapper();
+        toContentValuesMapper = new TK_Ticket_StepToContentValuesMapper();
         toTK_Ticket_StepMapper = new CursorToTK_Ticket_StepMapper();
     }
 
@@ -500,21 +498,7 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
             tk_ticket_step.setExec_type(cursor.getString(cursor.getColumnIndex(EXEC_TYPE)));
             tk_ticket_step.setScan_serial(cursor.getInt(cursor.getColumnIndex(SCAN_SERIAL)));
             tk_ticket_step.setAllow_new_obj(cursor.getInt(cursor.getColumnIndex(ALLOW_NEW_OBJ)));
-            if (cursor.isNull(cursor.getColumnIndex(PARTNER_CODE))) {
-                tk_ticket_step.setPartner_code(null);
-            } else {
-                tk_ticket_step.setPartner_code(cursor.getInt(cursor.getColumnIndex(PARTNER_CODE)));
-            }
-            if (cursor.isNull(cursor.getColumnIndex(PARTNER_ID))) {
-                tk_ticket_step.setPartner_id(null);
-            } else {
-                tk_ticket_step.setPartner_id(cursor.getString(cursor.getColumnIndex(PARTNER_ID)));
-            }
-            if (cursor.isNull(cursor.getColumnIndex(PARTNER_DESC))) {
-                tk_ticket_step.setPartner_desc(null);
-            } else {
-                tk_ticket_step.setPartner_desc(cursor.getString(cursor.getColumnIndex(PARTNER_DESC)));
-            }
+            tk_ticket_step.setMove_next_step(cursor.getInt(cursor.getColumnIndex(MOVE_NEXT_STEP)));
             if (cursor.isNull(cursor.getColumnIndex(AP_QUESTION))) {
                 tk_ticket_step.setAp_question(null);
             } else {
@@ -565,7 +549,7 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
         }
     }
 
-    private class TK_Ticket_SteptoContentValuesMapper implements Mapper<TK_Ticket_Step, ContentValues> {
+    private class TK_Ticket_StepToContentValuesMapper implements Mapper<TK_Ticket_Step, ContentValues> {
         @Override
         public ContentValues map(TK_Ticket_Step tk_ticket_step) {
             ContentValues contentValues = new ContentValues();
@@ -597,9 +581,9 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
             if (tk_ticket_step.getAllow_new_obj() > -1) {
                 contentValues.put(ALLOW_NEW_OBJ, tk_ticket_step.getAllow_new_obj());
             }
-            contentValues.put(PARTNER_CODE, tk_ticket_step.getPartner_code());
-            contentValues.put(PARTNER_ID, tk_ticket_step.getPartner_id());
-            contentValues.put(PARTNER_DESC, tk_ticket_step.getPartner_desc());
+            if (tk_ticket_step.getMove_next_step() > -1) {
+                contentValues.put(MOVE_NEXT_STEP, tk_ticket_step.getMove_next_step());
+            }
             contentValues.put(AP_QUESTION, tk_ticket_step.getAp_question());
             contentValues.put(AP_TYPE, tk_ticket_step.getAp_type());
             contentValues.put(AP_COMMENTS, tk_ticket_step.getAp_comments());

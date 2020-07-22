@@ -104,21 +104,28 @@ public class TK_Ticket {
     private Integer duration_minutes;
     private Integer barcode_code;
     @Expose
+    @Nullable
     private Integer pc_code;
+    @Nullable
     private String pc_id;
+    @Nullable
     private String pc_desc;
     @Expose
     @Nullable
     private Integer main_user;
+    @Nullable
     private String main_user_nick;
     @Expose
     private Integer pipeline_code;
+    @Nullable
     private String pipeline_id;
+    @Nullable
     private String pipeline_desc;
-
     private Integer current_step_order;
     private int approval_rejected;
     private String origin_type;
+    private String origin_desc;
+    private int valid_structure_step;
     private int inventory_control;
     private int user_focus;
     private int allow_step_approval;
@@ -151,6 +158,8 @@ public class TK_Ticket {
     private ArrayList<TK_Ticket_Ctrl> ctrl = new ArrayList<>();
     @Expose
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
+    @Expose
+    private ArrayList<TK_Ticket_Product> product = new ArrayList<>();
 
     public void setPK() {
         for (int i = 0; i < ctrl.size(); i++) {
@@ -158,6 +167,9 @@ public class TK_Ticket {
         }
         for (int i = 0; i < step.size(); i++) {
             step.get(i).setPK(this);
+        }
+        for (int i = 0; i < product.size(); i++) {
+            product.get(i).setPK(this);
         }
     }
 
@@ -557,6 +569,22 @@ public class TK_Ticket {
         this.origin_type = origin_type;
     }
 
+    public String getOrigin_desc() {
+        return origin_desc;
+    }
+
+    public void setOrigin_desc(String origin_desc) {
+        this.origin_desc = origin_desc;
+    }
+
+    public int getValid_structure_step() {
+        return valid_structure_step;
+    }
+
+    public void setValid_structure_step(int valid_structure_step) {
+        this.valid_structure_step = valid_structure_step;
+    }
+
     public int getInventory_control() {
         return inventory_control;
     }
@@ -672,6 +700,14 @@ public class TK_Ticket {
 
     public void setStep(ArrayList<TK_Ticket_Step> step) {
         this.step = step;
+    }
+
+    public ArrayList<TK_Ticket_Product> getProduct() {
+        return product;
+    }
+
+    public void setProduct(ArrayList<TK_Ticket_Product> product) {
+        this.product = product;
     }
 
     /**
@@ -794,7 +830,7 @@ public class TK_Ticket {
      */
     private boolean existsActionPhotoInServer(TK_Ticket_Ctrl ctrl) {
         return (ctrl.getAction().getAction_photo_name() != null && !ctrl.getAction().getAction_photo_name().isEmpty())
-            || (ctrl.getAction().getAction_photo() != null && !ctrl.getAction().getAction_photo().isEmpty());
+            || (ctrl.getAction().getAction_photo_url() != null && !ctrl.getAction().getAction_photo_url().isEmpty());
     }
 
     private static String getLocalPath(String imgLocalPath) {

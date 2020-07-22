@@ -10,6 +10,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Measure_Sql_001;
@@ -354,19 +355,15 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
         //Tenta inserir action
         switch (tk_ticket_ctrl.getCtrl_type()) {
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
-                TK_Ticket_ActionDao ticketActionDao = new TK_Ticket_ActionDao(
-                    context,
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                    Constant.DB_VERSION_CUSTOM
-                );
-                //Chama insertUpdate da action,passando db como param aguardando retorno.
-                daoObjReturn = ticketActionDao.addUpdate(tk_ticket_ctrl.getAction(), db);
-                //Se erro durante insert, dispara exception abortando o processamento.
-                if (daoObjReturn.hasError()) {
-                    throw new Exception(daoObjReturn.getRawMessage());
+                if(tk_ticket_ctrl.getAction() != null) {
+                    daoObjReturn = tryAddUpdateAction(tk_ticket_ctrl.getAction(), db);
+                    //Se erro durante insert, dispara exception abortando o processamento.
+                    if (daoObjReturn.hasError()) {
+                        throw new Exception(daoObjReturn.getRawMessage());
+                    }
                 }
                 break;
-            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+            /*case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
                 TK_Ticket_MeasureDao ticketMeasureDao = new TK_Ticket_MeasureDao(
                     context,
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -378,8 +375,20 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 if (daoObjReturn.hasError()) {
                     throw new Exception(daoObjReturn.getRawMessage());
                 }
+                break;*/
+            default:
                 break;
         }
+    }
+
+    private DaoObjReturn tryAddUpdateAction(TK_Ticket_Action tk_ticket_action, SQLiteDatabase db) {
+        TK_Ticket_ActionDao ticketActionDao = new TK_Ticket_ActionDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //Chama insertUpdate da action,passando db como param aguardando retorno.
+        return ticketActionDao.addUpdate(tk_ticket_action, db);
     }
 
     /**

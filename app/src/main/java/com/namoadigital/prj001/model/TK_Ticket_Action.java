@@ -20,7 +20,7 @@ public class TK_Ticket_Action {
     private String action_comments;//Max 500
     @Nullable
     @Expose
-    private String action_photo;
+    private String action_photo_url;
     @Nullable
     @Expose
     private String action_photo_local;
@@ -97,12 +97,12 @@ public class TK_Ticket_Action {
         this.action_comments = action_comments;
     }
 
-    public String getAction_photo() {
-        return action_photo;
+    public String getAction_photo_url() {
+        return action_photo_url;
     }
 
-    public void setAction_photo(String action_photo) {
-        this.action_photo = action_photo;
+    public void setAction_photo_url(String action_photo_url) {
+        this.action_photo_url = action_photo_url;
     }
 
     @Nullable
