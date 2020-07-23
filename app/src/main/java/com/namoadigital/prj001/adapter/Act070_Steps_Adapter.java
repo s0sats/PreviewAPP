@@ -40,7 +40,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
     private Context context;
     private ArrayList<BaseStep> source;
     private String mResource_Code;
-    private String mResource_Name = "act069_tickets_adapter";
+    private String mResource_Name = "act070_steps_adapter";
     private HMAux hmAux_Trans;
     private OnMainClickListener onMainClickListener;
     private OnActionClickListener onActionClickListener;
@@ -82,9 +82,8 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
-        transList.add("open_date_lbl");
-        transList.add("forecast_date_lbl");
-        transList.add("site_lbl");
+        transList.add("start_process_btn");
+        transList.add("review_process_btn");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -109,7 +108,13 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                 );
             case VIEW_TYPE_STEP_ACTION:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_action_cell, viewGroup, false);
-                return new Act070_Step_ActionVH(context, view, onActionClickListener);
+                return new Act070_Step_ActionVH(
+                    context,
+                    view,
+                    onActionClickListener,
+                    hmAux_Trans.get("start_process_btn"),
+                    hmAux_Trans.get("review_process_btn")
+                );
             case VIEW_TYPE_STEP_CHECKLIST:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_checklist_cell, viewGroup, false);
                 return new Act070_Step_ChecklistVH(context, view, onChecklistClickListener);

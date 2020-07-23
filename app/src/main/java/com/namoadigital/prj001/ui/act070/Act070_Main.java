@@ -57,9 +57,6 @@ import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
-import com.namoadigital.prj001.ui.act070.model.StepAction;
-import com.namoadigital.prj001.ui.act070.model.StepApproval;
-import com.namoadigital.prj001.ui.act070.model.StepChecklist;
 import com.namoadigital.prj001.ui.act070.model.StepFooter;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
@@ -199,6 +196,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         //Measure View
         transList.add("measure_value_lbl");
         transList.add("measure_date_lbl");
+        //NOVO_TICKET
+        transList.add("process_action_tll");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -222,6 +221,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         //
         if (mPresenter.validateBundleParams(mTkPrefix, mTkCode)) {
             updateTicketData();
+            //POR HORA FICA FORA
+            mPresenter.getStepsList(mTicket);
         } else {
             paramErrorFlow();
         }
@@ -298,9 +299,6 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
          * LUCHE - 13/07/2020 - PIPELINE
          */
         rvTicketPipeline = findViewById(R.id.act070_rv_pipeline);
-        iniAdapter();
-        initRecycle();
-        //
     }
 
     private void initRecycle() {
@@ -309,7 +307,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void iniAdapter() {
-        generateFakePipeline();
+        //generateFakePipeline();
         //
         mAdapter = new Act070_Steps_Adapter(
             context,
@@ -317,98 +315,108 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             new Act070_Steps_Adapter.OnMainClickListener() {
                 @Override
                 public void onMainClick(boolean isShown, int mainPosition) {
-                    int targetPosition = mainPosition + 1;
-                    //Atualiza status do isStepOpen no obj da lista.
-                    try {
-                        ((StepMain) sources.get(mainPosition)).setStepOpen(!isShown);
-                    } catch (Exception e) {
-                        ToolBox_Inf.registerException(getClass().getName(), e);
-                    }
-                    if (isShown) {
-                        sources.remove(
-                            targetPosition + 2
+//                    int targetPosition = mainPosition + 1;
+//                    //Atualiza status do isStepOpen no obj da lista.
+//                    try {
+//                        ((StepMain) sources.get(mainPosition)).setStepOpen(!isShown);
+//                    } catch (Exception e) {
+//                        ToolBox_Inf.registerException(getClass().getName(), e);
+//                    }
+//                    if (isShown) {
+//                        sources.remove(
+//                            targetPosition + 2
+//                        );
+//                        sources.remove(
+//                            targetPosition + 1
+//                        );
+//                        sources.remove(
+//                            targetPosition
+//                        );
+//                        //mAdapter.notifyItemRemoved(targetPosition);
+//                        mAdapter.notifyItemRangeRemoved(targetPosition, 3);
+//                    } else {
+//                        String processStatus = "PENDING";
+//                        String stepType = "ONE_TOUCH";
+//                        boolean currentStep = false;
+//                        try {
+//                            StepMain stepMain = (StepMain) sources.get(mainPosition);
+//                            processStatus = stepMain.getStepStatus();
+//                            currentStep = stepMain.isCurrentStep();
+//                            stepType = stepMain.getStepType();
+//                        } catch (Exception e) {
+//                            processStatus = "PENDING";
+//                        }
+//
+//                        sources.add(
+//                            targetPosition,
+//                            new StepAction(
+//                                "Ação - Limpeza de banheiro",
+//                                "btt4",
+//                                "WBTT20200713001",
+//                                "Viernheim",
+//                                "2020-07-06 08:00:00 -03:00",
+//                                "2020-07-08 20:00:00 -03:00",
+//                                "luche",
+//                                "",
+//                                stepType,
+//                                processStatus,
+//                                currentStep
+//                            )
+//                        );
+//                        sources.add(
+//                            targetPosition + 1,
+//                            new StepChecklist(
+//                                "Checklist 3.0 - Insp.Bugs",
+//                                "btt4",
+//                                "WBTT20200713001",
+//                                "Valhalla",
+//                                "2020-07-06 08:00:00 -03:00",
+//                                "2999-12-31 23:59:00 -03:00",
+//                                "Luche",
+//                                "22 - Namoa",
+//                                stepType,
+//                                processStatus,
+//                                currentStep
+//                            )
+//                            //full desc
+//                            /*"Checklist 3.0 - Insp.Bugs",
+//                                "btt4",
+//                                "WBTT20200713001",
+//                                "FakeVierhiem",
+//                                "06/07/2020 08:00",
+//                                "31/12/2999 23:59",
+//                                "Luche",
+//                                "22 - Namoa",
+//                                "PENDING",
+//                                false*/
+//                        );
+//                        sources.add(
+//                            targetPosition + 2,
+//                            new StepApproval(
+//                                "Trabalhos realizados conforme às normas ?",
+//                                "aprovado",
+//                                "Comentario",
+//                                "2020-07-16 08:00:00 -03:00",
+//                                "2020-07-17 14:00:00 -03:00",
+//                                "Luche",
+//                                "22 - Namoa",
+//                                stepType,
+//                                processStatus,
+//                                currentStep
+//                            )
+//                        );
+//                        //mAdapter.notifyItemInserted(targetPosition);
+//                        mAdapter.notifyItemRangeInserted(targetPosition, 3);
+//                    }
+                    mPresenter.updateStepOpenStates(sources, mainPosition, isShown);
+                    if(isShown) {
+                        mPresenter.removeStepCtrlsContent(sources, mainPosition);
+                    }else{
+                        mPresenter.generateStepCtrlsContent(
+                            mTicket,
+                            sources,
+                            mainPosition
                         );
-                        sources.remove(
-                            targetPosition + 1
-                        );
-                        sources.remove(
-                            targetPosition
-                        );
-                        //mAdapter.notifyItemRemoved(targetPosition);
-                        mAdapter.notifyItemRangeRemoved(targetPosition, 3);
-                    } else {
-                        String processStatus = "PENDING";
-                        String stepType = "ONE_TOUCH";
-                        boolean currentStep = false;
-                        try {
-                            StepMain stepMain = (StepMain) sources.get(mainPosition);
-                            processStatus = stepMain.getStepStatus();
-                            currentStep = stepMain.isCurrentStep();
-                            stepType = stepMain.getStepType();
-                        } catch (Exception e) {
-                            processStatus = "PENDING";
-                        }
-
-                        sources.add(
-                            targetPosition,
-                            new StepAction(
-                                "Ação - Limpeza de banheiro",
-                                "btt4",
-                                "WBTT20200713001",
-                                "Viernheim",
-                                "2020-07-06 08:00:00 -03:00",
-                                "2020-07-08 20:00:00 -03:00",
-                                "luche",
-                                "",
-                                stepType,
-                                processStatus,
-                                currentStep
-                            )
-                        );
-                        sources.add(
-                            targetPosition + 1,
-                            new StepChecklist(
-                                "Checklist 3.0 - Insp.Bugs",
-                                "btt4",
-                                "WBTT20200713001",
-                                "Valhalla",
-                                "2020-07-06 08:00:00 -03:00",
-                                "2999-12-31 23:59:00 -03:00",
-                                "Luche",
-                                "22 - Namoa",
-                                stepType,
-                                processStatus,
-                                currentStep
-                            )
-                            //full desc
-                            /*"Checklist 3.0 - Insp.Bugs",
-                                "btt4",
-                                "WBTT20200713001",
-                                "FakeVierhiem",
-                                "06/07/2020 08:00",
-                                "31/12/2999 23:59",
-                                "Luche",
-                                "22 - Namoa",
-                                "PENDING",
-                                false*/
-                        );
-                        sources.add(
-                            targetPosition + 2,
-                            new StepApproval(
-                                "Trabalhos realizados conforme às normas ?",
-                                "aprovado",
-                                "Comentario",
-                                "2020-07-16 08:00:00 -03:00",
-                                "2020-07-17 14:00:00 -03:00",
-                                "Luche",
-                                "22 - Namoa",
-                                stepType,
-                                processStatus,
-                                currentStep
-                            )
-                        );
-                        //mAdapter.notifyItemInserted(targetPosition);
-                        mAdapter.notifyItemRangeInserted(targetPosition, 3);
                     }
                 }
             },
@@ -439,7 +447,31 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                     );
                 }
             });
+        //
+        initRecycle();
     }
+
+    //region NOVO_TICKET
+    @Override
+    public void setStepperSource(ArrayList<BaseStep> baseSteps) {
+        sources = baseSteps;
+        iniAdapter();
+    }
+
+    @Override
+    public void informAdapterInsertRange(int mainPosition, int rangeLength) {
+        if(mAdapter != null) {
+            mAdapter.notifyItemRangeInserted(mainPosition, rangeLength);
+        }
+    }
+
+    @Override
+    public void informAdapterRemoveRange(int mainPosition, int rangeLength) {
+        if(mAdapter != null) {
+            mAdapter.notifyItemRangeRemoved(mainPosition, rangeLength);
+        }
+    }
+    //endregion
 
     private void generateFakePipeline() {
 
@@ -458,6 +490,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         }*/
 
         StepMain stepMain = new StepMain(
+            1,
             "1.Planejamento",
             "1",
             "2020-07-06 08:00:00 -03:00",
@@ -468,6 +501,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             "DONE",
             false);
         StepMain stepMain2 = new StepMain(
+            2,
             "2.Retirada de peças",
             "2",
             "2020-07-06 08:00:00 -03:00",
@@ -479,6 +513,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             true);
 
         StepMain stepMain5 = new StepMain(
+            3,
             "2.1 Retirada de peças",
             "2.1",
             "2020-07-06 08:00:00 -03:00",
@@ -489,6 +524,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             "PENDING",
             true);
         StepMain stepMain3 = new StepMain(
+            4,
             "3.1 Atendimento",
             "3.1",
             "2020-07-06 08:00:00 -03:00",
@@ -500,6 +536,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             false);
 
         StepMain stepMain4 = new StepMain(
+            5,
             "3.2 Conferencia",
             "3.2",
             "2020-07-06 08:00:00 -03:00",

@@ -36,11 +36,15 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
     private ImageView ivProcessAction;
     private TextView tvProcessAction;
     private Act070_Steps_Adapter.OnActionClickListener actionClickListener;
+    private String transStartProcess;
+    private String transReviewProcess;
 
-    public Act070_Step_ActionVH(Context context, @NonNull View itemView,Act070_Steps_Adapter.OnActionClickListener actionClickListener) {
+    public Act070_Step_ActionVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnActionClickListener actionClickListener, String transStartProcess, String transReviewProcess) {
         super(itemView);
         this.context = context;
         this.actionClickListener = actionClickListener;
+        this.transStartProcess = transStartProcess;
+        this.transReviewProcess = transReviewProcess;
         bindViews();
     }
 
@@ -125,33 +129,42 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
     private void configProcessAction(StepAction stepAction) {
         int tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PENDING);
         Drawable drawable = null;
-        if(stepAction.isCurrentStep()){
-            if(ToolBox_Inf.hasConsistentValueString(stepAction.getStartDate())){
-                drawable = context.getDrawable(R.drawable.ic_baseline_play_arrow_24dp);
+        String processActionText = transStartProcess;
+        switch (stepAction.getProcessStatus()){
+            case ConstantBaseApp.SYS_STATUS_DONE:
+                drawable = context.getDrawable(R.drawable.ic_baseline_open_in_new_24dp);
+                processActionText = transReviewProcess;
+                break;
+            case ConstantBaseApp.SYS_STATUS_PENDING:
+            case ConstantBaseApp.SYS_STATUS_PROCESS:
+            default:
                 tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PROCESS);
-                if(ToolBox_Inf.hasConsistentValueString(stepAction.getEndDate())){
-                    drawable = context.getDrawable(R.drawable.ic_baseline_open_in_new_24dp);
-                    tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PENDING);
-                }
-            }
-            //
-            if(drawable != null){
-                drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP);
-            }
+                drawable = context.getDrawable(R.drawable.ic_baseline_play_arrow_24dp);
+                break;
+        }
+        //
+        if(drawable != null){
+            drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP);
+        }
+        if(isActionCheckedIn(stepAction) || ConstantBaseApp.SYS_STATUS_DONE.equals(stepAction.getProcessStatus())) {
             ivProcessAction.setImageDrawable(drawable);
             tvProcessAction.setTextColor(tintColor);
+            tvProcessAction.setText(processActionText);
             ivProcessAction.setVisibility(View.VISIBLE);
             tvProcessAction.setVisibility(View.VISIBLE);
-        }else{
-            if(ToolBox_Inf.hasConsistentValueString(stepAction.getStartDate()) && ToolBox_Inf.hasConsistentValueString(stepAction.getEndDate()) ) {
-                drawable = context.getDrawable(R.drawable.ic_baseline_open_in_new_24dp);
-                drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP);
-                ivProcessAction.setImageDrawable(drawable);
-                tvProcessAction.setTextColor(tintColor);
-                ivProcessAction.setVisibility(View.VISIBLE);
-                tvProcessAction.setVisibility(View.VISIBLE);
-            }
         }
+    }
+
+    /**
+     * Se action for da etapa atual e ou é ONE_TOUCH ou é START_END com checkin(propriedades do stepmain
+     * @param stepAction
+     * @return
+     */
+    private boolean isActionCheckedIn(StepAction stepAction) {
+        return stepAction.isCurrentStep()
+               && ( ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(stepAction.getStepType())
+                   || (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(stepAction.getStepType()) && stepAction.isStepAlreadyCheckedIn())
+            );
     }
 
     private void applyHighlightBackground(StepAction stepAction) {
@@ -217,5 +230,4 @@ public class Act070_Step_ActionVH extends RecyclerView.ViewHolder {
         ivProcessAction.setVisibility(View.GONE);
         tvProcessAction.setVisibility(View.GONE);
     }
-
 }
