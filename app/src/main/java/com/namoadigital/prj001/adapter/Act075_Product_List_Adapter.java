@@ -25,7 +25,7 @@ import java.util.List;
 
 public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<TK_Ticket_Product> mValues;
+    private List<TK_Ticket_Product> mValues = new ArrayList<>();
     private int act_profile = -1;
     private static final int FOOTER_VIEW = 1;
     private String mResource_Code;
@@ -33,14 +33,17 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     private String mResource_Name = "Act075_Product_List_Adapter";
     private Context context;
     private boolean hasWithdrawApproved;
+    private OnProductInteract mListener;
 
-    public Act075_Product_List_Adapter(Context context, List<TK_Ticket_Product> mValues, int act_profile) {
+    public Act075_Product_List_Adapter(Context context, List<TK_Ticket_Product> mValues, int act_profile, OnProductInteract mListener) {
         this.mValues = mValues;
         this.act_profile = act_profile;
         this.mResource_Code = mResource_Code;
         this.hmAux_Trans = hmAux_Trans;
         this.mResource_Name = mResource_Name;
         this.context = context;
+        this.mListener = mListener;
+        //
         loadTranslation();
     }
 
@@ -64,7 +67,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         );
     }
 
-
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
@@ -81,7 +83,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             }
         }
         View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.act075_approval_form, viewGroup, false);
-        ProductViewHolder productViewHolder = new ProductViewHolder(inflate, act_profile);
+        ProductViewHolder productViewHolder = new ProductViewHolder(inflate);
         return productViewHolder;
     }
 
@@ -90,10 +92,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         TK_Ticket_Product tk_ticket_product = mValues.get(position);
         if (viewHolder instanceof ProductViewHolder) {
             ProductViewHolder productVH = (ProductViewHolder) viewHolder;
-            productVH.onBind(tk_ticket_product);
-            if (tk_ticket_product.getQty_used() == tk_ticket_product.getQty_used()) {
-
-            }
+            productVH.onBind(tk_ticket_product, position);
         } else if (viewHolder instanceof ApprovalViewHolder) {
             ApprovalViewHolder approvalVH = (ApprovalViewHolder) viewHolder;
             approvalVH.onBind(tk_ticket_product);
@@ -102,7 +101,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             addProductVH.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    mListener.onAddProduct();
                 }
             });
         }
@@ -151,7 +150,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         ImageView product_cell_iv_withdrawn_add;
         ImageView product_cell_iv_applied_add;
 
-        public ProductViewHolder(@NonNull View itemView, int act_profile) {
+        public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             tv_product_info = itemView.findViewById(R.id.tv_product_info);
             product_cell_tv_withdrawn = itemView.findViewById(R.id.product_cell_tv_withdrawn);
@@ -182,7 +181,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             product_cell_tv_extract.setText(hmAux_Trans.get("product_extract_lbl"));
         }
 
-        public void onBind(TK_Ticket_Product tk_ticket_product) {
+        public void onBind(final TK_Ticket_Product tk_ticket_product, final int position) {
             if (act_profile == 1) {
                 setAmountControllersVisibility(View.VISIBLE);
                 setDetailsForApprovalVisibility(View.VISIBLE);
@@ -190,13 +189,96 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                 setAmountControllersVisibility(View.GONE);
                 setDetailsForApprovalVisibility(View.GONE);
             }
+            //
+            product_cell_tv_withdrawn.setText(String.format("%s %s", tk_ticket_product.getQty(), tk_ticket_product.getUn()));
+            product_cell_tv_applied.setText(String.format("%s %s", tk_ticket_product.getQty_used(), tk_ticket_product.getUn()));
+            product_cell_tv_returned.setText(String.format("%s %s", tk_ticket_product.getQty_returned(), tk_ticket_product.getUn()));
+            //
+            if (tk_ticket_product.getQty() != null) {
+                if (tk_ticket_product.getQty() <= 0) {
+                    product_cell_iv_withdrawn_substract.setEnabled(false);
+                }else{
+                    product_cell_iv_withdrawn_substract.setEnabled(true);
+                }
+            }else{
+                product_cell_iv_withdrawn_substract.setEnabled(false);
+            }
+            //
+            if (tk_ticket_product.getQty_used() != null) {
+                if (tk_ticket_product.getQty_used().equals(tk_ticket_product.getQty())) {
+                    product_cell_iv_applied_add.setEnabled(false);
+                }
+                //
+                if(tk_ticket_product.getQty_used() == 0 ){
+                    product_cell_iv_applied_add.setEnabled(false);
+                }
+            }else{
+                tk_ticket_product.setQty_used((double) 0);
+                product_cell_iv_applied_add.setEnabled(true);
+            }
+            //
+            product_cell_tv_withdrawn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.callQtyDialog(position,tk_ticket_product);
+                }
+            });
+            //
+            product_cell_tv_applied.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.callQtyUsedDialog(position,tk_ticket_product);
+                }
+            });
+            //
+            product_cell_iv_withdrawn_substract.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    double mWithdraw = tk_ticket_product.getQty() - 1;
+                    tk_ticket_product.setQty(mWithdraw);
+                    if(tk_ticket_product.getQty() ==0){
+                        product_cell_iv_withdrawn_substract.setEnabled(false);
+                    }
+                }
+            });
+            //
+            product_cell_iv_applied_substract.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    double mApplied = tk_ticket_product.getQty_used() - 1;
+                    tk_ticket_product.setQty_used(mApplied);
+                    if(tk_ticket_product.getQty_used() ==0){
+                        product_cell_iv_withdrawn_substract.setEnabled(false);
+                    }
+                }
+            });
+            //
+            product_cell_iv_withdrawn_add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    double mWithdraw = tk_ticket_product.getQty() + 1;
+                    tk_ticket_product.setQty(mWithdraw);
+                }
+            });
+            //
+            product_cell_iv_applied_add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    double mApplied = tk_ticket_product.getQty_used() + 1;
+                    tk_ticket_product.setQty_used(mApplied);
+                    if(tk_ticket_product.getQty_used() >= tk_ticket_product.getQty()){
+                        product_cell_iv_withdrawn_substract.setEnabled(false);
+                    }
+                }
+            });
+            //
         }
-
+        //
         private void setDetailsForApprovalVisibility(int visibility) {
             cl_withdrawn.setVisibility(visibility);
             cl_applied.setVisibility(visibility);
         }
-
+        //
         private void setAmountControllersVisibility(int visibility) {
             product_cell_iv_withdrawn_substract.setVisibility(visibility);
             product_cell_iv_applied_substract.setVisibility(visibility);
@@ -252,9 +334,9 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         }
     }
 
-    interface OnProductInteract{
+    public interface OnProductInteract{
         void onAddProduct();
-        void onApproveProduct();
-
+        void callQtyDialog(int position, TK_Ticket_Product tk_ticket_product);
+        void callQtyUsedDialog(int position, TK_Ticket_Product tk_ticket_product);
     }
 }

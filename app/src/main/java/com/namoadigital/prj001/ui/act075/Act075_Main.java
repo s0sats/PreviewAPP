@@ -1,15 +1,19 @@
 package com.namoadigital.prj001.ui.act075;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.ctls.FabMenuItem;
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
@@ -24,7 +28,7 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act075_Main extends Base_Activity_Frag {
+public class Act075_Main extends Base_Activity_Frag implements Act075_Product_List_Adapter.OnProductInteract {
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private String mResource_CodeFrg = "0";
@@ -224,6 +228,7 @@ public class Act075_Main extends Base_Activity_Frag {
     private void callAct070() {
 
     }
+    
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
@@ -240,5 +245,62 @@ public class Act075_Main extends Base_Activity_Frag {
                 ToolBox_Con.getPreference_Translate_Code(context),
                 transList
         );
+    }
+
+    @Override
+    public void onAddProduct() {
+        //call Product Selection
+    }
+
+    @Override
+    public void callQtyDialog(final int position, TK_Ticket_Product tk_ticket_product) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View mDialogVIew = inflater.inflate(R.layout.act075_set_qties_dialog, null);
+        TextView dialog_set_qty_lbl =  mDialogVIew.findViewById(R.id.act075_dialog_set_qty_lbl);
+        final MKEditTextNM dialog_set_mkedt_qty =  mDialogVIew.findViewById(R.id.act075_dialog_set_mkedt_qty);
+        dialog_set_mkedt_qty.setText(String.format("%d", tk_ticket_product.getQty()));
+        dialog_set_qty_lbl.setText(hmAux_Trans.get("set_product_qty_lbl"));
+
+        builder.setView(mDialogVIew)
+                // Add action buttons
+                .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        tk_ticket_products.get(position).setQty(Double.valueOf(dialog_set_mkedt_qty.getText().toString()));
+                        mAdapter.notifyItemChanged(position);
+                    }
+                })
+                .setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+    }
+
+    @Override
+    public void callQtyUsedDialog(final int position, TK_Ticket_Product tk_ticket_product) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View mDialogVIew = inflater.inflate(R.layout.act075_set_qties_dialog, null);
+        TextView dialog_set_qty_lbl =  mDialogVIew.findViewById(R.id.act075_dialog_set_qty_lbl);
+        final MKEditTextNM dialog_set_mkedt_qty =  mDialogVIew.findViewById(R.id.act075_dialog_set_mkedt_qty);
+        dialog_set_mkedt_qty.setText(String.format("%d", tk_ticket_product.getQty_used()));
+        dialog_set_qty_lbl.setText(hmAux_Trans.get("set_product_qty_used_lbl"));
+
+        builder.setView(mDialogVIew)
+                // Add action buttons
+                .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        tk_ticket_products.get(position).setQty_used(Double.valueOf(dialog_set_mkedt_qty.getText().toString()));
+                        mAdapter.notifyItemChanged(position);
+                    }
+                })
+                .setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
     }
 }
