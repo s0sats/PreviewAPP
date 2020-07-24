@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -105,38 +106,42 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         mPresenter = new Act075_Main_Presenter(context, this, hmAux_Trans);
         recoverIntentsInfo();
         //
-        initFrag();
+        if(act_profile == 1) {
+            setProductHeaderFragment();
+        }else{
+            setApprovalHeaderFragment();
+        }
+
         //
         initFabMenuItens();
         //
         setProductList();
     }
 
+    private void setApprovalHeaderFragment() {
+
+    }
+
     private void setProductList() {
 
     }
 
-    private void initFrag() {
-        mFrgPipelineHeader = (Frg_Pipeline_Header) fm.findFragmentById(R.id.header_frg_pipeline_header);
-        String header_profiler = "";
-        if(act_profile == 1){
-            header_profiler = Frg_Pipeline_Header.PRODUCT;
-        }else{
-            header_profiler = Frg_Pipeline_Header.APPROVAL;
-        }
-        mFrgPipelineHeader.setContents(
-                header_profiler,
+    private void setProductHeaderFragment() {
+        fm = getSupportFragmentManager();
+        //
+        mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForProduct(
                 "mTicket_id",
                 "status",
                 "prod_desc",
                 "mTicket_date",
                 "site_desc",
-                "serial_id",
-                "desc_origin_param",
-                ""
+                "serial_id"
         );
-        mFrgPipelineHeader.setFragmentProfile();
-        mFrgPipelineHeader.setTvContent();
+        //
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.header_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     private void recoverIntentsInfo() {

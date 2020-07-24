@@ -20,26 +20,34 @@ public class Frg_Pipeline_Header extends Fragment {
     public static final String ORIGIN = "ORIGIN";
     public static final String APPROVAL = "APPROVAL";
 
-    private static final String TICKET_ID_PARAM = "TICKET_ID";
-    private static final String STATUS_PARAM = "STATUS";
-    private static final String PROD_DESC_PARAM = "PROD_DESC";
-    private static final String TICKET_DATE_PARAM = "TICKET_DATE";
-    private static final String SITE_DESC_PARAM = "SITE_DESC";
-    private static final String SERIAL_PARAM = "SERIAL";
+    private static final String TICKET_ID_PARAM = "TICKET_ID_PARAM";
+    private static final String STATUS_DESC_PARAM = "STATUS_DESC_PARAM";
+    private static final String STATUS_COLOR_PARAM = "STATUS_COLOR_PARAM";
+    private static final String PROD_DESC_PARAM = "PROD_DESC_PARAM";
+    private static final String TICKET_DATE_PARAM = "TICKET_DATE_PARAM";
+    private static final String SITE_DESC_PARAM = "SITE_DESC_PARAM";
+    private static final String SERIAL_ID_PARAM = "SERIAL_ID_PARAM";
     private static final String HEADER_PROFILE_PARAM = "HEADER_PROFILE_PARAM";
     private static final String DESC_ORIGIN_PARAM = "DESC_ORIGIN_PARAM";
     private static final String BTN_SYNC_DESCRIPTION_PARAM = "BTN_SYNC_DESCRIPTION_PARAM";
-
-    String header_profile_param = "";
-    String ticket_id_param = "";
-    String status_param = "";
-    String prod_desc_param = "";
-    String ticket_date_param = "";
-    String site_desc_param = "";
-    String serial_param = "";
-    String desc_origin_param = "";
-    String btn_sync_description_param = "";
-
+    private static final String STEP_MAIN_STEP_NUM_PARAM = "STEP_MAIN_STEP_NUM_PARAM";
+    private static final String STEP_MAIN_DESC_PARAM = "STEP_MAIN_DESC_PARAM";
+    private static final String STEP_MAIN_STEP_NUM_COLOR_PARAM = "STEP_MAIN_STEP_NUM_COLOR_PARAM";
+    //
+    String header_profile_param;
+    String ticket_id_param;
+    String ticket_date_param;
+    String site_desc_param;
+    String serial_id_param;
+    String prod_desc_param;
+    String status_desc_param;
+    int    status_color_param;
+    String desc_origin_param;
+    String btn_sync_description_param;
+    int    step_main_step_num_color_param;
+    String step_main_step_num_param;
+    String step_main_desc_param;
+    //
     TextView tv_ticket_id;
     TextView tv_status;
     TextView tv_prod_desc;
@@ -64,16 +72,73 @@ public class Frg_Pipeline_Header extends Fragment {
         // Required empty public constructor
     }
 
-    public void setContents(String header_profile, String ticket_id, String status, String prod_desc, String ticket_date, String site_desc, String serial, String desc_origin_param, String btn_sync_description_param) {
-        header_profile_param = header_profile;
-        ticket_id_param = ticket_id;
-        status_param = status;
-        prod_desc_param = prod_desc;
-        ticket_date_param = ticket_date;
-        site_desc_param = site_desc;
-        serial_param = serial;
-        this.desc_origin_param = desc_origin_param;
-        this.btn_sync_description_param = btn_sync_description_param;
+    public static Frg_Pipeline_Header newInstanceForPipeline(String ticket_id, String ticket_date, String site_desc, String serial_id, String prod_desc, String status_desc, int status_color, String desc_origin_param, String btn_sync_description_param) {
+        Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
+        Bundle args = new Bundle();
+        args.putString(HEADER_PROFILE_PARAM, PIPELINE);
+        args.putString(TICKET_ID_PARAM, ticket_id);
+        args.putString(TICKET_DATE_PARAM, ticket_date);
+        args.putString(SITE_DESC_PARAM, site_desc);
+        args.putString(SERIAL_ID_PARAM, serial_id);
+        args.putString(PROD_DESC_PARAM, prod_desc);
+        args.putString(STATUS_DESC_PARAM, status_desc);
+        args.putInt(STATUS_COLOR_PARAM, status_color);
+        args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
+        args.putString(BTN_SYNC_DESCRIPTION_PARAM, btn_sync_description_param);
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static Frg_Pipeline_Header newInstanceForApprovalOrAction(String ticket_id, String ticket_date, String site_desc, String serial_id, String prod_desc, String desc_origin_param, int step_main_step_num_color_param, String step_main_step_num_param, String step_main_desc_param) {
+        Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
+        Bundle args = new Bundle();
+        args.putString(HEADER_PROFILE_PARAM, APPROVAL);
+        args.putString(TICKET_ID_PARAM, ticket_id);
+        args.putString(TICKET_DATE_PARAM, ticket_date);
+        args.putString(SITE_DESC_PARAM, site_desc);
+        args.putString(SERIAL_ID_PARAM, serial_id);
+        args.putString(PROD_DESC_PARAM, prod_desc);
+        args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
+        args.putInt(STEP_MAIN_STEP_NUM_COLOR_PARAM, step_main_step_num_color_param);
+        args.putString(STEP_MAIN_STEP_NUM_PARAM, step_main_step_num_param);
+        args.putString(STEP_MAIN_DESC_PARAM, step_main_desc_param);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static Frg_Pipeline_Header newInstanceForProduct(String ticket_id, String ticket_date, String site_desc, String serial_id, String prod_desc, String desc_origin_param) {
+        Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
+        Bundle args = new Bundle();
+        args.putString(HEADER_PROFILE_PARAM, PRODUCT);
+        args.putString(TICKET_ID_PARAM, ticket_id);
+        args.putString(PROD_DESC_PARAM, prod_desc);
+        args.putString(TICKET_DATE_PARAM, ticket_date);
+        args.putString(SITE_DESC_PARAM, site_desc);
+        args.putString(SERIAL_ID_PARAM, serial_id);
+        args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            header_profile_param = getArguments().getString(HEADER_PROFILE_PARAM,"");
+            ticket_id_param = getArguments().getString(TICKET_ID_PARAM,"");
+            status_desc_param = getArguments().getString(STATUS_DESC_PARAM,"");
+            prod_desc_param = getArguments().getString(PROD_DESC_PARAM,"");
+            ticket_date_param = getArguments().getString(TICKET_DATE_PARAM,"");
+            site_desc_param = getArguments().getString(SITE_DESC_PARAM,"");
+            serial_id_param = getArguments().getString(SERIAL_ID_PARAM,"");
+            desc_origin_param = getArguments().getString(DESC_ORIGIN_PARAM,"");
+            status_color_param =  getArguments().getInt(STATUS_COLOR_PARAM, 0);
+            btn_sync_description_param = getArguments().getString(BTN_SYNC_DESCRIPTION_PARAM,"");
+            step_main_step_num_color_param = getArguments().getInt(STEP_MAIN_STEP_NUM_COLOR_PARAM, 0);
+            step_main_step_num_param = getArguments().getString(STEP_MAIN_STEP_NUM_PARAM,"");
+            step_main_desc_param = getArguments().getString(STEP_MAIN_DESC_PARAM,"");
+        }
     }
 
     @Override
@@ -96,7 +161,7 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_step_main_step_num = pipeline_header_view.findViewById(R.id.frg_pipeline_tv_step_main_step_num);
         tv_step_main_desc = pipeline_header_view.findViewById(R.id.frg_pipeline_tv_step_main_desc);
         //
-//        initializeLayoutVisibility();
+        initializeLayoutVisibility();
         //
         setFragmentProfile();
         //
@@ -108,7 +173,6 @@ public class Frg_Pipeline_Header extends Fragment {
     public void setFragmentProfile() {
         switch (header_profile_param) {
             case PIPELINE:
-                cl_step_ticket.setVisibility(View.VISIBLE);
                 cv_btn_sync.setVisibility(View.VISIBLE);
                 frg_pipeline_header_ticket.setVisibility(View.VISIBLE);
                 tv_ticket_id.setVisibility(View.VISIBLE);
@@ -149,6 +213,8 @@ public class Frg_Pipeline_Header extends Fragment {
                 tv_prod_desc.setVisibility(View.VISIBLE);
                 tv_serial.setVisibility(View.VISIBLE);
                 frg_pipeline_header_ticket.setVisibility(View.VISIBLE);
+                tv_step_main_step_num.setText(step_main_step_num_param);
+                tv_step_main_desc.setText(step_main_desc_param);
                 break;
         }
     }
@@ -182,14 +248,19 @@ public class Frg_Pipeline_Header extends Fragment {
         }
     }
 
-    public void setTvContent() {
+    private void setTvContent() {
         tv_ticket_id.setText(ticket_id_param);
-        tv_status.setText(status_param);
-        tv_prod_desc.setText(prod_desc_param);
         tv_ticket_date.setText(ticket_date_param);
         tv_site_desc.setText(site_desc_param);
-        tv_serial.setText(serial_param);
+        tv_serial.setText(serial_id_param);
+        tv_prod_desc.setText(prod_desc_param);
+        tv_status.setText(status_desc_param);
+        tv_status.setTextColor(status_color_param);
         tv_desc_origin.setText(desc_origin_param);
+        btn_sync_description.setText(btn_sync_description_param);
+        tv_step_main_step_num.setTextColor(step_main_step_num_color_param);
+        tv_step_main_step_num.setText(step_main_step_num_param);
+        tv_step_main_desc.setText(step_main_desc_param);
     }
 
     public interface OnPipelineFragmentInteractionListener {
