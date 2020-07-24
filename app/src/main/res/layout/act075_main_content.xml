@@ -2,15 +2,17 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <fragment
         android:id="@+id/header_frg_pipeline_header"
         android:name="com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout="@layout/act070_pipeline_header"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -19,10 +21,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="4dp"
-        tools:listitem="@layout/act075_product_item"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/act075_save_product"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_frg_pipeline_header" />
+        app:layout_constraintTop_toBottomOf="@+id/header_frg_pipeline_header"
+        app:layout_constraintVertical_weight="1"
+        tools:listitem="@layout/act075_product_item" />
 
     <Button
         android:id="@+id/act075_save_product"
@@ -33,7 +39,7 @@
         tools:text="SALVAR"
         android:textAllCaps="true"
         style="@style/NamoaSaveButton"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/act075_footer_base"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -48,5 +54,12 @@
         app:mButton_Back_Color="@color/namoa_sync_pipeline_background_btn"
         app:mButton_Resource="@drawable/ic_menu_hamburger"
         app:mButton_Resource_Color="@color/colorPrimary"></com.namoa_digital.namoa_library.ctls.FabMenu>
+
+    <include
+        android:id="@+id/act075_footer_base"
+        layout="@layout/footer_base"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

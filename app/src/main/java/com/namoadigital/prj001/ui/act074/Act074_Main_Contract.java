@@ -6,9 +6,6 @@ import java.util.ArrayList;
 
 public interface Act074_Main_Contract {
 
-
-    void loadTicketList(ArrayList<Act074_TicketVH> tickets);
-
     interface I_Presenter{
 
         void getTicketList(boolean isHistoricalShown, boolean statusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile, long ticketProductCode, long ticketSerialCode, boolean bStatusNotExecuted, boolean bStatusIgnored, boolean bStatusCanceled, boolean bStatusRejected, boolean bParterNoProfile);

@@ -4,9 +4,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,7 +30,7 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act075_Main extends Base_Activity_Frag implements Act075_Product_List_Adapter.OnProductInteract {
+public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contract.I_View, Act075_Product_List_Adapter.OnProductInteract, Frg_Pipeline_Header.OnPipelineFragmentInteractionListener {
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private String mResource_CodeFrg = "0";
@@ -47,6 +49,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Product_Li
     FabMenu fabMenu;
     FabMenuItem fabStep;
     FabMenuItem fabProduct;
+    Act075_Main_Presenter mPresenter;
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
     private ArrayList<TK_Ticket_Product> tk_ticket_products = new ArrayList<>();
     private Act075_Product_List_Adapter mAdapter;
@@ -56,7 +59,10 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Product_Li
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act075_main);
         //
-        rvProduct = findViewById(R.id.act075_rv_product);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        //
+//        rvProduct = findViewById(R.id.act075_rv_product);
         btnSave = findViewById(R.id.act075_save_product);
         fabMenu = (FabMenu) findViewById(R.id.act075_fabMenu_anchor);
         fabMenu.setmIcons_Enabled(false);
@@ -71,6 +77,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Product_Li
     }
 
     private void iniSetup() {
+        fm = getSupportFragmentManager();
+        //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
@@ -94,9 +102,10 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Product_Li
     }
 
     private void initVars() {
+        mPresenter = new Act075_Main_Presenter(context, this, hmAux_Trans);
         recoverIntentsInfo();
         //
-        setHeaderFragment();
+        initFrag();
         //
         initFabMenuItens();
         //
@@ -107,11 +116,16 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Product_Li
 
     }
 
-    private void setHeaderFragment() {
-        fm = getSupportFragmentManager();
-        //
-        mFrgPipelineHeader = Frg_Pipeline_Header.newInstance(
-                Frg_Pipeline_Header.PRODUCT,
+    private void initFrag() {
+        mFrgPipelineHeader = (Frg_Pipeline_Header) fm.findFragmentById(R.id.header_frg_pipeline_header);
+        String header_profiler = "";
+        if(act_profile == 1){
+            header_profiler = Frg_Pipeline_Header.PRODUCT;
+        }else{
+            header_profiler = Frg_Pipeline_Header.APPROVAL;
+        }
+        mFrgPipelineHeader.setContents(
+                header_profiler,
                 "mTicket_id",
                 "status",
                 "prod_desc",
@@ -121,11 +135,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Product_Li
                 "desc_origin_param",
                 ""
         );
-        //
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.header_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
-        ft.addToBackStack(null);
-        ft.commit();
+        mFrgPipelineHeader.setFragmentProfile();
+        mFrgPipelineHeader.setTvContent();
     }
 
     private void recoverIntentsInfo() {
@@ -148,7 +159,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Product_Li
         //atalho para step
         fabStep = new FabMenuItem(context);
         fabStep.setTag("to_step_lbl");
-        fabProduct.setmLabel(hmAux_Trans.get("to_step_lbl"));
+        fabStep.setmLabel(hmAux_Trans.get("to_step_lbl"));
         fabStep.setmLabel_Back_Color(lblBgColor);
         fabStep.setmLabel_Text_Color(lblColor);
         fabStep.setmButton_Back_Color(btnBgColor);
@@ -247,6 +258,16 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Product_Li
         );
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.add(0, 1, Menu.NONE, getResources().getString(R.string.app_name));
+
+        menu.getItem(0).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        return true;
+    }
+
     @Override
     public void onAddProduct() {
         //call Product Selection
@@ -302,5 +323,10 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Product_Li
 
                     }
                 });
+    }
+
+    @Override
+    public void syncPipeline() {
+
     }
 }

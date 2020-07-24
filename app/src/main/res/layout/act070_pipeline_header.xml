@@ -33,9 +33,8 @@
             android:id="@+id/frg_ticket_cl_ticket_id"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toStartOf="@id/frg_ticket_tv_status"
+            app:layout_constraintEnd_toStartOf="@id/frg_ticket_guide_end"
             app:layout_constraintStart_toStartOf="@id/frg_ticket_guide_start"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -49,21 +48,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="2019.999" />
-        </android.support.constraint.ConstraintLayout>
 
-        <TextView
-            android:id="@+id/frg_ticket_tv_status"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="center"
-            android:textColor="@color/namoa_color_light_blue"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/frg_ticket_guide_end"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Pending" />
+            <TextView
+                android:id="@+id/frg_ticket_tv_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/namoa_color_light_blue"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Pending" />
+        </android.support.constraint.ConstraintLayout>
 
         <TextView
             android:id="@+id/frg_ticket_tv_prod_desc"
