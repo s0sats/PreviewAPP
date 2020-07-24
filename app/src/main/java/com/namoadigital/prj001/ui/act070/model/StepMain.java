@@ -10,11 +10,14 @@ public class StepMain extends BaseStep{
     private String stepStatus;
     private boolean currentStep;
     private boolean stepOpen;
+    private boolean scan_serial;
+    private boolean allow_new_obj;
+    private boolean move_next_step;
 
     public StepMain() {
     }
 
-    public StepMain(int stepCode, String stepTtl, String stepNum, String forecastStartDate, String forecastEndDate, String checkInDate, String checkOutDate, String stepType, String stepStatus, boolean currentStep) {
+    public StepMain(int stepCode, String stepTtl, String stepNum, String forecastStartDate, String forecastEndDate, String checkInDate, String checkOutDate, String stepType, String stepStatus, boolean currentStep,boolean scan_serial, boolean allow_new_obj , boolean move_next_step) {
         this.stepCode = stepCode;
         this.stepDescription = stepTtl;
         this.stepNum = stepNum;
@@ -26,6 +29,9 @@ public class StepMain extends BaseStep{
         this.stepStatus = stepStatus;
         this.currentStep = currentStep;
         this.stepOpen = false;
+        this.scan_serial = scan_serial;
+        this.allow_new_obj = allow_new_obj;
+        this.move_next_step = move_next_step;
     }
 
     public String getStepNum() {
@@ -97,5 +103,29 @@ public class StepMain extends BaseStep{
 
     public void setStepOpen(boolean stepOpen) {
         this.stepOpen = stepOpen;
+    }
+
+    public boolean isScan_serial() {
+        return scan_serial;
+    }
+
+    public void setScan_serial(boolean scan_serial) {
+        this.scan_serial = scan_serial;
+    }
+
+    public boolean isAllow_new_obj() {
+        return allow_new_obj;
+    }
+
+    public void setAllow_new_obj(boolean allow_new_obj) {
+        this.allow_new_obj = allow_new_obj;
+    }
+
+    public boolean isMove_next_step() {
+        return move_next_step;
+    }
+
+    public void setMove_next_step(boolean move_next_step) {
+        this.move_next_step = move_next_step;
     }
 }

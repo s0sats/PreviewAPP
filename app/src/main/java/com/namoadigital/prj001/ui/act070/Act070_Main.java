@@ -57,8 +57,6 @@ import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
-import com.namoadigital.prj001.ui.act070.model.StepFooter;
-import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -198,6 +196,9 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("measure_date_lbl");
         //NOVO_TICKET
         transList.add("process_action_tll");
+        transList.add("process_add_new_btn");
+        transList.add("process_check_in_btn");
+        transList.add("process_check_out_btn");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -409,9 +410,9 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
 //                        mAdapter.notifyItemRangeInserted(targetPosition, 3);
 //                    }
                     mPresenter.updateStepOpenStates(sources, mainPosition, isShown);
-                    if(isShown) {
+                    if (isShown) {
                         mPresenter.removeStepCtrlsContent(sources, mainPosition);
-                    }else{
+                    } else {
                         mPresenter.generateStepCtrlsContent(
                             mTicket,
                             sources,
@@ -440,13 +441,23 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
             },
             new Act070_Steps_Adapter.OnApprovalClickListener() {
                 @Override
-                public void onnApprovalClick(int approvalPosition) {
+                public void onApprovalClick(int approvalPosition) {
                     ToolBox.toastMSG(
                         context,
                         "Approval position: " + approvalPosition
                     );
                 }
-            });
+            },
+            new Act070_Steps_Adapter.OnProcessBtnClickListener() {
+                @Override
+                public void onProcessBtnClick(int processBtnPosition) {
+                    ToolBox.toastMSG(
+                        context,
+                        "Process Position: " + processBtnPosition
+                    );
+                }
+            }
+    );
         //
         initRecycle();
     }
@@ -487,7 +498,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                  i == 1 ? true :false);
 
             sources.add(stepMain);
-        }*/
+        }
 
         StepMain stepMain = new StepMain(
             1,
@@ -549,27 +560,12 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         StepFooter stepFooter = new StepFooter(
             "31/12/2199 23:59"
         );
-        /*StepAction stepAction = new StepAction(
-            "Ação",
-            " 20/05/2020 17:05",
-            " 25/05/2020 18:05",
-            "Ronaldinho"
-        );
-        StepChecklist stepChecklist = new StepChecklist(
-            "Ação",
-            " 20/05/2020 17:05",
-            " 25/05/2020 18:05",
-            "Ronaldinho",
-            "BttXApp",
-            "22 - Namoa"
-        );*/
         sources.add(stepMain);
         sources.add(stepMain2);
         sources.add(stepMain3);
         sources.add(stepMain4);
         sources.add(stepFooter);
-        /*sources.add(stepAction);
-        sources.add(stepChecklist);*/
+        */
 
     }
 

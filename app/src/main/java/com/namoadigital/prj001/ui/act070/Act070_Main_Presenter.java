@@ -34,9 +34,11 @@ import com.namoadigital.prj001.sql.Sql_Act070_001;
 import com.namoadigital.prj001.sql.Sql_Act070_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
+import com.namoadigital.prj001.ui.act070.model.StepAbstractProcess;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.ui.act070.model.StepFooter;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
+import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Action_V;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Generic;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Measure_V;
@@ -651,7 +653,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 ticketStep.getStep_end_date(),
                 ticketStep.getExec_type(),
                 ticketStep.getStep_status(),
-                isCurrentStep(ticketStep.getStep_order(),current_step_order)
+                isCurrentStep(ticketStep.getStep_order(),current_step_order),
+                ticketStep.getScan_serial() == 1,
+                ticketStep.getAllow_new_obj()== 1,
+                ticketStep.getMove_next_step()== 1
             );
             //
             baseSteps.add(stepMain);
@@ -682,7 +687,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public void generateStepCtrlsContent(TK_Ticket mTicket, ArrayList<BaseStep> source , int mainPosition ) {
         ArrayList<BaseStep> stepsCtrls = generateStepCtrls(mTicket, (StepMain) source.get(mainPosition));
         if(stepsCtrls != null && stepsCtrls.size() > 0){
-            addSelectedStepProcessToSourcer(source,mainPosition,stepsCtrls);
+            addSelectedStepProcessToSource(source,mainPosition,stepsCtrls);
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_update_stepper_error_ttl"),
@@ -698,9 +703,18 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
-    private void addSelectedStepProcessToSourcer(ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
+    private void addSelectedStepProcessToSource(ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
         int targetIdx = mainPosition + 1;
         try{
+            //Adiciona btn de checkin se houver necessidade
+            addCheckinCtrl(source,mainPosition,stepsCtrls);
+            /*//Adiciona os obj / processos
+            source.addAll(targetIdx,stepsCtrls);*/
+            //Adiciona btn de add processo se houver necessidade
+            addNewProcess(source,mainPosition,stepsCtrls);
+            //Adiciona btn de checkout se houver necessidade
+            addCheckOutCtrl(source,mainPosition,stepsCtrls);
+            //
             if(source.addAll(targetIdx,stepsCtrls)){
                 mView.informAdapterInsertRange(targetIdx,stepsCtrls.size());
             }
@@ -710,6 +724,71 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 e.getMessage()
             );
             e.printStackTrace();
+        }
+    }
+
+    private void addCheckOutCtrl(ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
+        StepMain stepMain = (StepMain) source.get(mainPosition);
+        //
+        if( !ConstantBaseApp.SYS_STATUS_DONE.equals(stepMain.getStepStatus())
+            && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(stepMain.getStepType())
+        ){
+            BaseStep firstPlannedObj = getFirstPlannedObj(stepsCtrls);
+            if(firstPlannedObj != null){
+                if(firstPlannedObj instanceof StepAbstractProcess){
+                    String processStatus = ((StepAbstractProcess) firstPlannedObj).getProcessStatus();
+                    if(ConstantBaseApp.SYS_STATUS_DONE.equals(processStatus)){
+                        StepProcessBtn stepProcessBtn = new StepProcessBtn(
+                            hmAux_Trans.get("process_check_out_btn"),
+                            ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKOUT
+                        );
+                        //
+                        stepsCtrls.add(stepsCtrls.size(),stepProcessBtn);
+                    }
+                }
+            }
+        }
+    }
+
+    @Nullable
+    private BaseStep getFirstPlannedObj(ArrayList<BaseStep> stepsCtrls) {
+        for (BaseStep stepsCtrl : stepsCtrls) {
+            if(stepsCtrl instanceof StepAction){
+                if(((StepAction) stepsCtrl).isProcessPlanned()){
+                    return stepsCtrl;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void addNewProcess(ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
+        StepMain stepMain = (StepMain) source.get(mainPosition);
+        if(stepMain.isCurrentStep() && stepMain.isAllow_new_obj()){
+            StepProcessBtn stepNewProcess =
+                new StepProcessBtn(
+                    hmAux_Trans.get("process_add_new_btn"),
+                    ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_ADD_NEW
+                );
+            //
+            stepsCtrls.add(stepsCtrls.size(),stepNewProcess);
+        }
+    }
+
+    private void addCheckinCtrl(ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
+        StepMain stepMain = (StepMain) source.get(mainPosition);
+        if(stepMain.isCurrentStep()
+            && (ConstantBaseApp.SYS_STATUS_PENDING.equals(stepMain.getStepStatus()) || ConstantBaseApp.SYS_STATUS_PROCESS.equals(stepMain.getStepStatus()))
+            && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(stepMain.getStepType())
+            && !ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate())
+        ){
+            StepProcessBtn stepNewProcess =
+                new StepProcessBtn(
+                    hmAux_Trans.get("process_check_in_btn"),
+                    ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKIN
+            );
+            //
+            stepsCtrls.add(0,stepNewProcess);
         }
     }
 
@@ -793,6 +872,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         stepAction.setProcessStatus(tkStepCtrl.getCtrl_status());
                         stepAction.setCurrentStep(stepMain.isCurrentStep());
                         stepAction.setStepAlreadyCheckedIn(ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate()));
+                        stepAction.setProcessPlanned(tkStepCtrl.getObj_planned() == 1);
                         //
                         stepsCtrls.add(stepAction);
                         break;

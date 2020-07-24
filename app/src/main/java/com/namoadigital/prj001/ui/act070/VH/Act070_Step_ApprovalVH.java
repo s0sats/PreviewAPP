@@ -64,7 +64,7 @@ public class Act070_Step_ApprovalVH extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 if(onApprovalClick != null){
-                    onApprovalClick.onnApprovalClick(getAdapterPosition());
+                    onApprovalClick.onApprovalClick(getAdapterPosition());
                 }
             }
         });

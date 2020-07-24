@@ -634,6 +634,9 @@ public class ConstantBaseApp extends ConstantBase {
      */
     public static final String TK_PIPELINE_STEP_TYPE_ONE_TOUCH = "ONE_TOUCH";
     public static final String TK_PIPELINE_STEP_TYPE_START_END = "START_END";
+    public static final String TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKIN = "CHECKIN";
+    public static final String TK_PIPELINE_STEP_NEW_PROCESS_TYPE_ADD_NEW = "ADD_NEW";
+    public static final String TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKOUT = "CHECKOUT";
 
     /*
      * Constantes agendamento
