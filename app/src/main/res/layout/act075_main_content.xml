@@ -6,9 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <fragment
+    <FrameLayout
         android:id="@+id/header_frg_pipeline_header"
-        android:name="com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"

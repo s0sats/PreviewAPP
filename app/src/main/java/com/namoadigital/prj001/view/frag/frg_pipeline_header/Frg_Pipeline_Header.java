@@ -138,6 +138,8 @@ public class Frg_Pipeline_Header extends Fragment {
             step_main_step_num_color_param = getArguments().getInt(STEP_MAIN_STEP_NUM_COLOR_PARAM, 0);
             step_main_step_num_param = getArguments().getString(STEP_MAIN_STEP_NUM_PARAM,"");
             step_main_desc_param = getArguments().getString(STEP_MAIN_DESC_PARAM,"");
+            //
+
         }
     }
 
@@ -165,6 +167,11 @@ public class Frg_Pipeline_Header extends Fragment {
         //
         setFragmentProfile();
         //
+        if (site_desc_param.equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(getContext()))) {
+            tv_site_desc.setVisibility(View.GONE);
+        } else {
+            tv_site_desc.setVisibility(View.VISIBLE);
+        }
         setTvContent();
         //
         return pipeline_header_view;
@@ -193,7 +200,6 @@ public class Frg_Pipeline_Header extends Fragment {
                     }
                 });
                 //
-                btn_sync_description.setText(btn_sync_description_param);
                 break;
             case PRODUCT:
                 tv_ticket_id.setVisibility(View.VISIBLE);
@@ -213,8 +219,6 @@ public class Frg_Pipeline_Header extends Fragment {
                 tv_prod_desc.setVisibility(View.VISIBLE);
                 tv_serial.setVisibility(View.VISIBLE);
                 frg_pipeline_header_ticket.setVisibility(View.VISIBLE);
-                tv_step_main_step_num.setText(step_main_step_num_param);
-                tv_step_main_desc.setText(step_main_desc_param);
                 break;
         }
     }
@@ -241,11 +245,7 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_status.setVisibility(View.GONE);
         ll_btn_sync.setVisibility(View.GONE);
         cl_step_ticket.setVisibility(View.GONE);
-        if (site_desc_param.equalsIgnoreCase(ToolBox_Con.getPreference_Site_Code(getContext()))) {
-            tv_site_desc.setVisibility(View.GONE);
-        } else {
-            tv_site_desc.setVisibility(View.VISIBLE);
-        }
+
     }
 
     private void setTvContent() {
