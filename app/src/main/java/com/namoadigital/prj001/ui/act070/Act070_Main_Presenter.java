@@ -15,10 +15,13 @@ import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.T_TK_Ticket_Checkin_Obj_Env;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Checkin;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
@@ -27,7 +30,13 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
+import com.namoadigital.prj001.sql.Sql_Act070_001;
+import com.namoadigital.prj001.sql.Sql_Act070_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
+import com.namoadigital.prj001.ui.act070.model.BaseStep;
+import com.namoadigital.prj001.ui.act070.model.StepAction;
+import com.namoadigital.prj001.ui.act070.model.StepFooter;
+import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Action_V;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Generic;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Measure_V;
@@ -39,6 +48,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
@@ -46,6 +56,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private Act070_Main_Contract.I_View mView;
     private HMAux hmAux_Trans;
     private TK_TicketDao ticketDao;
+    private TK_Ticket_StepDao ticketStepDao;
+    private TK_Ticket_CtrlDao ticketCtrlDao;
     private MD_PartnerDao mdPartnerDao;
 
     public Act070_Main_Presenter(Context context, Act070_Main_Contract.I_View mView, HMAux hmAux_Trans) {
@@ -54,6 +66,16 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         this.hmAux_Trans = hmAux_Trans;
         //
         this.ticketDao = new TK_TicketDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        ticketStepDao = new TK_Ticket_StepDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        ticketCtrlDao = new TK_Ticket_CtrlDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
@@ -594,6 +616,199 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN, mTicket.getCheckin_user() == null || !ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(mTicket.getCheckin_user())));
         return bundle;
     }
+
+    //region 22/07/2020 - NOVO_TICKET
+    @Override
+    public void getStepsList(TK_Ticket mTicket) {
+        List<TK_Ticket_Step> ticketsStep = ticketStepDao.query(
+            new Sql_Act070_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                mTicket.getTicket_prefix(),
+                mTicket.getTicket_code()
+            ).toSqlQuery()
+        );
+        //
+        if(ticketsStep != null){
+            ArrayList<BaseStep> baseSteps = generateStepperSource(ticketsStep, mTicket.getCurrent_step_order(), mTicket.getForecast_date());
+            if(baseSteps != null){
+                mView.setStepperSource(baseSteps);
+            }
+        }else{
+            //mView.showAlert();
+        }
+    }
+
+    private ArrayList<BaseStep> generateStepperSource(List<TK_Ticket_Step> ticketStepList, Integer current_step_order, String forecast_date) {
+        ArrayList<BaseStep> baseSteps = new ArrayList<>();
+        for (TK_Ticket_Step ticketStep : ticketStepList) {
+            StepMain stepMain = new StepMain(
+                ticketStep.getStep_code(),
+                ticketStep.getStep_desc(),
+                getStepNum(ticketStep.getStep_order(),ticketStep.getStep_order_seq()),
+                ticketStep.getForecast_start(),
+                ticketStep.getForecast_end(),
+                ticketStep.getStep_start_date(),
+                ticketStep.getStep_end_date(),
+                ticketStep.getExec_type(),
+                ticketStep.getStep_status(),
+                isCurrentStep(ticketStep.getStep_order(),current_step_order)
+            );
+            //
+            baseSteps.add(stepMain);
+        }
+        //
+        if(!footerExists(baseSteps)){
+            baseSteps.add(
+                new StepFooter(forecast_date)
+            );
+        }
+        return baseSteps;
+    }
+
+    private boolean footerExists(ArrayList<BaseStep> baseSteps) {
+        return baseSteps.size() > 1
+            && (baseSteps.get(baseSteps.size() -1) instanceof StepFooter);
+    }
+
+    private boolean isCurrentStep(int step_order, Integer current_step_order) {
+        return current_step_order != null && step_order == current_step_order;
+    }
+
+    private String getStepNum(int step_order, Integer step_order_seq) {
+        return step_order + (step_order_seq == null ? "" : "." + step_order_seq);
+    }
+
+    @Override
+    public void generateStepCtrlsContent(TK_Ticket mTicket, ArrayList<BaseStep> source , int mainPosition ) {
+        ArrayList<BaseStep> stepsCtrls = generateStepCtrls(mTicket, (StepMain) source.get(mainPosition));
+        if(stepsCtrls != null && stepsCtrls.size() > 0){
+            addSelectedStepProcessToSourcer(source,mainPosition,stepsCtrls);
+        }else{
+            mView.showAlert(
+                hmAux_Trans.get("alert_update_stepper_error_ttl"),
+                hmAux_Trans.get("alert_no_items_to_add_msg")
+            );
+        }
+    }
+
+    @Override
+    public void updateStepOpenStates(ArrayList<BaseStep> sources, int mainPosition, boolean isShown) {
+        if(sources.get(mainPosition) instanceof StepMain) {
+            ((StepMain) sources.get(mainPosition)).setStepOpen(!isShown);
+        }
+    }
+
+    private void addSelectedStepProcessToSourcer(ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
+        int targetIdx = mainPosition + 1;
+        try{
+            if(source.addAll(targetIdx,stepsCtrls)){
+                mView.informAdapterInsertRange(targetIdx,stepsCtrls.size());
+            }
+        }catch (Exception e){
+            mView.showAlert(
+                hmAux_Trans.get("alert_update_stepper_error_ttl"),
+                e.getMessage()
+            );
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void removeStepCtrlsContent(ArrayList<BaseStep> sources, int mainPosition) {
+        ArrayList<BaseStep> removeCtrlList = new ArrayList<>();
+        int targetIdx = mainPosition + 1;
+        for (int i = targetIdx; i < sources.size(); i++) {
+            BaseStep auxStep = sources.get(i);
+            if(isNotMainOrFooterStep(auxStep)){
+                removeCtrlList.add(auxStep);
+            }else{
+                break;
+            }
+        }
+        if(removeCtrlList != null && removeCtrlList.size() > 0){
+            try {
+                if (sources.removeAll(removeCtrlList)) {
+                    mView.informAdapterRemoveRange(targetIdx, removeCtrlList.size());
+                } else {
+                    mView.showAlert(
+                        hmAux_Trans.get("alert_update_stepper_error_ttl"),
+                        hmAux_Trans.get("alert_error_on_remove_items_msg")
+                    );
+                }
+            }catch (Exception e){
+                mView.showAlert(
+                    hmAux_Trans.get("alert_update_stepper_error_ttl"),
+                    e.getMessage()
+                );
+                e.printStackTrace();
+            }
+        }else{
+            mView.showAlert(
+                hmAux_Trans.get("alert_update_stepper_error_ttl"),
+                hmAux_Trans.get("alert_no_items_to_remove_msg")
+            );
+        }
+        //
+
+    }
+
+    private boolean isNotMainOrFooterStep(BaseStep auxStep) {
+        return !(auxStep instanceof StepMain) && !(auxStep instanceof StepFooter);
+    }
+
+    private ArrayList<BaseStep> generateStepCtrls(TK_Ticket mTicket, StepMain stepMain) {
+        ArrayList<BaseStep> stepsCtrls = new ArrayList<>();
+        //
+        ArrayList<TK_Ticket_Ctrl> tkStepCtrls =
+            (ArrayList<TK_Ticket_Ctrl>) ticketCtrlDao.query(
+                    new Sql_Act070_002(
+                        mTicket.getCustomer_code(),
+                        mTicket.getTicket_prefix(),
+                        mTicket.getTicket_code(),
+                        stepMain.getStepCode()
+                    ).toSqlQuery()
+        );
+        //
+        if(tkStepCtrls == null || tkStepCtrls.size() == 0) {
+            mView.showAlert(
+                hmAux_Trans.get("alert_no_process_found_ttl"),
+                hmAux_Trans.get("alert_no_process_found_msg")
+            );
+        }else{
+            for (TK_Ticket_Ctrl tkStepCtrl : tkStepCtrls) {
+                //
+                switch (tkStepCtrl.getCtrl_type()){
+                    case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                        StepAction stepAction = new StepAction();
+                        stepAction.setStepCode(tkStepCtrl.getStep_code());
+                        stepAction.setStepDescription(hmAux_Trans.get("process_action_tll"));
+                        stepAction.setProductDesc(tkStepCtrl.getProduct_desc());
+                        stepAction.setSerialId(tkStepCtrl.getSerial_id());
+                        //stepAction.setSiteDesc(tkStepCtrl.getSite_desc());
+                        stepAction.setStartDate(tkStepCtrl.getCtrl_start_date());
+                        stepAction.setEndDate(tkStepCtrl.getCtrl_end_date());
+                        stepAction.setEndUser(tkStepCtrl.getCtrl_end_user_name());
+                        stepAction.setPartnerDesc(tkStepCtrl.getPartner_desc());
+                        stepAction.setStepType(stepMain.getStepType());
+                        stepAction.setProcessStatus(tkStepCtrl.getCtrl_status());
+                        stepAction.setCurrentStep(stepMain.isCurrentStep());
+                        stepAction.setStepAlreadyCheckedIn(ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate()));
+                        //
+                        stepsCtrls.add(stepAction);
+                        break;
+                    case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
+                    case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                    case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                    default:
+                        break;
+                }
+            }
+            //
+        }
+        return stepsCtrls;
+    }
+
+    //endregion
 
     @Override
     public void onBackPressedClicked(String requestingAct) {

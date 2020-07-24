@@ -33,6 +33,7 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String STEP_ID = "step_id";
     public static final String STEP_DESC = "step_desc";
     public static final String STEP_ORDER = "step_order";
+    public static final String STEP_ORDER_SEQ = "step_order_seq";
     public static final String FORECAST_START = "forecast_start";
     public static final String FORECAST_END = "forecast_end";
     public static final String EXEC_TYPE = "exec_type";
@@ -485,6 +486,11 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 tk_ticket_step.setStep_desc(cursor.getString(cursor.getColumnIndex(STEP_DESC)));
             }
             tk_ticket_step.setStep_order(cursor.getInt(cursor.getColumnIndex(STEP_ORDER)));
+            if (cursor.isNull(cursor.getColumnIndex(STEP_ORDER_SEQ))) {
+                tk_ticket_step.setStep_order_seq(null);
+            } else {
+                tk_ticket_step.setStep_order_seq(cursor.getInt(cursor.getColumnIndex(STEP_ORDER_SEQ)));
+            }
             if (cursor.isNull(cursor.getColumnIndex(FORECAST_START))) {
                 tk_ticket_step.setForecast_start(null);
             } else {
@@ -570,6 +576,7 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
             if (tk_ticket_step.getStep_order() > -1) {
                 contentValues.put(STEP_ORDER, tk_ticket_step.getStep_order());
             }
+            contentValues.put(STEP_ORDER_SEQ, tk_ticket_step.getStep_order_seq());
             contentValues.put(FORECAST_START, tk_ticket_step.getForecast_start());
             contentValues.put(FORECAST_END, tk_ticket_step.getForecast_end());
             if (tk_ticket_step.getExec_type() != null) {

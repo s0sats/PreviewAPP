@@ -80,6 +80,8 @@ public class TK_Ticket_ProductDao extends BaseDao implements DaoWithReturn<TK_Ti
             sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_product.getTicket_prefix()).append("'");
             sbWhere.append(" and ");
             sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_product.getTicket_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(PRODUCT_CODE).append(" = '").append(tk_ticket_product.getProduct_code()).append("'");
             //Tenta update e armazena retorno
             addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_product), sbWhere.toString(), null);
             //Se nenhuma linha afetada, tenta insert
@@ -154,6 +156,8 @@ public class TK_Ticket_ProductDao extends BaseDao implements DaoWithReturn<TK_Ti
                 sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_product.getTicket_prefix()).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_product.getTicket_code()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(PRODUCT_CODE).append(" = '").append(tk_ticket_product.getProduct_code()).append("'");
                 //Tenta update e armazena retorno
                 addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_product), sbWhere.toString(), null);
                 //Se nenhuma linha afetada, tenta insert
@@ -218,6 +222,8 @@ public class TK_Ticket_ProductDao extends BaseDao implements DaoWithReturn<TK_Ti
             sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_product.getTicket_prefix()).append("'");
             sbWhere.append(" and ");
             sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_product.getTicket_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(PRODUCT_CODE).append(" = '").append(tk_ticket_product.getProduct_code()).append("'");
             //
             sqlRet = db.delete(TABLE,sbWhere.toString(),null);
         }catch (SQLiteException e){

@@ -6,6 +6,7 @@ import android.widget.LinearLayout;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
 
 import java.util.ArrayList;
@@ -33,6 +34,12 @@ public interface Act070_Main_Contract {
         void updateSyncRequiredByFCM();
 
         void callAct017();
+        //LUCHE - 22/07/2020 - REINICIANDO O TICKET
+        void setStepperSource(ArrayList<BaseStep> baseSteps);
+
+        void informAdapterInsertRange(int mainPosition, int rangeLength);
+
+        void informAdapterRemoveRange(int mainPosition, int rangeLength);
     }
 
     interface I_Presenter{
@@ -72,5 +79,13 @@ public interface Act070_Main_Contract {
         boolean isTicketInTokenFile(int ticket_prefix, int ticket_code);
 
         boolean isReadOnlyStatus(String ticketStatus);
+        //LUCHE - 22/07/2020 - REINICIANDO O TICKET
+        void getStepsList(TK_Ticket mTicket);
+
+        void generateStepCtrlsContent(TK_Ticket mTicket, ArrayList<BaseStep> source , int mainPosition );
+
+        void removeStepCtrlsContent(ArrayList<BaseStep> sources, int mainPosition);
+
+        void updateStepOpenStates(ArrayList<BaseStep> sources, int mainPosition, boolean isShown);
     }
 }

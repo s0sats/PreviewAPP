@@ -1,3 +1,4 @@
+
 package com.namoadigital.prj001.model;
 
 import android.support.annotation.Nullable;
@@ -20,6 +21,8 @@ public class TK_Ticket_Step {
     @Nullable
     private String step_desc;
     private int step_order;
+    @Nullable
+    private Integer step_order_seq;
     @Nullable
     private String forecast_start;
     @Nullable
@@ -122,6 +125,15 @@ public class TK_Ticket_Step {
 
     public void setStep_order(int step_order) {
         this.step_order = step_order;
+    }
+
+    @Nullable
+    public Integer getStep_order_seq() {
+        return step_order_seq;
+    }
+
+    public void setStep_order_seq(@Nullable Integer step_order_seq) {
+        this.step_order_seq = step_order_seq;
     }
 
     @Nullable

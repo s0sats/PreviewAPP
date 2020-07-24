@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui.act070.model;
 
 public class StepMain extends BaseStep{
-
     private String stepNum;
     private String forecastStartDate;
     private String forecastEndDate;
@@ -11,10 +10,12 @@ public class StepMain extends BaseStep{
     private String stepStatus;
     private boolean currentStep;
     private boolean stepOpen;
+
     public StepMain() {
     }
 
-    public StepMain(String stepTtl, String stepNum, String forecastStartDate, String forecastEndDate, String checkInDate, String checkOutDate, String stepType, String stepStatus, boolean currentStep) {
+    public StepMain(int stepCode, String stepTtl, String stepNum, String forecastStartDate, String forecastEndDate, String checkInDate, String checkOutDate, String stepType, String stepStatus, boolean currentStep) {
+        this.stepCode = stepCode;
         this.stepDescription = stepTtl;
         this.stepNum = stepNum;
         this.forecastStartDate = forecastStartDate;

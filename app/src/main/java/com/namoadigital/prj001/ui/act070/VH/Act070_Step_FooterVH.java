@@ -33,7 +33,9 @@ public class Act070_Step_FooterVH extends RecyclerView.ViewHolder{
         resetVisibility();
         if(ToolBox_Inf.hasConsistentValueString(stepFooter.getEndDate())){
             tvEndDate.setVisibility(View.VISIBLE);
-            tvEndDate.setText(stepFooter.getEndDate());
+            tvEndDate.setText(
+                ToolBox_Inf.getStepStartEndDateFormated(context,stepFooter.getEndDate(),null)
+                );
         }
     }
 

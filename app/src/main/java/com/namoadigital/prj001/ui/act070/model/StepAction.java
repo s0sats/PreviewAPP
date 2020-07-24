@@ -11,11 +11,13 @@ public class StepAction extends BaseStep {
     private String stepType;
     private String processStatus;
     private boolean currentStep;
+    private boolean stepAlreadyCheckedIn;
 
     public StepAction() {
     }
 
-    public StepAction(String stepDescription, String startDate, String endDate, String endUser, String stepType) {
+    public StepAction(int stepCode, String stepDescription, String startDate, String endDate, String endUser, String stepType) {
+        this.stepCode = stepCode;
         this.stepDescription = stepDescription;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -23,7 +25,8 @@ public class StepAction extends BaseStep {
         this.stepType = stepType;
     }
 
-    public StepAction(String stepDescription, String productDesc, String serialId, String siteDesc, String startDate, String endDate, String endUser, String partnerDesc, String stepType, String processStatus, boolean currentStep) {
+    public StepAction(int stepCode, String stepDescription, String productDesc, String serialId, String siteDesc, String startDate, String endDate, String endUser, String partnerDesc, String stepType, String processStatus, boolean currentStep) {
+        this.stepCode = stepCode;
         this.stepDescription = stepDescription;
         this.productDesc = productDesc;
         this.serialId = serialId;
@@ -115,5 +118,13 @@ public class StepAction extends BaseStep {
 
     public void setStepType(String stepType) {
         this.stepType = stepType;
+    }
+
+    public boolean isStepAlreadyCheckedIn() {
+        return stepAlreadyCheckedIn;
+    }
+
+    public void setStepAlreadyCheckedIn(boolean stepAlreadyCheckedIn) {
+        this.stepAlreadyCheckedIn = stepAlreadyCheckedIn;
     }
 }

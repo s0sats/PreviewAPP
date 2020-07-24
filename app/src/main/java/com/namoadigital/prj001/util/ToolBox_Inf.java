@@ -6966,7 +6966,7 @@ public class ToolBox_Inf {
     }
 
     public static boolean checkSameDayDate(String startDate, String endDate) {
-        return startDate.substring(0, 9).equals(endDate.substring(0,9));
+        return startDate.substring(0, 10).equals(endDate.substring(0,10));
     }
 
 
