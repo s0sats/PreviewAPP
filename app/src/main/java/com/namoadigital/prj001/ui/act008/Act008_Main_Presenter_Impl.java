@@ -200,6 +200,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         product.setSite_restriction(scheduleExec.getSite_restriction());
         product.setProduct_icon_name(scheduleExec.getProduct_icon_name());
         product.setProduct_icon_url(scheduleExec.getProduct_icon_url());
+        product.setSpare_part(0);
         return product;
     }
 

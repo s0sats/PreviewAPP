@@ -25,6 +25,7 @@ public class MD_All_Product {
     private String serial_rule;
     private Integer serial_min_length;
     private Integer serial_max_length;
+    private int spare_part;
 
     public long getCustomer_code() {
         return customer_code;
@@ -176,5 +177,13 @@ public class MD_All_Product {
 
     public void setSerial_max_length(Integer serial_max_length) {
         this.serial_max_length = serial_max_length;
+    }
+
+    public int getSpare_part() {
+        return spare_part;
+    }
+
+    public void setSpare_part(int spare_part) {
+        this.spare_part = spare_part;
     }
 }

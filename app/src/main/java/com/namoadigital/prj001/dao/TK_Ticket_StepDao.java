@@ -40,9 +40,6 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String SCAN_SERIAL = "scan_serial";
     public static final String ALLOW_NEW_OBJ = "allow_new_obj";
     public static final String MOVE_NEXT_STEP = "move_next_step";
-    public static final String AP_QUESTION = "ap_question";
-    public static final String AP_TYPE = "ap_type";
-    public static final String AP_COMMENTS = "ap_comments";
     public static final String STEP_START_DATE = "step_start_date";
     public static final String STEP_START_USER = "step_start_user";
     public static final String STEP_START_USER_NICK = "step_start_user_nick";
@@ -505,21 +502,6 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
             tk_ticket_step.setScan_serial(cursor.getInt(cursor.getColumnIndex(SCAN_SERIAL)));
             tk_ticket_step.setAllow_new_obj(cursor.getInt(cursor.getColumnIndex(ALLOW_NEW_OBJ)));
             tk_ticket_step.setMove_next_step(cursor.getInt(cursor.getColumnIndex(MOVE_NEXT_STEP)));
-            if (cursor.isNull(cursor.getColumnIndex(AP_QUESTION))) {
-                tk_ticket_step.setAp_question(null);
-            } else {
-                tk_ticket_step.setAp_question(cursor.getString(cursor.getColumnIndex(AP_QUESTION)));
-            }
-            if (cursor.isNull(cursor.getColumnIndex(AP_TYPE))) {
-                tk_ticket_step.setAp_type(null);
-            } else {
-                tk_ticket_step.setAp_type(cursor.getString(cursor.getColumnIndex(AP_TYPE)));
-            }
-            if (cursor.isNull(cursor.getColumnIndex(AP_COMMENTS))) {
-                tk_ticket_step.setAp_comments(null);
-            } else {
-                tk_ticket_step.setAp_comments(cursor.getString(cursor.getColumnIndex(AP_COMMENTS)));
-            }
             if (cursor.isNull(cursor.getColumnIndex(STEP_START_DATE))) {
                 tk_ticket_step.setStep_start_date(null);
             } else {
@@ -591,9 +573,6 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
             if (tk_ticket_step.getMove_next_step() > -1) {
                 contentValues.put(MOVE_NEXT_STEP, tk_ticket_step.getMove_next_step());
             }
-            contentValues.put(AP_QUESTION, tk_ticket_step.getAp_question());
-            contentValues.put(AP_TYPE, tk_ticket_step.getAp_type());
-            contentValues.put(AP_COMMENTS, tk_ticket_step.getAp_comments());
             contentValues.put(STEP_START_DATE, tk_ticket_step.getStep_start_date());
             contentValues.put(STEP_START_USER, tk_ticket_step.getStep_start_user());
             contentValues.put(STEP_START_USER_NICK, tk_ticket_step.getStep_start_user_nick());

@@ -11,7 +11,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.TK_Ticket_Measure;
+import com.namoadigital.prj001.model.TK_Ticket_Approval;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -19,39 +19,39 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ticket_Measure>, DaoWithReturnSharedDbInstance<TK_Ticket_Measure> {
+public class TK_Ticket_ApprovalDao extends BaseDao implements DaoWithReturn<TK_Ticket_Approval>, DaoWithReturnSharedDbInstance<TK_Ticket_Approval>  {
 
-    private final Mapper<TK_Ticket_Measure, ContentValues> toContentValuesMapper;
-    private final Mapper<Cursor, TK_Ticket_Measure> toTK_Ticket_MeasureMapper;
+    private final Mapper<TK_Ticket_Approval, ContentValues> toContentValuesMapper;
+    private final Mapper<Cursor,TK_Ticket_Approval> toTK_Ticket_ApprovalMapper;
 
-    public static final String TABLE = "tk_ticket_measure";
+    public static final String TABLE = "tk_ticket_approval";
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String TICKET_PREFIX = "ticket_prefix";
     public static final String TICKET_CODE = "ticket_code";
     public static final String TICKET_SEQ = "ticket_seq";
     public static final String STEP_CODE = "step_code";
-    public static final String MEASURE_TP_CODE = "measure_tp_code";
-    public static final String MEASURE_TP_ID = "measure_tp_id";
-    public static final String MEASURE_TP_DESC = "measure_tp_desc";
-    public static final String MEASURE_VALUE = "measure_value";
-    public static final String VALUE_SUFIX = "value_sufix";
-    public static final String MEASURE_DATE = "measure_date";
-    public static final String MEASURE_INFO = "measure_info";
+    public static final String APPROVAL_STATUS = "approval_status";
+    public static final String APPROVAL_QUESTION = "approval_question";
+    public static final String APPROVAL_TYPE = "approval_type";
+    public static final String APPROVAL_COMMENTS = "approval_comments";
 
-    public TK_Ticket_MeasureDao(Context context, String mDB_NAME, int mDB_VERSION) {
+    public TK_Ticket_ApprovalDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
-        //
-        this.toContentValuesMapper = new TK_Ticket_MeasureToContentValues();
-        this.toTK_Ticket_MeasureMapper = new CursorToTK_Ticket_MeasureMapper();
+        this. toTK_Ticket_ApprovalMapper = new CursorToTK_Ticket_ApprovalMapper();
+        this.toContentValuesMapper = new TK_Ticket_ApprovalToContentValueMapper();
     }
 
     @Override
-    public DaoObjReturn addUpdate(TK_Ticket_Measure tk_ticket_measure) {
-        return addUpdate(tk_ticket_measure,null) ;
+    public DaoObjReturn addUpdate(TK_Ticket_Approval tk_ticket_approval) {
+        return addUpdate(tk_ticket_approval,null);
     }
 
     @Override
-    public DaoObjReturn addUpdate(TK_Ticket_Measure tk_ticket_measure, SQLiteDatabase dbInstance) {
+    public DaoObjReturn addUpdate(List<TK_Ticket_Approval> tk_ticket_approvals, boolean status) {
+        return addUpdate(tk_ticket_approvals,status,null);
+    }
+    @Override
+    public DaoObjReturn addUpdate(TK_Ticket_Approval tk_ticket_approval, SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
@@ -61,28 +61,26 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
         }else{
             this.db = dbInstance;
         }
-
         try{
             curAction = DaoObjReturn.UPDATE;
             //Where para update
             StringBuilder sbWhere = new StringBuilder();
-            sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_measure.getCustomer_code()).append("'");
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_approval.getCustomer_code()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_measure.getTicket_prefix()).append("'");
+            sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_approval.getTicket_prefix()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_measure.getTicket_code()).append("'");
+            sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_approval.getTicket_code()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_measure.getTicket_seq()).append("'");
+            sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_approval.getTicket_seq()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_measure.getStep_code()).append("'");
+            sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_approval.getStep_code()).append("'");
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_measure), sbWhere.toString(), null);
+            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_approval), sbWhere.toString(), null);
             //Se nenhuma linha afetada, tenta insert
             if(addUpdateRet == 0){
                 curAction = DaoObjReturn.INSERT;
-                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_measure));
+                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_approval));
             }
-
         }catch (SQLiteException e){
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -109,17 +107,11 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
         if(dbInstance == null){
             closeDB();
         }
-
         return daoObjReturn;
     }
 
     @Override
-    public DaoObjReturn addUpdate(List<TK_Ticket_Measure> tk_ticket_measures, boolean status) {
-        return addUpdate(tk_ticket_measures,status,null);
-    }
-
-    @Override
-    public DaoObjReturn addUpdate(List<TK_Ticket_Measure> tk_ticket_measures, boolean status, SQLiteDatabase dbInstance) {
+    public DaoObjReturn addUpdate(List<TK_Ticket_Approval> tk_ticket_approvals, boolean status, SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
@@ -140,26 +132,26 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
                 db.delete(TABLE, null, null);
             }
             //
-            for (TK_Ticket_Measure tk_ticket_measure : tk_ticket_measures) {
+            for (TK_Ticket_Approval tk_ticket_approval : tk_ticket_approvals) {
 
                 curAction = DaoObjReturn.UPDATE;
                 //Where para update
                 StringBuilder sbWhere = new StringBuilder();
-                sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_measure.getCustomer_code()).append("'");
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_approval.getCustomer_code()).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_measure.getTicket_prefix()).append("'");
+                sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_approval.getTicket_prefix()).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_measure.getTicket_code()).append("'");
+                sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_approval.getTicket_code()).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_measure.getTicket_seq()).append("'");
+                sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_approval.getTicket_seq()).append("'");
                 sbWhere.append(" and ");
-                sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_measure.getStep_code()).append("'");
+                sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_approval.getStep_code()).append("'");
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_measure), sbWhere.toString(), null);
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_approval), sbWhere.toString(), null);
                 //Se nenhuma linha afetada, tenta insert
                 if(addUpdateRet == 0){
                     curAction = DaoObjReturn.INSERT;
-                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_measure));
+                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_approval));
                 }
             }
             //Se db não foi passado, finaliza transaction com sucesso
@@ -195,7 +187,6 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
         if(dbInstance == null){
             closeDB();
         }
-
         return daoObjReturn;
     }
 
@@ -207,24 +198,11 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
         } catch (Exception e) {
         } finally {
         }
-
         closeDB();
     }
 
     @Override
-    public void remove(String sQuery) {
-        openDB();
-        try {
-            db.execSQL(sQuery);
-        } catch (Exception e) {
-        } finally {
-        }
-
-        closeDB();
-    }
-
-    @Override
-    public DaoObjReturn remove(TK_Ticket_Measure tk_ticket_measure, @Nullable SQLiteDatabase dbInstance) {
+    public DaoObjReturn remove(TK_Ticket_Approval tk_ticket_approval, @Nullable SQLiteDatabase dbInstance) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long sqlRet = 0;
         String curAction = DaoObjReturn.DELETE;
@@ -234,18 +212,17 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
         }else{
             this.db = dbInstance;
         }
-
         try{
             StringBuilder sbWhere = new StringBuilder();
-            sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_measure.getCustomer_code()).append("'");
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_approval.getCustomer_code()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_measure.getTicket_prefix()).append("'");
+            sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_approval.getTicket_prefix()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_measure.getTicket_code()).append("'");
+            sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_approval.getTicket_code()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_measure.getTicket_seq()).append("'");
+            sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_approval.getTicket_seq()).append("'");
             sbWhere.append(" and ");
-            sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_measure.getStep_code()).append("'");
+            sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_approval.getStep_code()).append("'");
             //
             sqlRet = db.delete(TABLE,sbWhere.toString(),null);
         }catch (SQLiteException e){
@@ -276,17 +253,25 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
         return daoObjReturn;
     }
 
+    @Override
+    public void remove(String sQuery) {
+        openDB();
+        try {
+            db.execSQL(sQuery);
+        } catch (Exception e) {
+        } finally {
+        }
+        closeDB();
+    }
 
     @Override
-    public TK_Ticket_Measure getByString(String sQuery) {
-        TK_Ticket_Measure tk_ticket_measure = null;
+    public TK_Ticket_Approval getByString(String sQuery) {
+        TK_Ticket_Approval tk_ticket_approval = null;
         openDB();
-
         try {
             Cursor cursor = db.rawQuery(sQuery, null);
-
             while (cursor.moveToNext()) {
-                tk_ticket_measure = toTK_Ticket_MeasureMapper.map(cursor);
+                tk_ticket_approval = toTK_Ticket_ApprovalMapper.map(cursor);
             }
             //
             cursor.close();
@@ -294,46 +279,38 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
             ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
-
         closeDB();
-
-        return tk_ticket_measure;
+        return tk_ticket_approval;
     }
 
     @Override
     public HMAux getByStringHM(String sQuery) {
         HMAux hmAux = null;
         openDB();
-
         try {
-
             Cursor cursor = db.rawQuery(sQuery, null);
-
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
-
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
-
         closeDB();
-
         return hmAux;
     }
 
     @Override
-    public List<TK_Ticket_Measure> query(String sQuery) {
-        List<TK_Ticket_Measure> tk_ticket_measures = new ArrayList<>();
+    public List<TK_Ticket_Approval> query(String sQuery) {
+        List<TK_Ticket_Approval> tk_ticket_approvals = new ArrayList<>();;
         openDB();
-
         try {
             Cursor cursor = db.rawQuery(sQuery, null);
+
             while (cursor.moveToNext()) {
-                TK_Ticket_Measure uAux = toTK_Ticket_MeasureMapper.map(cursor);
-                tk_ticket_measures.add(uAux);
+                TK_Ticket_Approval uAux = toTK_Ticket_ApprovalMapper.map(cursor);
+                tk_ticket_approvals.add(uAux);
             }
             //
             cursor.close();
@@ -341,17 +318,14 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
             ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
-
         closeDB();
-
-        return tk_ticket_measures;
+        return tk_ticket_approvals;
     }
 
     @Override
     public List<HMAux> query_HM(String sQuery) {
         List<HMAux> tk_ticket_actions = new ArrayList<>();
         openDB();
-
         try {
             Cursor cursor = db.rawQuery(sQuery, null);
             while (cursor.moveToNext()) {
@@ -362,82 +336,65 @@ public class TK_Ticket_MeasureDao extends BaseDao implements DaoWithReturn<TK_Ti
             ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
-
         closeDB();
-
         return tk_ticket_actions;
     }
 
-    private class CursorToTK_Ticket_MeasureMapper implements Mapper<Cursor, TK_Ticket_Measure> {
+    private class CursorToTK_Ticket_ApprovalMapper implements Mapper<Cursor, TK_Ticket_Approval> {
         @Override
-        public TK_Ticket_Measure map(Cursor cursor) {
-            TK_Ticket_Measure tk_ticket_measure = new TK_Ticket_Measure();
-            //
-            tk_ticket_measure.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
-            tk_ticket_measure.setTicket_prefix(cursor.getInt(cursor.getColumnIndex(TICKET_PREFIX)));
-            tk_ticket_measure.setTicket_code(cursor.getInt(cursor.getColumnIndex(TICKET_CODE)));
-            tk_ticket_measure.setTicket_seq(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ)));
-            tk_ticket_measure.setStep_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
-            tk_ticket_measure.setMeasure_tp_code(cursor.getInt(cursor.getColumnIndex(MEASURE_TP_CODE)));
-            tk_ticket_measure.setMeasure_tp_id(cursor.getString(cursor.getColumnIndex(MEASURE_TP_ID)));
-            tk_ticket_measure.setMeasure_tp_desc(cursor.getString(cursor.getColumnIndex(MEASURE_TP_DESC)));
-            tk_ticket_measure.setMeasure_value(cursor.getInt(cursor.getColumnIndex(MEASURE_VALUE)));
-            if(cursor.isNull(cursor.getColumnIndex(VALUE_SUFIX))) {
-                tk_ticket_measure.setValue_sufix(null);
-            }else{
-                tk_ticket_measure.setValue_sufix(cursor.getString(cursor.getColumnIndex(VALUE_SUFIX)));
+        public TK_Ticket_Approval map(Cursor cursor) {
+            TK_Ticket_Approval tk_ticket_approval = new TK_Ticket_Approval();
+            tk_ticket_approval.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
+            tk_ticket_approval.setTicket_prefix(cursor.getInt(cursor.getColumnIndex(TICKET_PREFIX)));
+            tk_ticket_approval.setTicket_code(cursor.getInt(cursor.getColumnIndex(TICKET_CODE)));
+            tk_ticket_approval.setTicket_seq(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ)));
+            tk_ticket_approval.setStep_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
+            tk_ticket_approval.setApproval_status(cursor.getString(cursor.getColumnIndex(APPROVAL_STATUS)));
+            if (cursor.isNull(cursor.getColumnIndex(APPROVAL_QUESTION))) {
+                tk_ticket_approval.setApproval_question(null);
+            } else {
+                tk_ticket_approval.setApproval_question(cursor.getString(cursor.getColumnIndex(APPROVAL_QUESTION)));
             }
-            tk_ticket_measure.setMeasure_date(cursor.getString(cursor.getColumnIndex(MEASURE_DATE)));
-            if(cursor.isNull(cursor.getColumnIndex(MEASURE_INFO))) {
-                tk_ticket_measure.setMeasure_info(null);
-            }else{
-                tk_ticket_measure.setMeasure_info(cursor.getString(cursor.getColumnIndex(MEASURE_INFO)));
+            if (cursor.isNull(cursor.getColumnIndex(APPROVAL_TYPE))) {
+                tk_ticket_approval.setApproval_type(null);
+            } else {
+                tk_ticket_approval.setApproval_type(cursor.getString(cursor.getColumnIndex(APPROVAL_TYPE)));
             }
-            //
-            return tk_ticket_measure;
+            if (cursor.isNull(cursor.getColumnIndex(APPROVAL_COMMENTS))) {
+                tk_ticket_approval.setApproval_comments(null);
+            } else {
+                tk_ticket_approval.setApproval_comments(cursor.getString(cursor.getColumnIndex(APPROVAL_COMMENTS)));
+            }
+            return tk_ticket_approval;
         }
     }
 
-
-    private class TK_Ticket_MeasureToContentValues implements Mapper<TK_Ticket_Measure, ContentValues> {
+    private class TK_Ticket_ApprovalToContentValueMapper implements Mapper<TK_Ticket_Approval, ContentValues> {
         @Override
-        public ContentValues map(TK_Ticket_Measure tk_ticket_measure) {
+        public ContentValues map(TK_Ticket_Approval tk_ticket_approval) {
             ContentValues contentValues = new ContentValues();
             //
-            if(tk_ticket_measure.getCustomer_code() > -1){
-                contentValues.put(CUSTOMER_CODE, tk_ticket_measure.getCustomer_code());
+            if (tk_ticket_approval.getCustomer_code() > -1) {
+                contentValues.put(CUSTOMER_CODE,tk_ticket_approval.getCustomer_code());
             }
-            if(tk_ticket_measure.getTicket_prefix() > -1){
-                contentValues.put(TICKET_PREFIX, tk_ticket_measure.getTicket_prefix());
+            if (tk_ticket_approval.getTicket_prefix() > -1) {
+                contentValues.put(TICKET_PREFIX,tk_ticket_approval.getTicket_prefix());
             }
-            if(tk_ticket_measure.getTicket_code() > -1){
-                contentValues.put(TICKET_CODE, tk_ticket_measure.getTicket_code());
+            if (tk_ticket_approval.getTicket_code() > -1) {
+                contentValues.put(TICKET_CODE,tk_ticket_approval.getTicket_code());
             }
-            if(tk_ticket_measure.getTicket_seq() > -1){
-                contentValues.put(TICKET_SEQ, tk_ticket_measure.getTicket_seq());
+            if (tk_ticket_approval.getTicket_seq() > -1) {
+                contentValues.put(TICKET_SEQ,tk_ticket_approval.getTicket_seq());
             }
-            if(tk_ticket_measure.getStep_code() > -1){
-                contentValues.put(STEP_CODE, tk_ticket_measure.getStep_code());
+            if (tk_ticket_approval.getStep_code() > -1) {
+                contentValues.put(STEP_CODE,tk_ticket_approval.getStep_code());
             }
-            if(tk_ticket_measure.getMeasure_tp_code() > -1){
-                contentValues.put(MEASURE_TP_CODE, tk_ticket_measure.getMeasure_tp_code());
+            if (tk_ticket_approval.getApproval_status() != null) {
+                contentValues.put(APPROVAL_STATUS,tk_ticket_approval.getStep_code());
             }
-            if(tk_ticket_measure.getMeasure_tp_id() != null){
-                contentValues.put(MEASURE_TP_ID, tk_ticket_measure.getMeasure_tp_id());
-            }
-            if(tk_ticket_measure.getMeasure_tp_desc() != null){
-                contentValues.put(MEASURE_TP_DESC, tk_ticket_measure.getMeasure_tp_desc());
-            }
-            if(tk_ticket_measure.getMeasure_value() > -1){
-                contentValues.put(MEASURE_VALUE, tk_ticket_measure.getMeasure_value());
-            }
-            contentValues.put(VALUE_SUFIX, tk_ticket_measure.getValue_sufix());
-            if(tk_ticket_measure.getMeasure_date()!= null){
-                contentValues.put(MEASURE_DATE, tk_ticket_measure.getMeasure_date());
-            }
-            //
-            contentValues.put(MEASURE_INFO, tk_ticket_measure.getMeasure_info());
-            //
+            contentValues.put(APPROVAL_QUESTION, tk_ticket_approval.getApproval_question());
+            contentValues.put(APPROVAL_TYPE, tk_ticket_approval.getApproval_type());
+            contentValues.put(APPROVAL_COMMENTS, tk_ticket_approval.getApproval_comments());
             return contentValues;
         }
     }

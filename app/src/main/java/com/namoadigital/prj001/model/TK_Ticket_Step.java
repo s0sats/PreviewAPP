@@ -32,12 +32,6 @@ public class TK_Ticket_Step {
     private int allow_new_obj;
     private int move_next_step;
     @Nullable
-    private String ap_question;
-    @Nullable
-    private String ap_type;
-    @Nullable
-    private String ap_comments;
-    @Nullable
     private String step_start_date;
     @Nullable
     private Integer step_start_user;
@@ -184,33 +178,6 @@ public class TK_Ticket_Step {
 
     public void setMove_next_step(int move_next_step) {
         this.move_next_step = move_next_step;
-    }
-
-    @Nullable
-    public String getAp_question() {
-        return ap_question;
-    }
-
-    public void setAp_question(@Nullable String ap_question) {
-        this.ap_question = ap_question;
-    }
-
-    @Nullable
-    public String getAp_type() {
-        return ap_type;
-    }
-
-    public void setAp_type(@Nullable String ap_type) {
-        this.ap_type = ap_type;
-    }
-
-    @Nullable
-    public String getAp_comments() {
-        return ap_comments;
-    }
-
-    public void setAp_comments(@Nullable String ap_comments) {
-        this.ap_comments = ap_comments;
     }
 
     @Nullable

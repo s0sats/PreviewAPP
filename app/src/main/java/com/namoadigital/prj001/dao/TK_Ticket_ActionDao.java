@@ -326,7 +326,7 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
 
     @Override
     public List<TK_Ticket_Action> query(String sQuery) {
-        List<TK_Ticket_Action> tk_ticket_actions = null;
+        List<TK_Ticket_Action> tk_ticket_actions = new ArrayList<>();
         openDB();
 
         try {

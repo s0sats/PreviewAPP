@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import com.google.gson.annotations.Expose;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
+import java.util.ArrayList;
+
 public class TK_Ticket_Ctrl {
     @Expose
     private long customer_code;//pk
@@ -66,6 +68,10 @@ public class TK_Ticket_Ctrl {
     @Expose
     @Nullable
     private TK_Ticket_Measure measure;
+    @Nullable
+    private TK_Ticket_Approval approval;
+    @Nullable
+    private ArrayList<TK_Ticket_Approval_Rejection> rejection = new ArrayList<>();
 
     public TK_Ticket_Ctrl() {
         this.customer_code = -1;
@@ -91,6 +97,16 @@ public class TK_Ticket_Ctrl {
                     this.measure.setPK(this);
                 }
                 break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                if(this.approval != null){
+                    this.approval.setPK(this);
+                }
+                if(this.rejection != null){
+                    for (TK_Ticket_Approval_Rejection tk_ticket_approval_rejection : this.rejection) {
+                        tk_ticket_approval_rejection.setPK(this);
+                    }
+                }
+                break;
         }
     }
 
@@ -106,6 +122,16 @@ public class TK_Ticket_Ctrl {
                 break;
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
                 this.measure.setPK(this);
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                if(this.approval != null){
+                    this.approval.setPK(this);
+                }
+                if(this.rejection != null){
+                    for (TK_Ticket_Approval_Rejection tk_ticket_approval_rejection : this.rejection) {
+                        tk_ticket_approval_rejection.setPK(this);
+                    }
+                }
                 break;
         }
     }
@@ -365,5 +391,23 @@ public class TK_Ticket_Ctrl {
 
     public void setObj_planned(int obj_planned) {
         this.obj_planned = obj_planned;
+    }
+
+    @Nullable
+    public TK_Ticket_Approval getApproval() {
+        return approval;
+    }
+
+    public void setApproval(@Nullable TK_Ticket_Approval approval) {
+        this.approval = approval;
+    }
+
+    @Nullable
+    public ArrayList<TK_Ticket_Approval_Rejection> getRejection() {
+        return rejection;
+    }
+
+    public void setRejection(@Nullable ArrayList<TK_Ticket_Approval_Rejection> rejection) {
+        this.rejection = rejection;
     }
 }

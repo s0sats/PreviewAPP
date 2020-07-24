@@ -34,6 +34,7 @@ public class MD_Product implements Serializable {
     private String product_icon_name;
     private String product_icon_url;
     private String product_icon_url_local;
+    private int spare_part;
 
     public long getCustomer_code() {
         return customer_code;
@@ -217,6 +218,14 @@ public class MD_Product implements Serializable {
 
     public void setProduct_icon_url_local(String product_icon_url_local) {
         this.product_icon_url_local = product_icon_url_local;
+    }
+
+    public int getSpare_part() {
+        return spare_part;
+    }
+
+    public void setSpare_part(int spare_part) {
+        this.spare_part = spare_part;
     }
 
     public MD_Product_Serial createNewSerialForThisProduct(String serial_id){

@@ -11,8 +11,12 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
+import com.namoadigital.prj001.model.TK_Ticket_Approval;
+import com.namoadigital.prj001.model.TK_Ticket_Approval_Rejection;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Approval_Rejection_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Measure_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -103,7 +107,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }
             //
             //Tenta inserir action
-            TK_Ticket_ActionDao ticketActionDao = new TK_Ticket_ActionDao(
+           /* TK_Ticket_ActionDao ticketActionDao = new TK_Ticket_ActionDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
@@ -113,7 +117,10 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             //Se erro durante insert, dispara exception abortando o processamento.
             if(daoObjReturn.hasError()){
                 throw new Exception(daoObjReturn.getRawMessage());
-            }
+            }*/
+
+            //Tenta inserir o "processo" filho
+            insertUpdateByCtrlType(tk_ticket_ctrl,db,daoObjReturn);
             //Se db não foi passado, finaliza transaction com sucesso
             if(dbInstance == null) {
                 db.setTransactionSuccessful();
@@ -363,6 +370,23 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     }
                 }
                 break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                if(tk_ticket_ctrl.getApproval() != null) {
+                    daoObjReturn = tryAddUpdateApproval(tk_ticket_ctrl.getApproval(), db);
+                    //Se erro durante insert, dispara exception abortando o processamento.
+                    if (daoObjReturn.hasError()) {
+                        throw new Exception(daoObjReturn.getRawMessage());
+                    }
+                }
+                if(tk_ticket_ctrl.getRejection() != null && tk_ticket_ctrl.getRejection().size() > 0 ) {
+                    daoObjReturn = tryAddUpdateApprovalRejection(tk_ticket_ctrl.getRejection(), db);
+                    //Se erro durante insert, dispara exception abortando o processamento.
+                    if (daoObjReturn.hasError()) {
+                        throw new Exception(daoObjReturn.getRawMessage());
+                    }
+                }
+                break;
+
             /*case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
                 TK_Ticket_MeasureDao ticketMeasureDao = new TK_Ticket_MeasureDao(
                     context,
@@ -391,6 +415,26 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
         return ticketActionDao.addUpdate(tk_ticket_action, db);
     }
 
+    private DaoObjReturn tryAddUpdateApproval(TK_Ticket_Approval tk_ticket_approval, SQLiteDatabase db) {
+        TK_Ticket_ApprovalDao ticketApprovalDao = new TK_Ticket_ApprovalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //Chama insertUpdate da action,passando db como param aguardando retorno.
+        return ticketApprovalDao.addUpdate(tk_ticket_approval, db);
+    }
+
+    private DaoObjReturn tryAddUpdateApprovalRejection(ArrayList<TK_Ticket_Approval_Rejection> ticket_approval_rejections, SQLiteDatabase db) {
+        TK_Ticket_Approval_RejectionDao ticketApprovalRejectionDao = new TK_Ticket_Approval_RejectionDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //Chama insertUpdate da action,passando db como param aguardando retorno.
+        return ticketApprovalRejectionDao.addUpdate(ticket_approval_rejections, false,db);
+    }
+
     /**
      * Deleta o processo filho do controle baseado no tipo
      * @param ctrl_type - Tipo do control
@@ -406,17 +450,33 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
         switch (ctrl_type){
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
                 ctrlTypeTable = TK_Ticket_MeasureDao.TABLE;
-                break;
+                //Tenta o delete
+                //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
+                daoObjReturn.setTable(ctrlTypeTable);
+                return db.delete(ctrlTypeTable,sbWhere.toString(),null);
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                //Tenta o delete
+                //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
                 ctrlTypeTable = TK_Ticket_ActionDao.TABLE;
+                daoObjReturn.setTable(ctrlTypeTable);
+                return db.delete(ctrlTypeTable,sbWhere.toString(),null);
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                //LUCHE - 24/07/2020
+                //Aqui ja mudou tudo, não é necessariamente 1 x 1, pode ter só aproval ou só rejeição
+                //e rejeição é uma lista...TOP
+                //Como não é 1 pra 1
+                ctrlTypeTable = TK_Ticket_ApprovalDao.TABLE;
+                daoObjReturn.setTable(ctrlTypeTable);
+                int approvalDelete = db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                //
+                ctrlTypeTable = TK_Ticket_Approval_RejectionDao.TABLE;
+                daoObjReturn.setTable(ctrlTypeTable);
+                approvalDelete += db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                return approvalDelete;
             default:
                 break;
         }
-        //Tenta o delete
-        //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
-        daoObjReturn.setTable(ctrlTypeTable);
-        //
-        return db.delete(ctrlTypeTable,sbWhere.toString(),null);
+        return 0;
     }
 
     /**
@@ -462,6 +522,42 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                             tk_ticket_ctrl.getTicket_seq()
                         ).toSqlQuery()
 
+                    )
+                );
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                //Busca approval do control
+                TK_Ticket_ApprovalDao ticketApprovalDao = new TK_Ticket_ApprovalDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                TK_Ticket_Approval_RejectionDao approvalRejectionDao = new TK_Ticket_Approval_RejectionDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //
+                tk_ticket_ctrl.setApproval(
+                    ticketApprovalDao.getByString(
+                        new TK_Ticket_Approval_Sql_001(
+                            tk_ticket_ctrl.getCustomer_code(),
+                            tk_ticket_ctrl.getTicket_prefix(),
+                            tk_ticket_ctrl.getTicket_code(),
+                            tk_ticket_ctrl.getTicket_seq(),
+                            tk_ticket_ctrl.getStep_code()
+                            ).toSqlQuery()
+                    )
+                );
+                //
+                tk_ticket_ctrl.setRejection(
+                    (ArrayList<TK_Ticket_Approval_Rejection>) approvalRejectionDao.query(
+                        new TK_Ticket_Approval_Rejection_Sql_001(
+                            tk_ticket_ctrl.getCustomer_code(),
+                            tk_ticket_ctrl.getTicket_prefix(),
+                            tk_ticket_ctrl.getTicket_code(),
+                            tk_ticket_ctrl.getTicket_seq(),
+                            tk_ticket_ctrl.getStep_code()
+                            ).toSqlQuery()
                     )
                 );
             default:
