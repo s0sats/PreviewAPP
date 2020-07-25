@@ -21,7 +21,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="4dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/act075_save_product"
+        app:layout_constraintBottom_toTopOf="@+id/act075_ll_footer_save_product"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="wrap"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,18 +29,30 @@
         app:layout_constraintVertical_weight="1"
         tools:listitem="@layout/act075_product_item" />
 
-    <Button
-        android:id="@+id/act075_save_product"
-        android:layout_width="0dp"
+
+    <LinearLayout
+        android:id="@+id/act075_ll_footer_save_product"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintWidth_percent=".9"
-        tools:text="SALVAR"
-        android:textAllCaps="true"
-        style="@style/NamoaSaveButton"
-        app:layout_constraintBottom_toTopOf="@+id/act075_footer_base"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/act075_save_product"
+            style="@style/NamoaSaveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp"
+            android:textAllCaps="true"
+            tools:text="SALVAR" />
+        <include
+            layout="@layout/footer_base" />
+    </LinearLayout>
+
+
 
     <com.namoa_digital.namoa_library.ctls.FabMenu
         android:id="@+id/act075_fabMenu_anchor"
@@ -48,17 +60,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/act075_save_product"
+        app:layout_constraintBottom_toTopOf="@+id/act075_ll_footer_save_product"
         app:layout_constraintEnd_toEndOf="parent"
         app:mButton_Back_Color="@color/namoa_sync_pipeline_background_btn"
         app:mButton_Resource="@drawable/ic_menu_hamburger"
         app:mButton_Resource_Color="@color/colorPrimary"></com.namoa_digital.namoa_library.ctls.FabMenu>
 
-    <include
-        android:id="@+id/act075_footer_base"
-        layout="@layout/footer_base"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+
 
 </android.support.constraint.ConstraintLayout>

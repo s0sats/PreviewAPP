@@ -131,11 +131,12 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         //
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForProduct(
                 "mTicket_id",
-                "status",
-                "prod_desc",
-                "mTicket_date",
+                "ticket_date",
+                18,
                 "site_desc",
-                "serial_id"
+                "serial_id",
+                "prod_desc",
+                "desc_origin"
         );
         //
         FragmentTransaction ft = fm.beginTransaction();
