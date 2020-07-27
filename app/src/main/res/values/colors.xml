@@ -155,5 +155,12 @@
     <color name="namoa_color_ticket_process_highlight">#fff4d2</color>
     <color name="namoa_color_ticket_process_highlight_pressed">#ffeeb9</color>
 
+    <!-- Cores PIPELINE -->
+    <color name="namoa_sync_pipeline_background_btn">#CCFDC620</color>
+    <color name="namoa_pipeline_background_icon">#CC656565</color>
+    <color name="namoa_pipeline_product_lbl">#3D93AA</color>
+    <color name="namoa_pipeline_extract">#656565</color>
+    <color name="namoa_product_extract_check">#75CA40</color>
+    <color name="namoa_amount_pipeline_background_btn">#FB9C0E</color>
 
 </resources>

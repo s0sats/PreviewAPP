@@ -26,9 +26,10 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act046.Act046_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
-import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act072.Act072_Main;
+import com.namoadigital.prj001.ui.act075.Act075_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -100,6 +101,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         transList.add("btn_pendencies");
         transList.add("btn_check_exists");
         transList.add("btn_graphics");
+        transList.add("btn_scheduled_tickets");
+        transList.add("btn_next_tickets");
         transList.add("alert_no_pendencies_ttl");
         transList.add("alert_no_pendencies_msg");
         transList.add("alert_no_value_filled_ttl");
@@ -158,8 +161,10 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                         processPendencies();
                         break;
                     case Frg_Serial_Search.BTN_OPTION_03:
-                        //processGraphics();
-                        callAct070(new Bundle());
+                        processNextTickets();
+                        break;
+                    case Frg_Serial_Search.BTN_OPTION_04:
+                        processScheduledTickets();
                         break;
                     default:
                         break;
@@ -173,9 +178,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
         mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies"));
         mFrgSerialSearch.setBtn_Option_03_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_graphics"));
+        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_next_tickets"));
         mFrgSerialSearch.setBtn_Option_03_Visibility(View.VISIBLE);
-        mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
+        mFrgSerialSearch.setBtn_Option_04_BackGround(R.drawable.namoa_cell_2_states);
+        mFrgSerialSearch.setBtn_Option_04_Label(hmAux_Trans.get("btn_scheduled_tickets"));
+        mFrgSerialSearch.setBtn_Option_04_Visibility(View.VISIBLE);
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
         //
         mPresenter = new Act068_Main_Presenter(
@@ -188,6 +195,23 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         //
         applyBundleSearchParams();
 
+    }
+
+    private void processScheduledTickets() {
+        Intent mIntent = new Intent(context, Act046_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    private void processNextTickets() {
+        Intent intent = new Intent(context, Act075_Main.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Act075_Main.VIEW_PROFILE, 1);
+        bundle.putSerializable("TK_Ticket_Product", new ArrayList<>());
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
     }
 
     private void applyBundleSearchParams() {
@@ -370,19 +394,6 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     @Override
     public void callAct069(Bundle bundle){
         Intent intent = new Intent(context, Act069_Main.class);
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
-        intent.putExtras(bundle);
-        startActivity(intent);
-        finish();
-    }
-
-    /**
-     *
-     * CRIADO PARA TESTAR NOVA ACT070 EM QUANTO NÃO TEMOS JSON
-     * @param bundle
-     */
-    private void callAct070(Bundle bundle){
-        Intent intent = new Intent(context, Act070_Main.class);
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
         intent.putExtras(bundle);
         startActivity(intent);

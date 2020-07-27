@@ -4190,6 +4190,14 @@ public class ToolBox_Inf {
 
     }
 
+    public static Integer getIntOrNull(String value){
+        try{
+            return Integer.parseInt(value);
+        }catch (Exception e){
+            return null;
+        }
+    }
+
     public static int convertStringToInt(String value) {
         try {
             return Integer.parseInt(value);

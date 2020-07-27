@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_product_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_withdrawn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_product_info"
+        tools:visibility="visible">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/gdl_withdrawn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/product_cell_tv_withdrawn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:text="TextView"
+            android:textColor="@color/namoa_pipeline_product_lbl"
+            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_withdrawn_substract"
+            app:layout_constraintEnd_toStartOf="@+id/gdl_withdrawn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_withdrawn_substract" />
+
+        <ImageView
+            android:id="@+id/product_cell_iv_withdrawn_substract"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/tk_product_amount_controllers"
+            android:tint="@color/colorFooterWhite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/gdl_withdrawn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_remove_black_24dp" />
+
+        <ImageView
+            android:id="@+id/product_cell_iv_withdrawn_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/tk_product_amount_controllers"
+            android:tint="@color/colorFooterWhite"
+            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_withdrawn_substract"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_withdrawn_substract"
+            app:srcCompat="@drawable/ic_add_black_24px" />
+
+        <TextView
+            android:id="@+id/product_cell_tv_withdrawn_qty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/padrao_WHITE"
+            android:padding="4dp"
+            tools:text="1 un"
+            android:textAlignment="center"
+            android:textColor="@color/namoa_pipeline_product_lbl"
+            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_withdrawn_add"
+            app:layout_constraintEnd_toStartOf="@+id/product_cell_iv_withdrawn_add"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@+id/product_cell_iv_withdrawn_substract"
+            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_withdrawn_add" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_applied"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cl_withdrawn"
+        tools:visibility="visible">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/gdl_applied"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/product_cell_tv_applied"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:text="TextView"
+            android:textColor="@color/namoa_pipeline_product_lbl"
+            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_applied_substract"
+            app:layout_constraintEnd_toStartOf="@+id/gdl_applied"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_applied_substract" />
+
+        <ImageView
+            android:id="@+id/product_cell_iv_applied_substract"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/tk_product_amount_controllers"
+            android:tint="@color/colorFooterWhite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/gdl_applied"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_remove_black_24dp" />
+
+        <ImageView
+            android:id="@+id/product_cell_iv_applied_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/tk_product_amount_controllers"
+            android:tint="@color/colorFooterWhite"
+            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_applied_substract"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_applied_substract"
+            app:srcCompat="@drawable/ic_add_black_24px" />
+
+        <TextView
+            android:id="@+id/product_cell_tv_applied_qty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/padrao_WHITE"
+            android:padding="4dp"
+            tools:text="1 un"
+            android:textAlignment="center"
+            android:textColor="@color/namoa_pipeline_product_lbl"
+            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_applied_add"
+            app:layout_constraintEnd_toStartOf="@+id/product_cell_iv_applied_add"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@+id/product_cell_iv_applied_substract"
+            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_applied_add"
+             />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_returned"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cl_applied"
+        tools:visibility="visible">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/gdl_returned"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/product_cell_tv_returned"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="8dp"
+            android:text="TextView"
+            android:textColor="@color/namoa_pipeline_product_lbl"
+            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_returned_add"
+            app:layout_constraintEnd_toStartOf="@+id/gdl_returned"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_returned_add" />
+
+
+        <ImageView
+            android:id="@+id/product_cell_iv_returned_substract"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#FB9C0E"
+            android:tint="@color/colorFooterWhite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/gdl_returned"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_remove_black_24dp"
+            tools:visibility="invisible" />
+
+
+        <ImageView
+
+            android:id="@+id/product_cell_iv_returned_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:tint="@color/namoa_product_extract_check"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_check_white_24dp" />
+
+        <TextView
+            android:id="@+id/product_cell_tv_returned_qty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/padrao_WHITE"
+            android:padding="4dp"
+            tools:text="1 un"
+            android:textAlignment="center"
+            android:textColor="@color/namoa_pipeline_product_lbl"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/product_cell_iv_returned_add"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@+id/product_cell_iv_returned_substract"
+            app:layout_constraintTop_toTopOf="parent" />
+    </android.support.constraint.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/product_cell_tv_extract"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="TextView"
+        android:textColor="@color/namoa_pipeline_extract"
+        android:textAlignment="textEnd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cl_returned" />
+</android.support.constraint.ConstraintLayout>

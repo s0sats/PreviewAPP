@@ -1,0 +1,9 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header">
+
+    <include
+        layout="@layout/act070_pipeline_header"/>
+</FrameLayout>

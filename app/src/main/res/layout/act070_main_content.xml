@@ -11,9 +11,9 @@
     tools:context=".ui.act070.Act070_Main"
     tools:showIn="@layout/act070_main">
 
-    <include
+    <fragment
         android:id="@+id/header_include"
-        layout="@layout/act070_pipeline_header"
+        android:name="com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"

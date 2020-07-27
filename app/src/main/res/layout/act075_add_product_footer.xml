@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add_plus"
+        android:tint="@color/namoa_pipeline_product_lbl"
+        android:layout_marginLeft="8dp"
+        />
+
+    <TextView
+        android:id="@+id/footer_add_product"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="4dp"
+        tools:text="ADICIONAR PRODUTO"
+        android:gravity="center"
+        android:textColor="@color/namoa_pipeline_product_lbl"
+        android:textSize="14sp"
+        />
+
+</LinearLayout>

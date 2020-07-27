@@ -36,4 +36,9 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="NamoaSaveButton" parent="@android:style/Widget.Button">
+        <item name="android:background">@color/namoa_pipeline_product_lbl</item>
+        <item name="android:textColor">@color/padrao_WHITE</item>
+    </style>
+
 </resources>
