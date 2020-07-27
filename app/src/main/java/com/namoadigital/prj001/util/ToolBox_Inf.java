@@ -7149,4 +7149,34 @@ public class ToolBox_Inf {
             return "01-01-1900";
         }
     }
+
+    /**
+     * LUCHE - 20/07/2020
+     * <p></p>
+     * Metodo que copia o arquivo passado em originalFile para o arquivo passado copyFile,
+     * criando o segundo se ele não existir.
+     * Copia o arquivo para qualquer diretorio existente.
+     *
+     * @param originalFile - Arquivo original
+     * @param copyFile - Arquivo para qual será copiado.
+     * @throws IOException
+     * TODO MELHOR ADICIONANDO CRIACAO DE DIR DESTINO?
+     */
+    public static void copyAndRenameFile(File originalFile, File copyFile) throws IOException {
+        if(!copyFile.exists()){
+            copyFile.createNewFile();
+        }
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(copyFile).getChannel();
+            inputChannel = new FileInputStream(originalFile).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            //file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
+    }
 }

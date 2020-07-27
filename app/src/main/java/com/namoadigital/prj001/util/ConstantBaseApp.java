@@ -762,4 +762,9 @@ public class ConstantBaseApp extends ConstantBase {
     //Paramentros de ACTs
     public static final String IS_LOCAL_PROCESS = "isLocalProcess";
     public static final String FROM_HISTORIC = "from_historic";
+
+    //Status GE_File
+    public static final String GE_FILE_STATUS_OPENED = "OPENED";
+    public static final String GE_FILE_STATUS_FILE_NOT_FOUND = "FILE_NOT_FOUND";
+    public static final String GE_FILE_STATUS_SENT = "SENT";
 }
