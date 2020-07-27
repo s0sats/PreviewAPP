@@ -79,11 +79,11 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
             );
     }
 
-    protected void applyHighlightBackground(ConstraintLayout clBackground, boolean isCurrentStep,String StepType, String startDate) {
+    protected void applyHighlightBackground(ConstraintLayout clBackground, String stepStatus, boolean isCurrentStep,String StepType, String startDate) {
         int backgroundColor = R.color.padrao_TRANSPARENT;
         Drawable drawable = context.getDrawable(R.drawable.pipeline_step_states);
         //Se step atual, verifica o destaque
-        if(isCurrentStep) {
+        if(!ConstantBaseApp.SYS_STATUS_DONE.equals(stepStatus) && isCurrentStep) {
             //Se start_end, se tiver checkin, fica amarelo , se não fica cinza indicando que falta q
             //não é possivel mexer.
             if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(StepType)) {

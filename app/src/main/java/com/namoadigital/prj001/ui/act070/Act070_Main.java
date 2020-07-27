@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,7 +43,7 @@ import com.bumptech.glide.request.target.Target;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoa_digital.namoa_library.view.Base_Activity;
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act070_Steps_Adapter;
@@ -63,15 +65,17 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I_View {
+public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentInteractionListener {
 
     public static final String PARAM_DENIED_BY_CHECKIN = "PARAM_DENIED_BY_CHECKIN";
 
+    private FragmentManager fm;
+    private Frg_Pipeline_Header mFrgPipelineHeader;
     private Act070_Main_Presenter mPresenter;
     private ScrollView svMain;
     private TextView tvTicketId;
@@ -137,6 +141,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     }
 
     private void iniSetup() {
+        fm = getSupportFragmentManager();
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
             context,
@@ -199,6 +204,7 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         transList.add("process_add_new_btn");
         transList.add("process_check_in_btn");
         transList.add("process_check_out_btn");
+        transList.add("please_sync_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -227,6 +233,39 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         } else {
             paramErrorFlow();
         }
+    }
+
+    private void iniHeaderFrag() {
+        mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForPipeline(
+            mTicket.getTicket_id(),
+            ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(mTicket.getOpen_date()),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            ),
+            mTicket.getOpen_site_code(),
+            mTicket.getOpen_site_desc(),
+            mTicket.getOpen_serial_id(),
+            mTicket.getOpen_product_desc(),
+            hmAux_Trans.get(mTicket.getTicket_status()),
+            ToolBox_Inf.getStatusColorV2(context,mTicket.getTicket_status()),
+            mTicket.getOrigin_desc(),
+            hmAux_Trans.get("please_sync_lbl")
+        );
+        //
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.act070_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    @Override
+    public void syncPipeline() {
+        /**
+         *
+         * CHAMAR SINCRONISMOS DA PORRA DO TICKET
+         *
+         *
+         */
     }
 
     private void refreshUi() {
@@ -581,6 +620,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private void updateTicketData() {
         mTicket = mPresenter.getTicketObj(mTkPrefix, mTkCode);
         //
+        //
+        iniHeaderFrag();
         /*if (mTicket != null) {
             setReadOnly();
             initFCMReceiver();

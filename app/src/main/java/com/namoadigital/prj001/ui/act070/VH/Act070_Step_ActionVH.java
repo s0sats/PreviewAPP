@@ -112,6 +112,7 @@ public class Act070_Step_ActionVH extends Act070_Step_Abstract_ProcessVH {
         );
         applyHighlightBackground(
             clBackground,
+            stepAction.getProcessStatus(),
             stepAction.isCurrentStep(),
             stepAction.getStepType(),
             stepAction.getStartDate()

@@ -11,21 +11,31 @@
     tools:context=".ui.act070.Act070_Main"
     tools:showIn="@layout/act070_main">
 
-    <fragment
-        android:id="@+id/header_include"
-        android:name="com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header"
+<!--    <fragment-->
+<!--        android:id="@+id/header_include"-->
+<!--        android:name="com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+
+    <FrameLayout
+        android:id="@+id/act070_frg_pipeline_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/act070_rv_pipeline"
         android:layout_width="0dp"
         android:layout_height="0dp"
         tools:listitem="@layout/act070_step_main_cell"
-        app:layout_constraintTop_toBottomOf="@id/header_include"
+        app:layout_constraintTop_toBottomOf="@id/act070_frg_pipeline_header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/include"

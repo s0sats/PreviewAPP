@@ -200,6 +200,43 @@
             app:layout_constraintTop_toTopOf="@+id/step_approval_tv_process_action"
             android:src="@drawable/ic_skip_next_white_24px" />
 
+        <TextView
+            android:id="@+id/step_approval_tv_process_rejection"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:text="REJEITADOS"
+            android:textColor="@color/namoa_color_danger_red"
+            app:layout_constraintEnd_toStartOf="@+id/step_approval_gd_end"
+            app:layout_constraintStart_toEndOf="@+id/step_approval_iv_process_rejection"
+            app:layout_constraintTop_toBottomOf="@id/step_approval_v_divider" />
+
+        <ImageView
+            android:id="@+id/step_approval_iv_process_rejection"
+            android:layout_width="@dimen/pipeline_step_icon_width"
+            android:layout_height="@dimen/pipeline_step_icon_width"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/step_approval_tv_process_rejection"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/step_approval_tv_process_rejection"
+            android:src="@drawable/ic_exclamation"
+            android:tint="@color/namoa_color_danger_red"
+
+            />
+
+        <View
+            android:id="@+id/step_approval_v_rejection_divider"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+            android:background="@color/namoa_color_gray3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/step_approval_iv_process_rejection" />
+
 
     </android.support.constraint.ConstraintLayout>
 

@@ -36,6 +36,7 @@ import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAbstractProcess;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
+import com.namoadigital.prj001.ui.act070.model.StepApproval;
 import com.namoadigital.prj001.ui.act070.model.StepFooter;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
@@ -876,8 +877,22 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         //
                         stepsCtrls.add(stepAction);
                         break;
-                    case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
                     case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                        StepApproval stepApproval = new StepApproval();
+                        stepApproval.setStepCode(tkStepCtrl.getStep_code());
+                        stepApproval.setStepType(stepMain.getStepType());
+                        stepApproval.setApprovalType(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_type() : null);
+                        stepApproval.setApprovalQuestion(tkStepCtrl.getApproval()  != null ? tkStepCtrl.getApproval().getApproval_question() : null);
+                        stepApproval.setApprovalStatus(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_status() : null);
+                        stepApproval.setApprovalComment(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_comments() : null);
+                        stepApproval.setPartnerDesc(tkStepCtrl.getPartner_desc());
+                        stepApproval.setStartDate(tkStepCtrl.getCtrl_start_date());
+                        stepApproval.setEndDate(tkStepCtrl.getCtrl_end_date());
+                        stepApproval.setEndUser(tkStepCtrl.getCtrl_start_user_name());
+                        stepApproval.setHasRejection(tkStepCtrl.getRejection() != null && tkStepCtrl.getRejection().size() > 0 );
+                        stepsCtrls.add(stepApproval);
+                        break;
+                    case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
                     case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
                     default:
                         break;

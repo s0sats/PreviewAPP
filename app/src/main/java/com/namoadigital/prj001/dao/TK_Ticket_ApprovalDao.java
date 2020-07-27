@@ -390,7 +390,7 @@ public class TK_Ticket_ApprovalDao extends BaseDao implements DaoWithReturn<TK_T
                 contentValues.put(STEP_CODE,tk_ticket_approval.getStep_code());
             }
             if (tk_ticket_approval.getApproval_status() != null) {
-                contentValues.put(APPROVAL_STATUS,tk_ticket_approval.getStep_code());
+                contentValues.put(APPROVAL_STATUS,tk_ticket_approval.getApproval_status());
             }
             contentValues.put(APPROVAL_QUESTION, tk_ticket_approval.getApproval_question());
             contentValues.put(APPROVAL_TYPE, tk_ticket_approval.getApproval_type());
