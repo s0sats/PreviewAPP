@@ -136,7 +136,7 @@
             tools:text="Open Date:" />
 
         <TextView
-            android:id="@+id/act074_ticket_cell_tv_forecast_date_val"
+            android:id="@+id/act074_ticket_cell_tv_planned_date_val"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -158,7 +158,7 @@
             android:background="@drawable/step_status"
             android:gravity="center"
             android:padding="2dp"
-            android:text="1"
+            tools:text="-"
             android:textColor="@color/namoa_color_white_alpha"
             android:textStyle="bold"
             android:visibility="visible"
@@ -172,9 +172,9 @@
             android:layout_marginTop="4dp"
             android:padding="2dp"
             android:visibility="visible"
+            android:src="@drawable/ic_baseline_date_range_24"
             app:layout_constraintStart_toStartOf="@+id/act074_ticket_cell_tv_step_desc"
-            app:layout_constraintTop_toBottomOf="@+id/act074_ticket_cell_tv_step_desc"
-            app:srcCompat="@drawable/ic_baseline_date_range_24" />
+            app:layout_constraintTop_toBottomOf="@+id/act074_ticket_cell_tv_step_desc"/>
 
 
     </android.support.constraint.ConstraintLayout>

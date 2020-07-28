@@ -32,7 +32,7 @@ import java.util.List;
 import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_PARTNER_EMPTY;
 import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_PARTNER_NO_PROFILE;
 import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_PARTNER_PROFILE;
-import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_TEXT;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FILTER_TEXT;
 
 public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I_View{
     private MKEditTextNM mketFilter;

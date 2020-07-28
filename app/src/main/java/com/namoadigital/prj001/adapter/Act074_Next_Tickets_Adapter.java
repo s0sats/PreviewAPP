@@ -111,7 +111,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
         private TextView tv_serial;
         private TextView tv_desc_origin;
         private TextView tv_step_desc;
-        private TextView tv_forecast_date_val;
+        private TextView tv_planned_date_val;
         private TextView tv_step_id;
         private ImageView iv_schedule_icon;
 
@@ -128,7 +128,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             tv_serial = itemView.findViewById(R.id.act074_ticket_cell_tv_serial);
             tv_desc_origin = itemView.findViewById(R.id.act074_ticket_cell_tv_desc_origin);
             tv_step_desc = itemView.findViewById(R.id.act074_ticket_cell_tv_step_desc);
-            tv_forecast_date_val = itemView.findViewById(R.id.act074_ticket_cell_tv_forecast_date_val);
+            tv_planned_date_val = itemView.findViewById(R.id.act074_ticket_cell_tv_planned_date_val);
             tv_step_id = itemView.findViewById(R.id.act074_ticket_cell_tv_step_id);
             iv_schedule_icon = itemView.findViewById(R.id.act074_ticket_cell_iv_schedule_icon);
             //
@@ -157,18 +157,23 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             //
             setVisibilityByContent(tv_status, item.getTicket_status());
             setVisibilityByContent(tv_ticket_id, item.getTicket_id());
-            setVisibilityByContent(tv_step_id, item.getTicket_step_id());
+            setVisibilityByContent(tv_step_id, item.getTicket_current_step_order());
             setVisibilityByContent(tv_step_desc, item.getTicket_step_desc());
             setVisibilityByContent(tv_prod_desc, item.getTicket_prod_desc());
             setSiteVisibility(tv_site_desc, item.getTicket_site_desc());
             setVisibilityByContent(tv_serial, item.getTicket_serial());
-            setVisibilityByContent(tv_desc_origin, item.getTicket_origin_desc());   
-            setVisibilityByContent(tv_forecast_date_val, item.getTicket_forecast_date());
+            setVisibilityByContent(tv_desc_origin, item.getTicket_origin_desc());
+            //
+            String formatted_planned_date = getFormatted_planned_date(item);
+
+            setVisibilityByContent(tv_planned_date_val,
+                    formatted_planned_date
+            );
             //
         }
 
         private void setVisibilityByContent(TextView tv_field, String tv_content) {
-            if (tv_content != null && tv_content.isEmpty()) {
+            if (tv_content != null && !tv_content.isEmpty()) {
                 tv_field.setVisibility(View.VISIBLE);
                 tv_field.setText(tv_content);
             }
@@ -202,16 +207,26 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             tv_serial.setVisibility(View.GONE);
             tv_desc_origin.setVisibility(View.GONE);
             tv_step_desc.setVisibility(View.GONE);
-            tv_forecast_date_val.setVisibility(View.GONE);
+            tv_planned_date_val.setVisibility(View.GONE);
             tv_step_id.setVisibility(View.GONE);
-            iv_schedule_icon.setVisibility(View.GONE);
+            iv_schedule_icon.setVisibility(View.VISIBLE);
         }
     }
 
-    private void setSiteVisibility(TextView tv_site_desc, String ticket_site_desc) {
-
+    @NonNull
+    private String getFormatted_planned_date(Act074_TicketVH item) {
+        //
+        return ToolBox_Inf.getStepStartEndDateFormated(context, item.getTicket_forecast_start_date(), item.getTicket_forecast_end_date());
     }
 
+    private void setSiteVisibility(TextView tv_site_desc, String ticket_site_desc) {
+        if(ticket_site_desc!=null && !ticket_site_desc.isEmpty()){
+            tv_site_desc.setVisibility(View.VISIBLE);
+            tv_site_desc.setText(ticket_site_desc);
+        }else{
+            tv_site_desc.setVisibility(View.GONE);
+        }
+    }
 
     private class TicketFilter extends Filter {
         @Override

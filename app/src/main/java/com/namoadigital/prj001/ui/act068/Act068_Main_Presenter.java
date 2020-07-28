@@ -89,7 +89,7 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
     @Override
     public void checkPendenciesFlow(int pendencies_qty) {
         if(pendencies_qty > 0){
-            mView.callAct069(new Bundle());
+            mView.callAct076(new Bundle());
         } else{
             mView.showMsg(
                 hmAux_Trans.get("alert_no_pendencies_ttl"),

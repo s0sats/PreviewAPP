@@ -154,14 +154,22 @@
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
+        <!--Origem-->
         <android.support.constraint.ConstraintLayout
             android:id="@+id/frg_pipeline_header_ticket"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             app:layout_constraintEnd_toEndOf="@id/frg_ticket_guide_end"
-            app:layout_constraintStart_toStartOf="@id/frg_ticket_guide_start"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cv_btn_sync">
+
+            <android.support.constraint.Guideline
+                android:id="@+id/frg_pipeline_header_gd_origin_icon_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.15"  />
 
             <ImageView
                 android:id="@+id/iv_ticket_header_icon"
@@ -172,20 +180,20 @@
                 android:src="@drawable/ic_baseline_receipt_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/frg_pipeline_header_gd_origin_icon_end"
+                />
 
             <TextView
                 android:id="@+id/frg_ticket_tv_desc_origin"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginEnd="4dp"
                 android:ellipsize="start"
                 android:singleLine="true"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_ticket_header_icon"
                 app:layout_constraintEnd_toStartOf="@+id/frg_ticket_tv_action_shortcut"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/iv_ticket_header_icon"
+                app:layout_constraintStart_toStartOf="@+id/frg_pipeline_header_gd_origin_icon_end"
                 app:layout_constraintTop_toTopOf="@+id/iv_ticket_header_icon"
                 tools:text=".../lalalla/alallal" />
 
@@ -202,14 +210,25 @@
 
         </android.support.constraint.ConstraintLayout>
 
+
+
+
+        <!--Step-->
         <android.support.constraint.ConstraintLayout
             android:id="@+id/frg_pipeline_cl_step_ticket"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/frg_ticket_guide_end"
-            app:layout_constraintStart_toStartOf="@+id/frg_ticket_guide_start"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/frg_pipeline_header_ticket">
+
+            <android.support.constraint.Guideline
+                android:id="@+id/frg_pipeline_header_gd_step_icon_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.15"  />
 
             <TextView
                 android:id="@+id/frg_pipeline_tv_step_main_step_num"
@@ -222,25 +241,24 @@
                 tools:text="1"
                 android:textColor="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintEnd_toEndOf="@id/frg_pipeline_header_gd_step_icon_end"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"
+                />
 
             <TextView
                 android:id="@+id/frg_pipeline_tv_step_main_desc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                tools:text="1 -Planejamento"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/frg_pipeline_tv_step_main_step_num"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/frg_pipeline_tv_step_main_step_num"
-                app:layout_constraintTop_toTopOf="@+id/frg_pipeline_tv_step_main_step_num" />
+                app:layout_constraintStart_toStartOf="@+id/frg_pipeline_header_gd_step_icon_end"
+                app:layout_constraintTop_toTopOf="@+id/frg_pipeline_tv_step_main_step_num"
+                tools:text="1 -Planejamento" />
         </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>

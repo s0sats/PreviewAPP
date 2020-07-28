@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -59,16 +61,18 @@ import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
+import com.namoadigital.prj001.ui.act076.Act076_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I_View {
+public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentInteractionListener {
 
     public static final String PARAM_DENIED_BY_CHECKIN = "PARAM_DENIED_BY_CHECKIN";
 
@@ -110,7 +114,10 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private FCMReceiver fcmReceiver;
     private View.OnClickListener photoListener;
     private Button btnCheckinCancel;
-
+    //
+    private FragmentManager fm;
+    private Frg_Pipeline_Header mFrgPipelineHeader;
+    //
     /**
      * Iniciando terraplanagem e reinicio da tela.
      * @param savedInstanceState
@@ -220,6 +227,8 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         //
         recoverIntentsInfo();
         //
+        setPipelineHeaderFragment();
+        //
         if (mPresenter.validateBundleParams(mTkPrefix, mTkCode)) {
             updateTicketData();
             //POR HORA FICA FORA
@@ -305,6 +314,28 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
     private void initRecycle() {
         rvTicketPipeline.setLayoutManager(new LinearLayoutManager(context));
         rvTicketPipeline.setAdapter(mAdapter);
+    }
+
+    private void setPipelineHeaderFragment() {
+        fm = getSupportFragmentManager();
+        //
+        mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForPipeline(
+                "mTicket_id",
+                "ticket_date",
+                18,
+                "site_desc",
+                "serial_id",
+                "prod_desc",
+                "status_desc",
+                R.color.namoa_color_dark_blue_lib,
+                "desc_origin",
+                "botao bunitinho"
+        );
+        //
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.header_include, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
     private void iniAdapter() {
@@ -481,6 +512,22 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
         if(mAdapter != null) {
             mAdapter.notifyItemRangeRemoved(mainPosition, rangeLength);
         }
+    }
+
+    @Override
+    public void callAct076() {
+        Intent intent = new Intent(context, Act076_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        requestingBundle.remove(TK_TicketDao.TICKET_PREFIX);
+        requestingBundle.remove(TK_TicketDao.TICKET_CODE);
+        intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct068() {
+
     }
     //endregion
 
@@ -1171,6 +1218,11 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
                 show.dismiss();
             }
         });
+    }
+
+    @Override
+    public void syncPipeline() {
+
     }
 
     class FCMReceiver extends BroadcastReceiver {

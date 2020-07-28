@@ -26,7 +26,7 @@ public interface Act068_Main_Contract {
 
        void callAct005();
 
-       void callAct069(Bundle bundle);
+       void callAct076(Bundle bundle);
 
        void showResult(ArrayList<HMAux> resultList);
    }

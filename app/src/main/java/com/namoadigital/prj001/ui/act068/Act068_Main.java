@@ -27,9 +27,9 @@ import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
-import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act072.Act072_Main;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
+import com.namoadigital.prj001.ui.act076.Act076_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -392,8 +392,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     @Override
-    public void callAct069(Bundle bundle){
-        Intent intent = new Intent(context, Act069_Main.class);
+    public void callAct076(Bundle bundle){
+        Intent intent = new Intent(context, Act076_Main.class);
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
         intent.putExtras(bundle);
         startActivity(intent);

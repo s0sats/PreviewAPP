@@ -900,8 +900,13 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 mView.callAct035();
                 break;
             case ConstantBaseApp.ACT069:
-            default:
                 mView.callAct069();
+                break;
+            case ConstantBaseApp.ACT076:
+                mView.callAct076();
+                break;
+            default:
+                mView.callAct068();
         }
     }
 

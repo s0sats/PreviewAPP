@@ -9,6 +9,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.VH_models.Act069_TicketVH;
+import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.sql.Sql_Act069_001;
@@ -70,15 +71,15 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
         mView.loadTicketList(generateTicketVhList(auxTickets));
     }
 
-    private ArrayList<Act069_TicketVH> generateTicketVhList(ArrayList<HMAux> auxTickets) {
-        ArrayList<Act069_TicketVH> tickets = new ArrayList<>();
+    private ArrayList<Act074_TicketVH> generateTicketVhList(ArrayList<HMAux> auxTickets) {
+        ArrayList<Act074_TicketVH> tickets = new ArrayList<>();
         if (auxTickets != null && auxTickets.size() > 0) {
             try {
                 for (HMAux aux : auxTickets) {
-                    getCtrlsSerialsList(aux);
+//                    getCtrlsSerialsList(aux);
                     //
                     tickets.add(
-                        Act069_TicketVH.getTicketVHObj(aux)
+                        Act074_TicketVH.getTicketVHObj(aux)
                     );
                 }
             } catch (Exception e) {
@@ -122,7 +123,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
      * @param item Ticket Clicado
      */
     @Override
-    public void checkTicketFlow(Act069_TicketVH item) {
+    public void checkTicketFlow(Act074_TicketVH item) {
         if(isScheduledTicketExecution(item)){
             mView.callAct071(generateAct071Bundle(item));
         }else{
@@ -137,7 +138,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
      * @param item Item clicado
      * @return - Verdadeiro se scheduelPK existir e ticket_prefix == 0  e ticket_code > 0
      */
-    private boolean isScheduledTicketExecution(Act069_TicketVH item) {
+    private boolean isScheduledTicketExecution(Act074_TicketVH item) {
         return item.getSchedulePk() != null && !item.getSchedulePk().isEmpty()
         && item.getTicket_prefix() == 0
         && item.getTicket_code() > 0;
@@ -150,7 +151,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
      * @param item Ticket clicado
      * @return - Bundle com pk do ticket
      */
-    private Bundle generateAct070Bundle(Act069_TicketVH item) {
+    private Bundle generateAct070Bundle(Act074_TicketVH item) {
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX,item.getTicket_prefix());
         bundle.putInt(TK_TicketDao.TICKET_CODE,item.getTicket_code());
@@ -165,7 +166,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
      * @param item Ticket clicado
      * @return - Bundle com dados do ticket agendamento
      */
-    private Bundle generateAct071Bundle(Act069_TicketVH item) {
+    private Bundle generateAct071Bundle(Act074_TicketVH item) {
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX,item.getTicket_prefix());
         bundle.putInt(TK_TicketDao.TICKET_CODE,item.getTicket_code());
@@ -181,7 +182,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
             String.valueOf(item.getTicket_code())
             )
         );
-        bundle.putString(TK_TicketDao.TYPE_DESC, item.getType_desc());
+//        bundle.putString(TK_TicketDao.TYPE_DESC, item.getType_desc());
         bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN,false);
         bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.getSchedulePk());
         //

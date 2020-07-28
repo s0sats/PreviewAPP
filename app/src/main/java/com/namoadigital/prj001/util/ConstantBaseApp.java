@@ -99,6 +99,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT073 = "act073";
     public static final String ACT074 = "act074";
     public static final String ACT075 = "act075";
+    public static final String ACT076 = "act076";
 
     public static final String title_lbl = "_title";
 
@@ -769,4 +770,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String GE_FILE_STATUS_OPENED = "OPENED";
     public static final String GE_FILE_STATUS_FILE_NOT_FOUND = "FILE_NOT_FOUND";
     public static final String GE_FILE_STATUS_SENT = "SENT";
+
+    //Chave de Bundle act069, 74 e 76
+    public static final String FILTER_TEXT = "FILTER_TEXT";
+
 }
