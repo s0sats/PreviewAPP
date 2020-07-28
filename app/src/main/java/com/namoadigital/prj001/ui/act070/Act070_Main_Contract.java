@@ -79,5 +79,7 @@ public interface Act070_Main_Contract {
         void removeStepCtrlsContent(ArrayList<BaseStep> sources, int mainPosition);
 
         void updateStepOpenStates(ArrayList<BaseStep> sources, int mainPosition, boolean isShown);
+
+        Bundle getAct071Bundle(TK_Ticket mTicket, int stepCode, int processTkSeq);
     }
 }

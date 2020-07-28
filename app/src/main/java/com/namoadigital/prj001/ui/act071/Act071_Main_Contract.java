@@ -55,7 +55,7 @@ public interface Act071_Main_Contract {
 
         boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq, int mSchedulePrefix, int mScheduleCode, int mScheduleExec);
 
-        TK_Ticket_Ctrl getTicketCtrlObj(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq);
+        TK_Ticket_Ctrl getTicketCtrlObj(int mActionPrefix, int mActionCode, int mActionSeq, int mStepCode);
 
         String getFormattedInfo(String ctrl_end_date, String ctrl_end_user_name);
 

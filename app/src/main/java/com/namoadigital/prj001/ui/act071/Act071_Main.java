@@ -112,6 +112,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private int mScheduleCode;
     private int mScheduleExec;
     private boolean mIsSchedule;
+    //LUCHE - 28/07/2020 - NOVO TICKET
+    private int mStepCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,6 +227,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mActionPrefix = requestingBundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
             mActionCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
             mActionSeq = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ, -1);
+            mStepCode = requestingBundle.getInt(TK_Ticket_CtrlDao.STEP_CODE, -1);
             mTicketID = requestingBundle.getString(TK_TicketDao.TICKET_ID, "");
             mTypePath = requestingBundle.getString(TK_TicketDao.TYPE_PATH, "");
             mTypeDesc = requestingBundle.getString(TK_TicketDao.TYPE_DESC, "");
@@ -239,6 +242,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mActionPrefix = -1;
             mActionCode = -1;
             mActionSeq = -1;
+            mStepCode = -1;
             mTicketID = "";
             mTypePath = "";
             mTypeDesc = "";
@@ -282,7 +286,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void updateActionData() {
-        mTicketCtrl = mPresenter.getTicketCtrlObj(mActionPrefix, mActionCode, mActionSeq);
+        mTicketCtrl = mPresenter.getTicketCtrlObj(mActionPrefix, mActionCode, mActionSeq,mStepCode);
         if (mTicketCtrl != null) {
             setReadOnly();
             setDataToViews();

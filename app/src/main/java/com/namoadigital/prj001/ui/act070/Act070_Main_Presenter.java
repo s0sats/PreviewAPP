@@ -382,6 +382,20 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return false;
     }
 
+    @Override
+    public Bundle getAct071Bundle(TK_Ticket mTicket, int stepCode, int processTkSeq) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket.getTicket_prefix());
+        bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket.getTicket_code());
+        bundle.putInt(TK_Ticket_ActionDao.TICKET_SEQ, processTkSeq);
+        bundle.putInt(TK_Ticket_ActionDao.STEP_CODE, stepCode);
+        bundle.putString(TK_TicketDao.TICKET_ID, mTicket.getTicket_id());
+        bundle.putString(TK_TicketDao.TYPE_PATH, mTicket.getType_path());
+        bundle.putString(TK_TicketDao.TYPE_DESC, mTicket.getType_desc());
+        //bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN, mTicket.getCheckin_user() == null || !ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(mTicket.getCheckin_user())));
+        return bundle;
+    }
+
     private Bundle getAct071CtrlBundleInfo(TK_Ticket mTicket, TK_Ticket_Ctrl ctrl) {
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, ctrl.getTicket_prefix());
@@ -650,6 +664,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         StepAction stepAction = new StepAction();
                         stepAction.setStepCode(tkStepCtrl.getStep_code());
                         stepAction.setStepDescription(hmAux_Trans.get("process_action_tll"));
+                        stepAction.setProcessTkSeq(tkStepCtrl.getTicket_seq());
                         stepAction.setProductDesc(tkStepCtrl.getProduct_desc());
                         stepAction.setSerialId(tkStepCtrl.getSerial_id());
                         //stepAction.setSiteDesc(tkStepCtrl.getSite_desc());
@@ -669,6 +684,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         StepApproval stepApproval = new StepApproval();
                         stepApproval.setStepCode(tkStepCtrl.getStep_code());
                         stepApproval.setStepType(stepMain.getStepType());
+                        stepApproval.setProcessTkSeq(tkStepCtrl.getTicket_seq());
                         stepApproval.setProcessStatus(tkStepCtrl.getCtrl_status());
                         stepApproval.setApprovalType(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_type() : null);
                         stepApproval.setApprovalQuestion(tkStepCtrl.getApproval()  != null ? tkStepCtrl.getApproval().getApproval_question() : null);

@@ -105,13 +105,14 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     }
 
     @Override
-    public TK_Ticket_Ctrl getTicketCtrlObj(int mActionPrefix, int mActionCode, int mActionSeq) {
+    public TK_Ticket_Ctrl getTicketCtrlObj(int mActionPrefix, int mActionCode, int mActionSeq, int mStepCode) {
         return ticketCtrlDao.getByString(
             new TK_Ticket_Ctrl_Sql_001(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 mActionPrefix,
                 mActionCode,
-                mActionSeq
+                mActionSeq,
+                mStepCode
             ).toSqlQuery()
         );
     }

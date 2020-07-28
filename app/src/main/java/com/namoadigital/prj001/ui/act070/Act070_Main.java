@@ -42,6 +42,7 @@ import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_MainVH;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
+import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -112,20 +113,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
         transList.add("act070_title");
-        transList.add("open_date_lbl");
-        transList.add("forecast_date_lbl");
-        transList.add("btn_checkin");
-        transList.add("btn_check_in_cancel");
-        transList.add("checkin_info_lbl");
-        transList.add("done_info_lbl");
-        transList.add("filter_lbl");
-        transList.add("partner_lbl");
-        transList.add("inner_comment_lbl");
         transList.add("alert_ticket_parameter_error_ttl");
         transList.add("alert_ticket_parameter_error_msg");
         transList.add("ticket_lbl");
-        transList.add("alert_cancel_checkin_ttl");
-        transList.add("alert_cancel_checkin_confirm");
         transList.add("alert_start_checkin_ttl");
         transList.add("alert_start_checkin_confirm");
         transList.add("alert_checkin_not_returned_ttl");
@@ -137,23 +127,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("dialog_ticket_checkin_cancel_start");
         transList.add("result_checkin_lbl");
         transList.add("result_checkin_cancel_lbl");
-        transList.add("alert_ticket_checkin_offline_ttl");
-        transList.add("alert_ticket_checkin_offline_msg");
         transList.add("alert_sync_data_ttl");
         transList.add("alert_sync_data_msg");
         transList.add("dialog_download_ticket_ttl");
         transList.add("dialog_download_ticket_start");
         transList.add("dialog_ticket_save_ttl");
         transList.add("dialog_ticket_save_start");
-        transList.add("alert_none_ticket_returned_ttl");
-        transList.add("alert_none_ticket_returned_msg");
-        transList.add("alert_error_on_checkin_ttl");
-        transList.add("alert_error_on_checkin_msg");
-        transList.add("alert_image_too_large_to_open_ttl");
-        transList.add("alert_image_too_large_to_open_msg");
-        //Measure View
-        transList.add("measure_value_lbl");
-        transList.add("measure_date_lbl");
         //NOVO_TICKET
         transList.add("process_action_tll");
         transList.add("process_add_new_btn");
@@ -266,8 +245,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             },100
         );
         //
-        /*moveToCurrentStep(currentStepFirstPosition);
-        openCurrentSteps();*/
     }
 
     private void openCurrentSteps() {
@@ -315,9 +292,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             new Act070_Steps_Adapter.OnActionClickListener() {
                 @Override
                 public void onActionClick(int actionPosition) {
-                    ToolBox.toastMSG(
-                        context,
-                        "Action position: " + actionPosition
+                    StepAction stepAction = (StepAction) sources.get(actionPosition);
+                    callAct071(
+                        mPresenter.getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq())
                     );
                 }
             },
