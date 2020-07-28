@@ -881,6 +881,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         StepApproval stepApproval = new StepApproval();
                         stepApproval.setStepCode(tkStepCtrl.getStep_code());
                         stepApproval.setStepType(stepMain.getStepType());
+                        stepApproval.setProcessStatus(tkStepCtrl.getCtrl_status());
                         stepApproval.setApprovalType(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_type() : null);
                         stepApproval.setApprovalQuestion(tkStepCtrl.getApproval()  != null ? tkStepCtrl.getApproval().getApproval_question() : null);
                         stepApproval.setApprovalStatus(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_status() : null);

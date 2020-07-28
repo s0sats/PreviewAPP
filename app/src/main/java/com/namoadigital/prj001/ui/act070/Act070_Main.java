@@ -486,6 +486,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                         "Approval position: " + approvalPosition
                     );
                 }
+
+                @Override
+                public void onShowRejectionClick(int approvalPosition) {
+                    ToolBox.toastMSG(
+                        context,
+                        "Rejection position: " + approvalPosition
+                    );
+                }
             },
             new Act070_Steps_Adapter.OnProcessBtnClickListener() {
                 @Override

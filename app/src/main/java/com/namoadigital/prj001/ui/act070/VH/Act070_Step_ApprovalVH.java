@@ -29,12 +29,18 @@ public class Act070_Step_ApprovalVH extends Act070_Step_Abstract_ProcessVH {
     private View vDivider;
     private ImageView ivProcessAction;
     private TextView tvProcessAction;
+    private ConstraintLayout clRejectionBackground;
+    private View vRejectionDivider;
+    private ImageView ivRejection;
+    private TextView tvRejection;
+    private String  transReviewRejection;
     private Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick;
 
 
-    public Act070_Step_ApprovalVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick, String transStartProcess, String transReviewProcess) {
+    public Act070_Step_ApprovalVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick, String transStartProcess, String transReviewProcess,String transReviewRejection) {
         super(context,itemView,transStartProcess,transReviewProcess);
         this.onApprovalClick = onApprovalClick;
+        this.transReviewRejection = transReviewRejection;
         bindViews();
     }
 
@@ -54,11 +60,25 @@ public class Act070_Step_ApprovalVH extends Act070_Step_Abstract_ProcessVH {
         vDivider =  this.itemView.findViewById(R.id.step_approval_v_divider);
         ivProcessAction =  this.itemView.findViewById(R.id.step_approval_iv_process_action);
         tvProcessAction =  this.itemView.findViewById(R.id.step_approval_tv_process_action);
+        clRejectionBackground = this.itemView.findViewById(R.id.step_approval_cl_rejection_background);
+        vRejectionDivider =  this.itemView.findViewById(R.id.step_approval_v_rejection_divider);
+        ivRejection =  this.itemView.findViewById(R.id.step_approval_iv_rejection);
+        tvRejection =  this.itemView.findViewById(R.id.step_approval_tv_rejection);
+        //
         clBackground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(onApprovalClick != null){
                     onApprovalClick.onApprovalClick(getAdapterPosition());
+                }
+            }
+        });
+        //
+        clRejectionBackground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(onApprovalClick != null){
+                    onApprovalClick.onShowRejectionClick(getAdapterPosition());
                 }
             }
         });
@@ -124,6 +144,15 @@ public class Act070_Step_ApprovalVH extends Act070_Step_Abstract_ProcessVH {
             stepApproval.isCurrentStep(),
             stepApproval.isStepAlreadyCheckedIn()
         );
+        //
+        showRejectedAction(stepApproval.hasRejection());
+    }
+
+    private void showRejectedAction(boolean hasRejection) {
+        if(hasRejection){
+            clRejectionBackground.setVisibility(View.VISIBLE);
+            tvRejection.setText(transReviewRejection);
+        }
     }
 
     private void resetVisibility() {
@@ -138,5 +167,6 @@ public class Act070_Step_ApprovalVH extends Act070_Step_Abstract_ProcessVH {
         tvPartner.setVisibility(View.GONE);
         ivProcessAction.setVisibility(View.GONE);
         tvProcessAction.setVisibility(View.GONE);
+        clRejectionBackground.setVisibility(View.GONE);
     }
 }

@@ -82,7 +82,7 @@ public class StepApproval extends StepAbstractProcess {
         return stepDescription;
     }
 
-    public boolean isHasRejection() {
+    public boolean hasRejection() {
         return hasRejection;
     }
 
