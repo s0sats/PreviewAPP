@@ -244,7 +244,7 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
     public void callAct070(Bundle bundle) {
         Intent intent = new Intent(context, Act070_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingAct);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT076);
         if (mketFilter.getText().toString().isEmpty()) {
             bundle.putString(ConstantBaseApp.FILTER_TEXT,mketFilter.getText().toString());
         }
