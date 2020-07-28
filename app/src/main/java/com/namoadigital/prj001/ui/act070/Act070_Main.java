@@ -6,45 +6,27 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.Group;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.Switch;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
-import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
-import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act070_Steps_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
@@ -58,8 +40,9 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
+import com.namoadigital.prj001.ui.act070.VH.Act070_Step_MainVH;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
-import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
+import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -67,7 +50,6 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentInteractionListener {
@@ -77,43 +59,16 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private Act070_Main_Presenter mPresenter;
-    private ScrollView svMain;
-    private TextView tvTicketId;
-    private TextView tvStatus;
-    private TextView tvTypePath;
-    private TextView tvTypeDesc;
-    private TextView tvOpenComment;
-    private TextView tvOpenDate;
-    private TextView tvOpenDate_val;
-    private TextView tvForecastDate;
-    private TextView tvForecastDate_val;
-    private TextView tvProduct;
-    private TextView tvSerial;
-    private ImageView ivInnerComment;
-    private ImageView ivOpenPhoto;
-    private Button btnCheckIn;
-    private ConstraintLayout clCheckinInfo;
-    private TextView tvCheckinInfoLbl;
-    private TextView tvCheckinInfoVal;
-    private TextView tvDoneInfoLbl;
-    private TextView tvDoneInfoVal;
-    private Group grDone;
-    private TextView tvFilterLbl;
-    private Switch swFilter;
-    private Group grFilter;
-    private LinearLayout llActions;
     private Bundle requestingBundle;
     private int mTkPrefix;
     private int mTkCode;
     private TK_Ticket mTicket;
     private String requestingAct;
     private String wsProcess = "";
-    private ArrayList<TK_Ticket_Ctrl_Super> actionList = new ArrayList<>();
     private boolean bReadOnly = false;
     private String room_code;
     private FCMReceiver fcmReceiver;
-    private View.OnClickListener photoListener;
-    private Button btnCheckinCancel;
+    private int currentStepFirstPosition = -1;
 
     /**
      * Iniciando terraplanagem e reinicio da tela.
@@ -228,8 +183,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         if (mPresenter.validateBundleParams(mTkPrefix, mTkCode)) {
             updateTicketData();
-            //POR HORA FICA FORA
-            mPresenter.getStepsList(mTicket);
         } else {
             paramErrorFlow();
         }
@@ -260,28 +213,16 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void syncPipeline() {
-        /**
-         *
-         * CHAMAR SINCRONISMOS DA PORRA DO TICKET
-         *
-         *
-         */
+        mPresenter.prepareSyncProcess(mTicket);
     }
 
     private void refreshUi() {
-        resetActionList();
-        //
         updateTicketData();
     }
 
     @Override
     public void callRefreshUi() {
         refreshUi();
-    }
-
-    private void resetActionList() {
-        llActions.removeAllViews();
-        actionList = new ArrayList<>();
     }
 
     @Override
@@ -307,47 +248,51 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     private void bindViews() {
-        svMain = findViewById(R.id.act070_sv_main);
-        tvTicketId = findViewById(R.id.act070_tv_ticket_id);
-        tvStatus = findViewById(R.id.act070_tv_status);
-        tvTypePath = findViewById(R.id.act070_tv_type_path);
-        tvTypeDesc = findViewById(R.id.act070_tv_type_desc);
-        tvOpenComment = findViewById(R.id.act070_tv_open_comment);
-        tvOpenDate = findViewById(R.id.act070_tv_open_date);
-        tvOpenDate_val = findViewById(R.id.act070_tv_open_date_val);
-        tvForecastDate = findViewById(R.id.act070_tv_forecast_date);
-        tvForecastDate_val = findViewById(R.id.act070_tv_forecast_date_val);
-        tvProduct = findViewById(R.id.act070_tv_product);
-        tvSerial = findViewById(R.id.act070_tv_serial);
-        ivInnerComment = findViewById(R.id.act070_iv_inner_comment);
-        ivOpenPhoto = findViewById(R.id.act070_iv_open_photo);
-        btnCheckIn = findViewById(R.id.act070_btn_check_in);
-        clCheckinInfo = findViewById(R.id.act070_cl_checkin_info);
-        btnCheckinCancel = findViewById(R.id.act070_btn_checkin_cancel);
-        tvCheckinInfoLbl = findViewById(R.id.act070_tv_checkin_info_lbl);
-        tvCheckinInfoVal = findViewById(R.id.act070_tv_checkin_info_val);
-        tvDoneInfoLbl = findViewById(R.id.act070_tv_done_info_lbl);
-        tvDoneInfoVal = findViewById(R.id.act070_tv_done_info_val);
-        grDone = findViewById(R.id.act070_gr_done);
-        tvFilterLbl = findViewById(R.id.act070_tv_filter_lbl);
-        swFilter = findViewById(R.id.act070_sw_filter);
-        grFilter = findViewById(R.id.act070_gr_filter);
-        llActions = findViewById(R.id.act070_ll_actions);
+        rvTicketPipeline = findViewById(R.id.act070_rv_pipeline);
         //
         setTranslation();
-        /**
-         * LUCHE - 13/07/2020 - PIPELINE
-         */
-        rvTicketPipeline = findViewById(R.id.act070_rv_pipeline);
     }
 
     private void initRecycle() {
         rvTicketPipeline.setLayoutManager(new LinearLayoutManager(context));
         rvTicketPipeline.setAdapter(mAdapter);
+        rvTicketPipeline.postDelayed(
+            new Runnable() {
+                @Override
+                public void run() {
+                    openCurrentSteps();
+                    moveToCurrentStep(currentStepFirstPosition);
+                }
+            },100
+        );
+        //
+        /*moveToCurrentStep(currentStepFirstPosition);
+        openCurrentSteps();*/
+    }
+
+    private void openCurrentSteps() {
+        try {
+            for (int i = 0; i < sources.size(); i++) {
+                if(sources.get(i) instanceof StepMain && ((StepMain) sources.get(i)).isCurrentStep()){
+                    Act070_Step_MainVH stepMainVH = (Act070_Step_MainVH) rvTicketPipeline.findViewHolderForAdapterPosition(i);
+                    if (stepMainVH != null) {
+                        stepMainVH.itemView.performClick();
+                        //Thread.sleep(200);
+                    }
+                }
+            }
+        }catch (Exception e){
+            ToolBox.toastMSG(context, e.getMessage());
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //openCurrentSteps();
     }
 
     private void iniAdapter() {
-        //generateFakePipeline();
         //
         mAdapter = new Act070_Steps_Adapter(
             context,
@@ -355,99 +300,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             new Act070_Steps_Adapter.OnMainClickListener() {
                 @Override
                 public void onMainClick(boolean isShown, int mainPosition) {
-//                    int targetPosition = mainPosition + 1;
-//                    //Atualiza status do isStepOpen no obj da lista.
-//                    try {
-//                        ((StepMain) sources.get(mainPosition)).setStepOpen(!isShown);
-//                    } catch (Exception e) {
-//                        ToolBox_Inf.registerException(getClass().getName(), e);
-//                    }
-//                    if (isShown) {
-//                        sources.remove(
-//                            targetPosition + 2
-//                        );
-//                        sources.remove(
-//                            targetPosition + 1
-//                        );
-//                        sources.remove(
-//                            targetPosition
-//                        );
-//                        //mAdapter.notifyItemRemoved(targetPosition);
-//                        mAdapter.notifyItemRangeRemoved(targetPosition, 3);
-//                    } else {
-//                        String processStatus = "PENDING";
-//                        String stepType = "ONE_TOUCH";
-//                        boolean currentStep = false;
-//                        try {
-//                            StepMain stepMain = (StepMain) sources.get(mainPosition);
-//                            processStatus = stepMain.getStepStatus();
-//                            currentStep = stepMain.isCurrentStep();
-//                            stepType = stepMain.getStepType();
-//                        } catch (Exception e) {
-//                            processStatus = "PENDING";
-//                        }
-//
-//                        sources.add(
-//                            targetPosition,
-//                            new StepAction(
-//                                "Ação - Limpeza de banheiro",
-//                                "btt4",
-//                                "WBTT20200713001",
-//                                "Viernheim",
-//                                "2020-07-06 08:00:00 -03:00",
-//                                "2020-07-08 20:00:00 -03:00",
-//                                "luche",
-//                                "",
-//                                stepType,
-//                                processStatus,
-//                                currentStep
-//                            )
-//                        );
-//                        sources.add(
-//                            targetPosition + 1,
-//                            new StepChecklist(
-//                                "Checklist 3.0 - Insp.Bugs",
-//                                "btt4",
-//                                "WBTT20200713001",
-//                                "Valhalla",
-//                                "2020-07-06 08:00:00 -03:00",
-//                                "2999-12-31 23:59:00 -03:00",
-//                                "Luche",
-//                                "22 - Namoa",
-//                                stepType,
-//                                processStatus,
-//                                currentStep
-//                            )
-//                            //full desc
-//                            /*"Checklist 3.0 - Insp.Bugs",
-//                                "btt4",
-//                                "WBTT20200713001",
-//                                "FakeVierhiem",
-//                                "06/07/2020 08:00",
-//                                "31/12/2999 23:59",
-//                                "Luche",
-//                                "22 - Namoa",
-//                                "PENDING",
-//                                false*/
-//                        );
-//                        sources.add(
-//                            targetPosition + 2,
-//                            new StepApproval(
-//                                "Trabalhos realizados conforme às normas ?",
-//                                "aprovado",
-//                                "Comentario",
-//                                "2020-07-16 08:00:00 -03:00",
-//                                "2020-07-17 14:00:00 -03:00",
-//                                "Luche",
-//                                "22 - Namoa",
-//                                stepType,
-//                                processStatus,
-//                                currentStep
-//                            )
-//                        );
-//                        //mAdapter.notifyItemInserted(targetPosition);
-//                        mAdapter.notifyItemRangeInserted(targetPosition, 3);
-//                    }
                     mPresenter.updateStepOpenStates(sources, mainPosition, isShown);
                     if (isShown) {
                         mPresenter.removeStepCtrlsContent(sources, mainPosition);
@@ -504,7 +356,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     );
                 }
             }
-    );
+        );
         //
         initRecycle();
     }
@@ -531,113 +383,31 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
     //endregion
 
-    private void generateFakePipeline() {
-
-        /*for(int i = 0; i <= 100;i++){
-            StepMain stepMain = new StepMain(
-                i + " .Planejamento",
-                String.valueOf(i),
-                "2020-07-06 08:00:00 -03:00",
-                "2020-12-31 23:59:59 -03:00",
-                "2020-07-08 10:00:59 -03:00",
-                "2020-07-10 23:59:59 -03:00",
-                i == 0 ? "DONE" : "PENDING",
-                 i == 1 ? true :false);
-
-            sources.add(stepMain);
-        }
-
-        StepMain stepMain = new StepMain(
-            1,
-            "1.Planejamento",
-            "1",
-            "2020-07-06 08:00:00 -03:00",
-            "2020-12-31 23:59:59 -03:00",
-            "2020-07-08 10:00:59 -03:00",
-            "2020-07-10 23:59:59 -03:00",
-            ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH,
-            "DONE",
-            false);
-        StepMain stepMain2 = new StepMain(
-            2,
-            "2.Retirada de peças",
-            "2",
-            "2020-07-06 08:00:00 -03:00",
-            "2020-12-31 23:59:59 -03:00",
-            "2020-07-11 10:00:59 -03:00",
-            "",
-            ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END,
-            "PROCESS",
-            true);
-
-        StepMain stepMain5 = new StepMain(
-            3,
-            "2.1 Retirada de peças",
-            "2.1",
-            "2020-07-06 08:00:00 -03:00",
-            "2020-12-31 23:59:59 -03:00",
-            "2020-07-11 10:00:59 -03:00",
-            "",
-            ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END,
-            "PENDING",
-            true);
-        StepMain stepMain3 = new StepMain(
-            4,
-            "3.1 Atendimento",
-            "3.1",
-            "2020-07-06 08:00:00 -03:00",
-            "2020-12-31 23:59:59 -03:00",
-            "",
-            "",
-            ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH,
-            "PENDING",
-            false);
-
-        StepMain stepMain4 = new StepMain(
-            5,
-            "3.2 Conferencia",
-            "3.2",
-            "2020-07-06 08:00:00 -03:00",
-            "2020-12-31 23:59:59 -03:00",
-            "",
-            "",
-            ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH,
-            "PENDING",
-            false);
-        StepFooter stepFooter = new StepFooter(
-            "31/12/2199 23:59"
-        );
-        sources.add(stepMain);
-        sources.add(stepMain2);
-        sources.add(stepMain3);
-        sources.add(stepMain4);
-        sources.add(stepFooter);
-        */
-
-    }
-
     private void setTranslation() {
-        tvOpenDate.setText(hmAux_Trans.get("open_date_lbl"));
-        tvForecastDate.setText(hmAux_Trans.get("forecast_date_lbl"));
-        btnCheckIn.setText(hmAux_Trans.get("btn_checkin"));
-        tvCheckinInfoLbl.setText(hmAux_Trans.get("checkin_info_lbl"));
-        tvDoneInfoLbl.setText(hmAux_Trans.get("done_info_lbl"));
-        tvFilterLbl.setText(hmAux_Trans.get("filter_lbl"));
     }
 
     private void updateTicketData() {
         mTicket = mPresenter.getTicketObj(mTkPrefix, mTkCode);
         //
-        //
-        iniHeaderFrag();
-        /*if (mTicket != null) {
+        if (mTicket != null) {
+            iniHeaderFrag();
+            mPresenter.getStepsList(mTicket);
             setReadOnly();
             initFCMReceiver();
-            setDataToViews();
             checkSyncNeeds();
         } else {
             paramErrorFlow();
-        }*/
+        }
+    }
+
+    @Override
+    public int getCurrentStepFirstPosition() {
+        return currentStepFirstPosition;
+    }
+
+    @Override
+    public void setCurrentStepFirstPosition(int currentStepFirstPosition) {
+        this.currentStepFirstPosition = currentStepFirstPosition;
     }
 
     private void checkSyncNeeds() {
@@ -650,7 +420,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public void updateSyncRequiredByFCM() {
         mTicket.setSync_required(1);
         //
-        setTicketSync();
+        //setTicketSync();
+        //REPORTAR PARA FRG HEADER
     }
 
     private void initFCMReceiver() {
@@ -672,209 +443,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     private void setReadOnly() {
         bReadOnly = mPresenter.getReadOnlyDefinition(mTicket);
-    }
-
-    private void setDataToViews() {
-        tvTicketId.setText(mTicket.getTicket_id());
-        setTicketSync();
-        //
-        tvStatus.setText(hmAux_Trans.get(mTicket.getTicket_status()));
-        tvStatus.setTextColor(ToolBox_Inf.getStatusColorV2(context, mTicket.getTicket_status()));
-        //
-        tvTypePath.setText(mTicket.getType_path());
-        tvTypeDesc.setText(mTicket.getType_desc());
-        defineOpenComment();
-        tvOpenDate_val.setText(
-                ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(mTicket.getOpen_date()),
-                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                )
-        );
-        defineForecastDate();
-
-        //
-        tvProduct.setText(mTicket.getOpen_product_desc());
-        tvSerial.setText(mTicket.getOpen_serial_id());
-        defineInnerCommentIcon();
-        defineOpenPhotoImage();
-        configCheckinInfos();
-        configDoneInfo();
-        defineFilterVisility();
-        loadActionList();
-    }
-
-    private void defineForecastDate() {
-        if(mTicket.getForecast_date() != null){
-            tvForecastDate_val.setVisibility(View.VISIBLE);
-            tvForecastDate_val.setText(
-                ToolBox_Inf.millisecondsToString(
-                    ToolBox_Inf.dateToMilliseconds( mTicket.getForecast_date()),
-                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                )
-            );
-        }else{
-            tvForecastDate_val.setVisibility(View.GONE);
-        }
-
-    }
-
-    private void defineOpenComment() {
-        if (mTicket.getOpen_comments() != null && !mTicket.getOpen_comments().isEmpty()) {
-            tvOpenComment.setVisibility(View.VISIBLE);
-            tvOpenComment.setText(mTicket.getOpen_comments());
-        } else {
-            tvOpenComment.setVisibility(View.GONE);
-        }
-
-    }
-
-    private void setTicketSync() {
-        if (mTicket != null) {
-            Drawable rightDraw = null;
-            Drawable background = getResources().getDrawable(R.drawable.stroke_blue2_states);
-            if (mTicket.getUpdate_required() == 1
-                    || mTicket.getSync_required() == 1
-                    || mPresenter.isTicketInTokenFile(mTicket.getTicket_prefix(), mTicket.getTicket_code())
-            ) {
-                rightDraw = getResources().getDrawable(R.drawable.ic_sync_black_24dp);
-                rightDraw.setColorFilter(getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
-                background = getResources().getDrawable(R.drawable.stroke_yellow_states);
-            }
-            tvTicketId.setCompoundDrawablesWithIntrinsicBounds(null, null, rightDraw, null);
-            tvTicketId.setBackground(background);
-        }
-    }
-
-
-    private void loadActionList() {
-        actionList = mPresenter.generateCtrlActions(
-                mTicket,
-                llActions,
-                swFilter.isChecked()
-        );
-    }
-
-    private void defineFilterVisility() {
-        if ( mPresenter.isReadOnlyStatus(mTicket.getTicket_status())
-                || mPresenter.checkFilterDisable(mTicket.getCtrl()))
-        {
-            swFilter.setChecked(false);
-            grFilter.setVisibility(View.GONE);
-        } else {
-            grFilter.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void configDoneInfo() {
-        if (mPresenter.isReadOnlyStatus(mTicket.getTicket_status())
-                && mTicket.getClose_date() != null && mTicket.getClose_user() != null) {
-            grDone.setVisibility(View.VISIBLE);
-            tvDoneInfoVal.setText(mPresenter.getFormattedDoneInfo(mTicket.getClose_date(), mTicket.getClose_user_name()));
-        } else {
-            grDone.setVisibility(View.GONE);
-        }
-    }
-
-    private void configCheckinInfos() {
-        if (mTicket.getCheckin_date() != null && mTicket.getCheckin_user() != null) {
-            btnCheckIn.setVisibility(View.GONE);
-            clCheckinInfo.setVisibility(View.VISIBLE);
-            tvCheckinInfoVal.setText(mPresenter.getFormattedCheckinInfo(mTicket.getCheckin_date(), mTicket.getCheckin_user_name()));
-        } else {
-            btnCheckIn.setVisibility(bReadOnly ? View.GONE : View.VISIBLE);
-            clCheckinInfo.setVisibility(View.GONE);
-        }
-        //
-        if (mPresenter.hideCancelCheckin(mTicket)) {
-            btnCheckinCancel.setVisibility(View.GONE);
-        } else {
-            btnCheckinCancel.setVisibility(View.VISIBLE);
-            btnCheckinCancel.setText(hmAux_Trans.get("btn_check_in_cancel"));
-        }
-    }
-
-    private void defineOpenPhotoImage() {
-        //Se status do ticket diferente de pending, reduz o tamanho da imagem
-        if (!ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(mTicket.getTicket_status())) {
-            ViewGroup.LayoutParams layoutParams = ivOpenPhoto.getLayoutParams();
-            //
-            layoutParams.width = 250;
-            layoutParams.height = 250;
-            //
-            ivOpenPhoto.setLayoutParams(layoutParams);
-        } else {
-            ViewGroup.LayoutParams layoutParams = ivOpenPhoto.getLayoutParams();
-            //
-            int[] percentMetrics = ToolBox_Inf.getPercentageWidthAndHeight(context, 0.8, 0.3);
-            layoutParams.width = percentMetrics[0];
-            layoutParams.height = percentMetrics[1];
-            //
-            ivOpenPhoto.setLayoutParams(layoutParams);
-        }
-        //
-        if (mTicket.getOpen_photo() == null && mTicket.getOpen_photo_local() == null) {
-            ivOpenPhoto.setVisibility(View.GONE);
-        } else {
-            String load = ConstantBaseApp.CACHE_PATH_PHOTO + "/" + mTicket.getOpen_photo_local();
-            if (mTicket.getOpen_photo_local() == null) {
-                load = mTicket.getOpen_photo();
-            }
-            final String finalLoad = load;
-            Glide.with(context)
-                .load(load)
-                .placeholder(R.drawable.sand_watch_transp)
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        //Define listener
-                        definePhotoListener(ToolBox_Inf.isImageUnder4kLimit(finalLoad));
-                        ivOpenPhoto.setOnClickListener(photoListener);
-                        return false;
-                    }
-                })
-                .into(ivOpenPhoto);
-            //Define listener
-            //definePhotoListener(ToolBox_Inf.isImageUnder4kLimit(load));
-        }
-    }
-
-    /**
-     * Define listener do click na foto
-     * TRATATIVA PARA IMAGENS MUITO GRANDES, TIPO 8
-     * @param isImageUnder4k
-     */
-    private void definePhotoListener(boolean isImageUnder4k) {
-        if (isImageUnder4k) {
-            photoListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    callCameraAct();
-                }
-            };
-        }else{
-            photoListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showAlert(
-                        hmAux_Trans.get("alert_image_too_large_to_open_ttl"),
-                        hmAux_Trans.get("alert_image_too_large_to_open_msg")
-                    );
-                }
-            };
-        }
-    }
-
-    private void defineInnerCommentIcon() {
-        if (mTicket.getInternal_comments() != null && mTicket.getInternal_comments().trim().length() > 0) {
-            ivInnerComment.setImageDrawable(getResources().getDrawable(R.drawable.ic_user_msg_on));
-        } else {
-            ivInnerComment.setImageDrawable(getResources().getDrawable(R.drawable.ic_user_msg_off));
-        }
     }
 
     private void paramErrorFlow() {
@@ -913,7 +481,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         );
     }
 
-    private void showAlert(String ttl, String msg, DialogInterface.OnClickListener listenerOk, boolean showNegative) {
+    @Override
+    public void showAlert(String ttl, String msg, DialogInterface.OnClickListener listenerOk, boolean showNegative) {
         ToolBox.alertMSG_YES_NO(
             context,
             ttl,
@@ -921,6 +490,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             listenerOk,
             showNegative ? 1 : 0
         );
+    }
+
+    @Override
+    public String getRequestingAct() {
+        return requestingAct;
     }
 
     @Override
@@ -1015,173 +589,45 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         ToolBox_Inf.buildFooterDialog(context);
     }
 
-    private void initAction() {
-        tvTicketId.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ToolBox.alertMSG_YES_NO(
-                    context,
-                    hmAux_Trans.get("alert_sync_data_ttl"),
-                    hmAux_Trans.get("alert_sync_data_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mPresenter.prepareSyncProcess(mTicket);
-                        }
-                    },
-                    1
-                );
-            }
-        });
-        //
-        ivInnerComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mTicket.getInternal_comments() != null && mTicket.getInternal_comments().trim().length() > 0) {
-                    showInnerCommetDialog();
-                }
-            }
-        });
-        //
-        ivOpenPhoto.setOnClickListener(photoListener);
-        //
-        swFilter.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                applyActionFilter(isChecked);
-            }
-        });
-        //
-        btnCheckinCancel.setOnClickListener(
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!mPresenter.hideCancelCheckin(mTicket)) {
-                        showAlert(
-                            hmAux_Trans.get("alert_cancel_checkin_ttl"),
-                            hmAux_Trans.get("alert_cancel_checkin_confirm"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mPresenter.executeCheckin(mTicket, false);
-                                }
-                            },
-                            true
-                        );
+    private void initAction() {}
+
+    private void moveToCurrentStep(final int position) {
+        if(position > -1) {
+            //Faz scroll para o fim do scroll
+            new Handler().postDelayed(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        smoothMoveToItemAndScrollItToTop(position);
                     }
-                }
-            }
-        );
-        //
-        btnCheckIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!bReadOnly) {
-                    showAlert(
-                        hmAux_Trans.get("alert_start_checkin_ttl"),
-                        hmAux_Trans.get("alert_start_checkin_confirm"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //Seta dados do checkin
-                                setCheckinToObj();
-                                //Tenta update no banco, se ok, vai pra WS, se não limpa os dados do checkin
-                                if (mPresenter.setCheckInData(mTicket)) {
-                                    mPresenter.executeCheckin(mTicket, true);
-                                } else {
-                                    resetCheckinInObj();
-                                    //
-                                    showAlert(
-                                        hmAux_Trans.get("alert_error_on_checkin_ttl"),
-                                        hmAux_Trans.get("alert_error_on_checkin_msg")
-                                    );
-                                }
-                            }
-                        },
-                        true
-                    );
-
-                }
-            }
-        });
-
-    }
-
-    private void resetCheckinInObj() {
-        mTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PENDING);
-        mTicket.setUpdate_required(0);
-        mTicket.setCheckin_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
-        mTicket.setCheckin_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
-        mTicket.setCheckin_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-    }
-
-    private void setCheckinToObj() {
-        mTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
-        mTicket.setUpdate_required(1);
-        mTicket.setCheckin_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
-        mTicket.setCheckin_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
-        mTicket.setCheckin_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-    }
-
-    private void applyActionFilter(boolean isChecked) {
-        for (TK_Ticket_Ctrl_Super ctrlSuper : actionList) {
-            //
-            ctrlSuper.setVisible(isChecked);
-            if (isChecked) {
-                ctrlSuper.applyFilterVisibility();
-            } else {
-                ctrlSuper.setVisible(true);
-            }
+                }, 400
+            );
         }
-        //Faz scroll para o fim do scroll
-        new Handler().postDelayed(
-            new Runnable() {
-                @Override
-                public void run() {
-                    svMain.fullScroll(View.FOCUS_DOWN);
-                }
-            }, 100
-        );
     }
 
-    private void callCameraAct() {
-        File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + mTicket.getOpen_photo_local());
-        if (!sFile.exists()) {
-            return;
+    /**
+     * LUCHE - 28/07/2020
+     * Como as tentativas de smoothScroll do recycle e scrollToPositionWithOffset falharam, ja que
+     * uma,smoothScroll, naõ rodava item pra primeiro na lista e a outra,scrollToPositionWithOffset,
+     * setava no topo, mas abruptamente, foi necessario criar esse semi-demonio
+     * @param position
+     */
+    private void smoothMoveToItemAndScrollItToTop(int position) {
+        //Gera smooth scroller
+        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(context) {
+            @Override protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+        };
+        //seta a posição
+        smoothScroller.setTargetPosition(position);
+        //Seta smooth scroller no layoutmaager do recycle o.O
+        try {
+            ((LinearLayoutManager) rvTicketPipeline.getLayoutManager()).startSmoothScroll(smoothScroller);
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        //
-        Bundle bundle = new Bundle();
-        bundle.putInt(ConstantBase.PID, ivOpenPhoto.getId());
-        bundle.putInt(ConstantBase.PTYPE, 1);
-        bundle.putString(ConstantBase.PPATH, mTicket.getOpen_photo_local());
-        bundle.putBoolean(ConstantBase.PEDIT, false);
-        bundle.putBoolean(ConstantBase.PENABLED, false);
-        bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
-        bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false);
-        //
-        Intent mIntent = new Intent(context, Camera_Activity.class);
-        mIntent.putExtras(bundle);
-        //
-        context.startActivity(mIntent);
     }
-
-    private void showInnerCommetDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, com.namoa_digital.namoa_library.R.style.AlertDialogTheme);
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View cView = (View) layoutInflater.inflate(com.namoa_digital.namoa_library.R.layout.dots_dialog_comments, null);
-        final EditText etComments = cView.findViewById(com.namoa_digital.namoa_library.R.id.dots_dialog_comments_tv_comments);
-        etComments.setText(mTicket.getInternal_comments());
-        etComments.setEnabled(false);
-        etComments.setFocusable(false);
-        builder
-            .setTitle(hmAux_Trans.get("inner_comment_lbl"))
-            .setView(cView)
-            .setCancelable(false)
-            .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), null);
-        //
-        builder.create().show();
-    }
-
 
     @Override
     public void showResult(ArrayList<HMAux> resultList, boolean ticketResult) {

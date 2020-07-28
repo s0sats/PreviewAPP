@@ -198,6 +198,11 @@ public class WS_TK_Ticket_Download extends IntentService {
             pkAux.setCustomer_code(pk[0]);
             pkAux.setTicket_prefix(pk[1]);
             pkAux.setTicket_code(pk[2]);
+            if(pk.length >= 4 ) {
+                pkAux.setScn(pk[3]);
+            }else{
+                pkAux.setScn("0");
+            }
             //
             objPkList.add(pkAux);
         }
