@@ -5,6 +5,8 @@ import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
+import static com.namoadigital.prj001.dao.TK_Ticket_StepDao.STEP_QTY;
+
 public class Sql_Act069_004 implements Specification {
     private long customer_code;
     private String site_logged;
@@ -41,9 +43,9 @@ public class Sql_Act069_004 implements Specification {
                         "       s.step_desc,\n" +
                         "       s.step_order,\n" +
                         "       s.step_order_seq,\n" +
-                        "       s.step_desc,\n" +
-                        "       s.forecast_start,\n" +
-                        "       s.forecast_end\n" +
+                        "       min(s.forecast_start) forecast_start,\n" +
+                        "       max(s.forecast_end) forecast_end,\n" +
+                        "        count(s.step_code) " + STEP_QTY + "\n"+
                         " FROM\n" +
                         "     " + TK_TicketDao.TABLE + " t \n" +
                         " LEFT JOIN\n" +
@@ -53,12 +55,18 @@ public class Sql_Act069_004 implements Specification {
                         " WHERE\n" +
                         " t.customer_code = '" + customer_code + "'\n" +
                         " and s.step_status != '" + ConstantBaseApp.SYS_STATUS_DONE + "'  \n" +
+                        " and t.ticket_status in ('" + ConstantBaseApp.SYS_STATUS_PENDING + "' , '" +
+                                                       ConstantBaseApp.SYS_STATUS_PROCESS + "' , '" +
+                                                       ConstantBaseApp.SYS_STATUS_WAITING_SYNC +
+                        "')  \n" +
+                        "and t.current_step_order = s.step_order"+
                         " GROUP BY\n" +
                         "  T.customer_code,\n" +
                         "  t.ticket_prefix,\n" +
                         "  t.ticket_code \n" +
                         " ORDER BY \n" +
-                        "  t.forecast_date desc,\n" +
+                        "  t.user_focus desc,\n" +
+                        "  t.forecast_date asc,\n" +
                         "  t.ticket_prefix,\n" +
                         "  t.ticket_code\n"
                 )

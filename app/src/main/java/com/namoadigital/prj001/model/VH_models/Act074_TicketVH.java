@@ -23,6 +23,7 @@ public class Act074_TicketVH {
     private String ticket_forecast_end_date;
     private String ticket_step_id;
     private String ticket_current_step_order;
+    private int ticket_step_qty;
     //Add atribuots do agendamento - Ainda faz sentido?
     private String schedulePk;
     @Nullable
@@ -39,7 +40,7 @@ public class Act074_TicketVH {
     private String schedule_erro_msg;
 
 
-    public Act074_TicketVH(int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_start_date, String ticket_forecast_end_date, String ticket_step_id, String ticket_current_step_order, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg) {
+    public Act074_TicketVH(int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_start_date, String ticket_forecast_end_date, String ticket_step_id, String ticket_current_step_order, int ticket_step_qty, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg) {
         this.ticket_prefix = ticket_prefix;
         this.ticket_code = ticket_code;
         this.ticket_id = ticket_id;
@@ -53,6 +54,7 @@ public class Act074_TicketVH {
         this.ticket_forecast_end_date = ticket_forecast_end_date;
         this.ticket_step_id = ticket_step_id;
         this.ticket_current_step_order = ticket_current_step_order;
+        this.ticket_step_qty = ticket_step_qty;
         this.schedulePk = schedulePk;
         this.schedule_prefix = schedule_prefix;
         this.schedule_code = schedule_code;
@@ -78,6 +80,7 @@ public class Act074_TicketVH {
                         hmAux.get(TK_Ticket_StepDao.FORECAST_END),
                         hmAux.get(TK_Ticket_StepDao.STEP_ID),
                         hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER),
+                ToolBox_Inf.convertStringToInt(hmAux.get(TK_Ticket_StepDao.STEP_QTY)),
                         " ",
                        0,
                         0,
@@ -190,6 +193,14 @@ public class Act074_TicketVH {
 
     public void setTicket_current_step_order(String ticket_current_step_order) {
         this.ticket_current_step_order = ticket_current_step_order;
+    }
+
+    public int getTicket_step_qty() {
+        return ticket_step_qty;
+    }
+
+    public void setTicket_step_qty(int ticket_step_qty) {
+        this.ticket_step_qty = ticket_step_qty;
     }
 
     public String getSchedulePk() {

@@ -54,6 +54,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
         transList.add("open_date_lbl");
         transList.add("forecast_date_lbl");
         transList.add("site_lbl");
+        transList.add("other_steps_available_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -140,12 +141,6 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
                     }
                 }
             });
-            //
-            setLabels();
-        }
-
-        private void setLabels() {
-            tv_step_desc.setText(hmAux_Trans.get("other_steps_available_lbl"));
         }
 
         public void bindData(Act074_TicketVH item) {
@@ -158,7 +153,11 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             setVisibilityByContent(tv_status, item.getTicket_status());
             setVisibilityByContent(tv_ticket_id, item.getTicket_id());
             setVisibilityByContent(tv_step_id, item.getTicket_current_step_order());
-            setVisibilityByContent(tv_step_desc, item.getTicket_step_desc());
+            if(item.getTicket_step_qty() <= 1) {
+                setVisibilityByContent(tv_step_desc, item.getTicket_step_desc());
+            }else{
+                setVisibilityByContent(tv_step_desc, hmAux_Trans.get("other_steps_available_lbl"));
+            }
             setVisibilityByContent(tv_prod_desc, item.getTicket_prod_desc());
             setSiteVisibility(tv_site_desc, item.getTicket_site_desc());
             setVisibilityByContent(tv_serial, item.getTicket_serial());

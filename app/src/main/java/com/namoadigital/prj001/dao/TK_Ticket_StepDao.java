@@ -47,6 +47,8 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String STEP_END_USER = "step_end_user";
     public static final String STEP_END_USER_NICK = "step_end_user_nick";
     public static final String STEP_STATUS = "step_status";
+    //UTILIZADO NA CONSULTA DA TELA DE TICKETS PENDENTES
+    public static final String STEP_QTY = "STEP_QTY";
 
     public TK_Ticket_StepDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
