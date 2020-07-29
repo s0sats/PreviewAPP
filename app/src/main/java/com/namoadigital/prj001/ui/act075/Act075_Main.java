@@ -1,10 +1,13 @@
 package com.namoadigital.prj001.ui.act075;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -22,16 +25,18 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act075_Product_List_Adapter;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contract.I_View, Act075_Product_List_Adapter.OnProductInteract, Frg_Pipeline_Header.OnPipelineFragmentInteractionListener {
+public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contract.I_View, Act075_Product_List_Adapter.OnProductInteract {
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private String mResource_CodeFrg = "0";
@@ -331,8 +336,36 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 });
     }
 
-    @Override
-    public void syncPipeline() {
 
+    public void callAct_Product_Selection(Context context) {
+        Intent mIntent = new Intent(context, Act_Product_Selection.class);
+        //
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        startActivityForResult(mIntent, 20);
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode) {
+            case 20:
+                processResult(resultCode, data);
+                break;
+            default:
+                break;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void processResult(int resultCode, Intent data) {
+        if (resultCode == AppCompatActivity.RESULT_OK) {
+            MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
+            //todo add product to adapter
+        } else {
+        }
+    }
+
 }

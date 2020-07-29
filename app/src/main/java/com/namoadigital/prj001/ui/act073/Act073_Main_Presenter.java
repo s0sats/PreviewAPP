@@ -254,7 +254,7 @@ public class Act073_Main_Presenter implements Act073_Main_Contract.I_Presenter {
                     );
                 }
             }else{
-                mView.callAct069();
+                mView.callAct076();
             }
         }else{
             mView.showAlert(
