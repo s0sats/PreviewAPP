@@ -12,14 +12,12 @@ public class TK_Ticket_Step_Sql_001 implements Specification {
     private long customer_code;
     private int ticket_prefix;
     private int ticket_code;
-    private int ticket_seq;
     private int step_code;
 
-    public TK_Ticket_Step_Sql_001(long customer_code, int ticket_prefix, int ticket_code, int ticket_seq, int step_code) {
+    public TK_Ticket_Step_Sql_001(long customer_code, int ticket_prefix, int ticket_code, int step_code) {
         this.customer_code = customer_code;
         this.ticket_prefix = ticket_prefix;
         this.ticket_code = ticket_code;
-        this.ticket_seq = ticket_seq;
         this.step_code = step_code;
     }
 
@@ -35,7 +33,6 @@ public class TK_Ticket_Step_Sql_001 implements Specification {
                     "      s.customer_code = '" + customer_code +"'\n" +
                     "      and s.ticket_prefix = '" + ticket_prefix +"'\n" +
                     "      and s.ticket_code = '" + ticket_code +"'\n"+
-                    "      and s.ticket_seq = '" + ticket_seq +"'\n" +
                     "      and s.step_code = '" + step_code +"'\n"
             )
             .toString();

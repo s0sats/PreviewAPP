@@ -11,6 +11,16 @@
     tools:context=".ui.act071.Act071_Main"
     tools:showIn="@layout/act071_main">
 
+    <FrameLayout
+        android:id="@+id/act071_frg_pipeline_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
     <ScrollView
         android:id="@+id/act071_sv_main"
         android:layout_width="0dp"
@@ -19,7 +29,7 @@
         app:layout_constraintBottom_toTopOf="@id/include"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/act071_frg_pipeline_header">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/act071_cl_main"
@@ -46,121 +56,29 @@
                 app:layout_constraintGuide_end="8dp"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
-            <TextView
-                android:id="@+id/act071_tv_ticket_id"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:textSize="@dimen/font_size_item_md"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/act071_tv_status"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="@id/act071_guide_start"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="2019.999" />
-
-            <TextView
-                android:id="@+id/act071_tv_status"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textSize="@dimen/font_size_title"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/act071_guide_end"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Pending" />
-            <!--Somente Visivel caso agendamento-->
-            <TextView
-                android:id="@+id/act071_tv_serial"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_item_md"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/act071_guide_end"
-                app:layout_constraintStart_toStartOf="@id/act071_guide_start"
-                app:layout_constraintTop_toBottomOf="@id/act071_tv_ticket_id"
-                tools:text="1234"
-                android:visibility="gone"
-                />
-
-            <TextView
-                android:id="@+id/act071_tv_type_path"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textSize="@dimen/font_size_item"
-                app:layout_constraintEnd_toStartOf="@id/act071_guide_end"
-                app:layout_constraintStart_toStartOf="@id/act071_guide_start"
-                app:layout_constraintTop_toBottomOf="@id/act071_tv_serial"
-                tools:text="LIMPEZA\Banheiro Feminino" />
-
-            <TextView
-                android:id="@+id/act071_tv_type_desc"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_item_md"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/act071_guide_end"
-                app:layout_constraintStart_toStartOf="@id/act071_guide_start"
-                app:layout_constraintTop_toBottomOf="@id/act071_tv_type_path"
-                tools:text="Vaso" />
-
-            <TextView
-                android:id="@+id/act071_tv_checkin_needed"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_item_md"
-                app:layout_constraintEnd_toStartOf="@id/act071_guide_end"
-                app:layout_constraintStart_toStartOf="@id/act071_guide_start"
-                app:layout_constraintTop_toBottomOf="@id/act071_tv_type_desc"
-                android:text="Necessario fazer checkin"
-                android:textColor="@color/namoa_color_red"/>
-
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/act071_cl_action"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-
                 android:padding="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/act071_guide_end"
                 app:layout_constraintHeight_percent="0.6"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="@id/act071_guide_start"
-                app:layout_constraintTop_toBottomOf="@id/act071_tv_checkin_needed"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0">
 
                 <TextView
                     android:id="@+id/act071_tv_photo_lbl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     tools:text="Photo"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act071_mket_partner" />
-
-                <TextView
-                    android:id="@+id/act071_tv_seq"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
-                    tools:text="1"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@id/act071_iv_exec"
-                    app:layout_constraintEnd_toStartOf="@id/act071_iv_exec"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/act071_iv_exec" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <!-- A cor do icone é definida via code-->
                 <ImageView
@@ -180,11 +98,12 @@
                     android:id="@+id/act071_tv_done_info_lbl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    tools:text="Done"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act071_til_comment" />
+                    app:layout_constraintTop_toBottomOf="@id/act071_cl_finalize"
+                    tools:text="Done"
+                    android:layout_marginTop="8dp"
+                    />
 
 
                 <TextView
@@ -208,41 +127,51 @@
                     tools:layout_editor_absoluteY="8dp"
                     tools:visibility="visible" />
 
-                <ImageView
-                    android:id="@+id/act071_iv_exec"
-                    android:layout_width="54dp"
-                    android:layout_height="54dp"
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/act071_cl_finalize"
+                    android:layout_width="276dp"
+                    android:layout_height="0dp"
+                    android:minHeight="36dp"
+                    android:background="@drawable/btn_namoa_main_states"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_ok_ns_states" />
-
-                <TextView
-                    android:id="@+id/act071_tv_partner_lbl"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    tools:text="Partner"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act071_iv_exec" />
-
-                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                    android:id="@+id/act071_mket_partner"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/act071_til_comment"
+                    app:layout_constraintHeight_default="spread"
                     android:layout_marginTop="8dp"
-                    tools:text="Parceiro não é companheiro"
-                    android:inputType="text"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act071_tv_partner_lbl"
-                    app:mBARCODE="false"
-                    app:mNFC="false"
-                    app:mOCR="false"
-                    app:mOCRVin="false"
-                    android:enabled="false"/>
+                    >
+
+                    <ImageView
+                        android:id="@+id/act071_iv_finalize_icon"
+                        android:layout_width="@dimen/pipeline_step_icon_width"
+                        android:layout_height="@dimen/pipeline_step_icon_height"
+                        android:src="@drawable/ic_finalizar_white"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/act071_tv_finalize_lbl"
+                        app:layout_constraintHorizontal_chainStyle="packed"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginStart="8dp"
+                        />
+
+                    <TextView
+                        android:id="@+id/act071_tv_finalize_lbl"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:text="FINALIZAR"
+                        android:textColor="@color/padrao_WHITE"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@id/act071_iv_finalize_icon"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        app:layout_constraintWidth_default="wrap"
+                        app:layout_constraintHeight_default="wrap"
+                        />
+
+                </android.support.constraint.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/act071_tv_comment_lbl"
@@ -260,26 +189,25 @@
                     android:id="@+id/act071_til_comment"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="500"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act071_tv_comment_lbl"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="500"
-                    >
+                    app:layout_constraintTop_toBottomOf="@id/act071_tv_comment_lbl">
+
                     <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                         android:id="@+id/act071_mket_comment_val"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        tools:text="Comentario aqui"
                         android:inputType="textMultiLine"
+                        android:maxLength="500"
                         app:mBARCODE="false"
                         app:mNFC="false"
                         app:mOCR="false"
                         app:mOCRVin="false"
-                        android:maxLength="500"
-                        />
+                        tools:text="Comentario aqui" />
                 </android.support.design.widget.TextInputLayout>
 
 

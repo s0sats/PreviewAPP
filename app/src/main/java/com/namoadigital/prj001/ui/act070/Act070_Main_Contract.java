@@ -6,6 +6,8 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
+import com.namoadigital.prj001.ui.act070.model.StepAction;
+import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 
 import java.util.ArrayList;
 
@@ -81,5 +83,9 @@ public interface Act070_Main_Contract {
         void updateStepOpenStates(ArrayList<BaseStep> sources, int mainPosition, boolean isShown);
 
         Bundle getAct071Bundle(TK_Ticket mTicket, int stepCode, int processTkSeq);
+
+        void defineActionFlow(TK_Ticket mTicket, StepAction stepAction);
+
+        void defineProcessBtnFlow(TK_Ticket mTicket, StepProcessBtn stepProcessBtn);
     }
 }

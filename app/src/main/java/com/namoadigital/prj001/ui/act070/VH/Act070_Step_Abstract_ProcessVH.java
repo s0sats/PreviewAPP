@@ -95,7 +95,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
                 drawable =
                     ToolBox_Inf.hasConsistentValueString(startDate)
                         ? context.getDrawable(R.drawable.pipeline_step_highligh_states)
-                        : context.getDrawable(R.drawable.pipeline_step_gray_states);
+                        : context.getDrawable(R.drawable.pipeline_step_no_checkin);
             }else{
                 //Se ONE_TOUCH, fica amarelo.
                 backgroundColor = R.color.namoa_color_ticket_process_highlight;

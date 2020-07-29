@@ -5,9 +5,5 @@
             <solid android:color="@color/namoa_color_gray2"/>
         </shape>
     </item>
-    <item>
-        <shape android:shape="rectangle">
-            <solid android:color="@color/namoa_color_pipeline_cur_step_no_checkin"/>
-        </shape>
-    </item>
+    <item android:drawable="@drawable/pipeline_step_no_checkin"/>
 </selector>

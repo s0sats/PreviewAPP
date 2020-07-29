@@ -44,6 +44,7 @@ import com.namoadigital.prj001.ui.act070.VH.Act070_Step_MainVH;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
+import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -139,6 +140,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("process_check_in_btn");
         transList.add("process_check_out_btn");
         transList.add("please_sync_lbl");
+        transList.add("alert_start_action_ttl");
+        transList.add("alert_start_action_confirm");
+        transList.add("alert_action_access_denied_ttl");
+        transList.add("alert_action_started_in_server_msg");
+        transList.add("alert_step_or_ctrl_not_found_ttl");
+        transList.add("alert_step_or_ctrl_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -180,7 +187,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mTicket.getOpen_product_desc(),
             hmAux_Trans.get(mTicket.getTicket_status()),
             ToolBox_Inf.getStatusColorV2(context,mTicket.getTicket_status()),
-            mTicket.getOrigin_desc(),
+            "\\" + mTicket.getOrigin_desc(),
             hmAux_Trans.get("please_sync_lbl")
         );
         //
@@ -250,11 +257,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void openCurrentSteps() {
         try {
             for (int i = 0; i < sources.size(); i++) {
-                if(sources.get(i) instanceof StepMain && ((StepMain) sources.get(i)).isCurrentStep()){
-                    Act070_Step_MainVH stepMainVH = (Act070_Step_MainVH) rvTicketPipeline.findViewHolderForAdapterPosition(i);
-                    if (stepMainVH != null) {
-                        stepMainVH.itemView.performClick();
-                        //Thread.sleep(200);
+                if(sources.get(i) instanceof StepMain){
+                    if(((StepMain) sources.get(i)).isCurrentStep() && !ConstantBaseApp.SYS_STATUS_DONE.equals(((StepMain) sources.get(i)).getStepStatus())) {
+                        Act070_Step_MainVH stepMainVH = (Act070_Step_MainVH) rvTicketPipeline.findViewHolderForAdapterPosition(i);
+                        if (stepMainVH != null) {
+                            stepMainVH.itemView.performClick();
+                        }
                     }
                 }
             }
@@ -293,9 +301,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 @Override
                 public void onActionClick(int actionPosition) {
                     StepAction stepAction = (StepAction) sources.get(actionPosition);
-                    callAct071(
-                        mPresenter.getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq())
-                    );
+                    mPresenter.defineActionFlow(mTicket,stepAction);
+//                    callAct071(
+//                        mPresenter.getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq())
+//                    );
                 }
             },
             new Act070_Steps_Adapter.OnChecklistClickListener() {
@@ -327,10 +336,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             new Act070_Steps_Adapter.OnProcessBtnClickListener() {
                 @Override
                 public void onProcessBtnClick(int processBtnPosition) {
-                    ToolBox.toastMSG(
-                        context,
-                        "Process Position: " + processBtnPosition
-                    );
+                    StepProcessBtn stepProcessBtn = (StepProcessBtn) sources.get(processBtnPosition);
+                    mPresenter.defineProcessBtnFlow(mTicket,stepProcessBtn);
                 }
             }
         );

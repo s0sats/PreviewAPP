@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.view.frag.frg_pipeline_header;
 
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -264,7 +265,7 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_status.setTextColor(status_color_param);
         tv_desc_origin.setText(desc_origin_param);
         btn_sync_description.setText(btn_sync_description_param);
-        tv_step_main_step_num.setTextColor(step_main_step_num_color_param);
+        tv_step_main_step_num.getBackground().setColorFilter(step_main_step_num_color_param, PorterDuff.Mode.SRC_ATOP);
         tv_step_main_step_num.setText(step_main_step_num_param);
         tv_step_main_desc.setText(step_main_desc_param);
     }
