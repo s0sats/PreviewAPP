@@ -17,6 +17,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act074_Next_Tickets_Adapter;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
@@ -127,7 +128,12 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
                 hmAux_Trans
         );
         //
-        mPresenter.getTicketList();
+        if(ticketProductCode > 0
+         && ticketSerialCode > 0){
+            mPresenter.getTicketListBySerial(ticketProductCode,ticketSerialCode);
+        }else {
+            mPresenter.getTicketList();
+        }
     }
 
     private void recoverIntentsInfo() {
@@ -135,6 +141,8 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
         if(bundle != null) {
             mketFilter.setText(bundle.getString(ConstantBaseApp.FILTER_TEXT,""));
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
+            ticketProductCode = bundle.getLong(TK_TicketDao.OPEN_PRODUCT_CODE, -1);
+            ticketSerialCode = bundle.getLong(TK_TicketDao.OPEN_SERIAL_CODE,-1);
         }else{
             requestingAct = ConstantBaseApp.ACT068;
         }

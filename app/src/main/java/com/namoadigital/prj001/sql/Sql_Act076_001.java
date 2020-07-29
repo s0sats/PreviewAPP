@@ -7,13 +7,26 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 
 import static com.namoadigital.prj001.dao.TK_Ticket_StepDao.STEP_QTY;
 
-public class Sql_Act069_004 implements Specification {
+public class Sql_Act076_001 implements Specification {
     private long customer_code;
+    private long ticketProductCode;
+    private long ticketSerialCode;
     private String site_logged;
+    private String serial_filter;
     //
-    public Sql_Act069_004(long customer_code, String site_logged) {
+    public Sql_Act076_001(long customer_code, String site_logged) {
         this.customer_code = customer_code;
         this.site_logged = site_logged;
+        serial_filter = "";
+    }
+
+    public Sql_Act076_001(long customer_code, String site_logged, long ticketProductCode, long ticketSerialCode) {
+        this.customer_code = customer_code;
+        this.site_logged = site_logged;
+        this.ticketProductCode = ticketProductCode;
+        this.ticketSerialCode = ticketSerialCode;
+        serial_filter = " and t.open_product_code = '" + ticketProductCode + "'\n" +
+                        " and t.open_serial_code = '" + ticketSerialCode + "'\n" ;
     }
 
     @Override
@@ -54,6 +67,7 @@ public class Sql_Act069_004 implements Specification {
                         "       AND t.ticket_prefix = s.ticket_prefix\n" +
                         " WHERE\n" +
                         " t.customer_code = '" + customer_code + "'\n" +
+                        serial_filter +
                         " and s.step_status != '" + ConstantBaseApp.SYS_STATUS_DONE + "'  \n" +
                         " and t.ticket_status in ('" + ConstantBaseApp.SYS_STATUS_PENDING + "' , '" +
                                                        ConstantBaseApp.SYS_STATUS_PROCESS + "' , '" +

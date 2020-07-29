@@ -28,5 +28,7 @@ public interface Act076_Main_Contract {
         void onBackPressedClicked(String requestingAct);
 
         void checkTicketFlow(Act074_TicketVH item);
+
+        void getTicketListBySerial(long ticketProductCode, long ticketSerialCode);
     }
 }
