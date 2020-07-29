@@ -73,6 +73,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_TICKET_DOWNLOAD_SERIAL = "https://dev.namoadigital.com/ws/prj001/tk/server_ticket_serial.ws";
     public static final String WS_TICKET_CHECKIN = "https://dev.namoadigital.com/ws/prj001/tk/server_ticket_checkin.ws";
     public static final String WS_TICKET_SAVE = "https://dev.namoadigital.com/ws/prj001/tk/server_ticket_set.ws";
+    public static final String WS_NEXT_TICKET = "https://dev.namoadigital.com/ws/prj001/tk/server_ticket_next.ws";
 
     public static final String WS_ENABLE_NFC = "https://dev.namoadigital.com/ws/prj001/server_enable_nfc_auth.ws";
     public static final String WS_CANCEL_NFC = "https://dev.namoadigital.com/ws/prj001/server_cancel_nfc_auth.ws";

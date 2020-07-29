@@ -28,7 +28,7 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
 import com.namoadigital.prj001.ui.act072.Act072_Main;
-import com.namoadigital.prj001.ui.act075.Act075_Main;
+import com.namoadigital.prj001.ui.act074.Act074_Main;
 import com.namoadigital.prj001.ui.act076.Act076_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -205,10 +205,10 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     private void processNextTickets() {
-        Intent intent = new Intent(context, Act075_Main.class);
+        Intent intent = new Intent(context, Act074_Main.class);
         Bundle bundle = new Bundle();
-        bundle.putInt(Act075_Main.VIEW_PROFILE, 1);
-        bundle.putSerializable("TK_Ticket_Product", new ArrayList<>());
+//        bundle.putInt(Act075_Main.VIEW_PROFILE, 1);
+//        bundle.putSerializable("TK_Ticket_Product", new ArrayList<>());
         intent.putExtras(bundle);
         startActivity(intent);
         finish();

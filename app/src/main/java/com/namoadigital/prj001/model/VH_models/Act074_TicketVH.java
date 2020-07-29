@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.model.TK_Next_Ticket;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class Act074_TicketVH {
@@ -81,6 +82,33 @@ public class Act074_TicketVH {
                         hmAux.get(TK_Ticket_StepDao.STEP_ID),
                         hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER),
                 ToolBox_Inf.convertStringToInt(hmAux.get(TK_Ticket_StepDao.STEP_QTY)),
+                        " ",
+                       0,
+                        0,
+                        0,
+                     " ",
+                      " ",
+                  " "
+        );
+    }
+
+    public static Act074_TicketVH getTicketVHObj(TK_Next_Ticket ticket) {
+
+        return new Act074_TicketVH(
+                ticket.getTicketPrefix(),
+                ticket.getTicketCode(),
+                ticket.getTicketPrefix() + "." + ticket.getTicketCode(),
+                ticket.getTicketStatus(),
+                ticket.getOpenProductDesc(),
+                ticket.getOpenSiteDesc(),
+                ticket.getOpenSerialId(),
+                ticket.getStepDesc(),
+                ticket.getOriginDesc(),
+                ticket.getForecastStart(),
+                ticket.getForecastEnd(),
+                        "",
+                String.valueOf(ticket.getCurrentStepOrder()),
+                ticket.getStepCount(),
                         " ",
                        0,
                         0,

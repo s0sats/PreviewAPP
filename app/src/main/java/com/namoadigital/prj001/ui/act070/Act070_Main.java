@@ -57,6 +57,7 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
+import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.view.TK_Ticket_Ctrl_Super;
@@ -527,7 +528,11 @@ public class Act070_Main extends Base_Activity implements Act070_Main_Contract.I
 
     @Override
     public void callAct068() {
-
+        Intent intent = new Intent(context, Act068_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
     }
     //endregion
 
