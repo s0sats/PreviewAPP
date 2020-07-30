@@ -509,12 +509,12 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         ticketCtrl.setTicket_seq(1);
         ticketCtrl.setCtrl_type(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION);
         ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_PENDING);
-        ticketCtrl.setSite_code(ToolBox_Inf.convertStringToInt(md_site.getSite_code()));
-        ticketCtrl.setSite_id(md_site.getSite_id());
-        ticketCtrl.setSite_desc(md_site.getSite_desc());
-        ticketCtrl.setOperation_code( (int) mdOperation.getOperation_code());
-        ticketCtrl.setOperation_id(mdOperation.getOperation_id());
-        ticketCtrl.setOperation_desc(mdOperation.getOperation_desc());
+//        ticketCtrl.setSite_code(ToolBox_Inf.convertStringToInt(md_site.getSite_code()));
+//        ticketCtrl.setSite_id(md_site.getSite_id());
+//        ticketCtrl.setSite_desc(md_site.getSite_desc());
+//        ticketCtrl.setOperation_code( (int) mdOperation.getOperation_code());
+//        ticketCtrl.setOperation_id(mdOperation.getOperation_id());
+//        ticketCtrl.setOperation_desc(mdOperation.getOperation_desc());
         ticketCtrl.setProduct_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.PRODUCT_CODE)));
         ticketCtrl.setProduct_id(item.get(MD_Schedule_ExecDao.PRODUCT_ID));
         ticketCtrl.setProduct_desc(item.get(MD_Schedule_ExecDao.PRODUCT_DESC));

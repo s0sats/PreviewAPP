@@ -8,52 +8,39 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import java.util.ArrayList;
 
 public class TK_Ticket_Ctrl {
-    @Expose
     private long customer_code;//pk
-    @Expose
     private int ticket_prefix;//pk
-    @Expose
     private int ticket_code;//pk
     @Expose
     private int ticket_seq;//pk
     @Expose
+    private int ticket_seq_tmp;//pk
+    @Expose
     private String ctrl_type;
-    @Expose
-    @Deprecated
-    private int site_code;
-    @Deprecated
-    private String site_id;
-    @Deprecated
-    private String site_desc;
-    @Expose
-    private int operation_code;
-    @Deprecated
-    private String operation_id;
-    @Deprecated
-    private String operation_desc;
-    @Expose
     @Nullable
     private Integer product_code;
     @Nullable
     private String product_id;
     @Nullable
     private String product_desc;
-    @Expose
     @Nullable
     private Integer serial_code;
     @Nullable
     private String serial_id;
+    @Expose
+    @Nullable
     private String ctrl_start_date;
-    private int ctrl_start_user;
+    @Expose
+    private Integer ctrl_start_user;
     private String ctrl_start_user_name;
     @Nullable
+    @Expose
     private String ctrl_end_date;
     private Integer ctrl_end_user;
     @Nullable
     private String ctrl_end_user_name;
     @Expose
     private String ctrl_status;
-    @Expose
     private Integer partner_code;
     @Nullable
     private String partner_id;
@@ -69,8 +56,10 @@ public class TK_Ticket_Ctrl {
     @Expose
     @Nullable
     private TK_Ticket_Measure measure;
+    @Expose
     @Nullable
     private TK_Ticket_Approval approval;
+    @Expose
     @Nullable
     private ArrayList<TK_Ticket_Approval_Rejection> rejection = new ArrayList<>();
 
@@ -169,60 +158,20 @@ public class TK_Ticket_Ctrl {
         this.ticket_seq = ticket_seq;
     }
 
+    public int getTicket_seq_tmp() {
+        return ticket_seq_tmp;
+    }
+
+    public void setTicket_seq_tmp(int ticket_seq_tmp) {
+        this.ticket_seq_tmp = ticket_seq_tmp;
+    }
+
     public String getCtrl_type() {
         return ctrl_type;
     }
 
     public void setCtrl_type(String ctrl_type) {
         this.ctrl_type = ctrl_type;
-    }
-
-    public int getSite_code() {
-        return site_code;
-    }
-
-    public void setSite_code(int site_code) {
-        this.site_code = site_code;
-    }
-
-    public String getSite_id() {
-        return site_id;
-    }
-
-    public void setSite_id(String site_id) {
-        this.site_id = site_id;
-    }
-
-    public String getSite_desc() {
-        return site_desc;
-    }
-
-    public void setSite_desc(String site_desc) {
-        this.site_desc = site_desc;
-    }
-
-    public int getOperation_code() {
-        return operation_code;
-    }
-
-    public void setOperation_code(int operation_code) {
-        this.operation_code = operation_code;
-    }
-
-    public String getOperation_id() {
-        return operation_id;
-    }
-
-    public void setOperation_id(String operation_id) {
-        this.operation_id = operation_id;
-    }
-
-    public String getOperation_desc() {
-        return operation_desc;
-    }
-
-    public void setOperation_desc(String operation_desc) {
-        this.operation_desc = operation_desc;
     }
 
     @Nullable
@@ -278,11 +227,11 @@ public class TK_Ticket_Ctrl {
         this.ctrl_start_date = ctrl_start_date;
     }
 
-    public int getCtrl_start_user() {
+    public Integer getCtrl_start_user() {
         return ctrl_start_user;
     }
 
-    public void setCtrl_start_user(int ctrl_start_user) {
+    public void setCtrl_start_user(Integer ctrl_start_user) {
         this.ctrl_start_user = ctrl_start_user;
     }
 

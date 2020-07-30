@@ -16,20 +16,14 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket;
-import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
-import com.namoadigital.prj001.model.TK_Ticket_Product;
-import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result;
-import com.namoadigital.prj001.model.WS_TK_Ticket_Ctrl_Obj;
-import com.namoadigital.prj001.model.WS_TK_Ticket_Obj;
-import com.namoadigital.prj001.model.WS_TK_Ticket_Product_Obj;
-import com.namoadigital.prj001.model.WS_TK_Ticket_Step_Obj;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
-import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_005;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_006;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -40,7 +34,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WS_TK_Ticket_Save extends IntentService {
+public class WS_TK_Ticket_Save_old extends IntentService {
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = ConstantBaseApp.APP_MODULE;
@@ -52,12 +46,12 @@ public class WS_TK_Ticket_Save extends IntentService {
     private boolean menuSendProcess;
     private Gson gsonEnv;
     private Gson gsonRec;
-    private ArrayList<WS_TK_Ticket_Obj> ticketToSend = new ArrayList<>();
+    private ArrayList<TK_Ticket> ticketToSend = new ArrayList<>();
     private ArrayList<Object> actReturnList = new ArrayList<>();
     private TK_TicketDao ticketDao;
     private MD_Schedule_ExecDao scheduleExecDao;
 
-    public WS_TK_Ticket_Save() { super("WS_TK_Ticket_Save");}
+    public WS_TK_Ticket_Save_old() { super("WS_TK_Ticket_Save");}
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
@@ -65,6 +59,7 @@ public class WS_TK_Ticket_Save extends IntentService {
         StringBuilder sb = new StringBuilder();
         Bundle bundle = intent.getExtras();
         try {
+
             gsonEnv = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().serializeNulls().create();
             gsonRec = new GsonBuilder().serializeNulls().create();
             ticketDao = new TK_TicketDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
@@ -113,7 +108,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                     T_TK_Ticket_Save_Env.class
                 );
             //
-            //ticketToSend = env.getTicket();
+            ticketToSend = env.getTicket();
             env.setApp_code(ConstantBaseApp.PRJ001_CODE);
             env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
@@ -137,16 +132,16 @@ public class WS_TK_Ticket_Save extends IntentService {
             }
             //
             //Set update required do banco para 0
-//            for (TK_Ticket ticket : ticketToSend) {
-//                ticket.setToken(token);
-//            }
+            for (TK_Ticket ticket : ticketToSend) {
+                ticket.setToken(token);
+            }
             //
             T_TK_Ticket_Save_Env env = new T_TK_Ticket_Save_Env();
             env.setApp_code(ConstantBaseApp.PRJ001_CODE);
             env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
-            //env.setTicket(ticketToSend);
+            env.setTicket(ticketToSend);
             env.setToken(token);
             //
             String json_token_content = gsonRec.toJson(env);
@@ -168,108 +163,26 @@ public class WS_TK_Ticket_Save extends IntentService {
                 return;
             }
             //Set update required do banco para 0
-//            for (TK_Ticket ticket : ticketToSend) {
-//                ticketDao.addUpdate(
-//                    new TK_Ticket_Sql_005(
-//                        ticket.getCustomer_code(),
-//                        ticket.getTicket_prefix(),
-//                        ticket.getTicket_code(),
-//                        0,
-//                        0 //Como retorno sempre full, reseta o sync_required
-//                    ).toSqlQuery()
-//                );
-//                //
-//            }
+            for (TK_Ticket ticket : ticketToSend) {
+                ticketDao.addUpdate(
+                    new TK_Ticket_Sql_005(
+                        ticket.getCustomer_code(),
+                        ticket.getTicket_prefix(),
+                        ticket.getTicket_code(),
+                        0,
+                        0 //Como retorno sempre full, reseta o sync_required
+                    ).toSqlQuery()
+                );
+                //
+            }
             //
             callWsTicketSave(env);
         }
     }
 
-    private ArrayList<WS_TK_Ticket_Obj> getTicketsToSend() {
-        ArrayList<TK_Ticket> rawTickets = getTicketsDB();
-        return getTicketSendFormat(rawTickets);
-        //
-    }
-
-    private ArrayList<WS_TK_Ticket_Obj> getTicketSendFormat(ArrayList<TK_Ticket> rawTickets) {
-        ArrayList<WS_TK_Ticket_Obj> ticketsToSend = new ArrayList<>();
-        for (TK_Ticket rawTicket : rawTickets) {
-            WS_TK_Ticket_Obj ticketObj = new WS_TK_Ticket_Obj();
-            ticketObj.setCustomer_code(rawTicket.getCustomer_code());
-            ticketObj.setTicket_prefix(rawTicket.getTicket_prefix());
-            ticketObj.setTicket_code(rawTicket.getTicket_code());
-            ticketObj.setScn(rawTicket.getScn());
-            //Busca por produtos a serem enviados.
-            if(rawTicket.getProduct() != null && rawTicket.getProduct().size() > 0){
-                boolean setProductIntoSend = false;
-                ArrayList<WS_TK_Ticket_Product_Obj> ticketProductObjs = new ArrayList<>();
-                for (TK_Ticket_Product tk_ticket_product : rawTicket.getProduct()) {
-                    WS_TK_Ticket_Product_Obj productObj = new WS_TK_Ticket_Product_Obj();
-                    if(tk_ticket_product.getUpdate_required() == 1){
-                        setProductIntoSend = true;
-                    }
-                    //
-                    productObj.setProduct_code(tk_ticket_product.getProduct_code());
-                    productObj.setQty(tk_ticket_product.getQty());
-                    productObj.setQty_used(tk_ticket_product.getQty_used());
-                    productObj.setQty_returned(tk_ticket_product.getQty_returned());
-                    ticketProductObjs.add(productObj);
-                }
-                //
-                if(setProductIntoSend){
-                    ticketObj.setProduct(ticketProductObjs);
-                }
-            }
-            //
-            if(rawTicket.getStep() != null && rawTicket.getStep().size() > 0){
-                ArrayList<WS_TK_Ticket_Step_Obj> ticketStepObjs = new ArrayList<>();
-                for (TK_Ticket_Step tk_ticket_step : rawTicket.getStep()) {
-                    WS_TK_Ticket_Step_Obj stepObj = new WS_TK_Ticket_Step_Obj();
-                    if(tk_ticket_step.getUpdate_required() == 1){
-                        stepObj.setStep_code(tk_ticket_step.getStep_code());
-                        stepObj.setStep_start_date(tk_ticket_step.getStep_start_date());
-                        stepObj.setStep_end_date(tk_ticket_step.getStep_end_date());
-                        //
-                        ticketStepObjs.add(stepObj);
-                    }
-                    //
-                    for (TK_Ticket_Ctrl ticketCtrl : tk_ticket_step.getCtrl()) {
-                        if(ticketCtrl.getUpdate_required() == 1){
-                            WS_TK_Ticket_Ctrl_Obj ctrlObj = new WS_TK_Ticket_Ctrl_Obj();
-                            ctrlObj.setTicket_seq(ticketCtrl.getTicket_seq());
-                            ctrlObj.setTicket_seq_tmp(ticketCtrl.getTicket_seq_tmp());
-                            ctrlObj.setCtrl_start_date(ticketCtrl.getCtrl_start_date());
-                            ctrlObj.setCtrl_end_date(ticketCtrl.getCtrl_end_date());
-                            ctrlObj.setCtrl_type(ticketCtrl.getCtrl_type());
-                            switch (ticketCtrl.getCtrl_type()){
-                                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
-                                    ctrlObj.setAction(ticketCtrl.getAction());
-                                    break;
-                                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
-                                    ctrlObj.setApproval(ticketCtrl.getApproval());
-                            }
-                            //
-                            stepObj.getCtrl().add(ctrlObj);
-                        }
-                    }
-                    //
-                    if(!ticketStepObjs.contains(stepObj) && stepObj.getCtrl().size() > 0 ){
-                        ticketStepObjs.add(stepObj);
-                    }
-                }
-                //
-                ticketObj.setStep(ticketStepObjs);
-            }
-            //
-            ticketsToSend.add(ticketObj);
-        }
-        //
-        return ticketsToSend;
-    }
-
-    private ArrayList<TK_Ticket> getTicketsDB() {
+    private ArrayList<TK_Ticket> getTicketsToSend() {
         return (ArrayList<TK_Ticket>) ticketDao.query(
-            new Sql_WS_TK_Ticket_Save_001(
+            new TK_Ticket_Sql_006(
                 ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
             ).toSqlQuery()
         );

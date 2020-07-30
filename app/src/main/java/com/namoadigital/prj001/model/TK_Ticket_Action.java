@@ -5,14 +5,12 @@ import android.support.annotation.Nullable;
 import com.google.gson.annotations.Expose;
 
 public class TK_Ticket_Action {
-    @Expose
     private long customer_code;//pk
-    @Expose
     private int ticket_prefix;//pk
-    @Expose
     private int ticket_code;//pk
-    @Expose
     private int ticket_seq;//pk
+    @Expose
+    private int ticket_seq_tmp;//pk
     @Expose
     private int step_code;//pk
     @Nullable
@@ -37,6 +35,7 @@ public class TK_Ticket_Action {
         this.ticket_prefix = -1;
         this.ticket_code = -1;
         this.ticket_seq = -1;
+        this.ticket_seq_tmp = -1;
         this.step_code = -1;
     }
 
@@ -45,6 +44,7 @@ public class TK_Ticket_Action {
         this.ticket_prefix = tk_ticket_ctrl.getTicket_prefix();
         this.ticket_code = tk_ticket_ctrl.getTicket_code();
         this.ticket_seq = tk_ticket_ctrl.getTicket_seq();
+        this.ticket_seq_tmp = tk_ticket_ctrl.getTicket_seq_tmp();
         this.step_code = tk_ticket_ctrl.getStep_code();
         this.action_status = tk_ticket_ctrl.getCtrl_status();
     }
@@ -79,6 +79,14 @@ public class TK_Ticket_Action {
 
     public void setTicket_seq(int ticket_seq) {
         this.ticket_seq = ticket_seq;
+    }
+
+    public int getTicket_seq_tmp() {
+        return ticket_seq_tmp;
+    }
+
+    public void setTicket_seq_tmp(int ticket_seq_tmp) {
+        this.ticket_seq_tmp = ticket_seq_tmp;
     }
 
     public int getStep_code() {

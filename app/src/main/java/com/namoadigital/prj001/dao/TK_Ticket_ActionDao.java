@@ -29,6 +29,7 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
     public static final String TICKET_PREFIX = "ticket_prefix";
     public static final String TICKET_CODE = "ticket_code";
     public static final String TICKET_SEQ = "ticket_seq";
+    public static final String TICKET_SEQ_TMP = "ticket_seq_tmp";
     public static final String STEP_CODE = "step_code";
     public static final String ACTION_COMMENTS = "action_comments";
     public static final String ACTION_PHOTO = "action_photo";
@@ -113,6 +114,69 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
 
         return daoObjReturn;
     }
+
+    public DaoObjReturn addUpdateTmp(TK_Ticket_Action tk_ticket_action,SQLiteDatabase dbInstance) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+        //
+        if(dbInstance == null) {
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+
+        try{
+            curAction = DaoObjReturn.UPDATE;
+            //Where para update
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_action.getCustomer_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_action.getTicket_prefix()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_action.getTicket_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(TICKET_SEQ_TMP).append(" = '").append(tk_ticket_action.getTicket_seq_tmp()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_action.getStep_code()).append("'");
+            //Tenta update e armazena retorno
+            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_action), sbWhere.toString(), null);
+            //Se nenhuma linha afetada, tenta insert
+            if(addUpdateRet == 0){
+                curAction = DaoObjReturn.INSERT;
+                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_action));
+            }
+
+        }catch (SQLiteException e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+
+        }catch (Exception e){
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true);
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
+
+        return daoObjReturn;
+    }
+
 
     @Override
     public DaoObjReturn addUpdate(List<TK_Ticket_Action> tk_ticket_actions, boolean status) {
@@ -382,6 +446,7 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
             tk_ticket_action.setTicket_prefix(cursor.getInt(cursor.getColumnIndex(TICKET_PREFIX)));
             tk_ticket_action.setTicket_code(cursor.getInt(cursor.getColumnIndex(TICKET_CODE)));
             tk_ticket_action.setTicket_seq(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ)));
+            tk_ticket_action.setTicket_seq_tmp(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ_TMP)));
             tk_ticket_action.setStep_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
             if(cursor.isNull(cursor.getColumnIndex(ACTION_COMMENTS))){
                 tk_ticket_action.setAction_comments(null);
@@ -435,6 +500,9 @@ public class TK_Ticket_ActionDao extends BaseDao implements DaoWithReturn<TK_Tic
             }
             if (tk_ticket_action.getTicket_seq() > -1) {
                 contentValues.put(TICKET_SEQ,tk_ticket_action.getTicket_seq());
+            }
+            if (tk_ticket_action.getTicket_seq_tmp() > -1) {
+                contentValues.put(TICKET_SEQ_TMP,tk_ticket_action.getTicket_seq_tmp());
             }
             if (tk_ticket_action.getStep_code() > -1) {
                 contentValues.put(STEP_CODE,tk_ticket_action.getStep_code());

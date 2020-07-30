@@ -9,8 +9,9 @@ import java.util.ArrayList;
  */
 
 public class T_TK_Ticket_Save_Env extends Main_Header_Env {
-    @Expose
+//    @Expose
     private ArrayList<TK_Ticket> ticket = new ArrayList<>();
+//   private ArrayList<WS_TK_Ticket_Obj> ticket = new ArrayList<>();
     @Expose
     private String token;
 
@@ -21,6 +22,15 @@ public class T_TK_Ticket_Save_Env extends Main_Header_Env {
     public void setTicket(ArrayList<TK_Ticket> ticket) {
         this.ticket = ticket;
     }
+
+
+//    public ArrayList<WS_TK_Ticket_Obj> getTicket() {
+//        return ticket;
+//    }
+//
+//    public void setTicket(ArrayList<WS_TK_Ticket_Obj> ticket) {
+//        this.ticket = ticket;
+//    }
 
     public String getToken() {
         return token;

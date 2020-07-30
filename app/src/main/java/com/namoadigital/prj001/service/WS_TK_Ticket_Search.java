@@ -151,10 +151,6 @@ public class WS_TK_Ticket_Search extends IntentService {
                 //
                 for (TK_Ticket tkTicket : ticketList) {
                     tkTicket.setPK();
-                    //TODO REVE SE MOVER PARA O STEP
-//                    TK_Ticket.checkActionPhotoResetNeeds(getDbTicket(tkTicket), tkTicket);
-//                    tkTicket.updateLocalImagesPathIfExists();
-
                     //Reseta sync_required para 0 via query, pois add update via obj não o atualiza.
                     /**
                      * TODO TALVEZ O MELHOR FOSSE INSERIR UMA A UMA E VERIFICANDO O RETORNO, CASO SUCESSO, RESETA O SYNC REQUIRED

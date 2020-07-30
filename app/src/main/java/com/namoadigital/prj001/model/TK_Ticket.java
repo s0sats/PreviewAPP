@@ -18,79 +18,31 @@ public class TK_Ticket {
     @Expose
     private int scn;
     private String ticket_id;
-    @Expose
     private int type_code;
     private String type_id;
     private String type_desc;
-    @Nullable
     private String type_path;
-    @Nullable
     private String open_comments;
-    @Nullable
     private String open_photo;
-    @Nullable
     private String open_photo_local;
-    @Nullable
     private String open_name;
-    @Nullable
     private String open_email;
-    @Nullable
     private String open_phone;
     private String open_date;
     private int open_user;
     private String open_user_name;
-    @Nullable
     private String internal_comments;
-    /**
-     * Remover campos para pipeline
-     *
-     * current_product_code
-     * current_product_id
-     * current_product_desc
-     *
-     * current_serial_code
-     * current_serial_id
-     * checkin_user
-     * checkin_date
-     * checkin_user_name
-     */
-
-    @Expose
     private int open_site_code;
     private String open_site_id;
     private String open_site_desc;
-    @Expose
     private int open_operation_code;
     private String open_operation_id;
     private String open_operation_desc;
-    @Expose
     private int open_product_code;
     private String open_product_id;
     private String open_product_desc;
-    @Expose
     private int open_serial_code;
     private String open_serial_id;
-
-    //Novo pipeline
-    //OS CAMPOS PREFIXO OPEN, SUBSTITUIRAM OS DE PREFIXO CURRENT
-//    @Expose
-//    private int open_site_code;
-//    private String open_site_id;
-//    private String open_site_desc;
-//
-//    @Expose
-//    private int open_operation_code;
-//    private String open_operation_id;
-//    private String open_operation_desc;
-//
-//    @Expose
-//    private int open_product_code;
-//    private String open_product_id;
-//    private String open_product_desc;
-//    //Novo pipeline - end
-//    @Expose
-//    private int open_serial_code;
-//    private String open_serial_id;
     @Nullable
     private String forecast_date;
     private String ticket_status;
@@ -101,19 +53,16 @@ public class TK_Ticket {
     private String close_user_name;
     private Integer duration_minutes;
     private Integer barcode_code;
-    @Expose
     @Nullable
     private Integer pc_code;
     @Nullable
     private String pc_id;
     @Nullable
     private String pc_desc;
-    @Expose
     @Nullable
     private Integer main_user;
     @Nullable
     private String main_user_nick;
-    @Expose
     private Integer pipeline_code;
     @Nullable
     private String pipeline_id;
@@ -129,15 +78,13 @@ public class TK_Ticket {
     private int allow_step_approval;
     private int sync_required;
     private int update_required;
+    private int update_required_product;
     @Expose
     private String token;
-    @Expose
     @Nullable
     private Integer schedule_prefix;
-    @Expose
     @Nullable
     private Integer schedule_code;
-    @Expose
     @Nullable
     private Integer schedule_exec;
     @Expose
@@ -604,6 +551,14 @@ public class TK_Ticket {
 
     public void setUpdate_required(int update_required) {
         this.update_required = update_required;
+    }
+
+    public int getUpdate_required_product() {
+        return update_required_product;
+    }
+
+    public void setUpdate_required_product(int update_required_product) {
+        this.update_required_product = update_required_product;
     }
 
     public String getToken() {

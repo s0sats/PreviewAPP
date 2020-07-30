@@ -8,11 +8,8 @@ import com.google.gson.annotations.Expose;
 import java.util.ArrayList;
 
 public class TK_Ticket_Step {
-    @Expose
     private long customer_code;//pk
-    @Expose
     private int ticket_prefix;//pk
-    @Expose
     private int ticket_code;//pk
     @Expose
     private int step_code;
@@ -31,12 +28,14 @@ public class TK_Ticket_Step {
     private int scan_serial;
     private int allow_new_obj;
     private int move_next_step;
+    @Expose
     @Nullable
     private String step_start_date;
     @Nullable
     private Integer step_start_user;
     @Nullable
     private String step_start_user_nick;
+    @Expose
     @Nullable
     private String step_end_date;
     @Nullable
@@ -45,6 +44,7 @@ public class TK_Ticket_Step {
     private String step_end_user_nick;
     private String step_status;
     private int update_required;
+    @Expose
     private ArrayList<TK_Ticket_Ctrl> ctrl = new ArrayList<>();
 
     public TK_Ticket_Step() {

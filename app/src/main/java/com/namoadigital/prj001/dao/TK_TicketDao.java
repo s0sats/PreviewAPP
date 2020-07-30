@@ -82,6 +82,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String ALLOW_STEP_APPROVAL = "allow_step_approval";
     public static final String SYNC_REQUIRED = "sync_required";
     public static final String UPDATE_REQUIRED = "update_required";
+    public static final String UPDATE_REQUIRED_PRODUCT = "update_required_product";
     public static final String TOKEN = "token";
     public static final String SCHEDULE_PREFIX = "schedule_prefix";
     public static final String SCHEDULE_CODE = "schedule_code";
@@ -798,6 +799,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             //
             tk_ticket.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
             tk_ticket.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
+            tk_ticket.setUpdate_required_product(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED_PRODUCT)));
             if (cursor.isNull(cursor.getColumnIndex(TOKEN))) {
                 tk_ticket.setToken(null);
             } else {
@@ -950,6 +952,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
 //            }
             if (tk_ticket.getUpdate_required() > -1) {
                 contentValues.put(UPDATE_REQUIRED, tk_ticket.getUpdate_required());
+            }
+            if (tk_ticket.getUpdate_required_product() > -1) {
+                contentValues.put(UPDATE_REQUIRED_PRODUCT, tk_ticket.getUpdate_required_product());
             }
             //TODO REVER CAMPO TOKEN POIS ESTA MUITO ESTRANHO
             tk_ticket.setToken(tk_ticket.getToken());

@@ -102,7 +102,7 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 Constant.DB_VERSION_CUSTOM
             );
             //Chama insertUpdate do Ctrl,passando db como param aguardando retorno.
-            daoObjReturn = ticketCtrlDao.addUpdate(tk_ticket_step.getCtrl(), false, db);
+            daoObjReturn = ticketCtrlDao.addUpdateTmp(tk_ticket_step.getCtrl(), false, db);
             //Se erro durante insert, dispara exception abortando o processamento.
             if (daoObjReturn.hasError()) {
                 throw new Exception(daoObjReturn.getRawMessage());
@@ -195,7 +195,7 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     Constant.DB_VERSION_CUSTOM
                 );
                 //Chama insertUpdate do Ctrl,passando db como param aguardando retorno.
-                daoObjReturn = ticketCtrlDao.addUpdate(tk_ticket_step.getCtrl(), false, db);
+                daoObjReturn = ticketCtrlDao.addUpdateTmp(tk_ticket_step.getCtrl(), false, db);
                 //Se erro durante insert, dispara exception abortando o processamento.
                 if (daoObjReturn.hasError()) {
                     throw new Exception(daoObjReturn.getRawMessage());
