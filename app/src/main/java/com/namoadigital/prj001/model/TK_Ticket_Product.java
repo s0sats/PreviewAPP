@@ -26,6 +26,7 @@ public class TK_Ticket_Product {
     private Double qty_returned;
     @Nullable
     private String return_status;
+    private int update_required;
 
     public TK_Ticket_Product() {
         this.customer_code = -1;
@@ -138,5 +139,13 @@ public class TK_Ticket_Product {
 
     public void setReturn_status(@Nullable String return_status) {
         this.return_status = return_status;
+    }
+
+    public int getUpdate_required() {
+        return update_required;
+    }
+
+    public void setUpdate_required(int update_required) {
+        this.update_required = update_required;
     }
 }

@@ -438,23 +438,24 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 //Cria ticket
                 TK_Ticket tkTicket = createTicket(item, nextTicketCode, md_site, mdOperation);
                 //Add ctrl e action ao ticket
-                tkTicket.getCtrl().add(
-                    createTicketCtrl(item, tkTicket, md_site, mdOperation)
-                );
-                if(updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_PROCESS)){
-                    DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
-                    //
-                    if (!daoObjReturn.hasError()) {
-                        item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
-                        item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
-                        //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
-                        //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
-                        item.put(TK_Ticket_CtrlDao.TICKET_SEQ, "1");
-                        return true;
-                    }else{
-                        updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_SCHEDULE);
-                    }
-                }
+                //TODO REVE COMO FAZER AGORA QUE CTRL É DO STEP
+//                tkTicket.getCtrl().add(
+//                    createTicketCtrl(item, tkTicket, md_site, mdOperation)
+//                );
+//                if(updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_PROCESS)){
+//                    DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
+//                    //
+//                    if (!daoObjReturn.hasError()) {
+//                        item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
+//                        item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
+//                        //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
+//                        //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
+//                        item.put(TK_Ticket_CtrlDao.TICKET_SEQ, "1");
+//                        return true;
+//                    }else{
+//                        updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_SCHEDULE);
+//                    }
+//                }
             }
         }
         //

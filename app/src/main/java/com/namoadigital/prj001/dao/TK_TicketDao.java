@@ -11,10 +11,8 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket;
-import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
-import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_002;
 import com.namoadigital.prj001.util.Constant;
@@ -82,9 +80,6 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String VALID_STRUCTURE_STEP = "valid_structure_step";
     public static final String USER_FOCUS = "user_focus";
     public static final String ALLOW_STEP_APPROVAL = "allow_step_approval";
-    public static final String CHECKIN_DATE = "checkin_date";
-    public static final String CHECKIN_USER = "checkin_user";
-    public static final String CHECKIN_USER_NAME = "checkin_user_name";
     public static final String SYNC_REQUIRED = "sync_required";
     public static final String UPDATE_REQUIRED = "update_required";
     public static final String TOKEN = "token";
@@ -530,29 +525,6 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         return tk_ticket;
     }
 
-    /**
-     * Retorna lista de ctrl do ticket selecionado.
-     *
-     * @param tk_ticket
-     */
-    private void getTicketCtrls(TK_Ticket tk_ticket) {
-        TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
-        );
-        //
-        tk_ticket.setCtrl(
-            (ArrayList<TK_Ticket_Ctrl>) ticketCtrlDao.query(
-                new TK_Ticket_Ctrl_Sql_002(
-                    tk_ticket.getCustomer_code(),
-                    tk_ticket.getTicket_prefix(),
-                    tk_ticket.getTicket_code()
-                ).toSqlQuery()
-            )
-        );
-    }
-
     private void getTicketSteps(TK_Ticket tk_ticket) {
         TK_Ticket_StepDao ticketStepDao = new TK_Ticket_StepDao(
             context,
@@ -823,25 +795,10 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             tk_ticket.setInventory_control(cursor.getInt(cursor.getColumnIndex(INVENTORY_CONTROL)));
             tk_ticket.setUser_focus(cursor.getInt(cursor.getColumnIndex(USER_FOCUS)));
             tk_ticket.setAllow_step_approval(cursor.getInt(cursor.getColumnIndex(ALLOW_STEP_APPROVAL)));
-            if (cursor.isNull(cursor.getColumnIndex(CHECKIN_DATE))) {
-                tk_ticket.setCheckin_date(null);
-            } else {
-                tk_ticket.setCheckin_date(cursor.getString(cursor.getColumnIndex(CHECKIN_DATE)));
-            }
-            if (cursor.isNull(cursor.getColumnIndex(CHECKIN_USER))) {
-                tk_ticket.setCheckin_user(null);
-            } else {
-                tk_ticket.setCheckin_user(cursor.getInt(cursor.getColumnIndex(CHECKIN_USER)));
-            }
-            if (cursor.isNull(cursor.getColumnIndex(CHECKIN_USER_NAME))) {
-                tk_ticket.setCheckin_user_name(null);
-            } else {
-                tk_ticket.setCheckin_user_name(cursor.getString(cursor.getColumnIndex(CHECKIN_USER_NAME)));
-            }
             //
             tk_ticket.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
             tk_ticket.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
-            if (cursor.isNull(cursor.getColumnIndex(CHECKIN_USER_NAME))) {
+            if (cursor.isNull(cursor.getColumnIndex(TOKEN))) {
                 tk_ticket.setToken(null);
             } else {
                 tk_ticket.setToken(cursor.getString(cursor.getColumnIndex(TOKEN)));
@@ -984,9 +941,6 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (tk_ticket.getApproval_rejected() > -1) {
                 contentValues.put(ALLOW_STEP_APPROVAL, tk_ticket.getAllow_step_approval());
             }
-            contentValues.put(CHECKIN_DATE, tk_ticket.getCheckin_date());
-            contentValues.put(CHECKIN_USER, tk_ticket.getCheckin_user());
-            contentValues.put(CHECKIN_USER_NAME, tk_ticket.getCheckin_user_name());
             /**
              * Atualizar somente via query update para evitar sobreposicao com o update do Ticket.
              * Atualiza com 0 quando Ticket Full e através do recebimento do GCM
@@ -997,7 +951,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (tk_ticket.getUpdate_required() > -1) {
                 contentValues.put(UPDATE_REQUIRED, tk_ticket.getUpdate_required());
             }
-            //
+            //TODO REVER CAMPO TOKEN POIS ESTA MUITO ESTRANHO
             tk_ticket.setToken(tk_ticket.getToken());
             contentValues.put(SCHEDULE_PREFIX,tk_ticket.getSchedule_prefix());
             contentValues.put(SCHEDULE_CODE,tk_ticket.getSchedule_code());

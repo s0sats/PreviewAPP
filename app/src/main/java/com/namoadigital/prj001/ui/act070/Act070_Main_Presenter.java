@@ -458,7 +458,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     private int getStepIdx(TK_Ticket_Step ticketStep, TK_Ticket tkTicket) {
-        for (int i = 0; i < tkTicket.getCtrl().size(); i++) {
+        for (int i = 0; i < tkTicket.getStep().size(); i++) {
             if(tkTicket.getStep().get(i).getTicket_prefix() == ticketStep.getTicket_prefix()
                && tkTicket.getStep().get(i).getTicket_code() == ticketStep.getTicket_code()
                && tkTicket.getStep().get(i).getStep_code() == ticketStep.getStep_code()
@@ -573,7 +573,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putString(TK_TicketDao.TICKET_ID, mTicket.getTicket_id());
         bundle.putString(TK_TicketDao.TYPE_PATH, mTicket.getType_path());
         bundle.putString(TK_TicketDao.TYPE_DESC, mTicket.getType_desc());
-        bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN, mTicket.getCheckin_user() == null || !ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(mTicket.getCheckin_user())));
+        //TODO REVE SE NECESSARIO AINDA
+        //bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN, mTicket.getCheckin_user() == null || !ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(mTicket.getCheckin_user())));
         return bundle;
     }
 

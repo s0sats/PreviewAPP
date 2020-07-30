@@ -16,7 +16,6 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket;
-import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result;
@@ -296,10 +295,12 @@ public class WS_TK_Ticket_Save extends IntentService {
                     //
                     updateActionsFileNames(retResult);
                 }
+                //REGION VERIFICAR TODO REVE SE MOVER PARA O STEP
                 //Verifica a necessidade de resetar a foto das action
-                TK_Ticket.checkActionPhotoResetNeeds(dbTicket,retTicket);
-                //Verifica se imagens já foram baixadas e atualiza campo com o local_path
-                retTicket.updateLocalImagesPathIfExists();
+//                TK_Ticket.checkActionPhotoResetNeeds(dbTicket,retTicket);
+//                //Verifica se imagens já foram baixadas e atualiza campo com o local_path
+//                retTicket.updateLocalImagesPathIfExists();
+                //ENDREGION
                 //Salva obj
                 if(createdBySchedule){
                     MD_Schedule_Exec schedule = getSchedule(
@@ -344,14 +345,15 @@ public class WS_TK_Ticket_Save extends IntentService {
                     //Seta status rejeitado no ticket, ctrls e ações
                     dbTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_IGNORED);
                     dbTicket.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-                    if(dbTicket.getCtrl() != null && dbTicket.getCtrl().size() > 0) {
-                        for (TK_Ticket_Ctrl ticketCtrl : dbTicket.getCtrl()) {
-                            ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_IGNORED);
-                            if(ticketCtrl.getAction() != null){
-                                ticketCtrl.getAction().setAction_status(ConstantBaseApp.SYS_STATUS_IGNORED);
-                            }
-                        }
-                    }
+                    //TODO REVE SE MOVER PARA O STEP
+//                    if(dbTicket.getCtrl() != null && dbTicket.getCtrl().size() > 0) {
+//                        for (TK_Ticket_Ctrl ticketCtrl : dbTicket.getCtrl()) {
+//                            ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_IGNORED);
+//                            if(ticketCtrl.getAction() != null){
+//                                ticketCtrl.getAction().setAction_status(ConstantBaseApp.SYS_STATUS_IGNORED);
+//                            }
+//                        }
+//                    }
                     MD_Schedule_Exec schedule = getSchedule(
                         dbTicket.getSchedule_prefix(),
                         dbTicket.getSchedule_code(),
@@ -415,27 +417,28 @@ public class WS_TK_Ticket_Save extends IntentService {
 
     private void updateActionsFileNames(T_TK_Ticket_Save_Rec_Result retResult) throws Exception {
         TK_Ticket tkTicket = retResult.getTicket();
-        if(tkTicket.getCtrl() != null) {
-            for (TK_Ticket_Ctrl ticketCtrl : tkTicket.getCtrl()) {
-                if(ticketCtrl.getAction() != null){
-                    if(ticketCtrl.getAction().getAction_photo_name() != null) {
-                        String oldName = ToolBox_Inf.buildTicketActionImgPath(ticketCtrl.getCustomer_code(), retResult.getOld_ticket_prefix(), retResult.getOld_ticket_code(), ticketCtrl.getTicket_seq());
-                        if (oldName != null) {
-                            renameFile(oldName, ticketCtrl.getAction().getAction_photo_name());
-                        } else {
-                            //Ok Fazer.... Lançar exception
-                            throw new Exception("Error on update tickt photos name !!!");
-                        }
-                    }//Senão tem foto, não tem que fazer de para de foto
-                }else{
-                    //Ok Fazer.... Lançar exception
-                    throw new Exception("Ticket action not found !!!");
-                }
-            }
-        }else{
-            //Ok Fazer.... Lançar exception
-            throw new Exception("Ticket controls not found !!!");
-        }
+        //TODO REVE SE MOVER PARA O STEP
+//        if(tkTicket.getCtrl() != null) {
+//            for (TK_Ticket_Ctrl ticketCtrl : tkTicket.getCtrl()) {
+//                if(ticketCtrl.getAction() != null){
+//                    if(ticketCtrl.getAction().getAction_photo_name() != null) {
+//                        String oldName = ToolBox_Inf.buildTicketActionImgPath(ticketCtrl.getCustomer_code(), retResult.getOld_ticket_prefix(), retResult.getOld_ticket_code(), ticketCtrl.getTicket_seq());
+//                        if (oldName != null) {
+//                            renameFile(oldName, ticketCtrl.getAction().getAction_photo_name());
+//                        } else {
+//                            //Ok Fazer.... Lançar exception
+//                            throw new Exception("Error on update tickt photos name !!!");
+//                        }
+//                    }//Senão tem foto, não tem que fazer de para de foto
+//                }else{
+//                    //Ok Fazer.... Lançar exception
+//                    throw new Exception("Ticket action not found !!!");
+//                }
+//            }
+//        }else{
+//            //Ok Fazer.... Lançar exception
+//            throw new Exception("Ticket controls not found !!!");
+//        }
     }
 
     private void renameFile(String oldName, String action_photo_name) {

@@ -55,7 +55,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String PARTNER_DESC  = "partner_desc";
     public static final String STEP_ORDER = "step_order";
     public static final String OBJ_PLANNED = "obj_planned";
-
+    public static final String UPDATE_REQUIRED = "update_required";
 
     public TK_Ticket_CtrlDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -728,6 +728,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }else{
                 tk_ticket_ctrl.setPartner_desc(cursor.getString(cursor.getColumnIndex(PARTNER_DESC)));
             }
+            tk_ticket_ctrl.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
             //
             return tk_ticket_ctrl;
         }
@@ -785,6 +786,9 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             contentValues.put(PARTNER_CODE,tk_ticket_ctrl.getPartner_code());
             contentValues.put(PARTNER_ID,tk_ticket_ctrl.getPartner_id());
             contentValues.put(PARTNER_DESC,tk_ticket_ctrl.getPartner_desc());
+            if(tk_ticket_ctrl.getUpdate_required() > -1){
+                contentValues.put(UPDATE_REQUIRED,tk_ticket_ctrl.getUpdate_required());
+            }
             //
             return contentValues;
         }

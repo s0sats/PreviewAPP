@@ -21,6 +21,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_006;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_010;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_002;
@@ -131,10 +132,13 @@ public class WS_Cleanning extends IntentService {
                     if(ticket.getOpen_photo_local()!= null && !ticket.getOpen_photo_local().isEmpty()   ){
                         filesToDeleteList.add(new File(Constant.CACHE_PATH_PHOTO + "/" +ticket.getOpen_photo_local()));
                     }
-                    //
-                    for (TK_Ticket_Ctrl ctrl : ticket.getCtrl()) {
-                        if(ctrl.getAction().getAction_photo_local() != null && !ctrl.getAction().getAction_photo_local() .isEmpty()){
-                            filesToDeleteList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + ctrl.getAction().getAction_photo_local()));
+                    //LUCHE - 30/07/2020
+                    //Modificado para deletar fotos das action dos controles que agora ficam no step
+                    for (TK_Ticket_Step tk_ticket_step : ticket.getStep()) {
+                        for (TK_Ticket_Ctrl ctrl : tk_ticket_step.getCtrl()) {
+                            if(ctrl.getAction().getAction_photo_local() != null && !ctrl.getAction().getAction_photo_local() .isEmpty()){
+                                filesToDeleteList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + ctrl.getAction().getAction_photo_local()));
+                            }
                         }
                     }
                 }

@@ -311,64 +311,38 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     public boolean updateTicketAction(TK_Ticket_Ctrl mTicketCtrl) {
         TK_Ticket tkTicket = getTicketbyPk(mTicketCtrl.getTicket_prefix(),mTicketCtrl.getTicket_code());
         //Em teoria, nunca deveria ser null, mas vai saber.
-        if(tkTicket != null && tkTicket.getCtrl() != null){
-            int ctrlIdx = getCtrlIdx(mTicketCtrl, tkTicket);
-            if(ctrlIdx > -1){
-                tkTicket.getCtrl().set(ctrlIdx,mTicketCtrl);
-                tkTicket.setUpdate_required(1);
-                tkTicket.setTicket_status( mView.isScheduledTicket() ? ConstantBaseApp.SYS_STATUS_WAITING_SYNC : tkTicket.getTicket_status());
-                //Atualiza Ticket completo, para garantir rolback caso erro ao atualizar ctrls
-                DaoObjReturn daoObjReturn  = ticketDao.addUpdate(tkTicket);
-                //
-                if(!daoObjReturn.hasError()){
-                    //Se agendamento, atualiza status do agendamento.
-                    if(mView.isScheduledTicket()){
-                        //
-                        updateScheduleStatus(
-                            mView.getmSchedulePrefix(),
-                            mView.getmScheduleCode(),
-                            mView.getmScheduleExec(),
-                            mTicketCtrl.getCtrl_status()
-                        );
-                    }
-                    //
-                    if (mTicketCtrl.getAction().getAction_photo_local() != null
-                        && !mTicketCtrl.getAction().getAction_photo_local().isEmpty()
-                    ) {
-                        uploadActionImage(mTicketCtrl);
-                    }
-                    //
-                    return true;
-                }
-            }
-        }
-        //Metodo de update original, modificado para garantir rollback via transation
-        /*DaoObjReturn daoObjReturn = ticketCtrlDao.addUpdate(mTicketCtrl);
-        if (!daoObjReturn.hasError()) {
-            tkTicket.setUpdate_required(1);
-            tkTicket.setTicket_status( mView.isScheduledTicket() ? ConstantBaseApp.SYS_STATUS_WAITING_SYNC : tkTicket.getTicket_status());
-            //
-            daoObjReturn = ticketDao.addUpdate(tkTicket);
-            if(!daoObjReturn.hasError()){
-                if(mView.isScheduledTicket()){
-                    //
-                    updateScheduleStatus(
-                        mView.getmSchedulePrefix(),
-                        mView.getmScheduleCode(),
-                        mView.getmScheduleExec(),
-                        mTicketCtrl.getCtrl_status()
-                    );
-                }
-                //
-                if (mTicketCtrl.getAction().getAction_photo_local() != null
-                    && !mTicketCtrl.getAction().getAction_photo_local().isEmpty()
-                ) {
-                    uploadActionImage(mTicketCtrl);
-                }
-                //
-                return true;
-            }
-        }*/
+        //TODO REFAZER METODO
+//        if(tkTicket != null && tkTicket.getCtrl() != null){
+//            int ctrlIdx = getCtrlIdx(mTicketCtrl, tkTicket);
+//            if(ctrlIdx > -1){
+//                tkTicket.getCtrl().set(ctrlIdx,mTicketCtrl);
+//                tkTicket.setUpdate_required(1);
+//                tkTicket.setTicket_status( mView.isScheduledTicket() ? ConstantBaseApp.SYS_STATUS_WAITING_SYNC : tkTicket.getTicket_status());
+//                //Atualiza Ticket completo, para garantir rolback caso erro ao atualizar ctrls
+//                DaoObjReturn daoObjReturn  = ticketDao.addUpdate(tkTicket);
+//                //
+//                if(!daoObjReturn.hasError()){
+//                    //Se agendamento, atualiza status do agendamento.
+//                    if(mView.isScheduledTicket()){
+//                        //
+//                        updateScheduleStatus(
+//                            mView.getmSchedulePrefix(),
+//                            mView.getmScheduleCode(),
+//                            mView.getmScheduleExec(),
+//                            mTicketCtrl.getCtrl_status()
+//                        );
+//                    }
+//                    //
+//                    if (mTicketCtrl.getAction().getAction_photo_local() != null
+//                        && !mTicketCtrl.getAction().getAction_photo_local().isEmpty()
+//                    ) {
+//                        uploadActionImage(mTicketCtrl);
+//                    }
+//                    //
+//                    return true;
+//                }
+//            }
+//        }
         return false;
     }
 
@@ -382,16 +356,17 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      * @return - Idx do ctrl ou -1 caso não encontre.
      */
     private int getCtrlIdx(TK_Ticket_Ctrl mTicketCtrl, TK_Ticket tkTicket) {
-        for (int i = 0; i < tkTicket.getCtrl().size(); i++) {
-            if(
-                tkTicket.getCtrl().get(i).getTicket_prefix() == mTicketCtrl.getTicket_prefix()
-                && tkTicket.getCtrl().get(i).getTicket_code() == mTicketCtrl.getTicket_code()
-                && tkTicket.getCtrl().get(i).getTicket_seq() == mTicketCtrl.getTicket_seq()
-                && tkTicket.getCtrl().get(i).getStep_code() == mTicketCtrl.getStep_code()
-            ){
-                return i;
-            }
-        }
+        //TODO REFAZER METODO
+//        for (int i = 0; i < tkTicket.getCtrl().size(); i++) {
+//            if(
+//                tkTicket.getCtrl().get(i).getTicket_prefix() == mTicketCtrl.getTicket_prefix()
+//                && tkTicket.getCtrl().get(i).getTicket_code() == mTicketCtrl.getTicket_code()
+//                && tkTicket.getCtrl().get(i).getTicket_seq() == mTicketCtrl.getTicket_seq()
+//                && tkTicket.getCtrl().get(i).getStep_code() == mTicketCtrl.getStep_code()
+//            ){
+//                return i;
+//            }
+//        }
         return -1;
     }
 
@@ -493,21 +468,22 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         TK_Ticket tkTicket = getTicketBySchedule(scheduleExec.getSchedule_prefix(),scheduleExec.getSchedule_code(),scheduleExec.getSchedule_exec());
         //
         if(tkTicket != null){
-            if(tkTicket.getCtrl() != null && tkTicket.getCtrl().size() > 0){
-                tkTicket.getCtrl().get(0).setCtrl_status(finalStatus);
-                tkTicket.getCtrl().get(0).getAction().setAction_status(finalStatus);
-            }
-            tkTicket.setTicket_status(finalStatus);
-            scheduleExec.setStatus(finalStatus);
-            scheduleExec.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-            //
-            DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
-            if(!daoObjReturn.hasError()){
-                daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
-                if(daoObjReturn.hasError()){
-                    erroMsg = hmAux_Trans.get("alert_error_on_cancel_schedule_msg");
-                }
-            }
+            //TODO RFAZER METODO
+//            if(tkTicket.getCtrl() != null && tkTicket.getCtrl().size() > 0){
+//                tkTicket.getCtrl().get(0).setCtrl_status(finalStatus);
+//                tkTicket.getCtrl().get(0).getAction().setAction_status(finalStatus);
+//            }
+//            tkTicket.setTicket_status(finalStatus);
+//            scheduleExec.setStatus(finalStatus);
+//            scheduleExec.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+//            //
+//            DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
+//            if(!daoObjReturn.hasError()){
+//                daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
+//                if(daoObjReturn.hasError()){
+//                    erroMsg = hmAux_Trans.get("alert_error_on_cancel_schedule_msg");
+//                }
+//            }
         } else{
             erroMsg = hmAux_Trans.get("alert_error_ticket_not_found_msg");
         }
@@ -675,15 +651,16 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     }
 
     @Override
+    //TODO REVE SE MOVER PARA O STEP
     public String hasCheckinBlockBy(int ticket_prefix, int ticket_code) {
         TK_Ticket ticket = getTicketbyPk(ticket_prefix, ticket_code);
         String preference_user_code = ToolBox_Con.getPreference_User_Code(context);
-        if (preference_user_code != null) {
-            if (!preference_user_code.equals(ticket.getCheckin_user()) && ticket.getCheckin_date() != null) {
-
-                return getFormattedInfo(ticket.getCheckin_date(), ticket.getCheckin_user_name());
-            }
-        }
+//        if (preference_user_code != null) {
+//            if (!preference_user_code.equals(ticket.getCheckin_user()) && ticket.getCheckin_date() != null) {
+//
+//                return getFormattedInfo(ticket.getCheckin_date(), ticket.getCheckin_user_name());
+//            }
+//        }
         return "";
     }
 
@@ -783,12 +760,13 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      */
     private boolean hasActionNotExec(TK_Ticket tkTicket) {
         //
-        for (TK_Ticket_Ctrl ctrl : tkTicket.getCtrl()) {
-            if (!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())
-                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(ctrl.getCtrl_status())) {
-                return true;
-            }
-        }
+        //TODO REFAZER METODO
+//        for (TK_Ticket_Ctrl ctrl : tkTicket.getCtrl()) {
+//            if (!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())
+//                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(ctrl.getCtrl_status())) {
+//                return true;
+//            }
+//        }
         //
         return false;
     }

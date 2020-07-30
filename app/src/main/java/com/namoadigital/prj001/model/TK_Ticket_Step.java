@@ -44,6 +44,7 @@ public class TK_Ticket_Step {
     @Nullable
     private String step_end_user_nick;
     private String step_status;
+    private int update_required;
     private ArrayList<TK_Ticket_Ctrl> ctrl = new ArrayList<>();
 
     public TK_Ticket_Step() {
@@ -240,6 +241,14 @@ public class TK_Ticket_Step {
 
     public void setStep_status(String step_status) {
         this.step_status = step_status;
+    }
+
+    public int getUpdate_required() {
+        return update_required;
+    }
+
+    public void setUpdate_required(int update_required) {
+        this.update_required = update_required;
     }
 
     public ArrayList<TK_Ticket_Ctrl> getCtrl() {

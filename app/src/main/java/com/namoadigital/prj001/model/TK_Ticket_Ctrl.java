@@ -62,6 +62,7 @@ public class TK_Ticket_Ctrl {
     private int step_code;
     private int step_order;
     private int obj_planned;
+    private int update_required;
     @Expose
     @Nullable
     private TK_Ticket_Action action;
@@ -391,6 +392,14 @@ public class TK_Ticket_Ctrl {
 
     public void setObj_planned(int obj_planned) {
         this.obj_planned = obj_planned;
+    }
+
+    public int getUpdate_required() {
+        return update_required;
+    }
+
+    public void setUpdate_required(int update_required) {
+        this.update_required = update_required;
     }
 
     @Nullable
