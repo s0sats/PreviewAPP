@@ -1,12 +1,8 @@
 package com.namoadigital.prj001.ui.act070.VH;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,8 +13,7 @@ import com.namoadigital.prj001.ui.act070.model.StepApproval;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-public class Act070_Step_ApprovalVH extends RecyclerView.ViewHolder {
-    private Context context;
+public class Act070_Step_ApprovalVH extends Act070_Step_Abstract_ProcessVH {
     private View vStepContinousLine;
     private ImageView ivStepDashedLine;
     private ConstraintLayout clBackground;
@@ -34,13 +29,18 @@ public class Act070_Step_ApprovalVH extends RecyclerView.ViewHolder {
     private View vDivider;
     private ImageView ivProcessAction;
     private TextView tvProcessAction;
+    private ConstraintLayout clRejectionBackground;
+    private View vRejectionDivider;
+    private ImageView ivRejection;
+    private TextView tvRejection;
+    private String  transReviewRejection;
     private Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick;
 
 
-    public Act070_Step_ApprovalVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick) {
-        super(itemView);
-        this.context = context;
+    public Act070_Step_ApprovalVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick, String transStartProcess, String transReviewProcess,String transReviewRejection) {
+        super(context,itemView,transStartProcess,transReviewProcess);
         this.onApprovalClick = onApprovalClick;
+        this.transReviewRejection = transReviewRejection;
         bindViews();
     }
 
@@ -60,6 +60,11 @@ public class Act070_Step_ApprovalVH extends RecyclerView.ViewHolder {
         vDivider =  this.itemView.findViewById(R.id.step_approval_v_divider);
         ivProcessAction =  this.itemView.findViewById(R.id.step_approval_iv_process_action);
         tvProcessAction =  this.itemView.findViewById(R.id.step_approval_tv_process_action);
+        clRejectionBackground = this.itemView.findViewById(R.id.step_approval_cl_rejection_background);
+        vRejectionDivider =  this.itemView.findViewById(R.id.step_approval_v_rejection_divider);
+        ivRejection =  this.itemView.findViewById(R.id.step_approval_iv_rejection);
+        tvRejection =  this.itemView.findViewById(R.id.step_approval_tv_rejection);
+        //
         clBackground.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,15 +73,27 @@ public class Act070_Step_ApprovalVH extends RecyclerView.ViewHolder {
                 }
             }
         });
+        //
+        clRejectionBackground.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(onApprovalClick != null){
+                    onApprovalClick.onShowRejectionClick(getAdapterPosition());
+                }
+            }
+        });
     }
 
     public void bindData(StepApproval stepApproval){
         resetVisibility();
         //
-        tvApprovalQuestion.setText(stepApproval.getStepDescription());
-        if(ToolBox_Inf.hasConsistentValueString(stepApproval.getApprovalStatus())) {
+        tvApprovalQuestion.setText(stepApproval.getApprovalQuestion());
+        if( ToolBox_Inf.hasConsistentValueString(stepApproval.getApprovalStatus())
+            && ConstantBaseApp.SYS_STATUS_DONE.equals(stepApproval.getApprovalStatus())
+        ) {
             tvApprovalStatus.setVisibility(View.VISIBLE);
             tvApprovalStatus.setText(stepApproval.getApprovalStatus());
+            tvApprovalStatus.setTextColor(ToolBox_Inf.getStatusColorV2(context,stepApproval.getApprovalStatus()));
         }
         if(ToolBox_Inf.hasConsistentValueString(stepApproval.getApprovalComment())) {
             tvApprovalComment.setVisibility(View.VISIBLE);
@@ -93,7 +110,7 @@ public class Act070_Step_ApprovalVH extends RecyclerView.ViewHolder {
             tvUser.setText(stepApproval.getEndUser());
         }
         if(ToolBox_Inf.hasConsistentValueString(stepApproval.getStartDate())) {
-            defineCheckInOutIcon(ToolBox_Inf.hasConsistentValueString(stepApproval.getEndDate()));
+            defineCheckInOutIcon(ivStartEndDateIcon,ToolBox_Inf.hasConsistentValueString(stepApproval.getEndDate()));
             ivStartEndDateIcon.setVisibility(View.VISIBLE);
             tvStartEndDate.setVisibility(View.VISIBLE);
             tvStartEndDate.setText(
@@ -101,91 +118,41 @@ public class Act070_Step_ApprovalVH extends RecyclerView.ViewHolder {
             );
         }
         //
-        applyHistoryLayout(stepApproval);
-        applyHighlightBackground(stepApproval);
-        configProcessAction(stepApproval);
-    }
-
-    private void defineCheckInOutIcon(boolean hasCheckOutDate) {
-        int drawableId =
-            hasCheckOutDate
-                ? R.drawable.ic_check_white_24dp
-                : R.drawable.ic_baseline_input_24dp_black;
-        Drawable drawable = context.getDrawable(drawableId);
-        ivStartEndDateIcon.setImageDrawable(drawable);
-    }
-
-    private void configProcessAction(StepApproval stepApproval) {
-        int tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PENDING);
-        Drawable drawable = null;
-        if(stepApproval.isCurrentStep()){
-            if(ToolBox_Inf.hasConsistentValueString(stepApproval.getStartDate())){
-                drawable = context.getDrawable(R.drawable.ic_baseline_play_arrow_24dp);
-                tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PROCESS);
-                if(ToolBox_Inf.hasConsistentValueString(stepApproval.getEndDate())){
-                    drawable = context.getDrawable(R.drawable.ic_baseline_open_in_new_24dp);
-                    tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PENDING);
-                }
-            }
-            //
-            if(drawable != null){
-                drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP);
-            }
-            ivProcessAction.setImageDrawable(drawable);
-            tvProcessAction.setTextColor(tintColor);
-            ivProcessAction.setVisibility(View.VISIBLE);
-            tvProcessAction.setVisibility(View.VISIBLE);
-        }else{
-            if(ToolBox_Inf.hasConsistentValueString(stepApproval.getStartDate()) && ToolBox_Inf.hasConsistentValueString(stepApproval.getEndDate()) ) {
-                drawable = context.getDrawable(R.drawable.ic_baseline_open_in_new_24dp);
-                drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP);
-                ivProcessAction.setImageDrawable(drawable);
-                tvProcessAction.setTextColor(tintColor);
-                ivProcessAction.setVisibility(View.VISIBLE);
-                tvProcessAction.setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
-    private void applyHighlightBackground(StepApproval stepApproval) {
-        int backgroundColor = R.color.padrao_TRANSPARENT;
-        Drawable drawable = context.getDrawable(R.drawable.pipeline_step_states);
-        //Se step atual, verifica o destaque
-        if(stepApproval.isCurrentStep()) {
-            //Se start_end, se tiver checkin, fica amarelo , se não fica cinza indicando que falta q
-            //não é possivel mexer.
-            if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(stepApproval.getStepType())) {
-                backgroundColor =
-                    ToolBox_Inf.hasConsistentValueString(stepApproval.getStartDate())
-                        ? R.color.namoa_color_ticket_process_highlight
-                        : R.color.namoa_color_pipeline_cur_step_no_checkin;
-                //
-                drawable =
-                    ToolBox_Inf.hasConsistentValueString(stepApproval.getStartDate())
-                        ? context.getDrawable(R.drawable.pipeline_step_highligh_states)
-                        : context.getDrawable(R.drawable.pipeline_step_gray_states);
-            } else {
-                //Se ONE_TOUCH, fica amarelo.
-                backgroundColor = R.color.namoa_color_ticket_process_highlight;
-                drawable = context.getDrawable(R.drawable.pipeline_step_highligh_states);
-            }
-            //
-        }
-        clBackground.setBackground(drawable);
-    }
-
-    private void applyHistoryLayout(StepApproval stepApproval) {
-        int fontColor = R.color.namoa_color_dark_blue;
+        applyHistoryLayout(
+            stepApproval.isCurrentStep(),
+            tvApprovalQuestion,
+            tvApprovalStatus,
+            tvApprovalComment,
+            tvPartner,
+            tvUser,
+            tvStartEndDate
+        );
         //
-        if(!stepApproval.isCurrentStep()){
-            fontColor = R.color.namoa_color_gray_4;
+        applyHighlightBackground(
+            clBackground,
+            stepApproval.getProcessStatus(),
+            stepApproval.isCurrentStep(),
+            stepApproval.getStepType(),
+            stepApproval.getStartDate()
+        );
+        //
+        configProcessAction(
+            ivProcessAction,
+            tvProcessAction,
+            stepApproval.getProcessStatus(),
+            stepApproval.getStepType(),
+            stepApproval.isCurrentStep(),
+            stepApproval.isStepAlreadyCheckedIn()
+        );
+        //
+        showRejectedAction(stepApproval.hasRejection());
+    }
+
+    private void showRejectedAction(boolean hasRejection) {
+        if(hasRejection){
+            clRejectionBackground.setVisibility(View.VISIBLE);
+            tvRejection.setText(transReviewRejection);
         }
-        tvApprovalQuestion.setTextColor(ContextCompat.getColor(context, fontColor));
-        tvApprovalStatus.setTextColor(ContextCompat.getColor(context, fontColor));
-        tvApprovalComment.setTextColor(ContextCompat.getColor(context, fontColor));
-        tvPartner.setTextColor(ContextCompat.getColor(context, fontColor));
-        tvUser.setTextColor(ContextCompat.getColor(context, fontColor));
-        tvStartEndDate.setTextColor(ContextCompat.getColor(context, fontColor));
     }
 
     private void resetVisibility() {
@@ -200,6 +167,6 @@ public class Act070_Step_ApprovalVH extends RecyclerView.ViewHolder {
         tvPartner.setVisibility(View.GONE);
         ivProcessAction.setVisibility(View.GONE);
         tvProcessAction.setVisibility(View.GONE);
+        clRejectionBackground.setVisibility(View.GONE);
     }
-
 }

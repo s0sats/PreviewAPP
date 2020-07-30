@@ -19,6 +19,7 @@ import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Partner;
@@ -26,6 +27,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
@@ -34,6 +36,7 @@ import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
+import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -49,6 +52,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     private Act071_Main_Contract.I_View mView;
     private HMAux hmAux_Trans;
     private TK_TicketDao ticketDao;
+    private TK_Ticket_StepDao ticketStepDao;
     private TK_Ticket_CtrlDao ticketCtrlDao;
     private MD_PartnerDao mdPartnerDao;
     private MD_Schedule_ExecDao scheduleExecDao;
@@ -59,6 +63,12 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         this.hmAux_Trans = hmAux_Trans;
         //
         this.ticketDao = new TK_TicketDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        this.ticketStepDao = new TK_Ticket_StepDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
@@ -105,16 +115,65 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     }
 
     @Override
-    public TK_Ticket_Ctrl getTicketCtrlObj(int mActionPrefix, int mActionCode, int mActionSeq) {
+    public TK_Ticket_Ctrl getTicketCtrlObj(int mActionPrefix, int mActionCode, int mActionSeq, int mStepCode) {
         return ticketCtrlDao.getByString(
             new TK_Ticket_Ctrl_Sql_001(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 mActionPrefix,
                 mActionCode,
-                mActionSeq
+                mActionSeq,
+                mStepCode
             ).toSqlQuery()
         );
     }
+
+    //region NOVO_TICKET
+
+    @Override
+    public TK_Ticket_Step getStepInfo(int mTicketPrefix, int mTicketCode, int mStepCode) {
+        TK_Ticket_Step ticketStep =
+            ticketStepDao.getByString(
+                new TK_Ticket_Step_Sql_001(
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    mTicketPrefix,
+                    mTicketCode,
+                    mStepCode
+                ).toSqlQuery()
+            );
+        //
+        if(ticketStep != null){
+            //APENAS PARA NÃO CARREGAR MUITO A MEMORIA - TEM QUE ESCOVAR BYTE, MAS NÃO PRECISA PLANEJAR SAKA
+            ticketStep.setCtrl(new ArrayList<TK_Ticket_Ctrl>());
+        }
+        return ticketStep;
+    }
+
+    @Override
+    public int getStepColor(TK_Ticket_Step ticketStep) {
+        return
+            ticketStep != null
+                ? ToolBox_Inf.getStatusColorV2(context,ticketStep.getStep_status())
+                : R.color.namoa_status_pending
+            ;
+    }
+
+    @Override
+    public String getStepNumFormatted(TK_Ticket_Step ticketStep) {
+        return
+            ticketStep != null
+                ? TK_Ticket_Step.getStepNumFormatted(ticketStep.getStep_order(),ticketStep.getStep_order_seq())
+                : "";
+
+    }
+
+    @Override
+    public String getStepDesc(TK_Ticket_Step ticketStep) {
+        return  ticketStep != null
+                ? ticketStep.getStep_desc()
+                : "";
+    }
+
+    //endregion
 
     @Override
     public String getFormattedInfo(String ctrl_end_date, String ctrl_end_user_name) {
@@ -328,6 +387,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 tkTicket.getCtrl().get(i).getTicket_prefix() == mTicketCtrl.getTicket_prefix()
                 && tkTicket.getCtrl().get(i).getTicket_code() == mTicketCtrl.getTicket_code()
                 && tkTicket.getCtrl().get(i).getTicket_seq() == mTicketCtrl.getTicket_seq()
+                && tkTicket.getCtrl().get(i).getStep_code() == mTicketCtrl.getStep_code()
             ){
                 return i;
             }

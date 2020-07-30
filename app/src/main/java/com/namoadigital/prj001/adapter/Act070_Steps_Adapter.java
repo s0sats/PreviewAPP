@@ -60,6 +60,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
     }
     public interface OnApprovalClickListener {
         void onApprovalClick(int approvalPosition);
+        void onShowRejectionClick(int approvalPosition);
     }
     public interface OnProcessBtnClickListener {
         void onProcessBtnClick(int processBtnPosition);
@@ -90,6 +91,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         List<String> transList = new ArrayList<>();
         transList.add("start_process_btn");
         transList.add("review_process_btn");
+        transList.add("review_rejection_btn");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -126,7 +128,14 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                 return new Act070_Step_ChecklistVH(context, view, onChecklistClickListener);
             case VIEW_TYPE_STEP_APPROVAL:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_approval_cell, viewGroup, false);
-                return new Act070_Step_ApprovalVH(context, view, onApprovalClickListener);
+                return new Act070_Step_ApprovalVH(
+                    context,
+                    view,
+                    onApprovalClickListener,
+                    hmAux_Trans.get("start_process_btn"),
+                    hmAux_Trans.get("review_process_btn"),
+                    hmAux_Trans.get("review_rejection_btn")
+                );
             case VIEW_TYPE_STEP_PROCESS_BTN:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_process_btn_cell, viewGroup, false);
                 return new Act070_Step_Process_Btn_VH(context,view, onProcessBtnClickListener);

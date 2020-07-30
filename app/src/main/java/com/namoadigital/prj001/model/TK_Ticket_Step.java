@@ -249,4 +249,8 @@ public class TK_Ticket_Step {
     public void setCtrl(ArrayList<TK_Ticket_Ctrl> ctrl) {
         this.ctrl = ctrl;
     }
+
+    public static String getStepNumFormatted(int step_order, Integer step_order_seq) {
+        return step_order + (step_order_seq == null ? "" : "." + step_order_seq);
+    }
 }

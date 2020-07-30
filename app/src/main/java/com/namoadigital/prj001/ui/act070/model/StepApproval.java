@@ -1,39 +1,21 @@
 package com.namoadigital.prj001.ui.act070.model;
 
-public class StepApproval extends BaseStep {
+public class StepApproval extends StepAbstractProcess {
+    private String approvalType;
     private String approvalStatus;
     private String approvalComment;
     private String startDate;
     private String endDate;
     private String endUser;
     private String partnerDesc;
-    private String stepType;
-    private String processStatus;
-    private boolean currentStep;
+    private boolean hasRejection;
 
-    public StepApproval() {
+    public String getApprovalType() {
+        return approvalType;
     }
 
-    public StepApproval(String stepQuestion,String approvalStatus, String endUser, String partnerDesc, String stepType,String processStatus, boolean currentStep) {
-        this.stepDescription = stepQuestion;
-        this.approvalStatus = approvalStatus;
-        this.endUser = endUser;
-        this.partnerDesc = partnerDesc;
-        this.stepType = stepType;
-        this.currentStep = currentStep;
-    }
-
-    public StepApproval(String stepQuestion,String approvalStatus,String approvalComment, String startDate, String endDate, String endUser, String partnerDesc, String stepType, String processStatus, boolean currentStep) {
-        this.stepDescription = stepQuestion;
-        this.approvalStatus = approvalStatus;
-        this.processStatus = processStatus;
-        this.approvalComment = approvalComment;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.endUser = endUser;
-        this.partnerDesc = partnerDesc;
-        this.stepType = stepType;
-        this.currentStep = currentStep;
+    public void setApprovalType(String approvalType) {
+        this.approvalType = approvalType;
     }
 
     public String getApprovalStatus() {
@@ -92,19 +74,19 @@ public class StepApproval extends BaseStep {
         this.partnerDesc = partnerDesc;
     }
 
-    public String getStepType() {
-        return stepType;
+    public void setApprovalQuestion(String approvalQuestion){
+        this.stepDescription = approvalQuestion;
     }
 
-    public void setStepType(String stepType) {
-        this.stepType = stepType;
+    public String getApprovalQuestion() {
+        return stepDescription;
     }
 
-    public boolean isCurrentStep() {
-        return currentStep;
+    public boolean hasRejection() {
+        return hasRejection;
     }
 
-    public void setCurrentStep(boolean currentStep) {
-        this.currentStep = currentStep;
+    public void setHasRejection(boolean hasRejection) {
+        this.hasRejection = hasRejection;
     }
 }

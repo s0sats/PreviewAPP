@@ -11,8 +11,11 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,6 +45,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
@@ -50,6 +54,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,7 +65,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I_View {
+public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I_View,Frg_Pipeline_Header.OnPipelineFragmentInteractionListener {
 
     public static final String TEMP_SUFIX_FILE = "temp-";
     private final double IV_PHOTO_EXISTS_WIDTH_PERCENT = 0.8;
@@ -68,24 +73,20 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private final double IV_PHOTO_NOT_EXISTS_WIDTH_PERCENT = 0.8;
     private final double IV_PHOTO_NOT_EXISTS_HEIGHT_PERCENT = 0.13;
 
+
     private Act071_Main_Presenter mPresenter;
+    private FragmentManager fm;
+    private Frg_Pipeline_Header mFrgPipelineHeader;
     private ScrollView svMain;
-    private TextView tvTicketId;
-    private TextView tvStatus;
-    private TextView tvSerialId;
-    private TextView tvTypePath;
-    private TextView tvTypeDesc;
-    private TextView tvSeq;
-    private ImageView ivExec;
-    private TextView tvPartnerLbl;
-    private MKEditTextNM mketPartner;
+    private ConstraintLayout clFinalize;
+    private ImageView ivFinalizeIcon;
+    private TextView tvFinalizeLbl;
     private TextView tvPhotoLbl;
     private ImageView ivActionPhoto;
     private TextView tvCommentsLbl;
     private MKEditTextNM mketComments;
     private TextView tvDoneInfoLbl;
     private TextView tvDoneInfoVal;
-    private TextView tvCheckinNeeded;
     private Group grDone;
     private Bundle requestingBundle;
     private int mActionPrefix;
@@ -112,6 +113,15 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private int mScheduleCode;
     private int mScheduleExec;
     private boolean mIsSchedule;
+    //LUCHE - 28/07/2020 - NOVO TICKET
+    private int mStepCode;
+    private String mPipelineHeaderOpen_date;
+    private int mPipelineHeaderOpen_site_code;
+    private String mPipelineHeaderOpen_site_desc;
+    private String mPipelineHeaderOpen_serial_id;
+    private String mPipelineHeaderOpen_product_desc;
+    private String mPipelineHeaderTicket_status;
+    private String mPipelineHeaderOrigin_desc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +141,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void iniSetup() {
+        fm = getSupportFragmentManager();
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
             context,
@@ -185,6 +196,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("alert_error_on_cancel_schedule_msg");
         transList.add("alert_error_ticket_not_found_msg");
         //
+        transList.add("finalize_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -206,6 +219,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         );
         //
         if (mPresenter.validateBundleParams(mActionPrefix, mActionCode, mActionSeq, mSchedulePrefix, mScheduleCode, mScheduleExec)) {
+            iniHeaderFrag();
             updateActionData();
             //
             if(mIsSchedule && mPresenter.isScheduleAbortProcess(mSchedulePrefix, mScheduleCode, mScheduleExec)){
@@ -225,6 +239,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mActionPrefix = requestingBundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
             mActionCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
             mActionSeq = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ, -1);
+            mStepCode = requestingBundle.getInt(TK_Ticket_CtrlDao.STEP_CODE, -1);
             mTicketID = requestingBundle.getString(TK_TicketDao.TICKET_ID, "");
             mTypePath = requestingBundle.getString(TK_TicketDao.TYPE_PATH, "");
             mTypeDesc = requestingBundle.getString(TK_TicketDao.TYPE_DESC, "");
@@ -234,11 +249,20 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mScheduleCode = requestingBundle.getInt(TK_TicketDao.SCHEDULE_CODE, -1);
             mScheduleExec = requestingBundle.getInt(TK_TicketDao.SCHEDULE_EXEC, -1);
             mIsSchedule = defineIsScheduleAttr();
+            //LUCHE 29/07/2020
+            mPipelineHeaderOpen_date = requestingBundle.getString(TK_TicketDao.OPEN_DATE, "");
+            mPipelineHeaderOpen_site_code = requestingBundle.getInt(TK_TicketDao.OPEN_SITE_CODE, -1);
+            mPipelineHeaderOpen_site_desc = requestingBundle.getString(TK_TicketDao.OPEN_SITE_DESC, "");
+            mPipelineHeaderOpen_serial_id = requestingBundle.getString(TK_TicketDao.OPEN_SERIAL_ID,"");
+            mPipelineHeaderOpen_product_desc = requestingBundle.getString(TK_TicketDao.OPEN_PRODUCT_DESC, "");
+            mPipelineHeaderTicket_status = requestingBundle.getString(TK_TicketDao.TICKET_STATUS, "");
+            mPipelineHeaderOrigin_desc = requestingBundle.getString(TK_TicketDao.ORIGIN_DESC, "");
         } else {
             requestingAct = ConstantBaseApp.ACT070;
             mActionPrefix = -1;
             mActionCode = -1;
             mActionSeq = -1;
+            mStepCode = -1;
             mTicketID = "";
             mTypePath = "";
             mTypeDesc = "";
@@ -247,20 +271,21 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mScheduleCode = -1;
             mScheduleExec = -1;
             mIsSchedule = false;
+            mPipelineHeaderOpen_date = "";
+            mPipelineHeaderOpen_site_code = -1;
+            mPipelineHeaderOpen_site_desc = "";
+            mPipelineHeaderOpen_serial_id  = "";
+            mPipelineHeaderOpen_product_desc =  "";
+            mPipelineHeaderTicket_status  =  "";
+            mPipelineHeaderOrigin_desc =  "";
         }
     }
 
     private void bindViews() {
         svMain = findViewById(R.id.act071_sv_main);
-        tvTicketId = findViewById(R.id.act071_tv_ticket_id);
-        tvStatus = findViewById(R.id.act071_tv_status);
-        tvSerialId = findViewById(R.id.act071_tv_serial);
-        tvTypePath = findViewById(R.id.act071_tv_type_path);
-        tvTypeDesc = findViewById(R.id.act071_tv_type_desc);
-        tvSeq = findViewById(R.id.act071_tv_seq);
-        ivExec = findViewById(R.id.act071_iv_exec);
-        tvPartnerLbl = findViewById(R.id.act071_tv_partner_lbl);
-        mketPartner = findViewById(R.id.act071_mket_partner);
+        clFinalize = findViewById(R.id.act071_cl_finalize);
+        ivFinalizeIcon = findViewById(R.id.act071_iv_finalize_icon);
+        tvFinalizeLbl = findViewById(R.id.act071_tv_finalize_lbl);
         tvPhotoLbl = findViewById(R.id.act071_tv_photo_lbl);
         ivActionPhoto = findViewById(R.id.act071_iv_action_photo);
         tvCommentsLbl = findViewById(R.id.act071_tv_comment_lbl);
@@ -268,21 +293,20 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         tilComment = findViewById(R.id.act071_til_comment);
         tvDoneInfoLbl = findViewById(R.id.act071_tv_done_info_lbl);
         tvDoneInfoVal = findViewById(R.id.act071_tv_done_info_val);
-        tvCheckinNeeded = findViewById(R.id.act071_tv_checkin_needed);
         grDone = findViewById(R.id.act071_gr_done);
         //
         setLabels();
     }
 
     private void setLabels() {
-        tvPartnerLbl.setText(hmAux_Trans.get("partner_lbl"));
+        tvFinalizeLbl.setText(hmAux_Trans.get("finalize_lbl"));
         tvPhotoLbl.setText(hmAux_Trans.get("photo_lbl"));
         tvCommentsLbl.setText(hmAux_Trans.get("comments_lbl"));
         tvDoneInfoLbl.setText(hmAux_Trans.get("done_info_lbl"));
     }
 
     private void updateActionData() {
-        mTicketCtrl = mPresenter.getTicketCtrlObj(mActionPrefix, mActionCode, mActionSeq);
+        mTicketCtrl = mPresenter.getTicketCtrlObj(mActionPrefix, mActionCode, mActionSeq,mStepCode);
         if (mTicketCtrl != null) {
             setReadOnly();
             setDataToViews();
@@ -290,6 +314,39 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             paramErrorFlow();
         }
     }
+
+    //region NOVO_TICKET
+    private void iniHeaderFrag() {
+        TK_Ticket_Step tkTicketStep = mPresenter.getStepInfo(mActionPrefix,mActionCode,mStepCode);
+        //
+        mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForApprovalOrAction(
+            mTicketID,
+            ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(mPipelineHeaderOpen_date),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            ),
+            mPipelineHeaderOpen_site_code,
+            mPipelineHeaderOpen_site_desc,
+            mPipelineHeaderOpen_serial_id,
+            mPipelineHeaderOpen_product_desc,
+            "\\" + mPipelineHeaderOrigin_desc,
+            mPresenter.getStepColor(tkTicketStep),
+            mPresenter.getStepNumFormatted(tkTicketStep),
+            mPresenter.getStepDesc(tkTicketStep)
+        );
+        //
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.act071_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
+        ft.addToBackStack(null);
+        ft.commit();
+    }
+
+    @Override
+    public void syncPipeline() {
+        //DO NOTHING
+
+    }
+    //endregion
 
     private void setReadOnly() {
         bReadOnly = bDisableByCheckin ? bDisableByCheckin: mPresenter.getReadOnlyDefinition(mTicketCtrl);
@@ -303,7 +360,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void applyReadOnly() {
-        ivExec.setVisibility(View.INVISIBLE);
+        clFinalize.setVisibility(View.GONE);
         mketComments.setEnabled(false);
     }
 
@@ -634,60 +691,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 //    }
 
     private void setDataToViews() {
-        tvTicketId.setText(mTicketID);
-        tvStatus.setText(hmAux_Trans.get(mTicketCtrl.getCtrl_status()));
-        tvStatus.setTextColor(ToolBox_Inf.getStatusColorV2(context, mTicketCtrl.getCtrl_status()));
-        defineSerialVisibility();
-        definePathVisibility();
-        tvTypeDesc.setText(mTypeDesc);
-        tvSeq.setText(mPresenter.getFormattedSeqText(String.valueOf(mTicketCtrl.getTicket_seq())));
-        definePartner();
         defineComments();
         //Define tamanho imageView., considerand que img já existe.
         defineActionPhotoMetrics(IV_PHOTO_EXISTS_WIDTH_PERCENT,IV_PHOTO_EXISTS_HEIGHT_PERCENT);
         defineActionPhoto();
         defineDoneInfo();
-        defineCheckinAlert();
-
-    }
-
-    private void defineSerialVisibility() {
-        tvSerialId.setVisibility(View.GONE);
-        if(isScheduledTicket()){
-            tvSerialId.setVisibility(View.VISIBLE);
-            tvSerialId.setText(mTicketCtrl.getSerial_id());
-        }
-    }
-
-    /*
-        BARRIONUEVO 05-02-2020
-        Adicao de informacao referentes ao checkin caso seja feito por outro usuario
-     */
-    private void defineCheckinAlert() {
-        if(bDisableByCheckin && !mPresenter.hasCheckinAlertByStatus(mTicketCtrl.getCtrl_status())) {
-            tvCheckinNeeded.setVisibility(View.VISIBLE);
-            String checkin_user = mPresenter.hasCheckinBlockBy(mActionPrefix, mActionCode);
-            if (checkin_user != null && !checkin_user.isEmpty()) {
-                tvCheckinNeeded.setText(hmAux_Trans.get("checkin_info_lbl") + " " + checkin_user);
-            } else {
-                tvCheckinNeeded.setText(hmAux_Trans.get("checkin_needed_alert_lbl"));
-            }
-        }else{
-            tvCheckinNeeded.setVisibility(View.GONE);
-        }
-    }
-
-    private void definePartner() {
-        mketPartner.setEnabled(false);
-        //
-        if(mTicketCtrl.getPartner_desc() != null && !mTicketCtrl.getPartner_desc().isEmpty()) {
-            mketPartner.setText(mTicketCtrl.getPartner_desc());
-            tvPartnerLbl.setVisibility(View.VISIBLE);
-            mketPartner.setVisibility(View.VISIBLE);
-        }else{
-            tvPartnerLbl.setVisibility(View.GONE);
-            mketPartner.setVisibility(View.GONE);
-        }
     }
 
     private void defineComments() {
@@ -697,15 +705,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         mketComments.setTag(mTicketCtrl.getAction().getAction_comments());
         //Reabilita counter para atualizar contador
         tilComment.setCounterEnabled(true);
-    }
-
-    private void definePathVisibility() {
-        tvTypePath.setVisibility(View.GONE);
-        //
-        if (mTypePath != null && !mTypePath.isEmpty()) {
-            tvTypePath.setVisibility(View.VISIBLE);
-            tvTypePath.setText(mTypePath);
-        }
     }
 
     private void defineActionPhoto() {
@@ -889,7 +888,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private void initAction() {
         ivActionPhoto.setOnClickListener(photoClickListener);
         //
-        ivExec.setOnClickListener(execClickListener);
+        clFinalize.setOnClickListener(execClickListener);
     }
 
     private void defineActionPhotoListener(boolean enableAction) {

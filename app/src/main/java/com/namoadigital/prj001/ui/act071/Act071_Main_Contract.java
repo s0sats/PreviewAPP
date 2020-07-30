@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 
 import java.util.ArrayList;
 
@@ -55,7 +56,7 @@ public interface Act071_Main_Contract {
 
         boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq, int mSchedulePrefix, int mScheduleCode, int mScheduleExec);
 
-        TK_Ticket_Ctrl getTicketCtrlObj(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq);
+        TK_Ticket_Ctrl getTicketCtrlObj(int mActionPrefix, int mActionCode, int mActionSeq, int mStepCode);
 
         String getFormattedInfo(String ctrl_end_date, String ctrl_end_user_name);
 
@@ -88,6 +89,14 @@ public interface Act071_Main_Contract {
         void showScheduleCancelMsg(int mSchedulePrefix, int mScheduleCode, int mScheduleExec);
 
         boolean isClosedStatus(String ctrl_status);
+
+        TK_Ticket_Step getStepInfo(int mTicketPrefix, int mTicketCode, int mStepCode);
+
+        int getStepColor(TK_Ticket_Step ticketStep);
+
+        String getStepNumFormatted(TK_Ticket_Step ticketStep);
+
+        String getStepDesc(TK_Ticket_Step ticketStep);
 
         /*boolean hasPartnerProfile(Integer partner_code);
 

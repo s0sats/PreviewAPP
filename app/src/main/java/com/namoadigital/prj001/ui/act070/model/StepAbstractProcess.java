@@ -6,6 +6,8 @@ public abstract class StepAbstractProcess extends BaseStep{
     protected boolean currentStep;
     protected boolean stepAlreadyCheckedIn;
     protected boolean processPlanned;
+    //TicketSeq
+    protected int processTkSeq;
 
     public String getStepType() {
         return stepType;
@@ -45,5 +47,13 @@ public abstract class StepAbstractProcess extends BaseStep{
 
     public void setProcessPlanned(boolean processPlanned) {
         this.processPlanned = processPlanned;
+    }
+
+    public int getProcessTkSeq() {
+        return processTkSeq;
+    }
+
+    public void setProcessTkSeq(int processTkSeq) {
+        this.processTkSeq = processTkSeq;
     }
 }
