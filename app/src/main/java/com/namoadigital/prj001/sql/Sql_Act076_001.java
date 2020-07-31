@@ -34,6 +34,8 @@ public class Sql_Act076_001 implements Specification {
         StringBuilder sb = new StringBuilder();
         return sb
                 .append(" SELECT\n" +
+                        "       t.customer_code,\n" +
+                        "       t.scn,\n" +
                         "       t.ticket_prefix,\n" +
                         "       t.ticket_code,\n" +
                         "       t.ticket_id,\n" +

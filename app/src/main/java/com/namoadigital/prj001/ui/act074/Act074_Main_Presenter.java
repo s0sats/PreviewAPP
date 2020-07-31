@@ -9,7 +9,9 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.TK_Next_Ticket;
 import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.receiver.WBR_TK_Next_Ticket;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Next_Ticket;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -90,13 +92,30 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void executeTicketSync() {
-
+    public void executeTicketSync(Act074_TicketVH item) {
+        mView.setWsProcess(WS_TK_Ticket_Download.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_download_ticket_ttl"),
+                hmAux_Trans.get("dialog_download_ticket_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(TK_TicketDao.TICKET_PREFIX,item.getTicket_pk());
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     @Override
     public void onBackPressedClicked(String requestingAct) {
-
+        switch (requestingAct){
+            default:
+                mView.callAct068();
+                break;
+        }
     }
 
     @Override
@@ -128,7 +147,7 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
                 mView.loadTicketList(ticketsVH);
             } catch (Exception e) {
                 ToolBox_Inf.registerException(getClass().getName(),e);
-                ticketsVH = new ArrayList<>();
+
                 mView.showEmptyListMsg(
                         hmAux_Trans.get("alert_error_on_generate_list_ttl"),
                         hmAux_Trans.get("alert_error_on_generate_list_msg")

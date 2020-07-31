@@ -20,7 +20,7 @@ public interface Act074_Main_Contract {
 
         boolean hasTicketInUpdateRequired();
 
-        void executeTicketSync();
+        void executeTicketSync(Act074_TicketVH item);
 
         void onBackPressedClicked(String requestingAct);
 
@@ -42,5 +42,7 @@ public interface Act074_Main_Contract {
         void showEmptyListMsg(String title, String msg);
 
         void callAct070(Bundle bundle);
+
+        void callAct068();
     }
 }

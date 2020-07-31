@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -25,8 +26,11 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act075_Product_List_Adapter;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -37,6 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contract.I_View, Act075_Product_List_Adapter.OnProductInteract {
+    public static final String PRODUCT_LIST = "PRODUCT_LIST";
+    public static final String IS_ADD_PRODUCT_LIST = "IS_ADD_PRODUCT_LIST";
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private String mResource_CodeFrg = "0";
@@ -49,6 +55,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         act_profile - 1 Produto
                       2 Aprovacao
      */
+    private TK_Ticket tkTicket;
     private int act_profile;
     RecyclerView rvProduct;
     Button btnSave;
@@ -59,6 +66,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
     private ArrayList<TK_Ticket_Product> tk_ticket_products = new ArrayList<>();
     private Act075_Product_List_Adapter mAdapter;
+    private int mTkPrefix;
+    private int mTkCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +77,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
-//        rvProduct = findViewById(R.id.act075_rv_product);
+        rvProduct = findViewById(R.id.act075_rv_product);
         btnSave = findViewById(R.id.act075_save_product);
         fabMenu = (FabMenu) findViewById(R.id.act075_fabMenu_anchor);
         fabMenu.setmIcons_Enabled(false);
@@ -111,6 +120,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         mPresenter = new Act075_Main_Presenter(context, this, hmAux_Trans);
         recoverIntentsInfo();
         //
+        tkTicket = mPresenter.getTicket(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix,mTkCode);
+        tk_ticket_products = tkTicket.getProduct();
+        //
         if(act_profile == 1) {
             setProductHeaderFragment();
         }else{
@@ -128,20 +140,37 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     }
 
     private void setProductList() {
-
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        rvProduct.setLayoutManager(layoutManager);
+        //
+        mAdapter = new Act075_Product_List_Adapter(
+                context,
+                hmAux_Trans,
+                tk_ticket_products,
+                act_profile,
+                tkTicket.getInventory_control(),
+                mPresenter.getWithdrawStatus(tkTicket),
+                mPresenter.getAppliedStatus(tkTicket),
+                this
+        );
+        //
+        rvProduct.setAdapter(mAdapter);
     }
 
     private void setProductHeaderFragment() {
         fm = getSupportFragmentManager();
         //
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForProduct(
-                "mTicket_id",
-                "ticket_date",
-                18,
-                "site_desc",
-                "serial_id",
-                "prod_desc",
-                "desc_origin"
+                tkTicket.getTicket_id(),
+                ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(tkTicket.getOpen_date()),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                ),
+                tkTicket.getOpen_site_code(),
+                tkTicket.getOpen_site_desc(),
+                tkTicket.getOpen_serial_id(),
+                tkTicket.getOpen_product_desc(),
+                tkTicket.getOrigin_desc()
         );
         //
         FragmentTransaction ft = fm.beginTransaction();
@@ -155,10 +184,10 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         //
         if (bundle != null) {
             act_profile = bundle.getInt(VIEW_PROFILE, -1);
-            tk_ticket_products = (ArrayList<TK_Ticket_Product>) bundle.getSerializable("TK_Ticket_Product");
+            mTkPrefix = bundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
+            mTkCode = bundle.getInt(TK_TicketDao.TICKET_CODE, -1);
         } else {
             act_profile = -1;
-            tk_ticket_products = new ArrayList<>();
         }
     }
 
@@ -187,6 +216,17 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         fabProduct.setmButton_Resource_Color(iconColor);
         fabProduct.setmButton_Resource(R.drawable.ic_baseline_build_24);
         fabMenuItems.add(fabProduct);
+        fabMenu.setFabMenuItens(fabMenuItems);
+        //
+        //Seta tradução e itens no FabMenu
+        for (FabMenuItem item : fabMenuItems) {
+            if (item != null && hmAux_Trans.get((String) item.getTag()) != null) {
+                item.setmLabel(hmAux_Trans.get((String) item.getTag()));
+            } else {
+                item.setmLabel(ToolBox.setNoTrans(mModule_Code, mResource_Code, (String) item.getTag()));
+            }
+        }
+        //
         fabMenu.setFabMenuItens(fabMenuItems);
     }
 
@@ -243,14 +283,17 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
             }
         });
-
-
     }
 
     private void callAct070() {
-
+        Intent intent = new Intent(context, Act070_Main.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX,tkTicket.getTicket_prefix());
+        bundle.putInt(TK_TicketDao.TICKET_CODE,tkTicket.getTicket_code());
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
     }
-    
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
@@ -259,6 +302,10 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         transList.add("taken_lbl");
         transList.add("applied_lbl");
         transList.add("btn_save");
+        transList.add("set_product_qty_lbl");
+        transList.add("set_product_qty_used_lbl");
+        transList.add("exit_without_save_ttl");
+        transList.add("exit_without_save_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -281,7 +328,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
     @Override
     public void onAddProduct() {
-        //call Product Selection
+        callAct_Product_Selection(context, tk_ticket_products);
     }
 
     @Override
@@ -291,7 +338,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         View mDialogVIew = inflater.inflate(R.layout.act075_set_qties_dialog, null);
         TextView dialog_set_qty_lbl =  mDialogVIew.findViewById(R.id.act075_dialog_set_qty_lbl);
         final MKEditTextNM dialog_set_mkedt_qty =  mDialogVIew.findViewById(R.id.act075_dialog_set_mkedt_qty);
-        dialog_set_mkedt_qty.setText(String.format("%d", tk_ticket_product.getQty()));
+        dialog_set_mkedt_qty.setText(String.valueOf(tk_ticket_product.getQty()));
         dialog_set_qty_lbl.setText(hmAux_Trans.get("set_product_qty_lbl"));
 
         builder.setView(mDialogVIew)
@@ -308,6 +355,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
                     }
                 });
+        builder.show();
     }
 
     @Override
@@ -317,7 +365,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         View mDialogVIew = inflater.inflate(R.layout.act075_set_qties_dialog, null);
         TextView dialog_set_qty_lbl =  mDialogVIew.findViewById(R.id.act075_dialog_set_qty_lbl);
         final MKEditTextNM dialog_set_mkedt_qty =  mDialogVIew.findViewById(R.id.act075_dialog_set_mkedt_qty);
-        dialog_set_mkedt_qty.setText(String.format("%d", tk_ticket_product.getQty_used()));
+        dialog_set_mkedt_qty.setText(String.format("%f", tk_ticket_product.getQty_used()));
         dialog_set_qty_lbl.setText(hmAux_Trans.get("set_product_qty_used_lbl"));
 
         builder.setView(mDialogVIew)
@@ -334,14 +382,17 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
                     }
                 });
+        builder.show();
     }
 
 
-    public void callAct_Product_Selection(Context context) {
+    public void callAct_Product_Selection(Context context, ArrayList<TK_Ticket_Product> tk_ticket_products) {
         Intent mIntent = new Intent(context, Act_Product_Selection.class);
         //
         Bundle bundle = new Bundle();
         //
+        bundle.putBoolean(IS_ADD_PRODUCT_LIST, true);
+        bundle.putSerializable(PRODUCT_LIST, tk_ticket_products);
         mIntent.putExtras(bundle);
         //
         startActivityForResult(mIntent, 20);
@@ -363,9 +414,38 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private void processResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
-            //todo add product to adapter
+            tk_ticket_products.add(
+                    new TK_Ticket_Product(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            tkTicket.getTicket_prefix(),
+                            tkTicket.getTicket_code(),
+                            (int) pAux.getProduct_code(),
+                            pAux.getProduct_id(),
+                            pAux.getProduct_desc(),
+                            pAux.getUn(),
+                            1.0,
+                            1.0,
+                            "pickup_status",
+                            0.0
+                    )
+            );
+            mAdapter.notifyDataSetChanged();
         } else {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        callAct070();
+    }
+
+    @Override
+    public void showMsg(String ttl, String msg) {
+
+    }
+
+    @Override
+    public void setWsProcess(String wsProcess) {
+
+    }
 }

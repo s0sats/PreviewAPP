@@ -16,6 +16,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -25,24 +26,32 @@ import java.util.List;
 
 public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<TK_Ticket_Product> mValues = new ArrayList<>();
-    private int act_profile = -1;
+    private List<TK_Ticket_Product> mValues;
+    private int act_profile;
+    private int inventory_control;
     private static final int FOOTER_VIEW = 1;
     private String mResource_Code;
     private HMAux hmAux_Trans;
     private String mResource_Name = "Act075_Product_List_Adapter";
     private Context context;
     private boolean hasWithdrawApproved;
+    private boolean hasAppliedApproved;
     private OnProductInteract mListener;
 
-    public Act075_Product_List_Adapter(Context context, List<TK_Ticket_Product> mValues, int act_profile, OnProductInteract mListener) {
+    public Act075_Product_List_Adapter(Context context, HMAux hmAux_Trans, List<TK_Ticket_Product> mValues, int act_profile, int inventory_control, boolean hasWithdrawApproved, boolean hasAppliedApproved, OnProductInteract mListener) {
         this.mValues = mValues;
         this.act_profile = act_profile;
-        this.mResource_Code = mResource_Code;
+        this.inventory_control = inventory_control;
         this.hmAux_Trans = hmAux_Trans;
-        this.mResource_Name = mResource_Name;
         this.context = context;
+        this.hasWithdrawApproved = hasWithdrawApproved;
+        this.hasAppliedApproved = hasAppliedApproved;
         this.mListener = mListener;
+        this.mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                Constant.APP_MODULE,
+                mResource_Name
+        );
         //
         loadTranslation();
     }
@@ -72,28 +81,32 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         if (viewType == FOOTER_VIEW) {
             if (act_profile == 1) {
-                View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.act075_approval_form, viewGroup, false);
-                AddProductViewHolder vh = new AddProductViewHolder(inflate);
-                return vh;
+                View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.act075_add_product_footer, viewGroup, false);
+                return new AddProductViewHolder(inflate);
             }
             if (act_profile == 2) {
                 View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.act075_approval_form, viewGroup, false);
-                ApprovalViewHolder vh = new ApprovalViewHolder(inflate);
-                return vh;
+                return new ApprovalViewHolder(inflate);
             }
         }
-        View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.act075_approval_form, viewGroup, false);
-        ProductViewHolder productViewHolder = new ProductViewHolder(inflate);
-        return productViewHolder;
+        View inflate = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.act075_product_item, viewGroup, false);
+        return new ProductViewHolder(inflate);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-        TK_Ticket_Product tk_ticket_product = mValues.get(position);
+        TK_Ticket_Product tk_ticket_product = new TK_Ticket_Product();
+
         if (viewHolder instanceof ProductViewHolder) {
+            if(mValues.size()>0) {
+                tk_ticket_product = mValues.get(position);
+            }
             ProductViewHolder productVH = (ProductViewHolder) viewHolder;
             productVH.onBind(tk_ticket_product, position);
         } else if (viewHolder instanceof ApprovalViewHolder) {
+            if(mValues.size()>0) {
+                tk_ticket_product = mValues.get(position);
+            }
             ApprovalViewHolder approvalVH = (ApprovalViewHolder) viewHolder;
             approvalVH.onBind(tk_ticket_product);
         } else if (viewHolder instanceof AddProductViewHolder) {
@@ -115,17 +128,13 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         return super.getItemViewType(position);
     }
 
-    private void setWithdrawApproved(boolean hasWithdrawApproved) {
-        this.hasWithdrawApproved = hasWithdrawApproved;
-    }
-
-
     @Override
     public int getItemCount() {
 
         if (mValues == null) {
             return 0;
         }
+
         if(act_profile == 1 && hasWithdrawApproved) {
             return mValues.size();
         }else{
@@ -142,6 +151,9 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         TextView product_cell_tv_applied;
         TextView product_cell_tv_returned;
         TextView product_cell_tv_extract;
+        TextView product_cell_tv_withdrawn_qty;
+        TextView product_cell_tv_applied_qty;
+        TextView product_cell_tv_returned_qty;
         ConstraintLayout cl_withdrawn;
         ConstraintLayout cl_applied;
         ConstraintLayout cl_returned;
@@ -149,6 +161,8 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         ImageView product_cell_iv_applied_substract;
         ImageView product_cell_iv_withdrawn_add;
         ImageView product_cell_iv_applied_add;
+        ImageView product_cell_iv_returned_substract;
+        ImageView product_cell_iv_returned_add;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -157,6 +171,9 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             product_cell_tv_applied = itemView.findViewById(R.id.product_cell_tv_applied);
             product_cell_tv_returned = itemView.findViewById(R.id.product_cell_tv_returned);
             product_cell_tv_extract = itemView.findViewById(R.id.product_cell_tv_extract);
+            product_cell_tv_withdrawn_qty = itemView.findViewById(R.id.product_cell_tv_withdrawn_qty);
+            product_cell_tv_applied_qty   = itemView.findViewById(R.id.product_cell_tv_applied_qty);
+            product_cell_tv_returned_qty  = itemView.findViewById(R.id.product_cell_tv_returned_qty);
             //
             cl_withdrawn = itemView.findViewById(R.id.cl_withdrawn);
             cl_applied = itemView.findViewById(R.id.cl_applied);
@@ -166,8 +183,13 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             product_cell_iv_applied_substract = itemView.findViewById(R.id.product_cell_iv_applied_substract);
             product_cell_iv_withdrawn_add = itemView.findViewById(R.id.product_cell_iv_withdrawn_add);
             product_cell_iv_applied_add = itemView.findViewById(R.id.product_cell_iv_applied_add);
+            product_cell_iv_returned_substract  = itemView.findViewById(R.id.product_cell_iv_returned_substract);
+            product_cell_iv_returned_add  = itemView.findViewById(R.id.product_cell_iv_returned_add);
             //
             setTranslation();
+            //
+            product_cell_iv_returned_substract.setVisibility(View.INVISIBLE);
+            product_cell_iv_returned_add.setVisibility(View.INVISIBLE);
         }
 
         private void setTranslation() {
@@ -182,17 +204,12 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         }
 
         public void onBind(final TK_Ticket_Product tk_ticket_product, final int position) {
-            if (act_profile == 1) {
-                setAmountControllersVisibility(View.VISIBLE);
-                setDetailsForApprovalVisibility(View.VISIBLE);
-            } else if (act_profile == 2) {
-                setAmountControllersVisibility(View.GONE);
-                setDetailsForApprovalVisibility(View.GONE);
-            }
             //
-            product_cell_tv_withdrawn.setText(String.format("%s %s", tk_ticket_product.getQty(), tk_ticket_product.getUn()));
-            product_cell_tv_applied.setText(String.format("%s %s", tk_ticket_product.getQty_used(), tk_ticket_product.getUn()));
-            product_cell_tv_returned.setText(String.format("%s %s", tk_ticket_product.getQty_returned(), tk_ticket_product.getUn()));
+            tv_product_info.setText(tk_ticket_product.getProduct_desc());
+            //
+            product_cell_tv_withdrawn_qty.setText(String.format("%s %s", tk_ticket_product.getQty(), tk_ticket_product.getUn()));
+            product_cell_tv_applied_qty.setText(String.format("%s %s", tk_ticket_product.getQty_used(), tk_ticket_product.getUn()));
+            product_cell_tv_returned_qty.setText(String.format("%s %s", tk_ticket_product.getQty_returned(), tk_ticket_product.getUn()));
             //
             if (tk_ticket_product.getQty() != null) {
                 if (tk_ticket_product.getQty() <= 0) {
@@ -217,14 +234,34 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                 product_cell_iv_applied_add.setEnabled(true);
             }
             //
-            product_cell_tv_withdrawn.setOnClickListener(new View.OnClickListener() {
+            if (act_profile == 1) {
+                if(inventory_control == 0 ){
+                    cl_withdrawn.setVisibility(View.GONE);
+                    cl_applied.setVisibility(View.VISIBLE);
+                    cl_returned.setVisibility(View.GONE);
+                }else {
+                    setAmountControllersVisibility(View.VISIBLE);
+                    setDetailsForApprovalVisibility(View.VISIBLE);
+                    if(hasWithdrawApproved){
+                        disableWithdrawLayout();
+                    }
+                    if(hasAppliedApproved){
+                        disableAppliedLayout();
+                    }
+                }
+            } else if (act_profile == 2) {
+                setAmountControllersVisibility(View.GONE);
+                setDetailsForApprovalVisibility(View.GONE);
+            }
+            //
+            product_cell_tv_withdrawn_qty.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mListener.callQtyDialog(position,tk_ticket_product);
                 }
             });
             //
-            product_cell_tv_applied.setOnClickListener(new View.OnClickListener() {
+            product_cell_tv_applied_qty.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mListener.callQtyUsedDialog(position,tk_ticket_product);
@@ -273,6 +310,19 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             });
             //
         }
+
+        private void disableAppliedLayout() {
+            product_cell_iv_withdrawn_substract.setVisibility(View.INVISIBLE);
+            product_cell_iv_withdrawn_add.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check_white_24dp));
+            product_cell_iv_withdrawn_add.setImageTintList(context.getResources().getColorStateList(R.color.namoa_product_extract_check));
+        }
+
+        private void disableWithdrawLayout() {
+            product_cell_iv_withdrawn_substract.setVisibility(View.INVISIBLE);
+            product_cell_iv_withdrawn_add.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check_white_24dp));
+            product_cell_iv_withdrawn_add.setImageTintList(context.getResources().getColorStateList(R.color.namoa_product_extract_check));
+        }
+
         //
         private void setDetailsForApprovalVisibility(int visibility) {
             cl_withdrawn.setVisibility(visibility);
@@ -292,7 +342,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
         public AddProductViewHolder(@NonNull View itemView) {
             super(itemView);
-            tv_add_product_lbl = itemView.findViewById(R.id.tv_add_product_lbl);
+            tv_add_product_lbl = itemView.findViewById(R.id.footer_add_product);
             tv_add_product_lbl.setText(hmAux_Trans.get("add_product_lbl"));
         }
     }
@@ -323,7 +373,10 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         }
 
         public String getApprovalComment(){
-            return mket_comment.getText().toString();
+            if(mket_comment != null) {
+                return mket_comment.getText().toString();
+            }
+            return  "";
         }
 
         public Boolean isApprovaed(){

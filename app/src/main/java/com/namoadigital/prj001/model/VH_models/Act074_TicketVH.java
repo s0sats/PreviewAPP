@@ -10,7 +10,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class Act074_TicketVH {
 //    public static final String CTRLS_SERIAL_LIST = "CTRLS_SERIAL_LIST";
-
+    private String ticket_pk;
     private int ticket_prefix;
     private int ticket_code;
     private String ticket_id;
@@ -41,7 +41,9 @@ public class Act074_TicketVH {
     private String schedule_erro_msg;
 
 
-    public Act074_TicketVH(int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_start_date, String ticket_forecast_end_date, String ticket_step_id, String ticket_current_step_order, int ticket_step_qty, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg) {
+    public Act074_TicketVH(int ticket_customer, int ticket_scn, int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_start_date, String ticket_forecast_end_date, String ticket_step_id, String ticket_current_step_order, int ticket_step_qty, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg) {
+        String separator = "|";
+        this.ticket_pk = ticket_customer +  separator +  ticket_prefix +  separator + ticket_code +  separator +  ticket_scn;
         this.ticket_prefix = ticket_prefix;
         this.ticket_code = ticket_code;
         this.ticket_id = ticket_id;
@@ -68,6 +70,8 @@ public class Act074_TicketVH {
     public static Act074_TicketVH getTicketVHObj(HMAux hmAux) {
 
         return new Act074_TicketVH(
+                        ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.CUSTOMER_CODE)),
+                        ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SCN)),
                         ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)),
                         ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.TICKET_CODE)),
                         hmAux.get(TK_TicketDao.TICKET_ID),
@@ -95,6 +99,8 @@ public class Act074_TicketVH {
     public static Act074_TicketVH getTicketVHObj(TK_Next_Ticket ticket) {
 
         return new Act074_TicketVH(
+                ticket.getCustomerCode(),
+                ticket.getScn(),
                 ticket.getTicketPrefix(),
                 ticket.getTicketCode(),
                 ticket.getTicketPrefix() + "." + ticket.getTicketCode(),
@@ -117,6 +123,14 @@ public class Act074_TicketVH {
                       " ",
                   " "
         );
+    }
+
+    public String getTicket_pk() {
+        return ticket_pk;
+    }
+
+    public void setTicket_pk(String ticket_pk) {
+        this.ticket_pk = ticket_pk;
     }
 
     public int getTicket_prefix() {

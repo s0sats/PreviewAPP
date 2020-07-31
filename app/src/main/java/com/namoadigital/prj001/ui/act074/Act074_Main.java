@@ -2,17 +2,12 @@ package com.namoadigital.prj001.ui.act074;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.support.constraint.Group;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -28,6 +23,8 @@ import com.namoadigital.prj001.model.T_TK_Next_Ticket_WS_Response;
 import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_TK_Next_Ticket;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
+import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -121,6 +118,9 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         transList.add("dialog_schedule_warning_user_nick_lbl");
         transList.add("dialog_schedule_warning_error_msg_lbl");
         //
+        transList.add("progress_next_tickets_ttl");
+        transList.add("progress_next_tickets_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -209,6 +209,11 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             );
             //
             mPresenter.setTicketVH(rec.getNext_tickets());
+        } else if(WS_TK_Ticket_Download.class.getName().equalsIgnoreCase(wsProcess)) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(TK_TicketDao.TICKET_PREFIX, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)));
+                bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
+                callAct070(bundle);
         }
         progressDialog.dismiss();
     }
@@ -316,9 +321,8 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
                 mAdapter.setOnTicketClickListener(new Act074_Next_Tickets_Adapter.OnTicketClickListener() {
                     @Override
                     public void onTicketClickListner(Act074_TicketVH item) {
-                        //LUCHE - 18/03/2020
-                        //Add chamada do metodo que define qual proximo step
-                        mPresenter.checkTicketFlow(item);
+
+                        mPresenter.executeTicketSync(item);
                     }
                 });
             }
@@ -359,6 +363,11 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     }
 
     @Override
+    public void onBackPressed() {
+        mPresenter.onBackPressedClicked(requestingAct);
+    }
+
+    @Override
     protected void footerCreateDialog() {
         //super.footerCreateDialog();
         ToolBox_Inf.buildFooterDialog(context);
@@ -395,129 +404,20 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         bStatusRejected = false;
     }
 
-    private void showFilterDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-        View view = (View) LayoutInflater.from(context).inflate(R.layout.act069_filter_dialog,null);
-        //
-        TextView tvTitle = view.findViewById(R.id.act069_filter_dialog_tv_title);
-        TextView tvStatusLbl = view.findViewById(R.id.act069_filter_dialog_tv_status_lbl);
-        TextView tvPartnerLbl = view.findViewById(R.id.act069_filter_dialog_tv_partner_lbl);
-        final CheckBox chkStatusPending = view.findViewById(R.id.act069_filter_dialog_chk_pending);
-        final CheckBox chkStatusProcess = view.findViewById(R.id.act069_filter_dialog_chk_process);
-        final CheckBox chkStatusWaitingSync = view.findViewById(R.id.act069_filter_dialog_chk_waiting_sync);
-        final CheckBox chkPartnerEmpty = view.findViewById(R.id.act069_filter_dialog_chk_no_partner);
-        final CheckBox chkPartnerProfile = view.findViewById(R.id.act069_filter_dialog_chk_profile_partner);
-        final CheckBox chkPartnerNoProfile = view.findViewById(R.id.act069_filter_dialog_chk_profile_partner_others);
-        final CheckBox chkStatusDone = view.findViewById(R.id.act069_filter_dialog_chk_done);
-        final CheckBox chkStatusNotExecuted = view.findViewById(R.id.act069_filter_dialog_chk_not_exec);
-        final CheckBox chkStatusIgnored = view.findViewById(R.id.act069_filter_dialog_chk_ignored);
-        final CheckBox chkStatusCanceled = view.findViewById(R.id.act069_filter_dialog_chk_canceled);
-        final CheckBox chkStatusRejected = view.findViewById(R.id.act069_filter_dialog_chk_rejected);
-        Group gpPending = view.findViewById(R.id.act069_filter_dialog_gp_pending);
-        Group gpHistoric = view.findViewById(R.id.act069_filter_dialog_gp_historic);
-        //
-        tvTitle.setText(hmAux_Trans.get("dialog_filter_title"));
-        tvStatusLbl.setText(hmAux_Trans.get("dialog_status_lbl"));
-        tvPartnerLbl.setText(hmAux_Trans.get("dialog_partner_lbl"));
-        //
-        chkStatusPending.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_PENDING));
-        chkStatusPending.setChecked(bStatusPending);
-        chkStatusPending.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_PENDING))));
-        chkStatusPending.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_PENDING))));
-        //
-        chkStatusProcess.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_PROCESS));
-        chkStatusProcess.setChecked(bStatusProcess);
-        chkStatusProcess.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_PROCESS))));
-        chkStatusProcess.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_PROCESS))));
-        //Esse ultimo stats só existe no quando lista origem do pendentes.
-        chkStatusWaitingSync.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC));
-        chkStatusWaitingSync.setChecked(bStatusWaitingSync);
-        chkStatusWaitingSync.setButtonTintList(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_WAITING_SYNC))));
-        chkStatusWaitingSync.setTextColor(ColorStateList.valueOf(getResources().getColor(ToolBox_Inf.getApStatusColor(ConstantBaseApp.SYS_STATUS_WAITING_SYNC))));
-        //
-        chkPartnerEmpty.setText(hmAux_Trans.get("chk_allow_no_partner_lbl"));
-        chkPartnerEmpty.setChecked(bParterEmpty);
-        //
-        chkPartnerProfile.setText(hmAux_Trans.get("chk_my_partner_lbl"));
-        chkPartnerProfile.setChecked(bParterProfile);
-        //
-        chkPartnerNoProfile.setText(hmAux_Trans.get("chk_partner_no_profile_lbl"));
-        chkPartnerNoProfile.setChecked(bParterNoProfile);
-        //Dados do historico
-        chkStatusDone.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_DONE));
-        chkStatusDone.setChecked(bStatusDone);
-        chkStatusDone.setButtonTintList(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_DONE)));
-        chkStatusDone.setTextColor(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_DONE));
-        //
-        chkStatusNotExecuted.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED));
-        chkStatusNotExecuted.setChecked(bStatusNotExecuted);
-        chkStatusNotExecuted.setButtonTintList(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_NOT_EXECUTED)));
-        chkStatusNotExecuted.setTextColor(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_NOT_EXECUTED));
-        chkStatusNotExecuted.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED));
-        //
-        chkStatusIgnored.setChecked(bStatusIgnored);
-        chkStatusIgnored.setButtonTintList(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_IGNORED)));
-        chkStatusIgnored.setTextColor(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_IGNORED));
-        chkStatusIgnored.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_IGNORED));
-        //
-        chkStatusCanceled.setChecked(bStatusCanceled);
-        chkStatusCanceled.setButtonTintList(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_CANCELLED)));
-        chkStatusCanceled.setTextColor(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_CANCELLED));
-        chkStatusCanceled.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_CANCELLED));
-        //
-        chkStatusRejected.setChecked(bStatusRejected);
-        chkStatusRejected.setButtonTintList(ColorStateList.valueOf(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_REJECTED)));
-        chkStatusRejected.setTextColor(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_REJECTED));
-        chkStatusRejected.setText(hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_REJECTED));
-        //Seta quais filtros serão exibidos
-        if(requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT014)){
-            gpPending.setVisibility(View.GONE);
-            gpHistoric.setVisibility(View.VISIBLE);
-        }else{
-            gpPending.setVisibility(View.VISIBLE);
-            gpHistoric.setVisibility(View.GONE);
-        }
-        //
-        builder
-                .setView(view)
-                .setCancelable(true)
-                .setPositiveButton(
-                        hmAux_Trans.get("sys_alert_btn_ok"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                bStatusPending = chkStatusPending.isChecked();
-                                bStatusProcess = chkStatusProcess.isChecked();
-                                bStatusWaitingSync = chkStatusWaitingSync.isChecked();
-                                bParterEmpty = chkPartnerEmpty.isChecked();
-                                bParterProfile = chkPartnerProfile.isChecked();
-                                bParterNoProfile = chkPartnerNoProfile.isChecked();
-                                //historico
-                                bStatusDone = chkStatusDone.isChecked();
-                                bStatusNotExecuted = chkStatusNotExecuted.isChecked();
-                                bStatusIgnored = chkStatusIgnored.isChecked();
-                                bStatusCanceled = chkStatusCanceled.isChecked();
-                                bStatusRejected = chkStatusRejected.isChecked();
-                                //
-                                mPresenter.getTicketList();
-                            }
-                        }
-                )
-                .setNegativeButton(
-                        hmAux_Trans.get("sys_alert_btn_cancel"),
-                        null
-                );
-        //
-        builder.show();
-    }
-
     @Override
     public void callAct070(Bundle bundle) {
         Intent intent = new Intent(context, Act070_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT074);
         intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct068() {
+        Intent intent = new Intent(context, Act068_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
     }

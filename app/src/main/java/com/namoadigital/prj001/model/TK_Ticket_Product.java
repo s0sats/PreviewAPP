@@ -4,7 +4,9 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 
-public class TK_Ticket_Product {
+import java.io.Serializable;
+
+public class TK_Ticket_Product implements Serializable {
     @Expose
     private long customer_code;//pk
     @Expose
@@ -37,6 +39,35 @@ public class TK_Ticket_Product {
         this.customer_code = tk_ticket.getCustomer_code();
         this.ticket_prefix = tk_ticket.getTicket_prefix();
         this.ticket_code = tk_ticket.getTicket_code();
+    }
+
+    public TK_Ticket_Product(long customer_code, int ticket_prefix, int ticket_code, int product_code, String product_id, String product_desc, String un, @Nullable Double qty, @Nullable Double qty_used, @Nullable String pickup_status, @Nullable Double qty_returned) {
+        this.customer_code = customer_code;
+        this.ticket_prefix = ticket_prefix;
+        this.ticket_code = ticket_code;
+        this.product_code = product_code;
+        this.product_id = product_id;
+        this.product_desc = product_desc;
+        this.un = un;
+        this.qty = qty;
+        this.qty_used = qty_used;
+        this.pickup_status = pickup_status;
+        this.qty_returned = qty_returned;
+    }
+
+    public TK_Ticket_Product(long customer_code, int ticket_prefix, int ticket_code, int product_code, String product_id, String product_desc, String un, @Nullable Double qty, @Nullable Double qty_used, @Nullable String pickup_status, @Nullable Double qty_returned, @Nullable String return_status) {
+        this.customer_code = customer_code;
+        this.ticket_prefix = ticket_prefix;
+        this.ticket_code = ticket_code;
+        this.product_code = product_code;
+        this.product_id = product_id;
+        this.product_desc = product_desc;
+        this.un = un;
+        this.qty = qty;
+        this.qty_used = qty_used;
+        this.pickup_status = pickup_status;
+        this.qty_returned = qty_returned;
+        this.return_status = return_status;
     }
 
     public long getCustomer_code() {

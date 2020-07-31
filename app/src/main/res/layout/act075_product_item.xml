@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/tv_product_info"
@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
-        android:text="TextView"
+        tools:text="TextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="8dp"
-            android:text="TextView"
+            tools:text="TextView"
             android:textColor="@color/namoa_pipeline_product_lbl"
             app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_withdrawn_substract"
             app:layout_constraintEnd_toStartOf="@+id/gdl_withdrawn"
@@ -111,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="8dp"
-            android:text="TextView"
+            tools:text="TextView"
             android:textColor="@color/namoa_pipeline_product_lbl"
             app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_applied_substract"
             app:layout_constraintEnd_toStartOf="@+id/gdl_applied"
@@ -151,15 +151,14 @@
             android:layout_marginEnd="8dp"
             android:background="@color/padrao_WHITE"
             android:padding="4dp"
-            tools:text="1 un"
             android:textAlignment="center"
             android:textColor="@color/namoa_pipeline_product_lbl"
-            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_applied_add"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/product_cell_iv_applied_add"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/product_cell_iv_applied_substract"
             app:layout_constraintTop_toTopOf="@+id/product_cell_iv_applied_add"
-             />
+            tools:text="1 un" />
 
     </android.support.constraint.ConstraintLayout>
 
@@ -185,7 +184,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="8dp"
-            android:text="TextView"
+            tools:text="TextView"
             android:textColor="@color/namoa_pipeline_product_lbl"
             app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_returned_add"
             app:layout_constraintEnd_toStartOf="@+id/gdl_returned"
@@ -209,7 +208,6 @@
 
 
         <ImageView
-
             android:id="@+id/product_cell_iv_returned_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -246,7 +244,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="TextView"
+        tools:text="TextView"
         android:textColor="@color/namoa_pipeline_extract"
         android:textAlignment="textEnd"
         app:layout_constraintEnd_toEndOf="parent"

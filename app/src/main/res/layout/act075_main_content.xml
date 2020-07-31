@@ -19,14 +19,14 @@
         android:id="@+id/act075_rv_product"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/act075_ll_footer_save_product"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="wrap"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_frg_pipeline_header"
-        app:layout_constraintVertical_weight="1"
         tools:listitem="@layout/act075_product_item" />
 
 
@@ -64,7 +64,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:mButton_Back_Color="@color/namoa_sync_pipeline_background_btn"
         app:mButton_Resource="@drawable/ic_menu_hamburger"
-        app:mButton_Resource_Color="@color/colorPrimary"></com.namoa_digital.namoa_library.ctls.FabMenu>
+        app:mButton_Resource_Color="@color/colorPrimary"/>
 
 
 
