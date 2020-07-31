@@ -395,7 +395,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 sbWhere.append(" and ");
                 sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_ctrl.getStep_code()).append("'");
                 //Tenta o delete do tipo do controle
-                sqlRet = deleteByCtrlType(tk_ticket_ctrl.getCtrl_type(), sbWhere,db,daoObjReturn);
+                sqlRet = deleteByCtrlType(tk_ticket_ctrl, sbWhere,db,daoObjReturn);
                 //Se delete do processo "filho" OK, segue para o delete do ctrl
                 if(sqlRet != 0){
                     sqlRet = 0;
@@ -538,46 +538,59 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
 
     /**
      * Deleta o processo filho do controle baseado no tipo
-     * @param ctrl_type - Tipo do control
+     * @param tk_ticket_ctrl - Control
      * @param sbWhere - Where para delete
      * @param db - Instancia do db
      * @param daoObjReturn - Obj de retorno do Dao
      * @return - Qtd de registros removidos
      * @throws Exception
      */
-    private long deleteByCtrlType(String ctrl_type, StringBuilder sbWhere, SQLiteDatabase db, DaoObjReturn daoObjReturn) throws Exception {
+    //TODO REVER POIS SE MUDAR DE VARIS ITENS PARA NENHUM, NÃO FUNCIONARÁ DEVIDAMENTE  - DESISTIR DA IDEIA DO RETORNO = 0 DAR EXCEPTION
+    //TODO POIS AGORA OS ITENS PODEM SER NULLS....
+    private long deleteByCtrlType(TK_Ticket_Ctrl tk_ticket_ctrl, StringBuilder sbWhere, SQLiteDatabase db, DaoObjReturn daoObjReturn) throws Exception {
         String ctrlTypeTable = "";
         //
-        switch (ctrl_type){
+        switch (tk_ticket_ctrl.getCtrl_type()){
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
                 ctrlTypeTable = TK_Ticket_MeasureDao.TABLE;
-                //Tenta o delete
-                //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
-                daoObjReturn.setTable(ctrlTypeTable);
-                return db.delete(ctrlTypeTable,sbWhere.toString(),null);
+                //Tenta o delete se houver
+                if(tk_ticket_ctrl.getMeasure() != null) {
+                    //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
+                    daoObjReturn.setTable(ctrlTypeTable);
+                    return db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                }
+                return 1;
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
                 //Tenta o delete
                 //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
                 ctrlTypeTable = TK_Ticket_ActionDao.TABLE;
-                daoObjReturn.setTable(ctrlTypeTable);
-                return db.delete(ctrlTypeTable,sbWhere.toString(),null);
+                if(tk_ticket_ctrl.getAction() != null) {
+                    daoObjReturn.setTable(ctrlTypeTable);
+                    return db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                }
+                return 1;
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                int approvalDelete = 1;
                 //LUCHE - 24/07/2020
                 //Aqui ja mudou tudo, não é necessariamente 1 x 1, pode ter só aproval ou só rejeição
                 //e rejeição é uma lista...TOP
                 //Como não é 1 pra 1
                 ctrlTypeTable = TK_Ticket_ApprovalDao.TABLE;
-                daoObjReturn.setTable(ctrlTypeTable);
-                int approvalDelete = db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                if(tk_ticket_ctrl.getApproval() != null) {
+                    daoObjReturn.setTable(ctrlTypeTable);
+                    approvalDelete = db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                }
                 //
                 ctrlTypeTable = TK_Ticket_Approval_RejectionDao.TABLE;
-                daoObjReturn.setTable(ctrlTypeTable);
-                approvalDelete += db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                if(tk_ticket_ctrl.getRejection() != null && tk_ticket_ctrl.getRejection().size() > 0 ) {
+                    daoObjReturn.setTable(ctrlTypeTable);
+                    approvalDelete += db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                }
                 return approvalDelete;
             default:
-                break;
+                return 1;
         }
-        return 0;
+       // return 0;
     }
 
     /**

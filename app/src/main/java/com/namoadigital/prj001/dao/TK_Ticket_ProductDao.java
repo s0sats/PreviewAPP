@@ -37,7 +37,6 @@ public class TK_Ticket_ProductDao extends BaseDao implements DaoWithReturn<TK_Ti
     public static final String PICKUP_STATUS = "pickup_status";
     public static final String QTY_RETURNED = "qty_returned";
     public static final String RETURN_STATUS = "return_status";
-    public static final String UPDATE_REQUIRED = "update_required";
 
     public TK_Ticket_ProductDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -278,7 +277,6 @@ public class TK_Ticket_ProductDao extends BaseDao implements DaoWithReturn<TK_Ti
 
     public DaoObjReturn removeFull(TK_Ticket tk_ticket , SQLiteDatabase dbInstance ){
         DaoObjReturn daoObjReturn = new DaoObjReturn();
-        long sqlRet = 0;
         long sqlRetTotal = 0;
         String curAction = DaoObjReturn.DELETE;
         daoObjReturn.setTable(TABLE);
@@ -304,12 +302,7 @@ public class TK_Ticket_ProductDao extends BaseDao implements DaoWithReturn<TK_Ti
                 sbWhere.append(PRODUCT_CODE).append(" = '").append(tk_ticket_product.getProduct_code()).append("'");
                 daoObjReturn.setTable(TABLE);
                 //
-                sqlRet = db.delete(TABLE,sbWhere.toString(),null);
-                if(sqlRet == 0){
-                     daoObjReturn.setRawMessage(daoObjReturn.DELETE_ERROR_0_ROWS_AFFECTED);
-                     throw new Exception(daoObjReturn.getErrorMsg());
-                }
-                sqlRetTotal += sqlRet;
+                sqlRetTotal = db.delete(TABLE,sbWhere.toString(),null);
             }
             //
             if(dbInstance == null) {
@@ -460,7 +453,6 @@ public class TK_Ticket_ProductDao extends BaseDao implements DaoWithReturn<TK_Ti
             } else {
                 tk_ticket_product.setReturn_status(cursor.getString(cursor.getColumnIndex(RETURN_STATUS)));
             }
-            tk_ticket_product.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
             return tk_ticket_product;
         }
     }
@@ -495,9 +487,6 @@ public class TK_Ticket_ProductDao extends BaseDao implements DaoWithReturn<TK_Ti
             contentValues.put(PICKUP_STATUS, tk_ticket_product.getPickup_status());
             contentValues.put(QTY_RETURNED, tk_ticket_product.getQty_returned());
             contentValues.put(RETURN_STATUS, tk_ticket_product.getReturn_status());
-            if (tk_ticket_product.getUpdate_required() > -1) {
-                contentValues.put(UPDATE_REQUIRED, tk_ticket_product.getUpdate_required());
-            }
             return contentValues;
         }
     }

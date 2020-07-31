@@ -57,6 +57,9 @@ import java.util.List;
 public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentInteractionListener {
 
     public static final String PARAM_DENIED_BY_CHECKIN = "PARAM_DENIED_BY_CHECKIN";
+    public static final String PARAM_CTRL_CREATION = "PARAM_CTRL_CREATION";
+    public static final String PARAM_ACTION_CREATION = "PARAM_ACTION_CREATION";
+
 
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
@@ -146,6 +149,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_action_started_in_server_msg");
         transList.add("alert_step_or_ctrl_not_found_ttl");
         transList.add("alert_step_or_ctrl_not_found_msg");
+        //
+        transList.add("alert_checkin_confirm_ttl");
+        transList.add("alert_checkin_confirm_msg");
+        transList.add("alert_error_on_set_checkin_ttl");
+        transList.add("alert_error_on_set_checkin_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,

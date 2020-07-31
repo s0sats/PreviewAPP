@@ -2,7 +2,6 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
-import com.namoadigital.prj001.dao.TK_Ticket_ProductDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.database.Specification;
 
@@ -28,10 +27,6 @@ public class Sql_WS_TK_Ticket_Save_001 implements Specification {
                     " FROM\n" +
                         TK_TicketDao.TABLE + " t,\n" +
                         TK_Ticket_StepDao.TABLE + " s \n" +
-                    " LEFT JOIN\n" +
-                        TK_Ticket_ProductDao.TABLE + " p on  t.customer_code = p.customer_code\n" +
-                    "                        and t.ticket_prefix = p.ticket_prefix\n" +
-                    "                        and t.ticket_code = p.ticket_code\n" +
                     " \n" +
                     " LEFT JOIN\n" +
                         TK_Ticket_CtrlDao.TABLE + " c on s.customer_code = c.customer_code\n" +
@@ -47,8 +42,8 @@ public class Sql_WS_TK_Ticket_Save_001 implements Specification {
                     "      and t.customer_code = '"+customer_code+"' \n" +
                     "      and \n" +
                     "          ( t.update_required = 1 \n" +
+                    "            OR t.update_required_product = 1\n" +
                     "            OR s.update_required = 1\n" +
-                    "            OR p.update_required = 1\n" +
                     "            OR c.update_required = 1\n" +
                     "           )\n" +
                     " GROUP BY\n" +

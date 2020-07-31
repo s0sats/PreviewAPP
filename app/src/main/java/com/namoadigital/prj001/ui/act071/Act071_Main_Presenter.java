@@ -173,6 +173,29 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 : "";
     }
 
+    @Override
+    public void setStartInfoIfNeed(TK_Ticket_Ctrl mTicketCtrl) {
+        if(ConstantBaseApp.SYS_STATUS_PENDING.equals(mTicketCtrl.getCtrl_status())
+           && mTicketCtrl.getCtrl_start_user() == null
+        ){
+            mTicketCtrl.setCtrl_start_date(
+                ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
+            );
+            mTicketCtrl.setCtrl_start_user(ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context)));
+            mTicketCtrl.setCtrl_start_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
+        }
+    }
+
+    @Override
+    public void createActionIfNeed(TK_Ticket_Ctrl mTicketCtrl, boolean isCreationAction) {
+        if(isCreationAction){
+            TK_Ticket_Action tk_ticket_action = new TK_Ticket_Action();
+            tk_ticket_action.setPK(mTicketCtrl);
+            tk_ticket_action.setAction_status(ConstantBaseApp.SYS_STATUS_PENDING);
+            mTicketCtrl.setAction(tk_ticket_action);
+        }
+    }
+
     //endregion
 
     @Override
@@ -311,38 +334,46 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     public boolean updateTicketAction(TK_Ticket_Ctrl mTicketCtrl) {
         TK_Ticket tkTicket = getTicketbyPk(mTicketCtrl.getTicket_prefix(),mTicketCtrl.getTicket_code());
         //Em teoria, nunca deveria ser null, mas vai saber.
-        //TODO REFAZER METODO
-//        if(tkTicket != null && tkTicket.getCtrl() != null){
-//            int ctrlIdx = getCtrlIdx(mTicketCtrl, tkTicket);
-//            if(ctrlIdx > -1){
-//                tkTicket.getCtrl().set(ctrlIdx,mTicketCtrl);
-//                tkTicket.setUpdate_required(1);
-//                tkTicket.setTicket_status( mView.isScheduledTicket() ? ConstantBaseApp.SYS_STATUS_WAITING_SYNC : tkTicket.getTicket_status());
-//                //Atualiza Ticket completo, para garantir rolback caso erro ao atualizar ctrls
-//                DaoObjReturn daoObjReturn  = ticketDao.addUpdate(tkTicket);
-//                //
-//                if(!daoObjReturn.hasError()){
-//                    //Se agendamento, atualiza status do agendamento.
-//                    if(mView.isScheduledTicket()){
-//                        //
-//                        updateScheduleStatus(
-//                            mView.getmSchedulePrefix(),
-//                            mView.getmScheduleCode(),
-//                            mView.getmScheduleExec(),
-//                            mTicketCtrl.getCtrl_status()
-//                        );
-//                    }
-//                    //
-//                    if (mTicketCtrl.getAction().getAction_photo_local() != null
-//                        && !mTicketCtrl.getAction().getAction_photo_local().isEmpty()
-//                    ) {
-//                        uploadActionImage(mTicketCtrl);
-//                    }
-//                    //
-//                    return true;
-//                }
-//            }
-//        }
+        int stepIdx = getStepIdx(mTicketCtrl, tkTicket);
+        if(
+            tkTicket != null
+            && stepIdx > -1 && stepIdx <= tkTicket.getStep().size()
+            && tkTicket.getStep().get(stepIdx) != null
+        ){
+            int ctrlIdx = getCtrlIdx(mTicketCtrl, tkTicket.getStep().get(stepIdx));
+            if(ctrlIdx > -1){
+                TK_Ticket_Step ticketStep = tkTicket.getStep().get(stepIdx);
+                ticketStep.getCtrl().set(ctrlIdx,mTicketCtrl);
+                //
+                mTicketCtrl.setUpdate_required(1);
+                ticketStep.setUpdate_required(1);
+                tkTicket.setUpdate_required(1);
+                tkTicket.setTicket_status( mView.isScheduledTicket() ? ConstantBaseApp.SYS_STATUS_WAITING_SYNC : tkTicket.getTicket_status());
+                //Atualiza Ticket completo, para garantir rolback caso erro ao atualizar ctrls
+                DaoObjReturn daoObjReturn  = ticketDao.addUpdate(tkTicket);
+                //
+                if(!daoObjReturn.hasError()){
+                    //Se agendamento, atualiza status do agendamento.
+                    if(mView.isScheduledTicket()){
+                        //
+                        updateScheduleStatus(
+                            mView.getmSchedulePrefix(),
+                            mView.getmScheduleCode(),
+                            mView.getmScheduleExec(),
+                            mTicketCtrl.getCtrl_status()
+                        );
+                    }
+                    //
+                    if (mTicketCtrl.getAction().getAction_photo_local() != null
+                        && !mTicketCtrl.getAction().getAction_photo_local().isEmpty()
+                    ) {
+                        uploadActionImage(mTicketCtrl);
+                    }
+                    //
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -352,21 +383,35 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      * Metodo que retorna o indice do control que esta sendo alterado.
      * Na teoria, sempre retornará um valor, por o crl sempre existe.
      * @param mTicketCtrl Obj controle alterado pelo usr
-     * @param tkTicket Obj Ticket ao qual o controle pertence
+     * @param tkTicketStep Obj Ticket Step ao qual o controle pertence
      * @return - Idx do ctrl ou -1 caso não encontre.
      */
-    private int getCtrlIdx(TK_Ticket_Ctrl mTicketCtrl, TK_Ticket tkTicket) {
+    private int getCtrlIdx(TK_Ticket_Ctrl mTicketCtrl, TK_Ticket_Step tkTicketStep) {
         //TODO REFAZER METODO
-//        for (int i = 0; i < tkTicket.getCtrl().size(); i++) {
-//            if(
-//                tkTicket.getCtrl().get(i).getTicket_prefix() == mTicketCtrl.getTicket_prefix()
-//                && tkTicket.getCtrl().get(i).getTicket_code() == mTicketCtrl.getTicket_code()
-//                && tkTicket.getCtrl().get(i).getTicket_seq() == mTicketCtrl.getTicket_seq()
-//                && tkTicket.getCtrl().get(i).getStep_code() == mTicketCtrl.getStep_code()
-//            ){
-//                return i;
-//            }
-//        }
+        for (int i = 0; i < tkTicketStep.getCtrl().size(); i++) {
+            if(
+                tkTicketStep.getCtrl().get(i).getTicket_prefix() == mTicketCtrl.getTicket_prefix()
+                && tkTicketStep.getCtrl().get(i).getTicket_code() == mTicketCtrl.getTicket_code()
+                && tkTicketStep.getCtrl().get(i).getTicket_seq() == mTicketCtrl.getTicket_seq()
+                && tkTicketStep.getCtrl().get(i).getStep_code() == mTicketCtrl.getStep_code()
+            ){
+                return i;
+            }
+        }
+        //
+        return -1;
+    }
+
+    private int getStepIdx(TK_Ticket_Ctrl mTicketCtrl, TK_Ticket tkTicket) {
+        for (int i = 0; i < tkTicket.getStep().size(); i++) {
+            if(
+                tkTicket.getStep().get(i).getTicket_prefix() == mTicketCtrl.getTicket_prefix()
+                && tkTicket.getStep().get(i).getTicket_code() == mTicketCtrl.getTicket_code()
+                && tkTicket.getStep().get(i).getStep_code() == mTicketCtrl.getStep_code()
+            ){
+                return i;
+            }
+        }
         return -1;
     }
 

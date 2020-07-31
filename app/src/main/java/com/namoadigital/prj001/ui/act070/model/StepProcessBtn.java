@@ -6,7 +6,8 @@ public class StepProcessBtn extends BaseStep {
 
     public StepProcessBtn() {
     }
-    public StepProcessBtn(String stepTtl, String processType){
+    public StepProcessBtn(int stepCode,String stepTtl, String processType){
+        this.stepCode = stepCode;
         this.stepDescription = stepTtl;
         this.processType = processType;
     }

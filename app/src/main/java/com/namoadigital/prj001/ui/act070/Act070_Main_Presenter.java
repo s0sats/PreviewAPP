@@ -387,7 +387,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     @Override
-    public Bundle getAct071Bundle(TK_Ticket mTicket, int stepCode, int processTkSeq) {
+    public Bundle getAct071Bundle(TK_Ticket mTicket, int stepCode, int processTkSeq, boolean actionCreation) {
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket.getTicket_prefix());
         bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket.getTicket_code());
@@ -403,7 +403,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putString(TK_TicketDao.OPEN_SERIAL_ID, mTicket.getOpen_serial_id());
         bundle.putString(TK_TicketDao.OPEN_PRODUCT_DESC, mTicket.getOpen_product_desc());
         bundle.putString(TK_TicketDao.ORIGIN_DESC, mTicket.getOrigin_desc());
-        //bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN, mTicket.getCheckin_user() == null || !ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(mTicket.getCheckin_user())));
+        bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, false);
+        bundle.putBoolean(Act070_Main.PARAM_ACTION_CREATION, actionCreation);
         return bundle;
     }
 
@@ -433,7 +434,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         ticketStep.setStep_start_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         ticketStep.setStep_start_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
         ticketStep.setStep_start_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
-        //
+        ticketStep.setUpdate_required(1);
         ticketStep.setStep_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
         //
         int stepIdx = getStepIdx(ticketStep,mTicket);
@@ -475,12 +476,19 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFromDb(mTicket.getTicket_prefix(),mTicket.getTicket_code(),stepAction.getProcessTkSeq(),stepAction.getStepCode());
         if(ticketStep != null && ticketCtrl != null){
             if(ConstantBaseApp.SYS_STATUS_DONE.equals(ticketStep.getStep_status())){
-                mView.callAct071(getAct071Bundle(mTicket,stepAction.getStepCode(),stepAction.getProcessTkSeq()));
+                mView.callAct071(
+                    getAct071Bundle(mTicket,stepAction.getStepCode(),stepAction.getProcessTkSeq(), false)
+                );
             }else{
-                if(ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketStep.getStep_status())) {
-                    if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())) {
-                        switch (ticketCtrl.getCtrl_status()) {
-                            case ConstantBaseApp.SYS_STATUS_PENDING:
+                if(ConstantBaseApp.SYS_STATUS_DONE.equals(ticketCtrl.getCtrl_status())){
+                    mView.callAct071(
+                        getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(),false
+                        )
+                    );
+                }else if(stepAction.isCurrentStep()) {
+                    if(ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketStep.getStep_status())){
+                        if(ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())){
+                            if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())) {
                                 mView.showAlert(
                                     hmAux_Trans.get("alert_start_action_ttl"),
                                     hmAux_Trans.get("alert_start_action_confirm"),
@@ -488,27 +496,23 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int i) {
                                             mView.callAct071(
-                                                getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq())
+                                                getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), true )
                                             );
                                         }
                                     },
                                     true
                                 );
-                                break;
-                            case ConstantBaseApp.SYS_STATUS_DONE:
+                            }else{
                                 mView.callAct071(
-                                    getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq())
+                                    getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), true)
                                 );
-                                break;
-                            default:
-                                mView.showAlert(
-                                    hmAux_Trans.get("alert_action_access_denied_ttl"),
-                                    hmAux_Trans.get("alert_action_started_in_server_msg")
-                                );
-                                break;
+                            }
+                        } else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())){
+                            mView.showAlert(
+                                hmAux_Trans.get("alert_action_access_denied_ttl"),
+                                hmAux_Trans.get("alert_action_started_in_server_msg")
+                            );
                         }
-                    } else {
-                        //não faz nada, pois não tem ação
                     }
                 }// //não faz nada, pois não tem ação
             }
@@ -518,15 +522,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 hmAux_Trans.get("alert_step_or_ctrl_not_found_msg")
             );
         }
-        /*if( ConstantBaseApp.SYS_STATUS_PENDING.equals(stepAction.getProcessStatus())){
-            if( stepAction.isCurrentStep()
-                && !stepAction.isStepAlreadyCheckedIn()
-            ){
-
-            }
-        }else{
-            mView.callAct071(getAct071Bundle(mTicket,stepAction.getStepCode(),stepAction.getProcessTkSeq()));
-        }*/
     }
 
     private TK_Ticket_Step getSelectedStep(int ticketPrefix, int ticketCode, int stepCode) {
@@ -716,6 +711,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     String processStatus = ((StepAbstractProcess) firstPlannedObj).getProcessStatus();
                     if(ConstantBaseApp.SYS_STATUS_DONE.equals(processStatus)){
                         StepProcessBtn stepProcessBtn = new StepProcessBtn(
+                            stepMain.getStepCode(),
                             hmAux_Trans.get("process_check_out_btn"),
                             ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKOUT
                         );
@@ -744,6 +740,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         if(stepMain.isCurrentStep() && stepMain.isAllow_new_obj()){
             StepProcessBtn stepNewProcess =
                 new StepProcessBtn(
+                    stepMain.getStepCode(),
                     hmAux_Trans.get("process_add_new_btn"),
                     ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_ADD_NEW
                 );
@@ -761,6 +758,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         ){
             StepProcessBtn stepNewProcess =
                 new StepProcessBtn(
+                    stepMain.getStepCode(),
                     hmAux_Trans.get("process_check_in_btn"),
                     ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKIN
             );

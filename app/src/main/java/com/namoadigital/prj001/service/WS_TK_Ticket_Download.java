@@ -19,7 +19,6 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
-import com.namoadigital.prj001.sql.TK_Ticket_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -99,7 +98,6 @@ public class WS_TK_Ticket_Download extends IntentService {
             T_TK_Ticket_Download_Rec.class
         );
         //
-        //
         if (
             !ToolBox_Inf.processWSCheckValidation(
                 getApplicationContext(),
@@ -125,37 +123,32 @@ public class WS_TK_Ticket_Download extends IntentService {
 
     private void processTicketReturn(ArrayList<TK_Ticket> ticketList) {
         if(ticketList != null && ticketList.size() > 0){
+            DaoObjReturn daoObjReturn = new DaoObjReturn();
             //
             HMAux hmAux = new HMAux();
-
             for (TK_Ticket tkTicket : ticketList) {
                 tkTicket.setPK();
-                //Reseta sync_required para 0 via query, pois add update via obj não o atualiza.
-                /**
-                 * TODO TALVEZ O MELHOR FOSSE INSERIR UMA A UMA E VERIFICANDO O RETORNO, CASO SUCESSO, RESETA O SYNC REQUIRED
-                 * DO JEITO QUE ESTA CORRE O RISCO DE RESETAR O SYNC REQUIRED E DAR PAU NO ADD UPDATE
-                 * É UM RISCO MUITO BAIXO MAS.....
-                 * */
-                ticketDao.addUpdate(
-                    new TK_Ticket_Sql_004(
-                        tkTicket.getCustomer_code(),
-                        tkTicket.getTicket_prefix(),
-                        tkTicket.getTicket_code(),
-                        0
-                    ).toSqlQuery()
-                );
-                if(ticketList.size() == 1){
-                    hmAux.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
-                    hmAux.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
+                daoObjReturn = ticketDao.removeFull(tkTicket);
+                //
+                if(daoObjReturn.hasError()) {
+                    break;
+                }else {
+                    if (ticketList.size() == 1) {
+                        hmAux.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
+                        hmAux.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
+                    }
                 }
             }
-            //
-            DaoObjReturn daoObjReturn = ticketDao.addUpdate(ticketList, false);
-            if(!daoObjReturn.hasError()){
-                startDownloadServices();
-                //
-                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"),hmAux , "", "0");
-            }else {
+            if(!daoObjReturn.hasError()) {
+                daoObjReturn = ticketDao.addUpdate(ticketList, false);
+                if(!daoObjReturn.hasError()){
+                    startDownloadServices();
+                    //
+                    ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"),hmAux , "", "0");
+                }else {
+                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_on_insert_ticket"), new HMAux(), "", "0");
+                }
+            }else{
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_on_insert_ticket"), new HMAux(), "", "0");
             }
         }else{

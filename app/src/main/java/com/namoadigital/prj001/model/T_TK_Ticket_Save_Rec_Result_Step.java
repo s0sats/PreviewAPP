@@ -1,22 +1,14 @@
 package com.namoadigital.prj001.model;
 
-import java.util.ArrayList;
-
-/**
- * Created by d.luche on 09/12/2019.
- */
-
-public class T_TK_Ticket_Save_Rec_Result {
+public class T_TK_Ticket_Save_Rec_Result_Step {
     private int customer_code;
     private int ticket_prefix;
     private int ticket_code;
+    private int step_code;
     private int scn;
     private String ret_status;
     private String ret_msg;
-//    private Integer old_ticket_prefix;
-//    private Integer old_ticket_code;
-//    private TK_Ticket ticket;
-//
+
     public int getCustomer_code() {
         return customer_code;
     }
@@ -41,6 +33,14 @@ public class T_TK_Ticket_Save_Rec_Result {
         this.ticket_code = ticket_code;
     }
 
+    public int getStep_code() {
+        return step_code;
+    }
+
+    public void setStep_code(int step_code) {
+        this.step_code = step_code;
+    }
+
     public int getScn() {
         return scn;
     }
@@ -63,38 +63,5 @@ public class T_TK_Ticket_Save_Rec_Result {
 
     public void setRet_msg(String ret_msg) {
         this.ret_msg = ret_msg;
-    }
-//
-//    public Integer getOld_ticket_prefix() {
-//        return old_ticket_prefix;
-//    }
-//
-//    public void setOld_ticket_prefix(Integer old_ticket_prefix) {
-//        this.old_ticket_prefix = old_ticket_prefix;
-//    }
-//
-//    public Integer getOld_ticket_code() {
-//        return old_ticket_code;
-//    }
-//
-//    public void setOld_ticket_code(Integer old_ticket_code) {
-//        this.old_ticket_code = old_ticket_code;
-//    }
-//
-//    public TK_Ticket getTicket() {
-//        return ticket;
-//    }
-//
-//    public void setTicket(TK_Ticket ticket) {
-//        this.ticket = ticket;
-//    }
-    private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> step;
-
-    public ArrayList<T_TK_Ticket_Save_Rec_Result_Step> getStep() {
-        return step;
-    }
-
-    public void setStep(ArrayList<T_TK_Ticket_Save_Rec_Result_Step> step) {
-        this.step = step;
     }
 }

@@ -73,7 +73,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private final double IV_PHOTO_NOT_EXISTS_WIDTH_PERCENT = 0.8;
     private final double IV_PHOTO_NOT_EXISTS_HEIGHT_PERCENT = 0.13;
 
-
     private Act071_Main_Presenter mPresenter;
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
@@ -122,6 +121,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private String mPipelineHeaderOpen_product_desc;
     private String mPipelineHeaderTicket_status;
     private String mPipelineHeaderOrigin_desc;
+    private boolean isCreationCtrl;
+    private boolean isCreationAction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -257,6 +258,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mPipelineHeaderOpen_product_desc = requestingBundle.getString(TK_TicketDao.OPEN_PRODUCT_DESC, "");
             mPipelineHeaderTicket_status = requestingBundle.getString(TK_TicketDao.TICKET_STATUS, "");
             mPipelineHeaderOrigin_desc = requestingBundle.getString(TK_TicketDao.ORIGIN_DESC, "");
+            //
+            isCreationCtrl = requestingBundle.getBoolean(Act070_Main.PARAM_CTRL_CREATION,false);
+            isCreationAction = requestingBundle.getBoolean(Act070_Main.PARAM_ACTION_CREATION,false);
         } else {
             requestingAct = ConstantBaseApp.ACT070;
             mActionPrefix = -1;
@@ -278,6 +282,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mPipelineHeaderOpen_product_desc =  "";
             mPipelineHeaderTicket_status  =  "";
             mPipelineHeaderOrigin_desc =  "";
+            isCreationCtrl =  false;
+            isCreationAction=  false;
         }
     }
 
@@ -308,8 +314,15 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private void updateActionData() {
         mTicketCtrl = mPresenter.getTicketCtrlObj(mActionPrefix, mActionCode, mActionSeq,mStepCode);
         if (mTicketCtrl != null) {
-            setReadOnly();
-            setDataToViews();
+            mPresenter.setStartInfoIfNeed(mTicketCtrl);
+            mPresenter.createActionIfNeed(mTicketCtrl,isCreationAction);
+            if(mTicketCtrl.getAction() != null){
+                setReadOnly();
+                setDataToViews();
+            }else{
+                //TODO CONFIRMAR SE EXIBIR MSG
+                paramErrorFlow();
+            }
         } else {
             paramErrorFlow();
         }
@@ -474,6 +487,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         }
     }
 
+    //TODO REVISA PROCESSO DE FOTO PARA SABER SE AIND AÉ NECESSARIO OS CONTROLES ANTIGOS
     private void setDataToObj() {
         mTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
         mTicketCtrl.getAction().setAction_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
@@ -485,8 +499,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //
         if(mPresenter.fileExists(actionPhotoLocalPath)) {
             mTicketCtrl.getAction().setAction_photo_local(actionPhotoLocalPath);
+            mTicketCtrl.getAction().setAction_photo_name(actionPhotoLocalPath);
         }else{
             mTicketCtrl.getAction().setAction_photo_local(null);
+            mTicketCtrl.getAction().setAction_photo_name(null);
         }
         //
         mTicketCtrl.setCtrl_end_date(

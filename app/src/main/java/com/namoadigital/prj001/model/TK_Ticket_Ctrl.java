@@ -71,34 +71,34 @@ public class TK_Ticket_Ctrl {
         this.step_order = -1;
     }
 
-    public void setPK(TK_Ticket tk_ticket) {
-        this.customer_code = tk_ticket.getCustomer_code();
-        this.ticket_prefix = tk_ticket.getTicket_prefix();
-        this.ticket_code = tk_ticket.getTicket_code();
-        //Seta a PK no tipo do controle
-        switch (this.ctrl_type) {
-            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
-                if(this.action != null) {
-                    this.action.setPK(this);
-                }
-                break;
-            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
-                if(this.measure != null) {
-                    this.measure.setPK(this);
-                }
-                break;
-            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
-                if(this.approval != null){
-                    this.approval.setPK(this);
-                }
-                if(this.rejection != null){
-                    for (TK_Ticket_Approval_Rejection tk_ticket_approval_rejection : this.rejection) {
-                        tk_ticket_approval_rejection.setPK(this);
-                    }
-                }
-                break;
-        }
-    }
+//    public void setPK(TK_Ticket tk_ticket) {
+//        this.customer_code = tk_ticket.getCustomer_code();
+//        this.ticket_prefix = tk_ticket.getTicket_prefix();
+//        this.ticket_code = tk_ticket.getTicket_code();
+//        //Seta a PK no tipo do controle
+//        switch (this.ctrl_type) {
+//            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+//                if(this.action != null) {
+//                    this.action.setPK(this);
+//                }
+//                break;
+//            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+//                if(this.measure != null) {
+//                    this.measure.setPK(this);
+//                }
+//                break;
+//            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+//                if(this.approval != null){
+//                    this.approval.setPK(this);
+//                }
+//                if(this.rejection != null){
+//                    for (TK_Ticket_Approval_Rejection tk_ticket_approval_rejection : this.rejection) {
+//                        tk_ticket_approval_rejection.setPK(this);
+//                    }
+//                }
+//                break;
+//        }
+//    }
 
     public void setPK(TK_Ticket_Step tk_ticket_step) {
         this.customer_code = tk_ticket_step.getCustomer_code();
@@ -106,6 +106,10 @@ public class TK_Ticket_Ctrl {
         this.ticket_code = tk_ticket_step.getTicket_code();
         this.step_code = tk_ticket_step.getStep_code();
         //Seta a PK no tipo do controle
+        setPKIntoProcess();
+    }
+
+    public void setPKIntoProcess() {
         switch (this.ctrl_type) {
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
                 this.action.setPK(this);

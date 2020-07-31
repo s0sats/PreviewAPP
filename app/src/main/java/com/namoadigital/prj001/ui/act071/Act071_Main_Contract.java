@@ -98,6 +98,10 @@ public interface Act071_Main_Contract {
 
         String getStepDesc(TK_Ticket_Step ticketStep);
 
+        void createActionIfNeed(TK_Ticket_Ctrl mTicketCtrl, boolean isCreationAction);
+
+        void setStartInfoIfNeed(TK_Ticket_Ctrl mTicketCtrl);
+
         /*boolean hasPartnerProfile(Integer partner_code);
 
         boolean hasActionExecProfile();

@@ -60,7 +60,7 @@ public class TK_Ticket_Step {
         this.ticket_code = tk_ticket.getTicket_code();
         //
         for (int i = 0; i < ctrl.size(); i++) {
-            ctrl.get(i).setPK(tk_ticket);
+            ctrl.get(i).setPK(this);
         }
     }
 

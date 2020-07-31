@@ -531,7 +531,8 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         //Add no ctrl
         ticketCtrl.setAction(new TK_Ticket_Action());
         //Seta Pk no controle e action
-        ticketCtrl.setPK(tkTicket);
+        //TODO MUDAR, AGORA PRECISA DO STEP
+        //ticketCtrl.setPK(tkTicket);
         //
         return ticketCtrl;
     }

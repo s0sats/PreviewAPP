@@ -22,6 +22,7 @@ public class TK_Ticket_Action {
     @Nullable
     @Expose
     private String action_photo_local;
+    @Expose
     @Nullable
     private String action_photo_name;
     @Expose
