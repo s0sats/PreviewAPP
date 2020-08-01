@@ -216,7 +216,7 @@
             android:tint="@color/namoa_product_extract_check"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_check_white_24dp" />
+            android:src="@drawable/ic_check_white_24dp" />
 
         <TextView
             android:id="@+id/product_cell_tv_returned_qty"

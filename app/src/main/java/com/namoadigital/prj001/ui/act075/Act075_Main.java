@@ -149,6 +149,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 tk_ticket_products,
                 act_profile,
                 tkTicket.getInventory_control(),
+                tkTicket.getTicket_status().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
+                ||tkTicket.getTicket_status().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS),
                 mPresenter.getWithdrawStatus(tkTicket),
                 mPresenter.getAppliedStatus(tkTicket),
                 this
