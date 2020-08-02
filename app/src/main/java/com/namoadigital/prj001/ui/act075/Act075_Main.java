@@ -68,7 +68,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private Act075_Product_List_Adapter mAdapter;
     private int mTkPrefix;
     private int mTkCode;
-
+    private boolean hasFABActive = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +80,6 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         rvProduct = findViewById(R.id.act075_rv_product);
         btnSave = findViewById(R.id.act075_save_product);
         fabMenu = (FabMenu) findViewById(R.id.act075_fabMenu_anchor);
-        fabMenu.setmIcons_Enabled(false);
         //
         iniSetup();
         //
@@ -230,6 +229,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         }
         //
         fabMenu.setFabMenuItens(fabMenuItems);
+        fabMenu.setmIcons_Enabled(true);
     }
 
 
@@ -282,7 +282,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
             @Override
             public void onFabStatusChanged(boolean b) {
-
+                hasFABActive = b;
             }
         });
     }
@@ -438,7 +438,11 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
     @Override
     public void onBackPressed() {
-        callAct070();
+        if(hasFABActive){
+            fabMenu.animateFAB();
+        }else {
+            callAct070();
+        }
     }
 
     @Override

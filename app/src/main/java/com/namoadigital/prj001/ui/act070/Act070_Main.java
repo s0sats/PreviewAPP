@@ -95,6 +95,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private FabMenuItem fabStep;
     private FabMenuItem fabProduct;
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
+    private boolean hasFABActive=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -230,6 +232,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }
         //
         fabMenu.setFabMenuItens(fabMenuItems);
+        fabMenu.setmIcons_Enabled(true);
     }
 
     private void iniHeaderFrag() {
@@ -668,7 +671,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
             @Override
             public void onFabStatusChanged(boolean b) {
-
+                hasFABActive = b;
             }
         });
     }
@@ -848,7 +851,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     @Override
     public void onBackPressed() {
         //super.onBackPressed();
-        mPresenter.onBackPressedClicked(requestingAct);
+        if(hasFABActive){
+            fabMenu.animateFAB();
+        }else {
+            mPresenter.onBackPressedClicked(requestingAct);
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
