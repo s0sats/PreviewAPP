@@ -20,6 +20,8 @@ import com.namoadigital.prj001.adapter.Act_Product_Selectio_Adapter_Groups_Produ
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.TK_Ticket_Product;
+import com.namoadigital.prj001.ui.act075.Act075_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -42,8 +44,9 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     private HMAux currentIndex = new HMAux();
     private Bundle bundle;
     private boolean mkUpdate = true;
-
+    private ArrayList<TK_Ticket_Product> tk_ticket_products = new ArrayList<>();
     private boolean returnOnFound;
+    private boolean isProductAddProcess;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -142,17 +145,28 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         if (bundle != null) {
             returnOnFound = Boolean.parseBoolean(bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_FOUND_JUMP));
             mket_product_search.setText(bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_SEARCH));
+            isProductAddProcess = bundle.getBoolean(Act075_Main.IS_ADD_PRODUCT_LIST, false);
+            tk_ticket_products = (ArrayList<TK_Ticket_Product>) bundle.getSerializable(Act075_Main.PRODUCT_LIST);
+        }else{
+            isProductAddProcess = false;
         }
     }
 
     private void callSetAdapterData(String search) {
-
-        mPresenter.setAdapterData(
-                Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
-                Long.parseLong(currentIndex.get(INDEX_RECURSIVE_CODE)),
-                search
-        );
-
+        if(isProductAddProcess){
+            mPresenter.setAdapterDataForProductInsert(
+                    Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
+                    Long.parseLong(currentIndex.get(INDEX_RECURSIVE_CODE)),
+                    tk_ticket_products,
+                    search
+            );
+        }else {
+            mPresenter.setAdapterData(
+                    Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
+                    Long.parseLong(currentIndex.get(INDEX_RECURSIVE_CODE)),
+                    search
+            );
+        }
     }
 
     private void iniCurrentIndex() {

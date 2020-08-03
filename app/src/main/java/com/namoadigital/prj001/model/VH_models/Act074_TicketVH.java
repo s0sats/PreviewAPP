@@ -3,10 +3,14 @@ package com.namoadigital.prj001.model.VH_models;
 import android.support.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.model.TK_Next_Ticket;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class Act074_TicketVH {
 //    public static final String CTRLS_SERIAL_LIST = "CTRLS_SERIAL_LIST";
-
+    private String ticket_pk;
     private int ticket_prefix;
     private int ticket_code;
     private String ticket_id;
@@ -16,8 +20,11 @@ public class Act074_TicketVH {
     private String ticket_serial;
     private String ticket_step_desc;
     private String ticket_origin_desc;
-    private String ticket_forecast_date;
+    private String ticket_forecast_start_date;
+    private String ticket_forecast_end_date;
     private String ticket_step_id;
+    private String ticket_current_step_order;
+    private int ticket_step_qty;
     //Add atribuots do agendamento - Ainda faz sentido?
     private String schedulePk;
     @Nullable
@@ -34,7 +41,9 @@ public class Act074_TicketVH {
     private String schedule_erro_msg;
 
 
-    public Act074_TicketVH(int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_date, String ticket_step_id, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg) {
+    public Act074_TicketVH(int ticket_customer, int ticket_scn, int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_start_date, String ticket_forecast_end_date, String ticket_step_id, String ticket_current_step_order, int ticket_step_qty, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg) {
+        String separator = "|";
+        this.ticket_pk = ticket_customer +  separator +  ticket_prefix +  separator + ticket_code +  separator +  ticket_scn;
         this.ticket_prefix = ticket_prefix;
         this.ticket_code = ticket_code;
         this.ticket_id = ticket_id;
@@ -44,8 +53,11 @@ public class Act074_TicketVH {
         this.ticket_serial = ticket_serial;
         this.ticket_step_desc = ticket_step_desc;
         this.ticket_origin_desc = ticket_origin_desc;
-        this.ticket_forecast_date = ticket_forecast_date;
+        this.ticket_forecast_start_date = ticket_forecast_start_date;
+        this.ticket_forecast_end_date = ticket_forecast_end_date;
         this.ticket_step_id = ticket_step_id;
+        this.ticket_current_step_order = ticket_current_step_order;
+        this.ticket_step_qty = ticket_step_qty;
         this.schedulePk = schedulePk;
         this.schedule_prefix = schedule_prefix;
         this.schedule_code = schedule_code;
@@ -56,10 +68,69 @@ public class Act074_TicketVH {
     }
 
     public static Act074_TicketVH getTicketVHObj(HMAux hmAux) {
-        //
-        return null;
-//                new Act074_TicketVH(
-//        );
+
+        return new Act074_TicketVH(
+                        ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.CUSTOMER_CODE)),
+                        ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SCN)),
+                        ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)),
+                        ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.TICKET_CODE)),
+                        hmAux.get(TK_TicketDao.TICKET_ID),
+                        hmAux.get(TK_TicketDao.TICKET_STATUS),
+                        hmAux.get(TK_TicketDao.OPEN_PRODUCT_DESC),
+                        hmAux.get(TK_TicketDao.OPEN_SITE_DESC),
+                        hmAux.get(TK_TicketDao.OPEN_SERIAL_ID),
+                        hmAux.get(TK_Ticket_StepDao.STEP_DESC),
+                        hmAux.get(TK_TicketDao.ORIGIN_DESC),
+                        hmAux.get(TK_Ticket_StepDao.FORECAST_START),
+                        hmAux.get(TK_Ticket_StepDao.FORECAST_END),
+                        hmAux.get(TK_Ticket_StepDao.STEP_ID),
+                        hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER),
+                ToolBox_Inf.convertStringToInt(hmAux.get(TK_Ticket_StepDao.STEP_QTY)),
+                        " ",
+                       0,
+                        0,
+                        0,
+                     " ",
+                      " ",
+                  " "
+        );
+    }
+
+    public static Act074_TicketVH getTicketVHObj(TK_Next_Ticket ticket) {
+
+        return new Act074_TicketVH(
+                ticket.getCustomerCode(),
+                ticket.getScn(),
+                ticket.getTicketPrefix(),
+                ticket.getTicketCode(),
+                ticket.getTicketPrefix() + "." + ticket.getTicketCode(),
+                ticket.getTicketStatus(),
+                ticket.getOpenProductDesc(),
+                ticket.getOpenSiteDesc(),
+                ticket.getOpenSerialId(),
+                ticket.getStepDesc(),
+                ticket.getOriginDesc(),
+                ticket.getForecastStart(),
+                ticket.getForecastEnd(),
+                        "",
+                String.valueOf(ticket.getCurrentStepOrder()),
+                ticket.getStepCount(),
+                        " ",
+                       0,
+                        0,
+                        0,
+                     " ",
+                      " ",
+                  " "
+        );
+    }
+
+    public String getTicket_pk() {
+        return ticket_pk;
+    }
+
+    public void setTicket_pk(String ticket_pk) {
+        this.ticket_pk = ticket_pk;
     }
 
     public int getTicket_prefix() {
@@ -134,12 +205,20 @@ public class Act074_TicketVH {
         this.ticket_origin_desc = ticket_origin_desc;
     }
 
-    public String getTicket_forecast_date() {
-        return ticket_forecast_date;
+    public String getTicket_forecast_start_date() {
+        return ticket_forecast_start_date;
     }
 
-    public void setTicket_forecast_date(String ticket_forecast_date) {
-        this.ticket_forecast_date = ticket_forecast_date;
+    public void setTicket_forecast_start_date(String ticket_forecast_start_date) {
+        this.ticket_forecast_start_date = ticket_forecast_start_date;
+    }
+
+    public String getTicket_forecast_end_date() {
+        return ticket_forecast_end_date;
+    }
+
+    public void setTicket_forecast_end_date(String ticket_forecast_end_date) {
+        this.ticket_forecast_end_date = ticket_forecast_end_date;
     }
 
     public String getTicket_step_id() {
@@ -148,6 +227,22 @@ public class Act074_TicketVH {
 
     public void setTicket_step_id(String ticket_step_id) {
         this.ticket_step_id = ticket_step_id;
+    }
+
+    public String getTicket_current_step_order() {
+        return ticket_current_step_order;
+    }
+
+    public void setTicket_current_step_order(String ticket_current_step_order) {
+        this.ticket_current_step_order = ticket_current_step_order;
+    }
+
+    public int getTicket_step_qty() {
+        return ticket_step_qty;
+    }
+
+    public void setTicket_step_qty(int ticket_step_qty) {
+        this.ticket_step_qty = ticket_step_qty;
     }
 
     public String getSchedulePk() {
@@ -223,7 +318,7 @@ public class Act074_TicketVH {
                         ticket_serial + "|" +
                         ticket_step_desc + "|" +
                         ticket_origin_desc + "|" +
-                        ticket_forecast_date +"|" +
+                        ticket_forecast_start_date +"|" +
                         ticket_step_id +"|" +
                         schedulePk)
                 .replace("null|","")

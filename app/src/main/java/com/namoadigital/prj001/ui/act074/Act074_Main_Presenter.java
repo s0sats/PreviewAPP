@@ -1,16 +1,23 @@
 package com.namoadigital.prj001.ui.act074;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.model.TK_Next_Ticket;
 import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
-import com.namoadigital.prj001.sql.Sql_Act069_001;
+import com.namoadigital.prj001.receiver.WBR_TK_Next_Ticket;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.service.WS_TK_Next_Ticket;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
     private Context context;
@@ -31,31 +38,20 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void getTicketList(boolean isHistoricalShown, boolean bStatusPending, boolean bStatusProcess, boolean bStatusWaitingSync, boolean bStatusDone, boolean bParterEmpty, boolean bParterProfile, long ticketProductCode, long ticketSerialCode, boolean bStatusNotExecuted, boolean bStatusIgnored, boolean bStatusCanceled, boolean bStatusRejected, boolean bParterNoProfile) {
-        ArrayList<HMAux> auxTickets = new ArrayList<>();
+    public void getTicketList() {
+        mView.setWsProcess(WS_TK_Next_Ticket.class.getName());
         //
-        auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
-                new Sql_Act069_001(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        ToolBox_Con.getPreference_Site_Code(context),
-                        isHistoricalShown,
-                        bStatusPending,
-                        bStatusProcess,
-                        bStatusWaitingSync,
-                        bStatusDone,
-                        ticketProductCode,
-                        ticketSerialCode,
-                        bStatusNotExecuted,
-                        bStatusIgnored,
-                        bStatusCanceled,
-                        bStatusRejected,
-                        bParterEmpty,
-                        bParterProfile,
-                        bParterNoProfile
-                ).toSqlQuery()
+        mView.showPD(
+                hmAux_Trans.get("progress_next_tickets_ttl"),
+                hmAux_Trans.get("progress_next_tickets_msg")
         );
         //
-        mView.loadTicketList(generateTicketVhList(auxTickets));
+        Intent mIntent = new Intent(context, WBR_TK_Next_Ticket.class);
+        Bundle bundle = new Bundle();
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     private ArrayList<Act074_TicketVH> generateTicketVhList(ArrayList<HMAux> auxTickets) {
@@ -96,17 +92,72 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void executeTicketSync() {
-
+    public void executeTicketSync(Act074_TicketVH item) {
+        mView.setWsProcess(WS_TK_Ticket_Download.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_download_ticket_ttl"),
+                hmAux_Trans.get("dialog_download_ticket_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(TK_TicketDao.TICKET_PREFIX,item.getTicket_pk());
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     @Override
     public void onBackPressedClicked(String requestingAct) {
-
+        switch (requestingAct){
+            default:
+                mView.callAct068();
+                break;
+        }
     }
 
     @Override
     public void checkTicketFlow(Act074_TicketVH item) {
-
+        mView.callAct070(generateAct070Bundle(item));
     }
+
+    private Bundle generateAct070Bundle(Act074_TicketVH item) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX,item.getTicket_prefix());
+        bundle.putInt(TK_TicketDao.TICKET_CODE,item.getTicket_code());
+        return bundle;
+    }
+
+    @Override
+    public void setTicketVH(List<TK_Next_Ticket> tickets) {
+        ArrayList<Act074_TicketVH> ticketsVH = new ArrayList<>();
+        if (tickets != null && tickets.size() > 0) {
+            try {
+                for (TK_Next_Ticket aux : tickets) {
+                    //
+                    if(ToolBox_Con.getPreference_Site_Code(context).equals(String.valueOf(aux.getOpenSiteCode()))){
+                        aux.setOpenSiteDesc("");
+                    }
+                    ticketsVH.add(
+                            Act074_TicketVH.getTicketVHObj(aux)
+                    );
+                }
+                mView.loadTicketList(ticketsVH);
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(getClass().getName(),e);
+
+                mView.showEmptyListMsg(
+                        hmAux_Trans.get("alert_error_on_generate_list_ttl"),
+                        hmAux_Trans.get("alert_error_on_generate_list_msg")
+                );
+            }
+        }else{
+            mView.showEmptyListMsg(hmAux_Trans.get("alert_no_next_tickets_ttl"), hmAux_Trans.get("alert_no_next_tickets_msg"));
+        }
+    }
+
+
+
 }

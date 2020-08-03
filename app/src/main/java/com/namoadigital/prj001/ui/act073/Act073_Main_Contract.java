@@ -24,6 +24,8 @@ public interface Act073_Main_Contract {
 
         void callAct069();
 
+        void callAct076();
+
         void callAct070(Bundle buildAct070Bundle);
     }
 

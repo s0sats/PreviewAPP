@@ -35,6 +35,10 @@ public class TK_Ticket_ApprovalDao extends BaseDao implements DaoWithReturn<TK_T
     public static final String APPROVAL_TYPE = "approval_type";
     public static final String APPROVAL_COMMENTS = "approval_comments";
 
+    public static final String APPROVAL_GET_MATERIAL = "APPROVAL_GET_MATERIAL";
+    public static final String APPROVAL_RETURN_MATERIAL = "APPROVAL_RETURN_MATERIAL";
+    public static final String APPROVAL_OPERATIONAL = "APPROVAL_OPERATIONAL";
+
     public TK_Ticket_ApprovalDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
         this. toTK_Ticket_ApprovalMapper = new CursorToTK_Ticket_ApprovalMapper();

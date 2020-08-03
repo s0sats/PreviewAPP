@@ -36,6 +36,7 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Search;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
+import com.namoadigital.prj001.ui.act076.Act076_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -553,6 +554,20 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
         startActivity(intent);
         finish();
 
+    }
+
+    @Override
+    public void callAct076() {
+        Intent intent = new Intent(context, Act076_Main.class);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT073);
+        bundle.putLong(TK_TicketDao.OPEN_PRODUCT_CODE,mdProductSerial.getProduct_code());
+        bundle.putLong(TK_TicketDao.OPEN_SERIAL_CODE,mdProductSerial.getSerial_code());
+        //
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
     }
 
     @Override

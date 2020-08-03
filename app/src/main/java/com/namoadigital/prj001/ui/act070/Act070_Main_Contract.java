@@ -48,6 +48,10 @@ public interface Act070_Main_Contract {
         void setCurrentStepFirstPosition(int currentStepFirstPosition);
 
         int getCurrentStepFirstPosition();
+
+        void callAct076();
+
+        void callAct068();
     }
 
     interface I_Presenter{

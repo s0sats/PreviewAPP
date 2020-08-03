@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -24,9 +23,9 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act069_Tickets_Adapter;
+import com.namoadigital.prj001.adapter.Act074_Next_Tickets_Adapter;
 import com.namoadigital.prj001.dao.TK_TicketDao;
-import com.namoadigital.prj001.model.VH_models.Act069_TicketVH;
+import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
@@ -44,18 +43,17 @@ import java.util.List;
 
 public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I_View {
 
-    public static final String FILTER_TEXT = "FILTER_TEXT";
     public static final String FILTER_PARTNER_EMPTY = "FILTER_PARTNER_EMPTY";
     public static final String FILTER_PARTNER_PROFILE = "FILTER_PARTNER_PROFILE";
     public static final String FILTER_PARTNER_NO_PROFILE = "FILTER_PARTNER_NO_PROFILE";
 
     private MKEditTextNM mketFilter;
-    private ImageView ivFilters;
+//    private ImageView ivFilters;
     private RecyclerView rvTickets;
     private TextView tvNoResult;
     private Button btnSyncTickets;
     private Act069_Main_Presenter mPresenter;
-    private Act069_Tickets_Adapter mAdapter;
+    private Act074_Next_Tickets_Adapter mAdapter;
     private boolean bStatusPending;
     private boolean bStatusProcess;
     private boolean bStatusWaitingSync;
@@ -152,7 +150,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
             hmAux_Trans
         );
         //
-        updateIvFilterState();
+//        updateIvFilterState();
         //
         mPresenter.getTicketList(
             requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT014),
@@ -184,7 +182,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         Bundle bundle = getIntent().getExtras();
         //
         if (bundle != null) {
-            mketFilter.setText(bundle.getString(FILTER_TEXT,""));
+            mketFilter.setText(bundle.getString(ConstantBaseApp.FILTER_TEXT,""));
             bStatusPending = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_PENDING,true);
             bStatusProcess = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_PROCESS,true);
             bStatusWaitingSync = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,true);
@@ -219,7 +217,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
 
     private void bindViews() {
         mketFilter = findViewById(R.id.act069_mket_filter);
-        ivFilters = findViewById(R.id.act069_iv_status_filter);
+//        ivFilters = findViewById(R.id.act069_iv_status_filter);
         rvTickets = findViewById(R.id.act069_rv_ticket_list);
         tvNoResult = findViewById(R.id.act069_tv_no_result);
         btnSyncTickets = findViewById(R.id.act069_btn_sync);
@@ -249,43 +247,43 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
     }
 
     @Override
-    public void loadTicketList(ArrayList<Act069_TicketVH> tickets) {
+    public void loadTicketList(ArrayList<Act074_TicketVH> tickets) {
         if(tickets!= null && tickets.size() > 0) {
             tvNoResult.setVisibility(View.GONE);
             rvTickets.setVisibility(View.VISIBLE);
             //
             rvTickets.setLayoutManager(new LinearLayoutManager(context));
             //
-            mAdapter = new Act069_Tickets_Adapter(
+            mAdapter = new Act074_Next_Tickets_Adapter(
                 context,
-                R.layout.act069_ticket_cell,
+                R.layout.act074_ticket_cell,
                 tickets
             );
             //
             if(mAdapter != null){
-                mAdapter.setOnTicketClickListener(new Act069_Tickets_Adapter.OnTicketClickListener() {
+                mAdapter.setOnTicketClickListener(new Act074_Next_Tickets_Adapter.OnTicketClickListener() {
                     @Override
-                    public void onTicketClickListner(Act069_TicketVH item) {
+                    public void onTicketClickListner(Act074_TicketVH item) {
                         //LUCHE - 18/03/2020
                         //Add chamada do metodo que define qual proximo step
                         mPresenter.checkTicketFlow(item);
                     }
                 });
-                mAdapter.setOnScheduleWarningClickListener(new Act069_Tickets_Adapter.OnScheduleWarningClickListener() {
-                    @Override
-                    public void onScheduleWarningClick(String fcmNewStatus, String fcmUserNick, String errorMsg) {
-                        ToolBox_Inf.showScheduleWarningDialog(
-                            context,
-                            hmAux_Trans.get("dialog_schedule_warning_ttl"),
-                            hmAux_Trans.get("dialog_schedule_warning_new_status_lbl"),
-                            hmAux_Trans.get(fcmNewStatus),
-                            hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl"),
-                            fcmUserNick,
-                            hmAux_Trans.get("dialog_schedule_warning_error_msg_lbl"),
-                            errorMsg
-                        );
-                    }
-                });
+//                mAdapter.setOnScheduleWarningClickListener(new Act069_Tickets_Adapter.OnScheduleWarningClickListener() {
+//                    @Override
+//                    public void onScheduleWarningClick(String fcmNewStatus, String fcmUserNick, String errorMsg) {
+//                        ToolBox_Inf.showScheduleWarningDialog(
+//                            context,
+//                            hmAux_Trans.get("dialog_schedule_warning_ttl"),
+//                            hmAux_Trans.get("dialog_schedule_warning_new_status_lbl"),
+//                            hmAux_Trans.get(fcmNewStatus),
+//                            hmAux_Trans.get("dialog_schedule_warning_user_nick_lbl"),
+//                            fcmUserNick,
+//                            hmAux_Trans.get("dialog_schedule_warning_error_msg_lbl"),
+//                            errorMsg
+//                        );
+//                    }
+//                });
             }
             //
             rvTickets.setAdapter(mAdapter);
@@ -361,12 +359,12 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
             }
         });
         //
-        ivFilters.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showFilterDialog();
-            }
-        });
+//        ivFilters.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showFilterDialog();
+//            }
+//        });
         //
         btnSyncTickets.setOnClickListener(
             new View.OnClickListener() {
@@ -489,7 +487,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
                         bStatusCanceled = chkStatusCanceled.isChecked();
                         bStatusRejected = chkStatusRejected.isChecked();
                         //
-                        updateIvFilterState();
+//                        updateIvFilterState();
                         //
                         mPresenter.getTicketList(
                             requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT014), bStatusPending,
@@ -516,22 +514,22 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
         builder.show();
     }
 
-    private void updateIvFilterState() {
-        if(requestingAct.equals(ConstantBaseApp.ACT014)){
-            //ivFilters.setVisibility(View.GONE);
-            if (bStatusDone || bStatusNotExecuted || bStatusIgnored ||bStatusCanceled || bStatusRejected) {
-                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
-            } else {
-                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
-            }
-        }else {
-            if (bStatusPending || bStatusProcess || bStatusWaitingSync ||bParterEmpty || bParterProfile || bParterNoProfile) {
-                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
-            } else {
-                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
-            }
-        }
-    }
+//    private void updateIvFilterState() {
+//        if(requestingAct.equals(ConstantBaseApp.ACT014)){
+//            //ivFilters.setVisibility(View.GONE);
+//            if (bStatusDone || bStatusNotExecuted || bStatusIgnored ||bStatusCanceled || bStatusRejected) {
+//                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
+//            } else {
+//                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
+//            }
+//        }else {
+//            if (bStatusPending || bStatusProcess || bStatusWaitingSync ||bParterEmpty || bParterProfile || bParterNoProfile) {
+//                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
+//            } else {
+//                ivFilters.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
+//            }
+//        }
+//    }
 
     private Bundle generateActFilterBundle() {
         Bundle bundle = new Bundle();

@@ -30,9 +30,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/include"
-        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_bias="0" />
 
-        />
+    <com.namoa_digital.namoa_library.ctls.FabMenu
+        android:id="@+id/act070_fabMenu_anchor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/act070_rv_pipeline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:mButton_Back_Color="@color/namoa_sync_pipeline_background_btn"
+        app:mButton_Resource="@drawable/ic_menu_hamburger"
+        app:mButton_Resource_Color="@color/colorPrimary" />
 
     <include
         android:id="@+id/include"

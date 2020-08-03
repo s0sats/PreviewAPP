@@ -2,7 +2,7 @@ package com.namoadigital.prj001.ui.act069;
 
 import android.os.Bundle;
 
-import com.namoadigital.prj001.model.VH_models.Act069_TicketVH;
+import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ public interface Act069_Main_Contract {
 
     interface I_View{
 
-        void loadTicketList(ArrayList<Act069_TicketVH> tickets);
+        void loadTicketList(ArrayList<Act074_TicketVH> tickets);
 
         void showMsg(String ttl, String msg);
 
@@ -45,6 +45,6 @@ public interface Act069_Main_Contract {
 
         void onBackPressedClicked(String requestingAct);
 
-        void checkTicketFlow(Act069_TicketVH item);
+        void checkTicketFlow(Act074_TicketVH item);
     }
 }
