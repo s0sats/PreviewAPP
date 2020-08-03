@@ -14,6 +14,8 @@ public class T_TK_Ticket_Save_Env extends Main_Header_Env {
 //   private ArrayList<WS_TK_Ticket_Obj> ticket = new ArrayList<>();
     @Expose
     private String token;
+    @Expose
+    private int reprocess;
 
     public ArrayList<TK_Ticket> getTicket() {
         return ticket;
@@ -38,5 +40,13 @@ public class T_TK_Ticket_Save_Env extends Main_Header_Env {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public int getReprocess() {
+        return reprocess;
+    }
+
+    public void setReprocess(int reprocess) {
+        this.reprocess = reprocess;
     }
 }

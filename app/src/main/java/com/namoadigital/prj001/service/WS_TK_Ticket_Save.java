@@ -128,6 +128,7 @@ public class WS_TK_Ticket_Save extends IntentService {
             env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
+            env.setReprocess(1);
             //
             callWsTicketSave(env);
         }else{
@@ -157,6 +158,7 @@ public class WS_TK_Ticket_Save extends IntentService {
             env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
             env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
             env.setTicket(ticketToSend);
+            env.setReprocess(0);
             env.setToken(token);
             //
             String json_token_content = gsonRec.toJson(env);

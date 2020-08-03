@@ -17,8 +17,8 @@ import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
-import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec;
-import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result;
+import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result_old;
+import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_old;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
@@ -199,9 +199,9 @@ public class WS_TK_Ticket_Save_old extends IntentService {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
         //
-        T_TK_Ticket_Save_Rec rec = gsonRec.fromJson(
+        T_TK_Ticket_Save_Rec_old rec = gsonRec.fromJson(
             resultado,
-            T_TK_Ticket_Save_Rec.class
+            T_TK_Ticket_Save_Rec_old.class
         );
         //
         if (
@@ -226,13 +226,13 @@ public class WS_TK_Ticket_Save_old extends IntentService {
         processTicketSaveReturn(rec);
     }
 
-    private void processTicketSaveReturn(T_TK_Ticket_Save_Rec rec) throws Exception {
+    private void processTicketSaveReturn(T_TK_Ticket_Save_Rec_old rec) throws Exception {
         //
         if( ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(rec.getSave())
             || ConstantBaseApp.MAIN_RESULT_OK_DUP.equalsIgnoreCase(rec.getSave()))
         {
             if(rec.getResult() != null && rec.getResult().size() > 0){
-                for (T_TK_Ticket_Save_Rec_Result retResult : rec.getResult()) {
+                for (T_TK_Ticket_Save_Rec_Result_old retResult : rec.getResult()) {
                     TicketSaveActReturn actReturn = getActReturn(retResult);
                     actReturnList.add(actReturn);
                     //
@@ -275,7 +275,7 @@ public class WS_TK_Ticket_Save_old extends IntentService {
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), jsonActReturn, "0");
     }
 
-    private void processTicketRet(T_TK_Ticket_Save_Rec_Result retResult, TicketSaveActReturn actReturn) throws Exception {
+    private void processTicketRet(T_TK_Ticket_Save_Rec_Result_old retResult, TicketSaveActReturn actReturn) throws Exception {
         boolean createdBySchedule = isTicketCreatedBySchedule(retResult);
         TK_Ticket retTicket = retResult.getTicket();
         DaoObjReturn daoObjReturn = new DaoObjReturn();
@@ -415,7 +415,7 @@ public class WS_TK_Ticket_Save_old extends IntentService {
         );
     }
 
-    private void updateActionsFileNames(T_TK_Ticket_Save_Rec_Result retResult) throws Exception {
+    private void updateActionsFileNames(T_TK_Ticket_Save_Rec_Result_old retResult) throws Exception {
         TK_Ticket tkTicket = retResult.getTicket();
         //TODO REVE SE MOVER PARA O STEP
 //        if(tkTicket.getCtrl() != null) {
@@ -447,7 +447,7 @@ public class WS_TK_Ticket_Save_old extends IntentService {
         from.renameTo(to);
     }
 
-    private boolean isTicketCreatedBySchedule(T_TK_Ticket_Save_Rec_Result retResult) {
+    private boolean isTicketCreatedBySchedule(T_TK_Ticket_Save_Rec_Result_old retResult) {
         return  retResult.getOld_ticket_prefix() != null && retResult.getOld_ticket_prefix() == 0
                 && retResult.getOld_ticket_code() != null && retResult.getOld_ticket_code() > 0 ;
     }
@@ -490,7 +490,7 @@ public class WS_TK_Ticket_Save_old extends IntentService {
         return ticketDao.getByString(selectionQuery);
     }
 
-    private TicketSaveActReturn getActReturn(T_TK_Ticket_Save_Rec_Result retResult) {
+    private TicketSaveActReturn getActReturn(T_TK_Ticket_Save_Rec_Result_old retResult) {
         TicketSaveActReturn actReturn = new TicketSaveActReturn(
             retResult.getCustomer_code(),
             retResult.getTicket_prefix(),
