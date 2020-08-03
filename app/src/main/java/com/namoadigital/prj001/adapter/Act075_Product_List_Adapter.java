@@ -45,6 +45,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         this.inventory_control = inventory_control;
         this.hmAux_Trans = hmAux_Trans;
         this.context = context;
+        this.isEditable = isEditable;
         this.hasWithdrawApproved = hasWithdrawApproved;
         this.hasAppliedApproved = hasAppliedApproved;
         this.mListener = mListener;
@@ -243,6 +244,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         cl_withdrawn.setVisibility(View.VISIBLE);
                         cl_applied.setVisibility(View.GONE);
                         cl_returned.setVisibility(View.GONE);
+                        product_cell_tv_extract.setVisibility(View.GONE);
                         if(isEditable){
                             enableWithdrawLayout();
                         }else{
@@ -252,6 +254,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         cl_withdrawn.setVisibility(View.VISIBLE);
                         cl_applied.setVisibility(View.VISIBLE);
                         cl_returned.setVisibility(View.GONE);
+                        product_cell_tv_extract.setVisibility(View.VISIBLE);
                         disableWithdrawLayout();
                         if(isEditable){
                             enableAppliedLayout();
@@ -263,6 +266,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         cl_withdrawn.setVisibility(View.VISIBLE);
                         cl_applied.setVisibility(View.VISIBLE);
                         cl_returned.setVisibility(View.VISIBLE);
+                        product_cell_tv_extract.setVisibility(View.VISIBLE);
                         disableWithdrawLayout();
                         disableAppliedLayout();
                     }
@@ -295,6 +299,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         if (tk_ticket_product.getQty() == 0) {
                             product_cell_iv_withdrawn_substract.setEnabled(false);
                         }
+                        notifyItemChanged(position);
                     }
                 });
                 //
@@ -306,6 +311,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         if (tk_ticket_product.getQty_used() == 0) {
                             product_cell_iv_withdrawn_substract.setEnabled(false);
                         }
+                        notifyItemChanged(position);
                     }
                 });
                 //
@@ -314,6 +320,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     public void onClick(View v) {
                         double mWithdraw = tk_ticket_product.getQty() + 1;
                         tk_ticket_product.setQty(mWithdraw);
+                        notifyItemChanged(position);
                     }
                 });
                 //
@@ -325,6 +332,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         if (tk_ticket_product.getQty_used() >= tk_ticket_product.getQty()) {
                             product_cell_iv_withdrawn_substract.setEnabled(false);
                         }
+                        notifyItemChanged(position);
                     }
                 });
             }

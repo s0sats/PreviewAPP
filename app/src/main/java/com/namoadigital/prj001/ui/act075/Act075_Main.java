@@ -348,7 +348,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        tk_ticket_products.get(position).setQty(Double.valueOf(dialog_set_mkedt_qty.getText().toString()));
+                        tk_ticket_products.get(position).setQty(Double.valueOf(dialog_set_mkedt_qty.getText().toString().replace(",", ".")));
                         mAdapter.notifyItemChanged(position);
                     }
                 })
@@ -375,7 +375,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        tk_ticket_products.get(position).setQty_used(Double.valueOf(dialog_set_mkedt_qty.getText().toString()));
+                        tk_ticket_products.get(position).setQty_used(Double.valueOf(dialog_set_mkedt_qty.getText().toString().replace(",", ".")));
                         mAdapter.notifyItemChanged(position);
                     }
                 })
