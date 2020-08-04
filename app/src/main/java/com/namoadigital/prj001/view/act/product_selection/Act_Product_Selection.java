@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act_Product_Selectio_Adapter_Groups_Products;
@@ -85,6 +86,8 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         transList.add("mket_hint_msg");
         transList.add("btn_back");
         transList.add("btn_home");
+        transList.add("alert_product_already_choosen_ttl");
+        transList.add("alert_product_already_choosen_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -251,7 +254,16 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
                 //
                 resetSearch();
                 //
-                mPresenter.onBtnHomeClicked();
+                if(isProductAddProcess) {
+                    mPresenter.setAdapterDataForProductInsert(
+                            Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
+                            Long.parseLong(currentIndex.get(INDEX_RECURSIVE_CODE)),
+                            tk_ticket_products,
+                            ""
+                    );
+                }else {
+                    mPresenter.onBtnHomeClicked();
+                }
             }
         });
         //
@@ -277,17 +289,45 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
                     callSetAdapterData(mket_product_search.getText().toString());
 
                 } else {
-                    MD_Product pAux = mPresenter.getProduct(
-                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                            String.valueOf(item.get("code"))
-                    );
+                    if (isProductAddProcess) {
+                        boolean hasError = false;
+                        if (!tk_ticket_products.isEmpty() && item.hasConsistentValue("code")) {
+                            int code = Integer.valueOf(item.get("code"));
+                            for (TK_Ticket_Product product : tk_ticket_products) {
 
-                    if (pAux != null) {
-                        sendResult(pAux);
+                                if (product.getProduct_code() == code) {
+                                    hasError = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (hasError) {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_product_already_choosen_ttl"),
+                                    hmAux_Trans.get("alert_product_already_choosen_msg"),
+                                    null,
+                                    0);
+                        } else {
+                            setProductForResult(item);
+                        }
+                    }else{
+                        setProductForResult(item);
                     }
                 }
             }
         });
+    }
+
+    private void setProductForResult(HMAux item) {
+        MD_Product pAux = mPresenter.getProduct(
+                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                String.valueOf(item.get("code"))
+        );
+
+        if (pAux != null) {
+            sendResult(pAux);
+        }
     }
 
     @Override
