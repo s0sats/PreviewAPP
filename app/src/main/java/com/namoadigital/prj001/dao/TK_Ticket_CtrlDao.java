@@ -395,17 +395,12 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 sbWhere.append(" and ");
                 sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_ctrl.getStep_code()).append("'");
                 //Tenta o delete do tipo do controle
-                sqlRet = deleteByCtrlType(tk_ticket_ctrl, sbWhere,db,daoObjReturn);
+                deleteByCtrlType(tk_ticket_ctrl, sbWhere,db,daoObjReturn);
                 //Se delete do processo "filho" OK, segue para o delete do ctrl
-                if(sqlRet != 0){
-                    sqlRet = 0;
-                    daoObjReturn.setTable(TABLE);
-                    sqlRet = db.delete(TABLE,sbWhere.toString(),null);
-                    if(sqlRet == 0){
-                        daoObjReturn.setRawMessage(daoObjReturn.DELETE_ERROR_0_ROWS_AFFECTED);
-                        throw new Exception(daoObjReturn.getErrorMsg());
-                    }
-                }else{
+                sqlRet = 0;
+                daoObjReturn.setTable(TABLE);
+                sqlRet = db.delete(TABLE,sbWhere.toString(),null);
+                if(sqlRet == 0){
                     daoObjReturn.setRawMessage(daoObjReturn.DELETE_ERROR_0_ROWS_AFFECTED);
                     throw new Exception(daoObjReturn.getErrorMsg());
                 }
@@ -545,8 +540,6 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
      * @return - Qtd de registros removidos
      * @throws Exception
      */
-    //TODO REVER POIS SE MUDAR DE VARIS ITENS PARA NENHUM, NÃO FUNCIONARÁ DEVIDAMENTE  - DESISTIR DA IDEIA DO RETORNO = 0 DAR EXCEPTION
-    //TODO POIS AGORA OS ITENS PODEM SER NULLS....
     private long deleteByCtrlType(TK_Ticket_Ctrl tk_ticket_ctrl, StringBuilder sbWhere, SQLiteDatabase db, DaoObjReturn daoObjReturn) throws Exception {
         String ctrlTypeTable = "";
         //
@@ -590,7 +583,6 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             default:
                 return 1;
         }
-       // return 0;
     }
 
     /**

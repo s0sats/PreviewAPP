@@ -11,10 +11,12 @@ import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
@@ -30,11 +32,16 @@ import com.namoadigital.prj001.model.WS_TK_Ticket_Obj;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Product_Obj;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Step_Obj;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.GE_File_Sql_006;
+import com.namoadigital.prj001.sql.GE_File_Sql_007;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_001;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_003;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_004;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_005;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_006;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_007;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
@@ -61,10 +68,11 @@ public class WS_TK_Ticket_Save extends IntentService {
     private Gson gsonRec;
     //private ArrayList<WS_TK_Ticket_Obj> ticketToSend = new ArrayList<>();
     private ArrayList<TK_Ticket> ticketToSend = new ArrayList<>();
-    private ArrayList<Object> actReturnList = new ArrayList<>();
+    private ArrayList<TicketSaveActReturn> actReturnList = new ArrayList<>();
     private TK_TicketDao ticketDao;
     private TK_Ticket_CtrlDao ticketCtrlDao;
     private MD_Schedule_ExecDao scheduleExecDao;
+    private GE_FileDao geFileDao;
 
     public WS_TK_Ticket_Save() { super("WS_TK_Ticket_Save");}
 
@@ -79,6 +87,7 @@ public class WS_TK_Ticket_Save extends IntentService {
             ticketDao = new TK_TicketDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             ticketCtrlDao = new TK_Ticket_CtrlDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             scheduleExecDao = new MD_Schedule_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+            geFileDao = new GE_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             menuSendProcess = bundle.getBoolean(ConstantBaseApp.PROCESS_MENU_SEND,false);
             processTicketSave();
 
@@ -377,24 +386,17 @@ public class WS_TK_Ticket_Save extends IntentService {
         if( ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(rec.getSave())
             || ConstantBaseApp.MAIN_RESULT_OK_DUP.equalsIgnoreCase(rec.getSave()))
         {
-            if(rec.getResult() != null && rec.getResult().size() > 0){
-                for (T_TK_Ticket_Save_Rec_Result recResult : rec.getResult()) {
-                    if(recResult.getStep()!= null &&  recResult.getStep().size() > 0) {
-                        for (T_TK_Ticket_Save_Rec_Result_Step resultStep : recResult.getStep()) {
-
-                        }
-                    }else{
-                        //MSG DE ERRO AQUI OU NÃO????
-                    }
-                }
+            if(rec.getTicket_return() != null && rec.getTicket_return().size() > 0){
+                processActFeedback(rec);
             }
             if(rec.getFrom_to() != null && rec.getFrom_to().size() > 0){
-                processFromTo(rec.getFrom_to(),rec.getResult());
-
-            }else{
-                if(rec.getTicket() != null && rec.getTicket().size() > 0){
-
+                if(processFromTo(rec.getFrom_to(),rec.getTicket_return())){
+                    processTicketFull(rec);
+                }else {
+                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("error_from_to_processing"), "", "0");
                 }
+            }else{
+                processTicketFull(rec);
             }
         }else{
             //COMO TRATAR, SERÁ QUE EXISTE ESSE OUTRO STATUS
@@ -408,44 +410,194 @@ public class WS_TK_Ticket_Save extends IntentService {
         }
     }
 
-    private void processFromTo(ArrayList<T_TK_Ticket_Save_Rec_From_To> from_to, ArrayList<T_TK_Ticket_Save_Rec_Result> recTicketResult) {
-        for (T_TK_Ticket_Save_Rec_From_To recFromTo : from_to) {
-            T_TK_Ticket_Save_Rec_Result ticketProcessResult = getTicketProcessResult(recTicketResult,recFromTo.getCustomer_code(),recFromTo.getTicket_prefix(),recFromTo.getTicket_code());
+    private void processActFeedback(T_TK_Ticket_Save_Rec rec) {
+        for (T_TK_Ticket_Save_Rec_Result recResult : rec.getTicket_return()) {
+            TicketSaveActReturn actReturn = getActReturn(recResult);
+            if(recResult.getStep()!= null &&  recResult.getStep().size() > 0) {
+                for (T_TK_Ticket_Save_Rec_Result_Step resultStep : recResult.getStep()) {
+                    if(!ConstantBaseApp.MAIN_RESULT_OK.equals(resultStep.getRet_status())){
+                        actReturn.setRetMsg(
+                            getFormattedRetMsg(actReturn, resultStep)
+                        );
+                    }
+                }
+            }
             //
-            if(ticketProcessResult != null && ConstantBaseApp.MAIN_RESULT_OK.equals(ticketProcessResult.getRet_status())) {
-                TK_Ticket_Ctrl ticketCtrl = getDbTicketCtrl(recFromTo);
-                ticketCtrl.setTicket_seq(recFromTo.getTicket_seq());
-                ticketCtrl.setPKIntoProcess();
-            }else{
-                TK_Ticket ticketSent = getTicketFromSentList(recFromTo.getCustomer_code(),recFromTo.getTicket_prefix(),recFromTo.getTicket_code());
-                //ATUALIZAR TICKET PARA UPDATE REQUIRED
+            if(recResult.getProduct()!= null &&  recResult.getProduct().size() > 0) {
+                for (T_TK_Ticket_Save_Rec_Result_Step resultProduct : recResult.getProduct()) {
+                    if(!ConstantBaseApp.MAIN_RESULT_OK.equals(resultProduct.getRet_status())){
+                        actReturn.setRetMsg(
+                            getFormattedRetMsg(actReturn, resultProduct)
+                        );
+                    }
+                }
+            }
+            //
+            if(ConstantBaseApp.MAIN_RESULT_OK.equals(recResult.getRet_status())){
+                //atualiza SCN do ticket.
                 ticketDao.addUpdate(
-                    new Sql_WS_TK_Ticket_Save_002(
-                        ticketSent.getCustomer_code(),
-                        ticketSent.getTicket_prefix(),
-                        ticketSent.getTicket_code(),
-                        ticketSent.getUpdate_required(),
-                        ticketSent.getUpdate_required_product() //Como retorno sempre full, reseta o sync_required
-                    ).toSqlQuery()
-                );
-                //TK_Ticket_Step
-                ticketDao.addUpdate(
-                    new Sql_WS_TK_Ticket_Save_003(
-                        ticketSent.getCustomer_code(),
-                        ticketSent.getTicket_prefix(),
-                        ticketSent.getTicket_code()
-                    ).toSqlQuery()
-                );
-                //TK_Ticket_Ctrl
-                ticketDao.addUpdate(
-                    new Sql_WS_TK_Ticket_Save_004(
-                        ticketSent.getCustomer_code(),
-                        ticketSent.getTicket_prefix(),
-                        ticketSent.getTicket_code()
+                    new Sql_WS_TK_Ticket_Save_007(
+                        recResult.getCustomer_code(),
+                        recResult.getTicket_prefix(),
+                        recResult.getTicket_code(),
+                        recResult.getScn()
                     ).toSqlQuery()
                 );
             }
+            //
+            actReturnList.add(actReturn);
         }
+    }
+
+    @NonNull
+    private String getFormattedRetMsg(TicketSaveActReturn actReturn, T_TK_Ticket_Save_Rec_Result_Step resultStep) {
+        String stepErroMsg = resultStep.getStep_desc() != null && !resultStep.getStep_desc().isEmpty() ? resultStep.getStep_desc() +"\n"+ actReturn.getRetMsg() : actReturn.getRetMsg();
+        //
+        if(actReturn.getRetMsg() == null || actReturn.getRetMsg().isEmpty()){
+            return stepErroMsg +"\n";
+        }else{
+            return actReturn.getRetMsg() + stepErroMsg+"\n";
+        }
+    }
+
+    private void processTicketFull(T_TK_Ticket_Save_Rec rec) throws Exception {
+        //Executa loop nos tickets caso exista
+        if(rec.getTicket() != null && rec.getTicket().size() > 0){
+            for (TK_Ticket tk_ticket : rec.getTicket()) {
+                //Seta pk nos filhos
+                tk_ticket.setPK();
+                //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
+                tk_ticket.updateLocalImagesPathIfExists();
+                //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
+                //for alterado, o que significa que mudaram a foto no server...
+                TK_Ticket.checkActionPhotoResetNeeds(
+                    getDbTicket(tk_ticket,false),
+                    tk_ticket
+                );
+                //Remove o ticket do banco de dados
+                ticketDao.removeFull(tk_ticket);
+                //Tenta o insert do ticket
+                DaoObjReturn daoObjReturn = ticketDao.addUpdate(tk_ticket);
+                //Se não houve erro , chama metodo define proximo passo.
+                if(!daoObjReturn.hasError()){
+                    prepareEndOrResendProcess();
+                }
+            }
+        }else{
+            prepareEndOrResendProcess();
+        }
+    }
+
+    private void prepareEndOrResendProcess() throws Exception {
+        //Após processamento , apaga arquivo de token
+        if (ToolBox_Inf.deleteFileWithRet(file_to_del)) {
+            if (reSend) {
+                ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_re_processing_data"), "", "0");
+                //Reseta var de re transmissão.
+                reSend = false;
+                //Reseta lista de cab após processo de token
+                ticketToSend.clear();
+                //
+                processTicketSave();
+            } else {
+                String jsonActReturn = gsonRec.toJson(actReturnList);
+                //
+                callFinishProcessing(jsonActReturn);
+            }
+        } else {
+            //VERIFICAR O QUYE FAZER NESSE CASO.
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception("WS_TICKET_SAVE_ERROR_ON_DELETE_TOKEN_FILE")
+            );
+        }
+    }
+
+    private boolean processFromTo(ArrayList<T_TK_Ticket_Save_Rec_From_To> from_to, ArrayList<T_TK_Ticket_Save_Rec_Result> recTicketResult) {
+        try {
+            for (T_TK_Ticket_Save_Rec_From_To recFromTo : from_to) {
+                T_TK_Ticket_Save_Rec_Result ticketProcessResult = getTicketProcessResult(recTicketResult, recFromTo.getCustomer_code(), recFromTo.getTicket_prefix(), recFromTo.getTicket_code());
+                //
+                if (ticketProcessResult != null && ConstantBaseApp.MAIN_RESULT_OK.equals(ticketProcessResult.getRet_status())) {
+                    TK_Ticket_Ctrl ticketCtrl = getDbTicketCtrl(recFromTo);
+                    ticketCtrl.setTicket_seq(recFromTo.getTicket_seq());
+                    ticketCtrl.setPKIntoProcess();
+                    //
+                    if (ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION.equals(ticketCtrl)
+                        && ticketCtrl.getAction() != null
+                        && ticketCtrl.getAction().getAction_photo_local() != null
+                        && !ticketCtrl.getAction().getAction_photo_local().isEmpty()
+                    ) {
+                        String originalName = ticketCtrl.getAction().getAction_photo_local();
+                        String newName = ToolBox_Inf.buildTicketActionImgPath(ticketCtrl);
+                        if (!fromToImgProcess(geFileDao, originalName, newName)) {
+                            return false;
+                        }
+                        //
+                        ticketCtrl.setFinalNameIntoActionPhoto(newName);
+                    }
+                    ticketCtrlDao.addUpdateTmp(ticketCtrl, null);
+                    //atualiza SCN do ticket.
+                    ticketDao.addUpdate(
+                        new Sql_WS_TK_Ticket_Save_007(
+                            ticketProcessResult.getCustomer_code(),
+                            ticketProcessResult.getTicket_prefix(),
+                            ticketProcessResult.getTicket_code(),
+                            ticketProcessResult.getScn()
+                        ).toSqlQuery()
+                    );
+                    return true;
+                } else {
+                    TK_Ticket ticketSent = getTicketFromSentList(recFromTo.getCustomer_code(), recFromTo.getTicket_prefix(), recFromTo.getTicket_code());
+                    //ATUALIZAR TICKET PARA UPDATE REQUIRED
+                    ticketDao.addUpdate(
+                        new Sql_WS_TK_Ticket_Save_002(
+                            ticketSent.getCustomer_code(),
+                            ticketSent.getTicket_prefix(),
+                            ticketSent.getTicket_code(),
+                            ticketSent.getUpdate_required(),
+                            ticketSent.getUpdate_required_product() //Como retorno sempre full, reseta o sync_required
+                        ).toSqlQuery()
+                    );
+                    //
+                    if (ticketSent.getStep() != null && ticketSent.getStep().size() > 0) {
+                        //TK_Ticket_Step
+                        for (TK_Ticket_Step ticketStep : ticketSent.getStep()) {
+                            ticketDao.addUpdate(
+                                new Sql_WS_TK_Ticket_Save_005(
+                                    ticketStep.getCustomer_code(),
+                                    ticketStep.getTicket_prefix(),
+                                    ticketStep.getTicket_code(),
+                                    ticketStep.getStep_code(),
+                                    1
+                                ).toSqlQuery()
+                            );
+                            //TK_ticket_Ctrl
+                            if (ticketStep.getCtrl() != null && ticketStep.getCtrl().size() > 0) {
+                                for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
+                                    //TK_Ticket_Ctrl
+                                    ticketDao.addUpdate(
+                                        new Sql_WS_TK_Ticket_Save_006(
+                                            ticketCtrl.getCustomer_code(),
+                                            ticketCtrl.getTicket_prefix(),
+                                            ticketCtrl.getTicket_code(),
+                                            ticketCtrl.getStep_code(),
+                                            ticketCtrl.getTicket_seq_tmp(),
+                                            1
+                                        ).toSqlQuery()
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     private TK_Ticket getTicketFromSentList(int customer_code, int ticket_prefix, int ticket_code) {
@@ -703,21 +855,112 @@ public class WS_TK_Ticket_Save extends IntentService {
         return ticketDao.getByString(selectionQuery);
     }
 
-//    private TicketSaveActReturn getActReturn(T_TK_Ticket_Save_Rec_Result retResult) {
-//        TicketSaveActReturn actReturn = new TicketSaveActReturn(
-//            retResult.getCustomer_code(),
-//            retResult.getTicket_prefix(),
-//            retResult.getTicket_code(),
-//            retResult.getScn(),
-//            retResult.getRet_status(),
-//            retResult.getRet_msg(),
-//            reSend,
-//            retResult.getOld_ticket_prefix() != null ? retResult.getOld_ticket_prefix() : -1,
-//            retResult.getOld_ticket_code() != null ? retResult.getOld_ticket_code() : -1
-//        );
-//        //
-//        return actReturn;
-//    }
+    private TicketSaveActReturn getActReturn(T_TK_Ticket_Save_Rec_Result retResult) {
+        TicketSaveActReturn actReturn = null;
+        //busca se ja existe retorno para o ticket
+        for (TicketSaveActReturn saveActReturn : actReturnList) {
+            if( saveActReturn.getPrefix() == retResult.getTicket_prefix()
+                && saveActReturn.getCode() == retResult.getTicket_code()
+            ) {
+                actReturn = saveActReturn;
+                break;
+            }
+        }
+        //REMOVE O RETORNO DO MESMO TICKET
+        if(actReturn != null) {
+            actReturnList.remove(actReturn);
+        }
+        //
+        actReturn = new TicketSaveActReturn(
+            retResult.getCustomer_code(),
+            retResult.getTicket_prefix(),
+            retResult.getTicket_code(),
+            retResult.getScn(),
+            retResult.getRet_status(),
+            retResult.getRet_msg(),
+            reSend
+        );
+        //
+        return actReturn;
+    }
+
+    /**LUCHE - 20/07/2020
+     * <p></p>
+     * Após usr da Mosolf ganhar 2 vezes na loteria conseguindo sincornizar o
+     * rename da foto com a rotina de upload, foi criado novo metodo para tratar
+     * o upload das imagens.
+     * Será gerada uma copia da imagem no de-para, na sequencia será avaliado o
+     *  status da foto na GE_File, se OPEN, atualiza registro com o segundo nome
+     *  se SENT, apaga a foto original.
+     * @param geFileDao
+     * @param originalFileName
+     * @param new_name
+     * @return
+     */
+    private boolean fromToImgProcess(GE_FileDao geFileDao, String originalFileName, String new_name) {
+        if(copyAndCheckFile(originalFileName,new_name)){
+            String fileCode = originalFileName.replace(".jpg", "").replace(".png", "");
+            GE_File geFile = getCurrentFileReg(geFileDao, fileCode);
+            if(ConstantBaseApp.GE_FILE_STATUS_OPENED.equals(geFile.getFile_status())){
+                //Atualiza path da imagem na lista de upload
+                geFileDao.addUpdate(
+                    new GE_File_Sql_006(
+                        fileCode,
+                        new_name
+                    ).toSqlQuery()
+                );
+            }else if(ConstantBaseApp.GE_FILE_STATUS_SENT.equals(geFile.getFile_status())){
+                //Log.d("del-PHOTO", "WsTicketSave :" + geFile.getFile_path());
+                ToolBox_Inf.deleteFileWithRet(
+                    imgFileAbsolutePath(originalFileName)
+                );
+            }
+            //
+            return true;
+        }
+        return false;
+    }
+
+    private String imgFileAbsolutePath(String file_name) {
+        File file = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/", file_name);
+        try {
+            return file.getAbsolutePath();
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return "";
+        }
+    }
+
+    /**
+     * LUCHE - 20/07/2020
+     * <p></p>
+     * Cria copia da foto com o nome definitivo.
+     * @param originalFileName - Nome da foto original
+     * @param copiedFileName - Nome definitivo para criação da copia
+     * @return Verdadeiro se foto copiada com sucesso.
+     */
+    private boolean copyAndCheckFile(String originalFileName, String copiedFileName){
+        try {
+            File originalFile = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/", originalFileName);
+            File copiedFile = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/", copiedFileName);
+            //
+            ToolBox_Inf.copyAndRenameFile(originalFile,copiedFile);
+            //
+            return ToolBox_Inf.verifyDownloadFileInf(copiedFileName,ConstantBaseApp.CACHE_PATH_PHOTO);
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private GE_File getCurrentFileReg(GE_FileDao geFileDao, String fileCode) {
+        return geFileDao.getByString(
+            new GE_File_Sql_007(
+                fileCode
+            ).toSqlQuery()
+        );
+    }
 
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
@@ -774,6 +1017,16 @@ public class WS_TK_Ticket_Save extends IntentService {
             this.fromTokenProcess = fromTokenProcess;
             this.oldPrefix = oldPrefix;
             this.oldCode = oldCode;
+        }
+
+        public TicketSaveActReturn(int customer_code, int prefix, int code, Integer scn, String retStatus, String retMsg, boolean fromTokenProcess) {
+            this.customer_code = customer_code;
+            this.prefix = prefix;
+            this.code = code;
+            this.scn = scn;
+            this.retStatus = retStatus;
+            this.retMsg = retMsg;
+            this.fromTokenProcess = fromTokenProcess;
         }
 
         public int getCustomer_code() {
@@ -895,6 +1148,11 @@ public class WS_TK_Ticket_Save extends IntentService {
         public void setScheduleExec(int scheduleExec) {
             this.scheduleExec = scheduleExec;
         }
-    }
 
+        public boolean isSameTicket(TicketSaveActReturn actReturn){
+            return this.getPrefix() == actReturn.getPrefix()
+                && this.getCode() == actReturn.getCode();
+        }
+
+    }
 }

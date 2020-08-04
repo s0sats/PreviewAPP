@@ -6,6 +6,7 @@ public class T_TK_Ticket_Save_Rec_Result_Step {
     private int ticket_code;
     private int step_code;
     private int scn;
+    private String step_desc;
     private String ret_status;
     private String ret_msg;
 
@@ -63,5 +64,13 @@ public class T_TK_Ticket_Save_Rec_Result_Step {
 
     public void setRet_msg(String ret_msg) {
         this.ret_msg = ret_msg;
+    }
+
+    public String getStep_desc() {
+        return step_desc;
+    }
+
+    public void setStep_desc(String step_desc) {
+        this.step_desc = step_desc;
     }
 }

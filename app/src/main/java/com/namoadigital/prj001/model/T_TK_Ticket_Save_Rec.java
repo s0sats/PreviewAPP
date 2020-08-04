@@ -12,7 +12,7 @@ public class T_TK_Ticket_Save_Rec {
     private String link_url;
     private String error_msg;
     private String save;
-    private ArrayList<T_TK_Ticket_Save_Rec_Result> result = new ArrayList<>();
+    private ArrayList<T_TK_Ticket_Save_Rec_Result> ticket_return = new ArrayList<>();
     private ArrayList<TK_Ticket> ticket = new ArrayList<>();
     private ArrayList<T_TK_Ticket_Save_Rec_From_To> from_to = new ArrayList<>();
 
@@ -56,12 +56,12 @@ public class T_TK_Ticket_Save_Rec {
         this.save = save;
     }
 
-    public ArrayList<T_TK_Ticket_Save_Rec_Result> getResult() {
-        return result;
+    public ArrayList<T_TK_Ticket_Save_Rec_Result> getTicket_return() {
+        return ticket_return;
     }
 
-    public void setResult(ArrayList<T_TK_Ticket_Save_Rec_Result> result) {
-        this.result = result;
+    public void setTicket_return(ArrayList<T_TK_Ticket_Save_Rec_Result> ticket_return) {
+        this.ticket_return = ticket_return;
     }
 
     public ArrayList<TK_Ticket> getTicket() {

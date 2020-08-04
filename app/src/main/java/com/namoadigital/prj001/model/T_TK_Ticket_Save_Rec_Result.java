@@ -89,6 +89,7 @@ public class T_TK_Ticket_Save_Rec_Result {
 //        this.ticket = ticket;
 //    }
     private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> step;
+    private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> product;
 
     public ArrayList<T_TK_Ticket_Save_Rec_Result_Step> getStep() {
         return step;
@@ -96,5 +97,13 @@ public class T_TK_Ticket_Save_Rec_Result {
 
     public void setStep(ArrayList<T_TK_Ticket_Save_Rec_Result_Step> step) {
         this.step = step;
+    }
+
+    public ArrayList<T_TK_Ticket_Save_Rec_Result_Step> getProduct() {
+        return product;
+    }
+
+    public void setProduct(ArrayList<T_TK_Ticket_Save_Rec_Result_Step> product) {
+        this.product = product;
     }
 }

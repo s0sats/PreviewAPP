@@ -112,10 +112,14 @@ public class TK_Ticket_Ctrl {
     public void setPKIntoProcess() {
         switch (this.ctrl_type) {
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
-                this.action.setPK(this);
+                if(this.action != null) {
+                    this.action.setPK(this);
+                }
                 break;
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
-                this.measure.setPK(this);
+                if(this.measure != null) {
+                    this.measure.setPK(this);
+                }
                 break;
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
                 if(this.approval != null){
@@ -371,5 +375,15 @@ public class TK_Ticket_Ctrl {
 
     public void setRejection(@Nullable ArrayList<TK_Ticket_Approval_Rejection> rejection) {
         this.rejection = rejection;
+    }
+
+    public void setFinalNameIntoActionPhoto(String finalName){
+        if(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION.equals(this.ctrl_type)
+            && this.getAction() != null
+            && !finalName.equals(this.getAction().getAction_photo_local())
+        ){
+            this.getAction().setAction_photo_local(finalName);
+            this.getAction().setAction_photo_name(finalName);
+        }
     }
 }
