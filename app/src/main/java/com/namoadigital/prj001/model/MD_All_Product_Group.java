@@ -12,6 +12,7 @@ public class MD_All_Product_Group {
     private Long recursive_code_father;
     private String group_id;
     private String group_desc;
+    private int spare_part;
 
     public long getCustomer_code() {
         return customer_code;
@@ -59,5 +60,13 @@ public class MD_All_Product_Group {
 
     public void setGroup_desc(String group_desc) {
         this.group_desc = group_desc;
+    }
+
+    public int getSpare_part() {
+        return spare_part;
+    }
+
+    public void setSpare_part(int spare_part) {
+        this.spare_part = spare_part;
     }
 }

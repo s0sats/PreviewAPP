@@ -31,7 +31,9 @@ public class MD_Product_GroupDao extends BaseDao implements Dao<MD_Product_Group
     public static final String RECURSIVE_CODE_FATHER = "recursive_code_father";
     public static final String GROUP_ID = "group_id";
     public static final String GROUP_DESC = "group_desc";
-    private String[] columns = {CUSTOMER_CODE, GROUP_CODE, RECURSIVE_CODE, RECURSIVE_CODE_FATHER, GROUP_ID, GROUP_DESC};
+    public static final String SPARE_PART = "spare_part";
+
+    private String[] columns = {CUSTOMER_CODE, GROUP_CODE, RECURSIVE_CODE, RECURSIVE_CODE_FATHER, GROUP_ID, GROUP_DESC, SPARE_PART};
 
     public MD_Product_GroupDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -248,6 +250,7 @@ public class MD_Product_GroupDao extends BaseDao implements Dao<MD_Product_Group
 
             md_product_group.setGroup_id(cursor.getString(cursor.getColumnIndex(GROUP_ID)));
             md_product_group.setGroup_desc(cursor.getString(cursor.getColumnIndex(GROUP_DESC)));
+            md_product_group.setSpare_part(cursor.getInt(cursor.getColumnIndex(SPARE_PART)));
 
             return md_product_group;
         }
@@ -279,6 +282,9 @@ public class MD_Product_GroupDao extends BaseDao implements Dao<MD_Product_Group
             }
             if (md_product_group.getGroup_desc() != null) {
                 contentValues.put(GROUP_DESC, md_product_group.getGroup_desc());
+            }
+            if (md_product_group.getSpare_part() > -1) {
+                contentValues.put(SPARE_PART, md_product_group.getSpare_part());
             }
 
             return contentValues;
