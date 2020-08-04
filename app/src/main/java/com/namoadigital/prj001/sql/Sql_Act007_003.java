@@ -16,12 +16,12 @@ public class Sql_Act007_003 implements Specification {
         this.s_recursive_code_father = s_recursive_code_father;
         removeProducts = "";
         if(!tk_ticket_products.isEmpty()) {
-            removeProducts = "            and product_code not in (";
+            removeProducts = "            and p.product_code not in (";
             for (int i = 0; i < tk_ticket_products.size(); i++) {
                 if (i == 0) {
                     removeProducts += String.valueOf(tk_ticket_products.get(i).getProduct_code());
                 } else {
-                    removeProducts += ", " + tk_ticket_products.get(i);
+                    removeProducts += ", " + tk_ticket_products.get(i).getProduct_code();
                 }
             }
             removeProducts += ") \n";
@@ -35,9 +35,10 @@ public class Sql_Act007_003 implements Specification {
 
         //String teste =
         return sb
-                .append("SELECT\n" +
-                        "      T.*     \n" +
-                        "FROM (\n" +
+                .append(
+//                        "SELECT\n" +
+//                        "      T.*     \n" +
+//                        "FROM (\n" +
                         "     SELECT\n" +
                         "        pg.group_code,\n" +
                         "        pg.group_id,\n" +
@@ -48,11 +49,13 @@ public class Sql_Act007_003 implements Specification {
                         "                               'group' type\n" +
                         "               \n" +
                         "     FROM\n" +
-                        "        md_product_groups pg, md_product_group_products pivot \n" +
+                        "        md_product_groups pg\n" +
+                        "     LEFT JOIN  md_all_product_group_products pivot \n" +
+                                "         on pg.group_code = pivot.group_code \n" +
+                                "        and pg.customer_code = pivot.customer_code \n" +
                         "     WHERE\n" +
                         "        pg.customer_code = " + s_customer_code  + "\n" +
                         "        and pivot.customer_code = " + s_customer_code  + "\n" +
-                        "        and pg.group_code = pivot.group_code \n" +
                         "        and pivot.product_code in ( \n" +
                         "         select product_code\n" +
                         "            from md_products p\n" +
@@ -60,12 +63,12 @@ public class Sql_Act007_003 implements Specification {
                         "              and p.customer_code = " + s_customer_code  + "\n" +
                                      removeProducts + "\n" +
                                      ")" + "\n"+
-                        "     ) T\n" +
-                        "WHERE\n" +
-                        "   t.recursive_code_father = " + s_recursive_code_father  + "\n" +
-                        "   and ( '" + s_filter  + "' IS NULL OR 1 = 0)\n" +
+//                        "     ) T\n" +
+//                        "WHERE\n" +
+//                        "   t.recursive_code_father = " + s_recursive_code_father  + "\n" +
+//                        "   and ( '" + s_filter  + "' IS NULL OR 1 = 0)\n" +
                         "ORDER BY\n" +
-                        "   t.group_id;")
+                        "   pg.group_id;")
                 //.append("group_code#group_id#group_desc#full_group_desc#type#recursive_code")
                 .toString().replace("'%null%'","null").replace("'null'","null");
 

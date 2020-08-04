@@ -128,7 +128,10 @@ public class WS_TK_Ticket_Download extends IntentService {
             HMAux hmAux = new HMAux();
             for (TK_Ticket tkTicket : ticketList) {
                 tkTicket.setPK();
-                daoObjReturn = ticketDao.removeFull(tkTicket);
+                TK_Ticket dbTicket = getDbTicket(tkTicket);
+                if(dbTicket != null) {
+                    daoObjReturn = ticketDao.removeFull(tkTicket);
+                }
                 //
                 if(daoObjReturn.hasError()) {
                     break;

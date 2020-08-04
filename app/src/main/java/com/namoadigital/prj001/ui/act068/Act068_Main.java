@@ -205,10 +205,16 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     private void processNextTickets() {
+        if(mPresenter.hasItensToSend()){
+            mPresenter.executeWSTicketSave();
+        }else{
+            callAct074();
+        }
+    }
+
+    private void callAct074() {
         Intent intent = new Intent(context, Act074_Main.class);
         Bundle bundle = new Bundle();
-//        bundle.putInt(Act075_Main.VIEW_PROFILE, 1);
-//        bundle.putSerializable("TK_Ticket_Product", new ArrayList<>());
         intent.putExtras(bundle);
         startActivity(intent);
         finish();

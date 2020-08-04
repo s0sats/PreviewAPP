@@ -31,7 +31,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     private ArrayList<Act074_TicketVH> mFilteredValues;
     private String mResource_Code;
     private HMAux hmAux_Trans;
-    private String mResource_Name = "Act074_Next_Tickets_Adapter";
+    private String mResource_Name = "Tickets_List_Adapter";
     private Act074_Next_Tickets_Adapter.TicketFilter valueFilter;
     private Act074_Next_Tickets_Adapter.OnTicketClickListener onTicketClickListener;
 
@@ -51,9 +51,6 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
-        transList.add("open_date_lbl");
-        transList.add("forecast_date_lbl");
-        transList.add("site_lbl");
         transList.add("other_steps_available_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(

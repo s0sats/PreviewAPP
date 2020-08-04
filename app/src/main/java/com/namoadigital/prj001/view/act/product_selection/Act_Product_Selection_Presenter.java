@@ -10,7 +10,6 @@ import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act007_001;
 import com.namoadigital.prj001.sql.Sql_Act007_002;
-import com.namoadigital.prj001.sql.Sql_Act007_003;
 import com.namoadigital.prj001.sql.Sql_Act007_004;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -110,14 +109,14 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
     @Override
     public void setAdapterDataForProductInsert(long group_code, Long recursive_code, ArrayList<TK_Ticket_Product> tk_ticket_products, String filter) {
 //
-        ArrayList<HMAux> groups = (ArrayList<HMAux>) product_groupDao.query_HM(
-                new Sql_Act007_003(
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                        String.valueOf(recursive_code),
-                        tk_ticket_products,
-                        (filter.trim().equals("") ? "null" : filter)
-                ).toSqlQuery()
-        );
+//        ArrayList<HMAux> groups = (ArrayList<HMAux>) product_groupDao.query_HM(
+//                new Sql_Act007_003(
+//                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+//                        String.valueOf(recursive_code),
+//                        tk_ticket_products,
+//                        (filter.trim().equals("") ? "null" : filter)
+//                ).toSqlQuery()
+//        );
         ArrayList<HMAux> products = (ArrayList<HMAux>) productDao.query_HM(
                 new Sql_Act007_004(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -130,18 +129,18 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
 
         ArrayList<HMAux> data = new ArrayList<>();
 
-        for (HMAux aux : groups) {
-            HMAux item = new HMAux();
-            item.put("code", aux.get("group_code"));
-            item.put("desc", aux.get("group_desc"));
-            item.put("id", aux.get("group_id"));
-            item.put("full_desc", aux.get("full_group_desc"));
-            item.put("type", aux.get("type"));
-            // Hugo
-            item.put("recursive", aux.get("recursive_code"));
-            //
-            data.add(item);
-        }
+//        for (HMAux aux : groups) {
+//            HMAux item = new HMAux();
+//            item.put("code", aux.get("group_code"));
+//            item.put("desc", aux.get("group_desc"));
+//            item.put("id", aux.get("group_id"));
+//            item.put("full_desc", aux.get("full_group_desc"));
+//            item.put("type", aux.get("type"));
+//            // Hugo
+//            item.put("recursive", aux.get("recursive_code"));
+//            //
+//            data.add(item);
+//        }
 
         for (HMAux aux : products) {
             HMAux item = new HMAux();

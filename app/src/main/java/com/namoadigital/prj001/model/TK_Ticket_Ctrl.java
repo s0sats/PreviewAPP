@@ -112,10 +112,14 @@ public class TK_Ticket_Ctrl {
     public void setPKIntoProcess() {
         switch (this.ctrl_type) {
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
-                this.action.setPK(this);
+                if(this.action != null) {
+                    this.action.setPK(this);
+                }
                 break;
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
-                this.measure.setPK(this);
+                if(this.measure != null) {
+                    this.measure.setPK(this);
+                }
                 break;
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
                 if(this.approval != null){

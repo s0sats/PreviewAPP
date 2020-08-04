@@ -69,6 +69,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private int mTkPrefix;
     private int mTkCode;
     private boolean hasFABActive = false;
+    private boolean hasUpdated = false;
+    private String wsProcess;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,13 +103,6 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         );
         //
         loadTranslation();
-        //
-        mResource_CodeFrg = ToolBox_Inf.getResourceCode(
-                context,
-                mModule_Code,
-                Constant.FRG_SERIAL_SEARCH
-        );
-        //
         loadTranslationFrg_Pipeline_Header();
 
     }
@@ -119,15 +115,24 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         mPresenter = new Act075_Main_Presenter(context, this, hmAux_Trans);
         recoverIntentsInfo();
         //
+        btnSave.setText(hmAux_Trans.get("save_product_lbl"));
+        //
         tkTicket = mPresenter.getTicket(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix,mTkCode);
         tk_ticket_products = tkTicket.getProduct();
         //
         if(act_profile == 1) {
+            //
+            if(tkTicket.getUpdate_required_product() == 1
+            || !hasUpdated) {
+                btnSave.setEnabled(false);
+            }else{
+                btnSave.setEnabled(true);
+            }
             setProductHeaderFragment();
         }else{
+            fabMenu.setVisibility(View.GONE);
             setApprovalHeaderFragment();
         }
-
         //
         initFabMenuItens();
         //
@@ -265,18 +270,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
 
                 }else if (id == fabStep.getId()){
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("exit_without_save_ttl"),
-                            hmAux_Trans.get("exit_without_save_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    callAct070();
-                                }
-                            },
-                            0
-                    );
+                    verifyChangesBeforeExit();
                 }
             }
 
@@ -285,6 +279,32 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 hasFABActive = b;
             }
         });
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.saveproduct(tkTicket, mAdapter.getmValues());
+            }
+        });
+    }
+
+    private void verifyChangesBeforeExit() {
+        if(hasUpdated) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("exit_without_save_ttl"),
+                    hmAux_Trans.get("exit_without_save_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            callAct070();
+                        }
+                    },
+                    0
+            );
+        }else{
+            callAct070();
+        }
     }
 
     private void callAct070() {
@@ -300,14 +320,13 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act075_title");
-        transList.add("withdrawn_lbl");
-        transList.add("taken_lbl");
-        transList.add("applied_lbl");
-        transList.add("btn_save");
+        transList.add("save_product_lbl");
         transList.add("set_product_qty_lbl");
         transList.add("set_product_qty_used_lbl");
         transList.add("exit_without_save_ttl");
         transList.add("exit_without_save_msg");
+        transList.add("to_product_lbl");
+        transList.add("to_step_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -334,13 +353,20 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     }
 
     @Override
+    public void callHasChanges(boolean b) {
+        hasUpdated = true;
+        btnSave.setEnabled(b);
+    }
+
+    @Override
     public void callQtyDialog(final int position, TK_Ticket_Product tk_ticket_product) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
         View mDialogVIew = inflater.inflate(R.layout.act075_set_qties_dialog, null);
         TextView dialog_set_qty_lbl =  mDialogVIew.findViewById(R.id.act075_dialog_set_qty_lbl);
         final MKEditTextNM dialog_set_mkedt_qty =  mDialogVIew.findViewById(R.id.act075_dialog_set_mkedt_qty);
-        dialog_set_mkedt_qty.setText(String.valueOf(tk_ticket_product.getQty()));
+        dialog_set_mkedt_qty.setmInputType("NUMBER");
+        dialog_set_mkedt_qty.setText(String.format("%f", tk_ticket_product.getQty()));
         dialog_set_qty_lbl.setText(hmAux_Trans.get("set_product_qty_lbl"));
 
         builder.setView(mDialogVIew)
@@ -348,7 +374,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        tk_ticket_products.get(position).setQty(Double.valueOf(dialog_set_mkedt_qty.getText().toString().replace(",", ".")));
+                        tk_ticket_products.get(position).setQty(Double.valueOf(dialog_set_mkedt_qty.getText().toString()));
                         mAdapter.notifyItemChanged(position);
                     }
                 })
@@ -367,6 +393,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         View mDialogVIew = inflater.inflate(R.layout.act075_set_qties_dialog, null);
         TextView dialog_set_qty_lbl =  mDialogVIew.findViewById(R.id.act075_dialog_set_qty_lbl);
         final MKEditTextNM dialog_set_mkedt_qty =  mDialogVIew.findViewById(R.id.act075_dialog_set_mkedt_qty);
+        dialog_set_mkedt_qty.setmInputType("NUMBER");
         dialog_set_mkedt_qty.setText(String.format("%f", tk_ticket_product.getQty_used()));
         dialog_set_qty_lbl.setText(hmAux_Trans.get("set_product_qty_used_lbl"));
 
@@ -375,7 +402,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        tk_ticket_products.get(position).setQty_used(Double.valueOf(dialog_set_mkedt_qty.getText().toString().replace(",", ".")));
+                        tk_ticket_products.get(position).setQty_used(Double.valueOf(dialog_set_mkedt_qty.getText().toString()));
                         mAdapter.notifyItemChanged(position);
                     }
                 })
@@ -415,6 +442,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
     private void processResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
+            hasUpdated = true;
+            btnSave.setEnabled(true);
             MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
             tk_ticket_products.add(
                     new TK_Ticket_Product(
@@ -441,17 +470,23 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         if(hasFABActive){
             fabMenu.animateFAB();
         }else {
-            callAct070();
+            verifyChangesBeforeExit();
         }
     }
 
     @Override
     public void showMsg(String ttl, String msg) {
-
+        ToolBox.alertMSG(context, ttl, msg, null, 0);
     }
 
     @Override
     public void setWsProcess(String wsProcess) {
+        this.wsProcess=wsProcess;
+    }
 
+    @Override
+    public void resetHasUpdate() {
+        hasUpdated = false;
+        btnSave.setEnabled(hasUpdated);
     }
 }

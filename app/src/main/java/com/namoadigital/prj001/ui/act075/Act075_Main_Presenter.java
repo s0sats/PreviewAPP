@@ -5,8 +5,11 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao;
+import com.namoadigital.prj001.dao.TK_Ticket_ProductDao;
+import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
+import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -23,6 +26,7 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     private Act075_Main_Contract.I_View mView;
     private HMAux hmAux_Trans;
     private TK_TicketDao ticketDao;
+    private TK_Ticket_ProductDao ticketProductDao;
     private TK_Ticket_ApprovalDao ticketApprovalDao;
 
     public Act075_Main_Presenter(Context context, Act075_Main_Contract.I_View mView, HMAux hmAux_Trans) {
@@ -36,6 +40,12 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                 Constant.DB_VERSION_CUSTOM
         );
         this.ticketApprovalDao = new TK_Ticket_ApprovalDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        this.ticketProductDao = new TK_Ticket_ProductDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
@@ -54,8 +64,20 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void saveproduct() {
-
+    public void saveproduct(TK_Ticket tkTicket, List<TK_Ticket_Product> tk_ticket_products) {
+        tkTicket.setUpdate_required_product(1);
+        DaoObjReturn daoObjReturn;
+        daoObjReturn = ticketDao.addUpdate(tkTicket);
+        if(daoObjReturn.hasError()){
+            mView.showMsg(hmAux_Trans.get("alert_save_error_ttl"), hmAux_Trans.get("alert_save_error_msg"));
+        }else{
+            daoObjReturn = ticketProductDao.addUpdate(tk_ticket_products, false);
+            if(daoObjReturn.hasError()){
+                mView.showMsg(hmAux_Trans.get("alert_save_error_ttl"), hmAux_Trans.get("alert_save_error_msg"));
+            }else{
+                mView.resetHasUpdate();
+            }
+        }
     }
 
     @Override
