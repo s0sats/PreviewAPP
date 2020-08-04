@@ -345,6 +345,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 TK_Ticket_Step ticketStep = tkTicket.getStep().get(stepIdx);
                 ticketStep.getCtrl().set(ctrlIdx,mTicketCtrl);
                 //
+                checkCloseStepForWaitingSync(ticketStep);
+                //
                 mTicketCtrl.setUpdate_required(1);
                 ticketStep.setUpdate_required(1);
                 tkTicket.setUpdate_required(1);
@@ -375,6 +377,23 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             }
         }
         return false;
+    }
+
+    private void checkCloseStepForWaitingSync(TK_Ticket_Step ticketStep) {
+        int stepCtrlsFinalizedCounter = 0;
+        for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
+            if(ConstantBaseApp.SYS_STATUS_DONE.equals(ticketCtrl.getCtrl_status())
+               || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ticketCtrl.getCtrl_status())
+            ){
+                stepCtrlsFinalizedCounter++;
+            }
+        }
+        //
+        if( stepCtrlsFinalizedCounter == ticketStep.getCtrl().size()
+            && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())
+        ){
+            ticketStep.setStep_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+        }
     }
 
     /**
@@ -806,12 +825,12 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     private boolean hasActionNotExec(TK_Ticket tkTicket) {
         //
         //TODO REFAZER METODO
-//        for (TK_Ticket_Ctrl ctrl : tkTicket.getCtrl()) {
-//            if (!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())
-//                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(ctrl.getCtrl_status())) {
-//                return true;
-//            }
-//        }
+        for (TK_Ticket_Step tkTicketStep : tkTicket.getStep()) {
+            if (!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(tkTicketStep.getStep_status())
+                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(tkTicketStep.getStep_status())) {
+                return true;
+            }
+        }
         //
         return false;
     }

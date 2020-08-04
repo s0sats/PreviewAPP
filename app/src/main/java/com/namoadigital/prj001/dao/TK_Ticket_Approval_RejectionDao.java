@@ -115,7 +115,7 @@ public class TK_Ticket_Approval_RejectionDao extends BaseDao implements DaoWithR
                 .append(" and ")
                 .append(STEP_CODE).append(" = '").append(tk_ticket_approval_rejection.getStep_code()).append("'")
                 .append(" and ")
-                .append(SEQ).append(" = '").append(tk_ticket_approval_rejection.getStep_code()).append("'");
+                .append(SEQ).append(" = '").append(tk_ticket_approval_rejection.getSeq()).append("'");
     }
 
     @Override

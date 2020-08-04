@@ -28,7 +28,7 @@ public class TK_Ticket_Ctrl_Sql_003 implements Specification {
         StringBuilder sb = new StringBuilder();
         return sb
             .append(" SELECT\n" +
-                    "       IFNULL(MAX(c.ticket_seq_tmp),0) + 1 "+NEXT_TICKET_SEQ_TMP+"\n" +
+                    "       IFNULL(MAX(c.ticket_seq_tmp),1000) + 1 "+NEXT_TICKET_SEQ_TMP+"\n" +
                     " FROM\n" +
                     "   " + TK_Ticket_CtrlDao.TABLE +"  c\n" +
                     " WHERE\n" +

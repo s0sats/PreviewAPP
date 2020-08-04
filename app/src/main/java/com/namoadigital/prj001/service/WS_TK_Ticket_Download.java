@@ -130,7 +130,7 @@ public class WS_TK_Ticket_Download extends IntentService {
                 tkTicket.setPK();
                 TK_Ticket dbTicket = getDbTicket(tkTicket);
                 if(dbTicket != null) {
-                    daoObjReturn = ticketDao.removeFull(tkTicket);
+                    daoObjReturn = ticketDao.removeFullV2(tkTicket);
                 }
                 //
                 if(daoObjReturn.hasError()) {

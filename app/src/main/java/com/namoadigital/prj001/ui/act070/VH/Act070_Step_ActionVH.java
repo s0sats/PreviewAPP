@@ -31,8 +31,8 @@ public class Act070_Step_ActionVH extends Act070_Step_Abstract_ProcessVH {
     private TextView tvProcessAction;
     private Act070_Steps_Adapter.OnActionClickListener actionClickListener;
 
-    public Act070_Step_ActionVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnActionClickListener actionClickListener, String transStartProcess, String transReviewProcess) {
-        super(context,itemView,transStartProcess,transReviewProcess);
+    public Act070_Step_ActionVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnActionClickListener actionClickListener, String transStartProcess, String transReviewProcess,String transWaitingSync) {
+        super(context,itemView,transStartProcess,transReviewProcess,transWaitingSync);
         this.actionClickListener = actionClickListener;
         bindViews();
     }

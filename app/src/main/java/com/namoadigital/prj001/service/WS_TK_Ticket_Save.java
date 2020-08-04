@@ -14,7 +14,9 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
@@ -45,6 +47,7 @@ import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_007;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
+import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -71,6 +74,8 @@ public class WS_TK_Ticket_Save extends IntentService {
     private ArrayList<TicketSaveActReturn> actReturnList = new ArrayList<>();
     private TK_TicketDao ticketDao;
     private TK_Ticket_CtrlDao ticketCtrlDao;
+    private TK_Ticket_StepDao ticketStepDao;
+    private TK_Ticket_ActionDao ticketActionDao;
     private MD_Schedule_ExecDao scheduleExecDao;
     private GE_FileDao geFileDao;
 
@@ -86,6 +91,8 @@ public class WS_TK_Ticket_Save extends IntentService {
             gsonRec = new GsonBuilder().serializeNulls().create();
             ticketDao = new TK_TicketDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             ticketCtrlDao = new TK_Ticket_CtrlDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+            ticketStepDao = new TK_Ticket_StepDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+            ticketActionDao = new TK_Ticket_ActionDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             scheduleExecDao = new MD_Schedule_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             geFileDao = new GE_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             menuSendProcess = bundle.getBoolean(ConstantBaseApp.PROCESS_MENU_SEND,false);
@@ -449,6 +456,17 @@ public class WS_TK_Ticket_Save extends IntentService {
         }
     }
 
+    private TK_Ticket_Step getTicketStepFromDB(T_TK_Ticket_Save_Rec_Result_Step resultStep) {
+        return ticketStepDao.getByString(
+            new TK_Ticket_Step_Sql_001(
+                resultStep.getCustomer_code(),
+                resultStep.getTicket_prefix(),
+                resultStep.getTicket_code(),
+                resultStep.getStep_code()
+            ).toSqlQuery()
+        );
+    }
+
     @NonNull
     private String getFormattedRetMsg(TicketSaveActReturn actReturn, T_TK_Ticket_Save_Rec_Result_Step resultStep) {
         String stepErroMsg = resultStep.getStep_desc() != null && !resultStep.getStep_desc().isEmpty() ? resultStep.getStep_desc() +"\n"+ actReturn.getRetMsg() : actReturn.getRetMsg();
@@ -475,7 +493,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                     tk_ticket
                 );
                 //Remove o ticket do banco de dados
-                ticketDao.removeFull(tk_ticket);
+                ticketDao.removeFullV2(tk_ticket);
                 //Tenta o insert do ticket
                 DaoObjReturn daoObjReturn = ticketDao.addUpdate(tk_ticket);
                 //Se não houve erro , chama metodo define proximo passo.

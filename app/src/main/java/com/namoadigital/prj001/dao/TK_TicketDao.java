@@ -421,52 +421,31 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         closeDB();
     }
 
-    public DaoObjReturn removeFull(TK_Ticket tk_ticket) {
+    public DaoObjReturn removeFullV2(TK_Ticket tk_ticket) {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.DELETE;
         daoObjReturn.setTable(TABLE);
         //
-        TK_Ticket_StepDao ticketStepDao = new TK_Ticket_StepDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
-        );
-        TK_Ticket_ProductDao ticketProductDao = new TK_Ticket_ProductDao(
-            context,
-            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-            Constant.DB_VERSION_CUSTOM
-        );
-        //
         openDB();
-
         try {
+            StringBuilder sbWhere = new StringBuilder();
+            sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket.getCustomer_code()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket.getTicket_prefix()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket.getTicket_code()).append("'");
+            //
             db.beginTransaction();
-            //Tenta o delete dos steps e actions
-            daoObjReturn = ticketStepDao.removeFull(tk_ticket, db);
-            //verifica se erro ao remover itens
-            if(daoObjReturn.hasError()){
-                throw new Exception(daoObjReturn.getRawMessage());
-            }
-            //Tenta o delete dos produtos e actions
-            daoObjReturn = ticketProductDao.removeFull(tk_ticket, db);
-            //verifica se erro ao remover itens
-            if(daoObjReturn.hasError()){
-                throw new Exception(daoObjReturn.getRawMessage());
-            }
-            //Se sucesso ao deletar ctrl
-            if (!daoObjReturn.hasError()) {
-                curAction = DaoObjReturn.DELETE;
-                //Where para update
-                StringBuilder sbWhere = new StringBuilder();
-                sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket.getCustomer_code()).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket.getTicket_prefix()).append("'");
-                sbWhere.append(" and ");
-                sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket.getTicket_code()).append("'");
-                //Tenta update e armazena retorno
-                addUpdateRet = db.delete(TABLE, sbWhere.toString(), null);
-            }
+            //
+            db.delete(TABLE, sbWhere.toString(), null);
+            db.delete(TK_Ticket_StepDao.TABLE, sbWhere.toString(), null);
+            db.delete(TK_Ticket_ProductDao.TABLE, sbWhere.toString(), null);
+            db.delete(TK_Ticket_CtrlDao.TABLE, sbWhere.toString(), null);
+            db.delete(TK_Ticket_ActionDao.TABLE, sbWhere.toString(), null);
+            db.delete(TK_Ticket_ApprovalDao.TABLE, sbWhere.toString(), null);
+            db.delete(TK_Ticket_Approval_RejectionDao.TABLE, sbWhere.toString(), null);
+            db.delete(TK_Ticket_MeasureDao.TABLE, sbWhere.toString(), null);
             //
             db.setTransactionSuccessful();
         }catch (SQLiteException e){
@@ -480,7 +459,6 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                     e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
                 )
             );
-
         } catch (Exception e) {
             //Seta obj de retorno com flag de erro e gera arquivo de exception
             daoObjReturn.setError(true);
@@ -492,11 +470,92 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             daoObjReturn.setAction(curAction);
             daoObjReturn.setActionReturn(addUpdateRet);
         }
-
         closeDB();
-
         return daoObjReturn;
     }
+
+    @Deprecated
+    /**
+     * LUCHE - 04/08/2020
+     * COMO NÃO EXISTE MAIS REGRA E QUASE TUDO PODE SER NULL OU NÃO TER ITEM, SUBSTITUIDO METODO
+     * PELO removeFullV2
+     */
+//    public DaoObjReturn removeFull(TK_Ticket tk_ticket) {
+//        DaoObjReturn daoObjReturn = new DaoObjReturn();
+//        long addUpdateRet = 0;
+//        String curAction = DaoObjReturn.DELETE;
+//        daoObjReturn.setTable(TABLE);
+//        //
+//        TK_Ticket_StepDao ticketStepDao = new TK_Ticket_StepDao(
+//            context,
+//            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//            Constant.DB_VERSION_CUSTOM
+//        );
+//        TK_Ticket_ProductDao ticketProductDao = new TK_Ticket_ProductDao(
+//            context,
+//            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//            Constant.DB_VERSION_CUSTOM
+//        );
+//        //
+//        openDB();
+//
+//        try {
+//            db.beginTransaction();
+//            //Tenta o delete dos steps e actions
+//            daoObjReturn = ticketStepDao.removeFull(tk_ticket, db);
+//            //verifica se erro ao remover itens
+//            if(daoObjReturn.hasError()){
+//                throw new Exception(daoObjReturn.getRawMessage());
+//            }
+//            //Tenta o delete dos produtos e actions
+//            daoObjReturn = ticketProductDao.removeFull(tk_ticket, db);
+//            //verifica se erro ao remover itens
+//            if(daoObjReturn.hasError()){
+//                throw new Exception(daoObjReturn.getRawMessage());
+//            }
+//            //Se sucesso ao deletar ctrl
+//            if (!daoObjReturn.hasError()) {
+//                curAction = DaoObjReturn.DELETE;
+//                //Where para update
+//                StringBuilder sbWhere = new StringBuilder();
+//                sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket.getCustomer_code()).append("'");
+//                sbWhere.append(" and ");
+//                sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket.getTicket_prefix()).append("'");
+//                sbWhere.append(" and ");
+//                sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket.getTicket_code()).append("'");
+//                //Tenta update e armazena retorno
+//                addUpdateRet = db.delete(TABLE, sbWhere.toString(), null);
+//            }
+//            //
+//            db.setTransactionSuccessful();
+//        }catch (SQLiteException e){
+//            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+//            //e contendo msg de erro tratada.
+//            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+//            //
+//            ToolBox_Inf.registerException(
+//                getClass().getName(),
+//                new Exception(
+//                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+//                )
+//            );
+//
+//        } catch (Exception e) {
+//            //Seta obj de retorno com flag de erro e gera arquivo de exception
+//            daoObjReturn.setError(true);
+//            ToolBox_Inf.registerException(getClass().getName(), e);
+//        } finally {
+//            db.endTransaction();
+//            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+//            //ou rowId do ultimo insert.
+//            daoObjReturn.setAction(curAction);
+//            daoObjReturn.setActionReturn(addUpdateRet);
+//        }
+//
+//        closeDB();
+//
+//        return daoObjReturn;
+//    }
 
     @Override
     public TK_Ticket getByString(String sQuery) {

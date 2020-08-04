@@ -172,6 +172,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("to_product_lbl");
         transList.add("to_step_lbl");
         //
+        transList.add("alert_checkout_confirm_ttl");
+        transList.add("alert_checkout_confirm_msg");
+        transList.add("alert_error_on_set_checkout_ttl");
+        transList.add("alert_error_on_set_checkout_msg");
+        transList.add("alert_offline_save_ttl");
+        transList.add("alert_offline_save_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
