@@ -1,21 +1,25 @@
 package com.namoadigital.prj001.ui.act075;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ProductDao;
-import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Product_Save;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_GET_MATERIAL;
@@ -64,20 +68,21 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void saveproduct(TK_Ticket tkTicket, List<TK_Ticket_Product> tk_ticket_products) {
-        tkTicket.setUpdate_required_product(1);
-        DaoObjReturn daoObjReturn;
-        daoObjReturn = ticketDao.addUpdate(tkTicket);
-        if(daoObjReturn.hasError()){
-            mView.showMsg(hmAux_Trans.get("alert_save_error_ttl"), hmAux_Trans.get("alert_save_error_msg"));
-        }else{
-            daoObjReturn = ticketProductDao.addUpdate(tk_ticket_products, false);
-            if(daoObjReturn.hasError()){
-                mView.showMsg(hmAux_Trans.get("alert_save_error_ttl"), hmAux_Trans.get("alert_save_error_msg"));
-            }else{
-                mView.resetHasUpdate();
-            }
-        }
+    public void saveproduct(int scn, ArrayList<TK_Ticket_Product> tk_ticket_products) {
+        mView.setWsProcess(WS_TK_Ticket_Product_Save.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_product_save_ticket_ttl"),
+                hmAux_Trans.get("dialog_product_save_ticket_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_TK_Ticket_Product_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(TK_TicketDao.SCN, scn);
+        bundle.putSerializable(TK_Ticket_ProductDao.TABLE, tk_ticket_products);
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     @Override

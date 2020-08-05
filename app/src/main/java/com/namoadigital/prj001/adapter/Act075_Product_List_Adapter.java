@@ -26,7 +26,7 @@ import java.util.List;
 
 public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<TK_Ticket_Product> mValues;
+    private List<TK_Ticket_Product> mValues = new ArrayList<>();
     private int act_profile;
     private int inventory_control;
     private static final int FOOTER_VIEW = 1;
@@ -40,7 +40,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     private OnProductInteract mListener;
 
     public Act075_Product_List_Adapter(Context context, HMAux hmAux_Trans, List<TK_Ticket_Product> mValues, int act_profile, int inventory_control, boolean isEditable, boolean hasWithdrawApproved, boolean hasAppliedApproved, OnProductInteract mListener) {
-        this.mValues = mValues;
+        this.mValues.addAll(mValues);
         this.act_profile = act_profile;
         this.inventory_control = inventory_control;
         this.hmAux_Trans = hmAux_Trans;
@@ -277,46 +277,46 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     product_cell_tv_withdrawn_qty.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mListener.callHasChanges(true);
                             mListener.callQtyDialog(position, tk_ticket_product);
+                            mListener.callHasChanges(true);
                         }
                     });
                     //
                     product_cell_tv_applied_qty.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mListener.callHasChanges(true);
                             mListener.callQtyUsedDialog(position, tk_ticket_product);
+                            mListener.callHasChanges(true);
                         }
                     });
                     //
                     product_cell_iv_withdrawn_substract.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mListener.callHasChanges(true);
                             double mWithdraw = tk_ticket_product.getQty() - 1;
                             tk_ticket_product.setQty(mWithdraw);
                             if (tk_ticket_product.getQty() == 0) {
                                 product_cell_iv_withdrawn_substract.setEnabled(false);
                             }
                             notifyItemChanged(position);
+                            mListener.callHasChanges(true);
                         }
                     });
                     //
                     product_cell_iv_withdrawn_add.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mListener.callHasChanges(true);
                             double mWithdraw = tk_ticket_product.getQty() + 1;
                             tk_ticket_product.setQty(mWithdraw);
                             notifyItemChanged(position);
+                            mListener.callHasChanges(true);
                         }
                     });
                     //
                     product_cell_iv_applied_substract.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mListener.callHasChanges(true);
+
                             double mApplied = tk_ticket_product.getQty_used() - 1;
                             tk_ticket_product.setQty_used(mApplied);
                             if (tk_ticket_product.getQty_used() == 0) {
@@ -327,6 +327,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                                 product_cell_iv_applied_add.setEnabled(true);
                             }
                             notifyItemChanged(position);
+                            mListener.callHasChanges(true);
                         }
                     });
 
@@ -334,7 +335,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     product_cell_iv_applied_add.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mListener.callHasChanges(true);
                             double mApplied = tk_ticket_product.getQty_used() + 1;
                             tk_ticket_product.setQty_used(mApplied);
                             if (inventory_control == 1
@@ -342,6 +342,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                                 product_cell_iv_applied_add.setEnabled(false);
                             }
                             notifyItemChanged(position);
+                            mListener.callHasChanges(true);
                         }
                     });
                 }

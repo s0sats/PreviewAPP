@@ -120,10 +120,12 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         tkTicket = mPresenter.getTicket(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix,mTkCode);
         tk_ticket_products = tkTicket.getProduct();
         //
+        setProductList();
+        //
         if(act_profile == 1) {
             //
             if(tkTicket.getUpdate_required_product() == 1
-            || !hasUpdated) {
+            || !hasUpdate()) {
                 btnSave.setEnabled(false);
             }else{
                 btnSave.setEnabled(true);
@@ -135,8 +137,6 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         }
         //
         initFabMenuItens();
-        //
-        setProductList();
     }
 
     private void setApprovalHeaderFragment() {
@@ -283,14 +283,26 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.saveproduct(tkTicket, mAdapter.getmValues());
+                if (ToolBox_Con.isOnline(context)) {
+                    mPresenter.saveproduct(tkTicket.getScn(), (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+                }else{
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                }
             }
         });
     }
 
+    @Override
+    public void showPD(String ttl, String msg) {
+        enableProgressDialog(ttl,
+                msg,
+                context.getString(R.string.generic_msg_cancel),
+                context.getString(R.string.generic_msg_ok));
+    }
+
     private void verifyChangesBeforeExit() {
-        if(hasUpdated) {
-            ToolBox.alertMSG(
+        if(hasUpdate()) {
+            ToolBox.alertMSG_YES_NO(
                     context,
                     hmAux_Trans.get("exit_without_save_ttl"),
                     hmAux_Trans.get("exit_without_save_msg"),
@@ -354,8 +366,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
     @Override
     public void callHasChanges(boolean b) {
-        hasUpdated = true;
-        btnSave.setEnabled(b);
+        updateSaveBUtton(hasUpdate());
     }
 
     @Override
@@ -442,10 +453,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
     private void processResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
-            hasUpdated = true;
-            btnSave.setEnabled(true);
+            updateSaveBUtton(true);
             MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
-            tk_ticket_products.add(
+            mAdapter.getmValues().add(
                     new TK_Ticket_Product(
                             ToolBox_Con.getPreference_Customer_Code(context),
                             tkTicket.getTicket_prefix(),
@@ -486,7 +496,20 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
     @Override
     public void resetHasUpdate() {
-        hasUpdated = false;
+        updateSaveBUtton(false);
+    }
+
+    private void updateSaveBUtton(boolean b) {
+        hasUpdated = b;
         btnSave.setEnabled(hasUpdated);
+    }
+
+    public boolean hasUpdate(){
+        List<TK_Ticket_Product> products = mAdapter.getmValues();
+        if (tk_ticket_products.equals(products)) {
+            return false;
+        }else {
+            return true;
+        }
     }
 }
