@@ -607,12 +607,14 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         btn_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //
-                if(ticketResult){
+                //LUCHE - 05/08/2020
+                //Agora no ticket 2.0 dando sucesso ou erro, processo o saveFlow
+                /*if(ticketResult){
                     checkPostTicketSaveFlow();
                 }else{
                     updateActionData();
-                }
+                }*/
+                checkPostTicketSaveFlow();
                 //
                 show.dismiss();
             }
@@ -881,7 +883,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private void defineDoneInfo() {
         grDone.setVisibility(View.GONE);
         //
-        if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicketCtrl.getCtrl_status())) {
+        if ( ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(mTicketCtrl.getCtrl_status())
+            ||ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(mTicketCtrl.getCtrl_status())
+        ) {
             grDone.setVisibility(View.VISIBLE);
             tvDoneInfoVal.setText(mPresenter.getFormattedInfo(mTicketCtrl.getCtrl_end_date(),mTicketCtrl.getCtrl_end_user_name()));
         }

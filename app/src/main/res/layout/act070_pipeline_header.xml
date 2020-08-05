@@ -195,13 +195,13 @@
                 android:ellipsize="start"
                 android:singleLine="true"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_ticket_header_icon"
-                app:layout_constraintEnd_toStartOf="@+id/frg_ticket_tv_action_shortcut"
+                app:layout_constraintEnd_toStartOf="@+id/frg_ticket_iv_action_shortcut"
                 app:layout_constraintStart_toStartOf="@+id/frg_pipeline_header_gd_origin_icon_end"
                 app:layout_constraintTop_toTopOf="@+id/iv_ticket_header_icon"
                 tools:text=".../lalalla/alallal" />
 
             <ImageView
-                android:id="@+id/frg_ticket_tv_action_shortcut"
+                android:id="@+id/frg_ticket_iv_action_shortcut"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_outline_open_in_new_24"

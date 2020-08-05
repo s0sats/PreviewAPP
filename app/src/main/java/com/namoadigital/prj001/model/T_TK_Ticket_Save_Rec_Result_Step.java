@@ -1,14 +1,16 @@
 package com.namoadigital.prj001.model;
 
+import java.util.ArrayList;
+
 public class T_TK_Ticket_Save_Rec_Result_Step {
     private int customer_code;
     private int ticket_prefix;
     private int ticket_code;
     private int step_code;
-    private int scn;
     private String step_desc;
     private String ret_status;
     private String ret_msg;
+    private ArrayList<T_TK_Ticket_Save_Rec_Result_Ctrl> ctrl = new ArrayList<>();
 
     public int getCustomer_code() {
         return customer_code;
@@ -42,14 +44,6 @@ public class T_TK_Ticket_Save_Rec_Result_Step {
         this.step_code = step_code;
     }
 
-    public int getScn() {
-        return scn;
-    }
-
-    public void setScn(int scn) {
-        this.scn = scn;
-    }
-
     public String getRet_status() {
         return ret_status;
     }
@@ -72,5 +66,25 @@ public class T_TK_Ticket_Save_Rec_Result_Step {
 
     public void setStep_desc(String step_desc) {
         this.step_desc = step_desc;
+    }
+
+    public ArrayList<T_TK_Ticket_Save_Rec_Result_Ctrl> getCtrl() {
+        return ctrl;
+    }
+
+    public void setCtrl(ArrayList<T_TK_Ticket_Save_Rec_Result_Ctrl> ctrl) {
+        this.ctrl = ctrl;
+    }
+
+    public static class T_TK_Ticket_Save_Rec_Result_Ctrl{
+        public int ticket_seq_tmp;
+
+        public int getTicket_seq_tmp() {
+            return ticket_seq_tmp;
+        }
+
+        public void setTicket_seq_tmp(int ticket_seq_tmp) {
+            this.ticket_seq_tmp = ticket_seq_tmp;
+        }
     }
 }

@@ -422,21 +422,21 @@ public class WS_TK_Ticket_Save extends IntentService {
             TicketSaveActReturn actReturn = getActReturn(recResult);
             if(recResult.getStep()!= null &&  recResult.getStep().size() > 0) {
                 for (T_TK_Ticket_Save_Rec_Result_Step resultStep : recResult.getStep()) {
-                    if(!ConstantBaseApp.MAIN_RESULT_OK.equals(resultStep.getRet_status())){
+                    //if(!ConstantBaseApp.MAIN_RESULT_OK.equals(resultStep.getRet_status())){
                         actReturn.setRetMsg(
                             getFormattedRetMsg(actReturn, resultStep)
                         );
-                    }
+                    //}
                 }
             }
             //
             if(recResult.getProduct()!= null &&  recResult.getProduct().size() > 0) {
                 for (T_TK_Ticket_Save_Rec_Result_Step resultProduct : recResult.getProduct()) {
-                    if(!ConstantBaseApp.MAIN_RESULT_OK.equals(resultProduct.getRet_status())){
+                    //if(!ConstantBaseApp.MAIN_RESULT_OK.equals(resultProduct.getRet_status())){
                         actReturn.setRetMsg(
                             getFormattedRetMsg(actReturn, resultProduct)
                         );
-                    }
+                    //}
                 }
             }
             //
@@ -469,7 +469,8 @@ public class WS_TK_Ticket_Save extends IntentService {
 
     @NonNull
     private String getFormattedRetMsg(TicketSaveActReturn actReturn, T_TK_Ticket_Save_Rec_Result_Step resultStep) {
-        String stepErroMsg = resultStep.getStep_desc() != null && !resultStep.getStep_desc().isEmpty() ? resultStep.getStep_desc() +"\n"+ actReturn.getRetMsg() : actReturn.getRetMsg();
+        String stepErroMsg = resultStep.getStep_desc() +" : ";
+        stepErroMsg += resultStep.getRet_msg() != null && !resultStep.getRet_msg().isEmpty() ? "\n"+ resultStep.getRet_msg() : resultStep.getRet_status();
         //
         if(actReturn.getRetMsg() == null || actReturn.getRetMsg().isEmpty()){
             return stepErroMsg +"\n";

@@ -16,6 +16,9 @@ public class T_TK_Ticket_Save_Rec_Result {
 //    private Integer old_ticket_prefix;
 //    private Integer old_ticket_code;
 //    private TK_Ticket ticket;
+    private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> step;
+    private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> product;
+    private int ticket_update;
 //
     public int getCustomer_code() {
         return customer_code;
@@ -88,9 +91,6 @@ public class T_TK_Ticket_Save_Rec_Result {
 //    public void setTicket(TK_Ticket ticket) {
 //        this.ticket = ticket;
 //    }
-    private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> step;
-    private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> product;
-
     public ArrayList<T_TK_Ticket_Save_Rec_Result_Step> getStep() {
         return step;
     }
@@ -105,5 +105,13 @@ public class T_TK_Ticket_Save_Rec_Result {
 
     public void setProduct(ArrayList<T_TK_Ticket_Save_Rec_Result_Step> product) {
         this.product = product;
+    }
+
+    public int getTicket_update() {
+        return ticket_update;
+    }
+
+    public void setTicket_update(int ticket_update) {
+        this.ticket_update = ticket_update;
     }
 }

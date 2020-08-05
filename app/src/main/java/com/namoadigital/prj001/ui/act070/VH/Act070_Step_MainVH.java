@@ -115,7 +115,9 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
     private void setStatusColorChanges(StepMain stepMain) {
         if(ToolBox_Inf.hasConsistentValueString(stepMain.getStepStatus())){
             int stepColor = ContextCompat.getColor(context,R.color.namoa_color_pipeline_next_step);
-            if(ConstantBaseApp.SYS_STATUS_DONE.equals(stepMain.getStepStatus())){
+            if(ConstantBaseApp.SYS_STATUS_DONE.equals(stepMain.getStepStatus())
+               || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(stepMain.getStepStatus())
+            ){
                 stepColor = ToolBox_Inf.getStatusColorV2(context,stepMain.getStepStatus());
             }else if(stepMain.isCurrentStep()){
                 stepColor = ContextCompat.getColor(context,R.color.namoa_status_process);

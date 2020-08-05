@@ -47,6 +47,7 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String STEP_END_USER = "step_end_user";
     public static final String STEP_END_USER_NICK = "step_end_user_nick";
     public static final String STEP_STATUS = "step_status";
+    public static final String USER_FOCUS = "user_focus";
     public static final String UPDATE_REQUIRED = "update_required";
     //UTILIZADO NA CONSULTA DA TELA DE TICKETS PENDENTES
     public static final String STEP_QTY = "STEP_QTY";
@@ -535,7 +536,10 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
             } else {
                 tk_ticket_step.setStep_end_user_nick(cursor.getString(cursor.getColumnIndex(STEP_END_USER_NICK)));
             }
+            //
             tk_ticket_step.setStep_status(cursor.getString(cursor.getColumnIndex(STEP_STATUS)));
+            //
+            tk_ticket_step.setUser_focus(cursor.getInt(cursor.getColumnIndex(USER_FOCUS)));
             tk_ticket_step.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
             return tk_ticket_step;
         }
@@ -585,6 +589,9 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
             contentValues.put(STEP_END_USER_NICK, tk_ticket_step.getStep_end_user_nick());
             if (tk_ticket_step.getStep_status() != null) {
                 contentValues.put(STEP_STATUS, tk_ticket_step.getStep_status());
+            }
+            if (tk_ticket_step.getUser_focus() > -1) {
+                contentValues.put(USER_FOCUS, tk_ticket_step.getUser_focus());
             }
             if (tk_ticket_step.getUpdate_required() > -1) {
                 contentValues.put(UPDATE_REQUIRED, tk_ticket_step.getUpdate_required());

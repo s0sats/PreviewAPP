@@ -151,15 +151,15 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
 
     @Override
     public int getStepColor(TK_Ticket_Step ticketStep, boolean IsCurrentStep) {
-        int stepColor = R.color.namoa_color_pipeline_next_step;
+        int stepColor = ContextCompat.getColor(context,R.color.namoa_color_pipeline_next_step);
         if(ConstantBaseApp.SYS_STATUS_DONE.equals(ticketStep.getStep_status())
             ||ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ticketStep.getStep_status())
         ){
-            stepColor = R.color.namoa_status_done;
+            stepColor = ToolBox_Inf.getStatusColorV2(context,ticketStep.getStep_status());
         }else if(IsCurrentStep){
-            stepColor = R.color.namoa_status_process;
+            stepColor = ContextCompat.getColor(context,R.color.namoa_status_process);
         }
-        return ContextCompat.getColor(context,stepColor);
+        return stepColor;
     }
 
     @Override
@@ -356,6 +356,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 TK_Ticket_Step ticketStep = tkTicket.getStep().get(stepIdx);
                 ticketStep.getCtrl().set(ctrlIdx,mTicketCtrl);
                 //
+                setCheckInOutWhenOneTouchStep(ticketStep,mTicketCtrl);
+                //
                 checkCloseStepForWaitingSync(ticketStep);
                 //
                 mTicketCtrl.setUpdate_required(1);
@@ -390,6 +392,31 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         return false;
     }
 
+    /**
+     * LUCHE - 05/08/2020
+     * <p></p>
+     * Se step for one_touch, seta data de inicio e fim do step antes de salvar a action
+     * @param ticketStep
+     * @param mTicketCtrl
+     */
+    private void setCheckInOutWhenOneTouchStep(TK_Ticket_Step ticketStep, TK_Ticket_Ctrl mTicketCtrl) {
+        if(ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())) {
+            ticketStep.setStep_start_date(mTicketCtrl.getCtrl_start_date());
+            ticketStep.setStep_start_user(mTicketCtrl.getCtrl_start_user());
+            ticketStep.setStep_start_user_nick(mTicketCtrl.getCtrl_start_user_name());
+            ticketStep.setStep_end_date(mTicketCtrl.getCtrl_end_date());
+            ticketStep.setStep_end_user(mTicketCtrl.getCtrl_end_user());
+            ticketStep.setStep_end_user_nick(mTicketCtrl.getCtrl_end_user_name());
+        }
+    }
+
+    /**
+     * LUCHE - 04/08/2020
+     * <p></p>
+     * Verifica se precisa setar o status do step como waiting sync impedindo adicionar novo ctrl
+     * e impedindo que segui para a proxima etapa.
+     * @param ticketStep
+     */
     private void checkCloseStepForWaitingSync(TK_Ticket_Step ticketStep) {
         int stepCtrlsFinalizedCounter = 0;
         for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
@@ -662,6 +689,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 boolean ticketResult = true;
                 int ticketNextIdx = 0;
                 HMAux auxResult = new HMAux();
+                String ticketPk = mPrefix + "." + mCode;
                 //
                 for (WS_TK_Ticket_Save.TicketSaveActReturn actReturn : checkinReturns) {
                     String ticketCode = actReturn.getPrefix() + "." + actReturn.getCode();
@@ -670,6 +698,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                     if (isScheduleCreationForThisAction(actReturn)) {
                         mPrefix = actReturn.getPrefix();
                         mCode = actReturn.getCode();
+                        ticketPk = mPrefix + "." + mCode;
                         mView.updateTicketPk(mPrefix,mCode);
                     }
                     //
@@ -678,12 +707,15 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                         && !actReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK))
                     ) {
                         //Se erro, verifica se erro de processamento qual erro foi e pega msg
-                        auxResult.put(ticketCode, getResultMsgFormmated(actReturn));
+                        //auxResult.put(ticketCode, getResultMsgFormmated(actReturn));
+                        auxResult.put(ticketCode, actReturn.getRetMsg());
+                        if(ticketCode.equals(ticketPk)){
+                            ticketResult = ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus());
+                        }
                     }
                 }
                 //For no resumido por ticket montando msg a ser exibida
                 for (Map.Entry<String, String> item : auxResult.entrySet()) {
-                    String ticketPk = mPrefix + "." + mCode;
                     HMAux hmAux = new HMAux();
                     //
                     //Monta HmAux
@@ -692,7 +724,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                     hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.getValue());
                     //
                     if (item.getKey().equals(ticketPk)) {
-                        ticketResult = item.getValue().equals(ConstantBaseApp.MAIN_RESULT_OK);
+                        //05/08/2020 - Modificado o set para ser feito no primeiro loop
+                        //ticketResult = item.getValue().equals(ConstantBaseApp.MAIN_RESULT_OK);
                         resultList.add(ticketNextIdx, hmAux);
                         ticketNextIdx++;
                     } else {
@@ -740,10 +773,12 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     }
 
     private String getResultMsgFormmated(WS_TK_Ticket_Save.TicketSaveActReturn actReturn) {
-        if (actReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK)) {
+        if ( actReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK)
+            && (actReturn.getRetMsg() == null || actReturn.getRetMsg().isEmpty())
+        ) {
             return actReturn.getRetStatus();
         } else {
-            return actReturn.isProcessError() ? actReturn.getProcessStatus() + "\n" + actReturn.getProcessMsg() : actReturn.getRetStatus() + "\n" + actReturn.getRetMsg();
+            return actReturn.getRetStatus() + "\n" + actReturn.getRetMsg();
         }
     }
 

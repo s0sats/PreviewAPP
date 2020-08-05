@@ -43,6 +43,7 @@ public class TK_Ticket_Step {
     @Nullable
     private String step_end_user_nick;
     private String step_status;
+    private int user_focus;
     private int update_required;
     @Expose
     private ArrayList<TK_Ticket_Ctrl> ctrl = new ArrayList<>();
@@ -249,6 +250,14 @@ public class TK_Ticket_Step {
 
     public void setUpdate_required(int update_required) {
         this.update_required = update_required;
+    }
+
+    public int getUser_focus() {
+        return user_focus;
+    }
+
+    public void setUser_focus(int user_focus) {
+        this.user_focus = user_focus;
     }
 
     public ArrayList<TK_Ticket_Ctrl> getCtrl() {

@@ -8,6 +8,7 @@ import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -60,7 +61,7 @@ public class Frg_Pipeline_Header extends Fragment {
     TextView tv_site_desc;
     TextView tv_serial;
     TextView tv_desc_origin;
-
+    private ImageView iv_action_shortcut;
     //Pipeline Profiler.
     CardView cv_btn_sync;
     LinearLayout ll_btn_sync;
@@ -70,6 +71,7 @@ public class Frg_Pipeline_Header extends Fragment {
     ConstraintLayout cl_step_ticket;
     TextView tv_step_main_step_num;
     TextView tv_step_main_desc;
+
 
     private OnPipelineFragmentInteractionListener mListener;
 
@@ -167,6 +169,7 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_site_desc = pipeline_header_view.findViewById(R.id.frg_ticket_tv_site_desc);
         tv_serial = pipeline_header_view.findViewById(R.id.frg_ticket_tv_serial);
         tv_desc_origin = pipeline_header_view.findViewById(R.id.frg_ticket_tv_desc_origin);
+        iv_action_shortcut = pipeline_header_view.findViewById(R.id.frg_ticket_iv_action_shortcut);
         btn_sync_description = pipeline_header_view.findViewById(R.id.frg_ticket_btn_sync_description);
         ll_btn_sync = pipeline_header_view.findViewById(R.id.frg_ticket_ll_btn_sync);
         cl_step_ticket = pipeline_header_view.findViewById(R.id.frg_pipeline_cl_step_ticket);
@@ -252,6 +255,7 @@ public class Frg_Pipeline_Header extends Fragment {
     }
 
     private void initializeLayoutVisibility() {
+        iv_action_shortcut.setVisibility(View.GONE);
         cv_btn_sync.setVisibility(View.GONE);
         frg_pipeline_header_ticket.setVisibility(View.GONE);
         tv_status.setVisibility(View.GONE);
