@@ -190,6 +190,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return
                 mTicket != null
                 && (mTicket.getUpdate_required() == 1
+                    || mTicket.getUpdate_required_product() == 1
                     || mTicket.getSync_required() == 1
                 );
     }
@@ -402,7 +403,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     @Override
-    public Bundle getAct071Bundle(TK_Ticket mTicket, int stepCode, int processTkSeq, boolean actionCreation) {
+    public Bundle getAct071Bundle(TK_Ticket mTicket, int stepCode, int processTkSeq, boolean currentStep, boolean actionCreation) {
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket.getTicket_prefix());
         bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket.getTicket_code());
@@ -418,6 +419,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putString(TK_TicketDao.OPEN_SERIAL_ID, mTicket.getOpen_serial_id());
         bundle.putString(TK_TicketDao.OPEN_PRODUCT_DESC, mTicket.getOpen_product_desc());
         bundle.putString(TK_TicketDao.ORIGIN_DESC, mTicket.getOrigin_desc());
+        bundle.putBoolean(TK_TicketDao.CURRENT_STEP_ORDER, currentStep);
         bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, false);
         bundle.putBoolean(Act070_Main.PARAM_ACTION_CREATION, actionCreation);
         return bundle;
@@ -537,42 +539,69 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         if(ticketStep != null && ticketCtrl != null){
             if(isDoneOrWaitingSync(ticketStep.getStep_status())){
                 mView.callAct071(
-                    getAct071Bundle(mTicket,stepAction.getStepCode(),stepAction.getProcessTkSeq(), false)
+                    getAct071Bundle(mTicket,stepAction.getStepCode(),stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), false)
                 );
             }else{
                 if(isDoneOrWaitingSync(ticketCtrl.getCtrl_status())){
                     mView.callAct071(
-                        getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(),false
+                        getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), false
                         )
                     );
                 }else if(stepAction.isCurrentStep()) {
-                    if(ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketStep.getStep_status())){
-                        if(ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())){
-                            if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())) {
-                                mView.showAlert(
-                                    hmAux_Trans.get("alert_start_action_ttl"),
-                                    hmAux_Trans.get("alert_start_action_confirm"),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            mView.callAct071(
-                                                getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), true )
-                                            );
-                                        }
-                                    },
-                                    true
-                                );
-                            }else{
-                                mView.callAct071(
-                                    getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), true)
-                                );
-                            }
-                        } else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())){
-                            mView.showAlert(
-                                hmAux_Trans.get("alert_action_access_denied_ttl"),
-                                hmAux_Trans.get("alert_action_started_in_server_msg")
-                            );
-                        }
+//VALIÇÃO QUE FUNCIONAVA APENAS PARA START_END
+//                    if(ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketStep.getStep_status())){
+//                        if(ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())){
+//                            if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())) {
+//                                mView.showAlert(
+//                                    hmAux_Trans.get("alert_start_action_ttl"),
+//                                    hmAux_Trans.get("alert_start_action_confirm"),
+//                                    new DialogInterface.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(DialogInterface dialogInterface, int i) {
+//                                            mView.callAct071(
+//                                                getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), true )
+//                                            );
+//                                        }
+//                                    },
+//                                    true
+//                                );
+//                            }else{
+//                                mView.callAct071(
+//                                    getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), true)
+//                                );
+//                            }
+//                        } else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())){
+//                            mView.showAlert(
+//                                hmAux_Trans.get("alert_action_access_denied_ttl"),
+//                                hmAux_Trans.get("alert_action_started_in_server_msg")
+//                            );
+//                        }
+//                    }
+                    if(isStartEndActionExecution(ticketStep, ticketCtrl)){
+                        mView.callAct071(
+                            getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), true)
+                        );
+                    }else if(isOneTouchActionExecution(ticketStep, ticketCtrl)){
+                        mView.showAlert(
+                            hmAux_Trans.get("alert_start_action_ttl"),
+                            hmAux_Trans.get("alert_start_action_confirm"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    mView.callAct071(
+                                        getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), true )
+                                    );
+                                }
+                            },
+                            true
+                        );
+                    }else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())){
+                        mView.showAlert(
+                            hmAux_Trans.get("alert_action_access_denied_ttl"),
+                            hmAux_Trans.get("alert_action_started_in_server_msg")
+                        );
+                    } else{
+                        //NÃO MAPEADO.
                     }
                 }// //não faz nada, pois não tem ação
             }
@@ -582,6 +611,18 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 hmAux_Trans.get("alert_step_or_ctrl_not_found_msg")
             );
         }
+    }
+
+    private boolean isOneTouchActionExecution(TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
+        return  ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketStep.getStep_status())
+                && ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
+                && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type());
+    }
+
+    private boolean isStartEndActionExecution(TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
+        return ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketStep.getStep_status())
+            && ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
+            && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(ticketStep.getExec_type());
     }
 
     private boolean isDoneOrWaitingSync(String status) {

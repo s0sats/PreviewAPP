@@ -92,7 +92,7 @@ public interface Act071_Main_Contract {
 
         TK_Ticket_Step getStepInfo(int mTicketPrefix, int mTicketCode, int mStepCode);
 
-        int getStepColor(TK_Ticket_Step ticketStep);
+        int getStepColor(TK_Ticket_Step ticketStep, boolean mPipelineHeaderIsCurrentStepOrder);
 
         String getStepNumFormatted(TK_Ticket_Step ticketStep);
 

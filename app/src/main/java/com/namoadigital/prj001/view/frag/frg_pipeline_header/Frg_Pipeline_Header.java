@@ -32,6 +32,7 @@ public class Frg_Pipeline_Header extends Fragment {
     private static final String HEADER_PROFILE_PARAM = "HEADER_PROFILE_PARAM";
     private static final String DESC_ORIGIN_PARAM = "DESC_ORIGIN_PARAM";
     private static final String BTN_SYNC_DESCRIPTION_PARAM = "BTN_SYNC_DESCRIPTION_PARAM";
+    private static final String BTN_SYNC_STATUS_PARAM = "BTN_SYNC_STATUS_PARAM";
     private static final String STEP_MAIN_STEP_NUM_PARAM = "STEP_MAIN_STEP_NUM_PARAM";
     private static final String STEP_MAIN_DESC_PARAM = "STEP_MAIN_DESC_PARAM";
     private static final String STEP_MAIN_STEP_NUM_COLOR_PARAM = "STEP_MAIN_STEP_NUM_COLOR_PARAM";
@@ -44,10 +45,11 @@ public class Frg_Pipeline_Header extends Fragment {
     String serial_id_param;
     String prod_desc_param;
     String status_desc_param;
-    int    status_color_param;
+    int status_color_param;
     String desc_origin_param;
     String btn_sync_description_param;
-    int    step_main_step_num_color_param;
+    boolean btn_sync_status_param;
+    int step_main_step_num_color_param;
     String step_main_step_num_param;
     String step_main_desc_param;
     //
@@ -75,7 +77,7 @@ public class Frg_Pipeline_Header extends Fragment {
         // Required empty public constructor
     }
 
-    public static Frg_Pipeline_Header newInstanceForPipeline(String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String status_desc, int status_color, String desc_origin_param, String btn_sync_description_param) {
+    public static Frg_Pipeline_Header newInstanceForPipeline(String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String status_desc, int status_color, String desc_origin_param, String btn_sync_description_param, boolean btn_sync_status_param) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
         args.putString(HEADER_PROFILE_PARAM, PIPELINE);
@@ -89,6 +91,7 @@ public class Frg_Pipeline_Header extends Fragment {
         args.putInt(STATUS_COLOR_PARAM, status_color);
         args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
         args.putString(BTN_SYNC_DESCRIPTION_PARAM, btn_sync_description_param);
+        args.putBoolean(BTN_SYNC_STATUS_PARAM, btn_sync_status_param);
         //
         fragment.setArguments(args);
         return fragment;
@@ -142,6 +145,7 @@ public class Frg_Pipeline_Header extends Fragment {
             desc_origin_param = getArguments().getString(DESC_ORIGIN_PARAM,"");
             status_color_param =  getArguments().getInt(STATUS_COLOR_PARAM, 0);
             btn_sync_description_param = getArguments().getString(BTN_SYNC_DESCRIPTION_PARAM,"");
+            btn_sync_status_param = getArguments().getBoolean(BTN_SYNC_STATUS_PARAM,false);
             step_main_step_num_color_param = getArguments().getInt(STEP_MAIN_STEP_NUM_COLOR_PARAM, 0);
             step_main_step_num_param = getArguments().getString(STEP_MAIN_STEP_NUM_PARAM,"");
             step_main_desc_param = getArguments().getString(STEP_MAIN_DESC_PARAM,"");
@@ -196,7 +200,8 @@ public class Frg_Pipeline_Header extends Fragment {
                 tv_serial.setVisibility(View.VISIBLE);
                 tv_desc_origin.setVisibility(View.VISIBLE);
                 btn_sync_description.setVisibility(View.VISIBLE);
-                ll_btn_sync.setVisibility(View.VISIBLE);
+                //ll_btn_sync.setVisibility(View.VISIBLE);
+                setBtnSyncVisibility();
                 //
                 setSyncListener();
                 //
@@ -250,9 +255,9 @@ public class Frg_Pipeline_Header extends Fragment {
         cv_btn_sync.setVisibility(View.GONE);
         frg_pipeline_header_ticket.setVisibility(View.GONE);
         tv_status.setVisibility(View.GONE);
-        ll_btn_sync.setVisibility(View.GONE);
+        //ll_btn_sync.setVisibility( View.GONE);
+        setBtnSyncVisibility();
         cl_step_ticket.setVisibility(View.GONE);
-
     }
 
     private void setTvContent() {
@@ -272,5 +277,19 @@ public class Frg_Pipeline_Header extends Fragment {
 
     public interface OnPipelineFragmentInteractionListener {
         void syncPipeline();
+    }
+
+    public void updateSyncRequired(boolean needToSync){
+        btn_sync_status_param = needToSync;
+        try{
+            getArguments().putBoolean(BTN_SYNC_STATUS_PARAM,btn_sync_status_param);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        setBtnSyncVisibility();
+    }
+
+    private void setBtnSyncVisibility() {
+        ll_btn_sync.setVisibility(btn_sync_status_param ? View.VISIBLE : View.GONE);
     }
 }
