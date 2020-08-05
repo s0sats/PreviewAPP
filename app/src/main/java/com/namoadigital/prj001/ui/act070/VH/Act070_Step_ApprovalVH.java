@@ -37,8 +37,8 @@ public class Act070_Step_ApprovalVH extends Act070_Step_Abstract_ProcessVH {
     private Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick;
 
 
-    public Act070_Step_ApprovalVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick, String transStartProcess, String transReviewProcess,String transReviewRejection) {
-        super(context,itemView,transStartProcess,transReviewProcess);
+    public Act070_Step_ApprovalVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick, String transStartProcess, String transReviewProcess,String transWaitingSync,String transReviewRejection) {
+        super(context,itemView,transStartProcess,transReviewProcess,transWaitingSync);
         this.onApprovalClick = onApprovalClick;
         this.transReviewRejection = transReviewRejection;
         bindViews();

@@ -86,7 +86,7 @@ public interface Act070_Main_Contract {
 
         void updateStepOpenStates(ArrayList<BaseStep> sources, int mainPosition, boolean isShown);
 
-        Bundle getAct071Bundle(TK_Ticket mTicket, int stepCode, int processTkSeq, boolean actionCreation);
+        Bundle getAct071Bundle(TK_Ticket mTicket, int stepCode, int processTkSeq, boolean currentStep, boolean actionCreation);
 
         void defineActionFlow(TK_Ticket mTicket, StepAction stepAction);
 

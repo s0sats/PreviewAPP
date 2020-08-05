@@ -121,7 +121,8 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                     view,
                     onActionClickListener,
                     hmAux_Trans.get("start_process_btn"),
-                    hmAux_Trans.get("review_process_btn")
+                    hmAux_Trans.get("review_process_btn"),
+                    hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
                 );
             case VIEW_TYPE_STEP_CHECKLIST:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_checklist_cell, viewGroup, false);
@@ -134,6 +135,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                     onApprovalClickListener,
                     hmAux_Trans.get("start_process_btn"),
                     hmAux_Trans.get("review_process_btn"),
+                    hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC),
                     hmAux_Trans.get("review_rejection_btn")
                 );
             case VIEW_TYPE_STEP_PROCESS_BTN:

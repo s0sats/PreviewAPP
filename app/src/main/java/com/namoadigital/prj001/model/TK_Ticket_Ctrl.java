@@ -376,4 +376,14 @@ public class TK_Ticket_Ctrl {
     public void setRejection(@Nullable ArrayList<TK_Ticket_Approval_Rejection> rejection) {
         this.rejection = rejection;
     }
+
+    public void setFinalNameIntoActionPhoto(String finalName){
+        if(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION.equals(this.ctrl_type)
+            && this.getAction() != null
+            && !finalName.equals(this.getAction().getAction_photo_local())
+        ){
+            this.getAction().setAction_photo_local(finalName);
+            this.getAction().setAction_photo_name(finalName);
+        }
+    }
 }

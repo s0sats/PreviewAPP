@@ -17,6 +17,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Rejection_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_003;
 import com.namoadigital.prj001.sql.TK_Ticket_Measure_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -317,6 +318,20 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
     private int getTicketSeqTmp(TK_Ticket_Ctrl tk_ticket_ctrl, SQLiteDatabase dbInstance) throws Exception {
         if(tk_ticket_ctrl.getTicket_seq_tmp() > 0){
             return tk_ticket_ctrl.getTicket_seq_tmp();
+        } else if(tk_ticket_ctrl.getTicket_seq() > 0) {
+            TK_Ticket_Ctrl dbTicketCtrl = getByString(
+                new TK_Ticket_Ctrl_Sql_001(
+                    tk_ticket_ctrl.getCustomer_code(),
+                    tk_ticket_ctrl.getTicket_prefix(),
+                    tk_ticket_ctrl.getTicket_code(),
+                    tk_ticket_ctrl.getTicket_seq(),
+                    tk_ticket_ctrl.getStep_code()
+                ).toSqlQuery()
+            );
+            //
+            if (dbTicketCtrl != null && dbTicketCtrl.getTicket_seq() > 0 && dbTicketCtrl.getTicket_seq_tmp() > 0) {
+                return dbTicketCtrl.getTicket_seq_tmp();
+            }
         }
         //
         HMAux nextTmp = getByStringHM(
@@ -329,9 +344,9 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             dbInstance
         );
         //
-        if(nextTmp != null && nextTmp.hasConsistentValue(TK_Ticket_Ctrl_Sql_003.NEXT_TICKET_SEQ_TMP)){
+        if (nextTmp != null && nextTmp.hasConsistentValue(TK_Ticket_Ctrl_Sql_003.NEXT_TICKET_SEQ_TMP)) {
             return Integer.parseInt(nextTmp.get(TK_Ticket_Ctrl_Sql_003.NEXT_TICKET_SEQ_TMP));
-        }else{
+        } else {
             throw new Exception("ERROR_ON_GET_NEXT_TICKET_SEQ_TMP");
         }
     }
@@ -395,17 +410,12 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 sbWhere.append(" and ");
                 sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_ctrl.getStep_code()).append("'");
                 //Tenta o delete do tipo do controle
-                sqlRet = deleteByCtrlType(tk_ticket_ctrl, sbWhere,db,daoObjReturn);
+                deleteByCtrlType(tk_ticket_ctrl, sbWhere,db,daoObjReturn);
                 //Se delete do processo "filho" OK, segue para o delete do ctrl
-                if(sqlRet != 0){
-                    sqlRet = 0;
-                    daoObjReturn.setTable(TABLE);
-                    sqlRet = db.delete(TABLE,sbWhere.toString(),null);
-                    if(sqlRet == 0){
-                        daoObjReturn.setRawMessage(daoObjReturn.DELETE_ERROR_0_ROWS_AFFECTED);
-                        throw new Exception(daoObjReturn.getErrorMsg());
-                    }
-                }else{
+                sqlRet = 0;
+                daoObjReturn.setTable(TABLE);
+                sqlRet = db.delete(TABLE,sbWhere.toString(),null);
+                if(sqlRet == 0){
                     daoObjReturn.setRawMessage(daoObjReturn.DELETE_ERROR_0_ROWS_AFFECTED);
                     throw new Exception(daoObjReturn.getErrorMsg());
                 }
@@ -545,8 +555,6 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
      * @return - Qtd de registros removidos
      * @throws Exception
      */
-    //TODO REVER POIS SE MUDAR DE VARIS ITENS PARA NENHUM, NÃO FUNCIONARÁ DEVIDAMENTE  - DESISTIR DA IDEIA DO RETORNO = 0 DAR EXCEPTION
-    //TODO POIS AGORA OS ITENS PODEM SER NULLS....
     private long deleteByCtrlType(TK_Ticket_Ctrl tk_ticket_ctrl, StringBuilder sbWhere, SQLiteDatabase db, DaoObjReturn daoObjReturn) throws Exception {
         String ctrlTypeTable = "";
         //
@@ -590,7 +598,6 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             default:
                 return 1;
         }
-       // return 0;
     }
 
     /**

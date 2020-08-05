@@ -126,7 +126,7 @@ public class WS_Cleanning extends IntentService {
             ArrayList<File> filesToDeleteList = new ArrayList<>();
             for (TK_Ticket ticket : tickets) {
                 //
-                DaoObjReturn daoObjReturn = ticketDao.removeFull(ticket);
+                DaoObjReturn daoObjReturn = ticketDao.removeFullV2(ticket);
                 //
                 if(!daoObjReturn.hasError()){
                     if(ticket.getOpen_photo_local()!= null && !ticket.getOpen_photo_local().isEmpty()   ){

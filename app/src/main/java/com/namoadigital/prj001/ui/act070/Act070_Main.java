@@ -172,6 +172,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("to_product_lbl");
         transList.add("to_step_lbl");
         //
+        transList.add("alert_checkout_confirm_ttl");
+        transList.add("alert_checkout_confirm_msg");
+        transList.add("alert_error_on_set_checkout_ttl");
+        transList.add("alert_error_on_set_checkout_msg");
+        transList.add("alert_offline_save_ttl");
+        transList.add("alert_offline_save_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -254,7 +261,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             hmAux_Trans.get(mTicket.getTicket_status()),
             ToolBox_Inf.getStatusColorV2(context,mTicket.getTicket_status()),
             "\\" + mTicket.getOrigin_desc(),
-            hmAux_Trans.get("please_sync_lbl")
+            hmAux_Trans.get("please_sync_lbl"),
+            mPresenter.checkOnlySyncNeeds(mTicket)
         );
         //
         FragmentTransaction ft = fm.beginTransaction();

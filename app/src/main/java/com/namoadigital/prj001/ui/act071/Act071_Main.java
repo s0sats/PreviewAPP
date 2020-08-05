@@ -121,6 +121,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private String mPipelineHeaderOpen_product_desc;
     private String mPipelineHeaderTicket_status;
     private String mPipelineHeaderOrigin_desc;
+    private boolean mPipelineHeaderIsCurrentStepOrder;
     private boolean isCreationCtrl;
     private boolean isCreationAction;
 
@@ -258,6 +259,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mPipelineHeaderOpen_product_desc = requestingBundle.getString(TK_TicketDao.OPEN_PRODUCT_DESC, "");
             mPipelineHeaderTicket_status = requestingBundle.getString(TK_TicketDao.TICKET_STATUS, "");
             mPipelineHeaderOrigin_desc = requestingBundle.getString(TK_TicketDao.ORIGIN_DESC, "");
+            mPipelineHeaderIsCurrentStepOrder = requestingBundle.getBoolean(TK_TicketDao.CURRENT_STEP_ORDER, false);
             //
             isCreationCtrl = requestingBundle.getBoolean(Act070_Main.PARAM_CTRL_CREATION,false);
             isCreationAction = requestingBundle.getBoolean(Act070_Main.PARAM_ACTION_CREATION,false);
@@ -282,6 +284,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mPipelineHeaderOpen_product_desc =  "";
             mPipelineHeaderTicket_status  =  "";
             mPipelineHeaderOrigin_desc =  "";
+            mPipelineHeaderIsCurrentStepOrder =  false;
             isCreationCtrl =  false;
             isCreationAction=  false;
         }
@@ -343,7 +346,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mPipelineHeaderOpen_serial_id,
             mPipelineHeaderOpen_product_desc,
             "\\" + mPipelineHeaderOrigin_desc,
-            mPresenter.getStepColor(tkTicketStep),
+            mPresenter.getStepColor(tkTicketStep,mPipelineHeaderIsCurrentStepOrder),
             mPresenter.getStepNumFormatted(tkTicketStep),
             mPresenter.getStepDesc(tkTicketStep)
         );

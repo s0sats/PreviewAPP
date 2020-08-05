@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -149,12 +150,16 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     }
 
     @Override
-    public int getStepColor(TK_Ticket_Step ticketStep) {
-        return
-            ticketStep != null
-                ? ToolBox_Inf.getStatusColorV2(context,ticketStep.getStep_status())
-                : R.color.namoa_status_pending
-            ;
+    public int getStepColor(TK_Ticket_Step ticketStep, boolean IsCurrentStep) {
+        int stepColor = R.color.namoa_color_pipeline_next_step;
+        if(ConstantBaseApp.SYS_STATUS_DONE.equals(ticketStep.getStep_status())
+            ||ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ticketStep.getStep_status())
+        ){
+            stepColor = R.color.namoa_status_done;
+        }else if(IsCurrentStep){
+            stepColor = R.color.namoa_status_process;
+        }
+        return ContextCompat.getColor(context,stepColor);
     }
 
     @Override
@@ -218,10 +223,16 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     @Override
     public boolean getReadOnlyDefinition(TK_Ticket_Ctrl mTicketCtrl) {
         return isReadOnlyStatus(mTicketCtrl.getCtrl_status())
-            || !hasActionExecProfile()
-            || !hasPartnerProfile(mTicketCtrl.getPartner_code());
+            || !hasActionExecProfile();
     }
 
+    /**
+     * LUCHE - 04/08/2020
+     * Não haverá mais restrição de execução por causa do parceiro
+     * ficará aqui pq pode tudo mudar.
+     * @param partner_code
+     * @return
+     */
     private boolean hasPartnerProfile(Integer partner_code) {
         if (partner_code == null) {
             return true;
@@ -345,6 +356,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 TK_Ticket_Step ticketStep = tkTicket.getStep().get(stepIdx);
                 ticketStep.getCtrl().set(ctrlIdx,mTicketCtrl);
                 //
+                checkCloseStepForWaitingSync(ticketStep);
+                //
                 mTicketCtrl.setUpdate_required(1);
                 ticketStep.setUpdate_required(1);
                 tkTicket.setUpdate_required(1);
@@ -375,6 +388,23 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             }
         }
         return false;
+    }
+
+    private void checkCloseStepForWaitingSync(TK_Ticket_Step ticketStep) {
+        int stepCtrlsFinalizedCounter = 0;
+        for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
+            if(ConstantBaseApp.SYS_STATUS_DONE.equals(ticketCtrl.getCtrl_status())
+               || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ticketCtrl.getCtrl_status())
+            ){
+                stepCtrlsFinalizedCounter++;
+            }
+        }
+        //
+        if( stepCtrlsFinalizedCounter == ticketStep.getCtrl().size()
+            && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())
+        ){
+            ticketStep.setStep_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+        }
     }
 
     /**
@@ -806,12 +836,12 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     private boolean hasActionNotExec(TK_Ticket tkTicket) {
         //
         //TODO REFAZER METODO
-//        for (TK_Ticket_Ctrl ctrl : tkTicket.getCtrl()) {
-//            if (!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())
-//                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(ctrl.getCtrl_status())) {
-//                return true;
-//            }
-//        }
+        for (TK_Ticket_Step tkTicketStep : tkTicket.getStep()) {
+            if (!ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(tkTicketStep.getStep_status())
+                && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(tkTicketStep.getStep_status())) {
+                return true;
+            }
+        }
         //
         return false;
     }

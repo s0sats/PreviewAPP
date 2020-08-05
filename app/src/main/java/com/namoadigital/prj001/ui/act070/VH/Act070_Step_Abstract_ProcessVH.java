@@ -19,12 +19,14 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
     protected Context context;
     protected String transStartProcess;
     protected String transReviewProcess;
+    protected String transWaitingSync;
 
-    public Act070_Step_Abstract_ProcessVH(Context context, @NonNull View itemView, String transStartProcess, String transReviewProcess) {
+    public Act070_Step_Abstract_ProcessVH(Context context, @NonNull View itemView, String transStartProcess, String transReviewProcess,String transWaitingSync) {
         super(itemView);
         this.context = context;
         this.transStartProcess = transStartProcess;
         this.transReviewProcess = transReviewProcess;
+        this.transWaitingSync = transWaitingSync;
     }
 
     protected void defineCheckInOutIcon(ImageView ivStartEndDateIcon,  boolean hasCheckOutDate) {
@@ -45,6 +47,11 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
                 drawable = context.getDrawable(R.drawable.ic_baseline_open_in_new_24dp);
                 processActionText = transReviewProcess;
                 break;
+            case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
+                tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+                drawable = context.getDrawable(R.drawable.ic_baseline_hourglass_empty_24dp_black);
+                processActionText = transWaitingSync;
+                break;
             case ConstantBaseApp.SYS_STATUS_PENDING:
             case ConstantBaseApp.SYS_STATUS_PROCESS:
             default:
@@ -56,7 +63,11 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         if(drawable != null){
             drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP);
         }
-        if(isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn) || ConstantBaseApp.SYS_STATUS_DONE.equals(processStatus)) {
+        if( isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn)
+            || ConstantBaseApp.SYS_STATUS_DONE.equals(processStatus)
+            || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(processStatus)
+
+        ) {
             ivProcessAction.setImageDrawable(drawable);
             tvProcessAction.setTextColor(tintColor);
             tvProcessAction.setText(processActionText);
@@ -83,25 +94,30 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         int backgroundColor = R.color.padrao_TRANSPARENT;
         Drawable drawable = context.getDrawable(R.drawable.pipeline_step_states);
         //Se step atual, verifica o destaque
-        if(!ConstantBaseApp.SYS_STATUS_DONE.equals(stepStatus) && isCurrentStep) {
-            //Se start_end, se tiver checkin, fica amarelo , se não fica cinza indicando que falta q
-            //não é possivel mexer.
-            if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(StepType)) {
-                backgroundColor =
-                    ToolBox_Inf.hasConsistentValueString(startDate)
-                        ? R.color.namoa_color_ticket_process_highlight
-                        : R.color.namoa_color_pipeline_cur_step_no_checkin ;
+        if(!ConstantBaseApp.SYS_STATUS_DONE.equals(stepStatus) && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(stepStatus)) {
+            if(isCurrentStep) {
+                //Se start_end, se tiver checkin, fica amarelo , se não fica cinza indicando que falta q
+                //não é possivel mexer.
+                if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(StepType)) {
+                    backgroundColor =
+                        ToolBox_Inf.hasConsistentValueString(startDate)
+                            ? R.color.namoa_color_ticket_process_highlight
+                            : R.color.namoa_color_pipeline_cur_step_no_checkin;
+                    //
+                    drawable =
+                        ToolBox_Inf.hasConsistentValueString(startDate)
+                            ? context.getDrawable(R.drawable.pipeline_step_highligh_states)
+                            : context.getDrawable(R.drawable.pipeline_step_no_checkin);
+                } else {
+                    //Se ONE_TOUCH, fica amarelo.
+                    backgroundColor = R.color.namoa_color_ticket_process_highlight;
+                    drawable = context.getDrawable(R.drawable.pipeline_step_highligh_states);
+                }
                 //
-                drawable =
-                    ToolBox_Inf.hasConsistentValueString(startDate)
-                        ? context.getDrawable(R.drawable.pipeline_step_highligh_states)
-                        : context.getDrawable(R.drawable.pipeline_step_no_checkin);
             }else{
-                //Se ONE_TOUCH, fica amarelo.
-                backgroundColor = R.color.namoa_color_ticket_process_highlight;
-                drawable = context.getDrawable(R.drawable.pipeline_step_highligh_states);
+                drawable = null;
+                clBackground.setOnClickListener(null);
             }
-            //
         }
         //
         //clBackground.setBackgroundColor(context.getResources().getColor(backgroundColor));
