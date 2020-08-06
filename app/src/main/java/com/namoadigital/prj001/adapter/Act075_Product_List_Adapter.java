@@ -290,7 +290,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     if(mListener.hasAppliedDataChange(tk_ticket_product)) {
                         product_cell_tv_applied_qty.setBackground(context.getResources().getDrawable(R.color.namoa_color_ticket_process_highlight));
                     }else{
-                        product_cell_tv_withdrawn_qty.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
+                        product_cell_tv_applied_qty.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
                     }
 
                     product_cell_tv_withdrawn_qty.setOnClickListener(new View.OnClickListener() {

@@ -135,11 +135,11 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             }else{
                 btnSave.setEnabled(true);
             }
-            setProductHeaderFragment();
         }else{
             fabMenu.setVisibility(View.GONE);
-            setApprovalHeaderFragment();
         }
+        //
+        setHeaderFragment();
         //
         initFabMenuItens();
     }
@@ -214,21 +214,37 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         rvProduct.setAdapter(mAdapter);
     }
 
-    private void setProductHeaderFragment() {
+    private void setHeaderFragment() {
         fm = getSupportFragmentManager();
         //
-        mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForProduct(
-                tkTicket.getTicket_id(),
-                ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(tkTicket.getOpen_date()),
-                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                ),
-                tkTicket.getOpen_site_code(),
-                tkTicket.getOpen_site_desc(),
-                tkTicket.getOpen_serial_id(),
-                tkTicket.getOpen_product_desc(),
-                tkTicket.getOrigin_desc()
-        );
+        if(act_profile == 1) {
+            mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForProduct(
+                    tkTicket.getTicket_id(),
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(tkTicket.getOpen_date()),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    ),
+                    tkTicket.getOpen_site_code(),
+                    tkTicket.getOpen_site_desc(),
+                    tkTicket.getOpen_serial_id(),
+                    tkTicket.getOpen_product_desc(),
+                    tkTicket.getOrigin_desc()
+            );
+        }else{
+//            mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForApprovalOrAction(
+//                    tkTicket.getTicket_id(),
+//                    ToolBox_Inf.millisecondsToString(
+//                            ToolBox_Inf.dateToMilliseconds(tkTicket.getOpen_date()),
+//                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+//                    ),
+//                    tkTicket.getOpen_site_code(),
+//                    tkTicket.getOpen_site_desc(),
+//                    tkTicket.getOpen_serial_id(),
+//                    tkTicket.getOpen_product_desc(),
+//                    tkTicket.getOrigin_desc(),
+//
+//            );
+        }
         //
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.header_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
@@ -473,8 +489,16 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                     public void onClick(DialogInterface dialog, int id) {
                         String qty = dialog_set_mkedt_qty.getText().toString().replace(",", ".");
                         //tk_ticket_products.get(position).setQty(Double.valueOf(qty));
-                        mAdapter.getmValues().get(position).setQty(Double.valueOf(qty));
-                        mAdapter.notifyItemChanged(position);
+
+                        if(qty.isEmpty()){
+                            qty = "0.0";
+                        }
+                        Double inputValue = Double.valueOf(qty);
+                        Double qty_value = mAdapter.getmValues().get(position).getQty();
+                        if(!inputValue.equals(qty_value)) {
+                            mAdapter.getmValues().get(position).setQty(Double.valueOf(qty));
+                            mAdapter.notifyItemChanged(position);
+                        }
                     }
                 })
                 .setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), new DialogInterface.OnClickListener() {
@@ -503,8 +527,15 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                     public void onClick(DialogInterface dialog, int id) {
                         String qty_used = dialog_set_mkedt_qty.getText().toString().replace(",", ".");
 //                        tk_ticket_products.get(position).setQty_used(Double.valueOf(qty_used));
-                        mAdapter.getmValues().get(position).setQty_used(Double.valueOf(qty_used));
-                        mAdapter.notifyItemChanged(position);
+                        if(qty_used.isEmpty()){
+                            qty_used = "0.0";
+                        }
+                        Double inputValue = Double.valueOf(qty_used);
+                        Double qty_used_value = mAdapter.getmValues().get(position).getQty_used();
+                        if(!inputValue.equals(qty_used_value)) {
+                            mAdapter.getmValues().get(position).setQty_used(Double.valueOf(qty_used));
+                            mAdapter.notifyItemChanged(position);
+                        }
                     }
                 })
                 .setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), new DialogInterface.OnClickListener() {
