@@ -179,6 +179,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_error_on_set_checkout_msg");
         transList.add("alert_offline_save_ttl");
         transList.add("alert_offline_save_msg");
+        //DIALOG DE EXPONTANEOS
+        transList.add("dialog_pipeline_main_title");
+        transList.add("dialog_pipeline_main_msg");
+        transList.add("dialog_pipeline_btn_process_action");
+        transList.add("dialog_pipeline_btn_cancel");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,

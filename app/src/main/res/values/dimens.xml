@@ -23,5 +23,6 @@
     <dimen name="pipeline_step_icon_width">18dp</dimen>
     <dimen name="pipeline_step_icon_height">18dp</dimen>
     <dimen name="pipeline_step_info_margin_top">5dp</dimen>
+    <dimen name="pipeline_step_btn_min_height">36dp</dimen>
 
 </resources>

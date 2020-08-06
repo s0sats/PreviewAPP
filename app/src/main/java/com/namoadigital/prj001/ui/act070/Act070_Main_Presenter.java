@@ -41,6 +41,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.PipelineNewProcessDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -402,8 +403,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return false;
     }
 
+    public Bundle getAct071ActionBundle(TK_Ticket mTicket, int stepCode, int processTkSeq, boolean currentStep, boolean actionCreation) {
+        return getAct071Bundle(mTicket, stepCode, processTkSeq, currentStep, false, actionCreation);
+    }
+
     @Override
-    public Bundle getAct071Bundle(TK_Ticket mTicket, int stepCode, int processTkSeq, boolean currentStep, boolean actionCreation) {
+    public Bundle getAct071Bundle(TK_Ticket mTicket, int stepCode, int processTkSeq, boolean currentStep, boolean ctrlCreation, boolean actionCreation) {
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket.getTicket_prefix());
         bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket.getTicket_code());
@@ -420,7 +425,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putString(TK_TicketDao.OPEN_PRODUCT_DESC, mTicket.getOpen_product_desc());
         bundle.putString(TK_TicketDao.ORIGIN_DESC, mTicket.getOrigin_desc());
         bundle.putBoolean(TK_TicketDao.CURRENT_STEP_ORDER, currentStep);
-        bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, false);
+        bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, ctrlCreation);
         bundle.putBoolean(Act070_Main.PARAM_ACTION_CREATION, actionCreation);
         return bundle;
     }
@@ -441,7 +446,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     true
                 );
                 break;
-
             case ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKOUT:
                 mView.showAlert(
                     hmAux_Trans.get("alert_checkout_confirm_ttl"),
@@ -455,8 +459,42 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     true
                 );
                 break;
+            case ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_ADD_NEW:
+                showNewProcessDialog(mTicket, hmAux_Trans,stepProcessBtn);
+                break;
         }
 
+    }
+
+    private void showNewProcessDialog(final TK_Ticket mTicket, HMAux hmAux_trans, StepProcessBtn stepProcessBtn) {
+        PipelineNewProcessDialog newProcessDialog =
+            new PipelineNewProcessDialog(
+                context,
+                hmAux_trans,
+                stepProcessBtn,
+                new PipelineNewProcessDialog.PipelineProcessDialogClickListener() {
+                    @Override
+                    public void onProcessActionClick(StepProcessBtn processBtn) {
+                        mView.callAct071(
+                            getAct071NewProcessoBundle(
+                                mTicket,
+                                processBtn.getStepCode()
+                            )
+                        );
+                    }
+
+                    @Override
+                    public void onCancelClick() {
+
+                    }
+                }
+            );
+        //
+        newProcessDialog.show();
+    }
+
+    private Bundle getAct071NewProcessoBundle(TK_Ticket mTicket, int stepCode) {
+        return getAct071Bundle(mTicket,stepCode,0,true,true,true);
     }
 
     private void setCheckinToStep(TK_Ticket mTicket, int stepCode) {
@@ -539,18 +577,18 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         if(ticketStep != null && ticketCtrl != null){
             if(isDoneOrWaitingSync(ticketStep.getStep_status())){
                 mView.callAct071(
-                    getAct071Bundle(mTicket,stepAction.getStepCode(),stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), false)
+                    getAct071ActionBundle(mTicket,stepAction.getStepCode(),stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), false)
                 );
             }else{
                 if(isDoneOrWaitingSync(ticketCtrl.getCtrl_status())){
                     mView.callAct071(
-                        getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), false
+                        getAct071ActionBundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), false
                         )
                     );
                 }else if(stepAction.isCurrentStep()) {
                     if(isStartEndActionExecution(ticketStep, ticketCtrl)){
                         mView.callAct071(
-                            getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), true)
+                            getAct071ActionBundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), true)
                         );
                     }else if(isOneTouchActionExecution(ticketStep, ticketCtrl)){
                         mView.showAlert(
@@ -560,7 +598,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     mView.callAct071(
-                                        getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), true )
+                                        getAct071ActionBundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), true )
                                     );
                                 }
                             },
@@ -841,11 +879,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
         return null;
     }
-
+    //TODO VERICAR NA WEB SOBRE QUANDO LIBERAR O BOTÃO NO CASO DO ONE_TOUCH
     private void addNewProcess(ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
         StepMain stepMain = (StepMain) source.get(mainPosition);
         if(!ConstantBaseApp.SYS_STATUS_DONE.equals(stepMain.getStepStatus())
            && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(stepMain.getStepStatus())
+           && ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate())
            && stepMain.isCurrentStep()
            && stepMain.isAllow_new_obj()
         ){
