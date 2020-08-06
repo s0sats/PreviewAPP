@@ -798,7 +798,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(tkTicket.getTicket_status())
                     || !hasActionNotExec(tkTicket)
                 ) {
-                    mView.callAct069(false);
+                    //mView.callAct069(false);
+                    mView.callAct076();
                 } else {
                     mView.callAct070();
                 }
@@ -922,11 +923,13 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                     mView.callAct070();
                 }
                 break;
-            case ConstantBaseApp.ACT069:
-                mView.callAct069(true);
-                break;
+//              LUCHE -06/08/2020 - NÃO DEVE MAIS ACONTECER.....
+//            case ConstantBaseApp.ACT069:
+//                mView.callAct069(true);
+//                break;
             case ConstantBaseApp.ACT070:
             case ConstantBaseApp.ACT068:
+            case ConstantBaseApp.ACT076:
             default:
                 mView.callAct070();
                 break;

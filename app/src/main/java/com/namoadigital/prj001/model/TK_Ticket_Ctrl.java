@@ -386,4 +386,25 @@ public class TK_Ticket_Ctrl {
             this.getAction().setAction_photo_name(finalName);
         }
     }
+
+    public void copyCtrlStatusForInnerProcess(){
+        switch (this.ctrl_type) {
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                if(this.action != null) {
+                    this.action.setAction_status(this.ctrl_status);
+                }
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                if(this.measure != null) {
+                    //this.measure.setPK(this);
+                }
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                if(this.approval != null){
+                    this.approval.setApproval_status(this.ctrl_status);
+                }
+                //Não ha necessidade de mexer no rejeitdo, pois ele tem o proprio status que sempre é rejeitado.
+                break;
+        }
+    }
 }

@@ -48,6 +48,8 @@ public interface Act071_Main_Contract {
         void checkPostTicketSaveFlow();
 
         String getRequestingAct();
+
+        void callAct076();
     }
 
     interface I_Presenter{

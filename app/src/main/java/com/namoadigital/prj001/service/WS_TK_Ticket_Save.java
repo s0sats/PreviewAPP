@@ -204,7 +204,8 @@ public class WS_TK_Ticket_Save extends IntentService {
                         ticket.getTicket_prefix(),
                         ticket.getTicket_code(),
                         0,
-                        0 //Como retorno sempre full, reseta o sync_required
+                        0,
+                        0//Como retorno sempre full, reseta o sync_required
                     ).toSqlQuery()
                 );
                 //TK_Ticket_Step
@@ -427,6 +428,30 @@ public class WS_TK_Ticket_Save extends IntentService {
                             getFormattedRetMsg(actReturn, resultStep)
                         );
                     //}
+                    if(resultStep.getCtrl() != null) {
+                        ArrayList<TK_Ticket_Ctrl> ctrlsToUpdate = new ArrayList<>();
+                        for (T_TK_Ticket_Save_Rec_Result_Step.T_TK_Ticket_Save_Rec_Result_Ctrl resultCtrl : resultStep.getCtrl()) {
+                            String newStatus =
+                                ConstantBaseApp.MAIN_RESULT_OK.equals(resultStep.getRet_status())
+                                    ? ConstantBaseApp.SYS_STATUS_DONE
+                                    : ConstantBaseApp.SYS_STATUS_ERROR;
+                            //
+                            TK_Ticket_Ctrl dbTicketCtrl = getDbTicketCtrl(
+                                resultStep.getCustomer_code(),
+                                resultStep.getTicket_prefix(),
+                                resultStep.getTicket_code(),
+                                resultStep.getStep_code(),
+                                resultCtrl.getTicket_seq_tmp()
+                            );
+                            //
+                            dbTicketCtrl.setCtrl_status(newStatus);
+                            dbTicketCtrl.copyCtrlStatusForInnerProcess();
+                            //
+                            ctrlsToUpdate.add(dbTicketCtrl);
+                        }
+                        //
+                        ticketCtrlDao.addUpdate(ctrlsToUpdate,false);
+                    }
                 }
             }
             //
@@ -440,7 +465,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                 }
             }
             //
-            if(ConstantBaseApp.MAIN_RESULT_OK.equals(recResult.getRet_status())){
+            if(recResult.getTicket_update() == 0 && ConstantBaseApp.MAIN_RESULT_OK.equals(recResult.getRet_status())){
                 //atualiza SCN do ticket.
                 ticketDao.addUpdate(
                     new Sql_WS_TK_Ticket_Save_007(
@@ -448,6 +473,16 @@ public class WS_TK_Ticket_Save extends IntentService {
                         recResult.getTicket_prefix(),
                         recResult.getTicket_code(),
                         recResult.getScn()
+                    ).toSqlQuery()
+                );
+            }else if(recResult.getTicket_update() == 1){
+                ticketDao.addUpdate(
+                    new Sql_WS_TK_Ticket_Save_002(
+                        recResult.getCustomer_code(),
+                        recResult.getTicket_prefix(),
+                        recResult.getTicket_code(),
+                        1,
+                        0
                     ).toSqlQuery()
                 );
             }
@@ -538,10 +573,22 @@ public class WS_TK_Ticket_Save extends IntentService {
                 T_TK_Ticket_Save_Rec_Result ticketProcessResult = getTicketProcessResult(recTicketResult, recFromTo.getCustomer_code(), recFromTo.getTicket_prefix(), recFromTo.getTicket_code());
                 //
                 if (ticketProcessResult != null && ConstantBaseApp.MAIN_RESULT_OK.equals(ticketProcessResult.getRet_status())) {
-                    TK_Ticket_Ctrl ticketCtrl = getDbTicketCtrl(recFromTo);
+                    TK_Ticket_Ctrl ticketCtrl = getDbTicketCtrl(
+                        recFromTo.getCustomer_code(),
+                        recFromTo.getTicket_prefix(),
+                        recFromTo.getTicket_code(),
+                        recFromTo.getStep_code(),
+                        recFromTo.getTicket_seq_tmp()
+                    );
+                    //Seta o seq retornando pelo servido no ctrl
                     ticketCtrl.setTicket_seq(recFromTo.getTicket_seq());
+                    //Seta o seq retornado nos processos filhos
                     ticketCtrl.setPKIntoProcess();
-                    //
+                    //Atualiza status no ctrl para done
+                    ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_DONE);
+                    //Atualiza status dos processos filhos
+                    ticketCtrl.copyCtrlStatusForInnerProcess();
+                    //Se for action, faz processo de copia da foto
                     if (ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION.equals(ticketCtrl)
                         && ticketCtrl.getAction() != null
                         && ticketCtrl.getAction().getAction_photo_local() != null
@@ -555,16 +602,32 @@ public class WS_TK_Ticket_Save extends IntentService {
                         //
                         ticketCtrl.setFinalNameIntoActionPhoto(newName);
                     }
+                    //Atualiza ctrl
                     ticketCtrlDao.addUpdateTmp(ticketCtrl, null);
-                    //atualiza SCN do ticket.
-                    ticketDao.addUpdate(
-                        new Sql_WS_TK_Ticket_Save_007(
-                            ticketProcessResult.getCustomer_code(),
-                            ticketProcessResult.getTicket_prefix(),
-                            ticketProcessResult.getTicket_code(),
-                            ticketProcessResult.getScn()
-                        ).toSqlQuery()
-                    );
+                    //Se processo de token e servidor informa que ainda tem atualização,
+                    //Seta update_Required pra 1
+                    if(reSend && ticketProcessResult.getTicket_update() == 1 ){
+                        ticketDao.addUpdate(
+                            new Sql_WS_TK_Ticket_Save_002(
+                                ticketProcessResult.getCustomer_code(),
+                                ticketProcessResult.getTicket_prefix(),
+                                ticketProcessResult.getTicket_code(),
+                                1,
+                                0
+                            ).toSqlQuery()
+                        );
+                    }else{
+                        //Se processo de token, necessidade de outra atualização
+                        //atualiza somente o SCN
+                        ticketDao.addUpdate(
+                            new Sql_WS_TK_Ticket_Save_007(
+                                ticketProcessResult.getCustomer_code(),
+                                ticketProcessResult.getTicket_prefix(),
+                                ticketProcessResult.getTicket_code(),
+                                ticketProcessResult.getScn()
+                            ).toSqlQuery()
+                        );
+                    }
                     return true;
                 } else {
                     TK_Ticket ticketSent = getTicketFromSentList(recFromTo.getCustomer_code(), recFromTo.getTicket_prefix(), recFromTo.getTicket_code());
@@ -644,13 +707,13 @@ public class WS_TK_Ticket_Save extends IntentService {
         return null;
     }
 
-    private TK_Ticket_Ctrl getDbTicketCtrl(T_TK_Ticket_Save_Rec_From_To recFromTo) {
+    private TK_Ticket_Ctrl getDbTicketCtrl(int customer_code, int ticket_prefix, int ticket_code, int step_code, int ticket_seq_tmp) {
         return ticketCtrlDao.getByString(
             new TK_Ticket_Ctrl_Sql_004(
-                recFromTo.getCustomer_code(),
-                recFromTo.getTicket_prefix(),
-                recFromTo.getTicket_code(),
-                recFromTo.getTicket_seq_tmp()
+                customer_code,
+                ticket_prefix,
+                ticket_code,
+                ticket_seq_tmp
             ).toSqlQuery()
         );
     }
