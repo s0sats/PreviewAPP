@@ -20,6 +20,9 @@ public interface Act075_Main_Contract {
 
     interface I_Presenter{
         TK_Ticket getTicket(long customer_code, int ticket_prefix, int ticket_code);
+
+        TK_Ticket_Product getTicketProduct(long customer_code, int ticket_prefix, int ticket_code, int product_code);
+
         //
         void saveproduct(int scn, ArrayList<TK_Ticket_Product> tk_ticket_products);
 

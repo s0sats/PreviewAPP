@@ -1,23 +1,27 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 public class T_TK_Ticket_Product_Save_Obj_Product_Env {
-
-    private int productCode;
+    @Expose
+    private int product_code;
+    @Expose
     private String qty;
-    private String qtyUsed;
+    @Expose
+    private String qty_used;
 
-    public T_TK_Ticket_Product_Save_Obj_Product_Env(int productCode, String qty, String qtyUsed) {
-        this.productCode = productCode;
+    public T_TK_Ticket_Product_Save_Obj_Product_Env(int product_code, String qty, String qty_used) {
+        this.product_code = product_code;
         this.qty = qty;
-        this.qtyUsed = qtyUsed;
+        this.qty_used = qty_used;
     }
 
-    public int getProductCode() {
-        return productCode;
+    public int getProduct_code() {
+        return product_code;
     }
 
-    public void setProductCode(int productCode) {
-        this.productCode = productCode;
+    public void setProduct_code(int product_code) {
+        this.product_code = product_code;
     }
 
     public String getQty() {
@@ -28,12 +32,11 @@ public class T_TK_Ticket_Product_Save_Obj_Product_Env {
         this.qty = qty;
     }
 
-    public String getQtyUsed() {
-        return qtyUsed;
+    public String getQty_used() {
+        return qty_used;
     }
 
-    public void setQtyUsed(String qtyUsed) {
-        this.qtyUsed = qtyUsed;
+    public void setQty_used(String qty_used) {
+        this.qty_used = qty_used;
     }
-
 }

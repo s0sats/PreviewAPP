@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -207,35 +208,39 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
         public void onBind(final TK_Ticket_Product tk_ticket_product, final int position) {
             //
+            Log.d("PRODUCT", "qty: " + tk_ticket_product.getQty());
+            Log.d("PRODUCT", "qty_used: " + tk_ticket_product.getQty_used());
+            //
             tv_product_info.setText(tk_ticket_product.getProduct_desc());
             //
             product_cell_tv_withdrawn_qty.setText(String.format("%s %s", tk_ticket_product.getQty(), tk_ticket_product.getUn()));
             product_cell_tv_applied_qty.setText(String.format("%s %s", tk_ticket_product.getQty_used(), tk_ticket_product.getUn()));
             product_cell_tv_returned_qty.setText(String.format("%s %s", tk_ticket_product.getQty_returned(), tk_ticket_product.getUn()));
             //
-            if (tk_ticket_product.getQty() != null) {
-                if (tk_ticket_product.getQty() <= 0) {
-                    product_cell_iv_withdrawn_substract.setEnabled(false);
-                } else {
-                    product_cell_iv_withdrawn_substract.setEnabled(true);
-                }
-            } else {
-                product_cell_iv_withdrawn_substract.setEnabled(false);
+            if (tk_ticket_product.getQty() == null) {
+                tk_ticket_product.setQty(0.0);
             }
             //
-            if (tk_ticket_product.getQty_used() != null) {
-                if(inventory_control == 1) {
-                    if (tk_ticket_product.getQty_used().equals(tk_ticket_product.getQty())) {
-                        product_cell_iv_applied_add.setEnabled(false);
-                    }
-                }
-                //
-                if (tk_ticket_product.getQty_used() == 0) {
-                    product_cell_iv_applied_substract.setEnabled(false);
-                }
+            if (tk_ticket_product.getQty() <= 0) {
+                product_cell_iv_withdrawn_substract.setEnabled(false);
             } else {
-                tk_ticket_product.setQty_used((double) 0);
+                product_cell_iv_withdrawn_substract.setEnabled(true);
+            }
+            if (tk_ticket_product.getQty_used() <= 0) {
+                product_cell_iv_applied_substract.setEnabled(false);
+            } else {
+                product_cell_iv_applied_substract.setEnabled(true);
+            }
+            //
+            if (tk_ticket_product.getQty_used() == null) {
+                tk_ticket_product.setQty_used(0.0);
                 product_cell_iv_applied_add.setEnabled(true);
+            }
+            //
+            if(inventory_control == 1) {
+                if (tk_ticket_product.getQty_used() <= tk_ticket_product.getQty()) {
+                    product_cell_iv_applied_add.setEnabled(false);
+                }
             }
             //
             if (act_profile == 1) {
@@ -273,12 +278,26 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         disableAppliedLayout();
                     }
                 }
+
                 if(isEditable) {
+
+                    if(mListener.hasWithdrawnDataChange(tk_ticket_product)) {
+                        product_cell_tv_withdrawn_qty.setBackground(context.getResources().getDrawable(R.color.namoa_color_ticket_process_highlight));
+                    }else{
+                        product_cell_tv_withdrawn_qty.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
+                    }
+
+                    if(mListener.hasAppliedDataChange(tk_ticket_product)) {
+                        product_cell_tv_applied_qty.setBackground(context.getResources().getDrawable(R.color.namoa_color_ticket_process_highlight));
+                    }else{
+                        product_cell_tv_withdrawn_qty.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
+                    }
+
                     product_cell_tv_withdrawn_qty.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             mListener.callQtyDialog(position, tk_ticket_product);
-                            mListener.callHasChanges(true);
+
                         }
                     });
                     //
@@ -286,7 +305,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         @Override
                         public void onClick(View v) {
                             mListener.callQtyUsedDialog(position, tk_ticket_product);
-                            mListener.callHasChanges(true);
                         }
                     });
                     //
@@ -295,11 +313,10 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         public void onClick(View v) {
                             double mWithdraw = tk_ticket_product.getQty() - 1;
                             tk_ticket_product.setQty(mWithdraw);
-                            if (tk_ticket_product.getQty() == 0) {
-                                product_cell_iv_withdrawn_substract.setEnabled(false);
-                            }
+//                            if (tk_ticket_product.getQty() == 0) {
+//                                product_cell_iv_withdrawn_substract.setEnabled(false);
+//                            }
                             notifyItemChanged(position);
-                            mListener.callHasChanges(true);
                         }
                     });
                     //
@@ -308,8 +325,10 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         public void onClick(View v) {
                             double mWithdraw = tk_ticket_product.getQty() + 1;
                             tk_ticket_product.setQty(mWithdraw);
+//                            if (tk_ticket_product.getQty() >= 1) {
+//                                product_cell_iv_applied_substract.setEnabled(true);
+//                            }
                             notifyItemChanged(position);
-                            mListener.callHasChanges(true);
                         }
                     });
                     //
@@ -319,15 +338,14 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
                             double mApplied = tk_ticket_product.getQty_used() - 1;
                             tk_ticket_product.setQty_used(mApplied);
-                            if (tk_ticket_product.getQty_used() == 0) {
-                                product_cell_iv_applied_substract.setEnabled(false);
-                            }
-                            if (inventory_control == 1
-                                    && tk_ticket_product.getQty_used() < tk_ticket_product.getQty()) {
-                                product_cell_iv_applied_add.setEnabled(true);
-                            }
+//                            if (tk_ticket_product.getQty_used() == 0) {
+//                                product_cell_iv_applied_substract.setEnabled(false);
+//                            }
+//                            if (inventory_control == 1
+//                                    && tk_ticket_product.getQty_used() < tk_ticket_product.getQty()) {
+//                                product_cell_iv_applied_add.setEnabled(true);
+//                            }
                             notifyItemChanged(position);
-                            mListener.callHasChanges(true);
                         }
                     });
 
@@ -337,12 +355,14 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         public void onClick(View v) {
                             double mApplied = tk_ticket_product.getQty_used() + 1;
                             tk_ticket_product.setQty_used(mApplied);
-                            if (inventory_control == 1
-                            && tk_ticket_product.getQty_used() >= tk_ticket_product.getQty()) {
-                                product_cell_iv_applied_add.setEnabled(false);
-                            }
+//                            if (inventory_control == 1
+//                            && tk_ticket_product.getQty_used() >= tk_ticket_product.getQty()) {
+//                                product_cell_iv_applied_add.setEnabled(false);
+//                            }
+//                            if (tk_ticket_product.getQty_used() >= 1) {
+//                                product_cell_iv_applied_substract.setEnabled(true);
+//                            }
                             notifyItemChanged(position);
-                            mListener.callHasChanges(true);
                         }
                     });
                 }
@@ -471,6 +491,12 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         return mValues;
     }
 
+    public void setmValues(List<TK_Ticket_Product> mValues) {
+        this.mValues.clear();
+        this.mValues.addAll(mValues);
+        notifyDataSetChanged();
+    }
+
     public interface OnProductInteract {
         void onAddProduct();
 
@@ -478,7 +504,9 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
         void callQtyUsedDialog(int position, TK_Ticket_Product tk_ticket_product);
 
-        void callHasChanges(boolean b);
+        boolean hasWithdrawnDataChange(TK_Ticket_Product tk_ticket_product);
+
+        boolean hasAppliedDataChange(TK_Ticket_Product tk_ticket_product);
     }
 
 }

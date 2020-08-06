@@ -24,10 +24,11 @@ import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.T_TK_Ticket_Product_Save_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Product_Save_Obj_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Product_Save_Obj_Product_Env;
-import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec;
+import com.namoadigital.prj001.model.T_TK_Ticket_Product_Save_Rec;
+import com.namoadigital.prj001.model.T_TK_Ticket_Product_Save_Return_Rec;
+import com.namoadigital.prj001.model.T_TK_Ticket_Save_Product_Return_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_From_To;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result;
-import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result_Step;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Ctrl_Obj;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Obj;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Product_Obj;
@@ -38,6 +39,7 @@ import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_001;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_003;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_004;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_007;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
@@ -47,11 +49,16 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.view.dialog.ServiceRegisterDialog.DECIMAL_PRICE_PATTERN;
+
 public class WS_TK_Ticket_Product_Save extends IntentService {
 
+    public static final String PRODUCT_ADD = "PRODUCT_ADD";
+    public static final String TICKET_FULL = "TICKET_FULL";
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = ConstantBaseApp.APP_MODULE;
     private String mResource_Code = "0";
@@ -68,9 +75,14 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
     private TK_Ticket_CtrlDao ticketCtrlDao;
     private MD_Schedule_ExecDao scheduleExecDao;
     private int scn;
-    private ArrayList<T_TK_Ticket_Product_Save_Obj_Product_Env> ticketToSend;
+    List<TK_Ticket_Product> ticket_products;
+    private List<T_TK_Ticket_Product_Save_Obj_Product_Env> ticketToSend = new ArrayList<>();
+    public final static String PRODUCT_SAVE_RETURN_KEY = "PRODUCT_SAVE_RETURN_KEY";
 
-    public WS_TK_Ticket_Product_Save() { super("WS_TK_Ticket_Product_Save");}
+
+    public WS_TK_Ticket_Product_Save() {
+        super("WS_TK_Ticket_Product_Save");
+    }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
@@ -83,9 +95,9 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
             ticketDao = new TK_TicketDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             ticketCtrlDao = new TK_Ticket_CtrlDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             scheduleExecDao = new MD_Schedule_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
-            scn = bundle.getInt(TK_TicketDao.SCN,-1);
-            List<TK_Ticket_Product> ticket = (List<TK_Ticket_Product>) bundle.getSerializable(TK_Ticket_ProductDao.TABLE);
-            processTicketSave(ticket);
+            scn = bundle.getInt(TK_TicketDao.SCN, -1);
+            ticket_products = (List<TK_Ticket_Product>) bundle.getSerializable(TK_Ticket_ProductDao.TABLE);
+            processTicketSave(ticket_products);
 
         } catch (Exception e) {
 
@@ -114,8 +126,8 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
             ticketToSend.add(
                     new T_TK_Ticket_Product_Save_Obj_Product_Env(
                             tk_ticket_product.getProduct_code(),
-                            String.valueOf(tk_ticket_product.getQty()),
-                            String.valueOf(tk_ticket_product.getQty_used())
+                            (new DecimalFormat(DECIMAL_PRICE_PATTERN).format(tk_ticket_product.getQty())).replace(".", ","),
+                            (new DecimalFormat(DECIMAL_PRICE_PATTERN).format(tk_ticket_product.getQty_used())).replace(".", ",")
                     )
             );
         }
@@ -131,8 +143,8 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
         TK_Ticket_Product tk_ticket_product = mTicket.get(0);
         ticket_product_save_obj.add(new T_TK_Ticket_Product_Save_Obj_Env(
                 tk_ticket_product.getCustomer_code(),
-                tk_ticket_product.getTicket_code(),
                 tk_ticket_product.getTicket_prefix(),
+                tk_ticket_product.getTicket_code(),
                 scn,
                 ticketToSend
         ));
@@ -159,21 +171,21 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
         return keepOnlyUpdateRequiredData(getTicketsDB());
     }
 
-    private ArrayList<TK_Ticket>  keepOnlyUpdateRequiredData(ArrayList<TK_Ticket> ticketList){
+    private ArrayList<TK_Ticket> keepOnlyUpdateRequiredData(ArrayList<TK_Ticket> ticketList) {
         for (TK_Ticket tk_ticket : ticketList) {
-            if(tk_ticket.getUpdate_required_product() != 1){
+            if (tk_ticket.getUpdate_required_product() != 1) {
                 tk_ticket.setProduct(new ArrayList<TK_Ticket_Product>());
             }
             //
-            if(tk_ticket.getStep() != null && tk_ticket.getStep().size() > 0){
+            if (tk_ticket.getStep() != null && tk_ticket.getStep().size() > 0) {
                 ArrayList<TK_Ticket_Step> stepsToUpdate = new ArrayList<>();
                 for (TK_Ticket_Step tk_ticket_step : tk_ticket.getStep()) {
-                    if(tk_ticket_step.getUpdate_required() == 1){
-                        if(tk_ticket_step.getCtrl() != null && tk_ticket_step.getCtrl().size() > 0){
+                    if (tk_ticket_step.getUpdate_required() == 1) {
+                        if (tk_ticket_step.getCtrl() != null && tk_ticket_step.getCtrl().size() > 0) {
                             ArrayList<TK_Ticket_Ctrl> ctrlsToUpdate = new ArrayList<>();
                             for (TK_Ticket_Ctrl ticketCtrl : tk_ticket_step.getCtrl()) {
                                 //Se ctrl update_required, poe na  nova lista
-                                if(ticketCtrl.getUpdate_required() == 1){
+                                if (ticketCtrl.getUpdate_required() == 1) {
                                     ctrlsToUpdate.add(ticketCtrl);
                                 }
                             }
@@ -201,7 +213,7 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
             ticketObj.setTicket_code(rawTicket.getTicket_code());
             ticketObj.setScn(rawTicket.getScn());
             //Busca por produtos a serem enviados.
-            if(rawTicket.getProduct() != null && rawTicket.getProduct().size() > 0 && rawTicket.getUpdate_required_product() == 1){
+            if (rawTicket.getProduct() != null && rawTicket.getProduct().size() > 0 && rawTicket.getUpdate_required_product() == 1) {
                 ArrayList<WS_TK_Ticket_Product_Obj> ticketProductObjs = new ArrayList<>();
                 for (TK_Ticket_Product tk_ticket_product : rawTicket.getProduct()) {
                     WS_TK_Ticket_Product_Obj productObj = new WS_TK_Ticket_Product_Obj();
@@ -216,11 +228,11 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
                 ticketObj.setProduct(ticketProductObjs);
             }
             //
-            if(rawTicket.getStep() != null && rawTicket.getStep().size() > 0){
+            if (rawTicket.getStep() != null && rawTicket.getStep().size() > 0) {
                 ArrayList<WS_TK_Ticket_Step_Obj> ticketStepObjs = new ArrayList<>();
                 for (TK_Ticket_Step tk_ticket_step : rawTicket.getStep()) {
                     WS_TK_Ticket_Step_Obj stepObj = new WS_TK_Ticket_Step_Obj();
-                    if(tk_ticket_step.getUpdate_required() == 1){
+                    if (tk_ticket_step.getUpdate_required() == 1) {
                         stepObj.setStep_code(tk_ticket_step.getStep_code());
                         stepObj.setStep_start_date(tk_ticket_step.getStep_start_date());
                         stepObj.setStep_end_date(tk_ticket_step.getStep_end_date());
@@ -229,14 +241,14 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
                     }
                     //
                     for (TK_Ticket_Ctrl ticketCtrl : tk_ticket_step.getCtrl()) {
-                        if(ticketCtrl.getUpdate_required() == 1){
+                        if (ticketCtrl.getUpdate_required() == 1) {
                             WS_TK_Ticket_Ctrl_Obj ctrlObj = new WS_TK_Ticket_Ctrl_Obj();
                             ctrlObj.setTicket_seq(ticketCtrl.getTicket_seq());
                             ctrlObj.setTicket_seq_tmp(ticketCtrl.getTicket_seq_tmp());
                             ctrlObj.setCtrl_start_date(ticketCtrl.getCtrl_start_date());
                             ctrlObj.setCtrl_end_date(ticketCtrl.getCtrl_end_date());
                             ctrlObj.setCtrl_type(ticketCtrl.getCtrl_type());
-                            switch (ticketCtrl.getCtrl_type()){
+                            switch (ticketCtrl.getCtrl_type()) {
                                 case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
                                     ctrlObj.setAction(ticketCtrl.getAction());
                                     break;
@@ -248,7 +260,7 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
                         }
                     }
                     //
-                    if(!ticketStepObjs.contains(stepObj) && stepObj.getCtrl().size() > 0 ){
+                    if (!ticketStepObjs.contains(stepObj) && stepObj.getCtrl().size() > 0) {
                         ticketStepObjs.add(stepObj);
                     }
                 }
@@ -274,16 +286,17 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //
+        String jsonEnv = gsonEnv.toJson(env);
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_TICKET_SAVE,
-                gsonEnv.toJson(env)
+                jsonEnv
         );
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
         //
-        T_TK_Ticket_Save_Rec rec = gsonRec.fromJson(
+        T_TK_Ticket_Product_Save_Rec rec = gsonRec.fromJson(
                 resultado,
-                T_TK_Ticket_Save_Rec.class
+                T_TK_Ticket_Product_Save_Rec.class
         );
         //
         if (
@@ -308,52 +321,102 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
         processTicketSaveReturn(rec);
     }
 
-    private void processTicketSaveReturn(T_TK_Ticket_Save_Rec rec) throws Exception {
-        //
-        if( ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(rec.getSave())
-                || ConstantBaseApp.MAIN_RESULT_OK_DUP.equalsIgnoreCase(rec.getSave()))
-        {
-            if(rec.getResult() != null && rec.getResult().size() > 0){
-                for (T_TK_Ticket_Save_Rec_Result recResult : rec.getResult()) {
-                    if(recResult.getStep()!= null &&  recResult.getStep().size() > 0) {
-                        for (T_TK_Ticket_Save_Rec_Result_Step resultStep : recResult.getStep()) {
-
-                        }
-                    }else{
-                        //MSG DE ERRO AQUI OU NÃO????
-                    }
-                }
+    private void processTicketSaveReturn(T_TK_Ticket_Product_Save_Rec rec) throws Exception {
+        if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(rec.getSave())
+                || ConstantBaseApp.MAIN_RESULT_OK_DUP.equalsIgnoreCase(rec.getSave())) {
+            //
+            String returnType = PRODUCT_ADD;
+            processProductList(rec.getTicket_return());
+            //
+            if (rec.getTicket() != null && rec.getTicket().size() > 0) {
+                returnType = TICKET_FULL;
+                processTicketFull(rec.getTicket());
             }
-            if(rec.getFrom_to() != null && rec.getFrom_to().size() > 0){
-                processFromTo(rec.getFrom_to(),rec.getResult());
-
-            }else{
-                if(rec.getTicket() != null && rec.getTicket().size() > 0){
-
-                }
-            }
-        }else{
+            //
+            HMAux returnAux = new HMAux();
+            returnAux.put(PRODUCT_SAVE_RETURN_KEY, returnType);
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), returnAux, "", "0");
+            return;
+        } else {
             //COMO TRATAR, SERÁ QUE EXISTE ESSE OUTRO STATUS
             ToolBox.sendBCStatus(
                     getApplicationContext(),
                     "ERROR_1",
-                    hmAux_Trans.get("msg_data_returned_error") +":\n"+ rec.getSave(),
+                    hmAux_Trans.get("msg_data_returned_error") + ":\n" + rec.getSave(),
                     new HMAux(),
                     "",
                     "0");
         }
+
+    }
+
+    private void processProductList(ArrayList<T_TK_Ticket_Product_Save_Return_Rec> ticket_return) {
+        for (T_TK_Ticket_Product_Save_Return_Rec product_response : ticket_return) {
+            for (T_TK_Ticket_Save_Product_Return_Rec products : product_response.getProduct()) {
+                if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(products.getRet_status())) {
+                    updateTicketProducts();
+                    updateTicketScn(product_response);
+                } else {
+                    //
+                }
+            }
+        }
+    }
+
+    private void updateTicketScn(T_TK_Ticket_Product_Save_Return_Rec product_response) {
+        ticketDao.addUpdate(
+                new Sql_WS_TK_Ticket_Save_007(
+                        product_response.getCustomer_code(),
+                        product_response.getTicket_prefix(),
+                        product_response.getTicket_code(),
+                        product_response.getScn()
+                ).toSqlQuery()
+        );
+    }
+
+    private void updateTicketProducts() {
+        TK_Ticket_ProductDao ticketProductDao = new TK_Ticket_ProductDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+        );
+        for (TK_Ticket_Product ticket_product : ticket_products) {
+            ticketProductDao.addUpdate(ticket_product);
+        }
+    }
+
+    private void processTicketFull(ArrayList<TK_Ticket> tickets) {
+
+        for (TK_Ticket tk_ticket : tickets) {
+            //Seta pk nos filhos
+            tk_ticket.setPK();
+            //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
+            tk_ticket.updateLocalImagesPathIfExists();
+            //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
+            //for alterado, o que significa que mudaram a foto no server...
+            TK_Ticket.checkActionPhotoResetNeeds(
+                    getDbTicket(tk_ticket, false),
+                    tk_ticket
+            );
+            //Remove o ticket do banco de dados
+            ticketDao.removeFullV2(tk_ticket);
+            //Tenta o insert do ticket
+            DaoObjReturn daoObjReturn = ticketDao.addUpdate(tk_ticket);
+            //Se não houve erro , chama metodo define proximo passo.
+        }
+
     }
 
     private void processFromTo(ArrayList<T_TK_Ticket_Save_Rec_From_To> from_to, ArrayList<T_TK_Ticket_Save_Rec_Result> recTicketResult) {
         for (T_TK_Ticket_Save_Rec_From_To recFromTo : from_to) {
-            T_TK_Ticket_Save_Rec_Result ticketProcessResult = getTicketProcessResult(recTicketResult,recFromTo.getCustomer_code(),recFromTo.getTicket_prefix(),recFromTo.getTicket_code());
+            T_TK_Ticket_Save_Rec_Result ticketProcessResult = getTicketProcessResult(recTicketResult, recFromTo.getCustomer_code(), recFromTo.getTicket_prefix(), recFromTo.getTicket_code());
             //
-            if(ticketProcessResult != null && ConstantBaseApp.MAIN_RESULT_OK.equals(ticketProcessResult.getRet_status())) {
+            if (ticketProcessResult != null && ConstantBaseApp.MAIN_RESULT_OK.equals(ticketProcessResult.getRet_status())) {
                 TK_Ticket_Ctrl ticketCtrl = getDbTicketCtrl(recFromTo);
                 ticketCtrl.setTicket_seq(recFromTo.getTicket_seq());
                 ticketCtrl.setPKIntoProcess();
-            }else{
-                TK_Ticket ticketSent = getTicketFromSentList(recFromTo.getCustomer_code(),recFromTo.getTicket_prefix(),recFromTo.getTicket_code());
+            } else {
+                TK_Ticket ticketSent = getTicketFromSentList(recFromTo.getCustomer_code(), recFromTo.getTicket_prefix(), recFromTo.getTicket_code());
                 //ATUALIZAR TICKET PARA UPDATE REQUIRED
                 ticketDao.addUpdate(
                         new Sql_WS_TK_Ticket_Save_002(
@@ -390,11 +453,11 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
 
     private T_TK_Ticket_Save_Rec_Result getTicketProcessResult(ArrayList<T_TK_Ticket_Save_Rec_Result> recTicketResult, int customer_code, int ticket_prefix, int ticket_code) {
         for (T_TK_Ticket_Save_Rec_Result recResult : recTicketResult) {
-            if(
+            if (
                     recResult.getCustomer_code() == customer_code
                             && recResult.getTicket_prefix() == ticket_prefix
                             && recResult.getTicket_code() == ticket_code
-            ){
+            ) {
                 return recResult;
             }
         }
@@ -522,7 +585,7 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
     @NonNull
     private DaoObjReturn updateTicketAndScheduleReg(TK_Ticket ticket, MD_Schedule_Exec scheduleExec) {
         DaoObjReturn daoObjReturn;
-        daoObjReturn = ticketDao.addUpdateBySchedulePk(ticket,null);
+        daoObjReturn = ticketDao.addUpdateBySchedulePk(ticket, null);
         if (!daoObjReturn.hasError()) {
             updateSchedule(scheduleExec);
         }
@@ -584,7 +647,7 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
 
     private void renameFile(String oldName, String action_photo_name) {
         File from = new File(Constant.CACHE_PATH_PHOTO + "/", oldName);
-        File to = new File(Constant.CACHE_PATH_PHOTO + "/",action_photo_name);
+        File to = new File(Constant.CACHE_PATH_PHOTO + "/", action_photo_name);
         from.renameTo(to);
     }
 
@@ -609,15 +672,15 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
     private TK_Ticket getDbTicket(TK_Ticket retTicket, boolean createdBySchedule) {
         String selectionQuery = "";
         //
-        if(createdBySchedule){
-            selectionQuery =  new TK_Ticket_Sql_009(
+        if (createdBySchedule) {
+            selectionQuery = new TK_Ticket_Sql_009(
                     retTicket.getCustomer_code(),
                     retTicket.getSchedule_prefix(),
                     retTicket.getSchedule_code(),
                     retTicket.getSchedule_exec()
             ).toSqlQuery();
-        }else{
-            selectionQuery =  new TK_Ticket_Sql_001(
+        } else {
+            selectionQuery = new TK_Ticket_Sql_001(
                     retTicket.getCustomer_code(),
                     retTicket.getTicket_prefix(),
                     retTicket.getTicket_code()
@@ -682,7 +745,7 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
         private Integer scn = -1;
         private String retStatus = "";
         private String retMsg = "";
-        private boolean fromTokenProcess =false;
+        private boolean fromTokenProcess = false;
         private boolean processError = false;
         private String processStatus = "";
         private String processMsg = "";
@@ -691,8 +754,9 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
         private int schedulePrefix = -1;
         private int scheduleCode = -1;
         private int scheduleExec = -1;
+
         //
-        public TicketSaveActReturn(int customer_code, int prefix, int code, Integer scn, String retStatus, String retMsg, boolean fromTokenProcess,int oldPrefix, int oldCode ) {
+        public TicketSaveActReturn(int customer_code, int prefix, int code, Integer scn, String retStatus, String retMsg, boolean fromTokenProcess, int oldPrefix, int oldCode) {
             this.customer_code = customer_code;
             this.prefix = prefix;
             this.code = code;

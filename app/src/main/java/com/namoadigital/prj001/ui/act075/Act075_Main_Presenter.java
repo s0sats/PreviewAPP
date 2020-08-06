@@ -14,6 +14,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_002;
+import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -63,6 +64,18 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                         customer_code,
                         ticket_prefix,
                         ticket_code
+                ).toSqlQuery()
+        );
+    }
+    @Override
+    public TK_Ticket_Product getTicketProduct(long customer_code, int ticket_prefix, int ticket_code, int product_code){
+        //
+        return ticketProductDao.getByString(
+                new TK_Ticket_Product_Sql_001(
+                        customer_code,
+                        ticket_prefix,
+                        ticket_code,
+                        product_code
                 ).toSqlQuery()
         );
     }
