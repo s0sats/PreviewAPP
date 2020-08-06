@@ -43,6 +43,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_PIPELINE_PRODUCT_STATUS_NO_CONTROL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_PIPELINE_PRODUCT_STATUS_PENDING;
 import static com.namoadigital.prj001.view.dialog.ServiceRegisterDialog.DECIMAL_PRICE_PATTERN;
 
 public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contract.I_View, Act075_Product_List_Adapter.OnProductInteract {
@@ -468,7 +470,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
     @Override
     public void onAddProduct() {
-        callAct_Product_Selection(context, tk_ticket_products);
+        callAct_Product_Selection(context, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
     }
 
     @Override
@@ -490,7 +492,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                         String qty = dialog_set_mkedt_qty.getText().toString().replace(",", ".");
                         //tk_ticket_products.get(position).setQty(Double.valueOf(qty));
 
-                        if(qty.isEmpty()){
+                        if(qty.isEmpty()
+                        || qty.contains("-")){
                             qty = "0.0";
                         }
                         Double inputValue = Double.valueOf(qty);
@@ -527,7 +530,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                     public void onClick(DialogInterface dialog, int id) {
                         String qty_used = dialog_set_mkedt_qty.getText().toString().replace(",", ".");
 //                        tk_ticket_products.get(position).setQty_used(Double.valueOf(qty_used));
-                        if(qty_used.isEmpty()){
+                        if(qty_used.isEmpty()
+                        || qty_used.contains("-")){
                             qty_used = "0.0";
                         }
                         Double inputValue = Double.valueOf(qty_used);
@@ -576,7 +580,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         if (resultCode == AppCompatActivity.RESULT_OK) {
             updateSaveButton(true);
             MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
-
+            String pickup_status = tkTicket.getInventory_control() == 0 ?  TK_PIPELINE_PRODUCT_STATUS_NO_CONTROL : TK_PIPELINE_PRODUCT_STATUS_PENDING;
             mAdapter.getmValues().add(
                     new TK_Ticket_Product(
                             ToolBox_Con.getPreference_Customer_Code(context),
@@ -588,8 +592,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                             pAux.getUn(),
                             0.0,
                             0.0,
-                            "",
-                            0.0
+                            pickup_status,
+                            0.0,
+                            pickup_status
                     )
             );
             mAdapter.notifyDataSetChanged();

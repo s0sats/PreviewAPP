@@ -643,6 +643,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_PIPELINE_APPROVAL_GET_MATERIAL = "APPROVAL_GET_MATERIAL";
     public static final String TK_PIPELINE_APPROVAL_RETURN_MATERIAL = "APPROVAL_RETURN_MATERIAL";
     public static final String TK_PIPELINE_APPROVAL_OPERATIONAL = "APPROVAL_OPERATIONAL";
+    public static final String TK_PIPELINE_PRODUCT_STATUS_PENDING = "PENDING";
+    public static final String TK_PIPELINE_PRODUCT_STATUS_NO_CONTROL = "NO_CONTROL";
 
     /*
      * Constantes agendamento

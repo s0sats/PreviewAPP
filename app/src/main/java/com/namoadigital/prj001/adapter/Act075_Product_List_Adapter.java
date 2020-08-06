@@ -138,7 +138,8 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             return 0;
         }
 
-        if (act_profile == 1 && hasWithdrawApproved) {
+        if (act_profile == 1 && hasWithdrawApproved
+        || act_profile == 1 && !isEditable) {
             return mValues.size();
         } else {
             if (mValues.size() == 0) {
@@ -246,6 +247,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             if (act_profile == 1) {
                 if (inventory_control == 0) {
                     noInventoryControlLayout();
+                    product_cell_tv_extract.setVisibility(View.GONE);
                 } else {
                     if(!hasWithdrawApproved){
                         cl_withdrawn.setVisibility(View.VISIBLE);
@@ -313,9 +315,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         public void onClick(View v) {
                             double mWithdraw = tk_ticket_product.getQty() - 1;
                             tk_ticket_product.setQty(mWithdraw);
-//                            if (tk_ticket_product.getQty() == 0) {
-//                                product_cell_iv_withdrawn_substract.setEnabled(false);
-//                            }
                             notifyItemChanged(position);
                         }
                     });
@@ -325,9 +324,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         public void onClick(View v) {
                             double mWithdraw = tk_ticket_product.getQty() + 1;
                             tk_ticket_product.setQty(mWithdraw);
-//                            if (tk_ticket_product.getQty() >= 1) {
-//                                product_cell_iv_applied_substract.setEnabled(true);
-//                            }
                             notifyItemChanged(position);
                         }
                     });
@@ -338,13 +334,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
                             double mApplied = tk_ticket_product.getQty_used() - 1;
                             tk_ticket_product.setQty_used(mApplied);
-//                            if (tk_ticket_product.getQty_used() == 0) {
-//                                product_cell_iv_applied_substract.setEnabled(false);
-//                            }
-//                            if (inventory_control == 1
-//                                    && tk_ticket_product.getQty_used() < tk_ticket_product.getQty()) {
-//                                product_cell_iv_applied_add.setEnabled(true);
-//                            }
                             notifyItemChanged(position);
                         }
                     });
@@ -355,13 +344,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         public void onClick(View v) {
                             double mApplied = tk_ticket_product.getQty_used() + 1;
                             tk_ticket_product.setQty_used(mApplied);
-//                            if (inventory_control == 1
-//                            && tk_ticket_product.getQty_used() >= tk_ticket_product.getQty()) {
-//                                product_cell_iv_applied_add.setEnabled(false);
-//                            }
-//                            if (tk_ticket_product.getQty_used() >= 1) {
-//                                product_cell_iv_applied_substract.setEnabled(true);
-//                            }
                             notifyItemChanged(position);
                         }
                     });
@@ -398,6 +380,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
         private void disableAppliedLayout() {
             product_cell_iv_applied_substract.setVisibility(View.INVISIBLE);
+            product_cell_iv_applied_add.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
             product_cell_iv_applied_add.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check_white_24dp));
             product_cell_iv_applied_add.setImageTintList(context.getResources().getColorStateList(R.color.namoa_product_extract_check));
         }
@@ -416,7 +399,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
         private void disableWithdrawLayout() {
             product_cell_iv_withdrawn_substract.setVisibility(View.INVISIBLE);
-            product_cell_iv_withdrawn_add.setBackground(null);
+            product_cell_iv_applied_add.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
             product_cell_iv_withdrawn_add.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check_white_24dp));
             product_cell_iv_withdrawn_add.setImageTintList(context.getResources().getColorStateList(R.color.namoa_product_extract_check));
         }
