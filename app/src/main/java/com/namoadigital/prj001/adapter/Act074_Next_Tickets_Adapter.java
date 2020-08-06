@@ -51,9 +51,6 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
 
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
-        transList.add("open_date_lbl");
-        transList.add("forecast_date_lbl");
-        transList.add("site_lbl");
         transList.add("other_steps_available_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(

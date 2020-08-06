@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_default="wrap"
+        app:layout_constrainedHeight="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,12 +41,14 @@
 
         <Button
             android:id="@+id/act075_save_product"
-            style="@style/NamoaSaveButton"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginVertical="8dp"
             android:textAllCaps="true"
+            android:textColor="@color/colorFooterWhite"
+            android:background="@drawable/namoa_cell_12_states"
             tools:text="SALVAR" />
         <include
             layout="@layout/footer_base" />

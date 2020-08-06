@@ -153,6 +153,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:textStyle="bold"
+                    android:textAllCaps="true"
                     tools:text="FAVOR SINCRONIZAR" />
 
             </LinearLayout>
@@ -206,6 +207,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_outline_open_in_new_24"
                 android:tint="@color/namoa_pipeline_background_icon"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/frg_ticket_tv_desc_origin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/frg_ticket_tv_desc_origin" />

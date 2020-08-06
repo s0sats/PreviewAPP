@@ -97,27 +97,15 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         List<String> transList = new ArrayList<>();
         transList.add("act074_title");
         transList.add("filter_hint");
-        transList.add("btn_sync_tickets");
         transList.add("no_record_lbl");
         transList.add("alert_error_on_generate_list_ttl");
         transList.add("alert_error_on_generate_list_msg");
-        transList.add("dialog_filter_title");
-        transList.add("dialog_status_lbl");
-        transList.add("dialog_partner_lbl");
-        transList.add("chk_allow_no_partner_lbl");
-        transList.add("chk_my_partner_lbl");
-        transList.add("chk_partner_no_profile_lbl");
         //
-        transList.add("alert_ticket_to_send_ttl");
-        transList.add("alert_ticket_to_send_msg");
         transList.add("dialog_download_ticket_ttl");
         transList.add("dialog_download_ticket_start");
         //
-        transList.add("dialog_schedule_warning_ttl");
-        transList.add("dialog_schedule_warning_new_status_lbl");
-        transList.add("dialog_schedule_warning_user_nick_lbl");
-        transList.add("dialog_schedule_warning_error_msg_lbl");
-        //
+        transList.add("alert_no_next_tickets_ttl");
+        transList.add("alert_no_next_tickets_msg");
         transList.add("progress_next_tickets_ttl");
         transList.add("progress_next_tickets_msg");
         //
@@ -143,7 +131,16 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
                 hmAux_Trans
         );
         //
-        mPresenter.getTicketList();
+        if(ToolBox_Con.isOnline(context)) {
+            mPresenter.getTicketList();
+        }else{
+            ToolBox_Inf.showNoConnectionDialogWithInteraction(context, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mPresenter.onBackPressedClicked(requestingAct);
+                }
+            });
+        }
         //
     }
 
@@ -222,6 +219,10 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
+        if(WS_TK_Next_Ticket.class.getName().equalsIgnoreCase(wsProcess)) {
+            mPresenter.onBackPressedClicked(requestingAct);
+        }
+        //
         disableProgressDialog();
     }
 
@@ -229,6 +230,9 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         //
+        if(WS_TK_Next_Ticket.class.getName().equalsIgnoreCase(wsProcess)) {
+            mPresenter.onBackPressedClicked(requestingAct);
+        }
         disableProgressDialog();
     }
 

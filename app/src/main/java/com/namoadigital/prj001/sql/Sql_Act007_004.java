@@ -10,26 +10,15 @@ public class Sql_Act007_004 implements Specification {
     private String s_customer_code;
     private String s_group_code;
     private String s_filter;
-    private String removeProducts;
     private int iType;
+    private int s_spare_part;
 
-    public Sql_Act007_004(String s_customer_code, String s_group_code, String s_filter, int iType, ArrayList<TK_Ticket_Product> tk_ticket_products) {
+    public Sql_Act007_004(String s_customer_code, String s_group_code, String s_filter, int iType, ArrayList<TK_Ticket_Product> tk_ticket_products, int s_spare_part) {
         this.s_customer_code = s_customer_code;
         this.s_group_code = s_group_code;
         this.s_filter = s_filter;
         this.iType = iType;
-        removeProducts = "";
-        if(!tk_ticket_products.isEmpty()) {
-            removeProducts = "            and product_code not in (";
-            for (int i = 0; i < tk_ticket_products.size(); i++) {
-                if (i == 0) {
-                    removeProducts += String.valueOf(tk_ticket_products.get(i).getProduct_code());
-                } else {
-                    removeProducts += ", " + tk_ticket_products.get(i);
-                }
-            }
-            removeProducts += ") \n";
-        }
+        this.s_spare_part = s_spare_part;
     }
 
     @Override
@@ -52,8 +41,7 @@ public class Sql_Act007_004 implements Specification {
                             "    md_product_group_products as pgp on p.customer_code = pgp.customer_code and p.product_code = pgp.product_code\n" +
                             " WHERE\n" +
                             "    p.customer_code= " + s_customer_code + " \n" +
-                            "    and p.spare_part = 1" +
-                                 removeProducts + "   \n" +
+                            "    and p.spare_part = " + s_spare_part+ "  \n" +
                             "    and pgp.product_code is null and '" + s_filter + "' IS NULL  \n" +
                             "    or ( '" + s_filter + "' IS NOT NULL and ( p.product_id like '%" + s_filter + "%' OR p.product_desc like '%" + s_filter + "%' ) )" +
                             "  ORDER BY \n" +
@@ -75,8 +63,7 @@ public class Sql_Act007_004 implements Specification {
                             "        md_product_group_products as pgp on p.customer_code = pgp.customer_code and p.product_code = pgp.product_code\n" +
                             "     WHERE   \n" +
                             "        pgp.customer_code= " + s_customer_code + "   \n" +
-                            "        and p.spare_part = 1" +
-                                     removeProducts + "   \n" +
+                            "         and p.spare_part = " + s_spare_part+ "  \n" +
                             "        and pgp.group_code = " + s_group_code + " AND pgp.product_code IS NOT NULL AND '" + s_filter + "' IS NULL \n" +
                             "        OR( '" + s_filter + "' IS NOT NULL\n" +
                             "              AND (p.product_id like '%" + s_filter + "%' OR p.product_desc like '%" + s_filter + "%')" +

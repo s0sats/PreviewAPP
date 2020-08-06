@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +31,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -37,8 +39,11 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.namoadigital.prj001.view.dialog.ServiceRegisterDialog.DECIMAL_PRICE_PATTERN;
 
 public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contract.I_View, Act075_Product_List_Adapter.OnProductInteract {
     public static final String PRODUCT_LIST = "PRODUCT_LIST";
@@ -69,6 +74,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private int mTkPrefix;
     private int mTkCode;
     private boolean hasFABActive = false;
+    private boolean hasUpdated = false;
+    private String wsProcess;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,13 +108,6 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         );
         //
         loadTranslation();
-        //
-        mResource_CodeFrg = ToolBox_Inf.getResourceCode(
-                context,
-                mModule_Code,
-                Constant.FRG_SERIAL_SEARCH
-        );
-        //
         loadTranslationFrg_Pipeline_Header();
 
     }
@@ -119,19 +120,74 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         mPresenter = new Act075_Main_Presenter(context, this, hmAux_Trans);
         recoverIntentsInfo();
         //
+        btnSave.setText(hmAux_Trans.get("save_product_lbl"));
+        //
         tkTicket = mPresenter.getTicket(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix,mTkCode);
         tk_ticket_products = tkTicket.getProduct();
         //
+        setProductList();
+        //
         if(act_profile == 1) {
-            setProductHeaderFragment();
+            //
+            if(tkTicket.getUpdate_required_product() == 1
+            || !hasUpdated) {
+                btnSave.setEnabled(false);
+            }else{
+                btnSave.setEnabled(true);
+            }
         }else{
-            setApprovalHeaderFragment();
+            fabMenu.setVisibility(View.GONE);
         }
-
+        //
+        setHeaderFragment();
         //
         initFabMenuItens();
+    }
+
+    @Override
+    public boolean hasWithdrawnDataChange(TK_Ticket_Product product) {
+        TK_Ticket_Product mTicketProduct = mPresenter.getTicketProduct(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix, mTkCode, product.getProduct_code());
+        if(mTicketProduct == null){
+            return true;
+        }
+        if(product.getQty() == null){
+            product.setQty(0.0);
+        }
+        if(mTicketProduct.getQty() == null){
+            mTicketProduct.setQty(0.0);
+        }
         //
-        setProductList();
+        if(!product.getQty().equals(mTicketProduct.getQty())){
+            hasUpdated = true;
+            Log.d("PRODUCT", "qty mudou: " + true);
+            return true;
+        }
+        Log.d("PRODUCT", "qty mudou: " + false);
+        return false;
+    }
+
+    @Override
+    public boolean hasAppliedDataChange(TK_Ticket_Product product) {
+        //
+        TK_Ticket_Product mTicketProduct = mPresenter.getTicketProduct(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix, mTkCode, product.getProduct_code());
+        if(mTicketProduct == null){
+            return true;
+        }
+        //
+        if(product.getQty_used() == null){
+            product.setQty_used(0.0);
+        }
+        if(mTicketProduct.getQty_used() == null){
+            mTicketProduct.setQty_used(0.0);
+        }
+        //
+        if(!product.getQty_used().equals(mTicketProduct.getQty_used())){
+            hasUpdated = true;
+            Log.d("PRODUCT", "qty_used mudou: " + true);
+            return true;
+        }
+        Log.d("PRODUCT", "qty_used mudou: " + false);
+        return false;
     }
 
     private void setApprovalHeaderFragment() {
@@ -158,21 +214,37 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         rvProduct.setAdapter(mAdapter);
     }
 
-    private void setProductHeaderFragment() {
+    private void setHeaderFragment() {
         fm = getSupportFragmentManager();
         //
-        mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForProduct(
-                tkTicket.getTicket_id(),
-                ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(tkTicket.getOpen_date()),
-                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                ),
-                tkTicket.getOpen_site_code(),
-                tkTicket.getOpen_site_desc(),
-                tkTicket.getOpen_serial_id(),
-                tkTicket.getOpen_product_desc(),
-                tkTicket.getOrigin_desc()
-        );
+        if(act_profile == 1) {
+            mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForProduct(
+                    tkTicket.getTicket_id(),
+                    ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(tkTicket.getOpen_date()),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    ),
+                    tkTicket.getOpen_site_code(),
+                    tkTicket.getOpen_site_desc(),
+                    tkTicket.getOpen_serial_id(),
+                    tkTicket.getOpen_product_desc(),
+                    tkTicket.getOrigin_desc()
+            );
+        }else{
+//            mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForApprovalOrAction(
+//                    tkTicket.getTicket_id(),
+//                    ToolBox_Inf.millisecondsToString(
+//                            ToolBox_Inf.dateToMilliseconds(tkTicket.getOpen_date()),
+//                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+//                    ),
+//                    tkTicket.getOpen_site_code(),
+//                    tkTicket.getOpen_site_desc(),
+//                    tkTicket.getOpen_serial_id(),
+//                    tkTicket.getOpen_product_desc(),
+//                    tkTicket.getOrigin_desc(),
+//
+//            );
+        }
         //
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.header_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
@@ -265,18 +337,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
 
                 }else if (id == fabStep.getId()){
-                    ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("exit_without_save_ttl"),
-                            hmAux_Trans.get("exit_without_save_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    callAct070();
-                                }
-                            },
-                            0
-                    );
+                    verifyChangesBeforeExit();
                 }
             }
 
@@ -285,6 +346,67 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 hasFABActive = b;
             }
         });
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ToolBox_Con.isOnline(context)) {
+                    mPresenter.saveproduct(tkTicket.getScn(), (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+                }else{
+                    ToolBox_Inf.showNoConnectionDialog(context);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void showPD(String ttl, String msg) {
+        enableProgressDialog(ttl,
+                msg,
+                context.getString(R.string.generic_msg_cancel),
+                context.getString(R.string.generic_msg_ok));
+    }
+
+    private void verifyChangesBeforeExit() {
+        if(hasUpdated) {
+            ToolBox.alertMSG_YES_NO(
+                    context,
+                    hmAux_Trans.get("exit_without_save_ttl"),
+                    hmAux_Trans.get("exit_without_save_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            callAct070();
+                        }
+                    },
+                    0
+            );
+        }else{
+            callAct070();
+        }
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        if(WS_TK_Ticket_Product_Save.class.getName().equalsIgnoreCase(wsProcess)) {
+            if(hmAux.hasConsistentValue(WS_TK_Ticket_Product_Save.PRODUCT_SAVE_RETURN_KEY)){
+                if(WS_TK_Ticket_Product_Save.PRODUCT_ADD.equalsIgnoreCase(hmAux.get(WS_TK_Ticket_Product_Save.PRODUCT_SAVE_RETURN_KEY))){
+                    showMsg(hmAux_Trans.get("alert_product_add_sucess_ttl"), hmAux_Trans.get("alert_product_add_sucess_msg"));
+                }else if (WS_TK_Ticket_Product_Save.TICKET_FULL.equalsIgnoreCase(hmAux.get(WS_TK_Ticket_Product_Save.PRODUCT_SAVE_RETURN_KEY))){
+                    showMsg(hmAux_Trans.get("alert_ticket_updated_ttl"), hmAux_Trans.get("alert_ticket_updated_msg"));
+                }
+            }
+            refreshUI();
+        }
+        progressDialog.dismiss();
+    }
+
+    private void refreshUI() {
+        tkTicket = mPresenter.getTicket(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix,mTkCode);
+        tk_ticket_products = tkTicket.getProduct();
+        mAdapter.setmValues(tk_ticket_products);
+        updateSaveButton(false);
     }
 
     private void callAct070() {
@@ -300,14 +422,18 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act075_title");
-        transList.add("withdrawn_lbl");
-        transList.add("taken_lbl");
-        transList.add("applied_lbl");
-        transList.add("btn_save");
+        transList.add("save_product_lbl");
         transList.add("set_product_qty_lbl");
         transList.add("set_product_qty_used_lbl");
         transList.add("exit_without_save_ttl");
         transList.add("exit_without_save_msg");
+        transList.add("to_product_lbl");
+        transList.add("to_step_lbl");
+        //
+        transList.add("alert_product_add_sucess_ttl");
+        transList.add("alert_product_add_sucess_msg");
+        transList.add("alert_ticket_updated_ttl");
+        transList.add("alert_ticket_updated_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -329,6 +455,18 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     }
 
     @Override
+    protected void processCustom_error(String mLink, String mRequired) {
+        super.processCustom_error(mLink, mRequired);
+        progressDialog.dismiss();
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        progressDialog.dismiss();
+    }
+
+    @Override
     public void onAddProduct() {
         callAct_Product_Selection(context, tk_ticket_products);
     }
@@ -340,7 +478,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         View mDialogVIew = inflater.inflate(R.layout.act075_set_qties_dialog, null);
         TextView dialog_set_qty_lbl =  mDialogVIew.findViewById(R.id.act075_dialog_set_qty_lbl);
         final MKEditTextNM dialog_set_mkedt_qty =  mDialogVIew.findViewById(R.id.act075_dialog_set_mkedt_qty);
-        dialog_set_mkedt_qty.setText(String.valueOf(tk_ticket_product.getQty()));
+        dialog_set_mkedt_qty.setmInputType("NUMBER");
+        dialog_set_mkedt_qty.setText((new DecimalFormat(DECIMAL_PRICE_PATTERN).format(tk_ticket_product.getQty())).replace(".",","));
         dialog_set_qty_lbl.setText(hmAux_Trans.get("set_product_qty_lbl"));
 
         builder.setView(mDialogVIew)
@@ -348,8 +487,18 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        tk_ticket_products.get(position).setQty(Double.valueOf(dialog_set_mkedt_qty.getText().toString().replace(",", ".")));
-                        mAdapter.notifyItemChanged(position);
+                        String qty = dialog_set_mkedt_qty.getText().toString().replace(",", ".");
+                        //tk_ticket_products.get(position).setQty(Double.valueOf(qty));
+
+                        if(qty.isEmpty()){
+                            qty = "0.0";
+                        }
+                        Double inputValue = Double.valueOf(qty);
+                        Double qty_value = mAdapter.getmValues().get(position).getQty();
+                        if(!inputValue.equals(qty_value)) {
+                            mAdapter.getmValues().get(position).setQty(Double.valueOf(qty));
+                            mAdapter.notifyItemChanged(position);
+                        }
                     }
                 })
                 .setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), new DialogInterface.OnClickListener() {
@@ -367,7 +516,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         View mDialogVIew = inflater.inflate(R.layout.act075_set_qties_dialog, null);
         TextView dialog_set_qty_lbl =  mDialogVIew.findViewById(R.id.act075_dialog_set_qty_lbl);
         final MKEditTextNM dialog_set_mkedt_qty =  mDialogVIew.findViewById(R.id.act075_dialog_set_mkedt_qty);
-        dialog_set_mkedt_qty.setText(String.format("%f", tk_ticket_product.getQty_used()));
+        dialog_set_mkedt_qty.setmInputType("NUMBER");
+        dialog_set_mkedt_qty.setText((new DecimalFormat(DECIMAL_PRICE_PATTERN).format(tk_ticket_product.getQty_used())).replace(".",","));
         dialog_set_qty_lbl.setText(hmAux_Trans.get("set_product_qty_used_lbl"));
 
         builder.setView(mDialogVIew)
@@ -375,8 +525,17 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 .setPositiveButton(hmAux_Trans.get("sys_alert_btn_ok"), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        tk_ticket_products.get(position).setQty_used(Double.valueOf(dialog_set_mkedt_qty.getText().toString().replace(",", ".")));
-                        mAdapter.notifyItemChanged(position);
+                        String qty_used = dialog_set_mkedt_qty.getText().toString().replace(",", ".");
+//                        tk_ticket_products.get(position).setQty_used(Double.valueOf(qty_used));
+                        if(qty_used.isEmpty()){
+                            qty_used = "0.0";
+                        }
+                        Double inputValue = Double.valueOf(qty_used);
+                        Double qty_used_value = mAdapter.getmValues().get(position).getQty_used();
+                        if(!inputValue.equals(qty_used_value)) {
+                            mAdapter.getmValues().get(position).setQty_used(Double.valueOf(qty_used));
+                            mAdapter.notifyItemChanged(position);
+                        }
                     }
                 })
                 .setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), new DialogInterface.OnClickListener() {
@@ -415,8 +574,10 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
     private void processResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
+            updateSaveButton(true);
             MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
-            tk_ticket_products.add(
+
+            mAdapter.getmValues().add(
                     new TK_Ticket_Product(
                             ToolBox_Con.getPreference_Customer_Code(context),
                             tkTicket.getTicket_prefix(),
@@ -425,9 +586,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                             pAux.getProduct_id(),
                             pAux.getProduct_desc(),
                             pAux.getUn(),
-                            1.0,
-                            1.0,
-                            "pickup_status",
+                            0.0,
+                            0.0,
+                            "",
                             0.0
                     )
             );
@@ -441,17 +602,27 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         if(hasFABActive){
             fabMenu.animateFAB();
         }else {
-            callAct070();
+            verifyChangesBeforeExit();
         }
     }
 
     @Override
     public void showMsg(String ttl, String msg) {
-
+        ToolBox.alertMSG(context, ttl, msg, null, 0);
     }
 
     @Override
     public void setWsProcess(String wsProcess) {
+        this.wsProcess=wsProcess;
+    }
 
+    @Override
+    public void resetHasUpdate() {
+        updateSaveButton(false);
+    }
+
+    private void updateSaveButton(boolean b) {
+        hasUpdated = b;
+        btnSave.setEnabled(hasUpdated);
     }
 }

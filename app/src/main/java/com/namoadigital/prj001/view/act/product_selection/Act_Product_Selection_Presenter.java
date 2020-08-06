@@ -109,25 +109,29 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
 
     @Override
     public void setAdapterDataForProductInsert(long group_code, Long recursive_code, ArrayList<TK_Ticket_Product> tk_ticket_products, String filter) {
-//
+        //
+        final int spare_part = 1;
         ArrayList<HMAux> groups = (ArrayList<HMAux>) product_groupDao.query_HM(
                 new Sql_Act007_003(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         String.valueOf(recursive_code),
                         tk_ticket_products,
-                        (filter.trim().equals("") ? "null" : filter)
+                        (filter.trim().equals("") ? "null" : filter),
+                        spare_part
                 ).toSqlQuery()
         );
+        //
         ArrayList<HMAux> products = (ArrayList<HMAux>) productDao.query_HM(
                 new Sql_Act007_004(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
                         String.valueOf(group_code),
                         (filter.trim().equals("") ? "null" : filter),
                         (int) group_code,
-                        tk_ticket_products
+                        tk_ticket_products,
+                        spare_part
                 ).toSqlQuery()
         );
-
+        //
         ArrayList<HMAux> data = new ArrayList<>();
 
         for (HMAux aux : groups) {
