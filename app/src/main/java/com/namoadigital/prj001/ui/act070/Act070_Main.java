@@ -46,6 +46,7 @@ import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_MainVH;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
+import com.namoadigital.prj001.ui.act070.model.StepApproval;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
@@ -394,10 +395,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             new Act070_Steps_Adapter.OnApprovalClickListener() {
                 @Override
                 public void onApprovalClick(int approvalPosition) {
-                    ToolBox.toastMSG(
-                        context,
-                        "Approval position: " + approvalPosition
-                    );
+                    StepApproval stepApproval = (StepApproval) sources.get(approvalPosition);
+                    mPresenter.defineApprovalFlow(mTicket,stepApproval);
                 }
 
                 @Override

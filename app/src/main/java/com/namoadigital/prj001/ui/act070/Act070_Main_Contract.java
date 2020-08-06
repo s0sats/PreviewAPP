@@ -7,6 +7,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
+import com.namoadigital.prj001.ui.act070.model.StepApproval;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 
 import java.util.ArrayList;
@@ -91,5 +92,7 @@ public interface Act070_Main_Contract {
         void defineActionFlow(TK_Ticket mTicket, StepAction stepAction);
 
         void defineProcessBtnFlow(TK_Ticket mTicket, StepProcessBtn stepProcessBtn);
+
+        void defineApprovalFlow(TK_Ticket mTicket, StepApproval stepApproval);
     }
 }

@@ -640,6 +640,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKIN = "CHECKIN";
     public static final String TK_PIPELINE_STEP_NEW_PROCESS_TYPE_ADD_NEW = "ADD_NEW";
     public static final String TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKOUT = "CHECKOUT";
+    public static final String TK_PIPELINE_APPROVAL_GET_MATERIAL = "APPROVAL_GET_MATERIAL";
+    public static final String TK_PIPELINE_APPROVAL_RETURN_MATERIAL = "APPROVAL_RETURN_MATERIAL";
+    public static final String TK_PIPELINE_APPROVAL_OPERATIONAL = "APPROVAL_OPERATIONAL";
 
     /*
      * Constantes agendamento

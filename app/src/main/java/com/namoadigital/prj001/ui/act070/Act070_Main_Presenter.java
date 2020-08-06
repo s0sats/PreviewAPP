@@ -548,35 +548,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         )
                     );
                 }else if(stepAction.isCurrentStep()) {
-//VALIÇÃO QUE FUNCIONAVA APENAS PARA START_END
-//                    if(ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketStep.getStep_status())){
-//                        if(ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())){
-//                            if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())) {
-//                                mView.showAlert(
-//                                    hmAux_Trans.get("alert_start_action_ttl"),
-//                                    hmAux_Trans.get("alert_start_action_confirm"),
-//                                    new DialogInterface.OnClickListener() {
-//                                        @Override
-//                                        public void onClick(DialogInterface dialogInterface, int i) {
-//                                            mView.callAct071(
-//                                                getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), true )
-//                                            );
-//                                        }
-//                                    },
-//                                    true
-//                                );
-//                            }else{
-//                                mView.callAct071(
-//                                    getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), true)
-//                                );
-//                            }
-//                        } else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())){
-//                            mView.showAlert(
-//                                hmAux_Trans.get("alert_action_access_denied_ttl"),
-//                                hmAux_Trans.get("alert_action_started_in_server_msg")
-//                            );
-//                        }
-//                    }
                     if(isStartEndActionExecution(ticketStep, ticketCtrl)){
                         mView.callAct071(
                             getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), true)
@@ -623,6 +594,36 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketStep.getStep_status())
             && ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
             && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(ticketStep.getExec_type());
+    }
+
+    @Override
+    public void defineApprovalFlow(TK_Ticket mTicket, StepApproval stepApproval) {
+        TK_Ticket_Step ticketStep = getSelectedStep(mTicket.getTicket_prefix(),mTicket.getTicket_code(), stepApproval.getStepCode());
+        TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFromDb(mTicket.getTicket_prefix(),mTicket.getTicket_code(),stepApproval.getProcessTkSeq(),stepApproval.getStepCode());
+        //
+        if(ticketStep != null && ticketCtrl != null){
+            if(isDoneOrWaitingSync(ticketStep.getStep_status())){
+               //   chamar act da aprovação
+            }else{
+                if(isDoneOrWaitingSync(ticketCtrl.getCtrl_status())){
+                   //chamar act da aprovação
+                }else if(stepApproval.isCurrentStep()) {
+                    switch (stepApproval.getApprovalType()){
+                        case ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL:
+                        case ConstantBaseApp.TK_PIPELINE_APPROVAL_RETURN_MATERIAL:
+                            break;
+                        case ConstantBaseApp.TK_PIPELINE_APPROVAL_OPERATIONAL:
+
+                    }
+                }// //não faz nada, pois não tem ação
+            }
+        }else{
+            mView.showAlert(
+                hmAux_Trans.get("alert_step_or_ctrl_not_found_ttl"),
+                hmAux_Trans.get("alert_step_or_ctrl_not_found_msg")
+            );
+        }
+
     }
 
     private boolean isDoneOrWaitingSync(String status) {
