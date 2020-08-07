@@ -268,7 +268,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             ToolBox_Inf.getStatusColorV2(context,mTicket.getTicket_status()),
             "\\" + mTicket.getOrigin_desc(),
             hmAux_Trans.get("please_sync_lbl"),
-            mPresenter.checkOnlySyncNeeds(mTicket)
+            mPresenter.checkOnlySyncNeeds(mTicket) || mPresenter.checkUpdateRequiredNeeds(mTicket)
         );
         //
         FragmentTransaction ft = fm.beginTransaction();
@@ -504,8 +504,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public void updateSyncRequiredByFCM() {
         mTicket.setSync_required(1);
         //
-        //setTicketSync();
-        //REPORTAR PARA FRG HEADER
+        if(mFrgPipelineHeader != null) {
+            mFrgPipelineHeader.updateSyncRequired(true);
+        }
     }
 
     private void initFCMReceiver() {

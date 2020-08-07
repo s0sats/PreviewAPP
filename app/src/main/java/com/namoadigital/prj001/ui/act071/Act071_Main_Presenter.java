@@ -211,24 +211,30 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         TK_Ticket_Step stepInfo = getStepInfo(mActionPrefix, mActionCode, mStepCode);
         TK_Ticket_Ctrl ticketCtrl = null;
         if(tkTicket!= null  && stepInfo != null) {
-            ticketCtrl = new TK_Ticket_Ctrl(
-                            0,
-                            0,
-                            ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION,
-                            tkTicket.getOpen_product_code(),
-                            tkTicket.getOpen_product_id(),
-                            tkTicket.getOpen_product_desc(),
-                            tkTicket.getOpen_serial_code(),
-                            tkTicket.getOpen_serial_id(),
-                            ConstantBaseApp.SYS_STATUS_PENDING,
-                            stepInfo.getStep_order(),
-                            0
-            );
-            //Seta PK baseado no Step recebido
-            ticketCtrl.setPK(stepInfo);
-            //
-            setStartInfoIfNeed(ticketCtrl);
-            createActionIfNeed(ticketCtrl, true);
+            try {
+                ticketCtrl = new TK_Ticket_Ctrl(
+                                0,
+                                ticketCtrlDao.getNextCtrlTicketSeqTmp(
+                                    stepInfo.getCustomer_code(),stepInfo.getTicket_prefix(),stepInfo.getTicket_code(),stepInfo.getStep_code(),null
+                                ),
+                                ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION,
+                                tkTicket.getOpen_product_code(),
+                                tkTicket.getOpen_product_id(),
+                                tkTicket.getOpen_product_desc(),
+                                tkTicket.getOpen_serial_code(),
+                                tkTicket.getOpen_serial_id(),
+                                ConstantBaseApp.SYS_STATUS_PENDING,
+                                stepInfo.getStep_order(),
+                                0
+                );
+                //Seta PK baseado no Step recebido
+                ticketCtrl.setPK(stepInfo);
+                //
+                setStartInfoIfNeed(ticketCtrl);
+                createActionIfNeed(ticketCtrl, true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return ticketCtrl;
     }
@@ -312,7 +318,12 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      * @return - String com o path local
      */
     @Override
+    //TODO VERIFICAR A NECESSIDADE DE INCLUIR QUANDO ACTION CREATION
     public String generateActionPhotoLocalPath(TK_Ticket_Action action) {
+        //Se criação de foto, devolve o nome da foto com o seq_tmp
+        if(mView.isCreationCtrl()){
+            return ToolBox_Inf.buildTicketActionImgPath(action.getCustomer_code(),action.getTicket_prefix(),action.getTicket_code(),action.getTicket_seq_tmp());
+        }
         if (action.getAction_photo_url() == null && action.getAction_photo_local() == null) {
             return ToolBox_Inf.buildTicketActionImgPath(action);
         }

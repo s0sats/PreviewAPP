@@ -316,27 +316,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void updateActionData() {
-        mTicketCtrl = mPresenter.getTicketCtrlObj(mActionPrefix, mActionCode, mActionSeq,mStepCode);
-        if (mTicketCtrl != null) {
-            mPresenter.setStartInfoIfNeed(mTicketCtrl);
-            mPresenter.createActionIfNeed(mTicketCtrl,isCreationAction);
-            if(mTicketCtrl.getAction() != null){
-                setReadOnly();
-                setDataToViews();
-            }else{
-                //TODO CONFIRMAR SE EXIBIR MSG
-                paramErrorFlow();
-            }
-        } else if(isCreationCtrl) {
+        if(isCreationCtrl){
             mTicketCtrl = mPresenter.createTicketCtrlObj(mActionPrefix, mActionCode, mStepCode);
             if(mTicketCtrl != null) {
-                if (mTicketCtrl.getAction() != null) {
-                    setReadOnly();
-                    setDataToViews();
-                } else {
-                    //TODO CONFIRMAR SE EXIBIR MSG
-                    paramErrorFlow();
-                }
+                setActionDataToUI();
             }else{
                 showAlert(
                     hmAux_Trans.get("alert_error_on_process_creation_ttl"),
@@ -349,6 +332,47 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                     }
                 );
             }
+        }else{
+            mTicketCtrl = mPresenter.getTicketCtrlObj(mActionPrefix, mActionCode, mActionSeq,mStepCode);
+            if (mTicketCtrl != null) {
+                mPresenter.setStartInfoIfNeed(mTicketCtrl);
+                mPresenter.createActionIfNeed(mTicketCtrl,isCreationAction);
+                setActionDataToUI();
+            } else {
+                paramErrorFlow();
+            }
+        }
+
+//        mTicketCtrl = mPresenter.getTicketCtrlObj(mActionPrefix, mActionCode, mActionSeq,mStepCode);
+//        if (mTicketCtrl != null) {
+//            mPresenter.setStartInfoIfNeed(mTicketCtrl);
+//            mPresenter.createActionIfNeed(mTicketCtrl,isCreationAction);
+//            setActionDataToUI();
+//        } else if(isCreationCtrl) {
+//            mTicketCtrl = mPresenter.createTicketCtrlObj(mActionPrefix, mActionCode, mStepCode);
+//            if(mTicketCtrl != null) {
+//                setActionDataToUI();
+//            }else{
+//                showAlert(
+//                    hmAux_Trans.get("alert_error_on_process_creation_ttl"),
+//                    hmAux_Trans.get("alert_error_on_process_creation_msg"),
+//                    new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            onBackPressed();
+//                        }
+//                    }
+//                );
+//            }
+//        } else {
+//            paramErrorFlow();
+//        }
+    }
+
+    private void setActionDataToUI() {
+        if (mTicketCtrl.getAction() != null) {
+            setReadOnly();
+            setDataToViews();
         } else {
             paramErrorFlow();
         }

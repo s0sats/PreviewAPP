@@ -628,7 +628,6 @@ public class WS_TK_Ticket_Save extends IntentService {
                             ).toSqlQuery()
                         );
                     }
-                    return true;
                 } else {
                     TK_Ticket ticketSent = getTicketFromSentList(recFromTo.getCustomer_code(), recFromTo.getTicket_prefix(), recFromTo.getTicket_code());
                     //ATUALIZAR TICKET PARA UPDATE REQUIRED

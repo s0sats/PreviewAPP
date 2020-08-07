@@ -190,15 +190,13 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public boolean checkOnlySyncNeeds(TK_Ticket mTicket) {
         return
                 mTicket != null
-                && (mTicket.getUpdate_required() == 1
-                    || mTicket.getUpdate_required_product() == 1
-                    || mTicket.getSync_required() == 1
-                );
+                && (mTicket.getSync_required() == 1);
     }
 
     public boolean checkUpdateRequiredNeeds(TK_Ticket mTicket) {
         return mTicket != null
             && (mTicket.getUpdate_required() == 1
+                || mTicket.getUpdate_required_product() == 1
                 || isTicketInTokenFile(mTicket.getTicket_prefix(),mTicket.getTicket_code())
                 );
     }
