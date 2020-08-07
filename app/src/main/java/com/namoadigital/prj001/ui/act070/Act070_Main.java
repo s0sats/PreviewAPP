@@ -35,6 +35,7 @@ import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
@@ -61,6 +62,7 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.ui.act075.Act075_Main.APPROVAL_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
@@ -686,6 +688,19 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 hasFABActive = b;
             }
         });
+    }
+
+    @Override
+    public void callact075ForMaterialApproval(int step_code, int ticket_seq, boolean currentStep) {
+        Intent intent = new Intent(context, Act075_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        requestingBundle.putInt(VIEW_PROFILE, APPROVAL_VIEW_ID);
+        requestingBundle.putInt(TK_Ticket_CtrlDao.STEP_CODE, step_code);
+        requestingBundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ticket_seq);
+        requestingBundle.putBoolean(TK_TicketDao.CURRENT_STEP_ORDER, currentStep);
+        intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
     }
 
     private void callAct075(int act_profile) {

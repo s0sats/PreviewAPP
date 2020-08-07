@@ -607,10 +607,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             }else{
                 if(isDoneOrWaitingSync(ticketCtrl.getCtrl_status())){
                    //chamar act da aprovação
+                    mView.callact075ForMaterialApproval(ticketCtrl.getStep_code(), ticketCtrl.getTicket_seq(), stepApproval.isCurrentStep());
                 }else if(stepApproval.isCurrentStep()) {
                     switch (stepApproval.getApprovalType()){
                         case ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL:
                         case ConstantBaseApp.TK_PIPELINE_APPROVAL_RETURN_MATERIAL:
+                            mView.callact075ForMaterialApproval(ticketCtrl.getStep_code(), ticketCtrl.getTicket_seq(), stepApproval.isCurrentStep());
                             break;
                         case ConstantBaseApp.TK_PIPELINE_APPROVAL_OPERATIONAL:
 
@@ -978,6 +980,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         stepApproval.setEndDate(tkStepCtrl.getCtrl_end_date());
                         stepApproval.setEndUser(tkStepCtrl.getCtrl_start_user_name());
                         stepApproval.setHasRejection(tkStepCtrl.getRejection() != null && tkStepCtrl.getRejection().size() > 0 );
+                        stepApproval.setCurrentStep(stepMain.isCurrentStep());
+                        stepApproval.setStepAlreadyCheckedIn(ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate()));
+                        stepApproval.setProcessPlanned(tkStepCtrl.getObj_planned() == 1);
                         stepsCtrls.add(stepApproval);
                         break;
                     case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
