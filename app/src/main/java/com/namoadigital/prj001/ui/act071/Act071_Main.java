@@ -221,7 +221,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             hmAux_Trans
         );
         //
-        if (mPresenter.validateBundleParams(mActionPrefix, mActionCode, mActionSeq, mSchedulePrefix, mScheduleCode, mScheduleExec)) {
+        if (mPresenter.validateBundleParams(mActionPrefix, mActionCode, mActionSeq, mSchedulePrefix, mScheduleCode, mScheduleExec,isCreationCtrl)) {
             iniHeaderFrag();
             updateActionData();
             //
@@ -326,6 +326,28 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             }else{
                 //TODO CONFIRMAR SE EXIBIR MSG
                 paramErrorFlow();
+            }
+        } else if(isCreationCtrl) {
+            mTicketCtrl = mPresenter.createTicketCtrlObj(mActionPrefix, mActionCode, mStepCode);
+            if(mTicketCtrl != null) {
+                if (mTicketCtrl.getAction() != null) {
+                    setReadOnly();
+                    setDataToViews();
+                } else {
+                    //TODO CONFIRMAR SE EXIBIR MSG
+                    paramErrorFlow();
+                }
+            }else{
+                showAlert(
+                    hmAux_Trans.get("alert_error_on_process_creation_ttl"),
+                    hmAux_Trans.get("alert_error_on_process_creation_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            onBackPressed();
+                        }
+                    }
+                );
             }
         } else {
             paramErrorFlow();
@@ -444,6 +466,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 }
             };
         }
+    }
+
+    @Override
+    public boolean isCreationCtrl() {
+        return isCreationCtrl;
     }
 
     private void copyFiles(String fromFile, String toFile) throws IOException {

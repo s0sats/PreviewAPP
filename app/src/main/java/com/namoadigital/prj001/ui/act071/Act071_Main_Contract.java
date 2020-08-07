@@ -50,13 +50,15 @@ public interface Act071_Main_Contract {
         String getRequestingAct();
 
         void callAct076();
+
+        boolean isCreationCtrl();
     }
 
     interface I_Presenter{
 
         void onBackPressedClicked(String requestingAct);
 
-        boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq, int mSchedulePrefix, int mScheduleCode, int mScheduleExec);
+        boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq, int mSchedulePrefix, int mScheduleCode, int mScheduleExec, boolean isCreationCtrl);
 
         TK_Ticket_Ctrl getTicketCtrlObj(int mActionPrefix, int mActionCode, int mActionSeq, int mStepCode);
 
@@ -103,6 +105,8 @@ public interface Act071_Main_Contract {
         void createActionIfNeed(TK_Ticket_Ctrl mTicketCtrl, boolean isCreationAction);
 
         void setStartInfoIfNeed(TK_Ticket_Ctrl mTicketCtrl);
+
+        TK_Ticket_Ctrl createTicketCtrlObj(int mActionPrefix, int mActionCode, int mStepCode);
 
         /*boolean hasPartnerProfile(Integer partner_code);
 

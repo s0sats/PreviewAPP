@@ -589,7 +589,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                     //Atualiza status dos processos filhos
                     ticketCtrl.copyCtrlStatusForInnerProcess();
                     //Se for action, faz processo de copia da foto
-                    if (ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION.equals(ticketCtrl)
+                    if (ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION.equals(ticketCtrl.getCtrl_type())
                         && ticketCtrl.getAction() != null
                         && ticketCtrl.getAction().getAction_photo_local() != null
                         && !ticketCtrl.getAction().getAction_photo_local().isEmpty()
