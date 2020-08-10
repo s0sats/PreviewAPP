@@ -1,7 +1,11 @@
 package com.namoadigital.prj001.ui.act075;
 
+import android.content.DialogInterface;
+
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 
@@ -12,11 +16,17 @@ public interface Act075_Main_Contract {
     interface I_View {
         void showMsg(String ttl, String msg);
         //
+        void showAlert(String ttl, String msg,  DialogInterface.OnClickListener listenerOk, boolean showNegative);
+        //
         void setWsProcess(String wsProcess);
-
+        //
         void resetHasUpdate();
-
+        //
         void showPD(String ttl, String msg);
+        //
+        void showResult(ArrayList<HMAux> resultList, boolean ticketResult);
+        //
+        void callRefreshUi();
         //
     }
 
@@ -35,13 +45,22 @@ public interface Act075_Main_Contract {
         //
         TK_Ticket_Step getSelectedStep(int mTkPrefix, int mTkCode, int mStepCode);
         //
+        TK_Ticket_Ctrl getSelectedCtrl(int mTkPrefix, int mTkCode, int mTkSeq, int mStepCode);
+
+        String getSelectedCtrlStatus(int mTkPrefix, int mTkCode, int mTkSeq, int mStepCode);
+
+        //
         int getStepColor(TK_Ticket_Step ticketStep, boolean IsCurrentStep);
         //
         String getStepNumFormatted(TK_Ticket_Step ticketStep);
         //
         String getStepDesc(TK_Ticket_Step ticketStep);
-
-        void saveApproval(TK_Ticket_Approval ticketApproval);
+        //
+        void saveApproval(TK_Ticket_Approval ticketApproval, boolean isApproved, String approveComments);
+        //
+        void processSaveReturn(int ticket_prefix, int ticket_code, String mLink);
+        //
+        boolean hasApproveProfile(int mTkPrefix, int mTkCode, int mTkSeq, int stepCode);
         //
     }
 }

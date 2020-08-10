@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
@@ -95,6 +97,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         transList.add("product_approve_option");
         transList.add("product_decline_option");
         transList.add("add_product_lbl");
+        transList.add("product_comment_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -225,11 +228,13 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         }
 
         private void setTranslation() {
-            product_cell_tv_withdrawn.setText(hmAux_Trans.get("product_withdraw_lbl"));
-            product_cell_tv_applied.setText(hmAux_Trans.get("product_aplied_lbl"));
-            if (act_profile == 1) {
+            if(act_profile == 1) {
+                product_cell_tv_withdrawn.setText(hmAux_Trans.get("product_withdraw_lbl"));
+                product_cell_tv_applied.setText(hmAux_Trans.get("product_aplied_lbl"));
                 product_cell_tv_returned.setText(hmAux_Trans.get("product_returned_lbl"));
-            } else {
+            }else{
+                product_cell_tv_withdrawn.setText(hmAux_Trans.get("product_amount_lbl"));
+                product_cell_tv_applied.setText(hmAux_Trans.get("product_amount_lbl"));
                 product_cell_tv_returned.setText(hmAux_Trans.get("product_amount_lbl"));
             }
             product_cell_tv_extract.setText(hmAux_Trans.get("product_extract_lbl"));
@@ -383,7 +388,8 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     product_cell_tv_extract.setVisibility(View.GONE);
                 }
                 setAmountControllersVisibility(View.GONE);
-                setDetailsForApprovalVisibility(View.GONE);
+
+                setDetailsForApprovalVisibility();
             }
             //
         }
@@ -438,9 +444,18 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         }
 
         //
-        private void setDetailsForApprovalVisibility(int visibility) {
-            cl_withdrawn.setVisibility(visibility);
-            cl_applied.setVisibility(visibility);
+        private void setDetailsForApprovalVisibility() {
+            if(!hasWithdrawApproved && !hasAppliedApproved){
+                cl_withdrawn.setVisibility(View.VISIBLE);
+                cl_applied.setVisibility(View.GONE);
+                cl_returned.setVisibility(View.GONE);
+            }
+            if(hasWithdrawApproved && !hasAppliedApproved){
+                cl_withdrawn.setVisibility(View.GONE);
+                cl_applied.setVisibility(View.VISIBLE);
+                cl_returned.setVisibility(View.GONE);
+            }
+
         }
 
         //
@@ -465,6 +480,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     public class ApprovalViewHolder extends RecyclerView.ViewHolder {
         TextView tv_ask_confirm;
         TextView tv_comment_lbl;
+        TextInputLayout til_comment;
         MKEditTextNM mket_comment;
         RadioGroup mRadioGroup;
         RadioButton rg_decline;
@@ -474,6 +490,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             super(itemView);
             tv_ask_confirm = itemView.findViewById(R.id.act075_approval_form_tv_ask_confirm);
             tv_comment_lbl = itemView.findViewById(R.id.act075_approval_form_tv_comment_lbl);
+            til_comment = itemView.findViewById(R.id.act075_approval_form_til_comment);
             mket_comment = itemView.findViewById(R.id.act075_approval_form_mket_comment);
             mRadioGroup = itemView.findViewById(R.id.act075_approval_form_rg);
             rg_approval = itemView.findViewById(R.id.act075_approval_form_rg_approval);
@@ -509,6 +526,18 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     }
                 }
             });
+            if(!isEditable) {
+                til_comment.setCounterEnabled(false);
+                if (ConstantBase.SYS_STATUS_DONE.equalsIgnoreCase(tkTicketApproval.getApproval_status())) {
+                    rg_approval.setChecked(true);
+                } else {
+                    rg_decline.setChecked(true);
+                }
+                rg_approval.setEnabled(false);
+                rg_decline.setEnabled(false);
+                mRadioGroup.setEnabled(false);
+                mket_comment.setEnabled(false);
+            }
             //
         }
         //

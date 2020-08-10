@@ -604,6 +604,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         if(ticketStep != null && ticketCtrl != null){
             if(isDoneOrWaitingSync(ticketStep.getStep_status())){
                //   chamar act da aprovação
+                mView.callact075ForMaterialApproval(ticketCtrl.getStep_code(), ticketCtrl.getTicket_seq(), stepApproval.isCurrentStep());
             }else{
                 if(isDoneOrWaitingSync(ticketCtrl.getCtrl_status())){
                    //chamar act da aprovação
