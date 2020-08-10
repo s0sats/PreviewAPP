@@ -34,10 +34,11 @@ import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
-import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
+import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -104,7 +105,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      *
      * @param mTkActionPrefix - Ticket Prefix
      * @param mTkActionCode   - Ticket Code
-     * @param mTkActionSeq    - Ticket Seq
+     * @param mTkActionSeqTmp    - Ticket Seq
      * @param mSchedulePrefix - Schedule Prefix
      * @param mScheduleCode   - Schedule Code
      * @param mScheduleExec   - Schedule Exec
@@ -112,22 +113,21 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      * @return - Verdadeiro se a pk do ticket maior que zero ou se pk agendamento , mas ticket code e seq maior que 0
      */
     @Override
-    public boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq, int mSchedulePrefix, int mScheduleCode, int mScheduleExec, boolean isCreationCtrl) {
+    public boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeqTmp, int mSchedulePrefix, int mScheduleCode, int mScheduleExec, boolean isCreationCtrl) {
         return ((mTkActionPrefix > 0 || (mSchedulePrefix > 0 && mScheduleCode > 0 && mScheduleExec > 0))
                 && mTkActionCode > 0
-                && (mTkActionSeq > 0 || isCreationCtrl)
+                && (mTkActionSeqTmp > 0 || isCreationCtrl)
         );
     }
 
     @Override
-    public TK_Ticket_Ctrl getTicketCtrlObj(int mActionPrefix, int mActionCode, int mActionSeq, int mStepCode) {
+    public TK_Ticket_Ctrl getTicketCtrlObj(int mActionPrefix, int mActionCode, int mActionSeqTmp, int mStepCode) {
         return ticketCtrlDao.getByString(
-            new TK_Ticket_Ctrl_Sql_001(
+            new TK_Ticket_Ctrl_Sql_004(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 mActionPrefix,
                 mActionCode,
-                mActionSeq,
-                mStepCode
+                mActionSeqTmp
             ).toSqlQuery()
         );
     }
@@ -156,9 +156,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     @Override
     public int getStepColor(TK_Ticket_Step ticketStep, boolean IsCurrentStep) {
         int stepColor = ContextCompat.getColor(context,R.color.namoa_color_pipeline_next_step);
-        if(ConstantBaseApp.SYS_STATUS_DONE.equals(ticketStep.getStep_status())
-            ||ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ticketStep.getStep_status())
-        ){
+        if(StepMain.usesStatusColorInStep(ticketStep.getStep_status())){
             stepColor = ToolBox_Inf.getStatusColorV2(context,ticketStep.getStep_status());
         }else if(IsCurrentStep){
             stepColor = ContextCompat.getColor(context,R.color.namoa_status_process);
@@ -447,7 +445,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     /**
      * LUCHE - 05/08/2020
      * <p></p>
-     * Se step for one_touch, seta data de inicio e fim do step antes de salvar a action
+     * Se step for one_touch, seta data de inicio
      * @param ticketStep
      * @param mTicketCtrl
      */
@@ -465,6 +463,9 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      * <p></p>
      * Verifica se precisa setar o status do step como waiting sync impedindo adicionar novo ctrl
      * e impedindo que segui para a proxima etapa.
+     * LUCHE - 10/08/2020
+     * Modificado metodo para desconsiderar o tipo do step e considerar apenas o move next para fechar ou não
+     * o step
      * @param ticketStep
      * @param mTicketCtrl
      */
@@ -480,9 +481,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         //Se todos os ctrl estão finalizado e o step é one_touch ou for start_end com move_next_step,
         //faz checkout
         if( stepCtrlsFinalizedCounter == ticketStep.getCtrl().size()
-            && ( ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())
-                 || ticketStep.getMove_next_step() == 1
-                )
+            && ticketStep.getMove_next_step() == 1
         ){
             ticketStep.setStep_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
             ticketStep.setStep_end_date(mTicketCtrl.getCtrl_end_date());

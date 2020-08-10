@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act070.model;
 
+import com.namoadigital.prj001.util.ConstantBaseApp;
+
 public class StepMain extends BaseStep{
     private String stepNum;
     private String forecastStartDate;
@@ -127,5 +129,14 @@ public class StepMain extends BaseStep{
 
     public void setMove_next_step(boolean move_next_step) {
         this.move_next_step = move_next_step;
+    }
+
+    public static boolean usesStatusColorInStep(String stepStatus){
+        return ConstantBaseApp.SYS_STATUS_DONE.equals(stepStatus)
+            || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(stepStatus)
+            || ConstantBaseApp.SYS_STATUS_CANCELLED.equals(stepStatus)
+            || ConstantBaseApp.SYS_STATUS_REJECTED.equals(stepStatus)
+            ;
+
     }
 }

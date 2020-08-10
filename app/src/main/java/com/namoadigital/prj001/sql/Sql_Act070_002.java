@@ -6,6 +6,8 @@ import com.namoadigital.prj001.database.Specification;
 /**
  * LUCHE - 23/07/2020
  * Query que seleciona os controles de um step ja ordenados.
+ * LUCHE - 10/08/2020
+ * Modificado order by para que os tmp sem seq sejam colocados no final da lista *
  */
 
 public class Sql_Act070_002 implements Specification {
@@ -36,7 +38,10 @@ public class Sql_Act070_002 implements Specification {
                     "      and c.ticket_code = '" + ticket_code +"'\n" +
                     "      and c.step_code = '" + step_code +"'\n" +
                     " ORDER BY \n" +
-                    "       c.ticket_seq,\n" +
+                    "       CASE WHEN c.ticket_seq <> 0 \n" +
+                    "            THEN c.ticket_seq \n" +
+                    "            ELSE c.ticket_seq_tmp \n" +
+                    "       END,\n" +
                     "       c.step_order,\n" +
                     "       c.step_code \n"
             )

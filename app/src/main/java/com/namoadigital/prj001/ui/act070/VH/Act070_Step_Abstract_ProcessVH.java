@@ -52,6 +52,12 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
                 drawable = context.getDrawable(R.drawable.ic_baseline_hourglass_empty_24dp_black);
                 processActionText = transWaitingSync;
                 break;
+            case ConstantBaseApp.SYS_STATUS_CANCELLED:
+            case ConstantBaseApp.SYS_STATUS_REJECTED:
+                tintColor = ToolBox_Inf.getStatusColorV2(context,processStatus);
+                drawable = null;
+                processActionText = "";
+                break;
             case ConstantBaseApp.SYS_STATUS_PENDING:
             case ConstantBaseApp.SYS_STATUS_PROCESS:
             default:
@@ -63,10 +69,13 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         if(drawable != null){
             drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP);
         }
-        if( isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn)
-            || ConstantBaseApp.SYS_STATUS_DONE.equals(processStatus)
+        if(
+            !ConstantBaseApp.SYS_STATUS_CANCELLED.equals(processStatus)
+            && !ConstantBaseApp.SYS_STATUS_REJECTED.equals(processStatus)
+            &&(ConstantBaseApp.SYS_STATUS_DONE.equals(processStatus)
             || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(processStatus)
-
+            || isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn)
+            )
         ) {
             ivProcessAction.setImageDrawable(drawable);
             tvProcessAction.setTextColor(tintColor);
@@ -94,7 +103,11 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         int backgroundColor = R.color.padrao_TRANSPARENT;
         Drawable drawable = context.getDrawable(R.drawable.pipeline_step_states);
         //Se step atual, verifica o destaque
-        if(!ConstantBaseApp.SYS_STATUS_DONE.equals(stepStatus) && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(stepStatus)) {
+        if(!ConstantBaseApp.SYS_STATUS_DONE.equals(stepStatus)
+           && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(stepStatus)
+           && !ConstantBaseApp.SYS_STATUS_CANCELLED.equals(stepStatus)
+           && !ConstantBaseApp.SYS_STATUS_REJECTED.equals(stepStatus)
+        ) {
             if(isCurrentStep) {
                 //Se start_end, se tiver checkin, fica amarelo , se não fica cinza indicando que falta q
                 //não é possivel mexer.
