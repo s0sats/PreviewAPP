@@ -19,14 +19,19 @@ public class TK_Ticket_Product implements Serializable {
     private String product_desc;
     private String un;
     @Nullable
+    @Expose
     private Double qty;
     @Nullable
+    @Expose
     private Double qty_used;
     @Nullable
+    @Expose
     private String pickup_status;
     @Nullable
+    @Expose
     private Double qty_returned;
     @Nullable
+    @Expose
     private String return_status;
 
     public TK_Ticket_Product() {

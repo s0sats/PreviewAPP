@@ -221,7 +221,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private void setProductList() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         rvProduct.setLayoutManager(layoutManager);
-        tk_ticket_products = tkTicket.getProduct();
+        tk_ticket_products = mPresenter.getTicketProductList(tkTicket);
         //
         mAdapter = new Act075_Product_List_Adapter(
                 context,
@@ -687,7 +687,12 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                         }
                         Double inputValue = Double.valueOf(qty_used);
                         Double qty_used_value = mAdapter.getmValues().get(position).getQty_used();
-                        if(!inputValue.equals(qty_used_value)) {
+                        Double qty_value = mAdapter.getmValues().get(position).getQty();
+                        if(qty_value == null){
+                            qty_value = 0.0;
+                        }
+                        if(!inputValue.equals(qty_used_value)
+                        && inputValue <= qty_value) {
                             mAdapter.getmValues().get(position).setQty_used(Double.valueOf(qty_used));
                             mAdapter.notifyItemChanged(position);
                         }

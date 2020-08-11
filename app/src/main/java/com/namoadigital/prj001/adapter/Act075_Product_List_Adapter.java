@@ -230,7 +230,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             setTranslation();
             //
             product_cell_iv_returned_substract.setVisibility(View.INVISIBLE);
-            product_cell_iv_returned_add.setVisibility(View.INVISIBLE);
         }
 
         private void setTranslation() {
@@ -278,7 +277,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             }
             //
             if(inventory_control == 1) {
-                if (tk_ticket_product.getQty_used() < tk_ticket_product.getQty()) {
+                if (tk_ticket_product.getQty_used() < tk_ticket_product.getQty().longValue()) {
                     product_cell_iv_applied_add.setEnabled(true);
                 }else{
                     product_cell_iv_applied_add.setEnabled(false);
