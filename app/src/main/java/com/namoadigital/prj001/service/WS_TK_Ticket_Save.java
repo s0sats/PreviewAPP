@@ -452,6 +452,29 @@ public class WS_TK_Ticket_Save extends IntentService {
                         //
                         ticketCtrlDao.addUpdate(ctrlsToUpdate,false);
                     }
+                    //
+                    if(ConstantBaseApp.MAIN_RESULT_OK.equals(resultStep.getRet_status()) && recResult.getTicket_update() == 0 ) {
+                        TK_Ticket_Step ticketStepFromDB = getTicketStepFromDB(resultStep);
+                        //Se não tem uma nova atualização, atualiza.
+                        if (ticketStepFromDB.getUpdate_required() == 0) {
+                            //Verifica se é um checkout para setar o Step como Done
+                            if (ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ticketStepFromDB.getStep_status())
+                                && stepWithCheckIn(ticketStepFromDB)
+                                && stepWithCheckout(ticketStepFromDB)
+                            ) {
+                                ticketStepFromDB.setStep_status(ConstantBaseApp.SYS_STATUS_DONE);
+                                ticketStepDao.addUpdate(ticketStepFromDB);
+                            } else {
+                                //Se não é checkout, verifica se é um checkin e muda o status para PROCESS
+                                if (ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ticketStepFromDB.getStep_status())
+                                    && stepWithCheckIn(ticketStepFromDB)
+                                ) {
+                                    ticketStepFromDB.setStep_status(ConstantBaseApp.SYS_STATUS_PROCESS);
+                                    ticketStepDao.addUpdate(ticketStepFromDB);
+                                }
+                            }
+                        }
+                    }
                 }
             }
             //
@@ -489,6 +512,16 @@ public class WS_TK_Ticket_Save extends IntentService {
             //
             actReturnList.add(actReturn);
         }
+    }
+
+    private boolean stepWithCheckout(TK_Ticket_Step ticketStepFromDB) {
+        return ToolBox_Inf.hasConsistentValueString(ticketStepFromDB.getStep_end_date())
+            && ticketStepFromDB.getStep_end_user() != null && ticketStepFromDB.getStep_end_user() > 0;
+    }
+
+    private boolean stepWithCheckIn(TK_Ticket_Step ticketStepFromDB) {
+        return ToolBox_Inf.hasConsistentValueString(ticketStepFromDB.getStep_start_date())
+            && ticketStepFromDB.getStep_start_user() != null && ticketStepFromDB.getStep_start_user() > 0;
     }
 
     private TK_Ticket_Step getTicketStepFromDB(T_TK_Ticket_Save_Rec_Result_Step resultStep) {
@@ -589,7 +622,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                     //Atualiza status dos processos filhos
                     ticketCtrl.copyCtrlStatusForInnerProcess();
                     //Se for action, faz processo de copia da foto
-                    if (ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION.equals(ticketCtrl)
+                    if (ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION.equals(ticketCtrl.getCtrl_type())
                         && ticketCtrl.getAction() != null
                         && ticketCtrl.getAction().getAction_photo_local() != null
                         && !ticketCtrl.getAction().getAction_photo_local().isEmpty()
@@ -628,7 +661,6 @@ public class WS_TK_Ticket_Save extends IntentService {
                             ).toSqlQuery()
                         );
                     }
-                    return true;
                 } else {
                     TK_Ticket ticketSent = getTicketFromSentList(recFromTo.getCustomer_code(), recFromTo.getTicket_prefix(), recFromTo.getTicket_code());
                     //ATUALIZAR TICKET PARA UPDATE REQUIRED

@@ -34,10 +34,11 @@ import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
-import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
+import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -99,31 +100,34 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      * <p></p>
      * Metodo que verifica se parametros do bundle são validos.
      * Atualizado o metodo adicionando as pk do agendamento pois, nesse caso, o prefix do ticket pode ser 0
+     * LUCHE - 07/08/2020
+     * Atualizado o metodo adicionando isCreationCtrl para permitir carregar a tela sem ter ctrl criado.
      *
      * @param mTkActionPrefix - Ticket Prefix
      * @param mTkActionCode   - Ticket Code
-     * @param mTkActionSeq    - Ticket Seq
+     * @param mTkActionSeqTmp    - Ticket Seq
      * @param mSchedulePrefix - Schedule Prefix
      * @param mScheduleCode   - Schedule Code
      * @param mScheduleExec   - Schedule Exec
+     * @param isCreationCtrl  - Se e criação de ação ou não
      * @return - Verdadeiro se a pk do ticket maior que zero ou se pk agendamento , mas ticket code e seq maior que 0
      */
     @Override
-    public boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq, int mSchedulePrefix, int mScheduleCode, int mScheduleExec) {
+    public boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeqTmp, int mSchedulePrefix, int mScheduleCode, int mScheduleExec, boolean isCreationCtrl) {
         return ((mTkActionPrefix > 0 || (mSchedulePrefix > 0 && mScheduleCode > 0 && mScheduleExec > 0))
-            && mTkActionCode > 0 && mTkActionSeq > 0
+                && mTkActionCode > 0
+                && (mTkActionSeqTmp > 0 || isCreationCtrl)
         );
     }
 
     @Override
-    public TK_Ticket_Ctrl getTicketCtrlObj(int mActionPrefix, int mActionCode, int mActionSeq, int mStepCode) {
+    public TK_Ticket_Ctrl getTicketCtrlObj(int mActionPrefix, int mActionCode, int mActionSeqTmp, int mStepCode) {
         return ticketCtrlDao.getByString(
-            new TK_Ticket_Ctrl_Sql_001(
+            new TK_Ticket_Ctrl_Sql_004(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 mActionPrefix,
                 mActionCode,
-                mActionSeq,
-                mStepCode
+                mActionSeqTmp
             ).toSqlQuery()
         );
     }
@@ -152,9 +156,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     @Override
     public int getStepColor(TK_Ticket_Step ticketStep, boolean IsCurrentStep) {
         int stepColor = ContextCompat.getColor(context,R.color.namoa_color_pipeline_next_step);
-        if(ConstantBaseApp.SYS_STATUS_DONE.equals(ticketStep.getStep_status())
-            ||ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ticketStep.getStep_status())
-        ){
+        if(StepMain.usesStatusColorInStep(ticketStep.getStep_status())){
             stepColor = ToolBox_Inf.getStatusColorV2(context,ticketStep.getStep_status());
         }else if(IsCurrentStep){
             stepColor = ContextCompat.getColor(context,R.color.namoa_status_process);
@@ -199,6 +201,40 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             tk_ticket_action.setAction_status(ConstantBaseApp.SYS_STATUS_PENDING);
             mTicketCtrl.setAction(tk_ticket_action);
         }
+    }
+
+    @Override
+    public TK_Ticket_Ctrl createTicketCtrlObj(int mActionPrefix, int mActionCode, int mStepCode) {
+        TK_Ticket tkTicket = getTicketbyPk(mActionPrefix, mActionCode);
+        TK_Ticket_Step stepInfo = getStepInfo(mActionPrefix, mActionCode, mStepCode);
+        TK_Ticket_Ctrl ticketCtrl = null;
+        if(tkTicket!= null  && stepInfo != null) {
+            try {
+                ticketCtrl = new TK_Ticket_Ctrl(
+                                0,
+                                ticketCtrlDao.getNextCtrlTicketSeqTmp(
+                                    stepInfo.getCustomer_code(),stepInfo.getTicket_prefix(),stepInfo.getTicket_code(),stepInfo.getStep_code(),null
+                                ),
+                                ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION,
+                                tkTicket.getOpen_product_code(),
+                                tkTicket.getOpen_product_id(),
+                                tkTicket.getOpen_product_desc(),
+                                tkTicket.getOpen_serial_code(),
+                                tkTicket.getOpen_serial_id(),
+                                ConstantBaseApp.SYS_STATUS_PENDING,
+                                stepInfo.getStep_order(),
+                                0
+                );
+                //Seta PK baseado no Step recebido
+                ticketCtrl.setPK(stepInfo);
+                //
+                setStartInfoIfNeed(ticketCtrl);
+                createActionIfNeed(ticketCtrl, true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return ticketCtrl;
     }
 
     //endregion
@@ -280,7 +316,12 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      * @return - String com o path local
      */
     @Override
+    //TODO VERIFICAR A NECESSIDADE DE INCLUIR QUANDO ACTION CREATION
     public String generateActionPhotoLocalPath(TK_Ticket_Action action) {
+        //Se criação de foto, devolve o nome da foto com o seq_tmp
+        if(mView.isCreationCtrl()){
+            return ToolBox_Inf.buildTicketActionImgPath(action.getCustomer_code(),action.getTicket_prefix(),action.getTicket_code(),action.getTicket_seq_tmp());
+        }
         if (action.getAction_photo_url() == null && action.getAction_photo_local() == null) {
             return ToolBox_Inf.buildTicketActionImgPath(action);
         }
@@ -338,6 +379,10 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      *
      * Modificado metodo para que ao invés de atualizar somente o control, atualize o ticket por completo,
      * garantindo o rollback em caso de erro.
+     *
+     * LUCHE - 23/08/2020
+     * Modificado metodo adicionando logica para criação do ctrl
+     *
      * @param mTicketCtrl Objeto carregado e alterado na tela.
      * @return - Verdadeiro somente se todas as atualizações forem salvas.
      */
@@ -352,13 +397,18 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             && tkTicket.getStep().get(stepIdx) != null
         ){
             int ctrlIdx = getCtrlIdx(mTicketCtrl, tkTicket.getStep().get(stepIdx));
-            if(ctrlIdx > -1){
+            if(ctrlIdx > -1 || mView.isCreationCtrl()){
                 TK_Ticket_Step ticketStep = tkTicket.getStep().get(stepIdx);
-                ticketStep.getCtrl().set(ctrlIdx,mTicketCtrl);
+                //Se cração de ctrl, add, se não seta na posição original.
+                if(mView.isCreationCtrl()) {
+                    ticketStep.getCtrl().add(mTicketCtrl);
+                }else{
+                    ticketStep.getCtrl().set(ctrlIdx, mTicketCtrl);
+                }
                 //
                 setCheckInOutWhenOneTouchStep(ticketStep,mTicketCtrl);
                 //
-                checkCloseStepForWaitingSync(ticketStep);
+                checkCloseStepForWaitingSync(ticketStep,mTicketCtrl);
                 //
                 mTicketCtrl.setUpdate_required(1);
                 ticketStep.setUpdate_required(1);
@@ -395,29 +445,31 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     /**
      * LUCHE - 05/08/2020
      * <p></p>
-     * Se step for one_touch, seta data de inicio e fim do step antes de salvar a action
+     * Se step for one_touch, seta data de inicio
      * @param ticketStep
      * @param mTicketCtrl
      */
     private void setCheckInOutWhenOneTouchStep(TK_Ticket_Step ticketStep, TK_Ticket_Ctrl mTicketCtrl) {
-        if(ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())) {
+        if(ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())
+           && !ToolBox_Inf.hasConsistentValueString(ticketStep.getStep_start_date())
+        ) {
             ticketStep.setStep_start_date(mTicketCtrl.getCtrl_start_date());
             ticketStep.setStep_start_user(mTicketCtrl.getCtrl_start_user());
             ticketStep.setStep_start_user_nick(mTicketCtrl.getCtrl_start_user_name());
-            ticketStep.setStep_end_date(mTicketCtrl.getCtrl_end_date());
-            ticketStep.setStep_end_user(mTicketCtrl.getCtrl_end_user());
-            ticketStep.setStep_end_user_nick(mTicketCtrl.getCtrl_end_user_name());
         }
     }
-
     /**
      * LUCHE - 04/08/2020
      * <p></p>
      * Verifica se precisa setar o status do step como waiting sync impedindo adicionar novo ctrl
      * e impedindo que segui para a proxima etapa.
+     * LUCHE - 10/08/2020
+     * Modificado metodo para desconsiderar o tipo do step e considerar apenas o move next para fechar ou não
+     * o step
      * @param ticketStep
+     * @param mTicketCtrl
      */
-    private void checkCloseStepForWaitingSync(TK_Ticket_Step ticketStep) {
+    private void checkCloseStepForWaitingSync(TK_Ticket_Step ticketStep, TK_Ticket_Ctrl mTicketCtrl) {
         int stepCtrlsFinalizedCounter = 0;
         for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
             if(ConstantBaseApp.SYS_STATUS_DONE.equals(ticketCtrl.getCtrl_status())
@@ -426,11 +478,15 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 stepCtrlsFinalizedCounter++;
             }
         }
-        //
+        //Se todos os ctrl estão finalizado e o step é one_touch ou for start_end com move_next_step,
+        //faz checkout
         if( stepCtrlsFinalizedCounter == ticketStep.getCtrl().size()
-            && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())
+            && ticketStep.getMove_next_step() == 1
         ){
             ticketStep.setStep_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+            ticketStep.setStep_end_date(mTicketCtrl.getCtrl_end_date());
+            ticketStep.setStep_end_user(mTicketCtrl.getCtrl_end_user());
+            ticketStep.setStep_end_user_nick(mTicketCtrl.getCtrl_end_user_name());
         }
     }
 
@@ -444,7 +500,6 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      * @return - Idx do ctrl ou -1 caso não encontre.
      */
     private int getCtrlIdx(TK_Ticket_Ctrl mTicketCtrl, TK_Ticket_Step tkTicketStep) {
-        //TODO REFAZER METODO
         for (int i = 0; i < tkTicketStep.getCtrl().size(); i++) {
             if(
                 tkTicketStep.getCtrl().get(i).getTicket_prefix() == mTicketCtrl.getTicket_prefix()

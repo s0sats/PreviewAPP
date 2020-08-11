@@ -41,6 +41,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.PipelineNewProcessDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -189,15 +190,13 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public boolean checkOnlySyncNeeds(TK_Ticket mTicket) {
         return
                 mTicket != null
-                && (mTicket.getUpdate_required() == 1
-                    || mTicket.getUpdate_required_product() == 1
-                    || mTicket.getSync_required() == 1
-                );
+                && (mTicket.getSync_required() == 1);
     }
 
     public boolean checkUpdateRequiredNeeds(TK_Ticket mTicket) {
         return mTicket != null
             && (mTicket.getUpdate_required() == 1
+                || mTicket.getUpdate_required_product() == 1
                 || isTicketInTokenFile(mTicket.getTicket_prefix(),mTicket.getTicket_code())
                 );
     }
@@ -402,12 +401,17 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return false;
     }
 
+    public Bundle getAct071ActionBundle(TK_Ticket mTicket, int stepCode, int processTkSeq, int processTkSeqTmp, boolean currentStep, boolean actionCreation) {
+        return getAct071Bundle(mTicket, stepCode, processTkSeq, processTkSeqTmp, currentStep, false, actionCreation);
+    }
+
     @Override
-    public Bundle getAct071Bundle(TK_Ticket mTicket, int stepCode, int processTkSeq, boolean currentStep, boolean actionCreation) {
+    public Bundle getAct071Bundle(TK_Ticket mTicket, int stepCode, int processTkSeq, int processTkSeqTmp, boolean currentStep, boolean ctrlCreation, boolean actionCreation) {
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket.getTicket_prefix());
         bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket.getTicket_code());
         bundle.putInt(TK_Ticket_ActionDao.TICKET_SEQ, processTkSeq);
+        bundle.putInt(TK_Ticket_ActionDao.TICKET_SEQ_TMP, processTkSeqTmp);
         bundle.putInt(TK_Ticket_ActionDao.STEP_CODE, stepCode);
         bundle.putString(TK_TicketDao.TICKET_ID, mTicket.getTicket_id());
         bundle.putString(TK_TicketDao.TYPE_PATH, mTicket.getType_path());
@@ -420,7 +424,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putString(TK_TicketDao.OPEN_PRODUCT_DESC, mTicket.getOpen_product_desc());
         bundle.putString(TK_TicketDao.ORIGIN_DESC, mTicket.getOrigin_desc());
         bundle.putBoolean(TK_TicketDao.CURRENT_STEP_ORDER, currentStep);
-        bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, false);
+        bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, ctrlCreation);
         bundle.putBoolean(Act070_Main.PARAM_ACTION_CREATION, actionCreation);
         return bundle;
     }
@@ -441,7 +445,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     true
                 );
                 break;
-
             case ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKOUT:
                 mView.showAlert(
                     hmAux_Trans.get("alert_checkout_confirm_ttl"),
@@ -455,8 +458,42 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     true
                 );
                 break;
+            case ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_ADD_NEW:
+                showNewProcessDialog(mTicket, hmAux_Trans,stepProcessBtn);
+                break;
         }
 
+    }
+
+    private void showNewProcessDialog(final TK_Ticket mTicket, HMAux hmAux_trans, StepProcessBtn stepProcessBtn) {
+        PipelineNewProcessDialog newProcessDialog =
+            new PipelineNewProcessDialog(
+                context,
+                hmAux_trans,
+                stepProcessBtn,
+                new PipelineNewProcessDialog.PipelineProcessDialogClickListener() {
+                    @Override
+                    public void onProcessActionClick(StepProcessBtn processBtn) {
+                        mView.callAct071(
+                            getAct071NewProcessoBundle(
+                                mTicket,
+                                processBtn.getStepCode()
+                            )
+                        );
+                    }
+
+                    @Override
+                    public void onCancelClick() {
+
+                    }
+                }
+            );
+        //
+        newProcessDialog.show();
+    }
+
+    private Bundle getAct071NewProcessoBundle(TK_Ticket mTicket, int stepCode) {
+        return getAct071Bundle(mTicket,stepCode,0,0,true,true,true);
     }
 
     private void setCheckinToStep(TK_Ticket mTicket, int stepCode) {
@@ -539,18 +576,18 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         if(ticketStep != null && ticketCtrl != null){
             if(isDoneOrWaitingSync(ticketStep.getStep_status())){
                 mView.callAct071(
-                    getAct071Bundle(mTicket,stepAction.getStepCode(),stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), false)
+                    getAct071ActionBundle(mTicket,stepAction.getStepCode(),stepAction.getProcessTkSeq(), stepAction.getProcessTkSeqTmp(), stepAction.isCurrentStep(), false)
                 );
             }else{
                 if(isDoneOrWaitingSync(ticketCtrl.getCtrl_status())){
                     mView.callAct071(
-                        getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), false
+                        getAct071ActionBundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(),stepAction.getProcessTkSeqTmp(), stepAction.isCurrentStep(), false
                         )
                     );
                 }else if(stepAction.isCurrentStep()) {
                     if(isStartEndActionExecution(ticketStep, ticketCtrl)){
                         mView.callAct071(
-                            getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), true)
+                            getAct071ActionBundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(),stepAction.getProcessTkSeqTmp(), stepAction.isCurrentStep(), true)
                         );
                     }else if(isOneTouchActionExecution(ticketStep, ticketCtrl)){
                         mView.showAlert(
@@ -560,7 +597,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     mView.callAct071(
-                                        getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.isCurrentStep(), true )
+                                        getAct071ActionBundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq(), stepAction.getProcessTkSeqTmp(), stepAction.isCurrentStep(), true )
                                     );
                                 }
                             },
@@ -766,7 +803,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public void generateStepCtrlsContent(TK_Ticket mTicket, ArrayList<BaseStep> source , int mainPosition ) {
         ArrayList<BaseStep> stepsCtrls = generateStepCtrls(mTicket, (StepMain) source.get(mainPosition));
         if(stepsCtrls != null && stepsCtrls.size() > 0){
-            addSelectedStepProcessToSource(source,mainPosition,stepsCtrls);
+            addSelectedStepProcessToSource(mTicket.getTicket_status(),source,mainPosition,stepsCtrls);
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_update_stepper_error_ttl"),
@@ -782,17 +819,21 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
-    private void addSelectedStepProcessToSource(ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
+    private void addSelectedStepProcessToSource(String ticket_status, ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
         int targetIdx = mainPosition + 1;
         try{
-            //Adiciona btn de checkin se houver necessidade
-            addCheckinCtrl(source,mainPosition,stepsCtrls);
-            /*//Adiciona os obj / processos
-            source.addAll(targetIdx,stepsCtrls);*/
-            //Adiciona btn de add processo se houver necessidade
-            addNewProcess(source,mainPosition,stepsCtrls);
-            //Adiciona btn de checkout se houver necessidade
-            addCheckOutCtrl(source,mainPosition,stepsCtrls);
+            //Se status do ticket for cancelado ou rejeitado, nem processa botões de ação
+            if(!isBadStatus(ticket_status)) {
+                //Adiciona btn de checkin se houver necessidade
+                addCheckinCtrl(source, mainPosition, stepsCtrls);
+                /*//Adiciona os obj / processos
+                source.addAll(targetIdx,stepsCtrls);*/
+                //Adiciona btn de add processo se houver necessidade
+                addNewProcess(source, mainPosition, stepsCtrls);
+                //Adiciona btn de checkout se houver necessidade
+                addCheckOutCtrl(source, mainPosition, stepsCtrls);
+                //
+            }
             //
             if(source.addAll(targetIdx,stepsCtrls)){
                 mView.informAdapterInsertRange(targetIdx,stepsCtrls.size());
@@ -810,7 +851,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         StepMain stepMain = (StepMain) source.get(mainPosition);
         //
         if( !isDoneOrWaitingSync(stepMain.getStepStatus())
-            && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(stepMain.getStepType())
+            && !isBadStatus(stepMain.getStepStatus())
+            //&& ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(stepMain.getStepType())
+            && !stepMain.isMove_next_step()
         ){
             BaseStep firstPlannedObj = getFirstPlannedObj(stepsCtrls);
             if(firstPlannedObj != null){
@@ -841,11 +884,15 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
         return null;
     }
-
+    //TODO VERICAR NA WEB SOBRE QUANDO LIBERAR O BOTÃO NO CASO DO ONE_TOUCH
     private void addNewProcess(ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
         StepMain stepMain = (StepMain) source.get(mainPosition);
-        if(!ConstantBaseApp.SYS_STATUS_DONE.equals(stepMain.getStepStatus())
-           && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(stepMain.getStepStatus())
+        if(
+            /*!ConstantBaseApp.SYS_STATUS_DONE.equals(stepMain.getStepStatus())
+             && !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(stepMain.getStepStatus())*/
+           !isDoneOrWaitingSync(stepMain.getStepStatus())
+           && !isBadStatus(stepMain.getStepStatus())
+           && ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate())
            && stepMain.isCurrentStep()
            && stepMain.isAllow_new_obj()
         ){
@@ -862,7 +909,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     private void addCheckinCtrl(ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
         StepMain stepMain = (StepMain) source.get(mainPosition);
-        if(stepMain.isCurrentStep()
+        if( !isBadStatus(stepMain.getStepStatus())
+            && stepMain.isCurrentStep()
             && (ConstantBaseApp.SYS_STATUS_PENDING.equals(stepMain.getStepStatus()) || ConstantBaseApp.SYS_STATUS_PROCESS.equals(stepMain.getStepStatus()))
             && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(stepMain.getStepType())
             && !ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate())
@@ -948,6 +996,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         stepAction.setStepCode(tkStepCtrl.getStep_code());
                         stepAction.setStepDescription(hmAux_Trans.get("process_action_tll"));
                         stepAction.setProcessTkSeq(tkStepCtrl.getTicket_seq());
+                        //PK DO APP
+                        stepAction.setProcessTkSeqTmp(tkStepCtrl.getTicket_seq_tmp());
                         stepAction.setProductDesc(tkStepCtrl.getProduct_desc());
                         stepAction.setSerialId(tkStepCtrl.getSerial_id());
                         //stepAction.setSiteDesc(tkStepCtrl.getSite_desc());
@@ -978,6 +1028,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         stepApproval.setEndDate(tkStepCtrl.getCtrl_end_date());
                         stepApproval.setEndUser(tkStepCtrl.getCtrl_start_user_name());
                         stepApproval.setHasRejection(tkStepCtrl.getRejection() != null && tkStepCtrl.getRejection().size() > 0 );
+                        stepApproval.setCurrentStep(stepMain.isCurrentStep());
+                        stepApproval.setStepAlreadyCheckedIn(ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate()));
+                        stepApproval.setProcessPlanned(tkStepCtrl.getObj_planned() == 1);
+                        //
                         stepsCtrls.add(stepApproval);
                         break;
                     case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
@@ -989,6 +1043,17 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             //
         }
         return stepsCtrls;
+    }
+
+    /**
+     * Verifica se é um dos status que para o ticket do jeito que esta, cancelled e rejeited
+     * @param status
+     * @return
+     */
+    public boolean isBadStatus(String status){
+        return
+            ConstantBaseApp.SYS_STATUS_CANCELLED.equals(status)
+            || ConstantBaseApp.SYS_STATUS_REJECTED.equals(status);
     }
 
     //endregion

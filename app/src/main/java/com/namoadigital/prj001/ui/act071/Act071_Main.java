@@ -125,6 +125,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private boolean mPipelineHeaderIsCurrentStepOrder;
     private boolean isCreationCtrl;
     private boolean isCreationAction;
+    private int mActionSeqTmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -221,7 +222,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             hmAux_Trans
         );
         //
-        if (mPresenter.validateBundleParams(mActionPrefix, mActionCode, mActionSeq, mSchedulePrefix, mScheduleCode, mScheduleExec)) {
+        //if (mPresenter.validateBundleParams(mActionPrefix, mActionCode, mActionSeq, mSchedulePrefix, mScheduleCode, mScheduleExec,isCreationCtrl)) {
+        if (mPresenter.validateBundleParams(mActionPrefix, mActionCode, mActionSeqTmp, mSchedulePrefix, mScheduleCode, mScheduleExec,isCreationCtrl)) {
             iniHeaderFrag();
             updateActionData();
             //
@@ -242,6 +244,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mActionPrefix = requestingBundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
             mActionCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
             mActionSeq = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ, -1);
+            //LUCHE - 10/08/2020 - SeqTemp nova pk
+            mActionSeqTmp = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, -1);
             mStepCode = requestingBundle.getInt(TK_Ticket_CtrlDao.STEP_CODE, -1);
             mTicketID = requestingBundle.getString(TK_TicketDao.TICKET_ID, "");
             mTypePath = requestingBundle.getString(TK_TicketDao.TYPE_PATH, "");
@@ -269,6 +273,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mActionPrefix = -1;
             mActionCode = -1;
             mActionSeq = -1;
+            mActionSeqTmp = -1;
             mStepCode = -1;
             mTicketID = "";
             mTypePath = "";
@@ -316,17 +321,38 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void updateActionData() {
-        mTicketCtrl = mPresenter.getTicketCtrlObj(mActionPrefix, mActionCode, mActionSeq,mStepCode);
-        if (mTicketCtrl != null) {
-            mPresenter.setStartInfoIfNeed(mTicketCtrl);
-            mPresenter.createActionIfNeed(mTicketCtrl,isCreationAction);
-            if(mTicketCtrl.getAction() != null){
-                setReadOnly();
-                setDataToViews();
+        if(isCreationCtrl){
+            mTicketCtrl = mPresenter.createTicketCtrlObj(mActionPrefix, mActionCode, mStepCode);
+            if(mTicketCtrl != null) {
+                setActionDataToUI();
             }else{
-                //TODO CONFIRMAR SE EXIBIR MSG
+                showAlert(
+                    hmAux_Trans.get("alert_error_on_process_creation_ttl"),
+                    hmAux_Trans.get("alert_error_on_process_creation_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            onBackPressed();
+                        }
+                    }
+                );
+            }
+        }else{
+            mTicketCtrl = mPresenter.getTicketCtrlObj(mActionPrefix, mActionCode, mActionSeqTmp,mStepCode);
+            if (mTicketCtrl != null) {
+                mPresenter.setStartInfoIfNeed(mTicketCtrl);
+                mPresenter.createActionIfNeed(mTicketCtrl,isCreationAction);
+                setActionDataToUI();
+            } else {
                 paramErrorFlow();
             }
+        }
+    }
+
+    private void setActionDataToUI() {
+        if (mTicketCtrl.getAction() != null) {
+            setReadOnly();
+            setDataToViews();
         } else {
             paramErrorFlow();
         }
@@ -444,6 +470,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 }
             };
         }
+    }
+
+    @Override
+    public boolean isCreationCtrl() {
+        return isCreationCtrl;
     }
 
     private void copyFiles(String fromFile, String toFile) throws IOException {

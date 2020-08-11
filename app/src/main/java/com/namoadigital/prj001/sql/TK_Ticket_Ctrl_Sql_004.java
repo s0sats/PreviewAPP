@@ -5,8 +5,9 @@ import com.namoadigital.prj001.database.Specification;
 
 /**
  * LUCHE - 30/07/2020
- * Query que seleciona o proximo ticket_seq_tmp para ser usado no ctrl e processos filhos
- * Usada no TK_Ticket_CtrlDao
+ * Query que seleciona ctrl pela pk tmp
+ * LUCHE - 10/08/2020
+ * Atualizado comentario a cima o.O
  */
 public class TK_Ticket_Ctrl_Sql_004 implements Specification {
     private long customer_code;

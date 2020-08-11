@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -71,7 +72,21 @@ public class TK_Ticket_Ctrl {
         this.step_order = -1;
     }
 
-//    public void setPK(TK_Ticket tk_ticket) {
+    public TK_Ticket_Ctrl(int ticket_seq, int ticket_seq_tmp, String ctrl_type, @Nullable Integer product_code, @Nullable String product_id, @Nullable String product_desc, @Nullable Integer serial_code, @Nullable String serial_id, String ctrl_status, int step_order, int obj_planned) {
+        this.ticket_seq = ticket_seq;
+        this.ticket_seq_tmp = ticket_seq_tmp;
+        this.ctrl_type = ctrl_type;
+        this.product_code = product_code;
+        this.product_id = product_id;
+        this.product_desc = product_desc;
+        this.serial_code = serial_code;
+        this.serial_id = serial_id;
+        this.ctrl_status = ctrl_status;
+        this.step_order = step_order;
+        this.obj_planned = obj_planned;
+    }
+
+    //    public void setPK(TK_Ticket tk_ticket) {
 //        this.customer_code = tk_ticket.getCustomer_code();
 //        this.ticket_prefix = tk_ticket.getTicket_prefix();
 //        this.ticket_code = tk_ticket.getTicket_code();
@@ -106,31 +121,38 @@ public class TK_Ticket_Ctrl {
         this.ticket_code = tk_ticket_step.getTicket_code();
         this.step_code = tk_ticket_step.getStep_code();
         //Seta a PK no tipo do controle
-        setPKIntoProcess();
+        if(this.ctrl_type != null && !this.ctrl_type.isEmpty()) {
+            setPKIntoProcess();
+        }
     }
 
     public void setPKIntoProcess() {
-        switch (this.ctrl_type) {
-            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
-                if(this.action != null) {
-                    this.action.setPK(this);
-                }
-                break;
-            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
-                if(this.measure != null) {
-                    this.measure.setPK(this);
-                }
-                break;
-            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
-                if(this.approval != null){
-                    this.approval.setPK(this);
-                }
-                if(this.rejection != null){
-                    for (TK_Ticket_Approval_Rejection tk_ticket_approval_rejection : this.rejection) {
-                        tk_ticket_approval_rejection.setPK(this);
+        try {
+            switch (this.ctrl_type) {
+                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                    if (this.action != null) {
+                        this.action.setPK(this);
                     }
-                }
-                break;
+                    break;
+                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                    if (this.measure != null) {
+                        this.measure.setPK(this);
+                    }
+                    break;
+                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                    if (this.approval != null) {
+                        this.approval.setPK(this);
+                    }
+                    if (this.rejection != null) {
+                        for (TK_Ticket_Approval_Rejection tk_ticket_approval_rejection : this.rejection) {
+                            tk_ticket_approval_rejection.setPK(this);
+                        }
+                    }
+                    break;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            ToolBox_Inf.registerException(getClass().getName(),e);
         }
     }
 

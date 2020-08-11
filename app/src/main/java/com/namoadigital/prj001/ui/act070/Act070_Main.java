@@ -179,6 +179,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_error_on_set_checkout_msg");
         transList.add("alert_offline_save_ttl");
         transList.add("alert_offline_save_msg");
+        //DIALOG DE EXPONTANEOS
+        transList.add("dialog_pipeline_main_title");
+        transList.add("dialog_pipeline_main_msg");
+        transList.add("dialog_pipeline_btn_process_action");
+        transList.add("dialog_pipeline_btn_cancel");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -263,7 +268,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             ToolBox_Inf.getStatusColorV2(context,mTicket.getTicket_status()),
             "\\" + mTicket.getOrigin_desc(),
             hmAux_Trans.get("please_sync_lbl"),
-            mPresenter.checkOnlySyncNeeds(mTicket)
+            mPresenter.checkOnlySyncNeeds(mTicket) || mPresenter.checkUpdateRequiredNeeds(mTicket)
         );
         //
         FragmentTransaction ft = fm.beginTransaction();
@@ -499,8 +504,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public void updateSyncRequiredByFCM() {
         mTicket.setSync_required(1);
         //
-        //setTicketSync();
-        //REPORTAR PARA FRG HEADER
+        if(mFrgPipelineHeader != null) {
+            mFrgPipelineHeader.updateSyncRequired(true);
+        }
     }
 
     private void initFCMReceiver() {

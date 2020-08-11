@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.support.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
@@ -14,7 +15,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
 import com.namoadigital.prj001.model.TK_Ticket_Approval_Rejection;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
-import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Rejection_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
@@ -334,12 +335,19 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }
         }
         //
+        return getNextCtrlTicketSeqTmp(
+            tk_ticket_ctrl.getCustomer_code(),
+            tk_ticket_ctrl.getTicket_prefix(),
+            tk_ticket_ctrl.getTicket_code(),
+            tk_ticket_ctrl.getStep_code(),
+            dbInstance
+        );
+    }
+
+    public int getNextCtrlTicketSeqTmp(long customer_code, int ticket_prefix, int ticket_code, int step_code,@Nullable SQLiteDatabase dbInstance) throws Exception {
         HMAux nextTmp = getByStringHM(
             new TK_Ticket_Ctrl_Sql_003(
-                tk_ticket_ctrl.getCustomer_code(),
-                tk_ticket_ctrl.getTicket_prefix(),
-                tk_ticket_ctrl.getTicket_code(),
-                tk_ticket_ctrl.getStep_code()
+                customer_code, ticket_prefix, ticket_code, step_code
             ).toSqlQuery(),
             dbInstance
         );
@@ -636,11 +644,12 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 //
                 tk_ticket_ctrl.setAction(
                     ticketActionDao.getByString(
-                        new TK_Ticket_Action_Sql_001(
+                        new TK_Ticket_Action_Sql_002(
                             tk_ticket_ctrl.getCustomer_code(),
                             tk_ticket_ctrl.getTicket_prefix(),
                             tk_ticket_ctrl.getTicket_code(),
-                            tk_ticket_ctrl.getTicket_seq()
+                            tk_ticket_ctrl.getTicket_seq_tmp(),
+                            tk_ticket_ctrl.getStep_code()
                         ).toSqlQuery()
 
                     )
