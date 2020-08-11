@@ -10,6 +10,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface Act075_Main_Contract {
 
@@ -61,6 +62,10 @@ public interface Act075_Main_Contract {
         void processSaveReturn(int ticket_prefix, int ticket_code, String mLink);
         //
         boolean hasApproveProfile(int mTkPrefix, int mTkCode, int mTkSeq, int stepCode);
+
+        List<TK_Ticket_Product> getTicketProductListForApproval(int mTkPrefix, int mTkCode);
+
+        void saveAppliedProduct(TK_Ticket ticket, ArrayList<TK_Ticket_Product> getmValues);
         //
     }
 }

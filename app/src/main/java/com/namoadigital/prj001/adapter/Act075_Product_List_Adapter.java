@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +30,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_GET_MATERIAL;
+import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_OPERATIONAL;
+import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_RETURN_MATERIAL;
 
 public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -445,17 +451,21 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
         //
         private void setDetailsForApprovalVisibility() {
-            if(!hasWithdrawApproved && !hasAppliedApproved){
+            if(APPROVAL_GET_MATERIAL.equalsIgnoreCase(tkTicketApproval.getApproval_type())){
                 cl_withdrawn.setVisibility(View.VISIBLE);
                 cl_applied.setVisibility(View.GONE);
                 cl_returned.setVisibility(View.GONE);
             }
-            if(hasWithdrawApproved && !hasAppliedApproved){
+            if( APPROVAL_RETURN_MATERIAL.equalsIgnoreCase(tkTicketApproval.getApproval_type())){
                 cl_withdrawn.setVisibility(View.GONE);
                 cl_applied.setVisibility(View.VISIBLE);
                 cl_returned.setVisibility(View.GONE);
             }
-
+            if( APPROVAL_OPERATIONAL.equalsIgnoreCase(tkTicketApproval.getApproval_type())){
+                cl_withdrawn.setVisibility(View.VISIBLE);
+                cl_applied.setVisibility(View.VISIBLE);
+                cl_returned.setVisibility(View.VISIBLE);
+            }
         }
 
         //
@@ -519,9 +529,15 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     switch (checkedId) {
                         case R.id.act075_approval_form_rg_approval:
                             mApproveListener.onSelectOption(true);
+                            mApproveListener.setSaveEnable(true);
                             break;
                         case R.id.act075_approval_form_rg_decline:
                             mApproveListener.onSelectOption(false);
+                            if (mket_comment.getText().toString().isEmpty()) {
+                                mApproveListener.setSaveEnable(false);
+                            }else{
+                                mApproveListener.setSaveEnable(true);
+                            }
                             break;
                     }
                 }
@@ -537,6 +553,28 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                 rg_decline.setEnabled(false);
                 mRadioGroup.setEnabled(false);
                 mket_comment.setEnabled(false);
+            }else{
+                mket_comment.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        String comment = s.toString();
+                        if (comment.isEmpty() && rg_decline.isChecked()) {
+                            mApproveListener.setSaveEnable(false);
+                        }else{
+                            mApproveListener.setSaveEnable(true);
+                        }
+                    }
+                });
             }
             //
         }
@@ -580,6 +618,8 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
     public interface OnApproveInteract {
         void onSelectOption(boolean isApproved);
+        void setSaveEnable(boolean isEnable);
+
     }
 
 }

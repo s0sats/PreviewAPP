@@ -78,7 +78,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     FabMenuItem fabProduct;
     Act075_Main_Presenter mPresenter;
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
-    private ArrayList<TK_Ticket_Product> tk_ticket_products = new ArrayList<>();
+    private List<TK_Ticket_Product> tk_ticket_products = new ArrayList<>();
     private Act075_Product_List_Adapter mAdapter;
     private int mTkPrefix;
     private int mTkCode;
@@ -139,7 +139,6 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 //        btnSave.requestFocus();
         //
         tkTicket = mPresenter.getTicket(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix,mTkCode);
-        tk_ticket_products = tkTicket.getProduct();
         //
         if(act_profile == 1) {
             //
@@ -152,13 +151,14 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             }
         }else{
             String ticketCtrlStatus = mPresenter.getSelectedCtrlStatus(mTkPrefix,mTkCode, mTkSeq, mStepCode);
+
             if( mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)
                     && tkTicket.getUpdate_required_product() == 1
-                    && (Constant.SYS_STATUS_PENDING.equalsIgnoreCase(ticketCtrlStatus)
-                    ||Constant.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketCtrlStatus))
+                    && (isEditable(Constant.SYS_STATUS_PENDING, ticketCtrlStatus, Constant.SYS_STATUS_PROCESS, ticketCtrlStatus))
                     && hasUpdated){
                 btnSave.setEnabled(true);
             }else{
+                hasUpdated = false;
                 btnSave.setEnabled(false);
             }
             setProductForApproveList(ticketCtrlStatus);
@@ -221,6 +221,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private void setProductList() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         rvProduct.setLayoutManager(layoutManager);
+        tk_ticket_products = tkTicket.getProduct();
         //
         mAdapter = new Act075_Product_List_Adapter(
                 context,
@@ -228,8 +229,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 tk_ticket_products,
                 act_profile,
                 tkTicket.getInventory_control(),
-                tkTicket.getTicket_status().equalsIgnoreCase(Constant.SYS_STATUS_PENDING)
-                        ||tkTicket.getTicket_status().equalsIgnoreCase(Constant.SYS_STATUS_PROCESS),
+                isEditable(tkTicket.getTicket_status(), Constant.SYS_STATUS_PENDING, tkTicket.getTicket_status(), Constant.SYS_STATUS_PROCESS),
                 mPresenter.getWithdrawStatus(tkTicket),
                 mPresenter.getAppliedStatus(tkTicket),
                 this
@@ -238,10 +238,16 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         rvProduct.setAdapter(mAdapter);
     }
 
+    private boolean isEditable(String ticket_status, String sysStatusPending, String ticket_status2, String sysStatusProcess) {
+        return ticket_status.equalsIgnoreCase(sysStatusPending)
+                || ticket_status2.equalsIgnoreCase(sysStatusProcess);
+    }
+
     private void setProductForApproveList(String ticketCtrlStatus) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         rvProduct.setLayoutManager(layoutManager);
         //
+        tk_ticket_products = mPresenter.getTicketProductListForApproval(mTkPrefix,mTkCode);
         TK_Ticket_Approval ticketApproval = mPresenter.getTicketApproval(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix, mTkCode, mTkSeq, mStepCode);
         //
         mAdapter = new Act075_Product_List_Adapter(
@@ -251,14 +257,12 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 ticketApproval,
                 act_profile,
                 tkTicket.getInventory_control(),
-                Constant.SYS_STATUS_PENDING.equalsIgnoreCase(ticketCtrlStatus)
-                        ||Constant.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketCtrlStatus),
+                isEditable(Constant.SYS_STATUS_PENDING, ticketCtrlStatus, Constant.SYS_STATUS_PROCESS, ticketCtrlStatus),
                 mPresenter.getWithdrawStatus(tkTicket),
                 mPresenter.getAppliedStatus(tkTicket),
                 this
         );
         //
-        rvProduct.setItemViewCacheSize(tk_ticket_products.size());
         rvProduct.setAdapter(mAdapter);
     }
 
@@ -406,10 +410,16 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             @Override
             public void onClick(View v) {
                 if(act_profile == 1) {
-                    if (ToolBox_Con.isOnline(context)) {
-                        mPresenter.saveproduct(tkTicket.getScn(), (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
-                    } else {
-                        ToolBox_Inf.showNoConnectionDialog(context);
+                    if(!mPresenter.getWithdrawStatus(tkTicket)){
+                        if (ToolBox_Con.isOnline(context)) {
+                            mPresenter.saveproduct(tkTicket.getScn(), (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+                        } else {
+                            ToolBox_Inf.showNoConnectionDialog(context);
+                        }
+                    }else{
+                        if(!mPresenter.getAppliedStatus(tkTicket)){
+                            mPresenter.saveAppliedProduct(tkTicket, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+                        }
                     }
                 }else if(act_profile == 2){
                     if(mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)) {
@@ -506,22 +516,42 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                     showMsg(hmAux_Trans.get("alert_product_add_sucess_ttl"), hmAux_Trans.get("alert_product_add_sucess_msg"));
                 }else if (WS_TK_Ticket_Product_Save.TICKET_FULL.equalsIgnoreCase(hmAux.get(WS_TK_Ticket_Product_Save.PRODUCT_SAVE_RETURN_KEY))){
                     showMsg(hmAux_Trans.get("alert_ticket_updated_ttl"), hmAux_Trans.get("alert_ticket_updated_msg"));
-                }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
-                    wsProcess = "";
-                    mPresenter.processSaveReturn(tkTicket.getTicket_prefix(), tkTicket.getTicket_code(), mLink);
                 }
             }
             refreshUI();
+        }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+            wsProcess = "";
+            mPresenter.processSaveReturn(tkTicket.getTicket_prefix(), tkTicket.getTicket_code(), mLink);
         }
         progressDialog.dismiss();
     }
 
     private void refreshUI() {
         tkTicket = mPresenter.getTicket(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix,mTkCode);
-        tk_ticket_products = tkTicket.getProduct();
-        setProductList();
-        mAdapter.setmValues(tk_ticket_products);
-        updateSaveButton(false);
+        if(act_profile == 1) {
+            tk_ticket_products = tkTicket.getProduct();
+            setProductList();
+            mAdapter.setmValues(tk_ticket_products);
+            if(tkTicket.getUpdate_required_product() == 1
+                    && (isEditable(Constant.SYS_STATUS_PENDING, tkTicket.getTicket_status(), Constant.SYS_STATUS_PROCESS, tkTicket.getTicket_status()))){
+                btnSave.setEnabled(true);
+            }else{
+                hasUpdated = false;
+                btnSave.setEnabled(false);
+            }
+        }else{
+            String ticketCtrlStatus = mPresenter.getSelectedCtrlStatus(mTkPrefix,mTkCode, mTkSeq, mStepCode);
+            if( mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)
+                    && tkTicket.getUpdate_required_product() == 1
+                    && (isEditable(Constant.SYS_STATUS_PENDING, ticketCtrlStatus, Constant.SYS_STATUS_PROCESS, ticketCtrlStatus))
+            ){
+                btnSave.setEnabled(true);
+            }else{
+                hasUpdated = false;
+                btnSave.setEnabled(false);
+            }
+            setProductForApproveList(ticketCtrlStatus);
+        }
     }
 
     private void callAct070() {
@@ -549,6 +579,14 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         transList.add("alert_product_add_sucess_msg");
         transList.add("alert_ticket_updated_ttl");
         transList.add("alert_ticket_updated_msg");
+        //
+        transList.add("alert_error_on_reject_ttl");
+        transList.add("alert_error_on_reject_msg");
+        transList.add("alert_error_on_approve_ttl");
+        transList.add("alert_error_on_approve_msg");
+        transList.add("alert_approval_access_denied_ttl");
+        transList.add("alert_approval_access_denied_msg");
+        transList.add("ticket_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -731,7 +769,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
     @Override
     public void showAlert(String ttl, String msg, DialogInterface.OnClickListener listenerOk, boolean showNegative) {
-
+        ToolBox.alertMSG(context, ttl, msg, listenerOk, 0);
     }
 
     @Override
@@ -750,8 +788,26 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     }
 
     @Override
+    public void setSaveEnable(boolean isEnable) {
+        String ticketCtrlStatus = mPresenter.getSelectedCtrlStatus(mTkPrefix,mTkCode, mTkSeq, mStepCode);
+        if (!isEditable(Constant.SYS_STATUS_PENDING, ticketCtrlStatus, Constant.SYS_STATUS_PROCESS, ticketCtrlStatus)) {
+            updateSaveButton(false);
+        }else{
+            updateSaveButton(isEnable);
+        }
+    }
+
+    @Override
     public void onSelectOption(boolean isApproved) {
         this.isApproved = isApproved;
-        updateSaveButton(true);
+        String ticketCtrlStatus = mPresenter.getSelectedCtrlStatus(mTkPrefix,mTkCode, mTkSeq, mStepCode);
+        if((act_profile ==2
+            && !isEditable(Constant.SYS_STATUS_PENDING, ticketCtrlStatus, Constant.SYS_STATUS_PROCESS, ticketCtrlStatus))){
+            updateSaveButton(false);
+            btnSave.setVisibility(View.GONE);
+        }else {
+
+            updateSaveButton(true);
+        }
     }
 }

@@ -30,11 +30,11 @@ import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
-import com.namoadigital.prj001.sql.TK_Ticket_Approval_Rejection_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_003;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -270,60 +270,52 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
 
     @Override
     public void saveApproval(TK_Ticket_Approval ticketApproval, boolean isApproved, String approveComments) {
-        if (isApproved) {
-            ticketApproval.setApproval_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
-            ticketApproval.setApproval_comments(approveComments);
-            TK_Ticket selectedTicket = getTicket(ticketApproval.getCustomer_code(), ticketApproval.getTicket_prefix(), ticketApproval.getTicket_code());
-            selectedTicket.setUpdate_required(1);
-            TK_Ticket_Step selectedStep = getSelectedStep(ticketApproval.getTicket_prefix(), ticketApproval.getTicket_code(), ticketApproval.getStep_code());
-            selectedStep.setUpdate_required(1);
-            selectedStep.setStep_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
-            TK_Ticket_Ctrl selectedCtrl = getSelectedCtrl(ticketApproval.getTicket_prefix(), ticketApproval.getTicket_code(), ticketApproval.getTicket_seq(), ticketApproval.getStep_code());
-            selectedCtrl.setUpdate_required(1);
-            selectedCtrl.setCtrl_end_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-            selectedCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
-            DaoObjReturn daoTicketReturn = ticketDao.addUpdate(selectedTicket);
-            DaoObjReturn daoStepReturn = ticketStepDao.addUpdate(selectedStep);
-            DaoObjReturn daoCtrlReturn = tkTicketCtrlDao.addUpdate(selectedCtrl);
-            DaoObjReturn daoApprovalReturn = ticketApprovalDao.addUpdate(ticketApproval);
-            if (!daoTicketReturn.hasError()
-                    &&  !daoStepReturn.hasError()
-                    &&  !daoCtrlReturn.hasError()
-                    &&  !daoApprovalReturn.hasError()
-            ) {
-                executeTicketSaveProcess();
-            } else {
-                mView.showMsg(
-                        hmAux_Trans.get("alert_error_on_approve_ttl"),
-                        hmAux_Trans.get("alert_error_on_approve_msg")
-                );
-            }
-        } else {
-            TK_Ticket_Approval_Rejection rejection = getRejectionPKObj(ticketApproval);
-            rejection.setRejection_user(ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context)));
-            rejection.setRejection_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
-            rejection.setRejection_date(ToolBox_Inf.getDateHourStr());
-
-            List<TK_Ticket_Approval_Rejection> query = ticketApprovalRejectionDao.query(new TK_Ticket_Approval_Rejection_Sql_001(
-                    rejection.getCustomer_code(),
-                    rejection.getTicket_prefix(),
-                    rejection.getTicket_code(),
-                    rejection.getTicket_seq(),
-                    rejection.getStep_code()).toSqlQuery()
-            );
-            rejection.setSeq(query.size() + 1);
-            rejection.setRejection_comments(approveComments);
-            DaoObjReturn daoObjReturn = ticketApprovalRejectionDao.addUpdate(rejection);
-            if (!daoObjReturn.hasError()) {
-                executeTicketSaveProcess();
-            } else {
-                mView.showMsg(
-                        hmAux_Trans.get("alert_error_on_reject_ttl"),
-                        hmAux_Trans.get("alert_error_on_reject_msg")
-                );
-            }
+        if (!isApproved) {
+            ticketApproval.setApproval_status(ConstantBaseApp.SYS_STATUS_REJECTED);
+            prepareApprovalData(ticketApproval, approveComments);
+        }else {
+            ticketApproval.setApproval_status(ConstantBaseApp.SYS_STATUS_DONE);
+            prepareApprovalData(ticketApproval, approveComments);
         }
     }
+
+    private void prepareApprovalData(TK_Ticket_Approval ticketApproval, String approveComments) {
+        ticketApproval.setApproval_comments(approveComments);
+        //
+        TK_Ticket selectedTicket = getTicket(ticketApproval.getCustomer_code(), ticketApproval.getTicket_prefix(), ticketApproval.getTicket_code());
+        TK_Ticket_Step selectedStep = getSelectedStep(ticketApproval.getTicket_prefix(), ticketApproval.getTicket_code(), ticketApproval.getStep_code());
+        TK_Ticket_Ctrl selectedCtrl = getSelectedCtrl(ticketApproval.getTicket_prefix(), ticketApproval.getTicket_code(), ticketApproval.getTicket_seq(), ticketApproval.getStep_code());
+        //
+        selectedCtrl.setUpdate_required(1);
+        selectedStep.setUpdate_required(1);
+        if(selectedCtrl.getCtrl_start_date() == null
+        || selectedCtrl.getCtrl_start_date().isEmpty() ) {
+            selectedCtrl.setCtrl_start_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        }
+        selectedCtrl.setCtrl_end_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        selectedCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+        selectedCtrl.setApproval(ticketApproval);
+        //
+        setCheckInOutWhenOneTouchStep(selectedStep, selectedCtrl);
+        DaoObjReturn daoTicketReturn = ticketDao.addUpdate(selectedTicket);
+        DaoObjReturn daoStepReturn = ticketStepDao.addUpdate(selectedStep);
+        DaoObjReturn daoCtrlReturn = tkTicketCtrlDao.addUpdate(selectedCtrl);
+        DaoObjReturn daoApprovalReturn = ticketApprovalDao.addUpdate(ticketApproval);
+        //
+        if (!daoTicketReturn.hasError()
+                &&  !daoStepReturn.hasError()
+                &&  !daoCtrlReturn.hasError()
+                &&  !daoApprovalReturn.hasError()
+        ) {
+            executeTicketSaveProcess();
+        } else {
+            mView.showMsg(
+                    hmAux_Trans.get("alert_error_on_approve_ttl"),
+                    hmAux_Trans.get("alert_error_on_approve_msg")
+            );
+        }
+    }
+
 
     private void executeTicketSaveProcess() {
         if (ToolBox_Con.isOnline(context)) {
@@ -436,13 +428,39 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
         }
     }
 
+    @Override
+    public List<TK_Ticket_Product> getTicketProductListForApproval(int mTkPrefix, int mTkCode) {
+        return ticketProductDao.query(
+                new TK_Ticket_Product_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mTkPrefix,
+                        mTkCode
+                ).toSqlQuery()
+        );
+
+    }
+
+    @Override
+    public void saveAppliedProduct(TK_Ticket ticket, ArrayList<TK_Ticket_Product> getmValues) {
+        ticket.setUpdate_required_product(1);
+        ticketDao.addUpdate(ticket);
+        updateTicketProducts(getmValues);
+        executeTicketSaveProcess();
+    }
+
+    private void updateTicketProducts( ArrayList<TK_Ticket_Product> ticket_products) {
+        for (TK_Ticket_Product ticket_product : ticket_products) {
+            ticketProductDao.addUpdate(ticket_product);
+        }
+    }
+
+
     public boolean userHasMaterialApprovalAccess(Integer main_user) {
         if (main_user != null) {
             if (ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(main_user.toString())) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -451,11 +469,11 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     }
 
     private String getResultSaveMsgFormmated(WS_TK_Ticket_Save.TicketSaveActReturn actReturn) {
-        if (actReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK)) {
-            return actReturn.getRetStatus();
-        } else {
+//        if (actReturn.getRetStatus().equals(ConstantBaseApp.MAIN_RESULT_OK)) {
+//            return actReturn.getRetStatus();
+//        } else {
             return actReturn.isProcessError() ? actReturn.getProcessStatus() + "\n" + actReturn.getProcessMsg() : actReturn.getRetStatus() + "\n" + actReturn.getRetMsg();
-        }
+//        }
     }
 
     private TK_Ticket_Approval_Rejection getRejectionPKObj(TK_Ticket_Approval ticketApproval) {
@@ -467,5 +485,33 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
         aux.setStep_code(ticketApproval.getStep_code());
         return aux;
 
+    }
+
+    private void setCheckInOutWhenOneTouchStep(TK_Ticket_Step ticketStep, TK_Ticket_Ctrl mTicketCtrl) {
+        if(ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())) {
+            ticketStep.setStep_start_date(mTicketCtrl.getCtrl_start_date());
+            ticketStep.setStep_start_user(mTicketCtrl.getCtrl_start_user());
+            ticketStep.setStep_start_user_nick(mTicketCtrl.getCtrl_start_user_name());
+            ticketStep.setStep_end_date(mTicketCtrl.getCtrl_end_date());
+            ticketStep.setStep_end_user(mTicketCtrl.getCtrl_end_user());
+            ticketStep.setStep_end_user_nick(mTicketCtrl.getCtrl_end_user_name());
+        }
+    }
+
+    private void checkCloseStepForWaitingSync(TK_Ticket_Step ticketStep) {
+        int stepCtrlsFinalizedCounter = 0;
+        for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
+            if(ConstantBaseApp.SYS_STATUS_DONE.equals(ticketCtrl.getCtrl_status())
+                    || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ticketCtrl.getCtrl_status())
+            ){
+                stepCtrlsFinalizedCounter++;
+            }
+        }
+        //
+        if( stepCtrlsFinalizedCounter == ticketStep.getCtrl().size()
+                && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())
+        ){
+            ticketStep.setStep_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+        }
     }
 }
