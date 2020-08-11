@@ -60,7 +60,6 @@ public class TK_Ticket_Ctrl {
     @Expose
     @Nullable
     private TK_Ticket_Approval approval;
-    @Expose
     @Nullable
     private ArrayList<TK_Ticket_Approval_Rejection> rejection = new ArrayList<>();
 

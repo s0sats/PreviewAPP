@@ -15,7 +15,9 @@ public class TK_Ticket_Approval_Rejection {
     @Expose
     private int step_code;//pk
     private int seq;//pk
+    @Expose
     private String rejection_comments;
+    @Expose
     private String rejection_date;
     private int rejection_user;
     private String rejection_user_nick;

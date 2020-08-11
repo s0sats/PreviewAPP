@@ -16,12 +16,14 @@ public class TK_Ticket_Approval {
     private int ticket_seq;//pk
     @Expose
     private int step_code;//pk
+    @Expose
     private String approval_status;
     @Nullable
     private String approval_question;
     @Nullable
     private String approval_type;
     @Nullable
+    @Expose
     private String approval_comments;
 
     public TK_Ticket_Approval() {

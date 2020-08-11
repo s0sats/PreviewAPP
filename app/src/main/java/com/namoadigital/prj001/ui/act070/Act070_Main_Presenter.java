@@ -641,13 +641,16 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         if(ticketStep != null && ticketCtrl != null){
             if(isDoneOrWaitingSync(ticketStep.getStep_status())){
                //   chamar act da aprovação
+                mView.callact075ForMaterialApproval(ticketCtrl.getStep_code(), ticketCtrl.getTicket_seq(), stepApproval.isCurrentStep());
             }else{
                 if(isDoneOrWaitingSync(ticketCtrl.getCtrl_status())){
                    //chamar act da aprovação
+                    mView.callact075ForMaterialApproval(ticketCtrl.getStep_code(), ticketCtrl.getTicket_seq(), stepApproval.isCurrentStep());
                 }else if(stepApproval.isCurrentStep()) {
                     switch (stepApproval.getApprovalType()){
                         case ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL:
                         case ConstantBaseApp.TK_PIPELINE_APPROVAL_RETURN_MATERIAL:
+                            mView.callact075ForMaterialApproval(ticketCtrl.getStep_code(), ticketCtrl.getTicket_seq(), stepApproval.isCurrentStep());
                             break;
                         case ConstantBaseApp.TK_PIPELINE_APPROVAL_OPERATIONAL:
 

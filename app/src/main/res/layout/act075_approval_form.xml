@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/padrao_WHITE"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -24,17 +25,20 @@
         android:id="@+id/act075_approval_form_rg"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="@+id/act075_approval_form_tv_ask_confirm"
-        app:layout_constraintStart_toStartOf="@+id/act075_approval_form_tv_ask_confirm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/act075_approval_form_tv_ask_confirm">
 
         <RadioButton
             android:id="@+id/act075_approval_form_rg_decline"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:paddingStart="20dp"
             android:paddingTop="10dp"
             android:paddingEnd="20dp"
@@ -44,20 +48,21 @@
             android:textColor="@color/namoa_cancel_red"
             android:textSize="@dimen/font_size_font_16" />
 
-        <RadioButton
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="10dp"
-            android:textSize="@dimen/font_size_font_16" />
+        <!--        <RadioButton-->
+        <!--            android:visibility="invisible"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:paddingStart="20dp"-->
+        <!--            android:paddingTop="10dp"-->
+        <!--            android:paddingEnd="20dp"-->
+        <!--            android:paddingBottom="10dp"-->
+        <!--            android:textSize="@dimen/font_size_font_16" />-->
 
         <RadioButton
             android:id="@+id/act075_approval_form_rg_approval"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:paddingStart="20dp"
             android:paddingTop="10dp"
             android:paddingEnd="20dp"
