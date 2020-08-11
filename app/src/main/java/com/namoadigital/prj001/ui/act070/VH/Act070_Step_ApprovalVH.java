@@ -133,7 +133,7 @@ public class Act070_Step_ApprovalVH extends Act070_Step_Abstract_ProcessVH {
             stepApproval.getProcessStatus(),
             stepApproval.isCurrentStep(),
             stepApproval.getStepType(),
-            stepApproval.getStartDate()
+            stepApproval.isStepAlreadyCheckedIn()
         );
         //
         configProcessAction(

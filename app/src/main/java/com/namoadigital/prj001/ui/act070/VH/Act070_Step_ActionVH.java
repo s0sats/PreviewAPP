@@ -115,7 +115,7 @@ public class Act070_Step_ActionVH extends Act070_Step_Abstract_ProcessVH {
             stepAction.getProcessStatus(),
             stepAction.isCurrentStep(),
             stepAction.getStepType(),
-            stepAction.getStartDate()
+            stepAction.isStepAlreadyCheckedIn()
         );
         configProcessAction(
             ivProcessAction,

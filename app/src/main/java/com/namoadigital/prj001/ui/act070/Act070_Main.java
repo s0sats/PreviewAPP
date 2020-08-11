@@ -49,6 +49,7 @@ import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.ui.act070.model.StepApproval;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
+import com.namoadigital.prj001.ui.act070.model.StepNone;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
@@ -162,8 +163,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("please_sync_lbl");
         transList.add("alert_start_action_ttl");
         transList.add("alert_start_action_confirm");
-        transList.add("alert_action_access_denied_ttl");
-        transList.add("alert_action_started_in_server_msg");
         transList.add("alert_step_or_ctrl_not_found_ttl");
         transList.add("alert_step_or_ctrl_not_found_msg");
         //
@@ -186,6 +185,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("dialog_pipeline_main_msg");
         transList.add("dialog_pipeline_btn_process_action");
         transList.add("dialog_pipeline_btn_cancel");
+        //
+        transList.add("process_none_tll");
+        transList.add("alert_start_none_process_ttl");
+        transList.add("alert_start_none_process_msg");
+        transList.add("alert_process_access_denied_ttl");
+        transList.add("alert_process_started_in_server_msg");
+
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -384,7 +390,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 @Override
                 public void onActionClick(int actionPosition) {
                     StepAction stepAction = (StepAction) sources.get(actionPosition);
-                    mPresenter.defineActionFlow(mTicket,stepAction);
+                    mPresenter.defineActionFlow(mTicket, stepAction);
 //                    callAct071(
 //                        mPresenter.getAct071Bundle(mTicket, stepAction.getStepCode(), stepAction.getProcessTkSeq())
 //                    );
@@ -403,7 +409,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 @Override
                 public void onApprovalClick(int approvalPosition) {
                     StepApproval stepApproval = (StepApproval) sources.get(approvalPosition);
-                    mPresenter.defineApprovalFlow(mTicket,stepApproval);
+                    mPresenter.defineApprovalFlow(mTicket, stepApproval);
                 }
 
                 @Override
@@ -418,10 +424,29 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 @Override
                 public void onProcessBtnClick(int processBtnPosition) {
                     StepProcessBtn stepProcessBtn = (StepProcessBtn) sources.get(processBtnPosition);
-                    mPresenter.defineProcessBtnFlow(mTicket,stepProcessBtn);
+                    mPresenter.defineProcessBtnFlow(mTicket, stepProcessBtn);
                 }
-            }
-        );
+            },
+            new Act070_Steps_Adapter.OnNoneClickListener() {
+                @Override
+                public void onNoneClick(int nonePosition) {
+                    final StepNone stepNone = (StepNone) sources.get(nonePosition);
+                    if(ConstantBaseApp.SYS_STATUS_PENDING.equals(stepNone.getProcessStatus())){
+                        showAlert(
+                            hmAux_Trans.get("alert_start_none_process_ttl"),
+                            hmAux_Trans.get("alert_start_none_process_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    mPresenter.defineNoneFlow(mTicket, stepNone);
+                                }
+                            },
+                            true
+                        );
+                    }
+
+                }
+            });
         //
         initRecycle();
     }

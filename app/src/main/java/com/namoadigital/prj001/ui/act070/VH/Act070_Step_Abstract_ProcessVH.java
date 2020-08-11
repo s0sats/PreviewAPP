@@ -99,7 +99,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
             );
     }
 
-    protected void applyHighlightBackground(ConstraintLayout clBackground, String stepStatus, boolean isCurrentStep,String StepType, String startDate) {
+    protected void applyHighlightBackground(ConstraintLayout clBackground, String stepStatus, boolean isCurrentStep,String StepType, boolean isStepAlreadyCheckedIn) {
         int backgroundColor = R.color.padrao_TRANSPARENT;
         Drawable drawable = context.getDrawable(R.drawable.pipeline_step_states);
         //Se step atual, verifica o destaque
@@ -113,12 +113,12 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
                 //não é possivel mexer.
                 if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(StepType)) {
                     backgroundColor =
-                        ToolBox_Inf.hasConsistentValueString(startDate)
+                        isStepAlreadyCheckedIn
                             ? R.color.namoa_color_ticket_process_highlight
                             : R.color.namoa_color_pipeline_cur_step_no_checkin;
                     //
                     drawable =
-                        ToolBox_Inf.hasConsistentValueString(startDate)
+                        isStepAlreadyCheckedIn
                             ? context.getDrawable(R.drawable.pipeline_step_highligh_states)
                             : context.getDrawable(R.drawable.pipeline_step_no_checkin);
                 } else {

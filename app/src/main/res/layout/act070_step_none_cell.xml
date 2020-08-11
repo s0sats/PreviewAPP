@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <View
+        android:id="@+id/step_none_v_line"
+        android:layout_width="@dimen/pipeline_step_vertical_line_width"
+        android:layout_height="0dp"
+        android:background="@color/namoa_color_dark_blue"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/step_none_gd_start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!--Image com dashed-->
+    <ImageView
+        android:id="@+id/step_none_iv_line"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/step_dashed_vertical_line"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/step_none_gd_start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/step_none_gd_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/step_none_cl_background"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/step_none_gd_start"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/step_none_gd_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="8dp" />
+
+        <TextView
+            android:id="@+id/step_none_tv_desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/step_none_gd_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Ação" />
+
+
+        <ImageView
+            android:id="@+id/step_none_iv_end_date"
+            android:layout_width="@dimen/pipeline_step_icon_width"
+            android:layout_height="@dimen/pipeline_step_icon_width"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_check_white_24dp"
+            android:tint="@color/namoa_color_gray_4"
+            app:layout_constraintBottom_toBottomOf="@id/step_none_tv_end_date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/step_none_tv_end_date" />
+
+        <TextView
+            android:id="@+id/step_none_tv_end_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+            app:layout_constraintEnd_toStartOf="@id/step_none_gd_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/step_none_iv_end_date"
+            app:layout_constraintTop_toBottomOf="@+id/step_none_tv_user"
+            app:layout_constraintWidth_default="spread"
+            tools:text="21/06/2020 18:00" />
+
+        <ImageView
+            android:id="@+id/step_none_iv_user"
+            android:layout_width="@dimen/pipeline_step_icon_width"
+            android:layout_height="@dimen/pipeline_step_icon_width"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_person_black_24dp"
+            android:tint="@color/namoa_color_gray_4"
+            app:layout_constraintBottom_toBottomOf="@id/step_none_tv_user"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/step_none_tv_user" />
+
+        <TextView
+            android:id="@+id/step_none_tv_user"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+            app:layout_constraintEnd_toStartOf="@id/step_none_gd_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@id/step_none_iv_user"
+            app:layout_constraintTop_toBottomOf="@+id/step_none_tv_partner"
+            app:layout_constraintWidth_default="spread"
+            tools:text="luche" />
+
+        <View
+            android:id="@+id/step_none_v_divider"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+            android:background="@color/namoa_color_gray3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/step_none_tv_process_action" />
+
+        <TextView
+            android:id="@+id/step_none_tv_partner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+            app:layout_constraintEnd_toStartOf="@id/step_none_gd_end"
+            app:layout_constraintStart_toEndOf="@id/step_none_iv_partner"
+            app:layout_constraintTop_toBottomOf="@+id/step_none_tv_serial"
+            tools:text="Partner" />
+
+        <TextView
+            android:id="@+id/step_none_tv_prod"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/step_none_gd_end"
+            app:layout_constraintStart_toStartOf="@id/step_none_tv_desc"
+            app:layout_constraintTop_toBottomOf="@id/step_none_tv_site"
+            tools:text="Carro " />
+
+        <TextView
+            android:id="@+id/step_none_tv_serial"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/step_none_gd_end"
+            app:layout_constraintStart_toStartOf="@id/step_none_tv_prod"
+            app:layout_constraintTop_toBottomOf="@id/step_none_tv_prod"
+            tools:text="WBTT20200707001" />
+
+        <TextView
+            android:id="@+id/step_none_tv_site"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+            android:textColor="@color/namoa_color_danger_red"
+            app:layout_constraintEnd_toStartOf="@id/step_none_gd_end"
+            app:layout_constraintHorizontal_bias="0.50"
+            app:layout_constraintStart_toStartOf="@id/step_none_tv_serial"
+            app:layout_constraintTop_toBottomOf="@id/step_none_tv_desc"
+            tools:text="Vierhiem" />
+
+        <ImageView
+            android:id="@+id/step_none_iv_partner"
+            android:layout_width="@dimen/pipeline_step_icon_width"
+            android:layout_height="@dimen/pipeline_step_icon_width"
+            android:layout_marginStart="8dp"
+            android:tint="@color/namoa_color_gray_4"
+            app:layout_constraintBottom_toBottomOf="@id/step_none_tv_partner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/step_none_tv_partner"
+            app:srcCompat="@drawable/ic_baseline_business_24_black" />
+
+        <TextView
+            android:id="@+id/step_none_tv_process_action"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+            android:text="Iniciar Processo"
+            app:layout_constraintEnd_toStartOf="@id/step_none_gd_end"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintStart_toEndOf="@id/step_none_iv_process_action"
+            app:layout_constraintTop_toBottomOf="@id/step_none_tv_end_date"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            />
+
+        <ImageView
+            android:id="@+id/step_none_iv_process_action"
+            android:layout_width="@dimen/pipeline_step_icon_width"
+            android:layout_height="@dimen/pipeline_step_icon_width"
+            android:layout_marginStart="8dp"
+            android:tint="@color/namoa_color_gray_4"
+            app:layout_constraintBottom_toBottomOf="@id/step_none_tv_process_action"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/step_none_tv_process_action"
+            app:srcCompat="@drawable/ic_skip_next_white_24px" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -15,6 +15,7 @@ import com.namoadigital.prj001.ui.act070.VH.Act070_Step_ApprovalVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_ChecklistVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_FooterVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_MainVH;
+import com.namoadigital.prj001.ui.act070.VH.Act070_Step_NoneVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_Process_Btn_VH;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
@@ -22,6 +23,7 @@ import com.namoadigital.prj001.ui.act070.model.StepApproval;
 import com.namoadigital.prj001.ui.act070.model.StepChecklist;
 import com.namoadigital.prj001.ui.act070.model.StepFooter;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
+import com.namoadigital.prj001.ui.act070.model.StepNone;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -37,6 +39,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
     public static final int VIEW_TYPE_STEP_PROCESS_BTN = 3;
     public static final int VIEW_TYPE_STEP_FOOTER = 4;
     public static final int VIEW_TYPE_STEP_APPROVAL = 5;
+    public static final int VIEW_TYPE_STEP_NONE = 6;
 
     private Context context;
     private ArrayList<BaseStep> source;
@@ -48,6 +51,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
     private OnChecklistClickListener onChecklistClickListener;
     private OnApprovalClickListener onApprovalClickListener;
     private OnProcessBtnClickListener onProcessBtnClickListener;
+    private OnNoneClickListener onNoneClickListener;
 
     public interface OnMainClickListener {
         void onMainClick(boolean isShown, int mainPosition);
@@ -66,11 +70,15 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         void onProcessBtnClick(int processBtnPosition);
     }
 
+    public interface OnNoneClickListener {
+        void onNoneClick(int nonePosition);
+    }
+
     public void setOnMainClickListener(OnMainClickListener onMainClickListener) {
         this.onMainClickListener = onMainClickListener;
     }
 
-    public Act070_Steps_Adapter(Context context, ArrayList<BaseStep> source, OnMainClickListener onMainClickListener, OnActionClickListener onActionClickListener, OnChecklistClickListener onChecklistClickListener, OnApprovalClickListener onApprovalClickListener, OnProcessBtnClickListener onProcessBtnClickListener) {
+    public Act070_Steps_Adapter(Context context, ArrayList<BaseStep> source, OnMainClickListener onMainClickListener, OnActionClickListener onActionClickListener, OnChecklistClickListener onChecklistClickListener, OnApprovalClickListener onApprovalClickListener, OnProcessBtnClickListener onProcessBtnClickListener, OnNoneClickListener onNoneClickListener) {
         this.context = context;
         this.source = source;
         this.onMainClickListener = onMainClickListener;
@@ -78,6 +86,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         this.onChecklistClickListener = onChecklistClickListener;
         this.onApprovalClickListener = onApprovalClickListener;
         this.onProcessBtnClickListener = onProcessBtnClickListener;
+        this.onNoneClickListener = onNoneClickListener;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
             context,
             ConstantBaseApp.APP_MODULE,
@@ -138,6 +147,17 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                     hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC),
                     hmAux_Trans.get("review_rejection_btn")
                 );
+            case VIEW_TYPE_STEP_NONE:
+                view = LayoutInflater.from(context).inflate(R.layout.act070_step_none_cell, viewGroup, false);
+                return new
+                    Act070_Step_NoneVH(
+                    context,
+                    view,
+                    onNoneClickListener,
+                    hmAux_Trans.get("start_process_btn"),
+                    hmAux_Trans.get("review_process_btn"),
+                    hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+                );
             case VIEW_TYPE_STEP_PROCESS_BTN:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_process_btn_cell, viewGroup, false);
                 return new Act070_Step_Process_Btn_VH(context,view, onProcessBtnClickListener);
@@ -165,6 +185,9 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         } else if(baseStep instanceof StepApproval){
             Act070_Step_ApprovalVH stepApprovalVH = (Act070_Step_ApprovalVH) viewHolder;
             stepApprovalVH.bindData((StepApproval) source.get(position));
+        } else if(baseStep instanceof StepNone){
+            Act070_Step_NoneVH stepNoneVH = (Act070_Step_NoneVH) viewHolder;
+            stepNoneVH.bindData((StepNone) source.get(position));
         } else if(baseStep instanceof StepProcessBtn){
             Act070_Step_Process_Btn_VH stepProcessBtnVh = (Act070_Step_Process_Btn_VH) viewHolder;
             stepProcessBtnVh.bindData((StepProcessBtn) source.get(position));
@@ -194,9 +217,10 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
             return VIEW_TYPE_STEP_PROCESS_BTN;
         }else if(baseStep instanceof StepFooter){
             return VIEW_TYPE_STEP_FOOTER;
-        } else{
-            return 6;
+        } else if(baseStep instanceof StepNone){
+            return VIEW_TYPE_STEP_NONE;
+        }else{
+            return 7;
         }
     }
-
 }
