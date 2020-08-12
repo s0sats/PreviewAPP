@@ -486,6 +486,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     @Override
     public void callRefreshUi() {
         refreshUI();
+        resetHasUpdate();
     }
 
     private void verifyChangesBeforeExit() {

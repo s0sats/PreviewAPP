@@ -454,7 +454,8 @@ public class WS_TK_Ticket_Save extends IntentService {
                                     if (handleApprovalObject(dbTicketCtrl.getApproval())) {
                                         dbTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_DONE);
                                     } else {
-                                        //todo tratar end date e user.
+                                        dbTicketCtrl.removeEndInfo();
+                                        resetStepDueToRejection(resultStep);
                                         dbTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_PROCESS);
                                     }
                                     //Não ha necessidade de mexer no rejeitdo, pois ele tem o proprio status que sempre é rejeitado.
@@ -531,6 +532,14 @@ public class WS_TK_Ticket_Save extends IntentService {
             //
             actReturnList.add(actReturn);
         }
+    }
+
+    private void resetStepDueToRejection(T_TK_Ticket_Save_Rec_Result_Step resultStep) {
+        TK_Ticket_Step ticketStepFromDB = getTicketStepFromDB(resultStep);
+        ticketStepFromDB.setStep_end_user_nick(null);
+        ticketStepFromDB.setStep_end_user(null);
+        ticketStepFromDB.setStep_end_date(null);
+        ticketStepDao.addUpdate(ticketStepFromDB);
     }
 
     private boolean handleApprovalObject(TK_Ticket_Approval approval) {

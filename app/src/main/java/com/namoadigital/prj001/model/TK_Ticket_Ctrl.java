@@ -408,6 +408,12 @@ public class TK_Ticket_Ctrl {
         }
     }
 
+    public void removeEndInfo(){
+        this.setCtrl_end_user_name(null);
+        this.setCtrl_end_user(null);
+        this.setCtrl_end_date(null);
+    }
+
     public void copyCtrlStatusForInnerProcess(){
         switch (this.ctrl_type) {
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:

@@ -190,8 +190,8 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
                 });
             }
             //
-            rvTickets.setAdapter(mAdapter);
             mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
+            rvTickets.setAdapter(mAdapter);
         }else{
             tvNoResult.setVisibility(View.VISIBLE);
             rvTickets.setVisibility(View.INVISIBLE);
