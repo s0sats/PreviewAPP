@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -264,6 +265,31 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         );
         //
         rvProduct.setAdapter(mAdapter);
+        rvProduct.postDelayed(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        smoothMoveToItemAndScrollItToTop(0);
+                    }
+                },100
+        );
+    }
+
+    private void smoothMoveToItemAndScrollItToTop(int position) {
+        //Gera smooth scroller
+        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(context) {
+            @Override protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+        };
+        //seta a posição
+        smoothScroller.setTargetPosition(position);
+        //Seta smooth scroller no layoutmaager do recycle o.O
+        try {
+            ((LinearLayoutManager) rvProduct.getLayoutManager()).startSmoothScroll(smoothScroller);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void setHeaderFragment() {
