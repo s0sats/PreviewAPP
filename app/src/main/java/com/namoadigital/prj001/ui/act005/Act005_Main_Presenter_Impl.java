@@ -1113,10 +1113,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         return checkinReturns;
     }
-
+    //TODO REVISAR APÓS PUBLIA PRA TESTE. TALVEZ REVER COMO GERAR LISTA DE RETORNO DO SAVE.
     private String getFormmatedRetMsg(String retStatus, String retMsg ) {
         String msg = retStatus ;
-        msg += retMsg != null && !retMsg.isEmpty() ? "\n" + retMsg  :"";
+        if(!ConstantBaseApp.MAIN_RESULT_OK.equals(retStatus)) {
+            msg += retMsg != null && !retMsg.isEmpty() ? "\n" + retMsg : "";
+        }
         return msg;
     }
 

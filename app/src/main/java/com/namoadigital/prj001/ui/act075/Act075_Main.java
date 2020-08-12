@@ -589,6 +589,15 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         transList.add("alert_approval_access_denied_msg");
         transList.add("ticket_lbl");
         //
+        transList.add("dialog_product_save_ticket_ttl");
+        transList.add("dialog_product_save_ticket_start");
+        transList.add("dialog_ticket_save_ttl");
+        transList.add("dialog_ticket_save_start");
+        transList.add("alert_offline_save_ttl");
+        transList.add("alert_offline_save_msg");
+        transList.add("alert_none_ticket_returned_ttl");
+        transList.add("alert_none_ticket_returned_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
