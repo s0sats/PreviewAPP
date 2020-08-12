@@ -101,6 +101,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         transList.add("start_process_btn");
         transList.add("review_process_btn");
         transList.add("review_rejection_btn");
+        transList.add("approved_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -145,8 +146,8 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                     hmAux_Trans.get("start_process_btn"),
                     hmAux_Trans.get("review_process_btn"),
                     hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC),
-                    hmAux_Trans.get("review_rejection_btn")
-                );
+                    hmAux_Trans.get("review_rejection_btn"),
+                    hmAux_Trans.get("approved_lbl"));
             case VIEW_TYPE_STEP_NONE:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_none_cell, viewGroup, false);
                 return new

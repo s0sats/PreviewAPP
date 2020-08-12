@@ -201,6 +201,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("alert_error_ticket_not_found_msg");
         //
         transList.add("finalize_lbl");
+        transList.add("alert_error_on_process_creation_ttl");
+        transList.add("alert_error_on_process_creation_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,

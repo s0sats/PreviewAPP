@@ -34,13 +34,15 @@ public class Act070_Step_ApprovalVH extends Act070_Step_Abstract_ProcessVH {
     private ImageView ivRejection;
     private TextView tvRejection;
     private String  transReviewRejection;
+    private String  transApprovedStatus;
     private Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick;
 
 
-    public Act070_Step_ApprovalVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick, String transStartProcess, String transReviewProcess,String transWaitingSync,String transReviewRejection) {
+    public Act070_Step_ApprovalVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick, String transStartProcess, String transReviewProcess, String transWaitingSync, String transReviewRejection, String transApprovedStatus) {
         super(context,itemView,transStartProcess,transReviewProcess,transWaitingSync);
         this.onApprovalClick = onApprovalClick;
         this.transReviewRejection = transReviewRejection;
+        this.transApprovedStatus = transApprovedStatus;
         bindViews();
     }
 
@@ -92,8 +94,8 @@ public class Act070_Step_ApprovalVH extends Act070_Step_Abstract_ProcessVH {
             && ConstantBaseApp.SYS_STATUS_DONE.equals(stepApproval.getApprovalStatus())
         ) {
             tvApprovalStatus.setVisibility(View.VISIBLE);
-            tvApprovalStatus.setText(stepApproval.getApprovalStatus());
-            tvApprovalStatus.setTextColor(ToolBox_Inf.getStatusColorV2(context,stepApproval.getApprovalStatus()));
+            tvApprovalStatus.setText(transApprovedStatus);
+            tvApprovalStatus.setTextColor(ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_DONE));
         }
         if(ToolBox_Inf.hasConsistentValueString(stepApproval.getApprovalComment())) {
             tvApprovalComment.setVisibility(View.VISIBLE);
@@ -121,7 +123,6 @@ public class Act070_Step_ApprovalVH extends Act070_Step_Abstract_ProcessVH {
         applyHistoryLayout(
             stepApproval.isCurrentStep(),
             tvApprovalQuestion,
-            tvApprovalStatus,
             tvApprovalComment,
             tvPartner,
             tvUser,

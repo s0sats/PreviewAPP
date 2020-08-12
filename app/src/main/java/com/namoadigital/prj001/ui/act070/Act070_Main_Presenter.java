@@ -526,18 +526,21 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     private void startNoneProcess(TK_Ticket mTicket, TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
-        setDataIntoCtrl(ticketCtrl);
-        setCheckInIntoStepWhenOneTouchStep(ticketStep,ticketCtrl);
-        checkCloseStepForWaitingSync(ticketStep, ticketCtrl);
-        //
         int ctrlIdx = getCtrlIdx(ticketCtrl, ticketStep);
         int stepIdx = getStepIdx(ticketStep,mTicket);
+        //
+        setDataIntoCtrl(ticketCtrl);
+        setCheckInIntoStepWhenOneTouchStep(ticketStep,ticketCtrl);
+        //
+        ticketStep.getCtrl().set(ctrlIdx,ticketCtrl);
+        //
+        checkCloseStepForWaitingSync(ticketStep, ticketCtrl);
+
         //
         ticketCtrl.setUpdate_required(1);
         ticketStep.setUpdate_required(1);
         mTicket.setUpdate_required(1);
         //
-        ticketStep.getCtrl().set(ctrlIdx,ticketCtrl);
         mTicket.getStep().set(stepIdx,ticketStep);
         //
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
