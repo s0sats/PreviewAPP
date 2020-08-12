@@ -230,7 +230,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             setTranslation();
             //
             product_cell_iv_returned_substract.setVisibility(View.INVISIBLE);
-            product_cell_iv_returned_add.setVisibility(View.INVISIBLE);
         }
 
         private void setTranslation() {
@@ -278,7 +277,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             }
             //
             if(inventory_control == 1) {
-                if (tk_ticket_product.getQty_used() < tk_ticket_product.getQty()) {
+                if (tk_ticket_product.getQty_used() < tk_ticket_product.getQty().longValue()) {
                     product_cell_iv_applied_add.setEnabled(true);
                 }else{
                     product_cell_iv_applied_add.setEnabled(false);
@@ -390,9 +389,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     });
                 }
             } else if (act_profile == 2) {
-                if(!hasAppliedApproved){
-                    product_cell_tv_extract.setVisibility(View.GONE);
-                }
                 setAmountControllersVisibility(View.GONE);
 
                 setDetailsForApprovalVisibility();
@@ -455,16 +451,19 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                 cl_withdrawn.setVisibility(View.VISIBLE);
                 cl_applied.setVisibility(View.GONE);
                 cl_returned.setVisibility(View.GONE);
+                product_cell_tv_extract.setVisibility(View.GONE);
             }
             if( APPROVAL_RETURN_MATERIAL.equalsIgnoreCase(tkTicketApproval.getApproval_type())){
                 cl_withdrawn.setVisibility(View.GONE);
                 cl_applied.setVisibility(View.VISIBLE);
                 cl_returned.setVisibility(View.GONE);
+                product_cell_tv_extract.setVisibility(View.VISIBLE);
             }
             if( APPROVAL_OPERATIONAL.equalsIgnoreCase(tkTicketApproval.getApproval_type())){
                 cl_withdrawn.setVisibility(View.VISIBLE);
                 cl_applied.setVisibility(View.VISIBLE);
                 cl_returned.setVisibility(View.VISIBLE);
+                product_cell_tv_extract.setVisibility(View.GONE);
             }
         }
 

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -15,12 +16,14 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
+import com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TK_Ticket_Approval;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
@@ -76,6 +79,7 @@ public class WS_TK_Ticket_Save extends IntentService {
     private TK_Ticket_CtrlDao ticketCtrlDao;
     private TK_Ticket_StepDao ticketStepDao;
     private TK_Ticket_ActionDao ticketActionDao;
+    private TK_Ticket_ApprovalDao ticketApprovalDao;
     private MD_Schedule_ExecDao scheduleExecDao;
     private GE_FileDao geFileDao;
 
@@ -93,6 +97,7 @@ public class WS_TK_Ticket_Save extends IntentService {
             ticketCtrlDao = new TK_Ticket_CtrlDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             ticketStepDao = new TK_Ticket_StepDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             ticketActionDao = new TK_Ticket_ActionDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+            ticketApprovalDao = new TK_Ticket_ApprovalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             scheduleExecDao = new MD_Schedule_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             geFileDao = new GE_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             menuSendProcess = bundle.getBoolean(ConstantBaseApp.PROCESS_MENU_SEND,false);
@@ -418,7 +423,7 @@ public class WS_TK_Ticket_Save extends IntentService {
         }
     }
 
-    private void processActFeedback(T_TK_Ticket_Save_Rec rec) {
+    private void processActFeedback(T_TK_Ticket_Save_Rec rec) throws NullPointerException{
         for (T_TK_Ticket_Save_Rec_Result recResult : rec.getTicket_return()) {
             TicketSaveActReturn actReturn = getActReturn(recResult);
             if(recResult.getStep()!= null &&  recResult.getStep().size() > 0) {
@@ -444,8 +449,23 @@ public class WS_TK_Ticket_Save extends IntentService {
                                 resultCtrl.getTicket_seq_tmp()
                             );
                             //
-                            dbTicketCtrl.setCtrl_status(newStatus);
-                            dbTicketCtrl.copyCtrlStatusForInnerProcess();
+                            switch (dbTicketCtrl.getCtrl_type()){
+                                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                                    if (handleApprovalObject(dbTicketCtrl.getApproval())) {
+                                        dbTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_DONE);
+                                    } else {
+                                        dbTicketCtrl.removeEndInfo();
+                                        resetStepDueToRejection(resultStep);
+                                        dbTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_PROCESS);
+                                    }
+                                    //Não ha necessidade de mexer no rejeitdo, pois ele tem o proprio status que sempre é rejeitado.
+                                    break;
+                                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                                        dbTicketCtrl.setCtrl_status(newStatus);
+                                    dbTicketCtrl.copyCtrlStatusForInnerProcess();
+                                    break;
+                            }
                             //
                             ctrlsToUpdate.add(dbTicketCtrl);
                         }
@@ -512,6 +532,25 @@ public class WS_TK_Ticket_Save extends IntentService {
             //
             actReturnList.add(actReturn);
         }
+    }
+
+    private void resetStepDueToRejection(T_TK_Ticket_Save_Rec_Result_Step resultStep) {
+        TK_Ticket_Step ticketStepFromDB = getTicketStepFromDB(resultStep);
+        ticketStepFromDB.setStep_end_user_nick(null);
+        ticketStepFromDB.setStep_end_user(null);
+        ticketStepFromDB.setStep_end_date(null);
+        ticketStepDao.addUpdate(ticketStepFromDB);
+    }
+
+    private boolean handleApprovalObject(TK_Ticket_Approval approval) {
+
+        if(ConstantBase.SYS_STATUS_REJECTED.equalsIgnoreCase(approval.getApproval_status())){
+            approval.setApproval_status(ConstantBase.SYS_STATUS_PENDING);
+            approval.setApproval_comments(null);
+            ticketApprovalDao.addUpdate(approval);
+            return false;
+        }
+        return true;
     }
 
     private boolean stepWithCheckout(TK_Ticket_Step ticketStepFromDB) {
