@@ -511,8 +511,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     startNoneProcess(mTicket,ticketStep,ticketCtrl);
                 }else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())){
                     mView.showAlert(
-                        hmAux_Trans.get("alert_action_access_denied_ttl"),
-                        hmAux_Trans.get("alert_action_started_in_server_msg")
+                        hmAux_Trans.get("alert_process_access_denied_ttl"),
+                        hmAux_Trans.get("alert_process_started_in_server_msg")
                     );
                 }//não faz nada, pois não tem ação
             }
@@ -737,8 +737,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         );
                     }else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())){
                         mView.showAlert(
-                            hmAux_Trans.get("alert_action_access_denied_ttl"),
-                            hmAux_Trans.get("alert_action_started_in_server_msg")
+                            hmAux_Trans.get("alert_process_access_denied_ttl"),
+                            hmAux_Trans.get("alert_process_started_in_server_msg")
                         );
                     } else{
                         //NÃO MAPEADO.
