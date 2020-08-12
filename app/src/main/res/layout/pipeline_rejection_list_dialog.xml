@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/pipeline_rejection_list_dialog_cl_main">
+
+    <TextView
+        android:id="@+id/pipeline_rejection_list_dialog_tv_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Devolução de materiais"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/pipeline_rejection_list_dialog_tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+        android:layout_marginEnd="8dp"
+        android:text="REJEITADO"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/pipeline_rejection_list_dialog_tv_question"
+        app:layout_constraintTop_toBottomOf="@+id/pipeline_rejection_list_dialog_tv_question"
+        android:textStyle="bold"
+        android:textColor="@color/namoa_color_danger_red"
+        android:textAllCaps="true"
+        />
+
+    <View
+        android:id="@+id/pipeline_rejection_list_dialog_v_divider"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+        android:background="@color/namoa_color_gray3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pipeline_rejection_list_dialog_tv_status"
+        android:layout_marginBottom="@dimen/pipeline_step_info_margin_top"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/pipeline_rejection_list_dialog_rv_rejections"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="@dimen/pipeline_step_info_margin_top"
+        app:layout_constraintBottom_toTopOf="@id/pipeline_rejection_list_dialog_tv_close"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@id/pipeline_rejection_list_dialog_tv_status"
+        app:layout_constraintTop_toBottomOf="@id/pipeline_rejection_list_dialog_v_divider"
+        app:layout_constraintVertical_bias="1.0"
+        tools:itemCount="15"
+        tools:listitem="@layout/pipeline_rejection_list_dialog_item" />
+
+    <TextView
+        android:id="@+id/pipeline_rejection_list_dialog_tv_close"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="8dp"
+        android:paddingStart="15dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="10dp"
+        android:text="Fechar"
+        android:textAllCaps="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/namoa_status_pending"
+        android:textStyle="bold"
+        android:gravity="center"
+        />
+
+</android.support.constraint.ConstraintLayout>

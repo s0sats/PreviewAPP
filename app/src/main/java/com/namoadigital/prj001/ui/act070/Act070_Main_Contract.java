@@ -99,5 +99,7 @@ public interface Act070_Main_Contract {
         void defineApprovalFlow(TK_Ticket mTicket, StepApproval stepApproval);
 
         void defineNoneFlow(TK_Ticket mTicket, StepNone stepNone);
+
+        void prepareRejectionDialog(TK_Ticket mTicket, StepApproval stepApproval);
     }
 }

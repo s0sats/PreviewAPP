@@ -44,6 +44,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.dialog.PipelineNewProcessDialog;
+import com.namoadigital.prj001.view.dialog.PipelineRejectionListDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -792,6 +793,34 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             );
         }
 
+    }
+
+    @Override
+    public void prepareRejectionDialog(TK_Ticket mTicket, StepApproval stepApproval) {
+        TK_Ticket_Step ticketStep = getSelectedStep(mTicket.getTicket_prefix(),mTicket.getTicket_code(), stepApproval.getStepCode());
+        TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFromDb(mTicket.getTicket_prefix(),mTicket.getTicket_code(),stepApproval.getProcessTkSeq(),stepApproval.getStepCode());
+        //
+        if(ticketCtrl != null && ticketCtrl.getApproval() != null) {
+            showRejectionList(ticketCtrl);
+        }else{
+            mView.showAlert(
+                hmAux_Trans.get("alert_step_or_ctrl_not_found_ttl"),
+                hmAux_Trans.get("alert_step_or_ctrl_not_found_msg")
+            );
+        }
+    }
+
+    private void showRejectionList(TK_Ticket_Ctrl ctrl) {
+        PipelineRejectionListDialog rejectionListDialog =
+            new PipelineRejectionListDialog(
+                context,
+                hmAux_Trans,
+                ctrl.getApproval().getApproval_question(),
+                hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_REJECTED),
+                ctrl.getRejection()
+            );
+        //
+        rejectionListDialog.show();
     }
 
     private boolean isDoneOrWaitingSync(String status) {

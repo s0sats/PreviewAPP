@@ -415,10 +415,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
                 @Override
                 public void onShowRejectionClick(int approvalPosition) {
-                    ToolBox.toastMSG(
-                        context,
-                        "Rejection position: " + approvalPosition
-                    );
+                    StepApproval stepApproval = (StepApproval) sources.get(approvalPosition);
+                    mPresenter.prepareRejectionDialog(mTicket, stepApproval);
                 }
             },
             new Act070_Steps_Adapter.OnProcessBtnClickListener() {
