@@ -78,8 +78,17 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
                 for (HMAux aux : auxTickets) {
 //                    getCtrlsSerialsList(aux);
                     //
+//                    tickets.add(
+//                        Act074_TicketVH.getTicketVHObj(aux)
+//                    );
+                    //LUCHE - 12/08/2020 - Ajuste rapido, pois no caso dos ticket ja finalizados
+                    //a data a ser exibida deve ser abertura e fechamento executado
+                    Act074_TicketVH ticketVHObj = Act074_TicketVH.getTicketVHObj(aux);
+                    ticketVHObj.setTicket_forecast_start_date(aux.get(TK_TicketDao.OPEN_DATE));
+                    ticketVHObj.setTicket_forecast_end_date(aux.get(TK_TicketDao.CLOSE_DATE));
+                    //
                     tickets.add(
-                        Act074_TicketVH.getTicketVHObj(aux)
+                        ticketVHObj
                     );
                 }
             } catch (Exception e) {

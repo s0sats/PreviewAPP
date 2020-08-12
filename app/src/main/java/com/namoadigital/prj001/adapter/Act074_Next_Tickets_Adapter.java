@@ -144,10 +144,15 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             resetVisibility();
             //
             tv_ticket_id.setText(getFormattedTicketID(item));
+            //LUCHE - 12/08/2020
+            //O metodo abaixo alem da visibilidade, tb seta o texto, como no caso do status o valor
+            //ficava o que vem do banco, não sua tradução.Modificado ordem para que sete da tradução seja
+            //feito após setar a visibilidade.
+            setVisibilityByContent(tv_status, item.getTicket_status());
+            //
             tv_status.setText(hmAux_Trans.get(item.getTicket_status()));
             tv_status.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(item.getTicket_status())));
             //
-            setVisibilityByContent(tv_status, item.getTicket_status());
             setVisibilityByContent(tv_ticket_id, item.getTicket_id());
             setVisibilityByContent(tv_step_id, item.getTicket_current_step_order());
             if(item.getTicket_step_qty() <= 1) {

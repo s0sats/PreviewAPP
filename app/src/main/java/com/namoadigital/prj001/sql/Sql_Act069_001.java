@@ -190,6 +190,7 @@ public class Sql_Act069_001 implements Specification {
                 "       t.open_product_desc,\n" +
                 "       t.open_serial_id,\n" +
                 "       t.sync_required\n," +
+                "       t.close_date\n," +
                 "       CASE WHEN t.schedule_prefix IS NOT NULL AND t.schedule_code IS NOT NULL AND t.schedule_exec IS NOT NULL \n" +
                 "            THEN t.schedule_prefix||'.'||t.schedule_code||'.'||t.schedule_exec \n" +
                 "            ELSE null \n" +
