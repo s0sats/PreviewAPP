@@ -72,6 +72,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public static final String PARAM_DENIED_BY_CHECKIN = "PARAM_DENIED_BY_CHECKIN";
     public static final String PARAM_CTRL_CREATION = "PARAM_CTRL_CREATION";
     public static final String PARAM_ACTION_CREATION = "PARAM_ACTION_CREATION";
+    public static final String IS_OPERATIONAL_PROCESS = "IS_OPERATIONAL_PROCESS";
 
 
     private FragmentManager fm;
@@ -722,13 +723,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     @Override
-    public void callact075ForMaterialApproval(int step_code, int ticket_seq, boolean currentStep) {
+    public void callact075ForApproval(int step_code, int ticket_seq, boolean currentStep, boolean isOperational) {
         Intent intent = new Intent(context, Act075_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         requestingBundle.putInt(VIEW_PROFILE, APPROVAL_VIEW_ID);
         requestingBundle.putInt(TK_Ticket_CtrlDao.STEP_CODE, step_code);
         requestingBundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ticket_seq);
         requestingBundle.putBoolean(TK_TicketDao.CURRENT_STEP_ORDER, currentStep);
+        requestingBundle.putBoolean(IS_OPERATIONAL_PROCESS, isOperational);
         intent.putExtras(requestingBundle);
         startActivity(intent);
         finish();

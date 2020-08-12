@@ -315,7 +315,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         cl_withdrawn.setVisibility(View.VISIBLE);
                         cl_applied.setVisibility(View.VISIBLE);
                         cl_returned.setVisibility(View.VISIBLE);
-                        product_cell_tv_extract.setVisibility(View.VISIBLE);
+                        product_cell_tv_extract.setVisibility(View.GONE);
                         disableWithdrawLayout();
                         disableAppliedLayout();
                     }
@@ -390,7 +390,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                 }
             } else if (act_profile == 2) {
                 setAmountControllersVisibility(View.GONE);
-
+                product_cell_tv_extract.setVisibility(View.GONE);
                 setDetailsForApprovalVisibility();
             }
             //
@@ -451,19 +451,16 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                 cl_withdrawn.setVisibility(View.VISIBLE);
                 cl_applied.setVisibility(View.GONE);
                 cl_returned.setVisibility(View.GONE);
-                product_cell_tv_extract.setVisibility(View.GONE);
             }
             if( APPROVAL_RETURN_MATERIAL.equalsIgnoreCase(tkTicketApproval.getApproval_type())){
                 cl_withdrawn.setVisibility(View.GONE);
                 cl_applied.setVisibility(View.VISIBLE);
                 cl_returned.setVisibility(View.GONE);
-                product_cell_tv_extract.setVisibility(View.VISIBLE);
             }
             if( APPROVAL_OPERATIONAL.equalsIgnoreCase(tkTicketApproval.getApproval_type())){
                 cl_withdrawn.setVisibility(View.VISIBLE);
                 cl_applied.setVisibility(View.VISIBLE);
                 cl_returned.setVisibility(View.VISIBLE);
-                product_cell_tv_extract.setVisibility(View.GONE);
             }
         }
 
