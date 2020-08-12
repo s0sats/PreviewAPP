@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -50,6 +51,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.ui.act070.Act070_Main.IS_OPERATIONAL_PROCESS;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_PIPELINE_PRODUCT_STATUS_NO_CONTROL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_PIPELINE_PRODUCT_STATUS_PENDING;
 import static com.namoadigital.prj001.view.dialog.ServiceRegisterDialog.DECIMAL_PRICE_PATTERN;
@@ -90,6 +92,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private TK_Ticket_Step ticketStep;
     private boolean mPipelineHeaderIsCurrentStepOrder;
     private boolean isApproved;
+    private boolean isOperationalProcess= false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,22 +139,27 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         recoverIntentsInfo();
         //
         btnSave.setText(hmAux_Trans.get("save_product_lbl"));
-//        btnSave.requestFocus();
         //
         tkTicket = mPresenter.getTicket(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix,mTkCode);
+        setHeaderFragment();
         //
+        boolean hasWithdrawnApproved = mPresenter.getWithdrawStatus(tkTicket);
+        boolean hasAppliedApproved = mPresenter.getAppliedStatus(tkTicket);
         if(act_profile == 1) {
             //
-            setProductList();
+            setProductList(hasWithdrawnApproved, hasAppliedApproved);
             if(tkTicket.getUpdate_required_product() == 1
             || !hasUpdated) {
                 btnSave.setEnabled(false);
             }else{
                 btnSave.setEnabled(true);
             }
+            if(hasWithdrawnApproved && hasAppliedApproved){
+                btnSave.setVisibility(View.GONE);
+            }
         }else{
             String ticketCtrlStatus = mPresenter.getSelectedCtrlStatus(mTkPrefix,mTkCode, mTkSeq, mStepCode);
-
+            mPresenter.setStartCtrl(mTkPrefix,mTkCode, mTkSeq, mStepCode);
             if( mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)
                     && tkTicket.getUpdate_required_product() == 1
                     && (isEditable(Constant.SYS_STATUS_PENDING, ticketCtrlStatus, Constant.SYS_STATUS_PROCESS, ticketCtrlStatus))
@@ -161,11 +169,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 hasUpdated = false;
                 btnSave.setEnabled(false);
             }
-            setProductForApproveList(ticketCtrlStatus);
+            setProductForApproveList(ticketCtrlStatus, hasWithdrawnApproved, hasAppliedApproved);
             fabMenu.setVisibility(View.GONE);
         }
-        //
-        setHeaderFragment();
         //
         initFabMenuItens();
     }
@@ -218,7 +224,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         return false;
     }
 
-    private void setProductList() {
+    private void setProductList(boolean hasWithdrawnApproved, boolean hasAppliedApproved) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         rvProduct.setLayoutManager(layoutManager);
         tk_ticket_products = mPresenter.getTicketProductList(tkTicket);
@@ -230,8 +236,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 act_profile,
                 tkTicket.getInventory_control(),
                 isEditable(tkTicket.getTicket_status(), Constant.SYS_STATUS_PENDING, tkTicket.getTicket_status(), Constant.SYS_STATUS_PROCESS),
-                mPresenter.getWithdrawStatus(tkTicket),
-                mPresenter.getAppliedStatus(tkTicket),
+                hasWithdrawnApproved,
+                hasAppliedApproved,
                 this
         );
         //
@@ -243,11 +249,13 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 || ticket_status2.equalsIgnoreCase(sysStatusProcess);
     }
 
-    private void setProductForApproveList(String ticketCtrlStatus) {
+    private void setProductForApproveList(String ticketCtrlStatus, boolean hasWithdrawnApproved, boolean hasAppliedApproved) {
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         rvProduct.setLayoutManager(layoutManager);
         //
-        tk_ticket_products = mPresenter.getTicketProductListForApproval(mTkPrefix,mTkCode);
+        if(!isOperationalProcess) {
+            tk_ticket_products = mPresenter.getTicketProductListForApproval(mTkPrefix, mTkCode);
+        }
         TK_Ticket_Approval ticketApproval = mPresenter.getTicketApproval(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix, mTkCode, mTkSeq, mStepCode);
         //
         mAdapter = new Act075_Product_List_Adapter(
@@ -258,12 +266,37 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 act_profile,
                 tkTicket.getInventory_control(),
                 isEditable(Constant.SYS_STATUS_PENDING, ticketCtrlStatus, Constant.SYS_STATUS_PROCESS, ticketCtrlStatus),
-                mPresenter.getWithdrawStatus(tkTicket),
-                mPresenter.getAppliedStatus(tkTicket),
+                hasWithdrawnApproved,
+                hasAppliedApproved,
                 this
         );
         //
         rvProduct.setAdapter(mAdapter);
+        rvProduct.postDelayed(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        smoothMoveToItemAndScrollItToTop(0);
+                    }
+                },100
+        );
+    }
+
+    private void smoothMoveToItemAndScrollItToTop(int position) {
+        //Gera smooth scroller
+        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(context) {
+            @Override protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+        };
+        //seta a posição
+        smoothScroller.setTargetPosition(position);
+        //Seta smooth scroller no layoutmaager do recycle o.O
+        try {
+            ((LinearLayoutManager) rvProduct.getLayoutManager()).startSmoothScroll(smoothScroller);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void setHeaderFragment() {
@@ -318,6 +351,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             mStepCode = bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE, -1);
             mTkSeq = bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ, -1);
             mPipelineHeaderIsCurrentStepOrder = bundle.getBoolean(TK_TicketDao.CURRENT_STEP_ORDER, false);
+            isOperationalProcess = bundle.getBoolean(IS_OPERATIONAL_PROCESS, false);
         } else {
             act_profile = -1;
         }
@@ -529,9 +563,12 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
     private void refreshUI() {
         tkTicket = mPresenter.getTicket(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix,mTkCode);
+        setHeaderFragment();
+        boolean hasWithdrawnApproved = mPresenter.getWithdrawStatus(tkTicket);
+        boolean hasAppliedApproved = mPresenter.getAppliedStatus(tkTicket);
         if(act_profile == 1) {
             tk_ticket_products = tkTicket.getProduct();
-            setProductList();
+            setProductList(hasWithdrawnApproved, hasAppliedApproved);
             mAdapter.setmValues(tk_ticket_products);
             if(tkTicket.getUpdate_required_product() == 1
                     && (isEditable(Constant.SYS_STATUS_PENDING, tkTicket.getTicket_status(), Constant.SYS_STATUS_PROCESS, tkTicket.getTicket_status()))){
@@ -539,6 +576,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             }else{
                 hasUpdated = false;
                 btnSave.setEnabled(false);
+            }
+            if(hasWithdrawnApproved && hasAppliedApproved){
+                btnSave.setVisibility(View.GONE);
             }
         }else{
             String ticketCtrlStatus = mPresenter.getSelectedCtrlStatus(mTkPrefix,mTkCode, mTkSeq, mStepCode);
@@ -551,7 +591,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 hasUpdated = false;
                 btnSave.setEnabled(false);
             }
-            setProductForApproveList(ticketCtrlStatus);
+            setProductForApproveList(ticketCtrlStatus, hasWithdrawnApproved, hasAppliedApproved);
         }
     }
 
@@ -821,7 +861,6 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             updateSaveButton(false);
             btnSave.setVisibility(View.GONE);
         }else {
-
             updateSaveButton(true);
         }
     }

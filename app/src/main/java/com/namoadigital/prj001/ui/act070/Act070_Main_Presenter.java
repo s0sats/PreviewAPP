@@ -774,24 +774,17 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFromDb(mTicket.getTicket_prefix(),mTicket.getTicket_code(),stepApproval.getProcessTkSeq(),stepApproval.getStepCode());
         //
         if(ticketStep != null && ticketCtrl != null){
-            if(isDoneOrWaitingSync(ticketStep.getStep_status())){
-               //   chamar act da aprovação
-                mView.callact075ForMaterialApproval(ticketCtrl.getStep_code(), ticketCtrl.getTicket_seq(), stepApproval.isCurrentStep());
-            }else{
-                if(isDoneOrWaitingSync(ticketCtrl.getCtrl_status())){
-                   //chamar act da aprovação
-                    mView.callact075ForMaterialApproval(ticketCtrl.getStep_code(), ticketCtrl.getTicket_seq(), stepApproval.isCurrentStep());
-                }else if(stepApproval.isCurrentStep()) {
-                    switch (stepApproval.getApprovalType()){
-                        case ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL:
-                        case ConstantBaseApp.TK_PIPELINE_APPROVAL_RETURN_MATERIAL:
-                            mView.callact075ForMaterialApproval(ticketCtrl.getStep_code(), ticketCtrl.getTicket_seq(), stepApproval.isCurrentStep());
-                            break;
-                        case ConstantBaseApp.TK_PIPELINE_APPROVAL_OPERATIONAL:
 
-                    }
-                }// //não faz nada, pois não tem ação
+            switch (stepApproval.getApprovalType()){
+                case ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL:
+                case ConstantBaseApp.TK_PIPELINE_APPROVAL_RETURN_MATERIAL:
+                    mView.callact075ForApproval(ticketCtrl.getStep_code(), ticketCtrl.getTicket_seq(), stepApproval.isCurrentStep(), false);
+                    break;
+                case ConstantBaseApp.TK_PIPELINE_APPROVAL_OPERATIONAL:
+                    mView.callact075ForApproval(ticketCtrl.getStep_code(), ticketCtrl.getTicket_seq(), stepApproval.isCurrentStep(), true);
+                    break;
             }
+
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_step_or_ctrl_not_found_ttl"),

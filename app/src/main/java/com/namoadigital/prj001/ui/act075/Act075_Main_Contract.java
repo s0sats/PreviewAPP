@@ -69,5 +69,6 @@ public interface Act075_Main_Contract {
 
         List<TK_Ticket_Product> getTicketProductList(TK_Ticket tkTicket);
         //
+        void setStartCtrl(int mTkPrefix, int mTkCode, int mTkSeq, int mStepCode);
     }
 }

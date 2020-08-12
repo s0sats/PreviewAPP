@@ -55,7 +55,7 @@ public interface Act070_Main_Contract {
 
         void callAct068();
 
-        void callact075ForMaterialApproval(int step_code, int ticket_seq, boolean currentStep);
+        void callact075ForApproval(int step_code, int ticket_seq, boolean currentStep, boolean isOperational);
     }
 
     interface I_Presenter{
