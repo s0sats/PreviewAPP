@@ -70,21 +70,19 @@
         android:id="@+id/pipeline_rejection_list_dialog_tv_close"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="8dp"
-        android:paddingStart="15dp"
+
+        android:background="@drawable/border_gray"
+        android:gravity="center"
+        android:paddingStart="20dp"
         android:paddingTop="10dp"
-        android:paddingEnd="15dp"
+        android:paddingEnd="20dp"
         android:paddingBottom="10dp"
         android:text="Fechar"
         android:textAllCaps="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         android:textColor="@color/namoa_status_pending"
         android:textStyle="bold"
-        android:gravity="center"
-        />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
