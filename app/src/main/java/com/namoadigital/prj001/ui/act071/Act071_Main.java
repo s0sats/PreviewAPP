@@ -448,6 +448,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                     }
                                     setDataToObj();
                                     if(mPresenter.updateTicketAction(mTicketCtrl)){
+                                        updateCreationParams();
                                         deletePhotoFile(TEMP_SUFIX_FILE + actionPhotoLocalPath);
                                         mPresenter.execTicketSave();
                                     }
@@ -471,6 +472,19 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                     );
                 }
             };
+        }
+    }
+
+    /**
+     * LUCHE - 13/08/2020
+     * Caso seja criação, atualiza os params após o save
+     */
+    private void updateCreationParams() {
+        if(isCreationCtrl || isCreationAction){
+            isCreationCtrl = false;
+            isCreationAction = false;
+            mActionSeq = mTicketCtrl.getTicket_seq();
+            mActionSeqTmp = mTicketCtrl.getTicket_seq_tmp();
         }
     }
 
@@ -527,12 +541,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     //TODO REVISA PROCESSO DE FOTO PARA SABER SE AIND AÉ NECESSARIO OS CONTROLES ANTIGOS
     private void setDataToObj() {
         //
-        if(isCreationCtrl){
-            isCreationCtrl = false;
-            isCreationAction = false;
-            mActionSeq = mTicketCtrl.getTicket_seq();
-            mActionSeqTmp = mTicketCtrl.getTicket_seq_tmp();
-        }
         mTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
         mTicketCtrl.getAction().setAction_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
         mTicketCtrl.setCtrl_end_user(ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context)));
