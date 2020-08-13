@@ -29,6 +29,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form;
@@ -39,8 +40,8 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TK_Ticket;
-import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
@@ -439,23 +440,23 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 TK_Ticket tkTicket = createTicket(item, nextTicketCode, md_site, mdOperation);
                 //Add ctrl e action ao ticket
                 //TODO REVE COMO FAZER AGORA QUE CTRL É DO STEP
-//                tkTicket.getCtrl().add(
-//                    createTicketCtrl(item, tkTicket, md_site, mdOperation)
-//                );
-//                if(updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_PROCESS)){
-//                    DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
-//                    //
-//                    if (!daoObjReturn.hasError()) {
-//                        item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
-//                        item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
-//                        //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
-//                        //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
-//                        item.put(TK_Ticket_CtrlDao.TICKET_SEQ, "1");
-//                        return true;
-//                    }else{
-//                        updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_SCHEDULE);
-//                    }
-//                }
+                tkTicket.getStep().add(
+                    createStep(item, tkTicket, md_site, mdOperation)
+                );
+                if(updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_PROCESS)){
+                    DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
+                    //
+                    if (!daoObjReturn.hasError()) {
+                        item.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
+                        item.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
+                        //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
+                        //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
+                        item.put(TK_Ticket_CtrlDao.TICKET_SEQ, "1");
+                        return true;
+                    }else{
+                        updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_SCHEDULE);
+                    }
+                }
             }
         }
         //
@@ -493,6 +494,10 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         tkTicket.setOpen_serial_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SERIAL_CODE)));
         tkTicket.setOpen_serial_id(item.get(MD_Schedule_ExecDao.SERIAL_ID));
         tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PROCESS);
+        //
+        tkTicket.setOrigin_type(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE);
+        tkTicket.setOrigin_desc(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE);
+        //
         tkTicket.setSchedule_prefix(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX)));
         tkTicket.setSchedule_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_CODE)));
         tkTicket.setSchedule_exec(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)));
@@ -504,17 +509,37 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         return ticketPrefix+"."+nextTicketCode;
     }
 
+    //TODO SE FUNCIONAR ASSIM, REMOVER OS PARAM DESNECESSARIOS
+    private TK_Ticket_Step createStep(HMAux item, TK_Ticket tkTicket, MD_Site md_site, MD_Operation mdOperation) {
+        TK_Ticket_Step ticketStep = new TK_Ticket_Step();
+        ticketStep.setStep_code(0);
+        ticketStep.setStep_order(0);
+        ticketStep.setExec_type(ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH);
+        ticketStep.setScan_serial(0);
+        ticketStep.setAllow_new_obj(0);
+        ticketStep.setMove_next_step(1);
+        ticketStep.setStep_start_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        ticketStep.setStep_start_user(ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context)));
+        ticketStep.setStep_start_user_nick(
+            ToolBox_Inf.getFullNick(
+                ToolBox_Con.getPreference_User_Code_Nick(context),
+                ToolBox_Con.getPreference_User_Code(context)
+            )
+        );
+        ticketStep.setStep_status(ConstantBaseApp.SYS_STATUS_PENDING);
+        ticketStep.setUser_focus(1);
+        ticketStep.setUpdate_required(1);
+        ticketStep.setPK(tkTicket);
+//        ticketStep.getCtrl().add(
+//            createTicketCtrl(item, tkTicket, md_site, mdOperation)
+//        );
+        return ticketStep;
+    }
+
     private TK_Ticket_Ctrl createTicketCtrl(HMAux item, TK_Ticket tkTicket, MD_Site md_site, MD_Operation mdOperation) {
         TK_Ticket_Ctrl ticketCtrl = new TK_Ticket_Ctrl();
-        ticketCtrl.setTicket_seq(1);
         ticketCtrl.setCtrl_type(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION);
         ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_PENDING);
-//        ticketCtrl.setSite_code(ToolBox_Inf.convertStringToInt(md_site.getSite_code()));
-//        ticketCtrl.setSite_id(md_site.getSite_id());
-//        ticketCtrl.setSite_desc(md_site.getSite_desc());
-//        ticketCtrl.setOperation_code( (int) mdOperation.getOperation_code());
-//        ticketCtrl.setOperation_id(mdOperation.getOperation_id());
-//        ticketCtrl.setOperation_desc(mdOperation.getOperation_desc());
         ticketCtrl.setProduct_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.PRODUCT_CODE)));
         ticketCtrl.setProduct_id(item.get(MD_Schedule_ExecDao.PRODUCT_ID));
         ticketCtrl.setProduct_desc(item.get(MD_Schedule_ExecDao.PRODUCT_DESC));
@@ -528,8 +553,6 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 ToolBox_Con.getPreference_User_Code(context)
             )
         );
-        //Add no ctrl
-        ticketCtrl.setAction(new TK_Ticket_Action());
         //Seta Pk no controle e action
         //TODO MUDAR, AGORA PRECISA DO STEP
         //ticketCtrl.setPK(tkTicket);
@@ -621,7 +644,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
         return bundle;
     }
-
+    //TODO CONTINUAR A REVISÃO
     private Bundle getTicketActionFlowBundle(HMAux item) {
        Bundle bundle = new Bundle();
         //
@@ -633,7 +656,9 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
        bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_CODE)));
        //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
         //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
-       bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, 1);
+       bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, 0);
+       bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, 0);
+        bundle.putInt(TK_Ticket_ActionDao.STEP_CODE, 0);
        //16/03/2020 - foi convencionado que durante a criação da execução do ticket, o ticket id,
        //será o igual ao do exibido nas celulas do agendamento.
        bundle.putString(TK_TicketDao.TICKET_ID, ToolBox_Inf.getFormattedTicketSeqExec(
@@ -647,6 +672,18 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
        bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN,false);
        bundle.putString(Constant.ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
+       //
+
+//        //params header
+//        bundle.putString(TK_TicketDao.OPEN_DATE, mTicket.getOpen_date());
+//        bundle.putInt(TK_TicketDao.OPEN_SITE_CODE, mTicket.getOpen_site_code());
+//        bundle.putString(TK_TicketDao.OPEN_SITE_DESC, mTicket.getOpen_site_desc());
+//        bundle.putString(TK_TicketDao.OPEN_SERIAL_ID, mTicket.getOpen_serial_id());
+//        bundle.putString(TK_TicketDao.OPEN_PRODUCT_DESC, mTicket.getOpen_product_desc());
+//        bundle.putString(TK_TicketDao.ORIGIN_DESC, mTicket.getOrigin_desc());
+//        bundle.putBoolean(TK_TicketDao.CURRENT_STEP_ORDER, currentStep);
+//        bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, ctrlCreation);
+//        bundle.putBoolean(Act070_Main.PARAM_ACTION_CREATION, actionCreation);
         //
         return bundle;
     }

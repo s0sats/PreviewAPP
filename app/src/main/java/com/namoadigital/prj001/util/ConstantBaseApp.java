@@ -633,6 +633,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_TICKET_CRTL_TYPE_APPROVAL ="OBJ_APPROVAL";
     public static final String TK_TICKET_CRTL_TYPE_NONE ="OBJ_NONE";
     public static final String TK_TICKET_PREX_IMG ="tk_";
+    public static final String TK_TICKET_ORIGIN_TYPE_SCHEDULE ="SCHEDULE";
     /*
      * Constantes Pipeline
      */

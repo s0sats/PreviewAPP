@@ -3,6 +3,7 @@ package com.namoadigital.prj001.view.frag.frg_pipeline_header;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.Group;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ public class Frg_Pipeline_Header extends Fragment {
     public static final String PRODUCT = "PRODUCT";
     public static final String ORIGIN = "ORIGIN";
     public static final String APPROVAL = "APPROVAL";
+    public static final String SCHEDULE = "SCHEDULE";
 
     private static final String TICKET_ID_PARAM = "TICKET_ID_PARAM";
     private static final String STATUS_DESC_PARAM = "STATUS_DESC_PARAM";
@@ -38,40 +40,45 @@ public class Frg_Pipeline_Header extends Fragment {
     private static final String STEP_MAIN_DESC_PARAM = "STEP_MAIN_DESC_PARAM";
     private static final String STEP_MAIN_STEP_NUM_COLOR_PARAM = "STEP_MAIN_STEP_NUM_COLOR_PARAM";
     //
-    String header_profile_param;
-    String ticket_id_param;
-    String ticket_date_param;
-    int site_code;
-    String site_desc_param;
-    String serial_id_param;
-    String prod_desc_param;
-    String status_desc_param;
-    int status_color_param;
-    String desc_origin_param;
-    String btn_sync_description_param;
-    boolean btn_sync_status_param;
-    int step_main_step_num_color_param;
-    String step_main_step_num_param;
-    String step_main_desc_param;
+    private String header_profile_param;
+    private String ticket_id_param;
+    private String ticket_date_param;
+    private int site_code;
+    private String site_desc_param;
+    private String serial_id_param;
+    private String prod_desc_param;
+    private String status_desc_param;
+    private int status_color_param;
+    private String desc_origin_param;
+    private String btn_sync_description_param;
+    private boolean btn_sync_status_param;
+    private int step_main_step_num_color_param;
+    private String step_main_step_num_param;
+    private String step_main_desc_param;
     //
-    TextView tv_ticket_id;
-    TextView tv_status;
-    TextView tv_prod_desc;
-    TextView tv_ticket_date;
-    TextView tv_site_desc;
-    TextView tv_serial;
-    TextView tv_desc_origin;
+    private TextView tv_ticket_id;
+    private TextView tv_status;
+    private TextView tv_prod_desc;
+    private TextView tv_ticket_date;
+    private TextView tv_site_desc;
+    private TextView tv_serial;
+    private TextView tv_desc_origin;
     private ImageView iv_action_shortcut;
     //Pipeline Profiler.
-    CardView cv_btn_sync;
-    LinearLayout ll_btn_sync;
-    TextView btn_sync_description;
-    ConstraintLayout frg_pipeline_header_ticket;
+    private CardView cv_btn_sync;
+    private LinearLayout ll_btn_sync;
+    private TextView btn_sync_description;
+    private ConstraintLayout frg_pipeline_header_ticket;
     //step
-    ConstraintLayout cl_step_ticket;
-    TextView tv_step_main_step_num;
-    TextView tv_step_main_desc;
-
+    private ConstraintLayout cl_step_ticket;
+    private TextView tv_step_main_step_num;
+    private TextView tv_step_main_desc;
+    //Schedule
+    private Group gp_pipeline;
+    private Group gp_schedule;
+    private TextView tv_schedule_desc;
+    private TextView tv_schedule_date;
+    private TextView tv_schedule_comment;
 
     private OnPipelineFragmentInteractionListener mListener;
 
@@ -131,6 +138,21 @@ public class Frg_Pipeline_Header extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+    //TODO IMPLEMENTAR O SET DAS INFORMAÇÕES - CONTINUAR DAQUI
+    public static Frg_Pipeline_Header newInstanceForSchedule(String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String desc_origin_param) {
+        Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
+        Bundle args = new Bundle();
+        args.putString(HEADER_PROFILE_PARAM, PRODUCT);
+        args.putString(TICKET_ID_PARAM, ticket_id);
+        args.putString(PROD_DESC_PARAM, prod_desc);
+        args.putString(TICKET_DATE_PARAM, ticket_date);
+        args.putInt(SITE_CODE_PARAM, site_code);
+        args.putString(SITE_DESC_PARAM, site_desc);
+        args.putString(SERIAL_ID_PARAM, serial_id);
+        args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -175,6 +197,11 @@ public class Frg_Pipeline_Header extends Fragment {
         cl_step_ticket = pipeline_header_view.findViewById(R.id.frg_pipeline_cl_step_ticket);
         tv_step_main_step_num = pipeline_header_view.findViewById(R.id.frg_pipeline_tv_step_main_step_num);
         tv_step_main_desc = pipeline_header_view.findViewById(R.id.frg_pipeline_tv_step_main_desc);
+        gp_pipeline = pipeline_header_view.findViewById(R.id.frg_ticket_gp_pipeline);
+        gp_schedule = pipeline_header_view.findViewById(R.id.frg_ticket_gp_schedule);
+        tv_schedule_desc = pipeline_header_view.findViewById(R.id.frg_ticket_tv_schedule_desc);
+        tv_schedule_date = pipeline_header_view.findViewById(R.id.frg_ticket_tv_schedule_date);
+        tv_schedule_comment = pipeline_header_view.findViewById(R.id.frg_ticket_tv_schedule_comment);
         //
         initializeLayoutVisibility();
         //
@@ -204,6 +231,7 @@ public class Frg_Pipeline_Header extends Fragment {
                 tv_desc_origin.setVisibility(View.VISIBLE);
                 btn_sync_description.setVisibility(View.VISIBLE);
                 //ll_btn_sync.setVisibility(View.VISIBLE);
+                gp_pipeline.setVisibility(View.VISIBLE);
                 setBtnSyncVisibility();
                 //
                 setSyncListener();
@@ -223,6 +251,7 @@ public class Frg_Pipeline_Header extends Fragment {
                 tv_prod_desc.setVisibility(View.VISIBLE);
                 tv_serial.setVisibility(View.VISIBLE);
                 frg_pipeline_header_ticket.setVisibility(View.VISIBLE);
+                gp_pipeline.setVisibility(View.VISIBLE);
                 break;
             case ORIGIN:
                 break;
@@ -234,6 +263,19 @@ public class Frg_Pipeline_Header extends Fragment {
                 tv_prod_desc.setVisibility(View.VISIBLE);
                 tv_serial.setVisibility(View.VISIBLE);
                 frg_pipeline_header_ticket.setVisibility(View.VISIBLE);
+                gp_pipeline.setVisibility(View.VISIBLE);
+                break;
+            case SCHEDULE:
+                cl_step_ticket.setVisibility(View.VISIBLE);
+                tv_ticket_id.setVisibility(View.VISIBLE);
+                tv_ticket_date.setVisibility(View.VISIBLE);
+                tv_site_desc.setVisibility(View.VISIBLE);
+                tv_prod_desc.setVisibility(View.VISIBLE);
+                tv_serial.setVisibility(View.VISIBLE);
+                frg_pipeline_header_ticket.setVisibility(View.VISIBLE);
+                tv_status.setVisibility(View.GONE);
+                gp_schedule.setVisibility(View.VISIBLE);
+                gp_pipeline.setVisibility(View.GONE);
                 break;
         }
     }
@@ -262,6 +304,8 @@ public class Frg_Pipeline_Header extends Fragment {
         //ll_btn_sync.setVisibility( View.GONE);
         setBtnSyncVisibility();
         cl_step_ticket.setVisibility(View.GONE);
+        gp_pipeline.setVisibility(View.GONE);
+        gp_schedule.setVisibility(View.GONE);
     }
 
     private void setTvContent() {

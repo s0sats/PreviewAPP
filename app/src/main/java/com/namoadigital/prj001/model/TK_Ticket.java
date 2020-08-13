@@ -83,10 +83,13 @@ public class TK_Ticket {
     private int update_required_product;
     @Expose
     private String token;
+    @Expose
     @Nullable
     private Integer schedule_prefix;
+    @Expose
     @Nullable
     private Integer schedule_code;
+    @Expose
     @Nullable
     private Integer schedule_exec;
     @Expose

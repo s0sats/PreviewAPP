@@ -219,17 +219,19 @@
             android:id="@+id/frg_pipeline_cl_step_ticket"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/frg_ticket_guide_end"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/frg_pipeline_header_ticket">
+            app:layout_constraintTop_toBottomOf="@+id/frg_pipeline_header_ticket"
+            app:layout_constraintHorizontal_bias="0.0"
+            android:layout_marginBottom="@dimen/pipeline_step_info_margin_top"
+            >
 
             <android.support.constraint.Guideline
                 android:id="@+id/frg_pipeline_header_gd_step_icon_end"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.15"  />
+                app:layout_constraintGuide_percent="0.15" />
 
             <TextView
                 android:id="@+id/frg_pipeline_tv_step_main_step_num"
@@ -239,14 +241,13 @@
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/step_status"
                 android:gravity="center"
-                tools:text="1"
                 android:textColor="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/frg_pipeline_header_gd_step_icon_end"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0"
-                />
+                tools:text="1" />
 
             <TextView
                 android:id="@+id/frg_pipeline_tv_step_main_desc"
@@ -261,6 +262,87 @@
                 app:layout_constraintTop_toTopOf="@+id/frg_pipeline_tv_step_main_step_num"
                 tools:text="1 -Planejamento" />
         </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/frg_ticket_cl_schedule"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/frg_ticket_guide_start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/frg_pipeline_cl_step_ticket"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="@dimen/pipeline_step_info_margin_top"
+            android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+            >
+            <TextView
+                android:id="@+id/frg_ticket_tv_schedule_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="DEscrição do agendamento" />
+
+            <TextView
+                android:id="@+id/frg_ticket_tv_schedule_comment"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:text="Comentario do agendamento"
+                android:layout_marginEnd="8dp"
+                android:textSize="12sp"
+                android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/frg_ticket_tv_schedule_desc" />
+
+            <ImageView
+                android:id="@+id/frg_ticket_iv_schedule_date"
+                android:layout_width="@dimen/pipeline_step_icon_width"
+                android:layout_height="@dimen/pipeline_step_icon_height"
+                app:layout_constraintBottom_toBottomOf="@+id/frg_ticket_tv_schedule_date"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/frg_ticket_tv_schedule_date"
+                app:srcCompat="@drawable/ic_baseline_date_range_24"
+                android:tint="@color/namoa_color_gray_4"
+                />
+
+
+            <TextView
+                android:id="@+id/frg_ticket_tv_schedule_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:textSize="12sp"
+                android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/frg_ticket_iv_schedule_date"
+                app:layout_constraintTop_toBottomOf="@id/frg_ticket_tv_schedule_comment"
+                tools:text="13/08/2020 14:58:05"
+                android:textColor="@color/namoa_color_gray_4"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="@dimen/pipeline_step_info_margin_top"
+                />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.Group
+            android:id="@+id/frg_ticket_gp_pipeline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="frg_ticket_tv_site_desc,frg_ticket_tv_ticket_date,,frg_pipeline_header_ticket,frg_pipeline_cl_step_ticket"
+            android:visibility="visible"
+            />
+
+        <android.support.constraint.Group
+            android:id="@+id/frg_ticket_gp_schedule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="frg_ticket_cl_schedule"
+            android:visibility="visible"
+            />
 
     </android.support.constraint.ConstraintLayout>
 
