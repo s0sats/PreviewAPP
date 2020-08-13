@@ -40,12 +40,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="8dp"
-            tools:text="TextView"
             android:textColor="@color/namoa_pipeline_product_lbl"
-            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_withdrawn_substract"
+            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_withdrawn_add"
             app:layout_constraintEnd_toStartOf="@+id/gdl_withdrawn"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_withdrawn_substract" />
+            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_withdrawn_add"
+            tools:text="TextView" />
 
         <ImageView
             android:id="@+id/product_cell_iv_withdrawn_substract"
@@ -80,14 +80,14 @@
             android:layout_marginEnd="8dp"
             android:background="@color/padrao_WHITE"
             android:padding="4dp"
-            tools:text="1 un"
             android:textAlignment="center"
             android:textColor="@color/namoa_pipeline_product_lbl"
             app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_withdrawn_add"
             app:layout_constraintEnd_toStartOf="@+id/product_cell_iv_withdrawn_add"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/product_cell_iv_withdrawn_substract"
-            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_withdrawn_add" />
+            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_withdrawn_add"
+            tools:text="1 un" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -112,12 +112,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="8dp"
-            tools:text="TextView"
             android:textColor="@color/namoa_pipeline_product_lbl"
-            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_applied_substract"
+            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_applied_add"
             app:layout_constraintEnd_toStartOf="@+id/gdl_applied"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_applied_substract" />
+            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_applied_add"
+            tools:text="TextView" />
 
         <ImageView
             android:id="@+id/product_cell_iv_applied_substract"
@@ -154,7 +154,7 @@
             android:padding="4dp"
             android:textAlignment="center"
             android:textColor="@color/namoa_pipeline_product_lbl"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_applied_add"
             app:layout_constraintEnd_toStartOf="@+id/product_cell_iv_applied_add"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/product_cell_iv_applied_substract"
@@ -185,12 +185,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="8dp"
-            tools:text="TextView"
             android:textColor="@color/namoa_pipeline_product_lbl"
             app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_returned_add"
             app:layout_constraintEnd_toStartOf="@+id/gdl_returned"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_returned_add" />
+            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_returned_add"
+            tools:text="TextView" />
 
 
         <ImageView
@@ -227,15 +227,15 @@
             android:layout_marginEnd="8dp"
             android:background="@color/padrao_WHITE"
             android:padding="4dp"
-            tools:text="1 un"
             android:textAlignment="center"
             android:textColor="@color/namoa_pipeline_product_lbl"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_returned_add"
             app:layout_constraintEnd_toStartOf="@+id/product_cell_iv_returned_add"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/product_cell_iv_returned_substract"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_returned_add"
+            tools:text="1 un" />
     </android.support.constraint.ConstraintLayout>
 
     <TextView

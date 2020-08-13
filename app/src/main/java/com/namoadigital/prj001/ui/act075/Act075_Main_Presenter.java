@@ -30,6 +30,7 @@ import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.TK_Ticket_Approval_Rejection_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
@@ -60,6 +61,9 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     private TK_Ticket_CtrlDao tkTicketCtrlDao;
     private TK_Ticket_ApprovalDao ticketApprovalDao;
     private TK_Ticket_Approval_RejectionDao ticketApprovalRejectionDao;
+    private String ctrlStartDate = "";
+    private Integer ctrlStartUser = -1;
+    private String ctrlStartUserName= "" ;
 
     public Act075_Main_Presenter(Context context, Act075_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -272,13 +276,26 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     public void saveApproval(TK_Ticket_Approval ticketApproval, boolean isApproved, String approveComments) {
         if (!isApproved) {
             ticketApproval.setApproval_status(ConstantBaseApp.SYS_STATUS_REJECTED);
+            TK_Ticket_Approval_Rejection rejection = getRejectionPKObj(ticketApproval);
+            rejection.setRejection_user(ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context)));
+            rejection.setRejection_user_nick(ToolBox_Con.getPreference_User_Code_Nick(context));
+            rejection.setRejection_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            //
+            List<TK_Ticket_Approval_Rejection> query = ticketApprovalRejectionDao.query(new TK_Ticket_Approval_Rejection_Sql_001(
+                    rejection.getCustomer_code(),
+                    rejection.getTicket_prefix(),
+                    rejection.getTicket_code(),
+                    rejection.getTicket_seq(),
+                    rejection.getStep_code()).toSqlQuery()
+            );
+            //
+            rejection.setSeq(query.size() + 1);
+            rejection.setRejection_comments(approveComments);
+            ticketApprovalRejectionDao.addUpdate(rejection);
         } else {
             ticketApproval.setApproval_status(ConstantBaseApp.SYS_STATUS_DONE);
         }
-        prepareApprovalData(ticketApproval, approveComments);
-    }
 
-    private void prepareApprovalData(TK_Ticket_Approval ticketApproval, String approveComments) {
         ticketApproval.setApproval_comments(approveComments);
         //
         TK_Ticket tkTicket = getTicket(ticketApproval.getCustomer_code(), ticketApproval.getTicket_prefix(), ticketApproval.getTicket_code());
@@ -294,6 +311,20 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                 TK_Ticket_Step ticketStep = tkTicket.getStep().get(stepIdx);
                 ticketStep.getCtrl().set(ctrlIdx, mTicketCtrl);
                 //
+                if (mTicketCtrl.getCtrl_start_date() == null
+                        || mTicketCtrl.getCtrl_start_date().isEmpty()) {
+                    mTicketCtrl.setCtrl_start_date(ctrlStartDate);
+                }
+                //
+                if (mTicketCtrl.getCtrl_start_user() == null
+                        || mTicketCtrl.getCtrl_start_user() < 0) {
+                    mTicketCtrl.setCtrl_start_user(ctrlStartUser);
+                }
+                //
+                if (mTicketCtrl.getCtrl_start_user_name() == null
+                        || mTicketCtrl.getCtrl_start_user_name().isEmpty()) {
+                    mTicketCtrl.setCtrl_start_user_name(ctrlStartUserName);
+                }
                 mTicketCtrl.setCtrl_end_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
                 mTicketCtrl.setCtrl_end_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
                 mTicketCtrl.setCtrl_end_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
@@ -319,59 +350,10 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void setStartCtrl(int mTkPrefix, int mTkCode, int mTkSeq, int mStepCode) {
-//        TK_Ticket_Ctrl mTicketCtrl = tkTicketCtrlDao.getByString(
-//                new TK_Ticket_Ctrl_Sql_001(
-//                        ToolBox_Con.getPreference_Customer_Code(context),
-//                        mTkPrefix,
-//                        mTkCode,
-//                        mTkSeq,
-//                        mStepCode
-//                ).toSqlQuery()
-//        );
-//
-//        if(mTicketCtrl.getCtrl_start_date() == null
-//                || mTicketCtrl.getCtrl_start_date().isEmpty() ) {
-//            mTicketCtrl.setCtrl_start_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-//        }
-//        if(mTicketCtrl.getCtrl_start_user() == null
-//                || mTicketCtrl.getCtrl_start_user() < 0 ) {
-//            mTicketCtrl.setCtrl_start_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
-//        }
-//        if(mTicketCtrl.getCtrl_start_user_name() == null
-//                || mTicketCtrl.getCtrl_start_user_name().isEmpty() ) {
-//            mTicketCtrl.setCtrl_start_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
-//        }
-//        tkTicketCtrlDao.addUpdate(mTicketCtrl);
-
-        TK_Ticket tkTicket = getTicket(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix, mTkCode);
-        TK_Ticket_Ctrl mTicketCtrl = getSelectedCtrl(mTkPrefix, mTkCode, mTkSeq, mStepCode);
-
-        int stepIdx = getStepIdx(mTicketCtrl, tkTicket);
-        if (tkTicket != null
-                && stepIdx > -1 && stepIdx <= tkTicket.getStep().size()
-                && tkTicket.getStep().get(stepIdx) != null
-        ) {
-            int ctrlIdx = getCtrlIdx(mTicketCtrl, tkTicket.getStep().get(stepIdx));
-            if (ctrlIdx > -1) {
-                if (mTicketCtrl.getCtrl_start_date() == null
-                        || mTicketCtrl.getCtrl_start_date().isEmpty()) {
-                    mTicketCtrl.setCtrl_start_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-                }
-                if (mTicketCtrl.getCtrl_start_user() == null
-                        || mTicketCtrl.getCtrl_start_user() < 0) {
-                    mTicketCtrl.setCtrl_start_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
-                }
-                if (mTicketCtrl.getCtrl_start_user_name() == null
-                        || mTicketCtrl.getCtrl_start_user_name().isEmpty()) {
-                    mTicketCtrl.setCtrl_start_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
-                }
-                TK_Ticket_Step ticketStep = tkTicket.getStep().get(stepIdx);
-                ticketStep.getCtrl().set(ctrlIdx, mTicketCtrl);
-                setCheckInOutWhenOneTouchStep(ticketStep, mTicketCtrl);
-                ticketDao.addUpdate(tkTicket);
-            }
-        }
+    public void setStartCtrl() {
+        ctrlStartDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+        ctrlStartUser = Integer.valueOf(ToolBox_Con.getPreference_User_Code(context));
+        ctrlStartUserName = ToolBox_Con.getPreference_User_Code_Nick(context);
     }
 
     private int getStepIdx(TK_Ticket_Ctrl mTicketCtrl, TK_Ticket tkTicket) {
