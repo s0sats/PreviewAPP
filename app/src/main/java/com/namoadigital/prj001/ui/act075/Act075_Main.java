@@ -159,7 +159,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             }
         }else{
             String ticketCtrlStatus = mPresenter.getSelectedCtrlStatus(mTkPrefix,mTkCode, mTkSeq, mStepCode);
-            mPresenter.setStartCtrl(mTkPrefix,mTkCode, mTkSeq, mStepCode);
+            mPresenter.setStartCtrl();
             if( mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)
                     && tkTicket.getUpdate_required_product() == 1
                     && (isEditable(Constant.SYS_STATUS_PENDING, ticketCtrlStatus, Constant.SYS_STATUS_PROCESS, ticketCtrlStatus))
