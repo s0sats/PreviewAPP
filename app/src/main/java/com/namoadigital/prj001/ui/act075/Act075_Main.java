@@ -157,6 +157,10 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             if(hasWithdrawnApproved && hasAppliedApproved){
                 btnSave.setVisibility(View.GONE);
             }
+            if(hasWithdrawnApproved && hasAppliedApproved
+                    || !isEditable(Constant.SYS_STATUS_PENDING, tkTicket.getTicket_status(), Constant.SYS_STATUS_PROCESS, tkTicket.getTicket_status())){
+                btnSave.setVisibility(View.GONE);
+            }
         }else{
             String ticketCtrlStatus = mPresenter.getSelectedCtrlStatus(mTkPrefix,mTkCode, mTkSeq, mStepCode);
             mPresenter.setStartCtrl();
@@ -577,7 +581,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 hasUpdated = false;
                 btnSave.setEnabled(false);
             }
-            if(hasWithdrawnApproved && hasAppliedApproved){
+            if(hasWithdrawnApproved && hasAppliedApproved
+            || !isEditable(Constant.SYS_STATUS_PENDING, tkTicket.getTicket_status(), Constant.SYS_STATUS_PROCESS, tkTicket.getTicket_status())){
                 btnSave.setVisibility(View.GONE);
             }
         }else{
