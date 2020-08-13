@@ -514,7 +514,12 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             @Override
             public void onClick(View v) {
                 //
-                refreshUI();
+                if(act_profile == 2) {
+                    hasUpdated = false;
+                    onBackPressed();
+                }else{
+                    refreshUI();
+                }
                 //
                 show.dismiss();
             }
@@ -522,9 +527,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     }
 
     @Override
-    public void callRefreshUi() {
-        refreshUI();
+    public void callMoveOn() {
         resetHasUpdate();
+        onBackPressed();
     }
 
     private void verifyChangesBeforeExit() {
@@ -539,7 +544,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                             callAct070();
                         }
                     },
-                    0
+                    1
             );
         }else{
             callAct070();
@@ -552,7 +557,13 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         if(WS_TK_Ticket_Product_Save.class.getName().equalsIgnoreCase(wsProcess)) {
             if(hmAux.hasConsistentValue(WS_TK_Ticket_Product_Save.PRODUCT_SAVE_RETURN_KEY)){
                 if(WS_TK_Ticket_Product_Save.PRODUCT_ADD.equalsIgnoreCase(hmAux.get(WS_TK_Ticket_Product_Save.PRODUCT_SAVE_RETURN_KEY))){
-                    showMsg(hmAux_Trans.get("alert_product_add_sucess_ttl"), hmAux_Trans.get("alert_product_add_sucess_msg"));
+                    showAlert(hmAux_Trans.get("alert_product_add_sucess_ttl"), hmAux_Trans.get("alert_product_add_sucess_msg"), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            hasUpdated = false;
+                            onBackPressed();
+                        }
+                    }, false);
                 }else if (WS_TK_Ticket_Product_Save.TICKET_FULL.equalsIgnoreCase(hmAux.get(WS_TK_Ticket_Product_Save.PRODUCT_SAVE_RETURN_KEY))){
                     showMsg(hmAux_Trans.get("alert_ticket_updated_ttl"), hmAux_Trans.get("alert_ticket_updated_msg"));
                 }

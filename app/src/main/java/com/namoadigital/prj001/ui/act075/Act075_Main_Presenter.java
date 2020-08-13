@@ -415,7 +415,7 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            mView.callRefreshUi();
+                            mView.callMoveOn();
                         }
                     },
                     false
