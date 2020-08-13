@@ -567,7 +567,9 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         if (comment.isEmpty() && rg_decline.isChecked()) {
                             mApproveListener.setSaveEnable(false);
                         }else{
-                            mApproveListener.setSaveEnable(true);
+                            if(rg_decline.isChecked()|| rg_approval.isChecked()) {
+                                mApproveListener.setSaveEnable(true);
+                            }
                         }
                     }
                 });

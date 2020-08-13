@@ -27,7 +27,7 @@ public interface Act075_Main_Contract {
         //
         void showResult(ArrayList<HMAux> resultList, boolean ticketResult);
         //
-        void callRefreshUi();
+        void callMoveOn();
         //
     }
 
