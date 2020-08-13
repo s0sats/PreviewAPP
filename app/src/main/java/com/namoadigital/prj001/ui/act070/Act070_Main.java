@@ -883,6 +883,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         progressDialog.dismiss();
+        updateTicketData();
     }
 
     //TRATA SESSION_NOT_FOUND
