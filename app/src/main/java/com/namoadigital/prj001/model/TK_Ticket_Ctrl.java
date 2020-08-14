@@ -48,7 +48,8 @@ public class TK_Ticket_Ctrl {
     @Nullable
     private String partner_desc;
     private int step_code;
-    private int step_order;
+    @Nullable//Somente se for agendado
+    private Integer step_order;
     private int obj_planned;
     private int update_required;
     @Expose
@@ -356,11 +357,12 @@ public class TK_Ticket_Ctrl {
         this.step_code = step_code;
     }
 
-    public int getStep_order() {
+    @Nullable
+    public Integer getStep_order() {
         return step_order;
     }
 
-    public void setStep_order(int step_order) {
+    public void setStep_order(@Nullable Integer step_order) {
         this.step_order = step_order;
     }
 

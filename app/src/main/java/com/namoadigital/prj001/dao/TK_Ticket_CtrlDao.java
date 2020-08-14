@@ -806,7 +806,11 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             tk_ticket_ctrl.setTicket_seq(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ)));
             tk_ticket_ctrl.setTicket_seq_tmp(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ_TMP)));
             tk_ticket_ctrl.setStep_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
-            tk_ticket_ctrl.setStep_order(cursor.getInt(cursor.getColumnIndex(STEP_ORDER)));
+            if(cursor.isNull(cursor.getColumnIndex(STEP_ORDER))){
+                tk_ticket_ctrl.setStep_order(null);
+            }else {
+                tk_ticket_ctrl.setStep_order(cursor.getInt(cursor.getColumnIndex(STEP_ORDER)));
+            }
             tk_ticket_ctrl.setObj_planned(cursor.getInt(cursor.getColumnIndex(OBJ_PLANNED)));
             tk_ticket_ctrl.setCtrl_type(cursor.getString(cursor.getColumnIndex(CTRL_TYPE)));
             if(cursor.isNull(cursor.getColumnIndex(PRODUCT_CODE))){
@@ -911,9 +915,9 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             if(tk_ticket_ctrl.getStep_code() > -1){
                 contentValues.put(STEP_CODE,tk_ticket_ctrl.getStep_code());
             }
-            if(tk_ticket_ctrl.getStep_order() > -1){
-                contentValues.put(STEP_ORDER,tk_ticket_ctrl.getStep_order());
-            }
+
+            contentValues.put(STEP_ORDER,tk_ticket_ctrl.getStep_order());
+
             if(tk_ticket_ctrl.getObj_planned() > -1){
                 contentValues.put(OBJ_PLANNED,tk_ticket_ctrl.getObj_planned());
             }

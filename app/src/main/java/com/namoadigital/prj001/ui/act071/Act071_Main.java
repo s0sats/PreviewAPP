@@ -43,6 +43,7 @@ import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
@@ -257,7 +258,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             mSchedulePrefix = requestingBundle.getInt(TK_TicketDao.SCHEDULE_PREFIX, -1);
             mScheduleCode = requestingBundle.getInt(TK_TicketDao.SCHEDULE_CODE, -1);
             mScheduleExec = requestingBundle.getInt(TK_TicketDao.SCHEDULE_EXEC, -1);
-            mIsSchedule = defineIsScheduleAttr();
             //LUCHE 29/07/2020
             mPipelineHeaderOpen_date = requestingBundle.getString(TK_TicketDao.OPEN_DATE, "");
             mPipelineHeaderOpen_site_code = requestingBundle.getInt(TK_TicketDao.OPEN_SITE_CODE, -1);
@@ -270,6 +270,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             //
             isCreationCtrl = requestingBundle.getBoolean(Act070_Main.PARAM_CTRL_CREATION,false);
             isCreationAction = requestingBundle.getBoolean(Act070_Main.PARAM_ACTION_CREATION,false);
+            //LUCHE 14/08/2020 - Movido metodo para ca pois agora as vars de cima fazem parte do processo de validação.
+            mIsSchedule = defineIsScheduleAttr();
         } else {
             requestingAct = ConstantBaseApp.ACT070;
             mActionPrefix = -1;
@@ -364,26 +366,49 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private void iniHeaderFrag() {
         TK_Ticket_Step tkTicketStep = mPresenter.getStepInfo(mActionPrefix,mActionCode,mStepCode);
         //
-        mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForApprovalOrAction(
-            mTicketID,
-            ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(mPipelineHeaderOpen_date),
-                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-            ),
-            mPipelineHeaderOpen_site_code,
-            mPipelineHeaderOpen_site_desc,
-            mPipelineHeaderOpen_serial_id,
-            mPipelineHeaderOpen_product_desc,
-            "\\" + mPipelineHeaderOrigin_desc,
-            mPresenter.getStepColor(tkTicketStep,mPipelineHeaderIsCurrentStepOrder),
-            mPresenter.getStepNumFormatted(tkTicketStep),
-            mPresenter.getStepDesc(tkTicketStep)
-        );
+        if(mIsSchedule) {
+            MD_Schedule_Exec scheduleExec = mPresenter.getScheduleExec(mSchedulePrefix,mScheduleCode,mScheduleExec);
+            if(scheduleExec != null) {
+                //
+                mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForSchedule(
+                    mTicketID,
+                    scheduleExec.getSerial_id(),
+                    scheduleExec.getProduct_desc(),
+                    scheduleExec.getSchedule_desc(),
+                    scheduleExec.getComments(),
+                    ToolBox_Inf.getStepStartEndDateFormated(
+                        context,
+                        scheduleExec.getDate_start() + " " + ToolBox_Con.getPreference_Customer_TMZ(context),
+                        scheduleExec.getDate_end() + " " + ToolBox_Con.getPreference_Customer_TMZ(context)
+                    )
+                );
+            }
+        }else{
+            mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForApprovalOrAction(
+                mTicketID,
+                ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(mPipelineHeaderOpen_date),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                ),
+                mPipelineHeaderOpen_site_code,
+                mPipelineHeaderOpen_site_desc,
+                mPipelineHeaderOpen_serial_id,
+                mPipelineHeaderOpen_product_desc,
+                "\\" + mPipelineHeaderOrigin_desc,
+                mPresenter.getStepColor(tkTicketStep, mPipelineHeaderIsCurrentStepOrder),
+                mPresenter.getStepNumFormatted(tkTicketStep),
+                mPresenter.getStepDesc(tkTicketStep)
+            );
+        }
         //
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.act071_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
-        ft.addToBackStack(null);
-        ft.commit();
+        if(mFrgPipelineHeader != null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.act071_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
+            ft.addToBackStack(null);
+            ft.commit();
+        }else{
+            paramErrorFlow();
+        }
     }
 
     @Override
@@ -702,10 +727,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
      * Metodo que define o atributo mIsSchedule
      * @return - Verdadeiro se ticket prefix == 0 e ticket_code, ticket_seq e pk do agendamento
      */
+    //TODO testar com ticket gerado pelo agendamento.
     private boolean defineIsScheduleAttr(){
         return mActionPrefix == 0
                && mActionCode > 0
-               && mActionSeq > 0
+               && (mActionSeqTmp > 0 || (isCreationCtrl && isCreationAction))
                && mSchedulePrefix > 0
                && mScheduleCode > 0
                && mScheduleExec > 0;
