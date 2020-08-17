@@ -13,8 +13,9 @@ public class T_TK_Ticket_Save_Rec_Result {
     private int scn;
     private String ret_status;
     private String ret_msg;
-//    private Integer old_ticket_prefix;
-//    private Integer old_ticket_code;
+    private Integer schedule_prefix;
+    private Integer schedule_code;
+    private Integer schedule_exec;
 //    private TK_Ticket ticket;
     private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> step;
     private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> product;
@@ -67,30 +68,31 @@ public class T_TK_Ticket_Save_Rec_Result {
     public void setRet_msg(String ret_msg) {
         this.ret_msg = ret_msg;
     }
-//
-//    public Integer getOld_ticket_prefix() {
-//        return old_ticket_prefix;
-//    }
-//
-//    public void setOld_ticket_prefix(Integer old_ticket_prefix) {
-//        this.old_ticket_prefix = old_ticket_prefix;
-//    }
-//
-//    public Integer getOld_ticket_code() {
-//        return old_ticket_code;
-//    }
-//
-//    public void setOld_ticket_code(Integer old_ticket_code) {
-//        this.old_ticket_code = old_ticket_code;
-//    }
-//
-//    public TK_Ticket getTicket() {
-//        return ticket;
-//    }
-//
-//    public void setTicket(TK_Ticket ticket) {
-//        this.ticket = ticket;
-//    }
+
+    public Integer getSchedule_prefix() {
+        return schedule_prefix;
+    }
+
+    public void setSchedule_prefix(Integer schedule_prefix) {
+        this.schedule_prefix = schedule_prefix;
+    }
+
+    public Integer getSchedule_code() {
+        return schedule_code;
+    }
+
+    public void setSchedule_code(Integer schedule_code) {
+        this.schedule_code = schedule_code;
+    }
+
+    public Integer getSchedule_exec() {
+        return schedule_exec;
+    }
+
+    public void setSchedule_exec(Integer schedule_exec) {
+        this.schedule_exec = schedule_exec;
+    }
+
     public ArrayList<T_TK_Ticket_Save_Rec_Result_Step> getStep() {
         return step;
     }
