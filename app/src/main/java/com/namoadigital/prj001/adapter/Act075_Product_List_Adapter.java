@@ -5,6 +5,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -526,6 +527,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         case R.id.act075_approval_form_rg_approval:
                             mApproveListener.onSelectOption(true);
                             mApproveListener.setSaveEnable(true);
+                            defineCommentRequired(false);
                             break;
                         case R.id.act075_approval_form_rg_decline:
                             mApproveListener.onSelectOption(false);
@@ -534,6 +536,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                             }else{
                                 mApproveListener.setSaveEnable(true);
                             }
+                            defineCommentRequired(true);
                             break;
                     }
                 }
@@ -575,6 +578,38 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                 });
             }
             //
+        }
+
+        /**
+         * LUCHE - 17/08/2020
+         * Criado metodo que define a cor do label do comentario e adiciona ou remove asterisco
+         * dependendo do param passado
+         * @param commentRequired
+         */
+        private void defineCommentRequired(boolean commentRequired) {
+            if (tv_comment_lbl != null) {
+                if(commentRequired){
+                    tv_comment_lbl.setText(setRequiredSign());
+                    tv_comment_lbl.setTextColor(ContextCompat.getColor(context, R.color.font_required));
+                }else{
+                    tv_comment_lbl.setText(hmAux_Trans.get("product_comment_lbl"));
+                    tv_comment_lbl.setTextColor(ContextCompat.getColor(context, R.color.font_normal));
+                }
+            }
+        }
+
+        /**
+         * LUCHE - 17/08/2020
+         * Metodo que seta o asterisco, parece preciosimos, pode até ser, mas se não tiver a tradução
+         * podia dar zica
+         * @return tradução + asterisco
+         */
+        @NonNull
+        private String setRequiredSign() {
+            return  hmAux_Trans.get("product_comment_lbl") != null
+                    ? hmAux_Trans.get("product_comment_lbl") + " *"
+                    : " *"
+                ;
         }
         //
         public String getApprovalComment() {
