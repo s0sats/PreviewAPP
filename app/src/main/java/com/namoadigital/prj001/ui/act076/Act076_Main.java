@@ -20,6 +20,7 @@ import com.namoadigital.prj001.adapter.Act074_Next_Tickets_Adapter;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
+import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -248,6 +249,15 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
         startActivity(intent);
         finish();
     }
+
+    @Override
+    public void callAct012() {
+        Intent intent = new Intent(context, Act012_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
     //
     @Override
     protected void footerCreateDialog() {

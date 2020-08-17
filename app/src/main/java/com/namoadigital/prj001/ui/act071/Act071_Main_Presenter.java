@@ -627,21 +627,30 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         //
         if(tkTicket != null){
             //TODO RFAZER METODO
-//            if(tkTicket.getCtrl() != null && tkTicket.getCtrl().size() > 0){
-//                tkTicket.getCtrl().get(0).setCtrl_status(finalStatus);
-//                tkTicket.getCtrl().get(0).getAction().setAction_status(finalStatus);
-//            }
-//            tkTicket.setTicket_status(finalStatus);
-//            scheduleExec.setStatus(finalStatus);
-//            scheduleExec.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-//            //
-//            DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
-//            if(!daoObjReturn.hasError()){
-//                daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
-//                if(daoObjReturn.hasError()){
-//                    erroMsg = hmAux_Trans.get("alert_error_on_cancel_schedule_msg");
-//                }
-//            }
+            if(tkTicket.getStep() != null && tkTicket.getStep().size() > 0){
+                for (TK_Ticket_Step ticketStep : tkTicket.getStep()) {
+                    ticketStep.setStep_status(finalStatus);
+                    //
+                    if(ticketStep.getCtrl() != null && ticketStep.getCtrl().size() > 0){
+                        for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
+                            ticketCtrl.setCtrl_status(finalStatus);
+                            ticketCtrl.copyCtrlStatusForInnerProcess();
+                        }
+                    }
+                }
+            }
+            //
+            tkTicket.setTicket_status(finalStatus);
+            scheduleExec.setStatus(finalStatus);
+            scheduleExec.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            //
+            DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
+            if(!daoObjReturn.hasError()){
+                daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
+                if(daoObjReturn.hasError()){
+                    erroMsg = hmAux_Trans.get("alert_error_on_cancel_schedule_msg");
+                }
+            }
         } else{
             erroMsg = hmAux_Trans.get("alert_error_ticket_not_found_msg");
         }
