@@ -329,13 +329,19 @@
         </android.support.constraint.ConstraintLayout>
 
         <android.support.constraint.Group
-            android:id="@+id/frg_ticket_gp_pipeline"
+            android:id="@+id/frg_ticket_gp_ticket"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="frg_ticket_tv_site_desc,frg_ticket_tv_ticket_date,,frg_pipeline_header_ticket,frg_pipeline_cl_step_ticket"
+            app:constraint_referenced_ids="frg_ticket_tv_site_desc,frg_ticket_tv_ticket_date,,frg_pipeline_header_ticket"
             android:visibility="visible"
             />
-
+        <android.support.constraint.Group
+            android:id="@+id/frg_ticket_gp_step"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="frg_pipeline_cl_step_ticket"
+            android:visibility="visible"
+            />
         <android.support.constraint.Group
             android:id="@+id/frg_ticket_gp_schedule"
             android:layout_width="wrap_content"

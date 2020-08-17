@@ -551,7 +551,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         return false;
     }
 
-    private MD_Schedule_Exec getScheduleExec(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
+    @Override
+    public MD_Schedule_Exec getScheduleExec(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
         return scheduleExecDao.getByString(
             new MD_Schedule_Exec_Sql_001(
                 ToolBox_Con.getPreference_Customer_Code(context),

@@ -59,6 +59,7 @@ import com.namoadigital.prj001.sql.Sql_Act017_001;
 import com.namoadigital.prj001.sql.Sql_Act017_002;
 import com.namoadigital.prj001.sql.Sql_Act017_003;
 import com.namoadigital.prj001.sql.Sql_Act017_004;
+import com.namoadigital.prj001.sql.Sql_Act017_005;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_010;
@@ -95,6 +96,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     private ScheduleRequestSerialDialog serialDialog;
     private TK_TicketDao ticketDao;
     private MD_OperationDao operationDao;
+    private TK_Ticket_CtrlDao ticketCtrlDao;
 
 
     public Act017_Main_Presenter_Impl(Context context, Act017_Main_View mView, GE_Custom_Form_LocalDao formLocalDao, HMAux hmAux_Trans) {
@@ -123,7 +125,11 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
         );
-
+        this.ticketCtrlDao = new TK_Ticket_CtrlDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
     }
 
     @Override
@@ -646,46 +652,62 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     }
     //TODO CONTINUAR A REVISÃO
     private Bundle getTicketActionFlowBundle(HMAux item) {
-       Bundle bundle = new Bundle();
+        Bundle bundle = new Bundle();
         //
-       bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017);
-       bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX)));
-       bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_CODE, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_CODE)));
-       bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)));
-       bundle.putInt(TK_TicketDao.TICKET_PREFIX, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_PREFIX)));
-       bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_CODE)));
-       //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
-        //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
-       bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, 0);
-       bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, 0);
-        bundle.putInt(TK_Ticket_ActionDao.STEP_CODE, 0);
-       //16/03/2020 - foi convencionado que durante a criação da execução do ticket, o ticket id,
-       //será o igual ao do exibido nas celulas do agendamento.
-       bundle.putString(TK_TicketDao.TICKET_ID, ToolBox_Inf.getFormattedTicketSeqExec(
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017);
+        bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX)));
+        bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_CODE, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_CODE)));
+        bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)));
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_PREFIX)));
+        bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_CODE)));
+        //16/03/2020 - foi convencionado que durante a criação da execução do ticket, o ticket id,
+        //será o igual ao do exibido nas celulas do agendamento.
+        bundle.putString(TK_TicketDao.TICKET_ID, ToolBox_Inf.getFormattedTicketSeqExec(
            item.get(MD_Schedule_ExecDao.SCHEDULE_PK),
            item.get(TK_TicketDao.TICKET_PREFIX),
            item.get(TK_TicketDao.TICKET_CODE)
            )
-       );
-       //bundle.putString(TK_TicketDao.TYPE_PATH, item.get(TK_TicketDao.TYPE_PATH));
-       bundle.putString(TK_TicketDao.TYPE_DESC, item.get(MD_Schedule_ExecDao.TICKET_TYPE_DESC));
-       bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN,false);
-       bundle.putString(Constant.ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
-       bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
-       //
+        );
+        //bundle.putString(TK_TicketDao.TYPE_PATH, item.get(TK_TicketDao.TYPE_PATH));
+        bundle.putString(TK_TicketDao.TYPE_DESC, item.get(MD_Schedule_ExecDao.TICKET_TYPE_DESC));
+        bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN,false);
+        bundle.putString(Constant.ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF));
+        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
+        //
+        //LUCHE - 14/08/2020 - Criação de action agendado v2
+        TK_Ticket_Ctrl ctrlItem = getScheduleCtrlIfExists(item);
+        //Se encontrou o ctrl, é um waiting sync, seta dados para abertura o item
+        if(ctrlItem != null) {
+            bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ctrlItem.getTicket_seq());
+            bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, ctrlItem.getTicket_seq_tmp());
+            bundle.putInt(TK_Ticket_ActionDao.STEP_CODE, ctrlItem.getStep_code());
+            bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, false);
+            bundle.putBoolean(Act070_Main.PARAM_ACTION_CREATION, false);
+        }else{
+            bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, 0);
+            bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, 0);
+            bundle.putInt(TK_Ticket_ActionDao.STEP_CODE, 0);
+            bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, true);
+            bundle.putBoolean(Act070_Main.PARAM_ACTION_CREATION, true);
+        }
 
-//        //params header
-//        bundle.putString(TK_TicketDao.OPEN_DATE, mTicket.getOpen_date());
-//        bundle.putInt(TK_TicketDao.OPEN_SITE_CODE, mTicket.getOpen_site_code());
-//        bundle.putString(TK_TicketDao.OPEN_SITE_DESC, mTicket.getOpen_site_desc());
-//        bundle.putString(TK_TicketDao.OPEN_SERIAL_ID, mTicket.getOpen_serial_id());
-//        bundle.putString(TK_TicketDao.OPEN_PRODUCT_DESC, mTicket.getOpen_product_desc());
-//        bundle.putString(TK_TicketDao.ORIGIN_DESC, mTicket.getOrigin_desc());
-//        bundle.putBoolean(TK_TicketDao.CURRENT_STEP_ORDER, currentStep);
-//        bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, ctrlCreation);
-//        bundle.putBoolean(Act070_Main.PARAM_ACTION_CREATION, actionCreation);
+
         //
         return bundle;
+    }
+
+    @Nullable
+    private TK_Ticket_Ctrl getScheduleCtrlIfExists(HMAux item) {
+        return ticketCtrlDao.getByString(
+            new Sql_Act017_005(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX),
+                item.get(MD_Schedule_ExecDao.SCHEDULE_CODE),
+                item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC),
+                item.get(TK_TicketDao.TICKET_PREFIX),
+                item.get(TK_TicketDao.TICKET_CODE)
+            ).toSqlQuery()
+        );
     }
 
     private boolean isStatusPossibleToOpen(HMAux item) {

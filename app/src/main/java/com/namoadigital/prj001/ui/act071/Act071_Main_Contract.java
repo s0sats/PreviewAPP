@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act071;
 import android.content.DialogInterface;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
@@ -109,6 +110,8 @@ public interface Act071_Main_Contract {
         void setStartInfoIfNeed(TK_Ticket_Ctrl mTicketCtrl);
 
         TK_Ticket_Ctrl createTicketCtrlObj(int mActionPrefix, int mActionCode, int mStepCode);
+
+        MD_Schedule_Exec getScheduleExec(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec);
 
         /*boolean hasPartnerProfile(Integer partner_code);
 
