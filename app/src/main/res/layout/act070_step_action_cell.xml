@@ -155,7 +155,7 @@
             android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/step_action_gd_end"
-            app:layout_constraintStart_toStartOf="@id/step_action_tv_prod"
+            app:layout_constraintStart_toStartOf="@+id/step_action_tv_desc"
             app:layout_constraintTop_toBottomOf="@id/step_action_tv_prod"
             tools:text="WBTT20200707001" />
 
@@ -166,8 +166,7 @@
             android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
             android:textColor="@color/namoa_color_danger_red"
             app:layout_constraintEnd_toStartOf="@id/step_action_gd_end"
-            app:layout_constraintHorizontal_bias="0.50"
-            app:layout_constraintStart_toStartOf="@id/step_action_tv_serial"
+            app:layout_constraintStart_toStartOf="@+id/step_action_tv_desc"
             app:layout_constraintTop_toBottomOf="@id/step_action_tv_desc"
             tools:text="Vierhiem" />
 

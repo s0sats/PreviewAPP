@@ -68,12 +68,13 @@ public class Act070_Step_ActionVH extends Act070_Step_Abstract_ProcessVH {
         resetVisibility();
         //
         tvActionDesc.setText(stepAction.getStepDescription());
+
         if(ToolBox_Inf.hasConsistentValueString(stepAction.getProductDesc())) {
-            tvProduct.setVisibility(View.VISIBLE);
+            setProductVisibility(tvProduct,stepAction.isProductDifferentThanTicket());
             tvProduct.setText(stepAction.getProductDesc());
         }
         if(ToolBox_Inf.hasConsistentValueString(stepAction.getSerialId())) {
-            tvSerial.setVisibility(View.VISIBLE);
+            setSerialVisibility(tvSerial, stepAction.isProductDifferentThanTicket(), stepAction.isSerialDifferentThanTicket());
             tvSerial.setText(stepAction.getSerialId());
         }
         //Sem necessidade de chamar o hasConsistentValueString, pois já é chamado internamento

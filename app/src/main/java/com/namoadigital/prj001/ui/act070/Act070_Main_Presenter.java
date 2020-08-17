@@ -1160,33 +1160,15 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 //
                 switch (tkStepCtrl.getCtrl_type()){
                     case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
-                        StepAction stepAction = createStepAction(stepMain, tkStepCtrl);
-                        //
+                        StepAction stepAction = createStepAction(mTicket,stepMain, tkStepCtrl);
                         stepsCtrls.add(stepAction);
                         break;
                     case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
-                        StepApproval stepApproval = new StepApproval();
-                        stepApproval.setStepCode(tkStepCtrl.getStep_code());
-                        stepApproval.setStepType(stepMain.getStepType());
-                        stepApproval.setProcessTkSeq(tkStepCtrl.getTicket_seq());
-                        stepApproval.setProcessStatus(tkStepCtrl.getCtrl_status());
-                        stepApproval.setApprovalType(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_type() : null);
-                        stepApproval.setApprovalQuestion(tkStepCtrl.getApproval()  != null ? tkStepCtrl.getApproval().getApproval_question() : null);
-                        stepApproval.setApprovalStatus(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_status() : null);
-                        stepApproval.setApprovalComment(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_comments() : null);
-                        stepApproval.setPartnerDesc(tkStepCtrl.getPartner_desc());
-                        stepApproval.setStartDate(tkStepCtrl.getCtrl_start_date());
-                        stepApproval.setEndDate(tkStepCtrl.getCtrl_end_date());
-                        stepApproval.setEndUser(tkStepCtrl.getCtrl_start_user_name());
-                        stepApproval.setHasRejection(tkStepCtrl.getRejection() != null && tkStepCtrl.getRejection().size() > 0 );
-                        stepApproval.setCurrentStep(stepMain.isCurrentStep());
-                        stepApproval.setStepAlreadyCheckedIn(ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate()));
-                        stepApproval.setProcessPlanned(tkStepCtrl.getObj_planned() == 1);
-                        //
+                        StepApproval stepApproval = createStepApproval(mTicket, stepMain, tkStepCtrl);
                         stepsCtrls.add(stepApproval);
                         break;
                     case ConstantBaseApp.TK_TICKET_CRTL_TYPE_NONE:
-                        StepNone stepNone = createStepNone(stepMain, tkStepCtrl);
+                        StepNone stepNone = createStepNone(mTicket,stepMain, tkStepCtrl);
                         stepsCtrls.add(stepNone);
                         break;
                     case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
@@ -1201,7 +1183,32 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     @NonNull
-    private StepAction createStepAction(StepMain stepMain, TK_Ticket_Ctrl tkStepCtrl) {
+    private StepApproval createStepApproval(TK_Ticket mTicket, StepMain stepMain, TK_Ticket_Ctrl tkStepCtrl) {
+        StepApproval stepApproval = new StepApproval();
+        stepApproval.setStepCode(tkStepCtrl.getStep_code());
+        stepApproval.setStepType(stepMain.getStepType());
+        stepApproval.setProcessTkSeq(tkStepCtrl.getTicket_seq());
+        stepApproval.setProcessStatus(tkStepCtrl.getCtrl_status());
+        stepApproval.setApprovalType(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_type() : null);
+        stepApproval.setApprovalQuestion(tkStepCtrl.getApproval()  != null ? tkStepCtrl.getApproval().getApproval_question() : null);
+        stepApproval.setApprovalStatus(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_status() : null);
+        stepApproval.setApprovalComment(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_comments() : null);
+        stepApproval.setPartnerDesc(tkStepCtrl.getPartner_desc());
+        stepApproval.setStartDate(tkStepCtrl.getCtrl_start_date());
+        stepApproval.setEndDate(tkStepCtrl.getCtrl_end_date());
+        stepApproval.setEndUser(tkStepCtrl.getCtrl_start_user_name());
+        stepApproval.setHasRejection(tkStepCtrl.getRejection() != null && tkStepCtrl.getRejection().size() > 0 );
+        stepApproval.setCurrentStep(stepMain.isCurrentStep());
+        stepApproval.setStepAlreadyCheckedIn(ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate()));
+        stepApproval.setProcessPlanned(tkStepCtrl.getObj_planned() == 1);
+        //
+        stepApproval.setProductDifferentThanTicket(tkStepCtrl.getProduct_code() != null && mTicket.getOpen_product_code() != tkStepCtrl.getProduct_code());
+        stepApproval.setProductDifferentThanTicket(tkStepCtrl.getSerial_code() != null && mTicket.getOpen_serial_code() != tkStepCtrl.getSerial_code());
+        return stepApproval;
+    }
+
+    @NonNull
+    private StepAction createStepAction(TK_Ticket mTicket, StepMain stepMain, TK_Ticket_Ctrl tkStepCtrl) {
         StepAction stepAction = new StepAction();
         stepAction.setStepCode(tkStepCtrl.getStep_code());
         stepAction.setStepDescription(hmAux_Trans.get("process_action_tll"));
@@ -1219,11 +1226,13 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepAction.setEndDate(tkStepCtrl.getCtrl_end_date());
         stepAction.setEndUser(tkStepCtrl.getCtrl_end_user_name());
         stepAction.setPartnerDesc(tkStepCtrl.getPartner_desc());
+        stepAction.setProductDifferentThanTicket(tkStepCtrl.getProduct_code() != null && mTicket.getOpen_product_code() != tkStepCtrl.getProduct_code());
+        stepAction.setSerialDifferentThanTicket(tkStepCtrl.getSerial_code() != null && mTicket.getOpen_serial_code() != tkStepCtrl.getSerial_code());
         return stepAction;
     }
 
     @NonNull
-    private StepNone createStepNone(StepMain stepMain, TK_Ticket_Ctrl tkStepCtrl) {
+    private StepNone createStepNone(TK_Ticket mTicket, StepMain stepMain, TK_Ticket_Ctrl tkStepCtrl) {
         StepNone stepNone = new StepNone();
         //Dados do StepAbs
         stepNone.setStepCode(tkStepCtrl.getStep_code());
@@ -1241,6 +1250,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepNone.setEndDate(tkStepCtrl.getCtrl_end_date());
         stepNone.setEndUser(tkStepCtrl.getCtrl_end_user_name());
         stepNone.setPartnerDesc(tkStepCtrl.getPartner_desc());
+        stepNone.setProductDifferentThanTicket(tkStepCtrl.getProduct_code() != null && mTicket.getOpen_product_code() != tkStepCtrl.getProduct_code());
+        stepNone.setSerialDifferentThanTicket(tkStepCtrl.getSerial_code() != null && mTicket.getOpen_serial_code() != tkStepCtrl.getSerial_code());
         return stepNone;
     }
 
