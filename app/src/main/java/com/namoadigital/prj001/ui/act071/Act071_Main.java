@@ -868,7 +868,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                             previousLenght = sFile.length();
                         }
                         //
-                        Glide.with(context).load(resource).into(ivActionPhoto);
+                        Glide.with(context)
+                            .load(resource)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .into(ivActionPhoto);
                         //
                         applyTooLargeImgListener(finalPath);
                     }
