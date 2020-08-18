@@ -287,7 +287,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             //
             if (act_profile == 1) {
                 if (inventory_control == 0) {
-                    noInventoryControlLayout();
+                    noInventoryControlLayout(position, tk_ticket_product);
                     product_cell_tv_extract.setVisibility(View.GONE);
                 } else {
                     if(!hasWithdrawApproved){
@@ -296,7 +296,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         cl_returned.setVisibility(View.GONE);
                         product_cell_tv_extract.setVisibility(View.GONE);
                         if(isEditable){
-                            enableWithdrawLayout();
+                            enableWithdrawLayout(position, tk_ticket_product);
                         }else{
                             disableWithdrawLayout();
                         }
@@ -307,7 +307,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         product_cell_tv_extract.setVisibility(View.VISIBLE);
                         disableWithdrawLayout();
                         if(isEditable){
-                            enableAppliedLayout();
+                            enableAppliedLayout(position, tk_ticket_product);
                         }else{
                             disableAppliedLayout();
                         }
@@ -323,7 +323,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                 }
 
                 if(isEditable) {
-
                     if(mProductListener.hasWithdrawnDataChange(tk_ticket_product)) {
                         product_cell_tv_withdrawn_qty.setBackground(context.getResources().getDrawable(R.color.namoa_color_ticket_process_highlight));
                     }else{
@@ -335,59 +334,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     }else{
                         product_cell_tv_applied_qty.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
                     }
-
-                    product_cell_tv_withdrawn_qty.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mProductListener.callQtyDialog(position, tk_ticket_product);
-
-                        }
-                    });
-                    //
-                    product_cell_tv_applied_qty.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mProductListener.callQtyUsedDialog(position, tk_ticket_product);
-                        }
-                    });
-                    //
-                    product_cell_iv_withdrawn_substract.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            double mWithdraw = tk_ticket_product.getQty() - 1;
-                            tk_ticket_product.setQty(mWithdraw);
-                            notifyItemChanged(position);
-                        }
-                    });
-                    //
-                    product_cell_iv_withdrawn_add.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            double mWithdraw = tk_ticket_product.getQty() + 1;
-                            tk_ticket_product.setQty(mWithdraw);
-                            notifyItemChanged(position);
-                        }
-                    });
-                    //
-                    product_cell_iv_applied_substract.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            double mApplied = tk_ticket_product.getQty_used() - 1;
-                            tk_ticket_product.setQty_used(mApplied);
-                            notifyItemChanged(position);
-                        }
-                    });
-
-                    //
-                    product_cell_iv_applied_add.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            double mApplied = tk_ticket_product.getQty_used() + 1;
-                            tk_ticket_product.setQty_used(mApplied);
-                            notifyItemChanged(position);
-                        }
-                    });
                 }
             } else if (act_profile == 2) {
                 setAmountControllersVisibility(View.GONE);
@@ -406,44 +352,137 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             product_cell_tv_extract.setText(hmAux_Trans.get("product_extract_lbl") + " " + balance);
         }
 
-        private void noInventoryControlLayout() {
-
+        /**
+         * LUCHE - 18/08/2020
+         * <p></p>
+         * Modificado metodo para receber como param a posição e obj , pois agora o metodo
+         * enableAppliedLayout setará tb as ações de clique.
+         * @param position
+         * @param tk_ticket_product
+         */
+        private void noInventoryControlLayout(int position, TK_Ticket_Product tk_ticket_product) {
             cl_withdrawn.setVisibility(View.GONE);
             cl_applied.setVisibility(View.VISIBLE);
             cl_returned.setVisibility(View.GONE);
             product_cell_tv_extract.setVisibility(View.GONE);
-
+            //
             if(isEditable){
-                enableAppliedLayout();
+                enableAppliedLayout(position, tk_ticket_product);
             }else{
                 disableAppliedLayout();
             }
         }
 
+        /**
+         * LUCHE - 18/08/2020
+         * <p></p>
+         * Modificado metodo remover as ações ao desabilitar
+         */
         private void disableAppliedLayout() {
             product_cell_iv_applied_substract.setVisibility(View.INVISIBLE);
             product_cell_iv_applied_add.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
             product_cell_iv_applied_add.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check_white_24dp));
             product_cell_iv_applied_add.setImageTintList(context.getResources().getColorStateList(R.color.namoa_product_extract_check));
+            //Remove listeners ao desabilitar
+            product_cell_tv_applied_qty.setOnClickListener(null);
+            product_cell_iv_applied_substract.setOnClickListener(null);
+            product_cell_iv_applied_add.setOnClickListener(null);
         }
 
-        private void enableAppliedLayout() {
+        /**
+         * LUCHE - 18/08/2020
+         * <p></p>
+         * Modificado metodo para receber como param a posição e obj , pois agora alem de habilitar
+         * o layout, setará as ações de clique.
+         * @param position
+         * @param tk_ticket_product
+         */
+        private void enableAppliedLayout(final int position, final TK_Ticket_Product tk_ticket_product) {
             product_cell_iv_applied_substract.setVisibility(View.VISIBLE);
             product_cell_iv_applied_add.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_add_black_24px));
             product_cell_iv_applied_add.setImageTintList(context.getResources().getColorStateList(R.color.colorFooterWhite));
+            //
+            product_cell_tv_applied_qty.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mProductListener.callQtyUsedDialog(position, tk_ticket_product);
+                }
+            });
+            //
+            product_cell_iv_applied_substract.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    double mApplied = tk_ticket_product.getQty_used() - 1;
+                    tk_ticket_product.setQty_used(mApplied);
+                    notifyItemChanged(position);
+                }
+            });
+
+            //
+            product_cell_iv_applied_add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    double mApplied = tk_ticket_product.getQty_used() + 1;
+                    tk_ticket_product.setQty_used(mApplied);
+                    notifyItemChanged(position);
+                }
+            });
         }
 
-        private void enableWithdrawLayout() {
+        /**
+         * LUCHE - 18/08/2020
+         * <p></p>
+         * Modificado metodo para receber como param a posição e obj , pois agora alem de habilitar
+         * o layout, setará as ações de clique.
+         * @param position
+         * @param tk_ticket_product
+         */
+        private void enableWithdrawLayout(final int position, final TK_Ticket_Product tk_ticket_product) {
             product_cell_iv_withdrawn_substract.setVisibility(View.VISIBLE);
             product_cell_iv_withdrawn_add.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_add_black_24px));
             product_cell_iv_withdrawn_add.setImageTintList(context.getResources().getColorStateList(R.color.colorFooterWhite));
+            //
+            product_cell_tv_withdrawn_qty.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mProductListener.callQtyDialog(position, tk_ticket_product);
+                }
+            });
+            //
+            product_cell_iv_withdrawn_substract.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    double mWithdraw = tk_ticket_product.getQty() - 1;
+                    tk_ticket_product.setQty(mWithdraw);
+                    notifyItemChanged(position);
+                }
+            });
+            //
+            product_cell_iv_withdrawn_add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    double mWithdraw = tk_ticket_product.getQty() + 1;
+                    tk_ticket_product.setQty(mWithdraw);
+                    notifyItemChanged(position);
+                }
+            });
         }
 
+        /**
+         * LUCHE - 18/08/2020
+         * <p></p>
+         * Modificado metodo remover as ações ao desabilitar
+         */
         private void disableWithdrawLayout() {
             product_cell_iv_withdrawn_substract.setVisibility(View.INVISIBLE);
             product_cell_iv_withdrawn_add.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
             product_cell_iv_withdrawn_add.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check_white_24dp));
             product_cell_iv_withdrawn_add.setImageTintList(context.getResources().getColorStateList(R.color.namoa_product_extract_check));
+            //Remove listeners ao desabilitar
+            product_cell_tv_withdrawn_qty.setOnClickListener(null);
+            product_cell_iv_withdrawn_substract.setOnClickListener(null);
+            product_cell_iv_withdrawn_add.setOnClickListener(null);
         }
 
         //
