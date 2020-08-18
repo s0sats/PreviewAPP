@@ -556,17 +556,19 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                 mket_comment.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                        //Log.d("SwipeTest", "beforeTextChanged: ");
                     }
 
+                    /**
+                     * LUCHE - 18/08/2020
+                     * Movido a validação de liberação do botão para o metodo onTextChanged pois, o
+                     * metodo afterTextChanged não é chamado na primeira letra digitada e tb não é
+                     * acionado caso a digitação seja feita por swipe.
+                     */
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        String comment = s.toString();
+                        //Log.d("SwipeTest", "onTextChanged: ");
+                        String comment = s.toString().trim();
                         if (comment.isEmpty() && rg_decline.isChecked()) {
                             mApproveListener.setSaveEnable(false);
                         }else{
@@ -574,6 +576,11 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                                 mApproveListener.setSaveEnable(true);
                             }
                         }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        //Log.d("SwipeTest", "afterTextChanged: ");
                     }
                 });
             }
@@ -652,7 +659,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     public interface OnApproveInteract {
         void onSelectOption(boolean isApproved);
         void setSaveEnable(boolean isEnable);
-
     }
 
 }
