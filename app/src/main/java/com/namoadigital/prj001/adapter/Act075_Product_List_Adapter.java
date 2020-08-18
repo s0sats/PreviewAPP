@@ -408,24 +408,29 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     mProductListener.callQtyUsedDialog(position, tk_ticket_product);
                 }
             });
-            //
+            //LUCHE - 18/08/2020
+            //Adicionado validação para só setar valor e atualiza obj se valor >= 0
             product_cell_iv_applied_substract.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     double mApplied = tk_ticket_product.getQty_used() - 1;
-                    tk_ticket_product.setQty_used(mApplied);
-                    notifyItemChanged(position);
+                    if(mApplied >= 0) {
+                        tk_ticket_product.setQty_used(mApplied);
+                        notifyItemChanged(position);
+                    }
                 }
             });
-
-            //
+            //LUCHE - 18/08/2020
+            //Adicionado validação para só setar valor e atualiza obj se:
+            //Ticket não controlar inventario ou controlar e valor <= ao valor retirado.
             product_cell_iv_applied_add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     double mApplied = tk_ticket_product.getQty_used() + 1;
-                    tk_ticket_product.setQty_used(mApplied);
-                    notifyItemChanged(position);
+                    if(inventory_control == 0 || mApplied <= tk_ticket_product.getQty()) {
+                        tk_ticket_product.setQty_used(mApplied);
+                        notifyItemChanged(position);
+                    }
                 }
             });
         }
@@ -449,13 +454,16 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     mProductListener.callQtyDialog(position, tk_ticket_product);
                 }
             });
-            //
+            //LUCHE - 18/08/2020
+            //Adicionando validação para só setar valor e atualiza obj se valor >= 0
             product_cell_iv_withdrawn_substract.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     double mWithdraw = tk_ticket_product.getQty() - 1;
-                    tk_ticket_product.setQty(mWithdraw);
-                    notifyItemChanged(position);
+                    if(mWithdraw >= 0) {
+                        tk_ticket_product.setQty(mWithdraw);
+                        notifyItemChanged(position);
+                    }
                 }
             });
             //
