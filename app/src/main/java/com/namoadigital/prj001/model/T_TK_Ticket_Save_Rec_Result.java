@@ -16,6 +16,7 @@ public class T_TK_Ticket_Save_Rec_Result {
     private Integer schedule_prefix;
     private Integer schedule_code;
     private Integer schedule_exec;
+    private String schedule_status;
 //    private TK_Ticket ticket;
     private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> step;
     private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> product;
@@ -91,6 +92,14 @@ public class T_TK_Ticket_Save_Rec_Result {
 
     public void setSchedule_exec(Integer schedule_exec) {
         this.schedule_exec = schedule_exec;
+    }
+
+    public String getSchedule_status() {
+        return schedule_status;
+    }
+
+    public void setSchedule_status(String schedule_status) {
+        this.schedule_status = schedule_status;
     }
 
     public ArrayList<T_TK_Ticket_Save_Rec_Result_Step> getStep() {
