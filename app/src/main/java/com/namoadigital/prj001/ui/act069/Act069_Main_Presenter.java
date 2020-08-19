@@ -134,10 +134,36 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
     @Override
     public void checkTicketFlow(Act074_TicketVH item) {
         if(isScheduledTicketExecution(item)){
-            mView.callAct071(generateAct071Bundle(item));
+            //LUCHE - 19/08/2020
+            //Não haverá mais naegação para action então foi comentado o if.
+            /*if(isSchedulePossibleToOpen(item)) {
+                mView.callAct071(generateAct071Bundle(item));
+            }else{
+                mView.showMsg(
+                    hmAux_Trans.get("alert_schedule_status_prevents_to_open_ttl"),
+                    hmAux_Trans.get("alert_schedule_status_prevents_to_open_msg")
+                );
+            }*/
+            mView.showMsg(
+                hmAux_Trans.get("alert_schedule_status_prevents_to_open_ttl"),
+                hmAux_Trans.get("alert_schedule_status_prevents_to_open_msg")
+            );
         }else{
             mView.callAct070(generateAct070Bundle(item));
         }
+    }
+
+    private boolean isSchedulePossibleToOpen(Act074_TicketVH item) {
+        return
+            item.getSchedule_prefix() != null && item.getSchedule_prefix() > 0
+            && item.getSchedule_code() != null &&item.getSchedule_code() > 0
+            && item.getSchedule_exec() != null && item.getSchedule_exec() > 0
+            && item.getTicket_prefix() > 0
+            && item.getTicket_code() > 0
+            && !ConstantBaseApp.SYS_STATUS_CANCELLED.equalsIgnoreCase(item.getTicket_status())
+            && !ConstantBaseApp.SYS_STATUS_REJECTED.equalsIgnoreCase(item.getTicket_status())
+            && !ConstantBaseApp.SYS_STATUS_IGNORED.equalsIgnoreCase(item.getTicket_status())
+            && !ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equalsIgnoreCase(item.getTicket_status());
     }
 
     /**

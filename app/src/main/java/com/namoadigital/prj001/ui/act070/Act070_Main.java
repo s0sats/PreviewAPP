@@ -564,7 +564,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    callAct069();
+                    callAct076();
                 }
             },
             0

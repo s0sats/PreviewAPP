@@ -3,6 +3,7 @@ package com.namoadigital.prj001.model.VH_models;
 import android.support.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.TK_Next_Ticket;
@@ -85,14 +86,14 @@ public class Act074_TicketVH {
                         hmAux.get(TK_Ticket_StepDao.FORECAST_END),
                         hmAux.get(TK_Ticket_StepDao.STEP_ID),
                         hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER),
-                ToolBox_Inf.convertStringToInt(hmAux.get(TK_Ticket_StepDao.STEP_QTY)),
-                        " ",
-                       0,
-                        0,
-                        0,
-                     " ",
-                      " ",
-                  " "
+                        ToolBox_Inf.convertStringToInt(hmAux.get(TK_Ticket_StepDao.STEP_QTY)),
+                        hmAux.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_PK) ? hmAux.get(MD_Schedule_ExecDao.SCHEDULE_PK) : " ",
+                        hmAux.hasConsistentValue(TK_TicketDao.SCHEDULE_PREFIX) ? ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SCHEDULE_PREFIX)) : 0,
+                        hmAux.hasConsistentValue(TK_TicketDao.SCHEDULE_CODE) ? ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SCHEDULE_CODE)) : 0,
+                        hmAux.hasConsistentValue(TK_TicketDao.SCHEDULE_EXEC) ? ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SCHEDULE_EXEC)) : 0,
+                        hmAux.hasConsistentValue(MD_Schedule_ExecDao.FCM_NEW_STATUS) ? hmAux.get(MD_Schedule_ExecDao.FCM_NEW_STATUS) : " ",
+                        hmAux.hasConsistentValue(MD_Schedule_ExecDao.FCM_USER_NICK) ? hmAux.get(MD_Schedule_ExecDao.FCM_USER_NICK) : " ",
+                        hmAux.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) ? hmAux.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) : " "
         );
     }
 
