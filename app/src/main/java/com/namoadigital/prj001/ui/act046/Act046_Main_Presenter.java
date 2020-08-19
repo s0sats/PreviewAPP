@@ -76,4 +76,13 @@ public class Act046_Main_Presenter implements Act046_Main_Contract.I_Presenter {
     public boolean loadCheckboxStatusFromPreferencie(String checkboxConstant, boolean defaultValue) {
         return ToolBox_Con.getBooleanPreferencesByKey(context, checkboxConstant, defaultValue);
     }
+
+    @Override
+    public void onBackPressedClicked(String requestingAct) {
+        if(ConstantBaseApp.ACT068.equalsIgnoreCase(requestingAct)){
+            mView.callAct068();
+        }else{
+            mView.callAct005(context);
+        }
+    }
 }

@@ -200,6 +200,9 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private void processScheduledTickets() {
         Intent mIntent = new Intent(context, Act046_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT068);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

@@ -171,18 +171,6 @@
         app:layout_constraintStart_toStartOf="@+id/act069_filter_dialog_chk_done"
         app:layout_constraintTop_toBottomOf="@+id/act069_filter_dialog_chk_done" />
 
-    <CheckBox
-        android:id="@+id/act069_filter_dialog_chk_ignored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:buttonTint="@color/namoa_status_ignored"
-        android:textColor="@color/namoa_status_ignored"
-        android:text="Ignored -trad"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/act069_filter_dialog_chk_not_exec"
-        app:layout_constraintTop_toBottomOf="@+id/act069_filter_dialog_chk_not_exec" />
 
     <CheckBox
         android:id="@+id/act069_filter_dialog_chk_canceled"
@@ -194,8 +182,8 @@
         android:text="Canceled - Trad"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/act069_filter_dialog_chk_ignored"
-        app:layout_constraintTop_toBottomOf="@+id/act069_filter_dialog_chk_ignored" />
+        app:layout_constraintStart_toStartOf="@+id/act069_filter_dialog_chk_not_exec"
+        app:layout_constraintTop_toBottomOf="@+id/act069_filter_dialog_chk_not_exec" />
 
     <CheckBox
         android:id="@+id/act069_filter_dialog_chk_rejected"
@@ -217,7 +205,6 @@
         app:constraint_referenced_ids="
         act069_filter_dialog_chk_done,
         act069_filter_dialog_chk_not_exec,
-        act069_filter_dialog_chk_ignored,
         act069_filter_dialog_chk_canceled,
         act069_filter_dialog_chk_rejected"
         />

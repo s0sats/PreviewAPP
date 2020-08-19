@@ -27,6 +27,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
+import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -69,6 +70,7 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
     private CheckBox cbk_site_logado;
     private CheckBox cbk_ticket;
     private CheckBox.OnCheckedChangeListener chkListener;
+    private String requestingAct;
 
 
     @Override
@@ -368,10 +370,12 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
             fragProduct_ID = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, "");
             fragSerial_ID = bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
             fragTracking = bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
+            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT005);
         } else {
             fragProduct_ID = "";
             fragSerial_ID = "";
             fragTracking = "";
+            requestingAct = ConstantBaseApp.ACT005;
         }
     }
 
@@ -492,8 +496,16 @@ public class Act046_Main extends Base_Activity_Frag_NFC_Geral implements Act046_
     }
 
     @Override
+    public void callAct068() {
+        Intent mIntent = new Intent(context, Act068_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void onBackPressed() {
-        callAct005(context);
+        mPresenter.onBackPressedClicked(requestingAct);
     }
 
     // NFC Processing Data
