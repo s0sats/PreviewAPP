@@ -489,6 +489,8 @@ public class WS_TK_Ticket_Save extends IntentService {
                                     break;
                                 case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
                                 case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+                                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_NONE:
+                                default:
                                     dbTicketCtrl.setCtrl_status(newStatus);
                                     dbTicketCtrl.copyCtrlStatusForInnerProcess();
                                     break;
@@ -714,24 +716,6 @@ public class WS_TK_Ticket_Save extends IntentService {
                 //Seta pk nos filhos
                 tk_ticket.setPK();
 
-                for (T_TK_Ticket_Save_Rec_Result rec_result : rec.getTicket_return()) {
-                    if (rec_result.getSchedule_prefix() != null
-                            && rec_result.getSchedule_code() != null
-                            && rec_result.getSchedule_exec() != null) {
-                        //
-                        TK_Ticket scheduledTicket = getScheduledTicket(
-                                rec_result.getSchedule_prefix(),
-                                rec_result.getSchedule_code(),
-                                rec_result.getSchedule_exec()
-                        );
-                        //
-                        DaoObjReturn daoObjReturn = ticketDao.removeFullV2(scheduledTicket);
-                        if (!daoObjReturn.hasError()) {
-                            //todo o que fazer?
-                        }
-                    }
-                }
-
                 //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
                 tk_ticket.updateLocalImagesPathIfExists();
                 //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
@@ -745,10 +729,11 @@ public class WS_TK_Ticket_Save extends IntentService {
                 //Tenta o insert do ticket
                 DaoObjReturn daoObjReturn = ticketDao.addUpdate(tk_ticket);
                 //Se não houve erro , chama metodo define proximo passo.
-                if (!daoObjReturn.hasError()) {
-                    prepareEndOrResendProcess();
-                }
+//                if (!daoObjReturn.hasError()) {
+//
+//                }
             }
+            prepareEndOrResendProcess();
         } else {
             prepareEndOrResendProcess();
         }
