@@ -10,7 +10,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.io.File;
 import java.util.ArrayList;
 
-public class TK_Ticket {
+public class TK_Ticket implements Cloneable {
     @Expose
     private long customer_code;//pk
     @Expose
@@ -780,5 +780,10 @@ public class TK_Ticket {
                 && tk_ticket.getTicket_prefix() > 0
                 && tk_ticket.getTicket_code() > 0 ;
 
+    }
+
+    @Override
+    public TK_Ticket clone() throws CloneNotSupportedException {
+        return (TK_Ticket) super.clone();
     }
 }
