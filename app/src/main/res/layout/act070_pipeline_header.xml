@@ -332,7 +332,7 @@
             android:id="@+id/frg_ticket_gp_ticket"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:constraint_referenced_ids="frg_ticket_tv_site_desc,frg_ticket_tv_ticket_date,,frg_pipeline_header_ticket"
+            app:constraint_referenced_ids="frg_ticket_tv_ticket_date,frg_pipeline_header_ticket"
             android:visibility="visible"
             />
         <android.support.constraint.Group

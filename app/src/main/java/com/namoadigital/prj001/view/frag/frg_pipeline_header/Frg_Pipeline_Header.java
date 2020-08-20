@@ -221,9 +221,8 @@ public class Frg_Pipeline_Header extends Fragment {
         String preference_site_code = ToolBox_Con.getPreference_Site_Code(getContext());
         if (preference_site_code.equals(String.valueOf(site_code))) {
             tv_site_desc.setVisibility(View.GONE);
-        } else {
-            tv_site_desc.setVisibility(View.VISIBLE);
         }
+
         setTvContent();
         //
         return pipeline_header_view;
@@ -286,7 +285,7 @@ public class Frg_Pipeline_Header extends Fragment {
                 cl_step_ticket.setVisibility(View.VISIBLE);
                 tv_ticket_id.setVisibility(View.VISIBLE);
                 tv_ticket_date.setVisibility(View.VISIBLE);
-                tv_site_desc.setVisibility(View.VISIBLE);
+                tv_site_desc.setVisibility(View.GONE);
                 tv_prod_desc.setVisibility(View.VISIBLE);
                 tv_serial.setVisibility(View.VISIBLE);
                 frg_pipeline_header_ticket.setVisibility(View.VISIBLE);
