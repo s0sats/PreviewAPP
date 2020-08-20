@@ -102,6 +102,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         transList.add("review_process_btn");
         transList.add("review_rejection_btn");
         transList.add("approved_lbl");
+        transList.add("continue_process_btn");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -132,6 +133,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                     onActionClickListener,
                     hmAux_Trans.get("start_process_btn"),
                     hmAux_Trans.get("review_process_btn"),
+                    hmAux_Trans.get("continue_process_btn"),
                     hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
                 );
             case VIEW_TYPE_STEP_CHECKLIST:
@@ -145,6 +147,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                     onApprovalClickListener,
                     hmAux_Trans.get("start_process_btn"),
                     hmAux_Trans.get("review_process_btn"),
+                    hmAux_Trans.get("continue_process_btn"),
                     hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC),
                     hmAux_Trans.get("review_rejection_btn"),
                     hmAux_Trans.get("approved_lbl"));
@@ -157,6 +160,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                     onNoneClickListener,
                     hmAux_Trans.get("start_process_btn"),
                     hmAux_Trans.get("review_process_btn"),
+                    hmAux_Trans.get("continue_process_btn"),
                     hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
                 );
             case VIEW_TYPE_STEP_PROCESS_BTN:

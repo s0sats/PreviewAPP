@@ -20,12 +20,14 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
     protected String transStartProcess;
     protected String transReviewProcess;
     protected String transWaitingSync;
+    protected String transContinue;
 
-    public Act070_Step_Abstract_ProcessVH(Context context, @NonNull View itemView, String transStartProcess, String transReviewProcess,String transWaitingSync) {
+    public Act070_Step_Abstract_ProcessVH(Context context, @NonNull View itemView, String transStartProcess, String transReviewProcess, String transContinueProcess, String transWaitingSync) {
         super(itemView);
         this.context = context;
         this.transStartProcess = transStartProcess;
         this.transReviewProcess = transReviewProcess;
+        this.transContinue = transContinueProcess;
         this.transWaitingSync = transWaitingSync;
     }
 
@@ -69,6 +71,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
             case ConstantBaseApp.SYS_STATUS_PENDING:
             case ConstantBaseApp.SYS_STATUS_PROCESS:
             default:
+                processActionText = ConstantBaseApp.SYS_STATUS_PROCESS.equals(processStatus) ? transContinue : transStartProcess;
                 tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_PROCESS);
                 drawable = context.getDrawable(R.drawable.ic_baseline_play_arrow_24dp);
                 break;
