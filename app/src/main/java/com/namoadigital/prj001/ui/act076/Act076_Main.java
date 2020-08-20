@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act076;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -193,6 +194,19 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
             //
             mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
             rvTickets.setAdapter(mAdapter);
+            //
+            rvTickets.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
+                    //
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        mketFilter.setEnabled(true);
+                    } else {
+                        mketFilter.setEnabled(false);
+                    }
+                }
+            });
         }else{
             tvNoResult.setVisibility(View.VISIBLE);
             rvTickets.setVisibility(View.INVISIBLE);
