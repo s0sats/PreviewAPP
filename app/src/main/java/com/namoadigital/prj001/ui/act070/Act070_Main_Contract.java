@@ -8,6 +8,7 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.ui.act070.model.StepApproval;
+import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 
@@ -101,5 +102,7 @@ public interface Act070_Main_Contract {
         void defineNoneFlow(TK_Ticket mTicket, StepNone stepNone);
 
         void prepareRejectionDialog(TK_Ticket mTicket, StepApproval stepApproval);
+
+        void defineFormFlow(TK_Ticket mTicket, StepForm stepForm);
     }
 }

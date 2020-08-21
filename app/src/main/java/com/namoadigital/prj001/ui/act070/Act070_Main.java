@@ -48,6 +48,7 @@ import com.namoadigital.prj001.ui.act070.VH.Act070_Step_MainVH;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.ui.act070.model.StepApproval;
+import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
@@ -402,10 +403,21 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             new Act070_Steps_Adapter.OnChecklistClickListener() {
                 @Override
                 public void onChecklistClick(int checklistPosition) {
-                    ToolBox.toastMSG(
-                        context,
-                        "Checklist position: " + checklistPosition
-                    );
+                    StepForm stepForm = (StepForm) sources.get(checklistPosition);
+                    mPresenter.defineFormFlow(mTicket,stepForm);
+//                    if(ConstantBaseApp.SYS_STATUS_PENDING.equals(stepForm.getProcessStatus())){
+//                        showAlert(
+//                            hmAux_Trans.get("alert_start_form_process_ttl"),
+//                            hmAux_Trans.get("alert_start_form_process_ttl"),
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialogInterface, int i) {
+//                                    mPresenter.defineNoneFlow(mTicket, stepNone);
+//                                }
+//                            },
+//                            true
+//                        );
+//                    }
                 }
             },
             new Act070_Steps_Adapter.OnApprovalClickListener() {
