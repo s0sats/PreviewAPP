@@ -55,6 +55,11 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String ERROR_MSG = "error_msg";
     public static final String LOCATION_PENDENCY = "location_pendency";
     public static final String DATE_GPS = "date_gps";
+    public static final String TICKET_PREFIX = "ticket_prefix";
+    public static final String TICKET_CODE = "ticket_code";
+    public static final String TICKET_SEQ = "ticket_seq";
+    public static final String TICKET_SEQ_TMP = "ticket_seq_tmp";
+    public static final String STEP_CODE = "step_code";
 
     //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
 
@@ -443,6 +448,36 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
                 custom_form_data.setError_msg(cursor.getString(cursor.getColumnIndex(ERROR_MSG)));
             }
 
+            if(cursor.isNull(cursor.getColumnIndex(TICKET_PREFIX))){
+                custom_form_data.setTicket_prefix(null);
+            }else{
+                custom_form_data.setTicket_prefix(cursor.getInt(cursor.getColumnIndex(TICKET_PREFIX)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(TICKET_CODE))){
+                custom_form_data.setTicket_code(null);
+            }else{
+                custom_form_data.setTicket_code(cursor.getInt(cursor.getColumnIndex(TICKET_CODE)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(TICKET_SEQ))){
+                custom_form_data.setTicket_seq(null);
+            }else{
+                custom_form_data.setTicket_seq(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(TICKET_SEQ_TMP))){
+                custom_form_data.setTicket_seq_tmp(null);
+            }else{
+                custom_form_data.setTicket_seq_tmp(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ_TMP)));
+            }
+
+            if(cursor.isNull(cursor.getColumnIndex(STEP_CODE))){
+                custom_form_data.setSchedule_code(null);
+            }else{
+                custom_form_data.setSchedule_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
+            }
+
             return custom_form_data;
         }
     }
@@ -536,7 +571,12 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             }else{
                 contentValues.put(LOCATION_PENDENCY, 0);
             }
-
+            //
+            contentValues.put(TICKET_PREFIX, custom_form_data.getTicket_prefix());
+            contentValues.put(TICKET_CODE, custom_form_data.getTicket_code());
+            contentValues.put(TICKET_SEQ, custom_form_data.getTicket_seq());
+            contentValues.put(TICKET_SEQ_TMP, custom_form_data.getTicket_seq_tmp());
+            contentValues.put(STEP_CODE, custom_form_data.getStep_code());
             return contentValues;
         }
     }
