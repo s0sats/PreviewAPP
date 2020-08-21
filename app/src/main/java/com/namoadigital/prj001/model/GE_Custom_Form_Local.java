@@ -55,6 +55,12 @@ public class GE_Custom_Form_Local {
     private Integer schedule_prefix;
     private Integer schedule_code;
     private Integer schedule_exec;
+    //PK Control usada no Ticket.
+    private Integer ticket_prefix;
+    private Integer ticket_code;
+    private Integer ticket_seq;
+    private Integer ticket_seq_tmp;
+    private Integer step_code;
 
     public long getCustomer_code() {
         return customer_code;
@@ -430,5 +436,45 @@ public class GE_Custom_Form_Local {
 
     public void setSchedule_exec(Integer schedule_exec) {
         this.schedule_exec = schedule_exec;
+    }
+
+    public Integer getTicket_prefix() {
+        return ticket_prefix;
+    }
+
+    public void setTicket_prefix(Integer ticket_prefix) {
+        this.ticket_prefix = ticket_prefix;
+    }
+
+    public Integer getTicket_code() {
+        return ticket_code;
+    }
+
+    public void setTicket_code(Integer ticket_code) {
+        this.ticket_code = ticket_code;
+    }
+
+    public Integer getTicket_seq() {
+        return ticket_seq;
+    }
+
+    public void setTicket_seq(Integer ticket_seq) {
+        this.ticket_seq = ticket_seq;
+    }
+
+    public Integer getTicket_seq_tmp() {
+        return ticket_seq_tmp;
+    }
+
+    public void setTicket_seq_tmp(Integer ticket_seq_tmp) {
+        this.ticket_seq_tmp = ticket_seq_tmp;
+    }
+
+    public Integer getStep_code() {
+        return step_code;
+    }
+
+    public void setStep_code(Integer step_code) {
+        this.step_code = step_code;
     }
 }
