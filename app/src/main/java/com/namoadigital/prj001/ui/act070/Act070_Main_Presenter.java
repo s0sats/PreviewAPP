@@ -35,6 +35,7 @@ import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAbstractProcess;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.ui.act070.model.StepApproval;
+import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepFooter;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
@@ -1172,6 +1173,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         stepsCtrls.add(stepNone);
                         break;
                     case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
+                        StepForm stepChecklist = createStepForm(mTicket,stepMain, tkStepCtrl);
+                        stepsCtrls.add(stepChecklist);
+                        break;
                     case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
                     default:
                         break;
@@ -1180,6 +1184,29 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             //
         }
         return stepsCtrls;
+    }
+
+    private StepForm createStepForm(TK_Ticket mTicket, StepMain stepMain, TK_Ticket_Ctrl tkStepCtrl) {
+        StepForm stepForm = new StepForm();
+        stepForm.setStepCode(tkStepCtrl.getStep_code());
+        stepForm.setStepDescription(hmAux_Trans.get("process_checklist_tll"));
+        stepForm.setStepType(stepMain.getStepType());
+        stepForm.setProcessTkSeq(tkStepCtrl.getTicket_seq());
+        stepForm.setProcessStatus(tkStepCtrl.getCtrl_status());
+        stepForm.setCurrentStep(stepMain.isCurrentStep());
+        stepForm.setStepAlreadyCheckedIn(ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate()));
+        stepForm.setProcessPlanned(tkStepCtrl.getObj_planned() == 1);
+        //PK DO APP
+        stepForm.setProcessTkSeqTmp(tkStepCtrl.getTicket_seq_tmp());
+        stepForm.setProductDesc(tkStepCtrl.getProduct_desc());
+        stepForm.setSerialId(tkStepCtrl.getSerial_id());
+        stepForm.setStartDate(tkStepCtrl.getCtrl_start_date());
+        stepForm.setEndDate(tkStepCtrl.getCtrl_end_date());
+        stepForm.setEndUser(tkStepCtrl.getCtrl_end_user_name());
+        stepForm.setPartnerDesc(tkStepCtrl.getPartner_desc());
+        stepForm.setProductDifferentThanTicket(tkStepCtrl.getProduct_code() != null && mTicket.getOpen_product_code() != tkStepCtrl.getProduct_code());
+        stepForm.setSerialDifferentThanTicket(tkStepCtrl.getSerial_code() != null && mTicket.getOpen_serial_code() != tkStepCtrl.getSerial_code());
+        return stepForm;
     }
 
     @NonNull

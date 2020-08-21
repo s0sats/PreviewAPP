@@ -12,7 +12,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_ActionVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_ApprovalVH;
-import com.namoadigital.prj001.ui.act070.VH.Act070_Step_ChecklistVH;
+import com.namoadigital.prj001.ui.act070.VH.Act070_Step_FormVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_FooterVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_MainVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_NoneVH;
@@ -20,7 +20,7 @@ import com.namoadigital.prj001.ui.act070.VH.Act070_Step_Process_Btn_VH;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.ui.act070.model.StepApproval;
-import com.namoadigital.prj001.ui.act070.model.StepChecklist;
+import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepFooter;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
@@ -138,7 +138,15 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                 );
             case VIEW_TYPE_STEP_CHECKLIST:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_checklist_cell, viewGroup, false);
-                return new Act070_Step_ChecklistVH(context, view, onChecklistClickListener);
+                return new Act070_Step_FormVH(
+                    context,
+                    view,
+                    onChecklistClickListener,
+                    hmAux_Trans.get("start_process_btn"),
+                    hmAux_Trans.get("review_process_btn"),
+                    hmAux_Trans.get("continue_process_btn"),
+                    hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC)
+                );
             case VIEW_TYPE_STEP_APPROVAL:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_approval_cell, viewGroup, false);
                 return new Act070_Step_ApprovalVH(
@@ -184,9 +192,9 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         }else if(baseStep instanceof StepAction){
             Act070_Step_ActionVH stepActionVH = (Act070_Step_ActionVH) viewHolder;
             stepActionVH.bindData((StepAction) source.get(position));
-        }else if(baseStep instanceof StepChecklist){
-            Act070_Step_ChecklistVH stepChecklistVH = (Act070_Step_ChecklistVH) viewHolder;
-            stepChecklistVH.bindData((StepChecklist) source.get(position));
+        }else if(baseStep instanceof StepForm){
+            Act070_Step_FormVH stepChecklistVH = (Act070_Step_FormVH) viewHolder;
+            stepChecklistVH.bindData((StepForm) source.get(position));
         } else if(baseStep instanceof StepApproval){
             Act070_Step_ApprovalVH stepApprovalVH = (Act070_Step_ApprovalVH) viewHolder;
             stepApprovalVH.bindData((StepApproval) source.get(position));
@@ -214,7 +222,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
             return VIEW_TYPE_STEP_MAIN;
         }else if(baseStep instanceof StepAction){
             return VIEW_TYPE_STEP_ACTION;
-        }else if(baseStep instanceof StepChecklist){
+        }else if(baseStep instanceof StepForm){
             return VIEW_TYPE_STEP_CHECKLIST;
         }else if(baseStep instanceof StepApproval){
             return VIEW_TYPE_STEP_APPROVAL;
