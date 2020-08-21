@@ -192,6 +192,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_start_none_process_msg");
         transList.add("alert_process_access_denied_ttl");
         transList.add("alert_process_started_in_server_msg");
+        //
+        transList.add("process_checklist_tll");
 
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
