@@ -40,6 +40,7 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
@@ -195,7 +196,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_process_started_in_server_msg");
         //
         transList.add("process_checklist_tll");
-
+        transList.add("alert_form_pdf_not_generated_ttl");
+        transList.add("alert_form_pdf_not_generated_msg");
+        transList.add("alert_form_pdf_not_downloaded_ttl");
+        transList.add("alert_form_pdf_not_downloaded_ttl");
+        transList.add("alert_form_master_data_not_found_ttl");
+        transList.add("alert_form_master_data_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -753,6 +759,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         requestingBundle.putInt(VIEW_PROFILE, act_profile);
         intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct011(Bundle act011Bundle) {
+        Intent intent = new Intent(context, Act011_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtras(act011Bundle);
         startActivity(intent);
         finish();
     }
