@@ -51,5 +51,7 @@ public interface Act068_Main_Contract {
        void executeWSTicketSave();
 
        void processSaveReturn(String jsonResult);
+
+       boolean verifyProductForForm();
    }
 }

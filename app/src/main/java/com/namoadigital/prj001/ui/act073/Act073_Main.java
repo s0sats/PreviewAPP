@@ -32,6 +32,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Search;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
@@ -64,6 +65,7 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
     private LinearLayout contentMain;
     //Variavel que inibe o pulo do fragmento para o caso do serial que necessita de alteração.
     private boolean hide_serial_info;
+    private HMAux hmAuxQtyReturn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -605,7 +607,16 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
             }
         } else if(wsProcess.equals(WS_TK_Ticket_Search.class.getName())){
             disableProgressDialog();
-            mPresenter.processTicketDownload(hmAux);
+            wsProcess = "";
+            if(mPresenter.verifyProductForForm()){
+                hmAuxQtyReturn = hmAux;
+            }else {
+                mPresenter.processTicketDownload(hmAux);
+            }
+        }else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            wsProcess = "";
+            disableProgressDialog();
+            mPresenter.processTicketDownload(hmAuxQtyReturn);
         }
     }
 

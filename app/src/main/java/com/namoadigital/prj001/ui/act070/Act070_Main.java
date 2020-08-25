@@ -37,6 +37,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
@@ -102,6 +103,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private FabMenuItem fabProduct;
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
     private boolean hasFABActive=false;
+    private String save_return = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -876,11 +878,25 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
         } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())) {
             wsProcess = "";
-            refreshUi();
-
+            save_return = "";
+            if(!mPresenter.verifyProductForForm()){
+                refreshUi();
+            }
+        } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            wsProcess = "";
+            if(save_return == null
+            || save_return.isEmpty()) {
+                refreshUi();
+            }else{
+                mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
+            }
         } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             wsProcess = "";
-            mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
+            if(mPresenter.verifyProductForForm()){
+                save_return = mLink;
+            }else {
+                mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
+            }
         }
         //
         progressDialog.dismiss();

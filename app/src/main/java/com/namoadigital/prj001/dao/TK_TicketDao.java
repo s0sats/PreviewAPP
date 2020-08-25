@@ -474,12 +474,13 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         return daoObjReturn;
     }
 
-    @Deprecated
+
     /**
      * LUCHE - 04/08/2020
      * COMO NÃO EXISTE MAIS REGRA E QUASE TUDO PODE SER NULL OU NÃO TER ITEM, SUBSTITUIDO METODO
      * PELO removeFullV2
      */
+//    @Deprecated
 //    public DaoObjReturn removeFull(TK_Ticket tk_ticket) {
 //        DaoObjReturn daoObjReturn = new DaoObjReturn();
 //        long addUpdateRet = 0;

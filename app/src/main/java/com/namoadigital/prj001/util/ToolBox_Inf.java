@@ -110,6 +110,7 @@ import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
+import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
@@ -189,6 +190,7 @@ import com.namoadigital.prj001.sql.Sql_Form_x_Site;
 import com.namoadigital.prj001.sql.Sql_Notification_Schedule_001;
 import com.namoadigital.prj001.sql.Sql_Notification_Schedule_002;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
+import com.namoadigital.prj001.sql.Sync_Checklist_Sql_004;
 import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -3668,6 +3670,46 @@ public class ToolBox_Inf {
         );
         dialogScheduleWarning.setCancelable(true);
         dialogScheduleWarning.show();
+    }
+
+    /**
+     * Metodo responsavel por verificar se há necessidade de sincronizacao
+     * de formularios no fluxo de ticket
+     * @param context - utilizado para instanciar os DAOs
+     * @return
+     */
+    public static boolean hasFormProductOutdate(Context context) {
+        long preference_customer_code = ToolBox_Con.getPreference_Customer_Code(context);
+        Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(
+                context,
+                ToolBox_Con.customDBPath(preference_customer_code),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        List<HMAux> hmAuxList =
+                syncChecklistDao.query_HM(
+                        new Sync_Checklist_Sql_004(
+                                preference_customer_code
+                        ).toSqlQuery()
+                );
+
+        if(hmAuxList != null
+                && !hmAuxList.isEmpty()){
+            for(HMAux aux: hmAuxList){
+                if(aux.hasConsistentValue(Sync_ChecklistDao.PRODUCT_CODE)) {
+                    Integer productCodeOutdate = Integer.parseInt(aux.get(Sync_ChecklistDao.PRODUCT_CODE));
+
+                    Sync_Checklist sync = new Sync_Checklist();
+                    sync.setCustomer_code(preference_customer_code);
+                    sync.setProduct_code(productCodeOutdate);
+                    sync.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd"));
+                    syncChecklistDao.addUpdate(sync);
+                }
+            }
+            return true;
+        }
+        //
+        return false;
     }
 
     private static class GenericExtFilter implements FilenameFilter {

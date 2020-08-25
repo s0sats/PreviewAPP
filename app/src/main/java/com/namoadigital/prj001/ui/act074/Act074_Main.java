@@ -23,6 +23,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.T_TK_Next_Ticket_WS_Response;
 import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Next_Ticket;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
@@ -62,6 +63,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     private boolean bStatusCanceled;
     private boolean bStatusRejected;
     private Act074_Main_Presenter mPresenter;
+    private HMAux mTicketDownloaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,6 +201,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         if(WS_TK_Next_Ticket.class.getName().equalsIgnoreCase(wsProcess)) {
+            wsProcess = "";
             Gson gson = new GsonBuilder().serializeNulls().create();
             //
             T_TK_Next_Ticket_WS_Response rec = gson.fromJson(
@@ -208,12 +211,25 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             //
             mPresenter.setTicketVH(rec.getNext_tickets());
         } else if(WS_TK_Ticket_Download.class.getName().equalsIgnoreCase(wsProcess)) {
-                Bundle bundle = new Bundle();
-                bundle.putInt(TK_TicketDao.TICKET_PREFIX, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)));
-                bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
-                callAct070(bundle);
+            wsProcess = "";
+            if(mPresenter.verifyProductForForm()){
+                mTicketDownloaded = hmAux;
+            }else {
+                processTicketDownloaded(hmAux);
+            }
+        } else if(WS_Sync.class.getName().equalsIgnoreCase(wsProcess)) {
+            wsProcess = "";
+            processTicketDownloaded(hmAux);
         }
+
         progressDialog.dismiss();
+    }
+
+    private void processTicketDownloaded(HMAux hmAux) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)));
+        bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
+        callAct070(bundle);
     }
 
     @Override

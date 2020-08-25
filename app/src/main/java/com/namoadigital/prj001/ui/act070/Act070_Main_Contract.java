@@ -103,6 +103,8 @@ public interface Act070_Main_Contract {
 
         void prepareRejectionDialog(TK_Ticket mTicket, StepApproval stepApproval);
 
+        boolean verifyProductForForm();
+
         void defineFormFlow(TK_Ticket mTicket, StepForm stepForm);
     }
 }

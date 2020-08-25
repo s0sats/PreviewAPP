@@ -18,11 +18,14 @@ import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
@@ -1357,4 +1360,36 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
+    @Override
+    public boolean verifyProductForForm() {
+        if(ToolBox_Inf.hasFormProductOutdate(context)){
+            if (ToolBox_Con.isOnline(context)) {
+                mView.setWsProcess(WS_Sync.class.getName());
+                //
+                mView.showPD(
+                        hmAux_Trans.get("progress_sync_ttl"),
+                        hmAux_Trans.get("progress_sync_msg")
+                );
+                //
+                ArrayList<String> data_package = new ArrayList<>();
+                data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+                //
+                Intent mIntent = new Intent(context, WBR_Sync.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+                bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+                bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
+                bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+                bundle.putInt(Constant.GC_STATUS, 1);
+                //
+                mIntent.putExtras(bundle);
+                //
+                context.sendBroadcast(mIntent);
+                return true;
+            }
+            return false;
+        }else{
+            return false;
+        }
+    }
 }

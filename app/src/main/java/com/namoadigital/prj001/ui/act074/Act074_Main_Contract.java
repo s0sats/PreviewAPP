@@ -27,6 +27,8 @@ public interface Act074_Main_Contract {
         void checkTicketFlow(Act074_TicketVH item);
 
         void setTicketVH(List<TK_Next_Ticket> tickets);
+
+        boolean verifyProductForForm();
     }
 
     interface I_View {

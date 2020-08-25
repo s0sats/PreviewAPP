@@ -12,16 +12,19 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
+import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Search;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Search;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
@@ -261,6 +264,39 @@ public class Act073_Main_Presenter implements Act073_Main_Contract.I_Presenter {
                 hmAux_Trans.get("alert_invalid_ticket_return_ttl"),
                 hmAux_Trans.get("alert_invalid_ticket_return_msg")
             );
+        }
+    }
+
+    @Override
+    public boolean verifyProductForForm() {
+        if(ToolBox_Inf.hasFormProductOutdate(context)){
+            if (ToolBox_Con.isOnline(context)) {
+                mView.setWsProcess(WS_Sync.class.getName());
+                //
+                mView.showPD(
+                        hmAux_Trans.get("progress_sync_ttl"),
+                        hmAux_Trans.get("progress_sync_msg")
+                );
+                //
+                ArrayList<String> data_package = new ArrayList<>();
+                data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+                //
+                Intent mIntent = new Intent(context, WBR_Sync.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+                bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+                bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
+                bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+                bundle.putInt(Constant.GC_STATUS, 1);
+                //
+                mIntent.putExtras(bundle);
+                //
+                context.sendBroadcast(mIntent);
+                return true;
+            }
+            return false;
+        }else{
+            return false;
         }
     }
 

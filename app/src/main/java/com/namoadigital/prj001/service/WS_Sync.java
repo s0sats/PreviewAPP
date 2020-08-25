@@ -260,7 +260,16 @@ public class WS_Sync extends IntentService {
             //Se é chamada da Act008, inclui o itenm na lista
             //para receber os forms do produto.
             if (product_code != -1L) {
-                CHECKLIST.add(product_code);
+                /*
+                    BARRIONUEVO - 25-08-2020
+                    PROJETO TICKET
+                    Product_code é setado como zerado para dar um bypass no product_code -1 aproveitando
+                    o processo de sincronismo de produtos da tabela sync_checklist.
+                    a tratativa a baixo evita a inclusão do produto igual a 0.
+                 */
+                if(product_code != 0L) {
+                    CHECKLIST.add(product_code);
+                }
             }
             //Se não existe produtos a serem enviados,
             //Nem adiciona tag na chamada do WS
