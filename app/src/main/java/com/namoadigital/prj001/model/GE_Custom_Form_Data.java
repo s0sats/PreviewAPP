@@ -104,6 +104,8 @@ public class GE_Custom_Form_Data {
     private Integer ticket_seq_tmp;
     @Expose
     private Integer step_code;
+    @Expose
+    private String ticket_checkin_date;
 
 
     public GE_Custom_Form_Data() {
@@ -142,6 +144,7 @@ public class GE_Custom_Form_Data {
         this.ticket_seq=null;
         this.ticket_seq_tmp=null;
         this.step_code=null;
+        this.ticket_checkin_date = null;
     }
 
     public long getCustomer_code() {
@@ -422,5 +425,13 @@ public class GE_Custom_Form_Data {
 
     public void setStep_code(Integer step_code) {
         this.step_code = step_code;
+    }
+
+    public String getTicket_checkin_date() {
+        return ticket_checkin_date;
+    }
+
+    public void setTicket_checkin_date(String ticket_checkin_date) {
+        this.ticket_checkin_date = ticket_checkin_date;
     }
 }

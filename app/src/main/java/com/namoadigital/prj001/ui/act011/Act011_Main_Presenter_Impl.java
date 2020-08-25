@@ -340,6 +340,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         customFormLocal.getStep_code(),
                         ConstantBaseApp.SYS_STATUS_PROCESS
                     );
+                    //Resgata Step para setar data de checkin no form.
+                    TK_Ticket_Step ticketStep = getTicketStep(
+                        customFormLocal.getTicket_prefix(),
+                        customFormLocal.getTicket_code(),
+                        customFormLocal.getStep_code()
+                    );
+                    //Seta data de checkin no formData
+                    formData.setTicket_checkin_date(ticketStep.getStep_start_date());
                 }
                 //if (bAgendado) {
                 if (isScheduleFirstTime) {
