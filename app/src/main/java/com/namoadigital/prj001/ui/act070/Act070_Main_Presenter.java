@@ -500,22 +500,46 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void defineNoneFlow(TK_Ticket mTicket, StepNone stepNone) {
-        TK_Ticket_Step ticketStep = getSelectedStep(mTicket.getTicket_prefix(),mTicket.getTicket_code(), stepNone.getStepCode());
-        TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFromDb(mTicket.getTicket_prefix(),mTicket.getTicket_code(),stepNone.getProcessTkSeq(),stepNone.getStepCode());
+    public void defineNoneFlow(final TK_Ticket mTicket, StepNone stepNone) {
+        final TK_Ticket_Step ticketStep = getSelectedStep(mTicket.getTicket_prefix(),mTicket.getTicket_code(), stepNone.getStepCode());
+        final TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFromDb(mTicket.getTicket_prefix(),mTicket.getTicket_code(),stepNone.getProcessTkSeq(),stepNone.getStepCode());
         //
         if(ticketStep != null && ticketCtrl != null){
             if(!isDoneOrWaitingSync(ticketStep.getStep_status())){
-                if(ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
-                    && stepNone.isCurrentStep()
-                ){
-                    startNoneProcess(mTicket,ticketStep,ticketCtrl);
-                }else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())){
-                    mView.showAlert(
-                        hmAux_Trans.get("alert_process_access_denied_ttl"),
-                        hmAux_Trans.get("alert_process_started_in_server_msg")
-                    );
-                }//não faz nada, pois não tem ação
+                if(stepNone.isCurrentStep()){
+                    if( isStartEndActionExecution(ticketStep, ticketCtrl)
+                        || isOneTouchActionExecution(ticketStep, ticketCtrl)
+                    ){
+                        mView.showAlert(
+                            hmAux_Trans.get("alert_start_none_process_ttl"),
+                            hmAux_Trans.get("alert_start_none_process_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    startNoneProcess(mTicket,ticketStep,ticketCtrl);
+                                }
+                            },
+                            true
+                        );
+                    } else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())){
+                        mView.showAlert(
+                            hmAux_Trans.get("alert_process_access_denied_ttl"),
+                            hmAux_Trans.get("alert_process_started_in_server_msg")
+                        );
+                    } else{
+                        //NÃO MAPEADO.
+                    }
+                }
+//                if(ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
+//                    && stepNone.isCurrentStep()
+//                ){
+//                    startNoneProcess(mTicket,ticketStep,ticketCtrl);
+//                }else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())){
+//                    mView.showAlert(
+//                        hmAux_Trans.get("alert_process_access_denied_ttl"),
+//                        hmAux_Trans.get("alert_process_started_in_server_msg")
+//                    );
+//                }//não faz nada, pois não tem ação
             }
         }else{
             mView.showAlert(

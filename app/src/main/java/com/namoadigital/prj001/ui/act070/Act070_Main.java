@@ -430,20 +430,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 @Override
                 public void onNoneClick(int nonePosition) {
                     final StepNone stepNone = (StepNone) sources.get(nonePosition);
-                    if(ConstantBaseApp.SYS_STATUS_PENDING.equals(stepNone.getProcessStatus())){
-                        showAlert(
-                            hmAux_Trans.get("alert_start_none_process_ttl"),
-                            hmAux_Trans.get("alert_start_none_process_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    mPresenter.defineNoneFlow(mTicket, stepNone);
-                                }
-                            },
-                            true
-                        );
-                    }
-
+                    mPresenter.defineNoneFlow(mTicket, stepNone);
                 }
             });
         //
