@@ -122,7 +122,12 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         transList.add("alert_local_product_not_found_ttl");
         transList.add("alert_local_product_not_found_msg");
         transList.add("alert_ticket_results_ttl");
+        //
         transList.add("btn_sync_ticket");
+        transList.add("alert_ticket_syncronized_ttl");
+        transList.add("alert_ticket_syncronized_msg");
+        transList.add("dialog_download_ticket_ttl");
+        transList.add("dialog_download_ticket_start");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -451,7 +456,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             mPresenter.processSaveReturn(result);
         } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())) {
             progressDialog.dismiss();
-            mPresenter.processSaveReturn(result);
+            showMsg(
+                    hmAux_Trans.get("alert_ticket_syncronized_ttl"),
+                    hmAux_Trans.get("alert_ticket_syncronized_msg")
+            );
+            mPresenter.getSync();
         } else{
             //
             progressDialog.dismiss();
@@ -505,6 +514,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             mFrgSerialSearch.setBtn_Option_05_Label(btn_text);
             mFrgSerialSearch.setBtn_Option_05_Visibility(View.VISIBLE);
         } else {
+            syncs_qty = 0;
             mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
         }
     }
