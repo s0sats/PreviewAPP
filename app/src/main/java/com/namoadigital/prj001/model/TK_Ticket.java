@@ -680,13 +680,15 @@ public class TK_Ticket implements Cloneable {
     public static void checkActionPhotoResetNeeds(TK_Ticket dbTicket, TK_Ticket tkTicket) {
         //Se existe o ticket localmente, começa a analisar as fotos das action
         if(dbTicket != null && dbTicket.getStep() != null && dbTicket.getStep().size() > 0 ){
-            for (TK_Ticket_Step dbTicketStep : dbTicket.getStep()) {
-                if(dbTicketStep.getCtrl() != null && dbTicketStep.getCtrl().size() > 0){
-                    for (TK_Ticket_Ctrl tkTicketCtrl : dbTicketStep.getCtrl()) {
-                        if( tkTicketCtrl.getCtrl_type().equalsIgnoreCase(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION)
+            for (int stepIdx = 0; stepIdx < tkTicket.getStep().size(); stepIdx++) {
+                TK_Ticket_Step tkTicketStep = tkTicket.getStep().get(stepIdx);
+                if(tkTicketStep.getCtrl() != null && tkTicketStep.getCtrl().size() > 0){
+                    for (TK_Ticket_Ctrl tkTicketCtrl : tkTicketStep.getCtrl()) {
+                        if( stepIdx <= dbTicket.getStep().size() //Garante que não haja indexOutOfBound
+                            && tkTicketCtrl.getCtrl_type().equalsIgnoreCase(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION)
                             && tkTicketCtrl.getAction() != null
                         ){
-                            if (haveToResetPhoto(dbTicketStep,tkTicketCtrl)) {
+                            if (haveToResetPhoto(dbTicket.getStep().get(stepIdx),tkTicketCtrl)) {
                                 //Apaga arquivo local
                                 ToolBox_Inf.deleteDownloadFile(
                                     Constant.CACHE_PATH_PHOTO + "/" +ToolBox_Inf.buildTicketActionImgPath(tkTicketCtrl)
@@ -696,6 +698,22 @@ public class TK_Ticket implements Cloneable {
                     }
                 }
             }
+//            for (TK_Ticket_Step tkTicketStep : tkTicket.getStep()) {
+//                if(tkTicketStep.getCtrl() != null && tkTicketStep.getCtrl().size() > 0){
+//                    for (TK_Ticket_Ctrl tkTicketCtrl : tkTicketStep.getCtrl()) {
+//                        if( tkTicketCtrl.getCtrl_type().equalsIgnoreCase(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION)
+//                            && tkTicketCtrl.getAction() != null
+//                        ){
+//                            if (haveToResetPhoto(tkTicketStep,tkTicketCtrl)) {
+//                                //Apaga arquivo local
+//                                ToolBox_Inf.deleteDownloadFile(
+//                                    Constant.CACHE_PATH_PHOTO + "/" +ToolBox_Inf.buildTicketActionImgPath(tkTicketCtrl)
+//                                );
+//                            }
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 
@@ -728,7 +746,10 @@ public class TK_Ticket implements Cloneable {
             if( ctrlDb.getCustomer_code() == tkTicketCtrl.getCustomer_code()
                 && ctrlDb.getTicket_prefix() == tkTicketCtrl.getTicket_prefix()
                 && ctrlDb.getTicket_code() == tkTicketCtrl.getTicket_code()
-                && ctrlDb.getTicket_seq_tmp() == tkTicketCtrl.getTicket_seq_tmp()
+                //TODO REVER ESSE OR, pois como o ticket qu vem do server nunca tem tmp, talvez não faça sentido....
+                && (ctrlDb.getTicket_seq_tmp() == tkTicketCtrl.getTicket_seq_tmp()
+                    || ctrlDb.getTicket_seq() == tkTicketCtrl.getTicket_seq()
+                    )
                 && ctrlDb.getStep_code() == tkTicketCtrl.getStep_code()
                 && ctrlDb.getAction() != null
                 && tkTicketCtrl.getAction() != null
