@@ -715,15 +715,14 @@ public class WS_TK_Ticket_Save extends IntentService {
             for (TK_Ticket tk_ticket : rec.getTicket()) {
                 //Seta pk nos filhos
                 tk_ticket.setPK();
-
-                //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
-                tk_ticket.updateLocalImagesPathIfExists();
                 //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
                 //for alterado, o que significa que mudaram a foto no server...
                 TK_Ticket.checkActionPhotoResetNeeds(
                         getDbTicket(tk_ticket, false),
                         tk_ticket
                 );
+                //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
+                tk_ticket.updateLocalImagesPathIfExists();
                 //Remove o ticket do banco de dados
                 ticketDao.removeFullV2(tk_ticket);
                 //Tenta o insert do ticket
