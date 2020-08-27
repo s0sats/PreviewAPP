@@ -42,8 +42,8 @@ public class Sql_Act007_004 implements Specification {
                             " WHERE\n" +
                             "    p.customer_code= " + s_customer_code + " \n" +
                             "    and p.spare_part = " + s_spare_part+ "  \n" +
-                            "    and pgp.product_code is null and '" + s_filter + "' IS NULL  \n" +
-                            "    or ( '" + s_filter + "' IS NOT NULL and ( p.product_id like '%" + s_filter + "%' OR p.product_desc like '%" + s_filter + "%' ) )" +
+                            "    and (pgp.product_code is null and '" + s_filter + "' IS NULL  \n" +
+                            "    or ( '" + s_filter + "' IS NOT NULL and ( p.product_id like '%" + s_filter + "%' OR p.product_desc like '%" + s_filter + "%' ) ) )" +
                             "  ORDER BY \n" +
                             "     p.product_id;")
                     //.append("product_code#product_id#product_desc#full_product_desc#type")
@@ -64,10 +64,10 @@ public class Sql_Act007_004 implements Specification {
                             "     WHERE   \n" +
                             "        pgp.customer_code= " + s_customer_code + "   \n" +
                             "         and p.spare_part = " + s_spare_part+ "  \n" +
-                            "        and pgp.group_code = " + s_group_code + " AND pgp.product_code IS NOT NULL AND '" + s_filter + "' IS NULL \n" +
+                            "        and (pgp.group_code = " + s_group_code + " AND pgp.product_code IS NOT NULL AND '" + s_filter + "' IS NULL \n" +
                             "        OR( '" + s_filter + "' IS NOT NULL\n" +
                             "              AND (p.product_id like '%" + s_filter + "%' OR p.product_desc like '%" + s_filter + "%')" +
-                            "           ) \n" +
+                            "           ) )\n" +
                             "     ORDER BY\n" +
                             "        P.product_id;")
                     //.append("product_code#product_id#product_desc#full_product_desc#type")

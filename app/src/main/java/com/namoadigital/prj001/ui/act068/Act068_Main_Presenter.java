@@ -15,15 +15,21 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
+import com.namoadigital.prj001.sql.Sql_Act068_001;
+import com.namoadigital.prj001.sql.Sql_Act068_002;
+import com.namoadigital.prj001.sql.Sql_Act069_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_008;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -31,6 +37,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
@@ -69,6 +76,21 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
         );
         //
         mView.setProduct(productList);
+    }
+
+    @Override
+    public void getSync() {
+        //
+        List<TK_Ticket> tickets = ticketDao.query(
+                new Sql_Act068_001(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        int qty = tickets.size();
+        //
+        mView.setSync(qty);
+
     }
 
     @Override
@@ -378,6 +400,52 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
         }else{
             return false;
         }
+    }
+
+    @Override
+    public void executeWSTicketDownload() {
+        if(ToolBox_Con.isOnline(context)){
+            mView.setWsProcess(WS_TK_Ticket_Download.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_download_ticket_ttl"),
+                    hmAux_Trans.get("dialog_download_ticket_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(TK_TicketDao.TICKET_PREFIX, getTicketConcatList());
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    private String getTicketConcatList() {
+        ArrayList<HMAux> auxTickets = getTicketToSync();
+        String ticketPKList = "";
+        for (HMAux aux : auxTickets) {
+            if(aux.hasConsistentValue(Sql_Act069_002.TICKET_PK)){
+                ticketPKList += ConstantBaseApp.MAIN_CONCAT_STRING + aux.get(Sql_Act069_002.TICKET_PK);
+            }
+        }
+        //
+        return ticketPKList.contains(ConstantBaseApp.MAIN_CONCAT_STRING) ? ticketPKList.substring(ConstantBaseApp.MAIN_CONCAT_STRING.length()) : "";
+    }
+
+    private ArrayList<HMAux> getTicketToSync() {
+        ArrayList<HMAux> auxTickets = new ArrayList<>();
+        //
+        auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
+                new Sql_Act068_002(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return auxTickets;
     }
 
     private String getResultSaveMsgFormmated(WS_TK_Ticket_Save.TicketSaveActReturn actReturn) {

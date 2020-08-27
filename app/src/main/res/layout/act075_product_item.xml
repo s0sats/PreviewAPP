@@ -212,12 +212,12 @@
             android:id="@+id/product_cell_iv_returned_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_check_white_24dp"
             android:tint="@color/namoa_product_extract_check"
+            app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_returned_substract"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_check_white_24dp" />
+            app:layout_constraintTop_toTopOf="@+id/product_cell_iv_returned_substract" />
 
         <TextView
             android:id="@+id/product_cell_tv_returned_qty"

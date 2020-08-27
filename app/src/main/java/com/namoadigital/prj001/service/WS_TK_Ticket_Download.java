@@ -130,6 +130,14 @@ public class WS_TK_Ticket_Download extends IntentService {
                 tkTicket.setPK();
                 TK_Ticket dbTicket = getDbTicket(tkTicket);
                 if(dbTicket != null) {
+                    //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
+                    //for alterado, o que significa que mudaram a foto no server...
+                    TK_Ticket.checkActionPhotoResetNeeds(
+                        dbTicket,
+                        tkTicket
+                    );
+                    //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
+                    tkTicket.updateLocalImagesPathIfExists();
                     daoObjReturn = ticketDao.removeFullV2(tkTicket);
                 }
                 //

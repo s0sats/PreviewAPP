@@ -25,6 +25,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Sync;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
@@ -57,6 +58,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private boolean fragIsOnlyOne;
     private String wsProcess ="";
     private String resultFromTicketSave;
+    private int syncs_qty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +125,12 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         transList.add("alert_local_product_not_found_msg");
         transList.add("alert_ticket_results_ttl");
         //
+        transList.add("btn_sync_ticket");
+        transList.add("alert_ticket_syncronized_ttl");
+        transList.add("alert_ticket_syncronized_msg");
+        transList.add("dialog_download_ticket_ttl");
+        transList.add("dialog_download_ticket_start");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -168,6 +176,9 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                     case Frg_Serial_Search.BTN_OPTION_04:
                         processScheduledTickets();
                         break;
+                     case Frg_Serial_Search.BTN_OPTION_05:
+                        mPresenter.executeWSTicketDownload();
+                        break;
                     default:
                         break;
                 }
@@ -185,13 +196,16 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         mFrgSerialSearch.setBtn_Option_04_BackGround(R.drawable.namoa_cell_2_states);
         mFrgSerialSearch.setBtn_Option_04_Label(hmAux_Trans.get("btn_scheduled_tickets"));
         mFrgSerialSearch.setBtn_Option_04_Visibility(View.VISIBLE);
+
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
+        mFrgSerialSearch.setBtn_Option_05_Label(hmAux_Trans.get("btn_sync_ticket"));
         //
         mPresenter = new Act068_Main_Presenter(
             context,this,hmAux_Trans
         );
         //
         //
+        mPresenter.getSync();
         mPresenter.getPendencies();
         mPresenter.getMD_Products();
         //
@@ -445,6 +459,13 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                 resultFromTicketSave = result;
             }else {
                 mPresenter.processSaveReturn(result);
+        } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())) {
+            progressDialog.dismiss();
+            showMsg(
+                    hmAux_Trans.get("alert_ticket_syncronized_ttl"),
+                    hmAux_Trans.get("alert_ticket_syncronized_msg")
+            );
+            mPresenter.getSync();
             }
 
         } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
@@ -492,6 +513,20 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                 checkFlow(mFrgSerialSearch.getHMAuxValues());
             }
         });
+    }
+
+    @Override
+    public void setSync(int qty) {
+        if (qty > 0) {
+            syncs_qty = qty;
+            String btn_text = hmAux_Trans.get("btn_sync_ticket") + " (" + syncs_qty + ")";
+
+            mFrgSerialSearch.setBtn_Option_05_Label(btn_text);
+            mFrgSerialSearch.setBtn_Option_05_Visibility(View.VISIBLE);
+        } else {
+            syncs_qty = 0;
+            mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
+        }
     }
 
     @Override
