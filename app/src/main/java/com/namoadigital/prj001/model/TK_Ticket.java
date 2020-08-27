@@ -698,22 +698,6 @@ public class TK_Ticket implements Cloneable {
                     }
                 }
             }
-//            for (TK_Ticket_Step tkTicketStep : tkTicket.getStep()) {
-//                if(tkTicketStep.getCtrl() != null && tkTicketStep.getCtrl().size() > 0){
-//                    for (TK_Ticket_Ctrl tkTicketCtrl : tkTicketStep.getCtrl()) {
-//                        if( tkTicketCtrl.getCtrl_type().equalsIgnoreCase(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION)
-//                            && tkTicketCtrl.getAction() != null
-//                        ){
-//                            if (haveToResetPhoto(tkTicketStep,tkTicketCtrl)) {
-//                                //Apaga arquivo local
-//                                ToolBox_Inf.deleteDownloadFile(
-//                                    Constant.CACHE_PATH_PHOTO + "/" +ToolBox_Inf.buildTicketActionImgPath(tkTicketCtrl)
-//                                );
-//                            }
-//                        }
-//                    }
-//                }
-//            }
         }
     }
 
@@ -730,12 +714,13 @@ public class TK_Ticket implements Cloneable {
      *  A ultima codição se refere:
      *    "O ticket local não possui codigo da foto":
      *    - Se não possui codigo da foto e um codigo foi retornado, significa que essa ação teve uma foto adicionada(via web ou por outro usr)
-     *
      *    "possui mas é diferente de 0":
      *    - Se o codigo for 0 , signifca que a action não tinha foto e o proprio usr adicionou a foto.Nesse caso não é necessario reset
      *    " e diferente do codigo do ticket recebido":
      *    - Se o codigo for != 0, significa que ja existia uma foto, então, só é necessario o reset caso o codigo recebido seja diferente do atual.
-     *
+     * LUCHE - 27/08/2020
+     * Modificado metodo, adicionando uma ultima condição, de quando a action é rejeitado pois ja foi executado por outro usr
+     *  - Se codigo da imagem é 0, o codigo retornado for != de 0 e o usr da action é diferente, tb reseta a foto.
      *
      * @param ticketStepsDb - Ticket no DB local
      * @param tkTicketCtrl - Controle do ticket vindo do server
@@ -747,17 +732,15 @@ public class TK_Ticket implements Cloneable {
                 && ctrlDb.getTicket_prefix() == tkTicketCtrl.getTicket_prefix()
                 && ctrlDb.getTicket_code() == tkTicketCtrl.getTicket_code()
                 //TODO REVER ESSE OR, pois como o ticket qu vem do server nunca tem tmp, talvez não faça sentido....
-                && (ctrlDb.getTicket_seq_tmp() == tkTicketCtrl.getTicket_seq_tmp()
-                    || ctrlDb.getTicket_seq() == tkTicketCtrl.getTicket_seq()
-                    )
+                && ctrlDb.getTicket_seq() == tkTicketCtrl.getTicket_seq()
                 && ctrlDb.getStep_code() == tkTicketCtrl.getStep_code()
                 && ctrlDb.getAction() != null
                 && tkTicketCtrl.getAction() != null
                 && ctrlDb.getAction().getAction_photo_local() != null
                 && tkTicketCtrl.getAction().getAction_photo_code() != null
                 && ( ctrlDb.getAction().getAction_photo_code() == null
-                     || (!ctrlDb.getAction().getAction_photo_code().equals(0)
-                         && !ctrlDb.getAction().getAction_photo_code().equals(tkTicketCtrl.getAction().getAction_photo_code()))
+                     || hasExistingPhotoCodeChanged(tkTicketCtrl, ctrlDb)
+                     || hasPhotoCodeChangedByActionPlannedRejection(tkTicketCtrl, ctrlDb)
                    )
             ){
                 return true;
@@ -765,6 +748,38 @@ public class TK_Ticket implements Cloneable {
         }
         //
         return false;
+    }
+
+    /**
+     * LUCHE - 27/08/2020
+     * <p></p>
+     * Metodo que avalia a condição:
+     *  - Usuario enviou uma action planejada como foto, porem foi rejeitado pelo servidor,
+     *  pois essa ação ja constava como executada no servidor e com foto.
+     *
+     * @param tkTicketCtrl
+     * @param ctrlDb
+     * @return
+     */
+    private static boolean hasPhotoCodeChangedByActionPlannedRejection(TK_Ticket_Ctrl tkTicketCtrl, TK_Ticket_Ctrl ctrlDb) {
+        return ctrlDb.getAction().getAction_photo_code().equals(0)
+           && !ctrlDb.getAction().getAction_photo_code().equals(tkTicketCtrl.getAction().getAction_photo_code())
+           && ctrlDb.getCtrl_end_user() != null
+           && !ctrlDb.getCtrl_end_user().equals(tkTicketCtrl.getCtrl_end_user());
+    }
+
+    /**
+     * LUCHE - 27/08/2020
+     * <p></p>
+     * Metodo que avalia se foto daquela action ja possuia um foto e ela foi trocada.
+     * Acontece quando um action esta em processo no servidor teve sua foto alterada.
+     * @param tkTicketCtrl
+     * @param ctrlDb
+     * @return
+     */
+    private static boolean hasExistingPhotoCodeChanged(TK_Ticket_Ctrl tkTicketCtrl, TK_Ticket_Ctrl ctrlDb) {
+        return !ctrlDb.getAction().getAction_photo_code().equals(0)
+            && !ctrlDb.getAction().getAction_photo_code().equals(tkTicketCtrl.getAction().getAction_photo_code());
     }
 //endregion
     /**
