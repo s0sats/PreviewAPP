@@ -1196,7 +1196,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepApproval.setPartnerDesc(tkStepCtrl.getPartner_desc());
         stepApproval.setStartDate(tkStepCtrl.getCtrl_start_date());
         stepApproval.setEndDate(tkStepCtrl.getCtrl_end_date());
-        stepApproval.setEndUser(tkStepCtrl.getCtrl_start_user_name());
+        stepApproval.setEndUser(tkStepCtrl.getCtrl_end_user_name());
         stepApproval.setHasRejection(tkStepCtrl.getRejection() != null && tkStepCtrl.getRejection().size() > 0 );
         stepApproval.setCurrentStep(stepMain.isCurrentStep());
         stepApproval.setStepAlreadyCheckedIn(ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate()));

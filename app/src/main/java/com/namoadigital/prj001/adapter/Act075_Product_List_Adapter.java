@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -9,10 +10,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -569,6 +570,13 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                    /*
+                       BARRIONUEVO 27-08-2020
+                       Esconde o teclado ao trocar a opcao dos radio button
+                     */
+                    InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(itemView.getWindowToken(), 0);
+                    //
                     switch (checkedId) {
                         case R.id.act075_approval_form_rg_approval:
                             mApproveListener.onSelectOption(true);
