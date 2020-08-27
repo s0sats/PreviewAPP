@@ -806,7 +806,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        closeFabMenu();
         switch (requestCode) {
             case 20:
                 processResult(resultCode, data);
@@ -816,6 +816,12 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void closeFabMenu() {
+        if(hasFABActive){
+            fabMenu.animateFAB();
+        }
     }
 
     private void processResult(int resultCode, Intent data) {
