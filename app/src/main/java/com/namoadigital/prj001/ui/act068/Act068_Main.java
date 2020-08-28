@@ -59,6 +59,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private String wsProcess ="";
     private String resultFromTicketSave;
     private int syncs_qty;
+    private boolean nextTicketsFlow=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -225,6 +226,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 
     private void processNextTickets() {
         if(mPresenter.hasItensToSend()){
+            nextTicketsFlow = true;
             mPresenter.executeWSTicketSave();
         }else{
             callAct074();
@@ -510,7 +512,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             public void onClick(View v) {
                 show.dismiss();
                 //
-                checkFlow(mFrgSerialSearch.getHMAuxValues());
+                if(nextTicketsFlow){
+                    nextTicketsFlow=false;
+                }else {
+                    checkFlow(mFrgSerialSearch.getHMAuxValues());
+                }
             }
         });
     }

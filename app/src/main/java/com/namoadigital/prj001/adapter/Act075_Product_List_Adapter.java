@@ -253,7 +253,9 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             //
             product_cell_tv_withdrawn_qty.setText(String.format("%s %s", tk_ticket_product.getQty(), tk_ticket_product.getUn()));
             product_cell_tv_applied_qty.setText(String.format("%s %s", tk_ticket_product.getQty_used(), tk_ticket_product.getUn()));
-            product_cell_tv_returned_qty.setText(String.format("%s %s", tk_ticket_product.getQty_returned(), tk_ticket_product.getUn()));
+
+            double qty_returned_for_approval = handleNullForQty(tk_ticket_product.getQty()) - handleNullForQty(tk_ticket_product.getQty_used());
+            product_cell_tv_returned_qty.setText(String.format("%s %s", qty_returned_for_approval, tk_ticket_product.getUn()));
             //
             if (tk_ticket_product.getQty() == null) {
                 tk_ticket_product.setQty(0.0);
@@ -343,9 +345,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
         private void calculateProductBalance(TK_Ticket_Product tk_ticket_product) {
             double qtyUsed = 0.0;
-            if(tk_ticket_product.getQty_used()!= null){
-                qtyUsed = tk_ticket_product.getQty_used();
-            }
+            qtyUsed = handleNullForQty(tk_ticket_product.getQty_used());
             double balance = tk_ticket_product.getQty() - qtyUsed;
             product_cell_tv_extract.setText(hmAux_Trans.get("product_extract_lbl") + " " + balance);
             tk_ticket_product.setQty_returned(balance);
@@ -519,6 +519,14 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             product_cell_iv_applied_add.setVisibility(visibility);
             product_cell_iv_returned_add.setVisibility(visibility);
         }
+    }
+
+    private double handleNullForQty(Double qty_used) {
+        double qtyUsed = 0.0;
+        if(qty_used!= null){
+            qtyUsed = qty_used;
+        }
+        return qtyUsed;
     }
 
     public class AddProductViewHolder extends RecyclerView.ViewHolder {

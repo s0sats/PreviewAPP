@@ -33,10 +33,7 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_From_To;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result_Step;
-import com.namoadigital.prj001.model.WS_TK_Ticket_Ctrl_Obj;
-import com.namoadigital.prj001.model.WS_TK_Ticket_Obj;
-import com.namoadigital.prj001.model.WS_TK_Ticket_Product_Obj;
-import com.namoadigital.prj001.model.WS_TK_Ticket_Step_Obj;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.GE_File_Sql_006;
 import com.namoadigital.prj001.sql.GE_File_Sql_007;
@@ -239,12 +236,6 @@ public class WS_TK_Ticket_Save extends IntentService {
         }
     }
 
-//    private ArrayList<WS_TK_Ticket_Obj> getTicketsToSend() {
-//        ArrayList<TK_Ticket> rawTickets = getTicketsDB();
-//        return getTicketSendFormat(rawTickets);
-//        //
-//    }
-
     private ArrayList<TK_Ticket> getTicketsToSend() {
         return keepOnlyUpdateRequiredData(getTicketsDB());
     }
@@ -280,76 +271,6 @@ public class WS_TK_Ticket_Save extends IntentService {
         }
         //
         return ticketList;
-    }
-
-    private ArrayList<WS_TK_Ticket_Obj> getTicketSendFormat(ArrayList<TK_Ticket> rawTickets) {
-        ArrayList<WS_TK_Ticket_Obj> ticketsToSend = new ArrayList<>();
-        for (TK_Ticket rawTicket : rawTickets) {
-            WS_TK_Ticket_Obj ticketObj = new WS_TK_Ticket_Obj();
-            ticketObj.setCustomer_code(rawTicket.getCustomer_code());
-            ticketObj.setTicket_prefix(rawTicket.getTicket_prefix());
-            ticketObj.setTicket_code(rawTicket.getTicket_code());
-            ticketObj.setScn(rawTicket.getScn());
-            //Busca por produtos a serem enviados.
-            if (rawTicket.getProduct() != null && rawTicket.getProduct().size() > 0 && rawTicket.getUpdate_required_product() == 1) {
-                ArrayList<WS_TK_Ticket_Product_Obj> ticketProductObjs = new ArrayList<>();
-                for (TK_Ticket_Product tk_ticket_product : rawTicket.getProduct()) {
-                    WS_TK_Ticket_Product_Obj productObj = new WS_TK_Ticket_Product_Obj();
-                    //
-                    productObj.setProduct_code(tk_ticket_product.getProduct_code());
-                    productObj.setQty(tk_ticket_product.getQty());
-                    productObj.setQty_used(tk_ticket_product.getQty_used());
-                    productObj.setQty_returned(tk_ticket_product.getQty_returned());
-                    //
-                    ticketProductObjs.add(productObj);
-                }
-                ticketObj.setProduct(ticketProductObjs);
-            }
-            //
-            if (rawTicket.getStep() != null && rawTicket.getStep().size() > 0) {
-                ArrayList<WS_TK_Ticket_Step_Obj> ticketStepObjs = new ArrayList<>();
-                for (TK_Ticket_Step tk_ticket_step : rawTicket.getStep()) {
-                    WS_TK_Ticket_Step_Obj stepObj = new WS_TK_Ticket_Step_Obj();
-                    if (tk_ticket_step.getUpdate_required() == 1) {
-                        stepObj.setStep_code(tk_ticket_step.getStep_code());
-                        stepObj.setStep_start_date(tk_ticket_step.getStep_start_date());
-                        stepObj.setStep_end_date(tk_ticket_step.getStep_end_date());
-                        //
-                        ticketStepObjs.add(stepObj);
-                    }
-                    //
-                    for (TK_Ticket_Ctrl ticketCtrl : tk_ticket_step.getCtrl()) {
-                        if (ticketCtrl.getUpdate_required() == 1) {
-                            WS_TK_Ticket_Ctrl_Obj ctrlObj = new WS_TK_Ticket_Ctrl_Obj();
-                            ctrlObj.setTicket_seq(ticketCtrl.getTicket_seq());
-                            ctrlObj.setTicket_seq_tmp(ticketCtrl.getTicket_seq_tmp());
-                            ctrlObj.setCtrl_start_date(ticketCtrl.getCtrl_start_date());
-                            ctrlObj.setCtrl_end_date(ticketCtrl.getCtrl_end_date());
-                            ctrlObj.setCtrl_type(ticketCtrl.getCtrl_type());
-                            switch (ticketCtrl.getCtrl_type()) {
-                                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
-                                    ctrlObj.setAction(ticketCtrl.getAction());
-                                    break;
-                                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
-                                    ctrlObj.setApproval(ticketCtrl.getApproval());
-                            }
-                            //
-                            stepObj.getCtrl().add(ctrlObj);
-                        }
-                    }
-                    //
-                    if (!ticketStepObjs.contains(stepObj) && stepObj.getCtrl().size() > 0) {
-                        ticketStepObjs.add(stepObj);
-                    }
-                }
-                //
-                ticketObj.setStep(ticketStepObjs);
-            }
-            //
-            ticketsToSend.add(ticketObj);
-        }
-        //
-        return ticketsToSend;
     }
 
     private ArrayList<TK_Ticket> getTicketsDB() {
@@ -403,7 +324,6 @@ public class WS_TK_Ticket_Save extends IntentService {
         if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(rec.getSave())
                 || ConstantBaseApp.MAIN_RESULT_OK_DUP.equalsIgnoreCase(rec.getSave())) {
             if (rec.getTicket_return() != null && rec.getTicket_return().size() > 0) {
-                //
                 processActFeedback(rec);
                 //
             }
@@ -501,8 +421,9 @@ public class WS_TK_Ticket_Save extends IntentService {
                         //
                         ticketCtrlDao.addUpdate(ctrlsToUpdate, false);
                     }
-                    //
-                    if (ConstantBaseApp.MAIN_RESULT_OK.equals(resultStep.getRet_status()) && recResult.getTicket_update() == 0) {
+                    //LUCHE - 27/08/2020
+                    //Removido condição de ticket_update = 0
+                    if (ConstantBaseApp.MAIN_RESULT_OK.equals(resultStep.getRet_status())) {
                         TK_Ticket_Step ticketStepFromDB = getTicketStepFromDB(resultStep);
                         //Se não tem uma nova atualização, atualiza.
                         if (ticketStepFromDB.getUpdate_required() == 0) {
@@ -615,27 +536,52 @@ public class WS_TK_Ticket_Save extends IntentService {
                     //}
                 }
             }
-            //
-            if (recResult.getTicket_update() == 0 && ConstantBaseApp.MAIN_RESULT_OK.equals(recResult.getRet_status())) {
-                //atualiza SCN do ticket.
-                ticketDao.addUpdate(
-                        new Sql_WS_TK_Ticket_Save_007(
-                                recResult.getCustomer_code(),
-                                recResult.getTicket_prefix(),
-                                recResult.getTicket_code(),
-                                recResult.getScn()
-                        ).toSqlQuery()
-                );
-            } else if (recResult.getTicket_update() == 1) {
-                ticketDao.addUpdate(
-                        new Sql_WS_TK_Ticket_Save_002(
+            //Após os processamento das lista, verifica a necessidade atualização do SCN, do update required ou não faz nada
+            if (ConstantBaseApp.MAIN_RESULT_OK.equals(recResult.getRet_status())) {
+                /**
+                 * Se o retorno for OK avalia se é um reenvio.
+                 * 1 - Reenvio com necessidade de ticket full
+                 *     Seta ticket como update requred para que ele seja enviado na seguda chamada
+                 *     do metodo e receba o ticket full que deveria ter vindo.
+                 * 2 - Reenvio SEM necessidade de ticket full
+                 *     Como não há mais atualizações, atualiza apenas o SCN do ticket
+                 * 3 - Não é um reenvio
+                 *     Se é o processamento direto do que veio do banco de dados,atualiza apenas SCN
+                 * Se ERRO não faz nenhuma atualização.
+                 */
+                if(reSend){
+                    if (recResult.getTicket_update() == 1) {
+                        ticketDao.addUpdate(
+                            new Sql_WS_TK_Ticket_Save_002(
                                 recResult.getCustomer_code(),
                                 recResult.getTicket_prefix(),
                                 recResult.getTicket_code(),
                                 1,
                                 0
+                            ).toSqlQuery()
+                        );
+                    } else {
+                        //atualiza SCN do ticket.
+                        ticketDao.addUpdate(
+                            new Sql_WS_TK_Ticket_Save_007(
+                                recResult.getCustomer_code(),
+                                recResult.getTicket_prefix(),
+                                recResult.getTicket_code(),
+                                recResult.getScn()
+                            ).toSqlQuery()
+                        );
+                    }
+                }else{
+                    //atualiza SCN do ticket.
+                    ticketDao.addUpdate(
+                        new Sql_WS_TK_Ticket_Save_007(
+                            recResult.getCustomer_code(),
+                            recResult.getTicket_prefix(),
+                            recResult.getTicket_code(),
+                            recResult.getScn()
                         ).toSqlQuery()
-                );
+                    );
+                }
             }
             //
             actReturnList.add(actReturn);
@@ -923,6 +869,8 @@ public class WS_TK_Ticket_Save extends IntentService {
     }
 
     private void callFinishProcessing(String jsonActReturn) {
+        startDownloadServices();
+        //
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), jsonActReturn, "0");
     }
 
@@ -1250,6 +1198,16 @@ public class WS_TK_Ticket_Save extends IntentService {
                         fileCode
                 ).toSqlQuery()
         );
+    }
+
+    private void startDownloadServices() {
+        //Como será possivel baixar ticket do customer logado, pode ser chamada a rotina de download.
+        //Esse as definição mudar, rever, pois seria necessario chamar essa serviço para cada customer code diferente.
+        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+        Bundle bundle = new Bundle();
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
+        mIntentPIC.putExtras(bundle);
+        getApplicationContext().sendBroadcast(mIntentPIC);
     }
 
     private void loadTranslation() {
