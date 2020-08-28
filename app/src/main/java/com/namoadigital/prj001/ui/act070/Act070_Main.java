@@ -901,7 +901,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             if(mPresenter.verifyProductForForm()){
                 save_return = mLink;
             }else {
-                mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
+                mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
             }
         }
         //
