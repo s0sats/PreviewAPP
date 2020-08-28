@@ -69,6 +69,8 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -213,6 +215,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private boolean canSave;
     private String filter_search;
     private int form_selected_index;
+    //
+    private Integer mTicket_prefix;
+    private Integer mTicket_code;
+    private Integer mTicket_seq;
+    private Integer mTicket_seq_tmp;
+    private Integer mStep_code;
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -693,7 +701,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new MD_ProductDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 hmAux_Trans,
-                new MD_Schedule_ExecDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                new MD_Schedule_ExecDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new TK_Ticket_StepDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         );
 
         recoverGetIntents();
@@ -720,9 +729,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 mSo_Prefix,
                 mSo_Code,
                 mSite_Code,
-                mOperation_Code
+                mOperation_Code,
+                mTicket_prefix,
+                mTicket_code,
+                mTicket_seq,
+                mTicket_seq_tmp,
+                mStep_code
         );
-
     }
 
 
@@ -1114,14 +1127,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             bundle_act015.putBoolean(FILTER_CHK_IS_CANCELLED, bundle.getBoolean(FILTER_CHK_IS_CANCELLED, false));
             bundle_act015.putBoolean(FILTER_CHK_IS_IGNORED, bundle.getBoolean(FILTER_CHK_IS_IGNORED, false));
             bundle_act015.putBoolean(FILTER_CHK_HAS_NON_CONFORMITY, bundle.getBoolean(FILTER_CHK_HAS_NON_CONFORMITY, false));
+            //LUCHE - 24/08/2020 - PK Ticket
+            mTicket_prefix = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_PREFIX) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_PREFIX) : null;
+            mTicket_code = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_CODE)? bundle.getInt(TK_Ticket_CtrlDao.TICKET_CODE) : null;
+            mTicket_seq = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_SEQ) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ) : null;
+            mTicket_seq_tmp = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) : null;
+            mStep_code = bundle.containsKey(TK_Ticket_CtrlDao.STEP_CODE) ? bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE) : null;
         } else {
             mSo_Prefix = null;
             mSo_Code = null;
             //
             mSite_Code = null;
             mOperation_Code = null;
+            //LUCHE - 24/08/2020 - TICKET
+            mTicket_prefix = null;
+            mTicket_code = null;
+            mTicket_seq = null;
+            mTicket_seq_tmp = null;
+            mStep_code = null;
         }
-
     }
 
     /**

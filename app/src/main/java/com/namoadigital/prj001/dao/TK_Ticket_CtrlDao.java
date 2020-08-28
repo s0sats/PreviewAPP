@@ -15,11 +15,13 @@ import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
 import com.namoadigital.prj001.model.TK_Ticket_Approval_Rejection;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Rejection_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_003;
+import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Measure_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -500,7 +502,16 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     }
                 }
                 break;
-
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
+                if(tk_ticket_ctrl.getForm() != null) {
+                    tk_ticket_ctrl.getForm().setPK(tk_ticket_ctrl);
+                    daoObjReturn = tryAddUpdateForm(tk_ticket_ctrl.getForm(), db,useTmpMethod);
+                    //Se erro durante insert, dispara exception abortando o processamento.
+                    if (daoObjReturn.hasError()) {
+                        throw new Exception(daoObjReturn.getRawMessage());
+                    }
+                }
+                break;
             /*case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
                 TK_Ticket_MeasureDao ticketMeasureDao = new TK_Ticket_MeasureDao(
                     context,
@@ -554,6 +565,21 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
         return ticketApprovalRejectionDao.addUpdate(ticket_approval_rejections, false,db);
     }
 
+    private DaoObjReturn tryAddUpdateForm(TK_Ticket_Form tk_ticket_form, SQLiteDatabase db, boolean useTmpMethod) {
+        TK_Ticket_FormDao ticketFormDao = new TK_Ticket_FormDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //Chama insertUpdate do form,passando db como param aguardando retorno.
+        //Se for criação, usa metodo TMP
+        if(useTmpMethod){
+            return ticketFormDao.addUpdateTmp(tk_ticket_form, db);
+        }else{
+            return ticketFormDao.addUpdate(tk_ticket_form, db);
+        }
+    }
+
     /**
      * Deleta o processo filho do controle baseado no tipo
      * @param tk_ticket_ctrl - Control
@@ -603,6 +629,15 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     approvalDelete += db.delete(ctrlTypeTable, sbWhere.toString(), null);
                 }
                 return approvalDelete;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
+                //Tenta o delete
+                //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
+                ctrlTypeTable = TK_Ticket_FormDao.TABLE;
+                if(tk_ticket_ctrl.getForm() != null) {
+                    daoObjReturn.setTable(ctrlTypeTable);
+                    return db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                }
+                return 1;
             default:
                 return 1;
         }
@@ -632,7 +667,6 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                         ).toSqlQuery()
                     )
                 );
-
                 break;
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
                 //Busca action do control
@@ -654,6 +688,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
 
                     )
                 );
+                break;
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
                 //Busca approval do control
                 TK_Ticket_ApprovalDao ticketApprovalDao = new TK_Ticket_ApprovalDao(
@@ -690,6 +725,28 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                             ).toSqlQuery()
                     )
                 );
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
+                //Busca action do control
+                TK_Ticket_FormDao ticketFormDao = new TK_Ticket_FormDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //
+                tk_ticket_ctrl.setForm(
+                    ticketFormDao.getByString(
+                        new TK_Ticket_Form_Sql_002(
+                            tk_ticket_ctrl.getCustomer_code(),
+                            tk_ticket_ctrl.getTicket_prefix(),
+                            tk_ticket_ctrl.getTicket_code(),
+                            tk_ticket_ctrl.getTicket_seq_tmp(),
+                            tk_ticket_ctrl.getStep_code()
+                        ).toSqlQuery()
+
+                    )
+                );
+                break;
             default:
                 break;
         }

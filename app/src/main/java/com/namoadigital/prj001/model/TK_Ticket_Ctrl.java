@@ -63,6 +63,8 @@ public class TK_Ticket_Ctrl {
     private TK_Ticket_Approval approval;
     @Nullable
     private ArrayList<TK_Ticket_Approval_Rejection> rejection = new ArrayList<>();
+    @Nullable
+    private TK_Ticket_Form form;
 
     public TK_Ticket_Ctrl() {
         this.customer_code = -1;
@@ -147,6 +149,11 @@ public class TK_Ticket_Ctrl {
                         for (TK_Ticket_Approval_Rejection tk_ticket_approval_rejection : this.rejection) {
                             tk_ticket_approval_rejection.setPK(this);
                         }
+                    }
+                    break;
+                case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
+                    if (this.form != null) {
+                        this.form.setPK(this);
                     }
                     break;
             }
@@ -400,6 +407,15 @@ public class TK_Ticket_Ctrl {
         this.rejection = rejection;
     }
 
+    @Nullable
+    public TK_Ticket_Form getForm() {
+        return form;
+    }
+
+    public void setForm(@Nullable TK_Ticket_Form form) {
+        this.form = form;
+    }
+
     public void setFinalNameIntoActionPhoto(String finalName){
         if(ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION.equals(this.ctrl_type)
             && this.getAction() != null
@@ -433,6 +449,11 @@ public class TK_Ticket_Ctrl {
                     this.approval.setApproval_status(this.ctrl_status);
                 }
                 //Não ha necessidade de mexer no rejeitdo, pois ele tem o proprio status que sempre é rejeitado.
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
+                if(this.form != null){
+                    this.form.setForm_status(this.ctrl_status);
+                }
                 break;
         }
     }

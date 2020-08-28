@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act070;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,14 +14,23 @@ import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.GE_Custom_Form;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
@@ -31,6 +41,8 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.Sql_Act070_001;
 import com.namoadigital.prj001.sql.Sql_Act070_002;
+import com.namoadigital.prj001.sql.Sql_Act070_003;
+import com.namoadigital.prj001.sql.Sql_Act070_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
@@ -38,8 +50,8 @@ import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAbstractProcess;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.ui.act070.model.StepApproval;
-import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepFooter;
+import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
@@ -61,6 +73,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private TK_TicketDao ticketDao;
     private TK_Ticket_StepDao ticketStepDao;
     private TK_Ticket_CtrlDao ticketCtrlDao;
+    private GE_Custom_FormDao geCustomFormDao;
+    private GE_Custom_Form_DataDao formDataDao;
 
     public Act070_Main_Presenter(Context context, Act070_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -78,6 +92,16 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             Constant.DB_VERSION_CUSTOM
         );
         ticketCtrlDao = new TK_Ticket_CtrlDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        this.geCustomFormDao = new GE_Custom_FormDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        this.formDataDao = new GE_Custom_Form_DataDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
@@ -559,27 +583,77 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         final TK_Ticket_Step ticketStep = getSelectedStep(mTicket.getTicket_prefix(),mTicket.getTicket_code(), stepForm.getStepCode());
         final TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFromDb(mTicket.getTicket_prefix(),mTicket.getTicket_code(),stepForm.getProcessTkSeq(),stepForm.getStepCode());
         //
-        if(ticketStep != null && ticketCtrl != null){
+        if(ticketStep != null && ticketCtrl != null && ticketCtrl.getForm() != null){
             if(!isDoneOrWaitingSync(ticketStep.getStep_status())){
-                if(ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status()) && stepForm.isCurrentStep()){
-                    startNoneProcess(mTicket,ticketStep,ticketCtrl);
-                    mView.showAlert(
-                        hmAux_Trans.get("alert_start_none_process_ttl"),
-                        hmAux_Trans.get("alert_start_none_process_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                startFormProcess(mTicket,ticketStep,ticketCtrl);
-                            }
-                        },
-                        true
-                    );
-                }else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())){
-                    mView.showAlert(
-                        hmAux_Trans.get("alert_process_access_denied_ttl"),
-                        hmAux_Trans.get("alert_process_started_in_server_msg")
-                    );
-                }//não faz nada, pois não tem ação
+                if(stepForm.isCurrentStep()){
+                    if (ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())) {
+                        if (checkFormMasterDataExists(ticketCtrl.getForm())) {
+                            mView.showAlert(
+                                hmAux_Trans.get("alert_start_none_process_ttl"),
+                                hmAux_Trans.get("alert_start_none_process_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        startFormProcess(mTicket, ticketStep, ticketCtrl);
+                                    }
+                                },
+                                true
+                            );
+                        } else {
+                            mView.showAlert(
+                                hmAux_Trans.get("alert_form_master_data_not_found_ttl"),
+                                hmAux_Trans.get("alert_form_master_data_not_found_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        //TODO CHAMAR WS PARA BAIXAR OS FORMS
+                                    }
+                                },
+                                false
+                            );
+                        }
+                    } else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())) {
+                        if (formDataAlreadyExists(ticketCtrl.getForm())) {
+                            startFormProcess(mTicket, ticketStep, ticketCtrl);
+                        } else {
+                            mView.showAlert(
+                                hmAux_Trans.get("alert_process_access_denied_ttl"),
+                                hmAux_Trans.get("alert_process_started_in_server_msg")
+                            );
+                        }
+                    } else if (isDoneOrWaitingSync(ticketCtrl.getCtrl_status())) {
+                        navegateToFormOrPDF(mTicket, ticketStep, ticketCtrl);
+                    }
+                }else{
+                    if(isDoneOrWaitingSync(ticketCtrl.getCtrl_status())){
+                        navegateToFormOrPDF(mTicket, ticketStep, ticketCtrl);
+                    }
+                }
+//
+//                if(ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status()) && stepForm.isCurrentStep()){
+//                    mView.showAlert(
+//                        hmAux_Trans.get("alert_start_none_process_ttl"),
+//                        hmAux_Trans.get("alert_start_none_process_msg"),
+//                        new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                startFormProcess(mTicket,ticketStep,ticketCtrl);
+//                            }
+//                        },
+//                        true
+//                    );
+//                }else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())){
+//                    if(ticketCtrl.getForm() != null && formAlreadyExists(ticketCtrl.getForm())){
+//                        startFormProcess(mTicket,ticketStep,ticketCtrl);
+//                    }else {
+//                        mView.showAlert(
+//                            hmAux_Trans.get("alert_process_access_denied_ttl"),
+//                            hmAux_Trans.get("alert_process_started_in_server_msg")
+//                        );
+//                    }
+//                }//não faz nada, pois não tem ação
+            }else{
+                navegateToFormOrPDF(mTicket, ticketStep, ticketCtrl);
             }
         }else{
             mView.showAlert(
@@ -588,11 +662,135 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             );
         }
     }
+
+    private void navegateToFormOrPDF(TK_Ticket mTicket, TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
+        if(ticketCtrl.getForm() != null){
+            if (formDataAlreadyExists(ticketCtrl.getForm())) {
+                startFormProcess(mTicket, ticketStep, ticketCtrl);
+            } else {
+                tryOpenFormPDF(ticketCtrl.getForm());
+            }
+        } else{
+            mView.showAlert(
+                hmAux_Trans.get("alert_form_obj_not_found_ttl"),
+                hmAux_Trans.get("alert_form_obj_not_found_msg")
+            );
+        }
+    }
+
+    private void tryOpenFormPDF(TK_Ticket_Form form) {
+        if(form.getPdf_url() == null || form.getPdf_url().isEmpty()){
+            mView.showAlert(
+                hmAux_Trans.get("alert_form_pdf_not_generated_ttl"),
+                hmAux_Trans.get("alert_form_pdf_not_generated_msg")
+            );
+        }else{
+            if(form.getPdf_url_local() == null || form.getPdf_url().isEmpty()){
+                mView.showAlert(
+                    hmAux_Trans.get("alert_form_pdf_not_downloaded_ttl"),
+                    hmAux_Trans.get("alert_form_pdf_not_downloaded_ttl")
+                );
+            }else{
+               openFormPDF(form.getPdf_url_local());
+            }
+        }
+    }
+
+    private void openFormPDF(String pdf_url_local) {
+        Intent pdfIntent = ToolBox_Inf.getOpenPdfIntent(context,ConstantBaseApp.CACHE_PDF + "/" + pdf_url_local);
+        //
+        try {
+            context.startActivity(pdfIntent);
+        }catch (ActivityNotFoundException e){
+            ToolBox_Inf.registerException(e);
+            //
+            ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_starting_pdf_not_supported_ttl"),
+                hmAux_Trans.get("alert_starting_pdf_not_supported_msg"),
+                null,
+                0
+            );
+        }
+    }
+
     //todo VERIFICAR COM O CESINHA COMO VAI FICAR O MODELO DE CTRL COM FORM
     private void startFormProcess(TK_Ticket mTicket, TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
-//        if(ticketCtrl){
+        if(ticketCtrl.getForm() != null){
+//            if(ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ticketCtrl.getForm().getForm_status())){
+//                if(formAlreadyExists(ticketCtrl.getForm())) {
+//                    mView.callAct011(getAct011Bundle(ticketCtrl));
+//                }else{
+//                    tryOpenFormPDF(ticketCtrl.getForm());
+//                }
+//            }else{
 //
-//        }
+//            }
+            mView.callAct011(getAct011Bundle(ticketCtrl));
+        }
+    }
+
+    /**
+     * LUCHE - 24/08/2020
+     * <p></p>
+     * Metodo que verifica se o form existe localmente.
+     * @param form Obj Tk_Ticket_form
+     * @return
+     */
+    private boolean formDataAlreadyExists(TK_Ticket_Form form) {
+        GE_Custom_Form_Data formData = formDataDao.getByString(
+            new Sql_Act070_003(
+                form.getCustomer_code(),
+                form.getTicket_prefix(),
+                form.getTicket_code(),
+                form.getTicket_seq(),
+                form.getTicket_seq_tmp(),
+                form.getStep_code()
+            ).toSqlQuery()
+        );
+        //
+        return formData != null && formData.getCustomer_code() > 0;
+    }
+
+    private boolean checkFormMasterDataExists(TK_Ticket_Form form) {
+        GE_Custom_Form customForm = geCustomFormDao.getByString(
+            new Sql_Act070_004(
+                form.getCustomer_code(),
+                form.getCustom_form_type(),
+                form.getCustom_form_code(),
+                form.getCustom_form_version()
+            ).toSqlQuery()
+        );
+        //
+        return customForm != null && customForm.getCustomer_code() > 0;
+    }
+
+    private Bundle getAct011Bundle(TK_Ticket_Ctrl ticketCtrl) {
+        Bundle bundle = new Bundle();
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(ticketCtrl.getProduct_code()));
+        bundle.putString(MD_ProductDao.PRODUCT_DESC, ticketCtrl.getProduct_desc());
+        bundle.putString(MD_ProductDao.PRODUCT_ID, ticketCtrl.getProduct_id());
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, ticketCtrl.getSerial_id());
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(ticketCtrl.getForm().getCustom_form_type()));
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, ticketCtrl.getForm().getCustom_form_type_desc());
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(ticketCtrl.getForm().getCustom_form_code()));
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(ticketCtrl.getForm().getCustom_form_version()));
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, ticketCtrl.getForm().getCustom_form_desc());
+        bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
+            String.valueOf(
+                ticketCtrl.getForm().getCustom_form_data() != null
+                    ? ticketCtrl.getForm().getCustom_form_data()
+                    : 0
+            )
+        );
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_PREFIX,ticketCtrl.getTicket_prefix());
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_CODE,ticketCtrl.getTicket_code());
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ,ticketCtrl.getTicket_seq());
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP,ticketCtrl.getTicket_seq_tmp());
+        bundle.putInt(TK_Ticket_CtrlDao.STEP_CODE,ticketCtrl.getStep_code());
+        //
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT070);
+        return bundle;
     }
 
     private void startNoneProcess(TK_Ticket mTicket, TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
