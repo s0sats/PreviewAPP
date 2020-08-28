@@ -325,9 +325,11 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                         || mTicketCtrl.getCtrl_start_user_name().isEmpty()) {
                     mTicketCtrl.setCtrl_start_user_name(ctrlStartUserName);
                 }
-                mTicketCtrl.setCtrl_end_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-                mTicketCtrl.setCtrl_end_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
-                mTicketCtrl.setCtrl_end_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
+                if(isApproved) {
+                    mTicketCtrl.setCtrl_end_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                    mTicketCtrl.setCtrl_end_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+                    mTicketCtrl.setCtrl_end_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
+                }
                 mTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
                 setCheckInOutWhenOneTouchStep(ticketStep, mTicketCtrl);
                 //

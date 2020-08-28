@@ -29,9 +29,13 @@ public interface Act068_Main_Contract {
        void callAct076(Bundle bundle);
 
        void showResult(ArrayList<HMAux> resultList);
+
+       void setSync(int qty);
    }
 
    interface I_Presenter{
+       void getSync();
+
        void getPendencies();
 
        void getMD_Products();
@@ -51,5 +55,7 @@ public interface Act068_Main_Contract {
        void executeWSTicketSave();
 
        void processSaveReturn(String jsonResult);
+
+       void executeWSTicketDownload();
    }
 }

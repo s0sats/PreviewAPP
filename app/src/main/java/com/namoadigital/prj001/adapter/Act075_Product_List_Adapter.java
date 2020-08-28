@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -9,10 +10,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -248,9 +249,6 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
         public void onBind(final TK_Ticket_Product tk_ticket_product, final int position) {
             //
-            Log.d("PRODUCT", "qty: " + tk_ticket_product.getQty());
-            Log.d("PRODUCT", "qty_used: " + tk_ticket_product.getQty_used());
-            //
             tv_product_info.setText(tk_ticket_product.getProduct_desc());
             //
             product_cell_tv_withdrawn_qty.setText(String.format("%s %s", tk_ticket_product.getQty(), tk_ticket_product.getUn()));
@@ -350,6 +348,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             }
             double balance = tk_ticket_product.getQty() - qtyUsed;
             product_cell_tv_extract.setText(hmAux_Trans.get("product_extract_lbl") + " " + balance);
+            tk_ticket_product.setQty_returned(balance);
         }
 
         /**
@@ -502,8 +501,8 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             }
             if( APPROVAL_RETURN_MATERIAL.equalsIgnoreCase(tkTicketApproval.getApproval_type())){
                 cl_withdrawn.setVisibility(View.GONE);
-                cl_applied.setVisibility(View.VISIBLE);
-                cl_returned.setVisibility(View.GONE);
+                cl_applied.setVisibility(View.GONE);
+                cl_returned.setVisibility(View.VISIBLE);
             }
             if( APPROVAL_OPERATIONAL.equalsIgnoreCase(tkTicketApproval.getApproval_type())){
                 cl_withdrawn.setVisibility(View.VISIBLE);
@@ -518,6 +517,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             product_cell_iv_applied_substract.setVisibility(visibility);
             product_cell_iv_withdrawn_add.setVisibility(visibility);
             product_cell_iv_applied_add.setVisibility(visibility);
+            product_cell_iv_returned_add.setVisibility(visibility);
         }
     }
 
@@ -570,6 +570,13 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                    /*
+                       BARRIONUEVO 27-08-2020
+                       Esconde o teclado ao trocar a opcao dos radio button
+                     */
+                    InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(itemView.getWindowToken(), 0);
+                    //
                     switch (checkedId) {
                         case R.id.act075_approval_form_rg_approval:
                             mApproveListener.onSelectOption(true);

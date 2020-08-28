@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act075;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,7 +19,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -339,10 +342,27 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             );
         }
         //
+        handleSoftInputFocus();
+        //
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.header_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
         ft.addToBackStack(null);
         ft.commit();
+    }
+
+    /**
+     *  BARRIONUEVO - 27-08-2020
+     *  Metodo que
+     */
+    private void handleSoftInputFocus() {
+        final FrameLayout header = findViewById(R.id.header_frg_pipeline_header);
+        header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(header.getWindowToken(), 0);
+            }
+        });
     }
 
     private void recoverIntentsInfo() {
@@ -786,7 +806,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        closeFabMenu();
         switch (requestCode) {
             case 20:
                 processResult(resultCode, data);
@@ -796,6 +816,12 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void closeFabMenu() {
+        if(hasFABActive){
+            fabMenu.animateFAB();
+        }
     }
 
     private void processResult(int resultCode, Intent data) {
