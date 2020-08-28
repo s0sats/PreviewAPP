@@ -4,6 +4,7 @@ package com.namoadigital.prj001.model;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 public class TK_Ticket_Form {
     @Expose
@@ -194,5 +195,16 @@ public class TK_Ticket_Form {
 
     public void setPdf_url_local(@Nullable String pdf_url_local) {
         this.pdf_url_local = pdf_url_local;
+    }
+    
+    public String getPdfUrlLocalName(boolean withExtension){
+            return
+                ConstantBaseApp.N_FORM_PDF_PREFIX +
+                this.customer_code + "_" +
+                this.custom_form_type+ "_" +
+                this.custom_form_code+ "_" +
+                this.custom_form_version+ "_" +
+                this.custom_form_data +
+                (withExtension ? ".pdf" : "");
     }
 }

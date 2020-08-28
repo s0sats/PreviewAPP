@@ -17,6 +17,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TSave_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
@@ -277,7 +278,9 @@ public class WS_Save extends IntentService {
             case "OK_DUP":
                 List<GE_Custom_Form_Local> formLocals = new ArrayList<>();
                 List<MD_Schedule_Exec> formSchedules = new ArrayList<>();
+                List<TK_Ticket_Ctrl> formTicketCtrl = new ArrayList<>();
                 boolean isScheduleForm = false;
+                boolean isTicketForm = false;
                 //Se enviado com sucesso, atualiza Status para DONE
                 for (GE_Custom_Form_Data form_data : form_datas){
                     //Se status DONE
@@ -285,10 +288,11 @@ public class WS_Save extends IntentService {
                     //Vars do novo agendamento
                     TSave_Rec.Error_Process errorProcess = null;
                     isScheduleForm = ToolBox_Inf.isScheduleForm(form_data);
+                    isTicketForm = isFormCreateByTicket(form_data);
                     //LUCHE - 20/02/2020
                     //Tratativa pós novo agendamento que registra no banco e exibe o erro
                     //Resgata item com erro se houver.
-                    if(isScheduleForm) {
+                    if(isScheduleForm || isTicketForm) {
                         errorProcess = checkErrorProcess(
                             error_process,
                             form_data.getCustomer_code(),
@@ -355,6 +359,7 @@ public class WS_Save extends IntentService {
                             errorProcess.setSchedule_desc(scheduleExec.getSchedule_desc());
                         }
                     }
+                    //TODO Continuar daqui, salvar os dados no ctrl;
                     //
                     if(errorProcess != null) {
                         errorProcessList.add(errorProcess);
@@ -434,6 +439,15 @@ public class WS_Save extends IntentService {
         aux.setCustom_form_status(Constant.SYS_STATUS_DONE);
         //
         return aux;
+    }
+
+    public boolean isFormCreateByTicket(GE_Custom_Form_Data geCustomFormData) {
+        return
+            geCustomFormData.getTicket_prefix() != null && geCustomFormData.getTicket_prefix() > -1
+                && geCustomFormData.getTicket_code() != null && geCustomFormData.getTicket_code() > -1
+                && geCustomFormData.getTicket_seq() != null && geCustomFormData.getTicket_seq() > -1
+                && geCustomFormData.getTicket_seq_tmp() != null && geCustomFormData.getTicket_seq_tmp()  > -1
+                && geCustomFormData.getStep_code() != null && geCustomFormData.getStep_code() > -1;
     }
 
     private TSave_Rec.Error_Process checkErrorProcess(ArrayList<TSave_Rec.Error_Process> error_process_list, long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, long custom_form_data) {

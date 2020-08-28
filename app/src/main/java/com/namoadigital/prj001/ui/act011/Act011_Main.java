@@ -906,7 +906,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
      * - O N-Form não pode ter sido gerado pela O.S
      * - O N-Form não pode ter sido gerado pelo Agendamento
      * - 0 Serial deve ser informdo
-     *
+     * LUCHE - 28/08/2020
+     *  Modificado metodo, adicionando condição de form NÃO TER SIDO ORIDINADO por um ticket
      * @return
      */
     @Override
@@ -917,10 +918,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             && !ToolBox_Inf.isScheduleForm(formLocal)
             && serial_id != null
             && !serial_id.isEmpty()
+            //LUCHE - 28/08/2020
+            && !mPresenter.isFormCreateByTicket(formLocal)
         ){
             return true;
         }
-
         return false;
     }
 

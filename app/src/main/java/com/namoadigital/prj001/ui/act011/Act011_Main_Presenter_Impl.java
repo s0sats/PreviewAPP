@@ -295,7 +295,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             }
         }
         //LUCHE - 24/08/2020
-        isTicketProcess = isFormCreateByTicket(customFormLocal.getTicket_prefix(),customFormLocal.getTicket_code(),customFormLocal.getTicket_seq(),customFormLocal.getTicket_seq_tmp(),customFormLocal.getStep_code());
+        //isTicketProcess = isFormCreateByTicket(customFormLocal.getTicket_prefix(),customFormLocal.getTicket_code(),customFormLocal.getTicket_seq(),customFormLocal.getTicket_seq_tmp(),customFormLocal.getStep_code());
+        isTicketProcess = isFormCreateByTicket(customFormLocal);
         //26/03/2020 - Informa usuario que o form foi abortado.
         if (bAbortSchedule) {
             mView.showFormCancelledMsg(customFormLocal,scheduleExec);
@@ -329,7 +330,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 );
                 //LUCHE - 24/08/2020
                 //Atualiza TicketCtrl se form for do ticket
-                //if(isFormCreateByTicket(mTicket_prefix,mTicket_code,mTicket_seq,mTicket_seq_tmp,mStep_code)){
                 if(isTicketProcess){
                     updateTicketCtrl(
                         customFormLocal.getCustomer_code(),
@@ -405,6 +405,16 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done());
             }
         }
+    }
+
+    @Override
+    public boolean isFormCreateByTicket(GE_Custom_Form_Local customFormLocal) {
+        return
+            customFormLocal.getTicket_prefix() != null && customFormLocal.getTicket_prefix() > -1
+            && customFormLocal.getTicket_code() != null && customFormLocal.getTicket_code() > -1
+            && customFormLocal.getTicket_seq() != null && customFormLocal.getTicket_seq() > -1
+            && customFormLocal.getTicket_seq_tmp() != null && customFormLocal.getTicket_seq_tmp()  > -1
+            && customFormLocal.getStep_code() != null && customFormLocal.getStep_code() > -1;
     }
 
     private boolean isFormCreateByTicket(Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code) {
@@ -864,7 +874,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             );
         }
         //TODO CONTINUAR AQUI AMANHA POIS NÃO ENTROU
-        //TODO REVER POIS STEP_CODE NÃO ESTA SENDO SALVO NO FORM DATA.--Era pau no Dao, corrigido.
         if(isTicketProcess){
             updateTicketCtrl(
                 formData.getCustomer_code(),

@@ -659,6 +659,9 @@ public class TK_Ticket implements Cloneable {
                                     }
                                 }
                                 break;
+                            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
+                                checkUpdateFormUrlLocal(ctrl);
+                                break;
                             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
                             default:
                                 break;
@@ -669,6 +672,24 @@ public class TK_Ticket implements Cloneable {
         }
     }
 
+    /**
+     * LUCHE - 28/08/2020
+     * Metdoo que analisa o PDF do form ja foi baixado e atualiza a utrl local
+     * @param ctrl
+     */
+    private void checkUpdateFormUrlLocal(TK_Ticket_Ctrl ctrl) {
+        if(ctrl.getForm() != null){
+            if( ctrl.getForm().getPdf_url() != null && !ctrl.getForm().getPdf_url().isEmpty()
+                && (ctrl.getForm().getPdf_url_local() == null || ctrl.getForm().getPdf_url_local().isEmpty())
+            ){
+                String pdfUrlLocalName = ctrl.getForm().getPdfUrlLocalName(true);
+                File file = new File(ConstantBaseApp.CACHE_PATH, pdfUrlLocalName );
+                if(file.exists()){
+                    ctrl.getForm().setPdf_url_local(pdfUrlLocalName);
+                }
+            }
+        }
+    }
     /**
      * Metodo que varre todas as actions do ticket e verifica se houve mudança no photo_code.
      * Esse metodo serve para atualizar a foto da action quando alguem alterou a foto via web

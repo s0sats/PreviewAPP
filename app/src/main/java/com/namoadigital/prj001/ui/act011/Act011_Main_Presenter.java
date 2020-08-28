@@ -41,4 +41,6 @@ public interface Act011_Main_Presenter {
     void cancelScheduleAndForm(GE_Custom_Form_Local customFormLocal, MD_Schedule_Exec scheduleExec);
 
     void validateGPSResource(GE_Custom_Form_Local formLocal);
+    //
+    boolean isFormCreateByTicket(GE_Custom_Form_Local customFormLocal);
 }

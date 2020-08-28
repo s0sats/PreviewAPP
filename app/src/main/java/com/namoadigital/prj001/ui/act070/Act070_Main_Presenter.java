@@ -25,9 +25,9 @@ import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
-import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
@@ -62,6 +62,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.dialog.PipelineNewProcessDialog;
 import com.namoadigital.prj001.view.dialog.PipelineRejectionListDialog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -558,16 +559,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         //NÃO MAPEADO.
                     }
                 }
-//                if(ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
-//                    && stepNone.isCurrentStep()
-//                ){
-//                    startNoneProcess(mTicket,ticketStep,ticketCtrl);
-//                }else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())){
-//                    mView.showAlert(
-//                        hmAux_Trans.get("alert_process_access_denied_ttl"),
-//                        hmAux_Trans.get("alert_process_started_in_server_msg")
-//                    );
-//                }//não faz nada, pois não tem ação
             }
         }else{
             mView.showAlert(
@@ -586,7 +577,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         if(ticketStep != null && ticketCtrl != null && ticketCtrl.getForm() != null){
             if(!isDoneOrWaitingSync(ticketStep.getStep_status())){
                 if(stepForm.isCurrentStep()){
-                    if (ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())) {
+                    if (isStartEndActionExecution(ticketStep, ticketCtrl)
+                        || isOneTouchActionExecution(ticketStep, ticketCtrl)
+                    ) {
                         if (checkFormMasterDataExists(ticketCtrl.getForm())) {
                             mView.showAlert(
                                 hmAux_Trans.get("alert_start_none_process_ttl"),
@@ -697,6 +690,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     private void openFormPDF(String pdf_url_local) {
+        File pdfFile = new File(ConstantBaseApp.CACHE_PATH + "/" + pdf_url_local);
+        copyPdfToPdfFolder(pdfFile);
         Intent pdfIntent = ToolBox_Inf.getOpenPdfIntent(context,ConstantBaseApp.CACHE_PDF + "/" + pdf_url_local);
         //
         try {
@@ -714,19 +709,30 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
+    private void copyPdfToPdfFolder(File pdfFile) {
+        try {
+            ToolBox_Inf.deleteAllFOD(Constant.CACHE_PDF);
+            ToolBox_Inf.copyFile(
+                pdfFile,
+                new File(Constant.CACHE_PDF)
+            );
+        } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(), e);
+        }
+    }
+
     //todo VERIFICAR COM O CESINHA COMO VAI FICAR O MODELO DE CTRL COM FORM
     private void startFormProcess(TK_Ticket mTicket, TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
         if(ticketCtrl.getForm() != null){
-//            if(ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ticketCtrl.getForm().getForm_status())){
-//                if(formAlreadyExists(ticketCtrl.getForm())) {
-//                    mView.callAct011(getAct011Bundle(ticketCtrl));
-//                }else{
-//                    tryOpenFormPDF(ticketCtrl.getForm());
-//                }
-//            }else{
-//
-//            }
-            mView.callAct011(getAct011Bundle(ticketCtrl));
+            if(ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ticketCtrl.getForm().getForm_status())){
+                if(formDataAlreadyExists(ticketCtrl.getForm())) {
+                    mView.callAct011(getAct011Bundle(ticketCtrl));
+                }else{
+                    tryOpenFormPDF(ticketCtrl.getForm());
+                }
+            }else{
+                mView.callAct011(getAct011Bundle(ticketCtrl));
+            }
         }
     }
 
@@ -1337,6 +1343,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 }
             }else if(stepsCtrl instanceof StepNone){
                 if(((StepNone) stepsCtrl).isProcessPlanned()){
+                    return stepsCtrl;
+                }
+            }else if(stepsCtrl instanceof StepForm){
+                if(((StepForm) stepsCtrl).isProcessPlanned()){
                     return stepsCtrl;
                 }
             }

@@ -33,6 +33,7 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_From_To;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result_Step;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.GE_File_Sql_006;
@@ -1204,10 +1205,13 @@ public class WS_TK_Ticket_Save extends IntentService {
         //Como será possivel baixar ticket do customer logado, pode ser chamada a rotina de download.
         //Esse as definição mudar, rever, pois seria necessario chamar essa serviço para cada customer code diferente.
         Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+        Intent mIntentPDF = new Intent(getApplicationContext(), WBR_DownLoad_PDF.class);
         Bundle bundle = new Bundle();
         bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
         mIntentPIC.putExtras(bundle);
+        mIntentPDF.putExtras(bundle);
         getApplicationContext().sendBroadcast(mIntentPIC);
+        getApplicationContext().sendBroadcast(mIntentPDF);
     }
 
     private void loadTranslation() {
