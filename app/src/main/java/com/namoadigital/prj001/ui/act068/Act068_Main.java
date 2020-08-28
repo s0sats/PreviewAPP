@@ -461,6 +461,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                 resultFromTicketSave = result;
             }else {
                 mPresenter.processSaveReturn(result);
+            }
         } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())) {
             progressDialog.dismiss();
             showMsg(
@@ -468,8 +469,6 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                     hmAux_Trans.get("alert_ticket_syncronized_msg")
             );
             mPresenter.getSync();
-            }
-
         } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             progressDialog.dismiss();
             mPresenter.processSaveReturn(resultFromTicketSave);
