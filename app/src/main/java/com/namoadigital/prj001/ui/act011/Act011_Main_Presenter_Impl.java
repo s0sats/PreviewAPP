@@ -51,6 +51,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -338,6 +339,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         customFormLocal.getTicket_seq(),
                         customFormLocal.getTicket_seq_tmp(),
                         customFormLocal.getStep_code(),
+                        customFormLocal.getCustom_form_data(),
                         ConstantBaseApp.SYS_STATUS_PROCESS
                     );
                     //Resgata Step para setar data de checkin no form.
@@ -427,7 +429,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             ;
     }
 
-    private void updateTicketCtrl(long customer_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code, String status) {
+    private void updateTicketCtrl(long customer_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code, long custom_form_data, String status) {
         TK_Ticket_Step tkTicketStep = getTicketStep(mTicket_prefix, mTicket_code, mStep_code);
 //        TK_Ticket_Ctrl ticketCtrl = ticketCtrlDao.getByString(
 //            new TK_Ticket_Ctrl_Sql_004(
@@ -448,17 +450,51 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         case ConstantBaseApp.SYS_STATUS_PROCESS:
                             setStartInfoIntoCtrl(tkTicketCtrl);
                             setCheckInIntoStepWhenOneTouchStep(tkTicketStep,tkTicketCtrl);
+                            tkTicketCtrl.getForm().setCustom_form_data((int) custom_form_data);
                             break;
                         case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
                             setCloseInfoIntoCtrl(tkTicketCtrl);
                             checkCloseStepForWaitingSync(tkTicketStep,tkTicketCtrl);
+                            //
+                            tkTicketCtrl.setUpdate_required(1);
+                            tkTicketStep.setUpdate_required(1);
                             break;
                     }
                     tkTicketStep.getCtrl().set(ctrlIdx,tkTicketCtrl);
                     //
                     ticketStepDao.addUpdate(tkTicketStep);
+                    //Se finalizou o ctrl, seta sync required tb no ticket.
+                    if(tkTicketStep.getUpdate_required() == 1){
+                        ticketStepDao.addUpdate(
+                            new Sql_WS_TK_Ticket_Save_002(
+                                tkTicketStep.getCustomer_code(),
+                                tkTicketStep.getTicket_prefix(),
+                                tkTicketStep.getTicket_code(),
+                                1,
+                                0
+                            ).toSqlQuery()
+                        );
+                    }
+                } else{
+                    mView.showMsg(
+                        hmAux_Trans.get("alert_ticket_step_or_ctrl_not_found_ttl"),
+                        hmAux_Trans.get("alert_ticket_step_or_ctrl_not_found_msg"),
+                        Act011_Main.SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR
+                    );
                 }
+            } else{
+                mView.showMsg(
+                    hmAux_Trans.get("alert_ticket_step_or_ctrl_not_found_ttl"),
+                    hmAux_Trans.get("alert_ticket_step_or_ctrl_not_found_msg"),
+                    Act011_Main.SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR
+                );
             }
+        } else {
+            mView.showMsg(
+                hmAux_Trans.get("alert_ticket_step_or_ctrl_not_found_ttl"),
+                hmAux_Trans.get("alert_ticket_step_or_ctrl_not_found_msg"),
+                Act011_Main.SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR
+            );
         }
         //TODO TRATAR CASOS NAO ENCONTRE AS INFOS.
     }
@@ -873,7 +909,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ConstantBaseApp.SYS_STATUS_WAITING_SYNC
             );
         }
-        //TODO CONTINUAR AQUI AMANHA POIS NÃO ENTROU
+        //
         if(isTicketProcess){
             updateTicketCtrl(
                 formData.getCustomer_code(),
@@ -882,6 +918,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 formData.getTicket_seq(),
                 formData.getTicket_seq_tmp(),
                 formData.getStep_code(),
+                formData.getCustom_form_data(),
                 ConstantBaseApp.SYS_STATUS_WAITING_SYNC
             );
         }
@@ -1033,7 +1070,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     @Override
     public void onBackPressedClicked() {
-        mView.callAct005(context);
+        if(ConstantBaseApp.ACT070.equals(mView.getRequestingAct())) {
+            mView.callAct070();
+        }else{
+            mView.callAct005(context);
+        }
     }
 
     /**

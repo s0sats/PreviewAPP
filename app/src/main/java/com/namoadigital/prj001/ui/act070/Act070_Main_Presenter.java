@@ -725,11 +725,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private void startFormProcess(TK_Ticket mTicket, TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
         if(ticketCtrl.getForm() != null){
             if(ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ticketCtrl.getForm().getForm_status())){
-                if(formDataAlreadyExists(ticketCtrl.getForm())) {
-                    mView.callAct011(getAct011Bundle(ticketCtrl));
-                }else{
-                    tryOpenFormPDF(ticketCtrl.getForm());
-                }
+                //LUCHE - 31/08/2020
+                //Pela definição de hoje, uma vez finalizado será exibido somente o PDF.
+//                if(formDataAlreadyExists(ticketCtrl.getForm())) {
+//                    mView.callAct011(getAct011Bundle(ticketCtrl));
+//                }else{
+//                    tryOpenFormPDF(ticketCtrl.getForm());
+//                }
+                tryOpenFormPDF(ticketCtrl.getForm());
             }else{
                 mView.callAct011(getAct011Bundle(ticketCtrl));
             }

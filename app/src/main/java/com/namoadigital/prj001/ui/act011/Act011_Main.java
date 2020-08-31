@@ -69,6 +69,7 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
@@ -95,6 +96,7 @@ import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act015.Act015_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -129,7 +131,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR = 5;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR = 6;
-
+    public static final int SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR = 7;
 
     private Act011_Main_Presenter mPresenter;
 
@@ -221,6 +223,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private Integer mTicket_seq;
     private Integer mTicket_seq_tmp;
     private Integer mStep_code;
+    private String requestingAct;
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -260,7 +263,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         initActions();
     }
-
 
     @Override
     protected void onDestroy() {
@@ -402,6 +404,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         transList.add("alert_form_turn_gps_on_title");
         transList.add("alert_form_turn_gps_on_msg");
+        //
+        transList.add("alert_ticket_step_or_ctrl_not_found_ttl");
+        transList.add("alert_ticket_step_or_ctrl_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -752,6 +757,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 && !SV_LocationTracker.status) {
             getLocation();
         }
+    }
+
+    @Override
+    public String getRequestingAct() {
+        return requestingAct;
     }
 
     private void showConfirmDeleteDialog() {
@@ -1135,6 +1145,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             mTicket_seq = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_SEQ) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ) : null;
             mTicket_seq_tmp = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) : null;
             mStep_code = bundle.containsKey(TK_Ticket_CtrlDao.STEP_CODE) ? bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE) : null;
+            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT005);
         } else {
             mSo_Prefix = null;
             mSo_Code = null;
@@ -1147,6 +1158,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             mTicket_seq = null;
             mTicket_seq_tmp = null;
             mStep_code = null;
+            requestingAct = ConstantBaseApp.ACT005;
         }
     }
 
@@ -2258,6 +2270,21 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     0
                 );
                 break;
+            case SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR:
+                ToolBox.alertMSG(
+                    context,
+                    title,
+                    msg,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //onBackPressed();
+                            //TODO O QUE FAZER ?!
+                        }
+                    },
+                    0
+                );
+                break;
         }
     }
 
@@ -2295,6 +2322,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         ).setTextColor(getResources().getColor(R.color.namoa_lime_green));
     }
 
+    /**
+     * LUCHE - 31/08/2020
+     * <P></P>
+     * Modificado o if else que existia por if return e adicionado tratativa para o caso da act070(ticket)
+     */
     private void flowControl() {
         //ToolBox_Inf.showNoConnectionDialog(Act011_Main.this);
         /*
@@ -2304,32 +2336,65 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             Tratativa para não alterar os dados apos a execucao do servico de envio do n-form
          */
         canSave = false;
-        if (mSo_Prefix == null || mSo_Code == null) {
-            if(finalizeNewFlow) {
-                if(mPresenter.checkNFormExists(formLocal)){
-                    callAct006(context);
-                }else{
-                    finalizeNewFlow = false;
-                    //
-                    ToolBox.alertMSG(
-                            Act011_Main.this,
-                            hmAux_Trans.get("alert_nform_expired_ttl"),
-                            hmAux_Trans.get("alert_nform_expired_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    callAct005(context);
-                                }
-                            },
-                            0
-                    );
-                }
-            }else{
-                callAct005(context);
+        //LUCHE - 31/08/2020
+        if(ConstantBaseApp.ACT070.equals(requestingAct) && mPresenter.isFormCreateByTicket(formLocal)){
+            callAct070();
+            return;
+        }
+        if(mSo_Prefix != null && mSo_Code != null){
+            nservCall();
+            return;
+        }
+        if (finalizeNewFlow) {
+            if (mPresenter.checkNFormExists(formLocal)) {
+                callAct006(context);
+            } else {
+                finalizeNewFlow = false;
+                //
+                ToolBox.alertMSG(
+                    Act011_Main.this,
+                    hmAux_Trans.get("alert_nform_expired_ttl"),
+                    hmAux_Trans.get("alert_nform_expired_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            callAct005(context);
+                        }
+                    },
+                    0
+                );
             }
         } else {
-            nservCall();
+            callAct005(context);
         }
+        //
+//        if (mSo_Prefix == null || mSo_Code == null) {
+//            if (finalizeNewFlow) {
+//                if (mPresenter.checkNFormExists(formLocal)) {
+//                    callAct006(context);
+//                } else {
+//                    finalizeNewFlow = false;
+//                    //
+//                    ToolBox.alertMSG(
+//                        Act011_Main.this,
+//                        hmAux_Trans.get("alert_nform_expired_ttl"),
+//                        hmAux_Trans.get("alert_nform_expired_msg"),
+//                        new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                callAct005(context);
+//                            }
+//                        },
+//                        0
+//                    );
+//                }
+//            } else {
+//                callAct005(context);
+//            }
+//        } else {
+//            nservCall();
+//        }
+
     }
 
     public void exitAlert() {
@@ -2343,15 +2408,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
-                // modificar para incluir a remossao do custom_form_local.
-                //mPresenter.saveData(formData, false);
-                if (bNew || hasAnyValueChanged()) {
-//                    mPresenter.deleteFormLocal(formLocal);
-
-                }
                 //
-                callAct005(Act011_Main.this);
+                //callAct005(Act011_Main.this);
+                mPresenter.onBackPressedClicked();
             }
         };
 
@@ -2441,10 +2500,23 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     @Override
+    public void callAct070() {
+        Intent mIntent = new Intent(context, Act070_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket_prefix != null ? mTicket_prefix : -1 );
+        bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket_code != null ? mTicket_code : -1 );
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
     public void onBackPressed() {
         //super.onBackPressed();
         //mPresenter.onBackPressedClicked();
-
         if (formData != null){
             if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
                 exitAlert();
@@ -2452,7 +2524,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 checkBackFlow();
             }
         } else {
-                callAct005(Act011_Main.this);
+           callAct005(Act011_Main.this);
         }
     }
 
@@ -2464,10 +2536,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
      *
      */
     private void checkBackFlow() {
-        if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_DONE)) {
-            callAct015();
-        }else{
-            callAct005(Act011_Main.this);
+        if(ConstantBaseApp.ACT070.equals(requestingAct)){
+            callAct070();
+        }else {
+            if (formData.getCustom_form_status().equals(Constant.SYS_STATUS_DONE)) {
+                callAct015();
+            } else {
+                callAct005(Act011_Main.this);
+            }
         }
     }
 

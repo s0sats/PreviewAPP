@@ -749,9 +749,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             }
 
             if(cursor.isNull(cursor.getColumnIndex(STEP_CODE))){
-                custom_form_local.setSchedule_code(null);
+                custom_form_local.setStep_code(null);
             }else{
-                custom_form_local.setSchedule_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
+                custom_form_local.setStep_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
             }
 
             return custom_form_local;

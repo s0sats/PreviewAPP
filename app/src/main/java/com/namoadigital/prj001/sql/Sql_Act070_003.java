@@ -2,10 +2,13 @@ package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 
 /**
  * LUCHE - 24/08/2020
  * Query que seleciona o form baseado na pk do ticket_ctrl
+ * LUCHE - 31/08/2020
+ * Alterado query para levar considerar apenas os status PENDING, IN_PROCESSING E WAITING_SYNC
  */
 
 public class Sql_Act070_003 implements Specification {
@@ -39,7 +42,12 @@ public class Sql_Act070_003 implements Specification {
                     "      and d.ticket_code = '" + ticket_code +"'\n" +
                     "      and d.ticket_seq = '" + ticket_seq +"'\n" +
                     "      and d.ticket_seq_tmp = '" + ticket_seq_tmp +"'\n" +
-                    "      and d.step_code = '" + step_code +"'\n"
+                    "      and d.step_code = '" + step_code +"'\n" +
+                    "      and d.custom_form_status in (" +
+                            "'" + ConstantBaseApp.SYS_STATUS_PENDING+"'," +
+                            "'" + ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"',"+
+                            "'" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"'"+
+                    "       ) \n"
             )
             .toString();
     }
