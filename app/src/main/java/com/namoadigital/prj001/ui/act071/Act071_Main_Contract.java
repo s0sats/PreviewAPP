@@ -113,6 +113,8 @@ public interface Act071_Main_Contract {
 
         MD_Schedule_Exec getScheduleExec(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec);
 
+        boolean verifyProductForForm();
+
         /*boolean hasPartnerProfile(Integer partner_code);
 
         boolean hasActionExecProfile();

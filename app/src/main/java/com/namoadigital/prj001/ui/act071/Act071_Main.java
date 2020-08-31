@@ -47,6 +47,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
@@ -127,6 +128,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private boolean isCreationCtrl;
     private boolean isCreationAction;
     private int mActionSeqTmp;
+    private String ticket_result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -204,6 +206,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("finalize_lbl");
         transList.add("alert_error_on_process_creation_ttl");
         transList.add("alert_error_on_process_creation_msg");
+        transList.add("progress_sync_ttl");
+        transList.add("progress_sync_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -1195,10 +1199,18 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //
         if(wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())){
             wsProcess = "";
-            mPresenter.processSaveReturn(mTicketCtrl.getTicket_prefix(), mTicketCtrl.getTicket_code(), mLink);
+            progressDialog.dismiss();
+            if(mPresenter.verifyProductForForm()){
+                ticket_result = mLink;
+            }else {
+                mPresenter.processSaveReturn(mTicketCtrl.getTicket_prefix(), mTicketCtrl.getTicket_code(), mLink);
+            }
+        } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            progressDialog.dismiss();
+            wsProcess = "";
+            mPresenter.processSaveReturn(mTicketCtrl.getTicket_prefix(), mTicketCtrl.getTicket_code(), ticket_result);
         }
         //
-        progressDialog.dismiss();
     }
 
 

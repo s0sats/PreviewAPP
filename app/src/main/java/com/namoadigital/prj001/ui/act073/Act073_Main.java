@@ -136,6 +136,8 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
         transList.add("dialog_download_ticket_start");
         transList.add("dialog_search_ticket_ttl");
         transList.add("dialog_search_ticket_start");
+        transList.add("progress_sync_ttl");
+        transList.add("progress_sync_msg");
 
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
