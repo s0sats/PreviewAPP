@@ -111,6 +111,8 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         transList.add("alert_no_next_tickets_msg");
         transList.add("progress_next_tickets_ttl");
         transList.add("progress_next_tickets_msg");
+        transList.add("progress_sync_ttl");
+        transList.add("progress_sync_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -198,10 +200,17 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     }
 
     @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        super.processCloseACT(mLink, mRequired);
+        processCloseACT(mLink,mRequired,new HMAux());
+    }
+
+    @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         if(WS_TK_Next_Ticket.class.getName().equalsIgnoreCase(wsProcess)) {
             wsProcess = "";
+            progressDialog.dismiss();
             Gson gson = new GsonBuilder().serializeNulls().create();
             //
             T_TK_Next_Ticket_WS_Response rec = gson.fromJson(
@@ -212,6 +221,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             mPresenter.setTicketVH(rec.getNext_tickets());
         } else if(WS_TK_Ticket_Download.class.getName().equalsIgnoreCase(wsProcess)) {
             wsProcess = "";
+            progressDialog.dismiss();
             if(mPresenter.verifyProductForForm()){
                 mTicketDownloaded = hmAux;
             }else {
@@ -219,10 +229,9 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             }
         } else if(WS_Sync.class.getName().equalsIgnoreCase(wsProcess)) {
             wsProcess = "";
-            processTicketDownloaded(hmAux);
+            progressDialog.dismiss();
+            processTicketDownloaded(mTicketDownloaded);
         }
-
-        progressDialog.dismiss();
     }
 
     private void processTicketDownloaded(HMAux hmAux) {

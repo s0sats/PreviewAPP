@@ -880,16 +880,18 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Checkin.class.getName())) {
             wsProcess = "";
+            progressDialog.dismiss();
             mPresenter.processCheckinReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
-
         } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())) {
             wsProcess = "";
             save_return = "";
+            progressDialog.dismiss();
             if(!mPresenter.verifyProductForForm()){
                 refreshUi();
             }
         } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             wsProcess = "";
+            progressDialog.dismiss();
             if(save_return == null
             || save_return.isEmpty()) {
                 refreshUi();
@@ -898,6 +900,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }
         } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             wsProcess = "";
+            progressDialog.dismiss();
             if(mPresenter.verifyProductForForm()){
                 save_return = mLink;
             }else {
@@ -905,7 +908,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }
         }
         //
-        progressDialog.dismiss();
     }
 
 
