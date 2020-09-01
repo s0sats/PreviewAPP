@@ -1217,6 +1217,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
+        //Atualiza UI
+        updateActionData();
+        //
         progressDialog.dismiss();
     }
 

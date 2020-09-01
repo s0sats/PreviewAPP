@@ -80,6 +80,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
@@ -407,6 +408,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         transList.add("alert_ticket_step_or_ctrl_not_found_ttl");
         transList.add("alert_ticket_step_or_ctrl_not_found_msg");
+        transList.add("lbl_ticket");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -3381,7 +3383,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_schedule"));
                     hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
                     break;
-
+                case TSave_Rec.Error_Process.ERROR_TYPE_TICKET:
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_ticket"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
+                    break;
             }
             //
             gAdapterRes.add(hmAux);

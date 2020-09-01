@@ -13,11 +13,13 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
@@ -25,6 +27,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -44,6 +47,7 @@ public class WS_Save extends IntentService {
     private GE_Custom_Form_Data_FieldDao formDataFieldDao;
     private GE_Custom_Form_LocalDao formLocalDao;
     private MD_Schedule_ExecDao scheduleExecDao;
+    private TK_Ticket_StepDao ticketStepDao;
     //
     private String token;
     private List<GE_Custom_Form_Data> form_datas;
@@ -88,6 +92,12 @@ public class WS_Save extends IntentService {
                 );
             //
             scheduleExecDao = new MD_Schedule_ExecDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+            ticketStepDao = new TK_Ticket_StepDao(
                 getApplicationContext(),
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                 Constant.DB_VERSION_CUSTOM
@@ -348,6 +358,7 @@ public class WS_Save extends IntentService {
                         formSchedules.add(scheduleExec);
                         //Preenche dados no obj de erro.
                         if (errorProcess != null) {
+                            errorProcess.setError_type(TSave_Rec.Error_Process.ERROR_TYPE_SCHEDULE);
                             errorProcess.setSchedule_pk(
                                 ToolBox_Inf.formatSchedulePk(
                                     scheduleExec.getSchedule_prefix(),
@@ -360,6 +371,30 @@ public class WS_Save extends IntentService {
                         }
                     }
                     //TODO Continuar daqui, salvar os dados no ctrl;
+                    if(isTicketForm) {
+                        //
+                        TK_Ticket_Step ticketStep = processTicketStepSaveReturn(
+                            form_data.getCustomer_code(),
+                            form_data.getTicket_prefix(),
+                            form_data.getTicket_code(),
+                            form_data.getTicket_seq(),
+                            form_data.getTicket_seq_tmp(),
+                            form_data.getStep_code()
+                        );
+                        if (errorProcess != null) {
+                            errorProcess.setError_type(TSave_Rec.Error_Process.ERROR_TYPE_TICKET);
+                            //
+                            errorProcess.setTicket_step_pk(
+                                formatTicketStepPk(
+                                    ticketStep.getTicket_prefix(),
+                                    ticketStep.getTicket_code(),
+                                    ticketStep.getStep_code()
+                                )
+                            );
+                            //
+                            errorProcess.setTicket_step_desc(ticketStep.getStep_desc());
+                        }
+                    }
                     //
                     if(errorProcess != null) {
                         errorProcessList.add(errorProcess);
@@ -400,6 +435,34 @@ public class WS_Save extends IntentService {
                 return false;
         }
 
+    }
+
+    private TK_Ticket_Step processTicketStepSaveReturn(long customer_code, Integer ticket_prefix, Integer ticket_code, Integer ticket_seq, Integer ticket_seq_tmp, Integer step_code) {
+        TK_Ticket_Step auxStep =
+            ticketStepDao.getByString(
+                new TK_Ticket_Step_Sql_001(
+                    customer_code,
+                    ticket_prefix,
+                    ticket_code,
+                    step_code
+                ).toSqlQuery()
+            );
+        //
+        return auxStep;
+    }
+
+    public static String formatTicketStepPk(Integer ticket_prefix, Integer ticket_code, Integer step_code) {
+        if(
+            ticket_prefix == null
+            || ticket_code == null
+            || step_code == null
+        ){
+            return "";
+        }
+        //
+        return  ticket_prefix +"."+
+                ticket_code +"."+
+                step_code ;
     }
 
     private MD_Schedule_Exec processScheduleExecSaveReturn(long customer_code, Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {

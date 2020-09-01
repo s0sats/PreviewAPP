@@ -915,6 +915,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         progressDialog.dismiss();
+        //LUCHE - 01/09/2020
+        updateTicketData();
     }
 
     @Override

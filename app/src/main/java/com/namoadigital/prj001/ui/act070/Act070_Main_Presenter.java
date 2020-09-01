@@ -774,6 +774,15 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return customForm != null && customForm.getCustomer_code() > 0;
     }
 
+    /**
+     * LUCHE - 24/08/2020
+     * <P></P>
+     * Metodo que gera o bundle para Act011. Bundle serve tanto para criar o form quando para navegar
+     * para um form ja iniciado.
+     *
+     * @param ticketCtrl
+     * @return
+     */
     private Bundle getAct011Bundle(TK_Ticket_Ctrl ticketCtrl) {
         Bundle bundle = new Bundle();
         bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(ticketCtrl.getProduct_code()));

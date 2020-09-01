@@ -7229,4 +7229,14 @@ public class ToolBox_Inf {
             if (outputChannel != null) outputChannel.close();
         }
     }
+
+    /**
+     * LUCHE - 01/09/2020
+     * Metodo que retorna String formatada com PK + descrição do agendamento
+     * @param error_process - Obj de retorno do WS_Save quando há mensagem de retorno
+     * @return - String formatada
+     */
+    public static String formatTicketErroLabel(TSave_Rec.Error_Process error_process) {
+        return error_process.getTicket_step_pk() +" - "+ error_process.getTicket_step_desc();
+    }
 }

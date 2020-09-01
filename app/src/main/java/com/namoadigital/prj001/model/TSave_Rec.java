@@ -76,6 +76,9 @@ public class TSave_Rec {
     }
 
     public class Error_Process{
+        public static final String ERROR_TYPE_SCHEDULE = "SCHEDULE";
+        public static final String ERROR_TYPE_TICKET = "TICKET";
+
         @Expose
         private int customer_code;
         @Expose
