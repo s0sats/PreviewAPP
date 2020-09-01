@@ -386,9 +386,7 @@ public class WS_Save extends IntentService {
                             //
                             errorProcess.setTicket_step_pk(
                                 formatTicketStepPk(
-                                    ticketStep.getTicket_prefix(),
-                                    ticketStep.getTicket_code(),
-                                    ticketStep.getStep_code()
+                                    ticketStep.getTicket_prefix(), ticketStep.getTicket_code()
                                 )
                             );
                             //
@@ -451,18 +449,12 @@ public class WS_Save extends IntentService {
         return auxStep;
     }
 
-    public static String formatTicketStepPk(Integer ticket_prefix, Integer ticket_code, Integer step_code) {
-        if(
-            ticket_prefix == null
-            || ticket_code == null
-            || step_code == null
-        ){
+    public static String formatTicketStepPk(Integer ticket_prefix, Integer ticket_code) {
+        if(ticket_prefix == null || ticket_code == null ){
             return "";
         }
         //
-        return  ticket_prefix +"."+
-                ticket_code +"."+
-                step_code ;
+        return  ticket_prefix +"."+ ticket_code;
     }
 
     private MD_Schedule_Exec processScheduleExecSaveReturn(long customer_code, Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {

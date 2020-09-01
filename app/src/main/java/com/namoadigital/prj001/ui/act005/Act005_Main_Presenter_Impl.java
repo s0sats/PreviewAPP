@@ -1149,12 +1149,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             if(errorProcesses != null && errorProcesses.size() > 0){
                 ArrayList<HMAux> auxResults = new ArrayList<>();
                 for (TSave_Rec.Error_Process error_process : errorProcesses) {
-                    //
-                    HMAux mHmAux = new HMAux();
-                    mHmAux.put("label", ToolBox_Inf.formatScheduleErroLabel(error_process));
-                    mHmAux.put("type", ConstantBaseApp.SYS_STATUS_SCHEDULE);
-                    mHmAux.put("status", error_process.getError());
-                    mHmAux.put("final_status", ToolBox_Inf.formatFormErrorDesc(error_process));
+                    ////
+                    HMAux mHmAux = ToolBox_Inf.getWsSaveErrorProcessAuxResult(error_process);
                     //
                     auxResults.add(mHmAux);
                 }

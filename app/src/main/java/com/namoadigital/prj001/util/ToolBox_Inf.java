@@ -7239,4 +7239,36 @@ public class ToolBox_Inf {
     public static String formatTicketErroLabel(TSave_Rec.Error_Process error_process) {
         return error_process.getTicket_step_pk() +" - "+ error_process.getTicket_step_desc();
     }
+
+    /**
+     * LUCHE - 01/09/2020
+     * <p></p>
+     * Gera o HmAux de error baseado no tipo do obj, atualmente, schedule e ticket.
+     * @param error_process
+     * @return HmAux a ser exibido.
+     */
+    public static HMAux getWsSaveErrorProcessAuxResult(TSave_Rec.Error_Process error_process) {
+        HMAux mHmAux = new HMAux();
+        String label = "";
+        String type = "";
+        String status = "";
+        String final_status ="";
+        //
+        if(TSave_Rec.Error_Process.ERROR_TYPE_TICKET.equals(error_process.getError_type())){
+            label = ToolBox_Inf.formatTicketErroLabel(error_process);
+            type = TSave_Rec.Error_Process.ERROR_TYPE_TICKET;
+        }else{
+            label = ToolBox_Inf.formatScheduleErroLabel(error_process);
+            type = ConstantBaseApp.SYS_STATUS_SCHEDULE;
+        }
+        status = error_process.getError();
+        final_status = ToolBox_Inf.formatFormErrorDesc(error_process);
+        //
+        mHmAux.put("label", label);
+        mHmAux.put("type", type);
+        mHmAux.put("status", status);
+        mHmAux.put("final_status", final_status);
+        //
+        return mHmAux;
+    }
 }
