@@ -105,6 +105,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
     private boolean hasFABActive=false;
     private String save_return = "";
+    private int lastPositionClicked =-1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -415,6 +416,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             new Act070_Steps_Adapter.OnChecklistClickListener() {
                 @Override
                 public void onChecklistClick(int checklistPosition) {
+                    lastPositionClicked = checklistPosition;
                     StepForm stepForm = (StepForm) sources.get(checklistPosition);
                     mPresenter.defineFormFlow(mTicket,stepForm);
 //                    if(ConstantBaseApp.SYS_STATUS_PENDING.equals(stepForm.getProcessStatus())){
@@ -895,8 +897,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             if(save_return == null
             || save_return.isEmpty()) {
                 refreshUi();
+                StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
+                mPresenter.defineFormFlow(mTicket,stepForm);
+                lastPositionClicked =-1;
             }else{
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
+                save_return = "";
             }
         } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             wsProcess = "";
