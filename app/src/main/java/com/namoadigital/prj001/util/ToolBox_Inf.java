@@ -3697,19 +3697,23 @@ public class ToolBox_Inf {
                 && !hmAuxList.isEmpty()){
             for(HMAux aux: hmAuxList){
                 if(aux.hasConsistentValue(Sync_ChecklistDao.PRODUCT_CODE)) {
-                    Integer productCodeOutdate = Integer.parseInt(aux.get(Sync_ChecklistDao.PRODUCT_CODE));
-
-                    Sync_Checklist sync = new Sync_Checklist();
-                    sync.setCustomer_code(preference_customer_code);
-                    sync.setProduct_code(productCodeOutdate);
-                    sync.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd"));
-                    syncChecklistDao.addUpdate(sync);
+                    setProductToSync(preference_customer_code, syncChecklistDao, aux);
                 }
             }
             return true;
         }
         //
         return false;
+    }
+
+    private static void setProductToSync(long preference_customer_code, Sync_ChecklistDao syncChecklistDao, HMAux aux) {
+        Integer productCodeOutdate = Integer.parseInt(aux.get(Sync_ChecklistDao.PRODUCT_CODE));
+
+        Sync_Checklist sync = new Sync_Checklist();
+        sync.setCustomer_code(preference_customer_code);
+        sync.setProduct_code(productCodeOutdate);
+        sync.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd"));
+        syncChecklistDao.addUpdate(sync);
     }
 
     private static class GenericExtFilter implements FilenameFilter {

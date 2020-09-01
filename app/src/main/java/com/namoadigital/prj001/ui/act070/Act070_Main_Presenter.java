@@ -599,7 +599,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        //TODO CHAMAR WS PARA BAIXAR OS FORMS
+
+                                        if(ToolBox_Con.isOnline(context)) {
+                                            callWsSync();
+                                        }else{
+                                            ToolBox_Inf.showNoConnectionDialog(context);
+                                        }
                                     }
                                 },
                                 false
@@ -766,8 +771,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             new Sql_Act070_004(
                 form.getCustomer_code(),
                 form.getCustom_form_type(),
-                form.getCustom_form_code(),
-                form.getCustom_form_version()
+                form.getCustom_form_code()
             ).toSqlQuery()
         );
         //
@@ -1623,32 +1627,36 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public boolean verifyProductForForm() {
         if(ToolBox_Inf.hasFormProductOutdate(context)){
             if (ToolBox_Con.isOnline(context)) {
-                mView.setWsProcess(WS_Sync.class.getName());
-                //
-                mView.showPD(
-                        hmAux_Trans.get("progress_sync_ttl"),
-                        hmAux_Trans.get("progress_sync_msg")
-                );
-                //
-                ArrayList<String> data_package = new ArrayList<>();
-                data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
-                //
-                Intent mIntent = new Intent(context, WBR_Sync.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
-                bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
-                bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
-                bundle.putInt(Constant.GC_STATUS_JUMP, 1);
-                bundle.putInt(Constant.GC_STATUS, 1);
-                //
-                mIntent.putExtras(bundle);
-                //
-                context.sendBroadcast(mIntent);
+                callWsSync();
                 return true;
             }
             return false;
         }else{
             return false;
         }
+    }
+
+    private void callWsSync() {
+        mView.setWsProcess(WS_Sync.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("progress_sync_ttl"),
+                hmAux_Trans.get("progress_sync_msg")
+        );
+        //
+        ArrayList<String> data_package = new ArrayList<>();
+        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+        //
+        Intent mIntent = new Intent(context, WBR_Sync.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+        bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+        bundle.putInt(Constant.GC_STATUS, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 }
