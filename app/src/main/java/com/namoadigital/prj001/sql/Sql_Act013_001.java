@@ -191,6 +191,8 @@ public class Sql_Act013_001 implements Specification {
             "  l.serial_max_length,\n" +
             "  l.serial_min_length,\n" +
             "  l.local_control,\n" +
+            "  d.ticket_prefix,\n" +
+            "  d.ticket_code,\n" +
             //O Alias no campo abaixo é apenas pois na tabela de agendamento não há prefixo product
             "  l.product_io_control "+GE_Custom_Form_LocalDao.IO_CONTROL+",\n" +
             "  l.site_restriction,\n" +

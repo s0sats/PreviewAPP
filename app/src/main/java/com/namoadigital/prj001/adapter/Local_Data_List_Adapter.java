@@ -155,6 +155,7 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
         TextView tv_schedule_comments_lbl = convertView.findViewById(R.id.local_data_list_cell_01_tv_schedule_comment_ttl);
 
         setSchedulePk(item, tv_schedule_lbl);
+        setTicketPk(item, tv_schedule_lbl);
         setScheduleComments(item, tv_schedule_comments_lbl);
 
         String dateStart = ToolBox_Inf.millisecondsToString(
@@ -338,6 +339,22 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
         defineLlIconsVisibility(llIcons,ivScheduleWarningInfos,ivNonConformity);
         //
         return convertView;
+    }
+
+    private void setTicketPk(HMAux item, TextView tv_schedule_lbl) {
+        try {
+            if (!item.hasConsistentValue(GE_Custom_Form_DataDao.TICKET_PREFIX)
+                || !item.hasConsistentValue(GE_Custom_Form_DataDao.TICKET_CODE)
+                || (item.get(GE_Custom_Form_DataDao.TICKET_PREFIX) + item.get(GE_Custom_Form_DataDao.TICKET_CODE)).isEmpty()) {
+                tv_schedule_lbl.setVisibility(View.INVISIBLE);
+            } else {
+                tv_schedule_lbl.setVisibility(View.VISIBLE);
+                String schedule_pk = item.get(GE_Custom_Form_DataDao.TICKET_PREFIX) +"."+ item.get(GE_Custom_Form_DataDao.TICKET_CODE);
+                tv_schedule_lbl.setText(schedule_pk);
+            }
+        }catch (NullPointerException e){
+            tv_schedule_lbl.setVisibility(View.GONE);
+        }
     }
 
     /**
