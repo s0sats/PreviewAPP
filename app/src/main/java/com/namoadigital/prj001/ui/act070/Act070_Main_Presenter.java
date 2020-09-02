@@ -46,6 +46,7 @@ import com.namoadigital.prj001.sql.Sql_Act070_002;
 import com.namoadigital.prj001.sql.Sql_Act070_003;
 import com.namoadigital.prj001.sql.Sql_Act070_004;
 import com.namoadigital.prj001.sql.Sql_Act070_005;
+import com.namoadigital.prj001.sql.Sql_Act070_006;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
@@ -825,6 +826,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     private Bundle getAct011Bundle(TK_Ticket_Ctrl ticketCtrl) {
+        GE_Custom_Form customForm = geCustomFormDao.getByString(
+                new Sql_Act070_006(
+                        ticketCtrl.getCustomer_code(),
+                        ticketCtrl.getForm().getCustom_form_type(),
+                        ticketCtrl.getForm().getCustom_form_code()
+                ).toSqlQuery()
+        );
+
         Bundle bundle = new Bundle();
         bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(ticketCtrl.getProduct_code()));
         bundle.putString(MD_ProductDao.PRODUCT_DESC, ticketCtrl.getProduct_desc());
@@ -833,7 +842,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(ticketCtrl.getForm().getCustom_form_type()));
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, ticketCtrl.getForm().getCustom_form_type_desc());
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(ticketCtrl.getForm().getCustom_form_code()));
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(ticketCtrl.getForm().getCustom_form_version()));
+        /*
+            Barrionuevo - 02-09-2020
+            Parametro com a versão mais atual do form.
+         */
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(customForm.getCustom_form_version()));
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, ticketCtrl.getForm().getCustom_form_desc());
         bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
             String.valueOf(

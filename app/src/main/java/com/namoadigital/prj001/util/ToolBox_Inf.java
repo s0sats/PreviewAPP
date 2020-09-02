@@ -3679,7 +3679,7 @@ public class ToolBox_Inf {
      * @param context - utilizado para instanciar os DAOs
      * @return
      */
-    public static boolean hasFormProductOutdate(Context context) {
+    public static boolean hasFormProductOutdate(Context context, int ticketPrefix, int ticketCode) {
         long preference_customer_code = ToolBox_Con.getPreference_Customer_Code(context);
         Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(
                 context,
@@ -3687,13 +3687,24 @@ public class ToolBox_Inf {
                 Constant.DB_VERSION_CUSTOM
         );
         //
-        List<HMAux> hmAuxList =
-                syncChecklistDao.query_HM(
-                        new Sync_Checklist_Sql_004(
-                                preference_customer_code
-                        ).toSqlQuery()
-                );
-
+        List<HMAux> hmAuxList;
+        if(ticketPrefix == -1 && ticketCode == -1) {
+            hmAuxList =
+                    syncChecklistDao.query_HM(
+                            new Sync_Checklist_Sql_004(
+                                    preference_customer_code
+                            ).toSqlQuery()
+                    );
+        }else{
+            hmAuxList =
+                    syncChecklistDao.query_HM(
+                            new Sync_Checklist_Sql_004(
+                                    preference_customer_code,
+                                    ticketPrefix,
+                                    ticketCode
+                            ).toSqlQuery()
+                    );
+        }
         if(hmAuxList != null
                 && !hmAuxList.isEmpty()){
             for(HMAux aux: hmAuxList){
@@ -3705,6 +3716,10 @@ public class ToolBox_Inf {
         }
         //
         return false;
+    }
+
+    public static boolean hasFormProductOutdate(Context context) {
+        return hasFormProductOutdate(context, -1, -1);
     }
 
     /**

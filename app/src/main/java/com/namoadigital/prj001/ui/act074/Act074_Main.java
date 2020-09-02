@@ -222,7 +222,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         } else if(WS_TK_Ticket_Download.class.getName().equalsIgnoreCase(wsProcess)) {
             wsProcess = "";
             progressDialog.dismiss();
-            if(mPresenter.verifyProductForForm()){
+            if(mPresenter.verifyProductForForm(hmAux)){
                 mTicketDownloaded = hmAux;
             }else {
                 processTicketDownloaded(hmAux);
@@ -247,6 +247,10 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         //
         if(WS_TK_Next_Ticket.class.getName().equalsIgnoreCase(wsProcess)) {
             mPresenter.onBackPressedClicked(requestingAct);
+        }else if(WS_Sync.class.getName().equalsIgnoreCase(wsProcess)) {
+            wsProcess = "";
+            progressDialog.dismiss();
+            processTicketDownloaded(mTicketDownloaded);
         }
         //
         disableProgressDialog();
@@ -258,6 +262,10 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         //
         if(WS_TK_Next_Ticket.class.getName().equalsIgnoreCase(wsProcess)) {
             mPresenter.onBackPressedClicked(requestingAct);
+        }else if(WS_Sync.class.getName().equalsIgnoreCase(wsProcess)) {
+            wsProcess = "";
+            progressDialog.dismiss();
+            processTicketDownloaded(mTicketDownloaded);
         }
         disableProgressDialog();
     }

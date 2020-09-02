@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act074;
 
 import android.os.Bundle;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.TK_Next_Ticket;
 import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 
@@ -28,7 +29,7 @@ public interface Act074_Main_Contract {
 
         void setTicketVH(List<TK_Next_Ticket> tickets);
 
-        boolean verifyProductForForm();
+        boolean verifyProductForForm(HMAux ticketPrefixCode);
     }
 
     interface I_View {

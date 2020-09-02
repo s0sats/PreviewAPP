@@ -11,10 +11,24 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 
 public class Sync_Checklist_Sql_004 implements Specification {
     private long customer_code;
+    private int ticket_prefix;
+    private int ticket_code;
+    private String ticket_filter;
 
     public Sync_Checklist_Sql_004(long customer_code) {
         this.customer_code = customer_code;
+        ticket_filter = "";
     }
+
+    public Sync_Checklist_Sql_004(long customer_code, int ticket_prefix, int ticket_code) {
+        this.customer_code = customer_code;
+        this.ticket_prefix = ticket_prefix;
+        this.ticket_code = ticket_code;
+
+        ticket_filter = "and t.ticket_prefix = " + ticket_prefix + "\n and t.ticket_code = " + ticket_code ;
+    }
+
+
 
     @Override
     public String toSqlQuery() {
@@ -32,15 +46,17 @@ public class Sync_Checklist_Sql_004 implements Specification {
                 " and t.ticket_prefix = s.ticket_prefix\n" +
                 " and t.ticket_code = s.ticket_code\n" +
                 " and t.current_step_order = s.step_order\n" +
+
                 " and s.ticket_prefix = c.ticket_prefix\n" +
                 " and s.ticket_code = c.ticket_code\n" +
                 " and s.customer_code = c.customer_code\n" +
                 " and s.step_code = c.step_code\n" +
+
                 " and c.customer_code = f.customer_code\n" +
                 " and c.ticket_prefix = f.ticket_prefix\n" +
                 " and c.ticket_code = f.ticket_code\n" +
                 " and c.ticket_seq_tmp = f.ticket_seq_tmp\n" +
-                " and s.step_code = f.step_code\n" +
+                  ticket_filter +
                 " and t.ticket_status in ('"+ ConstantBase.SYS_STATUS_PENDING +"','"+ ConstantBase.SYS_STATUS_PROCESS+ "')\n" +
                 " and s.step_status in ('"+ ConstantBase.SYS_STATUS_PENDING +"','"+ ConstantBase.SYS_STATUS_PROCESS+ "')\n" +
                 " and c.ctrl_status in ('"+ ConstantBase.SYS_STATUS_PENDING +"','"+ ConstantBase.SYS_STATUS_PROCESS+ "')\n" +
