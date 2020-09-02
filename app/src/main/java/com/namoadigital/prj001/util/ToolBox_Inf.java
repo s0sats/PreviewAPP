@@ -3748,11 +3748,15 @@ public class ToolBox_Inf {
 
     private static void setProductToSync(long preference_customer_code, Sync_ChecklistDao syncChecklistDao, HMAux aux) {
         Integer productCodeOutdate = Integer.parseInt(aux.get(Sync_ChecklistDao.PRODUCT_CODE));
+        Calendar cDate = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String last_update = dateFormat.format(cDate.getTime());
 
         Sync_Checklist sync = new Sync_Checklist();
         sync.setCustomer_code(preference_customer_code);
         sync.setProduct_code(productCodeOutdate);
-        sync.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd"));
+//        sync.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd"));
+        sync.setLast_update(last_update);
         syncChecklistDao.addUpdate(sync);
     }
 

@@ -72,7 +72,7 @@ public class Sync_Checklist_Sql_004 implements Specification {
                         "      f.customer_code = ge.customer_code \n" +
                         "      and f.custom_form_type = ge.custom_form_type \n" +
                         "      and f.custom_form_code = ge.custom_form_code \n" +
-                        "      and f.custom_form_version = ge.custom_form_version \n" +
+                        "      and f.custom_form_version <= ge.custom_form_version \n" +
                 "               )" +
                 ")");
         //"customer_code#product_code#last_update");
