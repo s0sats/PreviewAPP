@@ -354,6 +354,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         transList.add("dialog_info_so_prefix_lbl");
         transList.add("dialog_info_so_code_lbl");
+        transList.add("dialog_info_ticket_code_lbl");
 
         transList.add("alert_location_info_title");
         transList.add("alert_location_info_required");
@@ -2726,6 +2727,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         TextView tv_so_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_so_code_lbl);
         TextView tv_so_code_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_so_code_desc);
         //
+        TextView tv_ticket_info_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_ticket_info_lbl);
+        TextView tv_ticket_info_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_ticket_info_desc);
+        //
         TextView tv_data_serv_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_data_serv_lbl);
         TextView tv_data_serv_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_data_serv_val);
         //
@@ -2785,6 +2789,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         tv_form_code_lbl.setText(hmAux_Trans.get("dialog_info_form_code_lbl"));
         tv_form_version_lbl.setText(hmAux_Trans.get("dialog_info_form_version_lbl"));
         tv_so_code_lbl.setText(hmAux_Trans.get("dialog_info_so_code_lbl"));
+        tv_ticket_info_lbl.setText(hmAux_Trans.get("dialog_info_ticket_code_lbl"));
         tv_product_desc.setText(product_desc);
         tv_serial_val.setText(serial_id);
         tv_form_type_desc.setText(type + " - " + type_desc);
@@ -2836,6 +2841,19 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             tv_so_code_lbl.setVisibility(View.GONE);
             tv_so_code_desc.setVisibility(View.GONE);
         }
+
+        if (formData != null
+            && formData.getTicket_prefix() != null
+            && formData.getTicket_code() != null) {
+            tv_ticket_info_desc.setText(String.valueOf(formData.getTicket_prefix()) + "." + String.valueOf(formData.getTicket_code()));
+        } else {
+            tv_ticket_info_desc.setText("");
+            //
+            tv_ticket_info_lbl.setVisibility(View.GONE);
+            tv_ticket_info_desc.setVisibility(View.GONE);
+        }
+
+
 
          if(ToolBox_Inf.isScheduleForm(formLocal)){
             tv_data_serv_lbl.setText(hmAux_Trans.get("dialog_info_data_serv_lbl"));
