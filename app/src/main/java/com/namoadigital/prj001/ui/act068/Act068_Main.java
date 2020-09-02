@@ -173,16 +173,16 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                         checkFlow(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:
-                        processPendencies();
+                        mPresenter.executeWSTicketDownload();
                         break;
                     case Frg_Serial_Search.BTN_OPTION_03:
-                        processNextTickets();
+                        processPendencies();
                         break;
                     case Frg_Serial_Search.BTN_OPTION_04:
-                        processScheduledTickets();
+                        processNextTickets();
                         break;
-                     case Frg_Serial_Search.BTN_OPTION_05:
-                        mPresenter.executeWSTicketDownload();
+                    case Frg_Serial_Search.BTN_OPTION_05:
+                        processScheduledTickets();
                         break;
                     default:
                         break;
@@ -193,29 +193,32 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
         mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
+        //
+        mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies"));
+        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_sync_ticket"));
+        //
         mFrgSerialSearch.setBtn_Option_03_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_next_tickets"));
+        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_pendencies"));
         mFrgSerialSearch.setBtn_Option_03_Visibility(View.VISIBLE);
+        //
         mFrgSerialSearch.setBtn_Option_04_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_04_Label(hmAux_Trans.get("btn_scheduled_tickets"));
+        mFrgSerialSearch.setBtn_Option_04_Label(hmAux_Trans.get("btn_next_tickets"));
         mFrgSerialSearch.setBtn_Option_04_Visibility(View.VISIBLE);
-
-        mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
-        mFrgSerialSearch.setBtn_Option_05_Label(hmAux_Trans.get("btn_sync_ticket"));
+        //
+        mFrgSerialSearch.setBtn_Option_05_BackGround(R.drawable.namoa_cell_2_states);
+        mFrgSerialSearch.setBtn_Option_05_Label(hmAux_Trans.get("btn_scheduled_tickets"));
+        mFrgSerialSearch.setBtn_Option_05_Visibility(View.VISIBLE);
         //
         mPresenter = new Act068_Main_Presenter(
             context,this,hmAux_Trans
         );
-        //
         //
         mPresenter.getSync();
         mPresenter.getPendencies();
         mPresenter.getMD_Products();
         //
         applyBundleSearchParams();
-
     }
 
     private void processScheduledTickets() {
@@ -324,7 +327,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         pendencies_qty = qty;
         String btn_dependency_qty_text = hmAux_Trans.get("btn_pendencies") + " (" + pendencies_qty + ")";
         //
-        mFrgSerialSearch.setBtn_Option_02_Label(btn_dependency_qty_text);
+        mFrgSerialSearch.setBtn_Option_03_Label(btn_dependency_qty_text);
     }
 
     @Override
@@ -536,11 +539,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             syncs_qty = qty;
             String btn_text = hmAux_Trans.get("btn_sync_ticket") + " (" + syncs_qty + ")";
 
-            mFrgSerialSearch.setBtn_Option_05_Label(btn_text);
-            mFrgSerialSearch.setBtn_Option_05_Visibility(View.VISIBLE);
+            mFrgSerialSearch.setBtn_Option_02_Label(btn_text);
+            mFrgSerialSearch.setBtn_Option_02_Visibility(View.VISIBLE);
         } else {
             syncs_qty = 0;
-            mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
+            mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
         }
     }
 
