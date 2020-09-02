@@ -1103,6 +1103,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 ).toSqlQuery()
         );
         //
+        mPresenter.resetTicketCtrlFormDataIfNeeds(formLocal);
+        //
         callAct005(context);
     }
 

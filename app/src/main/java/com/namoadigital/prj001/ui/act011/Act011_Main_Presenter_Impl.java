@@ -22,6 +22,7 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
+import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form;
@@ -32,6 +33,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
@@ -52,6 +54,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_002;
+import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -419,26 +422,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             && customFormLocal.getStep_code() != null && customFormLocal.getStep_code() > -1;
     }
 
-    private boolean isFormCreateByTicket(Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code) {
-        return
-            mTicket_prefix != null && mTicket_prefix > -1
-            && mTicket_code != null && mTicket_code > -1
-            && mTicket_seq != null && mTicket_seq > -1
-            && mTicket_seq_tmp != null && mTicket_seq_tmp > -1
-            && mStep_code != null && mStep_code > -1
-            ;
-    }
-
     private void updateTicketCtrl(long customer_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code, long custom_form_data, String status) {
         TK_Ticket_Step tkTicketStep = getTicketStep(mTicket_prefix, mTicket_code, mStep_code);
-//        TK_Ticket_Ctrl ticketCtrl = ticketCtrlDao.getByString(
-//            new TK_Ticket_Ctrl_Sql_004(
-//                customer_code,
-//                mTicket_prefix,
-//                mTicket_code,
-//                mTicket_seq_tmp
-//            ).toSqlQuery()
-//        );
         //
         if(tkTicketStep != null && tkTicketStep.getCustomer_code() > 0){
             if(tkTicketStep.getCtrl() != null){
@@ -582,6 +567,47 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private boolean isDoneOrWaitingSync(String ctrl_status) {
         return ConstantBaseApp.SYS_STATUS_DONE.equals(ctrl_status)
             || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ctrl_status) ;
+    }
+
+    /**
+     * LUCHE - 02/09/2020
+     * <p></p>
+     * Metodo que reseta referencia do custom_form_data no ticket_form
+     * @param formLocal
+     */
+    @Override
+    public void resetTicketCtrlFormDataIfNeeds(GE_Custom_Form_Local formLocal) {
+        if(isFormCreateByTicket(formLocal)){
+            resetCtrlFormData(formLocal);
+        }
+    }
+
+    private void resetCtrlFormData(GE_Custom_Form_Local formLocal) {
+        TK_Ticket_FormDao ticketFormDao = new TK_Ticket_FormDao(
+            context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+        );
+        //
+        TK_Ticket_Form ticketForm = ticketFormDao.getByString(
+            new TK_Ticket_Form_Sql_002(
+                formLocal.getCustomer_code(),
+                formLocal.getTicket_prefix(),
+                formLocal.getTicket_code(),
+                formLocal.getTicket_seq_tmp(),
+                formLocal.getStep_code()
+            ).toSqlQuery()
+        );
+        //
+        if(ticketForm != null){
+            ticketForm.setCustom_form_data(null);
+            DaoObjReturn daoObjReturn = ticketFormDao.addUpdate(ticketForm);
+            //Tratar diferente ???, não tem rollback sem transaction
+            if(daoObjReturn.hasError()){
+                ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(daoObjReturn.getErrorMsg())
+                );
+            }
+        }
     }
 
     private DaoObjReturn updateScheduleInfos(GE_Custom_Form_Local customFormLocal, String serial_id) {

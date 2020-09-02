@@ -43,4 +43,6 @@ public interface Act011_Main_Presenter {
     void validateGPSResource(GE_Custom_Form_Local formLocal);
     //
     boolean isFormCreateByTicket(GE_Custom_Form_Local customFormLocal);
+
+    void resetTicketCtrlFormDataIfNeeds(GE_Custom_Form_Local formLocal);
 }
