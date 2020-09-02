@@ -59,5 +59,7 @@ public interface Act068_Main_Contract {
        boolean verifyProductForForm();
 
        void executeWSTicketDownload();
+
+       void defineWsToCall();
    }
 }

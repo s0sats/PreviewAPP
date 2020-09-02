@@ -158,7 +158,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public void prepareSyncProcess(TK_Ticket mTicket) {
         //Verifica se há necessidade de envidar dados para o server.
         if(checkUpdateRequiredNeeds(mTicket)){
-            if(ToolBox_Inf.hasFormWaitingSync(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
                 callWsSave();
             }else {
                 executeTicketSaveProcess(false);

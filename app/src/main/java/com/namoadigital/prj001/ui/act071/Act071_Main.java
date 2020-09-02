@@ -480,7 +480,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                     if(mPresenter.updateTicketAction(mTicketCtrl)){
                                         updateCreationParams();
                                         deletePhotoFile(TEMP_SUFIX_FILE + actionPhotoLocalPath);
-                                        if(ToolBox_Inf.hasFormWaitingSync(context, mActionPrefix, mActionCode)){
+                                        if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mActionPrefix, mActionCode)){
                                             if(ToolBox_Con.isOnline(context)) {
                                                 mPresenter.callWsSave();
                                             }else{

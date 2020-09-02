@@ -23,6 +23,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
@@ -132,6 +133,9 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         transList.add("dialog_download_ticket_ttl");
         transList.add("dialog_download_ticket_start");
         //
+        transList.add("dialog_ticket_form_save_ttl");
+        transList.add("dialog_ticket_form_save_start");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -227,7 +231,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private void processNextTickets() {
         if(mPresenter.hasItensToSend()){
             nextTicketsFlow = true;
-            mPresenter.executeWSTicketSave();
+            //mPresenter.executeWSTicketSave();
+            mPresenter.defineWsToCall();
         }else{
             callAct074();
         }
@@ -266,7 +271,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 
     private void checkFlow(HMAux optionsInfo) {
         if(mPresenter.hasItensToSend()){
-            mPresenter.executeWSTicketSave();
+            mPresenter.defineWsToCall();
+            //mPresenter.executeWSTicketSave();
         }else{
             processSerialSearch(optionsInfo);
         }
@@ -472,6 +478,10 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             progressDialog.dismiss();
             mPresenter.processSaveReturn(resultFromTicketSave);
+        } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
+            wsProcess = "";
+            progressDialog.dismiss();
+            mPresenter.executeWSTicketSave();
         } else{
             //
             progressDialog.dismiss();

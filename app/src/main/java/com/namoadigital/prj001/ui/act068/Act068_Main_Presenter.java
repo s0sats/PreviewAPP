@@ -9,28 +9,34 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
-import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
-import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_Sync;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act068_001;
 import com.namoadigital.prj001.sql.Sql_Act068_002;
+import com.namoadigital.prj001.sql.Sql_Act068_003;
 import com.namoadigital.prj001.sql.Sql_Act069_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_008;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -171,6 +177,50 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
 
             );
         }
+    }
+
+    @Override
+    public void defineWsToCall() {
+        if(hasFormWaitingSyncWithinAnyTicket(context)){
+            callWsSave();
+        }else {
+            executeWSTicketSave();
+        }
+    }
+
+    private boolean hasFormWaitingSyncWithinAnyTicket(Context context) {
+        GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        ArrayList<GE_Custom_Form_Data> formDataList = (ArrayList<GE_Custom_Form_Data>) formDataDao.query(
+            new Sql_Act068_003(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
+        );
+        return formDataList != null && formDataList.size() > 0 ;
+
+    }
+
+    private void callWsSave() {
+        mView.setWsProcess(WS_Save.class.getName());
+        //
+        mView.showPD(
+            hmAux_Trans.get("dialog_ticket_form_save_ttl"),
+            hmAux_Trans.get("dialog_ticket_form_save_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
+        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+
     }
 
     @Override

@@ -3729,7 +3729,7 @@ public class ToolBox_Inf {
      * @param ticket_code
      * @return
      */
-    public static boolean hasFormWaitingSync(Context context, int ticket_prefix, int ticket_code) {
+    public static boolean hasFormWaitingSyncWithinTicket(Context context, int ticket_prefix, int ticket_code) {
         GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
                 context,
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
