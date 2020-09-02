@@ -37,6 +37,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
@@ -105,6 +106,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
     private boolean hasFABActive=false;
     private String save_return = "";
+    private int lastPositionClicked =-1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -415,6 +417,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             new Act070_Steps_Adapter.OnChecklistClickListener() {
                 @Override
                 public void onChecklistClick(int checklistPosition) {
+                    lastPositionClicked = checklistPosition;
                     StepForm stepForm = (StepForm) sources.get(checklistPosition);
                     mPresenter.defineFormFlow(mTicket,stepForm);
 //                    if(ConstantBaseApp.SYS_STATUS_PENDING.equals(stepForm.getProcessStatus())){
@@ -895,8 +898,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             if(save_return == null
             || save_return.isEmpty()) {
                 refreshUi();
+                StepForm stepForm = (StepForm) sources.get(lastPositionClicked);
+                mPresenter.defineFormFlow(mTicket,stepForm);
+                lastPositionClicked =-1;
             }else{
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
+                save_return = "";
             }
         } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             wsProcess = "";
@@ -906,6 +913,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }else {
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
             }
+        } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
+            wsProcess = "";
+            progressDialog.dismiss();
+            mPresenter.prepareSyncProcess(mTicket);
         }
         //
     }

@@ -30,9 +30,11 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
+import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
@@ -41,6 +43,7 @@ import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -597,6 +600,26 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         }else{
             return false;
         }
+    }
+
+    @Override
+    public void callWsSave() {
+        mView.setWsProcess(WS_Save.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_ticket_form_save_ttl"),
+                hmAux_Trans.get("dialog_ticket_form_save_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
+        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 
     @Override

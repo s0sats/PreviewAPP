@@ -32,9 +32,11 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
@@ -43,9 +45,12 @@ import com.namoadigital.prj001.sql.Sql_Act070_001;
 import com.namoadigital.prj001.sql.Sql_Act070_002;
 import com.namoadigital.prj001.sql.Sql_Act070_003;
 import com.namoadigital.prj001.sql.Sql_Act070_004;
+import com.namoadigital.prj001.sql.Sql_Act070_005;
+import com.namoadigital.prj001.sql.Sql_Act070_006;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAbstractProcess;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
@@ -153,7 +158,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public void prepareSyncProcess(TK_Ticket mTicket) {
         //Verifica se há necessidade de envidar dados para o server.
         if(checkUpdateRequiredNeeds(mTicket)){
-            executeTicketSaveProcess(false);
+            if(ToolBox_Inf.hasFormWaitingSync(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+                callWsSave();
+            }else {
+                executeTicketSaveProcess(false);
+            }
         }else{
             executeSyncProcess(mTicket.getTicket_prefix(), mTicket.getTicket_code(),mTicket.getScn());
         }
@@ -216,6 +225,44 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 ToolBox_Inf.showNoConnectionDialog(context);
             }
         }
+    }
+
+    private void callWsSave() {
+        mView.setWsProcess(WS_Save.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_ticket_form_save_ttl"),
+                hmAux_Trans.get("dialog_ticket_form_save_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
+        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    /**
+     * BARRIONUEVO 01-09-2020
+     * Metodo que verifica forms de ctrl que estão em waiting sync
+     * @param ticket_prefix
+     * @param ticket_code
+     * @return
+     */
+    private boolean hasFormWaitingSync(int ticket_prefix, int ticket_code) {
+
+        GE_Custom_Form_Data formData = formDataDao.getByString(
+                new Sql_Act070_005(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ticket_prefix,
+                        ticket_code
+                ).toSqlQuery()
+        );
+        return formData != null;
     }
 
     @Override
@@ -599,7 +646,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        //TODO CHAMAR WS PARA BAIXAR OS FORMS
+
+                                        if(ToolBox_Con.isOnline(context)) {
+                                            callWsSync();
+                                        }else{
+                                            ToolBox_Inf.showNoConnectionDialog(context);
+                                        }
                                     }
                                 },
                                 false
@@ -766,8 +818,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             new Sql_Act070_004(
                 form.getCustomer_code(),
                 form.getCustom_form_type(),
-                form.getCustom_form_code(),
-                form.getCustom_form_version()
+                form.getCustom_form_code()
             ).toSqlQuery()
         );
         //
@@ -784,6 +835,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
      * @return
      */
     private Bundle getAct011Bundle(TK_Ticket_Ctrl ticketCtrl) {
+        GE_Custom_Form customForm = geCustomFormDao.getByString(
+                new Sql_Act070_006(
+                        ticketCtrl.getCustomer_code(),
+                        ticketCtrl.getForm().getCustom_form_type(),
+                        ticketCtrl.getForm().getCustom_form_code()
+                ).toSqlQuery()
+        );
+
         Bundle bundle = new Bundle();
         bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(ticketCtrl.getProduct_code()));
         bundle.putString(MD_ProductDao.PRODUCT_DESC, ticketCtrl.getProduct_desc());
@@ -792,7 +851,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(ticketCtrl.getForm().getCustom_form_type()));
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, ticketCtrl.getForm().getCustom_form_type_desc());
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(ticketCtrl.getForm().getCustom_form_code()));
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(ticketCtrl.getForm().getCustom_form_version()));
+        /*
+            Barrionuevo - 02-09-2020
+            Parametro com a versão mais atual do form.
+         */
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(customForm.getCustom_form_version()));
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, ticketCtrl.getForm().getCustom_form_desc());
         bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
             String.valueOf(
@@ -831,7 +894,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-            executeTicketSaveProcess(true);
+            if(hasFormWaitingSync(mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+                callWsSave();
+            }else {
+                executeTicketSaveProcess(true);
+            }
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_error_on_save_none_ttl"),
@@ -934,7 +1001,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         mTicket.getStep().set(stepIdx,ticketStep);
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-            executeTicketSaveProcess(true);
+            if(hasFormWaitingSync(mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+                callWsSave();
+            }else {
+                executeTicketSaveProcess(true);
+            }
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_error_on_set_checkin_ttl"),
@@ -964,7 +1035,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         mTicket.getStep().set(stepIdx,ticketStep);
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-            executeTicketSaveProcess(true);
+            if(hasFormWaitingSync(mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+                callWsSave();
+            }else {
+                executeTicketSaveProcess(true);
+            }
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_error_on_set_checkout_ttl"),
@@ -1632,32 +1707,36 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public boolean verifyProductForForm() {
         if(ToolBox_Inf.hasFormProductOutdate(context)){
             if (ToolBox_Con.isOnline(context)) {
-                mView.setWsProcess(WS_Sync.class.getName());
-                //
-                mView.showPD(
-                        hmAux_Trans.get("progress_sync_ttl"),
-                        hmAux_Trans.get("progress_sync_msg")
-                );
-                //
-                ArrayList<String> data_package = new ArrayList<>();
-                data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
-                //
-                Intent mIntent = new Intent(context, WBR_Sync.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
-                bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
-                bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
-                bundle.putInt(Constant.GC_STATUS_JUMP, 1);
-                bundle.putInt(Constant.GC_STATUS, 1);
-                //
-                mIntent.putExtras(bundle);
-                //
-                context.sendBroadcast(mIntent);
+                callWsSync();
                 return true;
             }
             return false;
         }else{
             return false;
         }
+    }
+
+    private void callWsSync() {
+        mView.setWsProcess(WS_Sync.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("progress_sync_ttl"),
+                hmAux_Trans.get("progress_sync_msg")
+        );
+        //
+        ArrayList<String> data_package = new ArrayList<>();
+        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+        //
+        Intent mIntent = new Intent(context, WBR_Sync.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+        bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+        bundle.putInt(Constant.GC_STATUS, 1);
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
     }
 }

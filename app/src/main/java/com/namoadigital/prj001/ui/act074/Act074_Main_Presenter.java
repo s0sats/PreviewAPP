@@ -162,8 +162,10 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
     }
 
     @Override
-    public boolean verifyProductForForm() {
-        if(ToolBox_Inf.hasFormProductOutdate(context)){
+    public boolean verifyProductForForm(HMAux ticketPrefixCode) {
+        int ticketPrefix = ticketPrefixCode.hasConsistentValue(TK_TicketDao.TICKET_PREFIX) ? Integer.valueOf(ticketPrefixCode.get(TK_TicketDao.TICKET_PREFIX)) : -1 ;
+        int ticketCode = ticketPrefixCode.hasConsistentValue(TK_TicketDao.TICKET_CODE) ? Integer.valueOf(ticketPrefixCode.get(TK_TicketDao.TICKET_CODE)) : -1 ;
+        if(ToolBox_Inf.hasFormProductOutdate(context, ticketPrefix, ticketCode)){
             if (ToolBox_Con.isOnline(context)) {
                 mView.setWsProcess(WS_Sync.class.getName());
                 //

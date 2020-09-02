@@ -115,6 +115,8 @@ public interface Act071_Main_Contract {
 
         boolean verifyProductForForm();
 
+        void callWsSave();
+
         /*boolean hasPartnerProfile(Integer partner_code);
 
         boolean hasActionExecProfile();

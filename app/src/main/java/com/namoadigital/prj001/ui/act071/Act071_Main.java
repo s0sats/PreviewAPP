@@ -47,6 +47,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
@@ -479,7 +480,16 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                     if(mPresenter.updateTicketAction(mTicketCtrl)){
                                         updateCreationParams();
                                         deletePhotoFile(TEMP_SUFIX_FILE + actionPhotoLocalPath);
-                                        mPresenter.execTicketSave();
+                                        if(ToolBox_Inf.hasFormWaitingSync(context, mActionPrefix, mActionCode)){
+                                            if(ToolBox_Con.isOnline(context)) {
+                                                mPresenter.callWsSave();
+                                            }else{
+                                                mPresenter.execTicketSave();
+                                            }
+                                        }else {
+                                            mPresenter.execTicketSave();
+                                        }
+
                                     }
                                 }catch (Exception e){
                                     e.printStackTrace();
@@ -1209,6 +1219,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             progressDialog.dismiss();
             wsProcess = "";
             mPresenter.processSaveReturn(mTicketCtrl.getTicket_prefix(), mTicketCtrl.getTicket_code(), ticket_result);
+        }else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
+            progressDialog.dismiss();
+            wsProcess = "";
+            mPresenter.execTicketSave();
         }
         //
     }

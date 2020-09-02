@@ -12,13 +12,11 @@ public class Sql_Act070_004 implements Specification {
     private long customer_code;
     private int custom_form_type;
     private int custom_form_code;
-    private int custom_form_version;
 
-    public Sql_Act070_004(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version) {
+    public Sql_Act070_004(long customer_code, int custom_form_type, int custom_form_code) {
         this.customer_code = customer_code;
         this.custom_form_type = custom_form_type;
         this.custom_form_code = custom_form_code;
-        this.custom_form_version = custom_form_version;
     }
 
     @Override
@@ -32,8 +30,7 @@ public class Sql_Act070_004 implements Specification {
                     " WHERE\n" +
                     "      f.customer_code = '" + customer_code +"'\n" +
                     "      and f.custom_form_type = '" + custom_form_type +"'\n" +
-                    "      and f.custom_form_code = '" + custom_form_code +"'\n" +
-                    "      and f.custom_form_version = '" + custom_form_version +"'\n"
+                    "      and f.custom_form_code = '" + custom_form_code +"'\n"
             )
             .toString();
     }
