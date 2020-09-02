@@ -32,9 +32,11 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
@@ -43,9 +45,11 @@ import com.namoadigital.prj001.sql.Sql_Act070_001;
 import com.namoadigital.prj001.sql.Sql_Act070_002;
 import com.namoadigital.prj001.sql.Sql_Act070_003;
 import com.namoadigital.prj001.sql.Sql_Act070_004;
+import com.namoadigital.prj001.sql.Sql_Act070_005;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAbstractProcess;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
@@ -153,7 +157,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public void prepareSyncProcess(TK_Ticket mTicket) {
         //Verifica se há necessidade de envidar dados para o server.
         if(checkUpdateRequiredNeeds(mTicket)){
-            executeTicketSaveProcess(false);
+            if(hasFormWaitingSync(mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+                callWsSave();
+            }else {
+                executeTicketSaveProcess(false);
+            }
         }else{
             executeSyncProcess(mTicket.getTicket_prefix(), mTicket.getTicket_code(),mTicket.getScn());
         }
@@ -216,6 +224,44 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 ToolBox_Inf.showNoConnectionDialog(context);
             }
         }
+    }
+
+    private void callWsSave() {
+        mView.setWsProcess(WS_Save.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_ticket_form_save_ttl"),
+                hmAux_Trans.get("dialog_ticket_form_save_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
+        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    /**
+     * BARRIONUEVO 01-09-2020
+     * Metodo que verifica forms de ctrl que estão em waiting sync
+     * @param ticket_prefix
+     * @param ticket_code
+     * @return
+     */
+    private boolean hasFormWaitingSync(int ticket_prefix, int ticket_code) {
+
+        GE_Custom_Form_Data formData = formDataDao.getByString(
+                new Sql_Act070_005(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ticket_prefix,
+                        ticket_code
+                ).toSqlQuery()
+        );
+        return formData != null;
     }
 
     @Override
@@ -826,7 +872,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-            executeTicketSaveProcess(true);
+            if(hasFormWaitingSync(mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+                callWsSave();
+            }else {
+                executeTicketSaveProcess(true);
+            }
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_error_on_save_none_ttl"),
@@ -929,7 +979,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         mTicket.getStep().set(stepIdx,ticketStep);
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-            executeTicketSaveProcess(true);
+            if(hasFormWaitingSync(mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+                callWsSave();
+            }else {
+                executeTicketSaveProcess(true);
+            }
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_error_on_set_checkin_ttl"),
@@ -959,7 +1013,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         mTicket.getStep().set(stepIdx,ticketStep);
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-            executeTicketSaveProcess(true);
+            if(hasFormWaitingSync(mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+                callWsSave();
+            }else {
+                executeTicketSaveProcess(true);
+            }
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_error_on_set_checkout_ttl"),

@@ -32,22 +32,18 @@ public class Sync_Checklist_Sql_004 implements Specification {
                 " and t.ticket_prefix = s.ticket_prefix\n" +
                 " and t.ticket_code = s.ticket_code\n" +
                 " and t.current_step_order = s.step_order\n" +
-
                 " and s.ticket_prefix = c.ticket_prefix\n" +
                 " and s.ticket_code = c.ticket_code\n" +
                 " and s.customer_code = c.customer_code\n" +
                 " and s.step_code = c.step_code\n" +
-
                 " and c.customer_code = f.customer_code\n" +
                 " and c.ticket_prefix = f.ticket_prefix\n" +
                 " and c.ticket_code = f.ticket_code\n" +
-                " and c.ticket_seq = f.ticket_seq_tmp\n" +
+                " and c.ticket_seq_tmp = f.ticket_seq_tmp\n" +
                 " and s.step_code = f.step_code\n" +
-
                 " and t.ticket_status in ('"+ ConstantBase.SYS_STATUS_PENDING +"','"+ ConstantBase.SYS_STATUS_PROCESS+ "')\n" +
                 " and s.step_status in ('"+ ConstantBase.SYS_STATUS_PENDING +"','"+ ConstantBase.SYS_STATUS_PROCESS+ "')\n" +
                 " and c.ctrl_status in ('"+ ConstantBase.SYS_STATUS_PENDING +"','"+ ConstantBase.SYS_STATUS_PROCESS+ "')\n" +
-
                 " and c.ctrl_type = '"+ ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM + "' \n" +
                 " and (not exists(SELECT 1\n" +
                 "                FROM sync_checklist sc\n" +
@@ -61,7 +57,8 @@ public class Sync_Checklist_Sql_004 implements Specification {
                         "      and f.custom_form_type = ge.custom_form_type \n" +
                         "      and f.custom_form_code = ge.custom_form_code \n" +
                         "      and f.custom_form_version = ge.custom_form_version \n" +
-                "               )");
+                "               )" +
+                ")");
         //"customer_code#product_code#last_update");
 
         return sb.toString();
