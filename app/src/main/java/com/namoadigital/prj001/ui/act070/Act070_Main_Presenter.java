@@ -651,11 +651,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         if (formDataAlreadyExists(ticketCtrl.getForm())) {
                             startFormProcess(mTicket, ticketStep, ticketCtrl);
                         } else if(formCtrlCreatedBySameUsr(ticketCtrl)) {
-                            //Paleativo pois quando é criado pelo mesmo usr na web, recebe form_data
-                            //e esta abrindo form errado...
-                            //TODO REVER POIS MESMO COM A GAMBIS, ÃO DEU CERTO...B.O NA ACT011?
-                            ticketCtrl.getForm().setCustom_form_data(null);
-                            //
                             showConfirmStartFormDialog(mTicket, ticketStep, ticketCtrl);
                         } else {
                             mView.showAlert(
@@ -722,7 +717,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private boolean formCtrlCreatedBySameUsr(TK_Ticket_Ctrl ticketCtrl) {
         return
             ticketCtrl.getCtrl_start_user() != null
-            && ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(ticketCtrl.getCtrl_start_user()));
+            && ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(ticketCtrl.getCtrl_start_user()))
+            && ticketCtrl.getForm() != null
+            && ticketCtrl.getForm().getCustom_form_data() == null
+            ;
     }
 
     private void navegateToFormOrPDF(TK_Ticket mTicket, TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
@@ -876,8 +874,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, ticketCtrl.getForm().getCustom_form_desc());
         bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
             String.valueOf(
-                ticketCtrl.getForm().getCustom_form_data() != null
-                    ? ticketCtrl.getForm().getCustom_form_data()
+                ticketCtrl.getForm().getCustom_form_data_tmp() != null
+                    ? ticketCtrl.getForm().getCustom_form_data_tmp()
                     : 0
             )
         );

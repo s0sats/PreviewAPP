@@ -11,8 +11,14 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
+import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_002;
+import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_003;
+import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_004;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -38,6 +44,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
     public static final String CUSTOM_FORM_DATA = "custom_form_data";
+    public static final String CUSTOM_FORM_DATA_TMP = "custom_form_data_tmp";
     public static final String PDF_CODE = "pdf_code";
     public static final String PDF_NAME = "pdf_name";
     public static final String PDF_URL = "pdf_url";
@@ -111,6 +118,8 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 curAction = DaoObjReturn.INSERT;
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_form));
             }
+            //
+            checkIfFormNeedToBeCancelled(tk_ticket_form,db);
 
         }catch (SQLiteException e){
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -140,6 +149,80 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
         }
 
         return daoObjReturn;
+    }
+
+    private void checkIfFormNeedToBeCancelled(TK_Ticket_Form tk_ticket_form, SQLiteDatabase db) throws Exception {
+        TK_Ticket_Form dbTicketForm = getByString(
+            new TK_Ticket_Form_Sql_002(
+                tk_ticket_form.getCustomer_code(),
+                tk_ticket_form.getTicket_prefix(),
+                tk_ticket_form.getTicket_code(),
+                tk_ticket_form.getTicket_seq_tmp(),
+                tk_ticket_form.getStep_code()
+            ).toSqlQuery()
+        );
+        //
+        if(dbTicketForm != null) {
+            GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            );
+            GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+            if (tk_ticket_form.getCustom_form_data() != null
+                && tk_ticket_form.getCustom_form_data() > 0
+                && dbTicketForm.getCustom_form_data_tmp() != null
+                && dbTicketForm.getCustom_form_data_tmp() > 0
+            ) {
+                if (ConstantBaseApp.SYS_STATUS_PENDING.equals(dbTicketForm.getForm_status())
+                    || ConstantBaseApp.SYS_STATUS_PROCESS.equals(dbTicketForm.getForm_status())
+                ) {
+                    GE_Custom_Form_Local formLocalToCancel = formLocalDao.getByStringSharedDbInstance(
+                        new TK_Ticket_Form_Sql_003(
+                            tk_ticket_form.getCustomer_code(),
+                            tk_ticket_form.getTicket_prefix(),
+                            tk_ticket_form.getTicket_code(),
+                            tk_ticket_form.getTicket_seq_tmp(),
+                            tk_ticket_form.getStep_code()
+                        ).toSqlQuery(),
+                        db
+                    );
+                    //
+                    GE_Custom_Form_Data formDataToCancel = formDataDao.getByStringSharedDbInstance(
+                        new TK_Ticket_Form_Sql_004(
+                            tk_ticket_form.getCustomer_code(),
+                            tk_ticket_form.getTicket_prefix(),
+                            tk_ticket_form.getTicket_code(),
+                            tk_ticket_form.getTicket_seq_tmp(),
+                            tk_ticket_form.getStep_code()
+                        ).toSqlQuery(),
+                        db
+                    );
+                    //
+                    if (formLocalToCancel != null) {
+                        formLocalToCancel.setCustom_form_status(ConstantBaseApp.SYS_STATUS_CANCELLED);
+                        DaoObjReturn daoObjReturn = formLocalDao.addUpdateThrowException(formLocalToCancel);
+                        if (daoObjReturn.hasError()) {
+                            throw new Exception(daoObjReturn.getErrorMsg());
+                        }
+                    }
+                    if (formDataToCancel != null) {
+                        formDataToCancel.setCustom_form_status(ConstantBaseApp.SYS_STATUS_CANCELLED);
+                        DaoObjReturn daoObjReturn = formDataDao.addUpdateWithReturn(formDataToCancel);
+                        if (daoObjReturn.hasError()) {
+                            throw new Exception(daoObjReturn.getErrorMsg());
+                        }
+                    }
+                    //
+                }
+            }
+            //
+        }
     }
 
     @Override
@@ -175,6 +258,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     curAction = DaoObjReturn.INSERT;
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_form));
                 }
+                checkIfFormNeedToBeCancelled(tk_ticket_form,db);
             }
             //Se db não foi passado, finaliza transaction com sucesso
             if(dbInstance == null) {
@@ -236,7 +320,8 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 curAction = DaoObjReturn.INSERT;
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_form));
             }
-
+            //
+            checkIfFormNeedToBeCancelled(tk_ticket_form,db);
         }catch (SQLiteException e){
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -299,6 +384,8 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     curAction = DaoObjReturn.INSERT;
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_form));
                 }
+                //
+                checkIfFormNeedToBeCancelled(tk_ticket_form,db);
             }
             //Se db não foi passado, finaliza transaction com sucesso
             if(dbInstance == null) {
@@ -404,8 +491,17 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
 
     @Override
     public TK_Ticket_Form getByString(String sQuery) {
+      return getByString(sQuery,null);
+    }
+
+    private TK_Ticket_Form getByString(String sQuery, @Nullable SQLiteDatabase dbInstance) {
         TK_Ticket_Form tk_ticket_form = null;
-        openDB();
+
+        if (dbInstance == null) {
+            openDB();
+        } else {
+            this.db = dbInstance;
+        }
 
         try {
             Cursor cursor = db.rawQuery(sQuery, null);
@@ -420,7 +516,9 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
         } finally {
         }
 
-        closeDB();
+        if(dbInstance == null) {
+            closeDB();
+        }
 
         return tk_ticket_form;
     }
@@ -516,6 +614,12 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }else{
                 tk_ticket_form.setCustom_form_data(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_TMP))){
+                tk_ticket_form.setCustom_form_data_tmp(null);
+            }else{
+                tk_ticket_form.setCustom_form_data_tmp(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA_TMP)));
+            }
+
             if(cursor.isNull(cursor.getColumnIndex(PDF_CODE))){
                 tk_ticket_form.setPdf_code(null);
             }else{
@@ -582,6 +686,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 contentValues.put(CUSTOM_FORM_VERSION,tk_ticket_form.getCustom_form_version());
             }
             contentValues.put(CUSTOM_FORM_DATA,tk_ticket_form.getCustom_form_data());
+            contentValues.put(CUSTOM_FORM_DATA_TMP,tk_ticket_form.getCustom_form_data_tmp());
             contentValues.put(PDF_CODE,tk_ticket_form.getPdf_code());
             contentValues.put(PDF_NAME,tk_ticket_form.getPdf_name());
             contentValues.put(PDF_URL,tk_ticket_form.getPdf_url());

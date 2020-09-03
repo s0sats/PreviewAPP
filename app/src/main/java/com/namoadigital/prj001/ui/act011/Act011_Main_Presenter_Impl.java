@@ -435,7 +435,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         case ConstantBaseApp.SYS_STATUS_PROCESS:
                             setStartInfoIntoCtrl(tkTicketCtrl);
                             setCheckInIntoStepWhenOneTouchStep(tkTicketStep,tkTicketCtrl);
-                            tkTicketCtrl.getForm().setCustom_form_data((int) custom_form_data);
+                            tkTicketCtrl.getForm().setCustom_form_data_tmp((int) custom_form_data);
                             break;
                         case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
                             setCloseInfoIntoCtrl(tkTicketCtrl);
@@ -598,7 +598,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         );
         //
         if(ticketForm != null){
-            ticketForm.setCustom_form_data(null);
+            ticketForm.setCustom_form_data_tmp(null);
             DaoObjReturn daoObjReturn = ticketFormDao.addUpdate(ticketForm);
             //Tratar diferente ???, não tem rollback sem transaction
             if(daoObjReturn.hasError()){

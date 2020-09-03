@@ -3,7 +3,9 @@ package com.namoadigital.prj001.dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
@@ -263,6 +265,38 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
 
         return custom_form_data;
     }
+
+    public GE_Custom_Form_Data getByStringSharedDbInstance(String s_query,@Nullable SQLiteDatabase dbInstance){
+        GE_Custom_Form_Data custom_form_data = null;
+        if (dbInstance == null) {
+            openDB();
+        } else {
+            this.db = dbInstance;
+        }
+
+        try {
+
+            Cursor cursor = db.rawQuery(s_query, null);
+
+            while (cursor.moveToNext()) {
+                custom_form_data = toGE_Custom_Form_DataMapper.map(cursor);
+            }
+
+            cursor.close();
+        } catch (Exception e) {
+            //
+            ToolBox_Inf.registerException(getClass().getName(), e);
+
+        } finally {
+        }
+
+        if(dbInstance == null) {
+            closeDB();
+        }
+
+        return custom_form_data;
+    }
+    //
     @Override
     public HMAux getByStringHM(String sQuery) {
         HMAux hmAux = null;

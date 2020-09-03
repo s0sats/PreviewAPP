@@ -29,6 +29,8 @@ public class TK_Ticket_Form {
     @Nullable
     private Integer custom_form_data;
     @Nullable
+    private Integer custom_form_data_tmp;
+    @Nullable
     private Integer pdf_code;
     @Nullable
     private String pdf_name;
@@ -159,6 +161,15 @@ public class TK_Ticket_Form {
 
     public void setCustom_form_data(@Nullable Integer custom_form_data) {
         this.custom_form_data = custom_form_data;
+    }
+
+    @Nullable
+    public Integer getCustom_form_data_tmp() {
+        return custom_form_data_tmp;
+    }
+
+    public void setCustom_form_data_tmp(@Nullable Integer custom_form_data_tmp) {
+        this.custom_form_data_tmp = custom_form_data_tmp;
     }
 
     @Nullable
