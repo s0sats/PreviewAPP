@@ -45,5 +45,7 @@ public interface Act035_Main_Presenter {
     boolean validateTicketPk(String ticketPk);
 
     void onBackPressedClicked(String act_request);
+
+    boolean verifyProductForForm(HMAux hmAux);
     //endregion
 }

@@ -628,6 +628,11 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
         if(contentMain.getVisibility() == View.INVISIBLE){
             mPresenter.onBackPressedClicked();
         }
+        if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            wsProcess = "";
+            disableProgressDialog();
+            mPresenter.processTicketDownload(hmAuxQtyReturn);
+        }
         //
         disableProgressDialog();
     }
@@ -637,6 +642,11 @@ public class Act073_Main extends Base_Activity_Frag implements Act073_Main_Contr
         super.processCustom_error(mLink, mRequired);
         if(contentMain.getVisibility() == View.INVISIBLE){
             mPresenter.onBackPressedClicked();
+        }
+        if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            wsProcess = "";
+            disableProgressDialog();
+            mPresenter.processTicketDownload(hmAuxQtyReturn);
         }
         //
         disableProgressDialog();

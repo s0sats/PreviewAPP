@@ -1231,6 +1231,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
+        if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            wsProcess = "";
+            mPresenter.processSaveReturn(mTicketCtrl.getTicket_prefix(), mTicketCtrl.getTicket_code(), ticket_result);
+        }
         //Atualiza UI
         updateActionData();
         //
@@ -1240,6 +1244,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
+        if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            wsProcess = "";
+            mPresenter.processSaveReturn(mTicketCtrl.getTicket_prefix(), mTicketCtrl.getTicket_code(), ticket_result);
+        }
         //Atualiza UI
         updateActionData();
         //
