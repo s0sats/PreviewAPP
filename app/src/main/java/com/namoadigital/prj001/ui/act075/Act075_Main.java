@@ -243,6 +243,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 act_profile,
                 tkTicket.getInventory_control(),
                 isEditable(tkTicket.getTicket_status(), Constant.SYS_STATUS_PENDING, tkTicket.getTicket_status(), Constant.SYS_STATUS_PROCESS),
+                tkTicket.getMain_user(),
                 hasWithdrawnApproved,
                 hasAppliedApproved,
                 this
@@ -273,6 +274,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 act_profile,
                 tkTicket.getInventory_control(),
                 isEditable(Constant.SYS_STATUS_PENDING, ticketCtrlStatus, Constant.SYS_STATUS_PROCESS, ticketCtrlStatus),
+                tkTicket.getMain_user(),
                 hasWithdrawnApproved,
                 hasAppliedApproved,
                 this

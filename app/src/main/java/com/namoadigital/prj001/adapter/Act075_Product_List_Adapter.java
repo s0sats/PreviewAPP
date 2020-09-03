@@ -42,6 +42,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     private List<TK_Ticket_Product> mValues = new ArrayList<>();
     private int act_profile;
     private int inventory_control;
+    private Integer mainUser;
     private static final int FOOTER_VIEW = 1;
     private String mResource_Code;
     private HMAux hmAux_Trans;
@@ -55,13 +56,14 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     private OnApproveInteract mApproveListener;
     private ApprovalViewHolder approvalVH;
 
-    public Act075_Product_List_Adapter(Context context, HMAux hmAux_Trans, List<TK_Ticket_Product> mValues, int act_profile, int inventory_control, boolean isEditable, boolean hasWithdrawApproved, boolean hasAppliedApproved, OnProductInteract mProductListener) {
+    public Act075_Product_List_Adapter(Context context, HMAux hmAux_Trans, List<TK_Ticket_Product> mValues, int act_profile, int inventory_control, boolean isEditable, Integer mainUser, boolean hasWithdrawApproved, boolean hasAppliedApproved, OnProductInteract mProductListener) {
         this.mValues.addAll(mValues);
         this.act_profile = act_profile;
         this.inventory_control = inventory_control;
         this.hmAux_Trans = hmAux_Trans;
         this.context = context;
         this.isEditable = isEditable;
+        this.mainUser = mainUser;
         this.hasWithdrawApproved = hasWithdrawApproved;
         this.hasAppliedApproved = hasAppliedApproved;
         this.mProductListener = mProductListener;
@@ -74,7 +76,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         loadTranslation();
     }
 
-    public Act075_Product_List_Adapter(Context context, HMAux hmAux_Trans, List<TK_Ticket_Product> mValues, TK_Ticket_Approval tkTicketApproval, int act_profile, int inventory_control, boolean isEditable, boolean hasWithdrawApproved, boolean hasAppliedApproved, OnApproveInteract mApproveListener) {
+    public Act075_Product_List_Adapter(Context context, HMAux hmAux_Trans, List<TK_Ticket_Product> mValues, TK_Ticket_Approval tkTicketApproval, int act_profile, int inventory_control, boolean isEditable, Integer mainUser, boolean hasWithdrawApproved, boolean hasAppliedApproved, OnApproveInteract mApproveListener) {
         this.mValues.addAll(mValues);
         this.tkTicketApproval = tkTicketApproval;
         this.act_profile = act_profile;
@@ -82,6 +84,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         this.hmAux_Trans = hmAux_Trans;
         this.context = context;
         this.isEditable = isEditable;
+        this.mainUser = mainUser;
         this.hasWithdrawApproved = hasWithdrawApproved;
         this.hasAppliedApproved = hasAppliedApproved;
         this.mApproveListener = mApproveListener;
@@ -307,7 +310,11 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         product_cell_tv_extract.setVisibility(View.VISIBLE);
                         disableWithdrawLayout();
                         if(isEditable){
-                            enableAppliedLayout(position, tk_ticket_product);
+                            if (ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mainUser.toString())) {
+                                enableAppliedLayout(position, tk_ticket_product);
+                            }else{
+                                disableAppliedEdition();
+                            }
                         }else{
                             disableAppliedLayout();
                         }
@@ -341,6 +348,12 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                 setDetailsForApprovalVisibility();
             }
             //
+        }
+
+        private void disableAppliedEdition() {
+            product_cell_iv_applied_substract.setEnabled(false);
+            product_cell_iv_applied_add.setEnabled(false);
+            product_cell_tv_applied_qty.setEnabled(false);
         }
 
         private void calculateProductBalance(TK_Ticket_Product tk_ticket_product) {
