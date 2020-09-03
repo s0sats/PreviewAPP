@@ -107,6 +107,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private boolean hasFABActive=false;
     private String save_return = "";
     private int lastPositionClicked =-1;
+    private boolean preventSyncLoop = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -536,9 +537,20 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         this.currentStepFirstPosition = currentStepFirstPosition;
     }
 
+    /**
+     * LUCHE - 03/09/2020
+     * Alterado metodo adicionando verificação da flag preventSyncLoop que impede que a tela entre
+     * em loop de chamada de WS caso durante alguma chamada seja retornado processCustom_error ou processError_1
+     */
     private void checkSyncNeeds() {
-        if (mPresenter.checkOnlySyncNeeds(mTicket) && ToolBox_Con.isOnline(context)) {
-            mPresenter.prepareSyncProcess(mTicket);
+        //Se a atualização da tela foi chamada pelas callbacks de erro do Ws, não az chamada do WS
+        //e reseta var que controla o loop
+        if(preventSyncLoop) {
+            preventSyncLoop = false;
+        }else {
+            if (mPresenter.checkOnlySyncNeeds(mTicket) && ToolBox_Con.isOnline(context)) {
+                mPresenter.prepareSyncProcess(mTicket);
+            }
         }
     }
 
@@ -926,6 +938,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         progressDialog.dismiss();
+        //LUCHE - 03/09/2020
+        //Ao chamar o updateTicketData, é verificado se há necessidade sincronizar os dados com server
+        //porem, se houve um erro, esse processo faz com que a tela entre em loop. Essa flag abaixo,
+        //previne o loop
+        preventSyncLoop = true;
         //LUCHE - 01/09/2020
         updateTicketData();
     }
@@ -934,6 +951,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         progressDialog.dismiss();
+        //LUCHE - 03/09/2020
+        //Ao chamar o updateTicketData, é verificado se há necessidade sincronizar os dados com server
+        //porem, se houve um erro, esse processo faz com que a tela entre em loop. Essa flag abaixo,
+        //previne o loop
+        preventSyncLoop = true;
+        //LUCHE - 01/09/2020
         updateTicketData();
     }
 
