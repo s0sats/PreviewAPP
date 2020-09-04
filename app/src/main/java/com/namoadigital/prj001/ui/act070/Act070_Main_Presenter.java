@@ -1631,7 +1631,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private StepForm createStepForm(TK_Ticket mTicket, StepMain stepMain, TK_Ticket_Ctrl tkStepCtrl) {
         StepForm stepForm = new StepForm();
         stepForm.setStepCode(tkStepCtrl.getStep_code());
-        stepForm.setStepDescription(hmAux_Trans.get("process_checklist_tll"));
+        stepForm.setStepDescription(
+            getStepFormDescription(tkStepCtrl)
+        );
         stepForm.setStepType(stepMain.getStepType());
         stepForm.setProcessTkSeq(tkStepCtrl.getTicket_seq());
         stepForm.setProcessStatus(tkStepCtrl.getCtrl_status());
@@ -1649,6 +1651,13 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepForm.setProductDifferentThanTicket(tkStepCtrl.getProduct_code() != null && mTicket.getOpen_product_code() != tkStepCtrl.getProduct_code());
         stepForm.setSerialDifferentThanTicket(tkStepCtrl.getSerial_code() != null && mTicket.getOpen_serial_code() != tkStepCtrl.getSerial_code());
         return stepForm;
+    }
+
+    private String getStepFormDescription(TK_Ticket_Ctrl tkStepCtrl) {
+        return
+            tkStepCtrl.getForm() != null && tkStepCtrl.getForm().getCustom_form_desc() != null
+                ? tkStepCtrl.getForm().getCustom_form_desc()
+                : hmAux_Trans.get("process_checklist_tll");
     }
 
     @NonNull
