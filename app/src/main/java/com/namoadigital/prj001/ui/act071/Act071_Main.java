@@ -210,6 +210,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("progress_sync_ttl");
         transList.add("progress_sync_msg");
         //
+        transList.add("dialog_ticket_form_save_ttl");
+        transList.add("dialog_ticket_form_save_start");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -1231,6 +1234,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
+        if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            wsProcess = "";
+            mPresenter.processSaveReturn(mTicketCtrl.getTicket_prefix(), mTicketCtrl.getTicket_code(), ticket_result);
+        }
         //Atualiza UI
         updateActionData();
         //
@@ -1240,6 +1247,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
+        if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            wsProcess = "";
+            mPresenter.processSaveReturn(mTicketCtrl.getTicket_prefix(), mTicketCtrl.getTicket_code(), ticket_result);
+        }
         //Atualiza UI
         updateActionData();
         //

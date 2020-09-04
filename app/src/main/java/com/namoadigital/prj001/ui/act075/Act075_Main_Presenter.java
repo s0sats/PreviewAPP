@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_GET_MATERIAL;
-import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_OPERATIONAL;
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_RETURN_MATERIAL;
 
 public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
@@ -498,15 +497,11 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     public boolean hasApproveProfile(int mTkPrefix, int mTkCode, int mTkSeq, int stepCode) {
         long customer_code = ToolBox_Con.getPreference_Customer_Code(context);
         TK_Ticket ticket = getTicket(customer_code, mTkPrefix, mTkCode);
-        TK_Ticket_Approval approval = getTicketApproval(customer_code, mTkPrefix, mTkCode, mTkSeq, stepCode);
-        if (approval != null && APPROVAL_OPERATIONAL.equalsIgnoreCase(approval.getApproval_type())) {
+        //TK_Ticket_Approval approval = getTicketApproval(customer_code, mTkPrefix, mTkCode, mTkSeq, stepCode);
+        if (ticket != null ) {
             return ticket.getAllow_step_approval() == 1 ? true : false;
-        } else {
-            if (!getWithdrawStatus(ticket)) {
-                return userHasMaterialWithdrawApprovalAccess(ticket.getMain_user());
-            } else {
-                return ticket.getAllow_step_approval() == 1 ? true : false;
-            }
+        }else{
+            return false;
         }
     }
 

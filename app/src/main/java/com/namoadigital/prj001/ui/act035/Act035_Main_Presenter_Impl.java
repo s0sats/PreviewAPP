@@ -23,6 +23,7 @@ import com.namoadigital.prj001.model.Chat_Room_Obj_SO;
 import com.namoadigital.prj001.model.Chat_S_Historical_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.model.Chat_S_Read;
+import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -31,9 +32,11 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_019;
@@ -727,6 +730,41 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
             mView.callAct027(context);
         }else {
             mView.callAct034(context);
+        }
+    }
+
+    @Override
+    public boolean verifyProductForForm(HMAux hmAux) {
+        int ticketPrefix = hmAux.hasConsistentValue(TK_TicketDao.TICKET_PREFIX) ? Integer.valueOf(hmAux.get(TK_TicketDao.TICKET_PREFIX)) : -1 ;
+        int ticketCode = hmAux.hasConsistentValue(TK_TicketDao.TICKET_CODE) ? Integer.valueOf(hmAux.get(TK_TicketDao.TICKET_CODE)) : -1 ;
+        if(ToolBox_Inf.hasFormProductOutdate(context, ticketPrefix, ticketCode)){
+            if (ToolBox_Con.isOnline(context)) {
+                mView.setWSProcess(WS_Sync.class.getName());
+                //
+                mView.showPD(
+                        hmAux_Trans.get("progress_sync_ttl"),
+                        hmAux_Trans.get("progress_sync_msg")
+                );
+                //
+                ArrayList<String> data_package = new ArrayList<>();
+                data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+                //
+                Intent mIntent = new Intent(context, WBR_Sync.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+                bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+                bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
+                bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+                bundle.putInt(Constant.GC_STATUS, 1);
+                //
+                mIntent.putExtras(bundle);
+                //
+                context.sendBroadcast(mIntent);
+                return true;
+            }
+            return false;
+        }else{
+            return false;
         }
     }
 }

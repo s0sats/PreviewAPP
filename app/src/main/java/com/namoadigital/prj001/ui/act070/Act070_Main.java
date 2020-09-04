@@ -210,8 +210,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         transList.add("alert_start_approval_ttl");
         transList.add("alert_start_approval_confirm");
-
         //
+        transList.add("progress_sync_ttl");
+        transList.add("progress_sync_msg");
+        //
+        transList.add("dialog_ticket_form_save_ttl");
+        transList.add("dialog_ticket_form_save_start");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -938,6 +943,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         progressDialog.dismiss();
+        //
+        if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            if(save_return != null
+                    && !save_return.isEmpty()) {
+                mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
+                save_return = "";
+            }
+        }
         //LUCHE - 03/09/2020
         //Ao chamar o updateTicketData, é verificado se há necessidade sincronizar os dados com server
         //porem, se houve um erro, esse processo faz com que a tela entre em loop. Essa flag abaixo,
@@ -951,6 +964,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         progressDialog.dismiss();
+        if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            if(save_return != null
+                    && !save_return.isEmpty()) {
+                mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
+                save_return = "";
+            }
+        }
         //LUCHE - 03/09/2020
         //Ao chamar o updateTicketData, é verificado se há necessidade sincronizar os dados com server
         //porem, se houve um erro, esse processo faz com que a tela entre em loop. Essa flag abaixo,

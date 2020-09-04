@@ -80,6 +80,7 @@ import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.service.WS_AP_Search;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service_chat.WS_Room_AP;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -360,6 +361,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("alert_serial_not_returned_msg");
         transList.add("dialog_product_not_found_ttl");
         transList.add("dialog_product_not_found_msg");
+        //
+        transList.add("progress_sync_ttl");
+        transList.add("progress_sync_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -3060,9 +3064,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        if(ws_process.equals(WS_Serial_Search.class.getName())){
+        if(ws_process.equals(WS_Serial_Search.class.getName())
+        || ws_process.equals(WS_Sync.class.getName())){
             processCloseACT(mLink, mRequired, new HMAux());
-        }else {
+        } else {
             //
             HMAux hmAuxAP = new HMAux();
             //
@@ -3111,6 +3116,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             progressDialog.dismiss();
         } else if (ws_process.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())) {
             setWSProcess("");
+            progressDialog.dismiss();
             //
             bundle.putString(CH_RoomDao.ROOM_CODE, hmAux.get(CH_RoomDao.ROOM_CODE));
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT035);
@@ -3120,10 +3126,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
             }
             //
-            callAct070(bundle);
+            if(!mPresenter.verifyProductForForm(hmAux)) {
+                callAct070(bundle);
+            }
             //
+        }else if(WS_Sync.class.getName().equalsIgnoreCase(ws_process)) {
+            setWSProcess("");
             progressDialog.dismiss();
-        }else if(ws_process.equals(WS_Serial_Search.class.getName())){
+            callAct070(bundle);
+        } else if(ws_process.equals(WS_Serial_Search.class.getName())){
             mPresenter.extractSearchResult(mLink, roomObjSo);
         } else if (ws_process.equalsIgnoreCase(WS_SO_Search.class.getName())) {
             mPresenter.processSoDownloadResult(hmAux, String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
@@ -3143,9 +3154,25 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        if(WS_Sync.class.getName().equalsIgnoreCase(ws_process)) {
+            progressDialog.dismiss();
+            callAct070(bundle);
+            resetWSProcess();
+        }
+        //
+    }
+
+    @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         progressDialog.dismiss();
+        //
+        if(WS_Sync.class.getName().equalsIgnoreCase(ws_process)) {
+            callAct070(bundle);
+        }
         //
         resetWSProcess();
     }
