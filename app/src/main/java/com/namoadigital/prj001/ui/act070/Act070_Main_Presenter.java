@@ -41,6 +41,7 @@ import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.Sql_Act070_001;
 import com.namoadigital.prj001.sql.Sql_Act070_002;
 import com.namoadigital.prj001.sql.Sql_Act070_003;
@@ -873,11 +874,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(customForm.getCustom_form_version()));
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, ticketCtrl.getForm().getCustom_form_desc());
         bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
-            String.valueOf(
-                ticketCtrl.getForm().getCustom_form_data_tmp() != null
-                    ? ticketCtrl.getForm().getCustom_form_data_tmp()
-                    : 0
-            )
+            getCustomFormDataOrNew(ticketCtrl)
         );
         bundle.putInt(TK_Ticket_CtrlDao.TICKET_PREFIX,ticketCtrl.getTicket_prefix());
         bundle.putInt(TK_Ticket_CtrlDao.TICKET_CODE,ticketCtrl.getTicket_code());
@@ -887,6 +884,48 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT070);
         return bundle;
+    }
+
+    /**
+     * LUCHE - 04/09/2020
+     * <p></p>
+     * Metodo que retorno o custom_form_data_tmp ou novo custom_form_data, caso seja criação de form.
+     * @param ticketCtrl
+     * @return
+     */
+    @NonNull
+    private String getCustomFormDataOrNew(@NonNull TK_Ticket_Ctrl ticketCtrl) {
+        if(ticketCtrl != null && ticketCtrl.getForm() != null){
+            return
+                ticketCtrl.getForm().getCustom_form_data_tmp() != null
+                    ? String.valueOf(ticketCtrl.getForm().getCustom_form_data_tmp())
+                    : getNextCustomFormData(ticketCtrl.getForm());
+        }else{
+            return "0";
+        }
+    }
+
+    /**
+     * LUCHE - 04/09/2020
+     * Metodo que retorno proximo custom_form_data para ser usado na criação do form do ticket.
+     * @param form
+     * @return
+     */
+    private String getNextCustomFormData(TK_Ticket_Form form) {
+        HMAux nextFormData = formDataDao.getByStringHM(
+            new GE_Custom_Form_Local_Sql_002(
+                String.valueOf(form.getCustomer_code()),
+                String.valueOf(form.getCustom_form_type()),
+                String.valueOf(form.getCustom_form_code()),
+                String.valueOf(form.getCustom_form_version())
+            ).toSqlQuery().toLowerCase()
+        );
+        //
+        if (nextFormData != null && nextFormData.size() > 0 && nextFormData.hasConsistentValue("id")) {
+            return nextFormData.get("id");
+        }
+        //
+        return "0";
     }
 
     private void startNoneProcess(TK_Ticket mTicket, TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
