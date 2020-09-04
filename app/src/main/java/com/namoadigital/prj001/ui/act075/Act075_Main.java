@@ -777,8 +777,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                         if(qty_value == null){
                             qty_value = 0.0;
                         }
-                        if(!inputValue.equals(qty_used_value)
-                        && inputValue <= qty_value) {
+                        if((!inputValue.equals(qty_used_value)
+                        && inputValue <= qty_value) || tkTicket.getInventory_control() ==0) {
                             mAdapter.getmValues().get(position).setQty_used(Double.valueOf(qty_used));
                             mAdapter.notifyItemChanged(position);
                         }
