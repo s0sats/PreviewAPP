@@ -100,6 +100,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
         transList.add("product_withdraw_lbl");
+        transList.add("product_to_withdraw_lbl");
         transList.add("product_aplied_lbl");
         transList.add("product_returned_lbl");
         transList.add("product_confirm_lbl");
@@ -239,7 +240,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
         private void setTranslation() {
             if(act_profile == 1) {
-                product_cell_tv_withdrawn.setText(hmAux_Trans.get("product_withdraw_lbl"));
+                product_cell_tv_withdrawn.setText(hmAux_Trans.get("product_to_withdraw_lbl"));
                 product_cell_tv_applied.setText(hmAux_Trans.get("product_aplied_lbl"));
                 product_cell_tv_returned.setText(hmAux_Trans.get("product_returned_lbl"));
             }else{
@@ -496,6 +497,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
          */
         private void disableWithdrawLayout() {
             product_cell_iv_withdrawn_substract.setVisibility(View.INVISIBLE);
+            product_cell_tv_withdrawn.setText(hmAux_Trans.get("product_withdraw_lbl"));
             product_cell_iv_withdrawn_add.setBackground(context.getResources().getDrawable(R.color.padrao_WHITE));
             product_cell_iv_withdrawn_add.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_check_white_24dp));
             product_cell_iv_withdrawn_add.setImageTintList(context.getResources().getColorStateList(R.color.namoa_product_extract_check));

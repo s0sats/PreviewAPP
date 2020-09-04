@@ -96,6 +96,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private boolean mPipelineHeaderIsCurrentStepOrder;
     private boolean isApproved;
     private boolean isOperationalProcess= false;
+    private Bundle requestingBundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -368,16 +369,16 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     }
 
     private void recoverIntentsInfo() {
-        Bundle bundle = getIntent().getExtras();
+        requestingBundle = getIntent().getExtras();
         //
-        if (bundle != null) {
-            act_profile = bundle.getInt(VIEW_PROFILE, -1);
-            mTkPrefix = bundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
-            mTkCode = bundle.getInt(TK_TicketDao.TICKET_CODE, -1);
-            mStepCode = bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE, -1);
-            mTkSeq = bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ, -1);
-            mPipelineHeaderIsCurrentStepOrder = bundle.getBoolean(TK_TicketDao.CURRENT_STEP_ORDER, false);
-            isOperationalProcess = bundle.getBoolean(IS_OPERATIONAL_PROCESS, false);
+        if (requestingBundle != null) {
+            act_profile = requestingBundle.getInt(VIEW_PROFILE, -1);
+            mTkPrefix = requestingBundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
+            mTkCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
+            mStepCode = requestingBundle.getInt(TK_Ticket_CtrlDao.STEP_CODE, -1);
+            mTkSeq = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ, -1);
+            mPipelineHeaderIsCurrentStepOrder = requestingBundle.getBoolean(TK_TicketDao.CURRENT_STEP_ORDER, false);
+            isOperationalProcess = requestingBundle.getBoolean(IS_OPERATIONAL_PROCESS, false);
         } else {
             act_profile = -1;
         }
@@ -635,10 +636,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
     private void callAct070() {
         Intent intent = new Intent(context, Act070_Main.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(TK_TicketDao.TICKET_PREFIX,tkTicket.getTicket_prefix());
-        bundle.putInt(TK_TicketDao.TICKET_CODE,tkTicket.getTicket_code());
-        intent.putExtras(bundle);
+        intent.putExtras(requestingBundle);
         startActivity(intent);
         finish();
     }

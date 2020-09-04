@@ -213,6 +213,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("progress_sync_ttl");
         transList.add("progress_sync_msg");
         //
+        transList.add("dialog_ticket_form_save_ttl");
+        transList.add("dialog_ticket_form_save_start");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,

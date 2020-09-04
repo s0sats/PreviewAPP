@@ -3064,9 +3064,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        if(ws_process.equals(WS_Serial_Search.class.getName())){
+        if(ws_process.equals(WS_Serial_Search.class.getName())
+        || ws_process.equals(WS_Sync.class.getName())){
             processCloseACT(mLink, mRequired, new HMAux());
-        }else {
+        } else {
             //
             HMAux hmAuxAP = new HMAux();
             //
