@@ -102,12 +102,19 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     }
 
     public DaoObjReturn addUpdateWithReturn(GE_Custom_Form_Data custom_form_data) {
+       return addUpdateWithReturnAndSharedDbInstance(custom_form_data,null);
+    }
+
+    public DaoObjReturn addUpdateWithReturnAndSharedDbInstance(GE_Custom_Form_Data custom_form_data, @Nullable SQLiteDatabase dbInstance){
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long addUpdateRet = 0;
         String curAction = DaoObjReturn.INSERT_OR_UPDATE;
-
-        openDB();
-
+        //
+        if(dbInstance == null) {
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
         try {
 
             if (db.insert(TABLE, null, toContentValuesMapper.map(custom_form_data)) == -1) {
@@ -129,17 +136,19 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
             //Gera arquivo de exception usando dados da exception e do obj de retorno
             ToolBox_Inf.registerException(
-                    getClass().getName(),
-                    new Exception(
-                            e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
-                    )
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
             );
         } finally {
             daoObjReturn.setAction(curAction);
             daoObjReturn.setActionReturn(addUpdateRet);
         }
-
-        closeDB();
+        //
+        if (dbInstance == null) {
+            closeDB();
+        }
         return daoObjReturn;
     }
 

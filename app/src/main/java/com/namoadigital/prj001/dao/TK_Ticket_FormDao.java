@@ -111,6 +111,10 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             curAction = DaoObjReturn.UPDATE;
             //Where para update
             StringBuilder sbWhere = getWherePkClause(tk_ticket_form);
+            /* LUCHE - 04/09/2020
+             * Antes de inserir, verifica a necessidade cancelar forms vinculados a esse obj.
+             */
+            checkIfFormNeedToBeCancelled(tk_ticket_form,db);
             //Tenta update e armazena retorno
             addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_form), sbWhere.toString(), null);
             //Se nenhuma linha afetada, tenta insert
@@ -118,8 +122,6 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 curAction = DaoObjReturn.INSERT;
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_form));
             }
-            //
-            checkIfFormNeedToBeCancelled(tk_ticket_form,db);
 
         }catch (SQLiteException e){
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -206,14 +208,14 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     //
                     if (formLocalToCancel != null) {
                         formLocalToCancel.setCustom_form_status(ConstantBaseApp.SYS_STATUS_CANCELLED);
-                        DaoObjReturn daoObjReturn = formLocalDao.addUpdateThrowException(formLocalToCancel);
+                        DaoObjReturn daoObjReturn = formLocalDao.addUpdateThrowExceptionWithSharedDbInstance(formLocalToCancel,db);
                         if (daoObjReturn.hasError()) {
                             throw new Exception(daoObjReturn.getErrorMsg());
                         }
                     }
                     if (formDataToCancel != null) {
                         formDataToCancel.setCustom_form_status(ConstantBaseApp.SYS_STATUS_CANCELLED);
-                        DaoObjReturn daoObjReturn = formDataDao.addUpdateWithReturn(formDataToCancel);
+                        DaoObjReturn daoObjReturn = formDataDao.addUpdateWithReturnAndSharedDbInstance(formDataToCancel,db);
                         if (daoObjReturn.hasError()) {
                             throw new Exception(daoObjReturn.getErrorMsg());
                         }
@@ -251,6 +253,10 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 curAction = DaoObjReturn.UPDATE;
                 //Where para update
                 StringBuilder sbWhere = getWherePkClause(tk_ticket_form);
+                /* LUCHE - 04/09/2020
+                 * Antes de inserir, verifica a necessidade cancelar forms vinculados a esse obj.
+                 */
+                checkIfFormNeedToBeCancelled(tk_ticket_form,db);
                 //Tenta update e armazena retorno
                 addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_form), sbWhere.toString(), null);
                 //Se nenhuma linha afetada, tenta insert
@@ -258,7 +264,6 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     curAction = DaoObjReturn.INSERT;
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_form));
                 }
-                checkIfFormNeedToBeCancelled(tk_ticket_form,db);
             }
             //Se db não foi passado, finaliza transaction com sucesso
             if(dbInstance == null) {
@@ -313,6 +318,10 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             curAction = DaoObjReturn.UPDATE;
             //Where para update
             StringBuilder sbWhere = getWherePkTmpClause(tk_ticket_form);
+            /* LUCHE - 04/09/2020
+             * Antes de inserir, verifica a necessidade cancelar forms vinculados a esse obj.
+             */
+            checkIfFormNeedToBeCancelled(tk_ticket_form,db);
             //Tenta update e armazena retorno
             addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_form), sbWhere.toString(), null);
             //Se nenhuma linha afetada, tenta insert
@@ -320,8 +329,6 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 curAction = DaoObjReturn.INSERT;
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_form));
             }
-            //
-            checkIfFormNeedToBeCancelled(tk_ticket_form,db);
         }catch (SQLiteException e){
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -377,6 +384,10 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 curAction = DaoObjReturn.UPDATE;
                 //Where para update
                 StringBuilder sbWhere = getWherePkTmpClause(tk_ticket_form);
+                /* LUCHE - 04/09/2020
+                 * Antes de inserir, verifica a necessidade cancelar forms vinculados a esse obj.
+                 */
+                checkIfFormNeedToBeCancelled(tk_ticket_form,db);
                 //Tenta update e armazena retorno
                 addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_form), sbWhere.toString(), null);
                 //Se nenhuma linha afetada, tenta insert
@@ -384,8 +395,6 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     curAction = DaoObjReturn.INSERT;
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_form));
                 }
-                //
-                checkIfFormNeedToBeCancelled(tk_ticket_form,db);
             }
             //Se db não foi passado, finaliza transaction com sucesso
             if(dbInstance == null) {

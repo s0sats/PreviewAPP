@@ -670,6 +670,15 @@ public class WS_TK_Ticket_Save extends IntentService {
                 );
                 //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
                 tk_ticket.updateLocalImagesPathIfExists();
+                /**
+                 * LUCHE - 04/09/2020
+                 * No download do ticket, existe chamado do metodo abaixo, pois como ao criar o form
+                 * os dados de "inicio" do ctrl não são transmitidos e não setam update_required, então
+                 * o download apaga essas infos.
+                 * Aqui, como é save, em tese, não precisa chamada.
+                 * //Busca ctrls tipo form em andamento e que seriam resetados.
+                 * tk_ticket.updateTicketCtrlFormInProcess(getApplicationContext());
+                 */
                 //Remove o ticket do banco de dados
                 ticketDao.removeFullV2(tk_ticket);
                 //Tenta o insert do ticket
