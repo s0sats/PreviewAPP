@@ -139,6 +139,9 @@ public class WS_TK_Ticket_Download extends IntentService {
                     );
                     //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
                     tkTicket.updateLocalImagesPathIfExists();
+                    //Busca ctrls tipo form em andamento e que seriam resetados.
+                    tkTicket.updateTicketCtrlFormInProcess(getApplicationContext());
+                    //
                     daoObjReturn = ticketDao.removeFullV2(tkTicket);
                 }
                 //

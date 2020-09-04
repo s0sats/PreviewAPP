@@ -1,10 +1,14 @@
 package com.namoadigital.prj001.model;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
@@ -842,5 +846,60 @@ public class TK_Ticket implements Cloneable {
     @Override
     public TK_Ticket clone() throws CloneNotSupportedException {
         return (TK_Ticket) super.clone();
+    }
+
+    public void updateTicketCtrlFormInProcess(Context context) {
+        if(getStep() != null) {
+            for (TK_Ticket_Step ticketStep : getStep()) {
+                //
+                if(ticketStep.getCtrl() != null){
+                    for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
+                        switch (ticketCtrl.getCtrl_type()){
+                            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
+                                checkUpdateCtrlFormInProcess(context,ticketCtrl);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkUpdateCtrlFormInProcess(Context context, TK_Ticket_Ctrl serverCtrl) {
+        if(ConstantBaseApp.SYS_STATUS_PENDING.equals(serverCtrl.getCtrl_status())) {
+            TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+            TK_Ticket_Ctrl dbTicketCtrl = ticketCtrlDao.getByString(
+                new TK_Ticket_Ctrl_Sql_001(
+                    serverCtrl.getCustomer_code(),
+                    serverCtrl.getTicket_prefix(),
+                    serverCtrl.getTicket_code(),
+                    serverCtrl.getTicket_seq(),
+                    serverCtrl.getStep_code()
+                ).toSqlQuery()
+            );
+            //
+            if ( dbTicketCtrl != null
+                 && ConstantBaseApp.SYS_STATUS_PROCESS.equals(dbTicketCtrl.getCtrl_status())
+                 && dbTicketCtrl.getForm() != null
+                 && dbTicketCtrl.getForm().getCustom_form_data_tmp() != null
+            ) {
+                serverCtrl.setCtrl_status(dbTicketCtrl.getCtrl_status());
+                serverCtrl.setCtrl_start_date(dbTicketCtrl.getCtrl_start_date());
+                serverCtrl.setCtrl_start_user(dbTicketCtrl.getCtrl_start_user());
+                serverCtrl.setCtrl_start_user_name(dbTicketCtrl.getCtrl_start_user_name());
+                serverCtrl.copyCtrlStatusForInnerProcess();
+                //Atualiza custom_form_data_tmp com o do banco.
+                if(serverCtrl.getForm() != null){
+                    serverCtrl.getForm().setCustom_form_data_tmp(dbTicketCtrl.getForm().getCustom_form_data_tmp());
+                }
+            }
+        }
     }
 }
