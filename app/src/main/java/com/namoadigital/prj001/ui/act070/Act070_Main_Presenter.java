@@ -28,6 +28,7 @@ import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
@@ -42,6 +43,7 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act070_001;
 import com.namoadigital.prj001.sql.Sql_Act070_002;
 import com.namoadigital.prj001.sql.Sql_Act070_003;
@@ -588,8 +590,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         || isOneTouchActionExecution(ticketStep, ticketCtrl)
                     ){
                         mView.showAlert(
-                            hmAux_Trans.get("alert_start_none_process_ttl"),
-                            hmAux_Trans.get("alert_start_none_process_msg"),
+                            hmAux_Trans.get("alert_start_process_ttl"),
+                            hmAux_Trans.get("alert_start_process_msg"),
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -628,25 +630,36 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     if (isStartEndActionExecution(ticketStep, ticketCtrl)
                         || isOneTouchActionExecution(ticketStep, ticketCtrl)
                     ) {
-                        if (checkFormMasterDataExists(ticketCtrl.getForm())) {
-                            showConfirmStartFormDialog(mTicket, ticketStep, ticketCtrl);
-                        } else {
-                            mView.showAlert(
-                                hmAux_Trans.get("alert_form_master_data_not_found_ttl"),
-                                hmAux_Trans.get("alert_form_master_data_not_found_msg"),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
+                        /**
+                         * BARRIONUEVO 08-09-2020
+                         * Metodo que verifica acesso ao produto.
+                         */
+                        if(userHasProductAccess(mTicket.getOpen_product_code())) {
+                            if (checkFormMasterDataExists(ticketCtrl.getForm())) {
+                                showConfirmStartFormDialog(mTicket, ticketStep, ticketCtrl);
+                            } else {
+                                mView.showAlert(
+                                    hmAux_Trans.get("alert_form_master_data_not_found_ttl"),
+                                    hmAux_Trans.get("alert_form_master_data_not_found_msg"),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
 
-                                        if(ToolBox_Con.isOnline(context)) {
-                                            ToolBox_Inf.hasFormProductOutdate(context, mTicket.getTicket_prefix(), mTicket.getTicket_prefix());
-                                            callWsSync();
-                                        }else{
-                                            ToolBox_Inf.showNoConnectionDialog(context);
+                                            if(ToolBox_Con.isOnline(context)) {
+                                                ToolBox_Inf.hasFormProductOutdate(context, mTicket.getTicket_prefix(), mTicket.getTicket_prefix());
+                                                callWsSync();
+                                            }else{
+                                                ToolBox_Inf.showNoConnectionDialog(context);
+                                            }
                                         }
-                                    }
-                                },
-                                false
+                                    },
+                                    false
+                                );
+                            }
+                        }else{
+                            mView.showAlert(
+                                    hmAux_Trans.get("alert_product_form_access_denied_ttl"),
+                                    hmAux_Trans.get("alert_product_form_access_denied_msg")
                             );
                         }
                     } else if (ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketCtrl.getCtrl_status())) {
@@ -671,8 +684,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 //
 //                if(ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status()) && stepForm.isCurrentStep()){
 //                    mView.showAlert(
-//                        hmAux_Trans.get("alert_start_none_process_ttl"),
-//                        hmAux_Trans.get("alert_start_none_process_msg"),
+//                        hmAux_Trans.get("alert_start_process_ttl"),
+//                        hmAux_Trans.get("alert_start_process_msg"),
 //                        new DialogInterface.OnClickListener() {
 //                            @Override
 //                            public void onClick(DialogInterface dialogInterface, int i) {
@@ -704,8 +717,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     private void showConfirmStartFormDialog(final TK_Ticket mTicket, final TK_Ticket_Step ticketStep, final TK_Ticket_Ctrl ticketCtrl) {
         mView.showAlert(
-            hmAux_Trans.get("alert_start_none_process_ttl"),
-            hmAux_Trans.get("alert_start_none_process_msg"),
+            hmAux_Trans.get("alert_start_process_ttl"),
+            hmAux_Trans.get("alert_start_process_msg"),
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -806,6 +819,27 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 mView.callAct011(getAct011Bundle(ticketCtrl));
             }
         }
+    }
+
+    private boolean userHasProductAccess(int open_product_code) {
+        MD_ProductDao md_productDao = new MD_ProductDao(
+                context,
+                ToolBox_Con.customDBPath(
+                        ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        MD_Product md_product = null;
+        md_product = md_productDao.getByString(
+                new MD_Product_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        open_product_code
+                ).toSqlQuery()
+        );
+        //
+        if (ToolBox_Inf.isValidProduct(md_product)) {
+            return true;
+        }
+        return false;
     }
 
     /**

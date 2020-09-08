@@ -2,6 +2,7 @@ package com.namoadigital.prj001.sql;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
@@ -39,7 +40,8 @@ public class Sync_Checklist_Sql_004 implements Specification {
                 TK_TicketDao.TABLE +" t,\n" +
                 TK_Ticket_StepDao.TABLE + " s,\n" +
                 TK_Ticket_CtrlDao.TABLE + " c,\n" +
-                TK_Ticket_FormDao.TABLE +"  f\n" +
+                TK_Ticket_FormDao.TABLE +"  f,\n" +
+                MD_ProductDao.TABLE +"  p\n" +
                 "WHERE\n" +
                 " t.customer_code = " +customer_code + "\n" +
                 " and t.customer_code = s.customer_code\n" +
@@ -56,6 +58,9 @@ public class Sync_Checklist_Sql_004 implements Specification {
                 " and c.ticket_prefix = f.ticket_prefix\n" +
                 " and c.ticket_code = f.ticket_code\n" +
                 " and c.ticket_seq_tmp = f.ticket_seq_tmp\n" +
+
+                " and c.customer_code = p.customer_code\n" +
+                " and c.product_code = p.product_code\n" +
                   ticket_filter +
                 " and t.ticket_status in ('"+ ConstantBase.SYS_STATUS_PENDING +"','"+ ConstantBase.SYS_STATUS_PROCESS+ "')\n" +
                 " and s.step_status in ('"+ ConstantBase.SYS_STATUS_PENDING +"','"+ ConstantBase.SYS_STATUS_PROCESS+ "')\n" +

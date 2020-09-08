@@ -23,6 +23,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.ctls.FabMenuItem;
@@ -67,6 +68,7 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.adapter.Generic_Results_Adapter.VALUE_ITEM_1;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.APPROVAL_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
@@ -195,8 +197,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("dialog_pipeline_btn_cancel");
         //
         transList.add("process_none_tll");
-        transList.add("alert_start_none_process_ttl");
-        transList.add("alert_start_none_process_msg");
+        transList.add("alert_start_process_ttl");
+        transList.add("alert_start_process_msg");
         transList.add("alert_process_access_denied_ttl");
         transList.add("alert_process_started_in_server_msg");
         //
@@ -216,6 +218,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         transList.add("dialog_ticket_form_save_ttl");
         transList.add("dialog_ticket_form_save_start");
+        //
+        transList.add("alert_product_form_access_denied_ttl");
+        transList.add("alert_product_form_access_denied_msg");
+        transList.add("alert_ticket_results_ok");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -825,41 +831,55 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void showResult(ArrayList<HMAux> resultList, boolean ticketResult) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act028_dialog_results, null);
-
-        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
-        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
-        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
-        //trad
-        tv_title.setText(hmAux_Trans.get("alert_checkin_results_ttl"));
-        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-        //
-        lv_results.setAdapter(
-            new Generic_Results_Adapter(
-                context,
-                resultList,
-                Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
-                hmAux_Trans
-            )
-        );
-        //
-        builder.setView(view);
-        builder.setCancelable(false);
-        //
-        final AlertDialog show = builder.show();
-        //
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //
-                refreshUi();
-                //
-                show.dismiss();
+        boolean showExtract = false;
+        if(resultList!= null && ticketResult) {
+            for (HMAux aux : resultList) {
+                if (!aux.get(VALUE_ITEM_1).equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_OK)) {
+                    showExtract = true;
+                    break;
+                }
             }
-        });
+        }
+        if(!showExtract){
+            Toast.makeText(context,  hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
+            refreshUi();
+        }else{
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+            TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+            ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+            Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
+            //trad
+            tv_title.setText(hmAux_Trans.get("alert_checkin_results_ttl"));
+            btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+            //
+            lv_results.setAdapter(
+                    new Generic_Results_Adapter(
+                            context,
+                            resultList,
+                            Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                            hmAux_Trans
+                    )
+            );
+            //
+            builder.setView(view);
+            builder.setCancelable(false);
+            //
+            final AlertDialog show = builder.show();
+            //
+            btn_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //
+                    refreshUi();
+                    //
+                    show.dismiss();
+                }
+            });
+        }
     }
 
     class FCMReceiver extends BroadcastReceiver {
