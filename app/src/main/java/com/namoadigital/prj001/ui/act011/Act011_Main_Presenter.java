@@ -45,4 +45,6 @@ public interface Act011_Main_Presenter {
     boolean isFormCreateByTicket(GE_Custom_Form_Local customFormLocal);
 
     void resetTicketCtrlFormDataIfNeeds(GE_Custom_Form_Local formLocal);
+
+    boolean isFormInWaitingSync(long customer_code, int custom_form_type, int custom_form_code,int custom_form_version,int custom_form_data);
 }

@@ -401,10 +401,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public void addUpdate(String sQuery) {
         openDB();
         try {
-
             db.execSQL(sQuery);
-
         } catch (Exception e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
         closeDB();

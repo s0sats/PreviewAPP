@@ -13,9 +13,13 @@ import android.util.Log;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_006;
+import com.namoadigital.prj001.sql.Sql_SV_Location_Tracker_001;
+import com.namoadigital.prj001.sql.Sql_SV_Location_Tracker_002;
+import com.namoadigital.prj001.sql.Sql_SV_Location_Tracker_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -131,10 +135,18 @@ public class SV_LocationTracker extends Service {
         }
     }
 
+    /**
+     *
+     * LUCHE - 08/09/2020
+     * Modificado metodo para além de setar dados no form, caso seja um form de um ticket,
+     * setar o ticket, step e ctrl com update_required
+     * @return
+     */
     private boolean setFormLocation() {
         boolean hasError = false;
         long customer_code = ToolBox_Con.getPreference_Customer_Code(getApplicationContext());
         GE_Custom_Form_DataDao ge_custom_form_dataDao = new GE_Custom_Form_DataDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        TK_TicketDao ticketDao = new TK_TicketDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
 
         List<GE_Custom_Form_Data> formDataList = getFormDataList(customer_code, ge_custom_form_dataDao);
 
@@ -145,10 +157,43 @@ public class SV_LocationTracker extends Service {
                 form_data.setLocation_type(mLocation_Type.toUpperCase());
                 form_data.setLocation_pendency(0);
                 form_data.setDate_gps(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-
+                //
                 DaoObjReturn daoObjReturn = ge_custom_form_dataDao.addUpdateWithReturn(form_data);
                 if(daoObjReturn.hasError()){
                     hasError = true;
+                }else{
+                    //Se não teve erro ao atualizar for, verifica se é de ticket e se for,
+                    //atualiza flags.
+                    if(isFormCreateByTicket(form_data)){
+                        //Seta update required pra 1 no ticket
+                        ticketDao.addUpdate(
+                            new Sql_SV_Location_Tracker_001(
+                                form_data.getCustomer_code(),
+                                form_data.getTicket_prefix(),
+                                form_data.getTicket_code()
+                            ).toSqlQuery()
+                        );
+                        //Seta update required pra 1 no step
+                        ticketDao.addUpdate(
+                            new Sql_SV_Location_Tracker_002(
+                                form_data.getCustomer_code(),
+                                form_data.getTicket_prefix(),
+                                form_data.getTicket_code(),
+                                form_data.getStep_code()
+                            ).toSqlQuery()
+                        );
+                        //Seta update required pra 1 no ctrl
+                        ticketDao.addUpdate(
+                            new Sql_SV_Location_Tracker_003(
+                                form_data.getCustomer_code(),
+                                form_data.getTicket_prefix(),
+                                form_data.getTicket_code(),
+                                form_data.getStep_code(),
+                                form_data.getTicket_seq(),
+                                form_data.getTicket_seq_tmp()
+                            ).toSqlQuery()
+                        );
+                    }
                 }
 //                String dataRecorded =
 //                        "\nasync_gps = " + async_gps +
@@ -167,6 +212,21 @@ public class SV_LocationTracker extends Service {
         return ge_custom_form_dataDao.query(
                 new GE_Custom_Form_Data_Sql_006(customer_code).toSqlQuery()
         );
+    }
+
+    /**
+     * LUCHE - 08/ 09/2020
+     * Verifica se fomr foi criado via ticket.
+     * @param customFormData
+     * @return
+     */
+    private boolean isFormCreateByTicket(GE_Custom_Form_Data customFormData) {
+        return
+            customFormData.getTicket_prefix() != null && customFormData.getTicket_prefix() > -1
+                && customFormData.getTicket_code() != null && customFormData.getTicket_code() > -1
+                && customFormData.getTicket_seq() != null && customFormData.getTicket_seq() > -1
+                && customFormData.getTicket_seq_tmp() != null && customFormData.getTicket_seq_tmp()  > -1
+                && customFormData.getStep_code() != null && customFormData.getStep_code() > -1;
     }
 
     private void recordProcess(String data) {

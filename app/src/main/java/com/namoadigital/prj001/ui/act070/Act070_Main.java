@@ -77,7 +77,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public static final String PARAM_CTRL_CREATION = "PARAM_CTRL_CREATION";
     public static final String PARAM_ACTION_CREATION = "PARAM_ACTION_CREATION";
     public static final String IS_OPERATIONAL_PROCESS = "IS_OPERATIONAL_PROCESS";
-
+    public static final String PARAM_FORCE_SEND_BY_FORM_EXEC = "PARAM_FORCE_SEND_BY_FORM_EXEC";
 
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
@@ -108,6 +108,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private String save_return = "";
     private int lastPositionClicked =-1;
     private boolean preventSyncLoop = false;
+    //LUCHE - 08/09/2020 - Var que define se deve forçar ou não envio ao chegar na act.
+    private boolean forceSendByFormExecution = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -336,12 +338,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mTkPrefix = requestingBundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
             mTkCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
             room_code = requestingBundle.getString(CH_RoomDao.ROOM_CODE, null);
+            forceSendByFormExecution = requestingBundle.getBoolean(PARAM_FORCE_SEND_BY_FORM_EXEC, false);
             //
         } else {
             requestingAct = ConstantBaseApp.ACT069;
             mTkPrefix = -1;
             mTkCode = -1;
             room_code = null;
+            forceSendByFormExecution = false;
         }
     }
 
@@ -546,6 +550,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
      * LUCHE - 03/09/2020
      * Alterado metodo adicionando verificação da flag preventSyncLoop que impede que a tela entre
      * em loop de chamada de WS caso durante alguma chamada seja retornado processCustom_error ou processError_1
+     * LUCHE - 08/09/2020
+     * Modificado logica da chama de  chamada automatica de sincronismo, para além do checkOnlySyncNeeds,
+     * verificar a flag forceSendByFormExecution, que pe enviada via bundle.
      */
     private void checkSyncNeeds() {
         //Se a atualização da tela foi chamada pelas callbacks de erro do Ws, não az chamada do WS
@@ -553,10 +560,17 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         if(preventSyncLoop) {
             preventSyncLoop = false;
         }else {
-            if (mPresenter.checkOnlySyncNeeds(mTicket) && ToolBox_Con.isOnline(context)) {
+            if ( (mPresenter.checkOnlySyncNeeds(mTicket) || forceSendByFormExecution) && ToolBox_Con.isOnline(context)) {
+                resetForceSendByform();
                 mPresenter.prepareSyncProcess(mTicket);
+            }else{
+                resetForceSendByform();
             }
         }
+    }
+
+    private void resetForceSendByform() {
+        forceSendByFormExecution = false;
     }
 
     @Override
