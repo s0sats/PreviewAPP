@@ -886,7 +886,8 @@ public class TK_Ticket implements Cloneable {
             );
             //
             if ( dbTicketCtrl != null
-                 && ConstantBaseApp.SYS_STATUS_PROCESS.equals(dbTicketCtrl.getCtrl_status())
+                 && ( ConstantBaseApp.SYS_STATUS_PROCESS.equals(dbTicketCtrl.getCtrl_status())
+                      || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(dbTicketCtrl.getCtrl_status()))
                  && dbTicketCtrl.getForm() != null
                  && dbTicketCtrl.getForm().getCustom_form_data_tmp() != null
             ) {

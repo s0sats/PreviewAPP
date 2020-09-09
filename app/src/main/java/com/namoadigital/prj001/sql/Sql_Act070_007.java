@@ -6,20 +6,21 @@ import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
 /**
- * BARRIONUEVO 01-09-2020
- * Query responsavel por definir chamada de WS_save antes do save do ticket
+ * LUCHE 09/09/2020
+ * Query que verifica se algum ctrl do step possui form pendencia de GPS
  *
  */
-public class Sql_Act070_005 implements Specification {
-
+public class Sql_Act070_007 implements Specification {
     private long customer_code;
     private int ticket_prefix;
     private int ticket_code;
+    private int step_code;
 
-    public Sql_Act070_005(long customer_code, int ticket_prefix, int ticket_code) {
+    public Sql_Act070_007(long customer_code, int ticket_prefix, int ticket_code, int step_code) {
         this.customer_code = customer_code;
         this.ticket_prefix = ticket_prefix;
         this.ticket_code = ticket_code;
+        this.step_code = step_code;
     }
 
     @Override
@@ -32,15 +33,19 @@ public class Sql_Act070_005 implements Specification {
                         "   " + GE_Custom_Form_DataDao.TABLE +"  d,\n" +
                         "   " + TK_Ticket_CtrlDao.TABLE +"  c\n" +
                         " WHERE\n" +
-                        "      d.customer_code = '" + customer_code +"'\n" +
+                        "      d.ticket_prefix =   c.ticket_prefix \n" +
+                        "      and d.ticket_code =   c.ticket_code \n" +
+                        "      and d.step_code =   c.step_code \n" +
+                        "\n"+
+                        "      and d.customer_code = '" + customer_code +"'\n" +
                         "      and d.ticket_prefix = '" + ticket_prefix +"'\n" +
                         "      and d.ticket_code = '" + ticket_code +"'\n" +
-                        "      and d.ticket_prefix =   c.ticket_prefix \n" +
-                        "      and d.ticket_code =   c.ticket_code \n" +
+                        "      and d.step_code = '" + step_code +"'\n" +
+                        "\n"+
                         "      and c.ctrl_status = " + "'" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"'"+
                         "      and d.custom_form_status = " + "'" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"'"+
-                        "      and d.location_pendency = 0 \n" +
-                        "        \n"
+                        "      and d.location_pendency = 1 \n" +
+                        "\n"
                 )
                 .toString();
     }

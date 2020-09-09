@@ -647,6 +647,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_PIPELINE_APPROVAL_OPERATIONAL = "APPROVAL_OPERATIONAL";
     public static final String TK_PIPELINE_PRODUCT_STATUS_PENDING = "PENDING";
     public static final String TK_PIPELINE_PRODUCT_STATUS_NO_CONTROL = "NO_CONTROL";
+    public static final String TK_TICKET_FORM_GPS_LOCATION_UPDATE = "TK_TICKET_FORM_GPS_LOCATION_UPDATE";
 
     /*
      * Constantes agendamento

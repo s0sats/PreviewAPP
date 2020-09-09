@@ -66,10 +66,33 @@ public class WS_TK_Ticket_Download extends IntentService {
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
         } finally {
-
+            //Verifica se existem form com pendencia de GPS
+            checkSetLocationPendencyPreferenceFalse();
+            //Chama atualização da notificação.
+            ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
+            //
             WBR_TK_Ticket_Download.completeWakefulIntent(intent);
         }
 
+    }
+
+    /**
+     * LUCHE - 09/09/2020
+     * <p></p>
+     * Metodo que verifica se existem form com pendencia de GPS e caso não exista nenhum, reseta
+     * preferencia.
+     * A chamada desse metodo se faz necessaria pois, quando o FormDao identifica que existe um form
+     * no server e outro criado localmente, o form local é cancelado e se não houverem mais forms
+     * com pendencia de GPS, a flag deve ser resetada.
+     */
+    private void checkSetLocationPendencyPreferenceFalse() {
+        int pendencies = ToolBox_Inf.getLocationPendencies(getApplicationContext());
+        if(pendencies == 0) {
+            ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, false);
+            if(SV_LocationTracker.status) {
+                ToolBox_Inf.stop_Location_Tracker(getApplicationContext());
+            }
+        }
     }
 
     private void processTicketDownload(String ticketPkList) throws Exception {

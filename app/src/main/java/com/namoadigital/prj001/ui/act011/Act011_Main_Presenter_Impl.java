@@ -642,12 +642,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
      * @param custom_form_data
      * @return
      */
-    public boolean isFormInWaitingSync(long customer_code, int custom_form_type, int custom_form_code,int custom_form_version,int custom_form_data){
+    public boolean setForceSentByForm(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data){
         GE_Custom_Form_Data formData =
             getGeCustomFormDataByPk(customer_code, custom_form_type, custom_form_code, custom_form_version, custom_form_data);
         //
-        return formData != null && ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(formData.getCustom_form_status());
-
+        return
+            formData != null
+            && ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(formData.getCustom_form_status())
+            && formData.getLocation_pendency() == 0;
     }
 
     /**
