@@ -18,6 +18,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
@@ -135,6 +136,8 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
             ToolBox_Inf.convertStringToInt(
                 ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context))
             );
+        ArrayList<TK_Ticket> ticketInToken = ToolBox_Inf.getTicketsWithinToken(ToolBox_Con.getPreference_Customer_Code(context));
+        qtyToSend = qtyToSend + ticketInToken.size();
         //
         return qtyToSend > 0;
     }
@@ -186,6 +189,47 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
         }else {
             executeWSTicketSave();
         }
+    }
+
+    @Override
+    public void processWS_SaveReturn(String result) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //
+        ArrayList<TSave_Rec.Error_Process> errorProcesses = null;
+        try {
+            errorProcesses = gson.fromJson(
+                    result,
+                    new TypeToken<ArrayList<TSave_Rec.Error_Process>>() {
+                    }.getType()
+            );
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        //
+        if(errorProcesses != null && errorProcesses.size() > 0){
+            ArrayList<HMAux> auxResults = new ArrayList<>();
+            for (TSave_Rec.Error_Process error_process : errorProcesses) {
+                //
+                HMAux mHmAux = ToolBox_Inf.getWsSaveErrorProcessAuxResult(error_process);
+                //
+                HMAux aux = new HMAux();
+                switch (mHmAux.get("type")) {
+                    case ConstantBaseApp.SYS_STATUS_SCHEDULE:
+                        aux.put(Generic_Results_Adapter.LABEL_TTL, mHmAux.get("label"));
+                        aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mHmAux.get("final_status")+"\n"+mHmAux.get("status"));
+                        break;
+                    case TSave_Rec.Error_Process.ERROR_TYPE_TICKET:
+                        aux.put(Generic_Results_Adapter.LABEL_TTL, mHmAux.get("label"));
+                        aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mHmAux.get("final_status")+"\n"+mHmAux.get("status"));
+                        break;
+                }
+                //
+                auxResults.add(aux);
+            }
+            //
+            mView.addResultList(auxResults);
+        }
+
     }
 
     private boolean hasFormWaitingSyncWithinAnyTicket(Context context) {
@@ -390,7 +434,10 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
                     )
                     ) {
                         //Se erro, verifica se erro de processamento qual erro foi e pega msg
-                        auxResult.put(ticketCode, getResultSaveMsgFormmated(actReturn));
+                        if(!ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus())){
+                            ticketResult = ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus());
+                            auxResult.put(ticketCode, getResultSaveMsgFormmated(actReturn));
+                        }
                     }
                 }
                 //For no resumido por ticket montando msg a ser exibida
@@ -404,7 +451,8 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
                     resultList.add(hmAux);
                 }
                 //
-                mView.showResult(resultList);
+                mView.addResultList(resultList);
+                mView.showResult(ticketResult);
             } else {
                 mView.showMsg(
                     hmAux_Trans.get("alert_none_ticket_returned_ttl"),

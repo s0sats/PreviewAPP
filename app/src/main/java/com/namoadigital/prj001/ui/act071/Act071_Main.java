@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -130,7 +131,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private boolean isCreationAction;
     private int mActionSeqTmp;
     private String ticket_result;
-
+    private ArrayList<HMAux> wsResult = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -213,6 +214,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("dialog_ticket_form_save_ttl");
         transList.add("dialog_ticket_form_save_start");
         //
+        transList.add("alert_ticket_results_ok");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -226,6 +229,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         bindViews();
         //
         recoverIntentsInfo();
+        //
+        wsResult.clear();
         //
         mPresenter = new Act071_Main_Presenter(
             context,
@@ -535,6 +540,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         return isCreationCtrl;
     }
 
+    @Override
+    public void addResultList(ArrayList<HMAux> auxResults) {
+        wsResult.addAll(auxResults);
+    }
+
     private void copyFiles(String fromFile, String toFile) throws IOException {
 
         File src = new File(fromFile);
@@ -668,48 +678,56 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     @Override
-    public void showResult(ArrayList<HMAux> resultList, final boolean ticketResult) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+    public void showResult(final boolean ticketResult) {
+        if(wsResult != null && wsResult.isEmpty() && ticketResult){
+            Toast.makeText(context,  hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
+            checkPostTicketSaveFlow();
+            wsResult.clear();
+        }else {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act028_dialog_results, null);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.act028_dialog_results, null);
 
-        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
-        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
-        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
-        //trad
-        tv_title.setText(hmAux_Trans.get("alert_ticket_ttl"));
-        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-        //
-        lv_results.setAdapter(
-            new Generic_Results_Adapter(
-                context,
-                resultList,
-                Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
-                hmAux_Trans
-            )
-        );
-        //
-        builder.setView(view);
-        builder.setCancelable(false);
-        //
-        final AlertDialog show = builder.show();
-        //
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //LUCHE - 05/08/2020
-                //Agora no ticket 2.0 dando sucesso ou erro, processo o saveFlow
+            TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+            ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+            Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
+            //trad
+            tv_title.setText(hmAux_Trans.get("alert_ticket_ttl"));
+            btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+            //
+            lv_results.setAdapter(
+                    new Generic_Results_Adapter(
+                            context,
+                            wsResult,
+                            Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                            hmAux_Trans
+                    )
+            );
+            //
+            builder.setView(view);
+            builder.setCancelable(false);
+            //
+            final AlertDialog show = builder.show();
+            //
+            btn_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //LUCHE - 05/08/2020
+                    //Agora no ticket 2.0 dando sucesso ou erro, processo o saveFlow
                 /*if(ticketResult){
                     checkPostTicketSaveFlow();
                 }else{
                     updateActionData();
                 }*/
-                checkPostTicketSaveFlow();
-                //
-                show.dismiss();
-            }
-        });
+                    checkPostTicketSaveFlow();
+                    //
+                    wsResult.clear();
+                    //
+                    show.dismiss();
+                }
+            });
+        }
     }
     @Override
     public void checkPostTicketSaveFlow() {
@@ -1225,6 +1243,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         }else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
             progressDialog.dismiss();
             wsProcess = "";
+            mPresenter.processWS_SaveReturn(mLink);
             mPresenter.execTicketSave();
         }
         //
@@ -1237,6 +1256,13 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             wsProcess = "";
             mPresenter.processSaveReturn(mTicketCtrl.getTicket_prefix(), mTicketCtrl.getTicket_code(), ticket_result);
+        }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+            //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
+            if(!wsResult.isEmpty()) {
+                showResult(false);
+            }
+        }else{
+            wsResult.clear();
         }
         //Atualiza UI
         updateActionData();
@@ -1250,6 +1276,13 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             wsProcess = "";
             mPresenter.processSaveReturn(mTicketCtrl.getTicket_prefix(), mTicketCtrl.getTicket_code(), ticket_result);
+        }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+            //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
+            if(!wsResult.isEmpty()) {
+                showResult(false);
+            }
+        }else{
+            wsResult.clear();
         }
         //Atualiza UI
         updateActionData();

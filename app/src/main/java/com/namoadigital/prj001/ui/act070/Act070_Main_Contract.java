@@ -30,7 +30,7 @@ public interface Act070_Main_Contract {
 
         void showAlert(String ttl, String msg);
 
-        void showResult(ArrayList<HMAux> resultList, boolean ticketResult);
+        void showResult(boolean ticketResult);
 
         void callRefreshUi();
 
@@ -51,6 +51,8 @@ public interface Act070_Main_Contract {
         void setCurrentStepFirstPosition(int currentStepFirstPosition);
 
         int getCurrentStepFirstPosition();
+
+        void addResultList(ArrayList<HMAux> resultList);
 
         void callAct076();
 
@@ -108,5 +110,7 @@ public interface Act070_Main_Contract {
         boolean verifyProductForForm();
 
         void defineFormFlow(TK_Ticket mTicket, StepForm stepForm);
+
+        void processWS_SaveReturn(String mLink);
     }
 }

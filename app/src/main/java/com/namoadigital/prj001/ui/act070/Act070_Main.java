@@ -93,7 +93,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private String room_code;
     private FCMReceiver fcmReceiver;
     private int currentStepFirstPosition = -1;
-
+    private ArrayList<HMAux> wsResult = new ArrayList<>();
     /**
      * Iniciando terraplanagem e reinicio da tela.
      * @param savedInstanceState
@@ -235,6 +235,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     private void initVars() {
         bindViews();
+        //
+        wsResult.clear();
         //
         mPresenter = new Act070_Main_Presenter(
             context,
@@ -547,6 +549,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     @Override
+    public void addResultList(ArrayList<HMAux> resultList) {
+        wsResult.addAll(resultList);
+    }
+
+    @Override
     public void setCurrentStepFirstPosition(int currentStepFirstPosition) {
         this.currentStepFirstPosition = currentStepFirstPosition;
     }
@@ -843,10 +850,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     @Override
-    public void showResult(ArrayList<HMAux> resultList, boolean ticketResult) {
-        if(ticketResult){
+    public void showResult(boolean ticketResult) {
+        if(wsResult != null && wsResult.isEmpty() && ticketResult){
             Toast.makeText(context,  hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
             refreshUi();
+            wsResult.clear();
         }else{
             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -863,7 +871,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             lv_results.setAdapter(
                     new Generic_Results_Adapter(
                             context,
-                            resultList,
+                            wsResult,
                             Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
                             hmAux_Trans
                     )
@@ -879,6 +887,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 public void onClick(View v) {
                     //
                     refreshUi();
+                    //
+                    wsResult.clear();
                     //
                     show.dismiss();
                 }
@@ -957,6 +967,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
             wsProcess = "";
             progressDialog.dismiss();
+            mPresenter.processWS_SaveReturn(mLink);
             mPresenter.prepareSyncProcess(mTicket);
         }
         //
@@ -974,6 +985,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
                 save_return = "";
             }
+        }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+            //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
+            if(!wsResult.isEmpty()) {
+                showResult(false);
+            }
+        }else{
+            wsResult.clear();
         }
         //LUCHE - 03/09/2020
         //Ao chamar o updateTicketData, é verificado se há necessidade sincronizar os dados com server
@@ -994,6 +1012,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 mPresenter.processSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), save_return);
                 save_return = "";
             }
+        }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+            //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
+            if(!wsResult.isEmpty()) {
+                showResult(false);
+            }
+        }else{
+            wsResult.clear();
         }
         //LUCHE - 03/09/2020
         //Ao chamar o updateTicketData, é verificado se há necessidade sincronizar os dados com server

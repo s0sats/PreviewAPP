@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -61,6 +62,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private String resultFromTicketSave;
     private int syncs_qty;
     private boolean nextTicketsFlow=false;
+    private ArrayList<HMAux> wsResult = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +140,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         //
         transList.add("progress_sync_ttl");
         transList.add("progress_sync_msg");
+        //
+        transList.add("alert_ticket_results_ok");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -440,6 +444,60 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     @Override
+    public void showResult(boolean ticketResult) {
+        if(wsResult != null && wsResult.isEmpty() && ticketResult){
+            Toast.makeText(context,  hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
+            if (nextTicketsFlow) {
+                nextTicketsFlow = false;
+            } else {
+                checkFlow(mFrgSerialSearch.getHMAuxValues());
+            }
+            wsResult.clear();
+        }else {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+            TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+            ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+            Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
+            //trad
+            tv_title.setText(hmAux_Trans.get("alert_ticket_results_ttl"));
+            btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+            //
+            lv_results.setAdapter(
+                    new Generic_Results_Adapter(
+                            context,
+                            wsResult,
+                            Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                            hmAux_Trans
+                    )
+            );
+            //
+            builder.setView(view);
+            builder.setCancelable(false);
+            //
+            final AlertDialog show = builder.show();
+            //
+            btn_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    show.dismiss();
+                    //
+                    wsResult.clear();
+                    //
+                    if (nextTicketsFlow) {
+                        nextTicketsFlow = false;
+                    } else {
+                        checkFlow(mFrgSerialSearch.getHMAuxValues());
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
     public void callAct072(Bundle bundle) {
         Intent intent = new Intent(context, Act072_Main.class);
         intent.putExtras(bundle);
@@ -487,53 +545,12 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
             wsProcess = "";
             progressDialog.dismiss();
+            mPresenter.processWS_SaveReturn(result);
             mPresenter.executeWSTicketSave();
         } else{
             //
             progressDialog.dismiss();
         }
-    }
-
-    @Override
-    public void showResult(ArrayList<HMAux> resultList) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act028_dialog_results, null);
-
-        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
-        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
-        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
-        //trad
-        tv_title.setText(hmAux_Trans.get("alert_ticket_results_ttl"));
-        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-        //
-        lv_results.setAdapter(
-            new Generic_Results_Adapter(
-                context,
-                resultList,
-                Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
-                hmAux_Trans
-            )
-        );
-        //
-        builder.setView(view);
-        builder.setCancelable(false);
-        //
-        final AlertDialog show = builder.show();
-        //
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                show.dismiss();
-                //
-                if(nextTicketsFlow){
-                    nextTicketsFlow=false;
-                }else {
-                    checkFlow(mFrgSerialSearch.getHMAuxValues());
-                }
-            }
-        });
     }
 
     @Override
@@ -551,6 +568,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     @Override
+    public void addResultList(ArrayList<HMAux> resultList) {
+        wsResult.addAll(resultList);
+    }
+
+    @Override
     public void onBackPressed() {
         mPresenter.onBackPressedClicked();
     }
@@ -562,7 +584,15 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             progressDialog.dismiss();
             mPresenter.processSaveReturn(resultFromTicketSave);
+        }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+            //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
+            if(!wsResult.isEmpty()) {
+                showResult(false);
+            }
+        }else{
+            wsResult.clear();
         }
+
         disableProgressDialog();
     }
 
@@ -573,6 +603,13 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             progressDialog.dismiss();
             mPresenter.processSaveReturn(resultFromTicketSave);
+        }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+            //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
+            if(!wsResult.isEmpty()) {
+                showResult(false);
+            }
+        }else{
+            wsResult.clear();
         }
         //
         disableProgressDialog();

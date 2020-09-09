@@ -33,6 +33,7 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
@@ -315,9 +316,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     ) {
                         //Se erro, verifica se erro de processamento qual erro foi e pega msg
                         //auxResult.put(ticketCode, getResultMsgFormmated(actReturn));
-                        auxResult.put(ticketCode, actReturn.getRetMsg());
-                        if(ticketResult){
+
+                        if(!ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus())){
                             ticketResult = ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus());
+                            auxResult.put(ticketCode, actReturn.getRetMsg());
                         }
                     }
                 }
@@ -340,7 +342,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     }
                 }
                 //
-                mView.showResult(resultList, ticketResult);
+                mView.addResultList(resultList);
+                mView.showResult(ticketResult);
             } else {
                 mView.showAlert(
                     hmAux_Trans.get("alert_none_ticket_returned_ttl"),
@@ -389,8 +392,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     )
                     ) {
                         //Se erro, verifica se erro de processamento qual erro foi e pega msg
-                        auxResult.put(ticketCode, getResultMsgFormmated(actReturn));
-                        auxAction.put(ticketCode, String.valueOf(actReturn.getCheckinAction()));
+                        if(!ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus())){
+                            ticketResult = ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus());
+                            auxResult.put(ticketCode, getResultMsgFormmated(actReturn));
+                            auxAction.put(ticketCode, String.valueOf(actReturn.getCheckinAction()));
+                        }
                     }
                 }
                 //For no resumido por ticket montando msg a ser exibida
@@ -416,7 +422,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                     }
                 }
                 //
-                mView.showResult(resultList, ticketResult);
+                mView.addResultList(resultList);
+                mView.showResult(ticketResult);
             } else {
                 mView.showAlert(
                     hmAux_Trans.get("alert_checkin_not_returned_ttl"),
@@ -430,6 +437,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             );
         }
     }
+
+
 
     private String setCheckinActionResultLbl(String status, String action) {
         if ("1".equals(action)) {
@@ -713,6 +722,47 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 hmAux_Trans.get("alert_step_or_ctrl_not_found_msg")
             );
         }
+    }
+
+    @Override
+    public void processWS_SaveReturn(String mLink) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //
+            ArrayList<TSave_Rec.Error_Process> errorProcesses = null;
+            try {
+                errorProcesses = gson.fromJson(
+                        mLink,
+                        new TypeToken<ArrayList<TSave_Rec.Error_Process>>() {
+                        }.getType()
+                );
+            }catch (Exception e){
+                ToolBox_Inf.registerException(getClass().getName(),e);
+            }
+            //
+            if(errorProcesses != null && errorProcesses.size() > 0){
+                ArrayList<HMAux> auxResults = new ArrayList<>();
+                for (TSave_Rec.Error_Process error_process : errorProcesses) {
+                    //
+                    HMAux mHmAux = ToolBox_Inf.getWsSaveErrorProcessAuxResult(error_process);
+                    //
+                    HMAux aux = new HMAux();
+                    switch (mHmAux.get("type")) {
+                       case ConstantBaseApp.SYS_STATUS_SCHEDULE:
+                            aux.put(Generic_Results_Adapter.LABEL_TTL, mHmAux.get("label"));
+                            aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mHmAux.get("final_status")+"\n"+mHmAux.get("status"));
+                            break;
+                        case TSave_Rec.Error_Process.ERROR_TYPE_TICKET:
+                            aux.put(Generic_Results_Adapter.LABEL_TTL, mHmAux.get("label"));
+                            aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mHmAux.get("final_status")+"\n"+mHmAux.get("status"));
+                            break;
+                    }
+                    //
+                    auxResults.add(aux);
+                }
+                //
+                mView.addResultList(auxResults);
+            }
+
     }
 
     private void showConfirmStartFormDialog(final TK_Ticket mTicket, final TK_Ticket_Step ticketStep, final TK_Ticket_Ctrl ticketCtrl) {

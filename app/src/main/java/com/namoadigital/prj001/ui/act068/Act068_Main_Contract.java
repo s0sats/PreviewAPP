@@ -28,9 +28,11 @@ public interface Act068_Main_Contract {
 
        void callAct076(Bundle bundle);
 
-       void showResult(ArrayList<HMAux> resultList);
+       void showResult(boolean ticketResult);
 
        void setSync(int qty);
+
+       void addResultList(ArrayList<HMAux> resultList);
    }
 
    interface I_Presenter{
@@ -61,5 +63,7 @@ public interface Act068_Main_Contract {
        void executeWSTicketDownload();
 
        void defineWsToCall();
+
+       void processWS_SaveReturn(String result);
    }
 }

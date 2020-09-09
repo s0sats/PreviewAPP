@@ -28,7 +28,7 @@ public interface Act071_Main_Contract {
 
         void callAct070();
 
-        void showResult(ArrayList<HMAux> resultList, boolean ticketResult);
+        void showResult(boolean ticketResult);
 
         boolean hasUnsavedData();
 
@@ -53,6 +53,8 @@ public interface Act071_Main_Contract {
         void callAct076();
 
         boolean isCreationCtrl();
+
+        void addResultList(ArrayList<HMAux> auxResults);
     }
 
     interface I_Presenter{
@@ -116,6 +118,8 @@ public interface Act071_Main_Contract {
         boolean verifyProductForForm();
 
         void callWsSave();
+
+        void processWS_SaveReturn(String mLink);
 
         /*boolean hasPartnerProfile(Integer partner_code);
 
