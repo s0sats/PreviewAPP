@@ -39,7 +39,7 @@ public class Sql_Act070_005 implements Specification {
                         "      and d.ticket_code =   c.ticket_code \n" +
                         "      and c.ctrl_status = " + "'" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"'"+
                         "      and d.custom_form_status = " + "'" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"'"+
-                        "        \n"
+                        "      and d.location_pendency =   0 \n"
                 )
                 .toString();
     }

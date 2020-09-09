@@ -316,7 +316,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         //Se erro, verifica se erro de processamento qual erro foi e pega msg
                         //auxResult.put(ticketCode, getResultMsgFormmated(actReturn));
                         auxResult.put(ticketCode, actReturn.getRetMsg());
-                        if(ticketCode.equals(ticketPk)){
+                        if(ticketResult){
                             ticketResult = ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus());
                         }
                     }
