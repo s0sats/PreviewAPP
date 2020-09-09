@@ -1044,7 +1044,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //Se form for do tipo ticket e fluxo do ticket, seta msgType que finaliza SEM CHAMAR O WS, pois
         //o Ws será chamado encadeadamento na Act070
         int msgType =
-            isTicketProcess && ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(mView.getRequestingAct())
+            isTicketProcess && ConstantBaseApp.ACT070.equals(mView.getRequestingAct())
                 ? Act011_Main.SHOW_MSG_TYPE_TICKET_FORM_FINALIZED
                 : 2
             ;
