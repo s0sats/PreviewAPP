@@ -343,8 +343,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         customFormLocal.getTicket_seq_tmp(),
                         customFormLocal.getStep_code(),
                         customFormLocal.getCustom_form_data(),
-                        ConstantBaseApp.SYS_STATUS_PROCESS
-                    );
+                        ConstantBaseApp.SYS_STATUS_PROCESS,
+                        formData.getLocation_pendency());
                     //Resgata Step para setar data de checkin no form.
                     TK_Ticket_Step ticketStep = getTicketStep(
                         customFormLocal.getTicket_prefix(),
@@ -422,7 +422,21 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             && customFormLocal.getStep_code() != null && customFormLocal.getStep_code() > -1;
     }
 
-    private void updateTicketCtrl(long customer_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code, long custom_form_data, String status) {
+    /**
+     * LUCHE - 08/09/2020
+     * Metodo que altera status do ticket e dependendo do status finaliza ou não ctrl.
+     * Se o form ainda precisar de posição GPS, seta o status waiting_sync MAS NÃO UPDATE REQUIRED
+     * @param customer_code
+     * @param mTicket_prefix
+     * @param mTicket_code
+     * @param mTicket_seq
+     * @param mTicket_seq_tmp
+     * @param mStep_code
+     * @param custom_form_data
+     * @param status
+     * @param location_pendency - Identificador se o form esta com pendencia de GPS.
+     */
+    private void updateTicketCtrl(long customer_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code, long custom_form_data, String status, int location_pendency) {
         TK_Ticket_Step tkTicketStep = getTicketStep(mTicket_prefix, mTicket_code, mStep_code);
         //
         if(tkTicketStep != null && tkTicketStep.getCustomer_code() > 0){
@@ -441,8 +455,15 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             setCloseInfoIntoCtrl(tkTicketCtrl);
                             checkCloseStepForWaitingSync(tkTicketStep,tkTicketCtrl);
                             //
-                            tkTicketCtrl.setUpdate_required(1);
-                            tkTicketStep.setUpdate_required(1);
+                            /*
+                             * location_pendency
+                             *  0: Sem pendencia de GPS, finaliza e seta update required
+                             *  1: Com pendencia de GPS, finaliza e deixa serviço de GPS setar update_required
+                             */
+                            if(location_pendency == 0) {
+                                tkTicketCtrl.setUpdate_required(1);
+                                tkTicketStep.setUpdate_required(1);
+                            }
                             break;
                     }
                     tkTicketStep.getCtrl().set(ctrlIdx,tkTicketCtrl);
@@ -608,6 +629,48 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 );
             }
         }
+    }
+
+    /**
+     * LUCHE - 08/09/2020
+     * <p></p>
+     * Metodo que verifica se form esta no status waiting_sync.
+     * @param customer_code
+     * @param custom_form_type
+     * @param custom_form_code
+     * @param custom_form_version
+     * @param custom_form_data
+     * @return
+     */
+    public boolean isFormInWaitingSync(long customer_code, int custom_form_type, int custom_form_code,int custom_form_version,int custom_form_data){
+        GE_Custom_Form_Data formData =
+            getGeCustomFormDataByPk(customer_code, custom_form_type, custom_form_code, custom_form_version, custom_form_data);
+        //
+        return formData != null && ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(formData.getCustom_form_status());
+
+    }
+
+    /**
+     * LUCHE - 08/09/2020
+     * <p></p>
+     * Metodo que seleciona o custom_form_data atual com o status atualizado.
+     * @param customer_code
+     * @param custom_form_type
+     * @param custom_form_code
+     * @param custom_form_version
+     * @param custom_form_data
+     * @return
+     */
+    private GE_Custom_Form_Data getGeCustomFormDataByPk(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data) {
+        return custom_form_dataDao.getByString(
+            new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
+                String.valueOf(customer_code),
+                String.valueOf(custom_form_type),
+                String.valueOf(custom_form_code),
+                String.valueOf(custom_form_version),
+                String.valueOf(custom_form_data)
+            ).toSqlQuery()
+        );
     }
 
     private DaoObjReturn updateScheduleInfos(GE_Custom_Form_Local customFormLocal, String serial_id) {
@@ -935,6 +998,13 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ConstantBaseApp.SYS_STATUS_WAITING_SYNC
             );
         }
+        /**
+         * LUCHE - 08/09/2020
+         * Modificado ordem da chamadas , pois será necessario levar em consideração form com pendencia
+         * de GPS no set do update_required do ticket, sendo assim, o metodo checkGpsFlow deve
+         * ser SEMPRE chamado antes do update do ticket.
+         */
+        checkGpsFlow(formData, require_location);
         //
         if(isTicketProcess){
             updateTicketCtrl(
@@ -945,11 +1015,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 formData.getTicket_seq_tmp(),
                 formData.getStep_code(),
                 formData.getCustom_form_data(),
-                ConstantBaseApp.SYS_STATUS_WAITING_SYNC
+                ConstantBaseApp.SYS_STATUS_WAITING_SYNC,
+                formData.getLocation_pendency()
             );
         }
-        //
-        checkGpsFlow(formData, require_location);
         formData.setCustom_form_status(Constant.SYS_STATUS_WAITING_SYNC);
         formData.setDate_end(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
 
@@ -971,11 +1040,19 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //
         context.sendBroadcast(mIntent);
         /*Fim da fila de upload */
-        //
+        //LUCHE - 08/09/2020
+        //Se form for do tipo ticket e fluxo do ticket, seta msgType que finaliza SEM CHAMAR O WS, pois
+        //o Ws será chamado encadeadamento na Act070
+        int msgType =
+            isTicketProcess && ConstantBaseApp.ACT070.equals(mView.getRequestingAct())
+                ? Act011_Main.SHOW_MSG_TYPE_TICKET_FORM_FINALIZED
+                : 2
+            ;
         mView.showMsg(
                 hmAux_Trans.get("alert_finalize_title"),//"Finalizando Registro",
                 hmAux_Trans.get("alert_finalize_msg"),//"Registro Finalizado!!!",
-                2);
+            msgType
+        );
 
 
     }

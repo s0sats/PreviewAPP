@@ -133,6 +133,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR = 5;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR = 6;
     public static final int SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR = 7;
+    public static final int SHOW_MSG_TYPE_TICKET_FORM_FINALIZED = 8;
 
     private Act011_Main_Presenter mPresenter;
 
@@ -2176,24 +2177,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
-                               /* GE_FileDao geFileDao = new GE_FileDao(
-                                        context,
-                                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
-                                );
-
-                                geFileDao.addUpdate(geFiles, false);
-
-                                activateUpload(context);*/
-
-                                // Hugo is ok
-
-//                                if (mSo_Prefix == null || mSo_Code == null) {
-//                                    callAct051(context);
-//                                } else {
-//                                    nservCall();
-//                                }
-
                                 if (ToolBox_Con.isOnline(context)) {
                                     enableProgressDialog(
                                             hmAux_Trans.get("alert_send_finish_ttl"),
@@ -2214,7 +2197,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         0,
                         false
                 );
-
                 break;
 
             case 3:
@@ -2262,6 +2244,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 );
                 break;
             case SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR:
+            case SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR:
+                //TODO O QUE FAZER NO CASO DO TICKET
                 ToolBox.alertMSG(
                     context,
                     title,
@@ -2275,21 +2259,22 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     0
                 );
                 break;
-            case SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR:
+            case SHOW_MSG_TYPE_TICKET_FORM_FINALIZED:
                 ToolBox.alertMSG(
-                    context,
+                    Act011_Main.this,
                     title,
                     msg,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            //onBackPressed();
-                            //TODO O QUE FAZER ?!
+                            flowControl();
                         }
                     },
-                    0
+                    0,
+                    false
                 );
                 break;
+
         }
     }
 
@@ -2512,6 +2497,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket_prefix != null ? mTicket_prefix : -1 );
         bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket_code != null ? mTicket_code : -1 );
+        //LUCHE - 08/09/2020
+        //Se é finalização do form e esta voltando pra act070, seta flag para forçar o envio ao chegar na act
+        if(mPresenter.isFormInWaitingSync(formData.getCustomer_code(),formData.getCustom_form_type(),formData.getCustom_form_code(),formData.getCustom_form_version(), (int) formData.getCustom_form_data())){
+            bundle.putBoolean(Act070_Main.PARAM_FORCE_SEND_BY_FORM_EXEC,true);
+        }
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
