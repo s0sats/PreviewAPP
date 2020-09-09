@@ -183,6 +183,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             ) {
                 if (ConstantBaseApp.SYS_STATUS_PENDING.equals(dbTicketForm.getForm_status())
                     || ConstantBaseApp.SYS_STATUS_PROCESS.equals(dbTicketForm.getForm_status())
+                    || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(dbTicketForm.getForm_status())
                 ) {
                     GE_Custom_Form_Local formLocalToCancel = formLocalDao.getByStringSharedDbInstance(
                         new TK_Ticket_Form_Sql_003(
@@ -215,6 +216,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     }
                     if (formDataToCancel != null) {
                         formDataToCancel.setCustom_form_status(ConstantBaseApp.SYS_STATUS_CANCELLED);
+                        formDataToCancel.setLocation_pendency(0);
                         DaoObjReturn daoObjReturn = formDataDao.addUpdateWithReturnAndSharedDbInstance(formDataToCancel,db);
                         if (daoObjReturn.hasError()) {
                             throw new Exception(daoObjReturn.getErrorMsg());

@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -21,6 +22,7 @@ import com.namoadigital.prj001.sql.Sql_SV_Location_Tracker_001;
 import com.namoadigital.prj001.sql.Sql_SV_Location_Tracker_002;
 import com.namoadigital.prj001.sql.Sql_SV_Location_Tracker_003;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -193,7 +195,10 @@ public class SV_LocationTracker extends Service {
                                 form_data.getTicket_seq_tmp()
                             ).toSqlQuery()
                         );
+                        //Envia broadcast para tela
+                        sendTicketBroadcastStatus();
                     }
+                    //
                 }
 //                String dataRecorded =
 //                        "\nasync_gps = " + async_gps +
@@ -227,6 +232,20 @@ public class SV_LocationTracker extends Service {
                 && customFormData.getTicket_seq() != null && customFormData.getTicket_seq() > -1
                 && customFormData.getTicket_seq_tmp() != null && customFormData.getTicket_seq_tmp()  > -1
                 && customFormData.getStep_code() != null && customFormData.getStep_code() > -1;
+    }
+
+    /**
+     * LUCHE - 09/09/2020
+     * <p></p>
+     * Metodo que dispara broadcast para avisar tela de ticket que precisa ser atualizada.
+     */
+    private void sendTicketBroadcastStatus() {
+        Intent mIntent = new Intent();
+        mIntent.setAction(Constant.WS_FCM);
+        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        mIntent.putExtra(ConstantBaseApp.SW_TYPE,ConstantBaseApp.TK_TICKET_FORM_GPS_LOCATION_UPDATE);
+        //
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(mIntent);
     }
 
     private void recordProcess(String data) {

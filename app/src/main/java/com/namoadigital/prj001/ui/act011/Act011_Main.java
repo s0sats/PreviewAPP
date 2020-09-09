@@ -2499,7 +2499,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket_code != null ? mTicket_code : -1 );
         //LUCHE - 08/09/2020
         //Se é finalização do form e esta voltando pra act070, seta flag para forçar o envio ao chegar na act
-        if(mPresenter.isFormInWaitingSync(formData.getCustomer_code(),formData.getCustom_form_type(),formData.getCustom_form_code(),formData.getCustom_form_version(), (int) formData.getCustom_form_data())){
+        if(mPresenter.setForceSentByForm(formData.getCustomer_code(),formData.getCustom_form_type(),formData.getCustom_form_code(),formData.getCustom_form_version(), (int) formData.getCustom_form_data())){
             bundle.putBoolean(Act070_Main.PARAM_FORCE_SEND_BY_FORM_EXEC,true);
         }
         //

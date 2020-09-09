@@ -40,7 +40,8 @@ public class TK_Ticket_Form_Sql_003 implements Specification {
                     "      and fl.ticket_seq_tmp = '" + ticket_seq_tmp +"'" +
                     "      and fl.custom_form_status in (" +
                                     "'"+ ConstantBaseApp.SYS_STATUS_PENDING +"'," +
-                                    "'"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING +"'" +
+                                    "'"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING +"'," +
+                                    "'"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"'" +
                     ")"
             )
             .toString();

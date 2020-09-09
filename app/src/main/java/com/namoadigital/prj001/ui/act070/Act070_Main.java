@@ -582,6 +582,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }
     }
 
+    private void updateSyncRequiredByGpsService() {
+        mTicket.setUpdate_required(1);
+        //
+        if(mFrgPipelineHeader != null) {
+            mFrgPipelineHeader.updateSyncRequired(true);
+        }
+    }
+
     private void initFCMReceiver() {
         fcmReceiver = new FCMReceiver();
         //
@@ -882,12 +890,18 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             Bundle bundle = intent.getExtras();
             if (bundle != null
                 && bundle.containsKey(ConstantBaseApp.SW_TYPE)
-                && bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE)
             ) {
                 //
-                if (mPresenter.checkSyncRequireNeedsChange(mTicket.getTicket_prefix(), mTicket.getTicket_code())) {
-                    updateSyncRequiredByFCM();
+                if(bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE)) {
+                    if (mPresenter.checkSyncRequireNeedsChange(mTicket.getTicket_prefix(), mTicket.getTicket_code())) {
+                        updateSyncRequiredByFCM();
+                    }
                 }
+                //
+                if(bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.TK_TICKET_FORM_GPS_LOCATION_UPDATE)) {
+                    updateSyncRequiredByGpsService();
+                }
+
             }
         }
     }

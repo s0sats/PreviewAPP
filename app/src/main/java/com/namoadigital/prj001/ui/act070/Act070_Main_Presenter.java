@@ -48,6 +48,7 @@ import com.namoadigital.prj001.sql.Sql_Act070_003;
 import com.namoadigital.prj001.sql.Sql_Act070_004;
 import com.namoadigital.prj001.sql.Sql_Act070_005;
 import com.namoadigital.prj001.sql.Sql_Act070_006;
+import com.namoadigital.prj001.sql.Sql_Act070_007;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
@@ -464,7 +465,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         ) {
             return true;
         }
-
         return false;
     }
 
@@ -1402,7 +1402,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public void generateStepCtrlsContent(TK_Ticket mTicket, ArrayList<BaseStep> source , int mainPosition ) {
         ArrayList<BaseStep> stepsCtrls = generateStepCtrls(mTicket, (StepMain) source.get(mainPosition));
         if(stepsCtrls != null && stepsCtrls.size() > 0){
-            addSelectedStepProcessToSource(mTicket.getTicket_status(),source,mainPosition,stepsCtrls);
+            addSelectedStepProcessToSource(mTicket,source,mainPosition,stepsCtrls);
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_update_stepper_error_ttl"),
@@ -1418,8 +1418,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
-    private void addSelectedStepProcessToSource(String ticket_status, ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
+    private void addSelectedStepProcessToSource(TK_Ticket tkTicket, ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
+        String ticket_status = tkTicket.getTicket_status();
         int targetIdx = mainPosition + 1;
+        //
         try{
             //Se status do ticket for cancelado ou rejeitado, nem processa botões de ação
             if(!isBadStatus(ticket_status)) {
@@ -1430,7 +1432,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 //Adiciona btn de add processo se houver necessidade
                 addNewProcess(source, mainPosition, stepsCtrls);
                 //Adiciona btn de checkout se houver necessidade
-                addCheckOutCtrl(source, mainPosition, stepsCtrls);
+                addCheckOutCtrl(tkTicket,source, mainPosition, stepsCtrls);
                 //
             }
             //
@@ -1446,7 +1448,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
-    private void addCheckOutCtrl(ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
+    private void addCheckOutCtrl(TK_Ticket tkTicket, ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
         StepMain stepMain = (StepMain) source.get(mainPosition);
         //
         if( !isDoneOrWaitingSync(stepMain.getStepStatus())
@@ -1459,17 +1461,48 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 if(firstPlannedObj instanceof StepAbstractProcess){
                     String processStatus = ((StepAbstractProcess) firstPlannedObj).getProcessStatus();
                     if(isDoneOrWaitingSync(processStatus)){
-                        StepProcessBtn stepProcessBtn = new StepProcessBtn(
-                            stepMain.getStepCode(),
-                            hmAux_Trans.get("process_check_out_btn"),
-                            ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKOUT
-                        );
-                        //
-                        stepsCtrls.add(stepsCtrls.size(),stepProcessBtn);
+                        if(isNotFormProcessOrFormNoPendencie(tkTicket, (StepAbstractProcess)firstPlannedObj)){
+                            StepProcessBtn stepProcessBtn = new StepProcessBtn(
+                                stepMain.getStepCode(),
+                                hmAux_Trans.get("process_check_out_btn"),
+                                ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKOUT
+                            );
+                            //
+                            stepsCtrls.add(stepsCtrls.size(),stepProcessBtn);
+                        }
                     }
                 }
             }
         }
+    }
+
+    private boolean isNotFormProcessOrFormNoPendencie(TK_Ticket tkTicket, StepAbstractProcess firstPlannedObj) {
+        if(!(firstPlannedObj instanceof StepForm)){
+            return true;
+        }
+        //
+        return !hasFormWithGpsPendency(tkTicket,firstPlannedObj);
+    }
+
+    /**
+     * LUCHE - 09/09/2020
+     * <p></p>
+     * Metodo que verifica se existe algum form com pendencia de GPS no step.
+     * @param tkTicket Ticket
+     * @param firstPlannedObj Obj planeajdo
+     * @return - Verdadeiro houver alguma form do step aguardando pendencia GPS.
+     */
+    private boolean hasFormWithGpsPendency(TK_Ticket tkTicket, StepAbstractProcess firstPlannedObj) {
+        List<GE_Custom_Form_Data> formWithGpsPendency = formDataDao.query(
+            new Sql_Act070_007(
+                tkTicket.getCustomer_code(),
+                tkTicket.getTicket_prefix(),
+                tkTicket.getTicket_code(),
+                firstPlannedObj.getStepCode()
+            ).toSqlQuery()
+        );
+        //
+        return formWithGpsPendency != null && formWithGpsPendency.size() > 0;
     }
 
     @Nullable
