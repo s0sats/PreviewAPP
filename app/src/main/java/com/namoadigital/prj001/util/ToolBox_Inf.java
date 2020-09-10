@@ -184,6 +184,7 @@ import com.namoadigital.prj001.sql.Sql_Act005_008;
 import com.namoadigital.prj001.sql.Sql_Act005_010;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act070_005;
+import com.namoadigital.prj001.sql.Sql_Act070_008;
 import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
 import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
 import com.namoadigital.prj001.sql.Sql_Form_x_Product;
@@ -3724,7 +3725,9 @@ public class ToolBox_Inf {
 
     /**
      * BARRIONUEVO 01-09-2020
-     * Metodo que verifica forms de ctrl que estão em waiting sync
+     * Metodo que verifica forms de ctrl que estão em waiting sync.
+     * LUCHE - 10/09/2020
+     * Modificado query do metodo para incluir tb o os forms com pendencia de GPS.
      * @param ticket_prefix
      * @param ticket_code
      * @return
@@ -3744,6 +3747,32 @@ public class ToolBox_Inf {
                 ).toSqlQuery()
         );
         return formData != null;
+    }
+
+    /**
+     * LUCHE - 10/09/2020
+     * Verifica se existe alguma form com pendencia de GPS para o ticket passado.
+     * @param context
+     * @param ticket_prefix
+     * @param ticket_code
+     * @return
+     */
+    public static boolean hasFormGpsPendencyWithinTicket(Context context, int ticket_prefix, int ticket_code) {
+        GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        ArrayList<GE_Custom_Form_Data> formWithGpsPendency = (ArrayList<GE_Custom_Form_Data>) formDataDao.query(
+            new Sql_Act070_008(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ticket_prefix,
+                ticket_code
+            ).toSqlQuery()
+        );
+        //
+        return formWithGpsPendency != null && formWithGpsPendency.size() > 0;
     }
 
     private static void setProductToSync(long preference_customer_code, Sync_ChecklistDao syncChecklistDao, HMAux aux) {
