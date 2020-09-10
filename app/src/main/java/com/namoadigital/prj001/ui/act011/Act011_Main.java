@@ -1457,9 +1457,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             act011_ff_options.enableScheduled(ToolBox_Inf.isScheduleForm(formLocal));
 
             if (mSo_Prefix == null || mSo_Code == null) {
-                act011_ff_options.enableTab(formData.getCustom_form_status(), 0);
+                if((formData.getTicket_prefix() != null && formData.getTicket_prefix() > 0)
+                && (formData.getTicket_code() != null && formData.getTicket_code() > 0 )){
+                    act011_ff_options.enableTab(formData.getCustom_form_status(), 0, 1);
+                }else {
+                    act011_ff_options.enableTab(formData.getCustom_form_status(), 0, 0);
+                }
             } else {
-                act011_ff_options.enableTab(formData.getCustom_form_status(), 1);
+                act011_ff_options.enableTab(formData.getCustom_form_status(), 1, 0);
             }
 
             //act011_ff_options.enableTab(formData.getCustom_form_status());
