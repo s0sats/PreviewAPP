@@ -677,8 +677,10 @@ public class WS_TK_Ticket_Save extends IntentService {
                  * o download apaga essas infos.
                  * Aqui, como é save, em tese, não precisa chamada.
                  * //Busca ctrls tipo form em andamento e que seriam resetados.
-                 * tk_ticket.updateTicketCtrlFormInProcess(getApplicationContext());
+                 * LUCHE - 10/09/2020
+                 * O luche que passado errou feio, precisa sim
                  */
+                tk_ticket.updateTicketCtrlFormInProcess(getApplicationContext());
                 //Remove o ticket do banco de dados
                 ticketDao.removeFullV2(tk_ticket);
                 //Tenta o insert do ticket
