@@ -623,29 +623,29 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
      * @param mTkCode
      * @param mTkSeq
      * @param mStepCode
-     * @return
+     * @return - Retorna a CHAVE a ser buscada no hmAux, ou seja, o txt_code.
      */
     @Override
     public String defineActTitle(int act_profile, int mTkPrefix, int mTkCode, int mTkSeq, int mStepCode) {
         if(act_profile == 1){
-            return hmAux_Trans.get("act_ticket_product_ttl");
+            return "act_ticket_product_ttl";
         }else{
             TK_Ticket_Approval ticketApproval = getTicketApproval(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix, mTkCode, mTkSeq, mStepCode);
             //
             if(ticketApproval != null && ticketApproval.getApproval_type() != null){
                 switch (ticketApproval.getApproval_type()){
                     case APPROVAL_GET_MATERIAL:
-                        return hmAux_Trans.get("act_ticket_get_material_approval_ttl");
+                        return "act_ticket_get_material_approval_ttl";
                     case APPROVAL_RETURN_MATERIAL:
-                        return hmAux_Trans.get("act_ticket_return_material_approval_ttl");
+                        return "act_ticket_return_material_approval_ttl";
                     case APPROVAL_OPERATIONAL:
-                        return hmAux_Trans.get("act_ticket_operational_approval_ttl");
+                        return "act_ticket_operational_approval_ttl";
                     default:
-                        return hmAux_Trans.get("act_ticket_approval_ttl");
+                        return "act_ticket_approval_ttl";
                 }
             }
             //Se algo der erro poe label generico
-            return hmAux_Trans.get("act_ticket_approval_ttl");
+            return"act_ticket_approval_ttl";
         }
     }
 }

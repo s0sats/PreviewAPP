@@ -430,10 +430,12 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT075;
-        mAct_Title = Constant.ACT075 + "_" + "title";
+
         //Define o nome baseado no profile e tipo de aprovação
         if(mPresenter != null) {
             mAct_Title = mPresenter.defineActTitle(act_profile, mTkPrefix, mTkCode, mTkSeq, mStepCode);
+        }else{
+            mAct_Title = Constant.ACT075 + "_" + "title";
         }
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
