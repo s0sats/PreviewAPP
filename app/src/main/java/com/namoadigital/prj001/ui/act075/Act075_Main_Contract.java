@@ -70,5 +70,7 @@ public interface Act075_Main_Contract {
         List<TK_Ticket_Product> getTicketProductList(TK_Ticket tkTicket);
         //
         void setStartCtrl();
+
+        String defineActTitle(int act_profile, int mTkPrefix, int mTkCode, int mTkSeq, int mStepCode);
     }
 }

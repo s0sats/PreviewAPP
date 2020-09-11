@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_GET_MATERIAL;
+import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_OPERATIONAL;
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_RETURN_MATERIAL;
 
 public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
@@ -608,6 +609,43 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
             ticketStep.setStep_end_date(mTicketCtrl.getCtrl_end_date());
             ticketStep.setStep_end_user(mTicketCtrl.getCtrl_end_user());
             ticketStep.setStep_end_user_nick(mTicketCtrl.getCtrl_end_user_name());
+        }
+    }
+
+    /**
+     * LUCHE - 11/09/2020
+     * Metodo que define o titulo da tela baseado no act_profile ou tipo da aprovação
+     *  act_profile
+     *      1 = Produto
+     *      2 = Aprovação
+     * @param act_profile
+     * @param mTkPrefix
+     * @param mTkCode
+     * @param mTkSeq
+     * @param mStepCode
+     * @return
+     */
+    @Override
+    public String defineActTitle(int act_profile, int mTkPrefix, int mTkCode, int mTkSeq, int mStepCode) {
+        if(act_profile == 1){
+            return hmAux_Trans.get("act_ticket_product_ttl");
+        }else{
+            TK_Ticket_Approval ticketApproval = getTicketApproval(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix, mTkCode, mTkSeq, mStepCode);
+            //
+            if(ticketApproval != null && ticketApproval.getApproval_type() != null){
+                switch (ticketApproval.getApproval_type()){
+                    case APPROVAL_GET_MATERIAL:
+                        return hmAux_Trans.get("act_ticket_get_material_approval_ttl");
+                    case APPROVAL_RETURN_MATERIAL:
+                        return hmAux_Trans.get("act_ticket_return_material_approval_ttl");
+                    case APPROVAL_OPERATIONAL:
+                        return hmAux_Trans.get("act_ticket_operational_approval_ttl");
+                    default:
+                        return hmAux_Trans.get("act_ticket_approval_ttl");
+                }
+            }
+            //Se algo der erro poe label generico
+            return hmAux_Trans.get("act_ticket_approval_ttl");
         }
     }
 }

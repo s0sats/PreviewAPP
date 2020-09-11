@@ -431,6 +431,10 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
         mAct_Info = Constant.ACT075;
         mAct_Title = Constant.ACT075 + "_" + "title";
+        //Define o nome baseado no profile e tipo de aprovação
+        if(mPresenter != null) {
+            mAct_Title = mPresenter.defineActTitle(act_profile, mTkPrefix, mTkCode, mTkSeq, mStepCode);
+        }
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -673,6 +677,12 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         transList.add("alert_offline_save_msg");
         transList.add("alert_none_ticket_returned_ttl");
         transList.add("alert_none_ticket_returned_msg");
+        //
+        transList.add("act_ticket_product_ttl");
+        transList.add("act_ticket_approval_ttl");
+        transList.add("act_ticket_get_material_approval_ttl");
+        transList.add("act_ticket_return_material_approval_ttl");
+        transList.add("act_ticket_operational_approval_ttl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
