@@ -55,8 +55,9 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     private TK_Ticket_Approval tkTicketApproval;
     private OnApproveInteract mApproveListener;
     private ApprovalViewHolder approvalVH;
+    private boolean hasUpdatePendency;
 
-    public Act075_Product_List_Adapter(Context context, HMAux hmAux_Trans, List<TK_Ticket_Product> mValues, int act_profile, int inventory_control, boolean isEditable, Integer mainUser, boolean hasWithdrawApproved, boolean hasAppliedApproved, OnProductInteract mProductListener) {
+    public Act075_Product_List_Adapter(Context context, HMAux hmAux_Trans, List<TK_Ticket_Product> mValues, int act_profile, int inventory_control, boolean isEditable, Integer mainUser, boolean hasWithdrawApproved, boolean hasAppliedApproved, boolean hasUpdatePendency, OnProductInteract mProductListener) {
         this.mValues.addAll(mValues);
         this.act_profile = act_profile;
         this.inventory_control = inventory_control;
@@ -66,6 +67,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         this.mainUser = mainUser;
         this.hasWithdrawApproved = hasWithdrawApproved;
         this.hasAppliedApproved = hasAppliedApproved;
+        this.hasUpdatePendency = hasUpdatePendency;
         this.mProductListener = mProductListener;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -155,7 +157,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             addProductVH.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mProductListener.onAddProduct();
+                    mProductListener.onAddProduct(hasUpdatePendency && inventory_control == 1);
                 }
             });
         }
@@ -300,7 +302,11 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         cl_returned.setVisibility(View.GONE);
                         product_cell_tv_extract.setVisibility(View.GONE);
                         if(isEditable){
-                            enableWithdrawLayout(position, tk_ticket_product);
+                            if(hasUpdatePendency){
+                                disableProductEdition(true);
+                            }else{
+                                enableWithdrawLayout(position, tk_ticket_product);
+                            }
                         }else{
                             disableWithdrawLayout();
                         }
@@ -314,7 +320,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                             if (ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mainUser.toString())) {
                                 enableAppliedLayout(position, tk_ticket_product);
                             }else{
-                                disableAppliedEdition();
+                                disableProductEdition(false);
                             }
                         }else{
                             disableAppliedLayout();
@@ -329,7 +335,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         disableAppliedLayout();
                     }
                 }
-
+                //
                 if(isEditable) {
                     if(mProductListener.hasWithdrawnDataChange(tk_ticket_product)) {
                         product_cell_tv_withdrawn_qty.setBackground(context.getResources().getDrawable(R.color.namoa_color_ticket_process_highlight));
@@ -351,10 +357,16 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             //
         }
 
-        private void disableAppliedEdition() {
-            product_cell_iv_applied_substract.setEnabled(false);
-            product_cell_iv_applied_add.setEnabled(false);
-            product_cell_tv_applied_qty.setEnabled(false);
+        private void disableProductEdition(boolean isWithdraw) {
+            if(isWithdraw){
+                product_cell_iv_withdrawn_substract.setEnabled(false);
+                product_cell_iv_withdrawn_add.setEnabled(false);
+                product_cell_tv_withdrawn_qty.setEnabled(false);
+            }else {
+                product_cell_iv_applied_substract.setEnabled(false);
+                product_cell_iv_applied_add.setEnabled(false);
+                product_cell_tv_applied_qty.setEnabled(false);
+            }
         }
 
         private void calculateProductBalance(TK_Ticket_Product tk_ticket_product) {
@@ -722,7 +734,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     public interface OnProductInteract {
-        void onAddProduct();
+        void onAddProduct(boolean hasUpdatedRequired);
 
         void callQtyDialog(int position, TK_Ticket_Product tk_ticket_product);
 

@@ -303,7 +303,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return mTicket != null
             && (mTicket.getUpdate_required() == 1
                 || mTicket.getUpdate_required_product() == 1
-                || isTicketInTokenFile(mTicket.getTicket_prefix(),mTicket.getTicket_code())
+                || ToolBox_Inf.isTicketInTokenFile(context, mTicket.getTicket_prefix(),mTicket.getTicket_code())
                 );
     }
 
@@ -498,23 +498,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         ) {
             return true;
         }
-        return false;
-    }
-
-    @Override
-    public boolean isTicketInTokenFile(int ticket_prefix, int ticket_code) {
-        ArrayList<TK_Ticket> ticketInToken = ToolBox_Inf.getTicketsWithinToken(ToolBox_Con.getPreference_Customer_Code(context));
-        if(ticketInToken != null && ticketInToken.size() > 0){
-            for (TK_Ticket tkTicket : ticketInToken) {
-                if( tkTicket.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
-                    && tkTicket.getTicket_prefix() == ticket_prefix
-                    && tkTicket.getTicket_code() == ticket_code
-                ){
-                    return true;
-                }
-            }
-        }
-        //
         return false;
     }
 

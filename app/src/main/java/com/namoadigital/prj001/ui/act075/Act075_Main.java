@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.ctls.FabMenuItem;
@@ -41,6 +42,7 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
@@ -97,6 +99,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private boolean isApproved;
     private boolean isOperationalProcess= false;
     private Bundle requestingBundle;
+    private ArrayList<HMAux> wsResult = new ArrayList<>();
+    private boolean sync_ticket_form=false;
+    private boolean hasPendency = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,16 +149,44 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         //
         btnSave.setText(hmAux_Trans.get("save_product_lbl"));
         //
+        wsResult.clear();
+        //
         tkTicket = mPresenter.getTicket(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix,mTkCode);
         setHeaderFragment();
         //
         boolean hasWithdrawnApproved = mPresenter.getWithdrawStatus(tkTicket);
         boolean hasAppliedApproved = mPresenter.getAppliedStatus(tkTicket);
+        //
         if(act_profile == 1) {
             //
+            if(!hasWithdrawnApproved && tkTicket.getInventory_control() ==1) {
+                hasPendency = mPresenter.hasUpdatePendency(tkTicket);
+                if (hasPendency) {
+                    if (ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkCode)) {
+                        showAlert(
+                                hmAux_Trans.get("alert_form_location_pendency_ttl"),
+                                hmAux_Trans.get("alert_form_location_pendency_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        callMoveOn();
+                                    }
+                                },
+                                false
+                        );
+                    } else {
+                        if (ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)) {
+                            sync_ticket_form = false;
+                            mPresenter.callWsSave();
+                        } else {
+                            mPresenter.executeTicketSaveSyncFormProcess();
+                        }
+                    }
+                }
+            }
             setProductList(hasWithdrawnApproved, hasAppliedApproved);
             if(tkTicket.getUpdate_required_product() == 1
-            || !hasUpdated) {
+                    || !hasUpdated) {
                 btnSave.setEnabled(false);
             }else{
                 btnSave.setEnabled(true);
@@ -247,6 +280,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 tkTicket.getMain_user(),
                 hasWithdrawnApproved,
                 hasAppliedApproved,
+                hasPendency,
                 this
         );
         //
@@ -477,21 +511,108 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             @Override
             public void onClick(View v) {
                 if(act_profile == 1) {
-                    if(!mPresenter.getWithdrawStatus(tkTicket)){
-                        if (ToolBox_Con.isOnline(context)) {
-                            mPresenter.saveproduct(tkTicket.getScn(), (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
-                        } else {
-                            ToolBox_Inf.showNoConnectionDialog(context);
-                        }
-                    }else{
-                        if(!mPresenter.getAppliedStatus(tkTicket)){
-                            mPresenter.saveAppliedProduct(tkTicket, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
-                        }
-                    }
+                    ToolBox.alertMSG_YES_NO(context,
+                            hmAux_Trans.get("alert_confirm_product_ttl"),
+                            hmAux_Trans.get("alert_confirm_product_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if(!mPresenter.getWithdrawStatus(tkTicket)
+                                            && tkTicket.getInventory_control() == 1){
+                                        if (ToolBox_Con.isOnline(context)) {
+                                            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)){
+                                                if(ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkCode)) {
+                                                    showAlert(
+                                                            hmAux_Trans.get("alert_form_location_pendency_ttl"),
+                                                            hmAux_Trans.get("alert_form_location_pendency_msg"),
+                                                            new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    callMoveOn();
+                                                                }
+                                                            },
+                                                            false
+                                                    );
+                                                }else{
+                                                    showAlert(
+                                                            hmAux_Trans.get("alert_form_pendency_please_sync_ttl"),
+                                                            hmAux_Trans.get("alert_form_pendency_please_sync_msg"),
+                                                            new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    callMoveOn();
+                                                                }
+                                                            },
+                                                            false
+                                                    );
+                                                }
+                                            }else {
+                                                mPresenter.saveproduct(tkTicket.getScn(), (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+                                            }
+                                        } else {
+                                            ToolBox_Inf.showNoConnectionDialog(context);
+                                        }
+                                    }else{
+                                        if(!mPresenter.getAppliedStatus(tkTicket)
+                                                || tkTicket.getInventory_control() == 0){
+                                            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)) {
+                                                if (ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkPrefix)) {
+                                                    showAlert(
+                                                            hmAux_Trans.get("alert_form_location_pendency_ttl"),
+                                                            hmAux_Trans.get("alert_form_location_pendency_msg"),
+                                                            new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    callMoveOn();
+                                                                }
+                                                            },
+                                                            false
+                                                    );
+                                                } else {
+                                                    sync_ticket_form = true;
+                                                    mPresenter.callWsSave();
+                                                }
+                                            }else {
+                                                mPresenter.saveAppliedProduct(tkTicket, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            0);
+
                 }else if(act_profile == 2){
                     if(mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)) {
-                        TK_Ticket_Approval ticketApproval = mPresenter.getTicketApproval(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix, mTkCode, mTkSeq, mStepCode);
-                        mPresenter.saveApproval(ticketApproval, isApproved, mAdapter.getApprovalCommments());
+                        ToolBox.alertMSG_YES_NO(context,
+                                hmAux_Trans.get("alert_confirm_approval_ttl"),
+                                hmAux_Trans.get("alert_confirm_approval_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)) {
+                                            if (ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkPrefix)) {
+                                                showAlert(
+                                                        hmAux_Trans.get("alert_form_location_pendency_ttl"),
+                                                        hmAux_Trans.get("alert_form_location_pendency_msg"),
+                                                        new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                callMoveOn();
+                                                            }
+                                                        },
+                                                        false
+                                                );
+                                            } else {
+                                                sync_ticket_form = true;
+                                                mPresenter.callWsSave();
+                                            }
+                                        }else {
+                                            saveApprovalFlow();
+                                        }
+                                    }
+                                },
+                                0
+                        );
                     }else{
                         showMsg(
                                 hmAux_Trans.get("alert_approval_access_denied_ttl"),
@@ -503,6 +624,11 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         });
     }
 
+    private void saveApprovalFlow() {
+        TK_Ticket_Approval ticketApproval = mPresenter.getTicketApproval(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix, mTkCode, mTkSeq, mStepCode);
+        mPresenter.saveApproval(ticketApproval, isApproved, mAdapter.getApprovalCommments());
+    }
+
     @Override
     public void showPD(String ttl, String msg) {
         enableProgressDialog(ttl,
@@ -512,47 +638,60 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     }
 
     @Override
-    public void showResult(ArrayList<HMAux> resultList, boolean ticketResult) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act028_dialog_results, null);
-
-        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
-        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
-        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
-        //trad
-        tv_title.setText(hmAux_Trans.get("alert_checkin_results_ttl"));
-        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-        //
-        lv_results.setAdapter(
-                new Generic_Results_Adapter(
-                        context,
-                        resultList,
-                        Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
-                        hmAux_Trans
-                )
-        );
-        //
-        builder.setView(view);
-        builder.setCancelable(false);
-        //
-        final AlertDialog show = builder.show();
-        //
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //
-                if(act_profile == 2) {
-                    hasUpdated = false;
-                    onBackPressed();
-                }else{
-                    refreshUI();
-                }
-                //
-                show.dismiss();
+    public void showResult(boolean ticketResult) {
+        if(wsResult != null && wsResult.isEmpty() && ticketResult){
+            Toast.makeText(context,  hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
+            //SE SUCESSO NA APROVACAO/REJEICAO VOLTA AUTOMATICAMENTE PARA TELA DE TICKET
+            if (act_profile == 2) {
+                hasUpdated = false;
+                hasFABActive = false;
+                onBackPressed();
             }
-        });
+            refreshUI();
+            wsResult.clear();
+        }else {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+            TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+            ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+            Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
+            //trad
+            tv_title.setText(hmAux_Trans.get("alert_checkin_results_ttl"));
+            btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+            //
+            lv_results.setAdapter(
+                    new Generic_Results_Adapter(
+                            context,
+                            wsResult,
+                            Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                            hmAux_Trans
+                    )
+            );
+            //
+            builder.setView(view);
+            builder.setCancelable(false);
+            //
+            final AlertDialog show = builder.show();
+            //
+            btn_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //
+                    if (act_profile == 2) {
+                        hasUpdated = false;
+                        hasFABActive = false;
+                        onBackPressed();
+                    } else {
+                        refreshUI();
+                    }
+                    //
+                    show.dismiss();
+                }
+            });
+        }
     }
 
     @Override
@@ -581,28 +720,64 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     }
 
     @Override
+    protected void processCloseACT(String mLink, String mRequired) {
+        //super.processCloseACT(mLink, mRequired);
+        processCloseACT(mLink, mRequired, new HMAux());
+    }
+
+    @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
         if(WS_TK_Ticket_Product_Save.class.getName().equalsIgnoreCase(wsProcess)) {
+            progressDialog.dismiss();
             if(hmAux.hasConsistentValue(WS_TK_Ticket_Product_Save.PRODUCT_SAVE_RETURN_KEY)){
                 if(WS_TK_Ticket_Product_Save.PRODUCT_ADD.equalsIgnoreCase(hmAux.get(WS_TK_Ticket_Product_Save.PRODUCT_SAVE_RETURN_KEY))){
-                    showAlert(hmAux_Trans.get("alert_product_add_sucess_ttl"), hmAux_Trans.get("alert_product_add_sucess_msg"), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            hasUpdated = false;
-                            onBackPressed();
-                        }
-                    }, false);
+                    if(wsResult!= null
+                    && wsResult.size() >0 ) {
+                        showResult(false);
+                    }else{
+                        Toast.makeText(context,  hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
+                        hasUpdated = false;
+                        onBackPressed();
+                    }
                 }else if (WS_TK_Ticket_Product_Save.TICKET_FULL.equalsIgnoreCase(hmAux.get(WS_TK_Ticket_Product_Save.PRODUCT_SAVE_RETURN_KEY))){
-                    showMsg(hmAux_Trans.get("alert_ticket_updated_ttl"), hmAux_Trans.get("alert_ticket_updated_msg"));
+                    showResult(true);
+//                    showMsg(hmAux_Trans.get("alert_ticket_updated_ttl"), hmAux_Trans.get("alert_ticket_updated_msg"));
                 }
             }
             refreshUI();
         }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+            progressDialog.dismiss();
             wsProcess = "";
-            mPresenter.processSaveReturn(tkTicket.getTicket_prefix(), tkTicket.getTicket_code(), mLink);
+            if(act_profile == 1) {
+                hasPendency = mPresenter.hasUpdatePendency(tkTicket);
+            }
+            if(sync_ticket_form){
+                sync_ticket_form = false;
+                if(act_profile == 1) {
+                    if(!mPresenter.getWithdrawStatus(tkTicket)){
+                        if (ToolBox_Con.isOnline(context)) {
+                            mPresenter.saveproduct(tkTicket.getScn(), (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+                        }else{
+                            ToolBox_Inf.showNoConnectionDialog(context);
+                        }
+                    }else if(!mPresenter.getAppliedStatus(tkTicket)){
+                        mPresenter.saveAppliedProduct(tkTicket, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+                    }
+                }else{
+                    if(mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)) {
+                        saveApprovalFlow();
+                    }
+                }
+            }else {
+                mPresenter.processSaveReturn(tkTicket.getTicket_prefix(), tkTicket.getTicket_code(), mLink);
+            }
+        }else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
+            progressDialog.dismiss();
+            wsProcess = "";
+            mPresenter.processWS_SaveReturn(mLink);
+            mPresenter.executeTicketSaveSyncFormProcess();
         }
-        progressDialog.dismiss();
     }
 
     private void refreshUI() {
@@ -622,7 +797,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 btnSave.setEnabled(false);
             }
             if(hasWithdrawnApproved && hasAppliedApproved
-            || !isEditable(Constant.SYS_STATUS_PENDING, tkTicket.getTicket_status(), Constant.SYS_STATUS_PROCESS, tkTicket.getTicket_status())){
+                    || !isEditable(Constant.SYS_STATUS_PENDING, tkTicket.getTicket_status(), Constant.SYS_STATUS_PROCESS, tkTicket.getTicket_status())){
                 btnSave.setVisibility(View.GONE);
             }
         }else{
@@ -680,6 +855,28 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         transList.add("alert_none_ticket_returned_ttl");
         transList.add("alert_none_ticket_returned_msg");
         //
+        transList.add("alert_form_location_pendency_ttl");
+        transList.add("alert_form_location_pendency_msg");
+        //
+        transList.add("dialog_ticket_form_save_ttl");
+        transList.add("dialog_ticket_form_save_start");
+        //
+        transList.add("dialog_ticket_update_ttl");
+        transList.add("dialog_ticket_update_start");
+        //
+        transList.add("alert_ticket_results_ok");
+        //
+        transList.add("alert_has_update_required_ttl");
+        transList.add("alert_has_update_required_msg");
+        transList.add("alert_form_location_pendency_ttl");
+        transList.add("alert_form_location_pendency_msg");
+        transList.add("alert_confirm_product_ttl");
+        transList.add("alert_confirm_product_msg");
+        transList.add("alert_confirm_approval_ttl");
+        transList.add("alert_confirm_approval_msg");
+        transList.add("alert_form_pendency_please_sync_ttl");
+        transList.add("alert_form_pendency_please_sync_msg");
+        //
         transList.add("act_ticket_product_ttl");
         transList.add("act_ticket_approval_ttl");
         transList.add("act_ticket_get_material_approval_ttl");
@@ -708,18 +905,56 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
+        if(act_profile == 1 && !mPresenter.getWithdrawStatus(tkTicket)) {
+            hasPendency = mPresenter.hasUpdatePendency(tkTicket);
+        }
+        if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+            //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
+            if(sync_ticket_form) {
+                sync_ticket_form = false;
+                if (!wsResult.isEmpty()) {
+                    showResult(false);
+                }
+            }
+        }else{
+            wsResult.clear();
+        }
         progressDialog.dismiss();
     }
 
     @Override
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
+        if(act_profile == 1 && !mPresenter.getWithdrawStatus(tkTicket)) {
+            hasPendency = mPresenter.hasUpdatePendency(tkTicket);
+        }
+        if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+            //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
+            if(sync_ticket_form) {
+                sync_ticket_form = false;
+                if (!wsResult.isEmpty()) {
+                    showResult(false);
+                }
+            }
+        }else{
+            wsResult.clear();
+        }
         progressDialog.dismiss();
     }
 
     @Override
-    public void onAddProduct() {
-        callAct_Product_Selection(context, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+    public void onAddProduct(boolean hasUpdatedRequired) {
+        if(hasUpdatedRequired){
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_has_update_required_ttl"),
+                    hmAux_Trans.get("alert_has_update_required_msg"),
+                    null,
+                    0
+            );
+        }else {
+            callAct_Product_Selection(context, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+        }
     }
 
     @Override
@@ -742,7 +977,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                         //tk_ticket_products.get(position).setQty(Double.valueOf(qty));
 
                         if(qty.isEmpty()
-                        || qty.contains("-")){
+                                || qty.contains("-")){
                             qty = "0.0";
                         }
                         Double inputValue = Double.valueOf(qty);
@@ -780,7 +1015,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                         String qty_used = dialog_set_mkedt_qty.getText().toString().replace(",", ".");
 //                        tk_ticket_products.get(position).setQty_used(Double.valueOf(qty_used));
                         if(qty_used.isEmpty()
-                        || qty_used.contains("-")){
+                                || qty_used.contains("-")){
                             qty_used = "0.0";
                         }
                         Double inputValue = Double.valueOf(qty_used);
@@ -790,7 +1025,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                             qty_value = 0.0;
                         }
                         if((!inputValue.equals(qty_used_value)
-                        && inputValue <= qty_value) || tkTicket.getInventory_control() ==0) {
+                                && inputValue <= qty_value) || tkTicket.getInventory_control() ==0) {
                             mAdapter.getmValues().get(position).setQty_used(Double.valueOf(qty_used));
                             mAdapter.notifyItemChanged(position);
                         }
@@ -911,11 +1146,16 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         this.isApproved = isApproved;
         String ticketCtrlStatus = mPresenter.getSelectedCtrlStatus(mTkPrefix,mTkCode, mTkSeq, mStepCode);
         if((act_profile ==2
-            && !isEditable(Constant.SYS_STATUS_PENDING, ticketCtrlStatus, Constant.SYS_STATUS_PROCESS, ticketCtrlStatus))){
+                && !isEditable(Constant.SYS_STATUS_PENDING, ticketCtrlStatus, Constant.SYS_STATUS_PROCESS, ticketCtrlStatus))){
             updateSaveButton(false);
             btnSave.setVisibility(View.GONE);
         }else {
             updateSaveButton(true);
         }
+    }
+
+    @Override
+    public void addResultList(ArrayList<HMAux> resultList) {
+        wsResult.addAll(resultList);
     }
 }

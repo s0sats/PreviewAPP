@@ -26,10 +26,14 @@ import com.namoadigital.prj001.model.TK_Ticket_Approval_Rejection;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.model.TSave_Rec;
+import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.Sql_Act075_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Rejection_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_002;
@@ -38,6 +42,7 @@ import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_003;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -174,7 +179,15 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
             for (TK_Ticket_Approval approval :
                     approvals) {
                 if (APPROVAL_GET_MATERIAL.equalsIgnoreCase(approval.getApproval_type())) {
-                    if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(approval.getApproval_status())) {
+                    TK_Ticket_Ctrl ctrl = tkTicketCtrlDao.getByString(
+                            new TK_Ticket_Ctrl_Sql_001(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    approval.getTicket_prefix(),
+                                    approval.getTicket_code(),
+                                    approval.getTicket_seq(),
+                                    approval.getStep_code()
+                            ).toSqlQuery());
+                    if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(ctrl.getCtrl_status())) {
                         return true;
                     }
                 }
@@ -396,7 +409,8 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
         return -1;
     }
 
-    private void executeTicketSaveProcess() {
+    @Override
+    public void executeTicketSaveProcess() {
         if (ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_TK_Ticket_Save.class.getName());
             //
@@ -457,7 +471,10 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                     )
                     ) {
                         //Se erro, verifica se erro de processamento qual erro foi e pega msg
-                        auxResult.put(ticketCode, getResultSaveMsgFormmated(actReturn));
+                        if(!ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus())){
+                            ticketResult = ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus());
+                            auxResult.put(ticketCode, actReturn.getRetMsg());
+                        }
                     }
                 }
                 //For no resumido por ticket montando msg a ser exibida
@@ -479,7 +496,8 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                     }
                 }
                 //
-                mView.showResult(resultList, ticketResult);
+                mView.addResultList(resultList);
+                mView.showResult(ticketResult);
             } else {
                 mView.showMsg(
                         hmAux_Trans.get("alert_none_ticket_returned_ttl"),
@@ -523,7 +541,100 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
         ticket.setUpdate_required_product(1);
         ticketDao.addUpdate(ticket);
         updateTicketProducts(getmValues);
-        executeTicketSaveProcess();
+
+        if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, ticket.getTicket_prefix(), ticket.getTicket_code())){
+            if(ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, ticket.getTicket_prefix(), ticket.getTicket_code())) {
+                mView.showAlert(
+                        hmAux_Trans.get("alert_form_location_pendency_ttl"),
+                        hmAux_Trans.get("alert_form_location_pendency_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mView.callMoveOn();
+                            }
+                        },
+                        false
+                );
+            }else {
+                if (ToolBox_Con.isOnline(context)) {
+                    callWsSave();
+                } else {
+                    mView.showAlert(
+                            hmAux_Trans.get("alert_offline_save_ttl"),
+                            hmAux_Trans.get("alert_offline_save_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    mView.callMoveOn();
+                                }
+                            },
+                            false
+                    );
+                }
+            }
+        }else {
+            executeTicketSaveProcess();
+        }
+    }
+
+    @Override
+    public void callWsSave() {
+        mView.setWsProcess(WS_Save.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("dialog_ticket_form_save_ttl"),
+                hmAux_Trans.get("dialog_ticket_form_save_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
+        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
+
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void processWS_SaveReturn(String mLink) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //
+        ArrayList<TSave_Rec.Error_Process> errorProcesses = null;
+        try {
+            errorProcesses = gson.fromJson(
+                    mLink,
+                    new TypeToken<ArrayList<TSave_Rec.Error_Process>>() {
+                    }.getType()
+            );
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        //
+        if(errorProcesses != null && errorProcesses.size() > 0){
+            ArrayList<HMAux> auxResults = new ArrayList<>();
+            for (TSave_Rec.Error_Process error_process : errorProcesses) {
+                //
+                HMAux mHmAux = ToolBox_Inf.getWsSaveErrorProcessAuxResult(error_process);
+                //
+                HMAux aux = new HMAux();
+                switch (mHmAux.get("type")) {
+                    case ConstantBaseApp.SYS_STATUS_SCHEDULE:
+                        aux.put(Generic_Results_Adapter.LABEL_TTL, mHmAux.get("label"));
+                        aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mHmAux.get("final_status")+"\n"+mHmAux.get("status"));
+                        break;
+                    case TSave_Rec.Error_Process.ERROR_TYPE_TICKET:
+                        aux.put(Generic_Results_Adapter.LABEL_TTL, mHmAux.get("label"));
+                        aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mHmAux.get("final_status")+"\n"+mHmAux.get("status"));
+                        break;
+                }
+                //
+                auxResults.add(aux);
+            }
+            //
+            mView.addResultList(auxResults);
+        }
     }
 
     @Override
@@ -548,6 +659,46 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
         for (TK_Ticket_Product ticket_product : ticket_products) {
             ticketProductDao.addUpdate(ticket_product);
         }
+    }
+
+    @Override
+    public void executeTicketSaveSyncFormProcess() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_TK_Ticket_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_ticket_update_ttl"),
+                    hmAux_Trans.get("dialog_ticket_update_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_TK_Ticket_Save.class);
+            Bundle bundle = new Bundle();
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public boolean hasUpdatePendency(TK_Ticket tkTicket) {
+        List<TK_Ticket> ticketList = ticketDao.query(new Sql_Act075_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                tkTicket.getTicket_prefix(),
+                tkTicket.getTicket_code()
+        ).toSqlQuery());
+        //
+        boolean hasPendencies;
+        if(ticketList == null || ticketList.size() == 0){
+            hasPendencies = false;
+        }else{
+            hasPendencies = true;
+        }
+        //
+        return hasPendencies
+                || ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, tkTicket.getTicket_prefix(),tkTicket.getTicket_code())
+                || ToolBox_Inf.isTicketInTokenFile(context, tkTicket.getTicket_prefix(),tkTicket.getTicket_code());
     }
 
 
