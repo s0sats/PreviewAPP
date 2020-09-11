@@ -79,5 +79,9 @@ public interface Act075_Main_Contract {
         void callWsSave();
 
         void processWS_SaveReturn(String mLink);
+
+        void executeTicketSaveSyncFormProcess();
+
+        boolean hasUpdatePendency(TK_Ticket tkTicket);
     }
 }

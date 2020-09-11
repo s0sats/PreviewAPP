@@ -89,6 +89,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_Obj;
@@ -185,6 +186,7 @@ import com.namoadigital.prj001.sql.Sql_Act005_010;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act070_005;
 import com.namoadigital.prj001.sql.Sql_Act070_008;
+import com.namoadigital.prj001.sql.Sql_Act075_001;
 import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
 import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
 import com.namoadigital.prj001.sql.Sql_Form_x_Product;
@@ -3723,6 +3725,22 @@ public class ToolBox_Inf {
         return hasFormProductOutdate(context, -1, -1);
     }
 
+
+    public static boolean isTicketInTokenFile(Context context, int ticket_prefix, int ticket_code) {
+        ArrayList<TK_Ticket> ticketInToken = ToolBox_Inf.getTicketsWithinToken(ToolBox_Con.getPreference_Customer_Code(context));
+        if(ticketInToken != null && ticketInToken.size() > 0){
+            for (TK_Ticket tkTicket : ticketInToken) {
+                if( tkTicket.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                        && tkTicket.getTicket_prefix() == ticket_prefix
+                        && tkTicket.getTicket_code() == ticket_code
+                ){
+                    return true;
+                }
+            }
+        }
+        //
+        return false;
+    }
     /**
      * BARRIONUEVO 01-09-2020
      * Metodo que verifica forms de ctrl que estão em waiting sync.

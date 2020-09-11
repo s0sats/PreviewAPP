@@ -83,8 +83,6 @@ public interface Act070_Main_Contract {
 
         boolean checkSyncRequireNeedsChange(int ticket_prefix, int ticket_code);
 
-        boolean isTicketInTokenFile(int ticket_prefix, int ticket_code);
-
         boolean isReadOnlyStatus(String ticketStatus);
         //LUCHE - 22/07/2020 - REINICIANDO O TICKET
         void getStepsList(TK_Ticket mTicket);

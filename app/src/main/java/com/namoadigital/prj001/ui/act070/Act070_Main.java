@@ -586,6 +586,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     private void resetForceSendByform() {
         forceSendByFormExecution = false;
+        requestingBundle.remove(PARAM_FORCE_SEND_BY_FORM_EXEC);
     }
 
     @Override
