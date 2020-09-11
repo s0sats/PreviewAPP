@@ -579,7 +579,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                                     }
                                 }
                             },
-                            0);
+                            1);
 
                 }else if(act_profile == 2){
                     if(mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)) {
@@ -611,7 +611,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                                         }
                                     }
                                 },
-                                0
+                            1
                         );
                     }else{
                         showMsg(
