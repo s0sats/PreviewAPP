@@ -25,9 +25,11 @@ public interface Act075_Main_Contract {
         //
         void showPD(String ttl, String msg);
         //
-        void showResult(ArrayList<HMAux> resultList, boolean ticketResult);
+        void showResult(boolean ticketResult);
         //
         void callMoveOn();
+        //
+        void addResultList(ArrayList<HMAux> resultList);
         //
     }
 
@@ -58,6 +60,9 @@ public interface Act075_Main_Contract {
         String getStepDesc(TK_Ticket_Step ticketStep);
         //
         void saveApproval(TK_Ticket_Approval ticketApproval, boolean isApproved, String approveComments);
+
+        void executeTicketSaveProcess();
+
         //
         void processSaveReturn(int ticket_prefix, int ticket_code, String mLink);
         //
@@ -70,5 +75,9 @@ public interface Act075_Main_Contract {
         List<TK_Ticket_Product> getTicketProductList(TK_Ticket tkTicket);
         //
         void setStartCtrl();
+        //
+        void callWsSave();
+
+        void processWS_SaveReturn(String mLink);
     }
 }
