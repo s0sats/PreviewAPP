@@ -7348,4 +7348,33 @@ public class ToolBox_Inf {
         //
         return mHmAux;
     }
+
+    /**
+     * LUCHE - 11/09/2020
+     * Metodo que define a exição da descrição da origem do ticket, baseada no tipo.
+     * Até a presente data, só existe um que deve ser tratado diferente, ma sja deixei as constantes
+     * e switch criados pro futuro.
+     * @param ticketOriginType Tipo da Origem
+     * @param ticketOriginDesc Descricao da origem
+     * @return
+     */
+    @NonNull
+    public static String getFormattedTicketOriginDesc(String ticketOriginType, String ticketOriginDesc) {
+        if(ticketOriginType == null){
+            return "\\" + ticketOriginDesc;
+        }
+        switch (ticketOriginType){
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE:
+                return ticketOriginDesc;
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MEASURE:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_SCORE:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_TRANSFER:
+            default:
+                return "\\" + ticketOriginDesc;
+        }
+    }
 }

@@ -410,7 +410,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 mPipelineHeaderOpen_site_desc,
                 mPipelineHeaderOpen_serial_id,
                 mPipelineHeaderOpen_product_desc,
-                "\\" + mPipelineHeaderOrigin_desc,
+                mPipelineHeaderOrigin_desc,
                 mPresenter.getStepColor(tkTicketStep, mPipelineHeaderIsCurrentStepOrder),
                 mPresenter.getStepNumFormatted(tkTicketStep),
                 mPresenter.getStepDesc(tkTicketStep)
