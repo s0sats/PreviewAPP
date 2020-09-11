@@ -79,7 +79,7 @@ public interface Act071_Main_Contract {
 
         boolean updateTicketAction(TK_Ticket_Ctrl mTicketCtrl);
 
-        void execTicketSave();
+        void execTicketSave(boolean forceOfflineProcess);
 
         void processSaveReturn(int ticket_prefix, int ticket_code, String mLink);
 
@@ -120,6 +120,8 @@ public interface Act071_Main_Contract {
         void callWsSave();
 
         void processWS_SaveReturn(String mLink);
+
+        void defineFormWaitingSyncFlow(int mActionPrefix, int mActionCode);
 
         /*boolean hasPartnerProfile(Integer partner_code);
 

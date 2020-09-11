@@ -8,7 +8,8 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 /**
  * BARRIONUEVO 01-09-2020
  * Query responsavel por definir chamada de WS_save antes do save do ticket
- *
+ * LUCHE - 10/09/2020
+ * Removido filtro de location_pendency = 0
  */
 public class Sql_Act070_005 implements Specification {
 
@@ -39,7 +40,6 @@ public class Sql_Act070_005 implements Specification {
                         "      and d.ticket_code =   c.ticket_code \n" +
                         "      and c.ctrl_status = " + "'" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"'"+
                         "      and d.custom_form_status = " + "'" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"'"+
-                        "      and d.location_pendency = 0 \n" +
                         "        \n"
                 )
                 .toString();

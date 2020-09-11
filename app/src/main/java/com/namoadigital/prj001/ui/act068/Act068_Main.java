@@ -143,6 +143,9 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         //
         transList.add("alert_ticket_results_ok");
         //
+        transList.add("alert_form_location_pendency_ttl");
+        transList.add("alert_form_location_pendency_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,

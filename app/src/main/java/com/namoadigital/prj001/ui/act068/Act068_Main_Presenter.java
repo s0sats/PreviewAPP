@@ -35,6 +35,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act068_001;
 import com.namoadigital.prj001.sql.Sql_Act068_002;
 import com.namoadigital.prj001.sql.Sql_Act068_003;
+import com.namoadigital.prj001.sql.Sql_Act068_004;
 import com.namoadigital.prj001.sql.Sql_Act069_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_008;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -185,9 +186,28 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
     @Override
     public void defineWsToCall() {
         if(hasFormWaitingSyncWithinAnyTicket(context)){
-            callWsSave();
+            //callWsSave();
+            defineFormWaitingSyncFlow();
         }else {
             executeWSTicketSave();
+        }
+    }
+
+    /**
+     * LUCHE - 10/09/2020
+     * DEVE SEMPRE SER PRECEDIDO DA CHAMADA DO hasFormWaitingSyncWithinAnyTicket
+     * Metodo que verifica se deve chamar o Ws de save do form ou exibir msg de que existe form com
+     * pendencia de GPS.
+
+     */
+    private void defineFormWaitingSyncFlow(){
+        if(hasFormWaitingSyncAndGpsPendencyWithinAnyTicket(context)){
+            mView.showMsg(
+                hmAux_Trans.get("alert_form_location_pendency_ttl"),
+                hmAux_Trans.get("alert_form_location_pendency_msg")
+            );
+        }else{
+            callWsSave();
         }
     }
 
@@ -240,6 +260,21 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
         );
         ArrayList<GE_Custom_Form_Data> formDataList = (ArrayList<GE_Custom_Form_Data>) formDataDao.query(
             new Sql_Act068_003(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
+        );
+        return formDataList != null && formDataList.size() > 0 ;
+
+    }
+
+    private boolean hasFormWaitingSyncAndGpsPendencyWithinAnyTicket(Context context) {
+        GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        ArrayList<GE_Custom_Form_Data> formDataList = (ArrayList<GE_Custom_Form_Data>) formDataDao.query(
+            new Sql_Act068_004(
                 ToolBox_Con.getPreference_Customer_Code(context)
             ).toSqlQuery()
         );
