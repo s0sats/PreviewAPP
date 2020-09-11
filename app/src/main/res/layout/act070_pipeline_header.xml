@@ -177,11 +177,12 @@
 
             <ImageView
                 android:id="@+id/iv_ticket_header_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:src="@drawable/ic_baseline_receipt_24"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:src="@drawable/ic_baseline_error_outline_24dp_black"
+                android:tint="@color/namoa_color_pipeline_origin_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

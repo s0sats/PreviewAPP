@@ -109,6 +109,7 @@
 <!--    CORES ESPECIFICAS TICKET-->
     <color name="namoa_color_pipeline_next_step">#C2E5EE</color>
     <color name="namoa_color_pipeline_cur_step_no_checkin">#F1F1F1</color>
+    <color name="namoa_color_pipeline_origin_icon">#4292A8</color>
 
 
     <!--&lt;!&ndash;REVISÃO CORES STATUS&ndash;&gt;-->
