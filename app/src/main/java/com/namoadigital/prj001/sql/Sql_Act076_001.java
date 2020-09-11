@@ -7,6 +7,11 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 
 import static com.namoadigital.prj001.dao.TK_Ticket_StepDao.STEP_QTY;
 
+/**
+ * LUCHE - 11/09/2020
+ * Modificado query adicionando campo origin_desc.
+ */
+
 public class Sql_Act076_001 implements Specification {
     private long customer_code;
     private long ticketProductCode;
@@ -53,6 +58,7 @@ public class Sql_Act076_001 implements Specification {
                         "       t.open_product_desc,\n" +
                         "       t.open_serial_id,\n" +
                         "       t.sync_required\n," +
+                        "       t.origin_desc\n," +
                         "       s.step_code,\n" +
                         "       s.step_id,\n" +
                         "       s.step_desc,\n" +
@@ -60,7 +66,7 @@ public class Sql_Act076_001 implements Specification {
                         "       s.step_order_seq,\n" +
                         "       min(s.forecast_start) forecast_start,\n" +
                         "       max(s.forecast_end) forecast_end,\n" +
-                        "        count(s.step_code) " + STEP_QTY + "\n"+
+                        "       count(s.step_code) " + STEP_QTY + "\n"+
                         " FROM\n" +
                         "     " + TK_TicketDao.TABLE + " t \n" +
                         " LEFT JOIN\n" +
