@@ -49,7 +49,6 @@ import com.namoadigital.prj001.sql.Sql_Act070_001;
 import com.namoadigital.prj001.sql.Sql_Act070_002;
 import com.namoadigital.prj001.sql.Sql_Act070_003;
 import com.namoadigital.prj001.sql.Sql_Act070_004;
-import com.namoadigital.prj001.sql.Sql_Act070_005;
 import com.namoadigital.prj001.sql.Sql_Act070_006;
 import com.namoadigital.prj001.sql.Sql_Act070_007;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
@@ -164,7 +163,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //Verifica se há necessidade de envidar dados para o server.
         if(checkUpdateRequiredNeeds(mTicket)){
             if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
-                callWsSave();
+                //callWsSave();
+                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code());
             }else {
                 executeTicketSaveProcess(false);
             }
@@ -232,6 +232,26 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
+    /**
+     * LUCHE - 10/09/2020
+     * DEVE SEMPRE SER PRECEDIDO DA CHAMADA DO hasFormWaitingSyncWithinTicket
+     * Metodo que verifica se deve chamar o Ws de save do form ou exibir msg de que existe form com
+     * pendencia de GPS.
+     *
+     * @param ticket_prefix
+     * @param ticket_code
+     */
+    private void defineFormWaitingSyncFlow(int ticket_prefix, int ticket_code){
+        if(ToolBox_Inf.hasFormGpsPendencyWithinTicket(context,ticket_prefix,ticket_code)){
+            mView.showAlert(
+                hmAux_Trans.get("alert_form_location_pendency_ttl"),
+                hmAux_Trans.get("alert_form_location_pendency_msg")
+            );
+        }else{
+            callWsSave();
+        }
+    }
+
     private void callWsSave() {
         mView.setWsProcess(WS_Save.class.getName());
         //
@@ -251,24 +271,26 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         context.sendBroadcast(mIntent);
     }
 
-    /**
-     * BARRIONUEVO 01-09-2020
-     * Metodo que verifica forms de ctrl que estão em waiting sync
-     * @param ticket_prefix
-     * @param ticket_code
-     * @return
-     */
-    private boolean hasFormWaitingSync(int ticket_prefix, int ticket_code) {
-
-        GE_Custom_Form_Data formData = formDataDao.getByString(
-                new Sql_Act070_005(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        ticket_prefix,
-                        ticket_code
-                ).toSqlQuery()
-        );
-        return formData != null;
-    }
+//    /**
+//     * BARRIONUEVO 01-09-2020
+//     * Metodo que verifica forms de ctrl que estão em waiting sync
+//     * LUCHE - 10/09/2020
+//     * Comentado pois será usado a versão do toolbox_inf, ja que esse metodo pe chamado em mais telas
+//     * @param ticket_prefix
+//     * @param ticket_code
+//     * @return
+//     */
+//    private boolean hasFormWaitingSync(int ticket_prefix, int ticket_code) {
+//
+//        GE_Custom_Form_Data formData = formDataDao.getByString(
+//                new Sql_Act070_005(
+//                        ToolBox_Con.getPreference_Customer_Code(context),
+//                        ticket_prefix,
+//                        ticket_code
+//                ).toSqlQuery()
+//        );
+//        return formData != null;
+//    }
 
     @Override
     public boolean checkOnlySyncNeeds(TK_Ticket mTicket) {
@@ -1033,8 +1055,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-            if(hasFormWaitingSync(mTicket.getTicket_prefix(), mTicket.getTicket_code())){
-                callWsSave();
+            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+                //callWsSave();
+                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code());
             }else {
                 executeTicketSaveProcess(true);
             }
@@ -1140,8 +1163,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         mTicket.getStep().set(stepIdx,ticketStep);
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-            if(hasFormWaitingSync(mTicket.getTicket_prefix(), mTicket.getTicket_code())){
-                callWsSave();
+            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+                //callWsSave();
+                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code());
             }else {
                 executeTicketSaveProcess(true);
             }
@@ -1174,8 +1198,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         mTicket.getStep().set(stepIdx,ticketStep);
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-            if(hasFormWaitingSync(mTicket.getTicket_prefix(), mTicket.getTicket_code())){
-                callWsSave();
+            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context,mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+                //callWsSave();
+                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code());
             }else {
                 executeTicketSaveProcess(true);
             }

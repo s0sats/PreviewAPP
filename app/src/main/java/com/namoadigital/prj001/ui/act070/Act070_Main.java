@@ -223,6 +223,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_product_form_access_denied_ttl");
         transList.add("alert_product_form_access_denied_msg");
         transList.add("alert_ticket_results_ok");
+        //
+        transList.add("alert_form_location_pendency_ttl");
+        transList.add("alert_form_location_pendency_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,

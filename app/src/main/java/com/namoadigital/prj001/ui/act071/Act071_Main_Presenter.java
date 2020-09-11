@@ -803,8 +803,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void execTicketSave() {
-        if (ToolBox_Con.isOnline(context)) {
+    public void execTicketSave(boolean forceOfflineProcess) {
+        if (!forceOfflineProcess && ToolBox_Con.isOnline(context)) {
             mView.setWsProcess(WS_TK_Ticket_Save.class.getName());
             //
             mView.showPD(
@@ -830,6 +830,37 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                         }
                     }
                 );
+            }
+        }
+    }
+
+    /**
+     * LUCHE - 10/09/2020
+     * DEVE SEMPRE SER PRECEDIDO DA CHAMADA DO hasFormWaitingSyncWithinTicket
+     * Metodo que define fluxo quando identificado que existe form pendente de envio para o ticket
+     * @param mActionPrefix
+     * @param mActionCode
+     */
+    @Override
+    public void defineFormWaitingSyncFlow(int mActionPrefix, int mActionCode) {
+        if(ToolBox_Inf.hasFormGpsPendencyWithinTicket(context,mActionPrefix,mActionCode)){
+            if (checkOfflineTicketDone(mView.getAction())) {
+                mView.showAlert(
+                    hmAux_Trans.get("alert_form_location_pendency_ttl"),
+                    hmAux_Trans.get("alert_offline_save_by_location_pendency_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.postTicketSave();
+                        }
+                    }
+                );
+            }
+        }else{
+            if(ToolBox_Con.isOnline(context)) {
+                callWsSave();
+            }else{
+                execTicketSave(true);
             }
         }
     }

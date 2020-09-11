@@ -216,6 +216,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //
         transList.add("alert_ticket_results_ok");
         //
+        transList.add("alert_form_location_pendency_ttl");
+        transList.add("alert_offline_save_by_location_pendency_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -489,13 +492,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                         updateCreationParams();
                                         deletePhotoFile(TEMP_SUFIX_FILE + actionPhotoLocalPath);
                                         if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mActionPrefix, mActionCode)){
-                                            if(ToolBox_Con.isOnline(context)) {
-                                                mPresenter.callWsSave();
-                                            }else{
-                                                mPresenter.execTicketSave();
-                                            }
+                                            mPresenter.defineFormWaitingSyncFlow(mActionPrefix, mActionCode);
                                         }else {
-                                            mPresenter.execTicketSave();
+                                            mPresenter.execTicketSave(false);
                                         }
 
                                     }
@@ -1244,7 +1243,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             progressDialog.dismiss();
             wsProcess = "";
             mPresenter.processWS_SaveReturn(mLink);
-            mPresenter.execTicketSave();
+            mPresenter.execTicketSave(false);
         }
         //
     }
