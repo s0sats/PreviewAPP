@@ -648,7 +648,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                          * BARRIONUEVO 08-09-2020
                          * Metodo que verifica acesso ao produto.
                          */
-                        if(userHasProductAccess(mTicket.getOpen_product_code())) {
+                        if(userHasProductAccess(ticketCtrl.getProduct_code())) {
                             if (checkFormMasterDataExists(ticketCtrl.getForm())) {
                                 showConfirmStartFormDialog(mTicket, ticketStep, ticketCtrl);
                             } else {

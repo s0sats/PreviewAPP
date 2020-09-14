@@ -471,8 +471,8 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                     )
                     ) {
                         //Se erro, verifica se erro de processamento qual erro foi e pega msg
-                        if(!ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus())){
-                            ticketResult = ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus());
+                        if(actReturn.isProcessError()){
+                            ticketResult = !actReturn.isProcessError();
                             auxResult.put(ticketCode, actReturn.getRetMsg());
                         }
                     }
