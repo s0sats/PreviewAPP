@@ -332,7 +332,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    mPresenter.prepareSyncProcess(mTicket);
+                    mPresenter.prepareSyncProcess(mTicket, false);
                 }
             },
             true
@@ -590,8 +590,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             preventSyncLoop = false;
         }else {
             if ( (mPresenter.checkOnlySyncNeeds(mTicket) || forceSendByFormExecution) && ToolBox_Con.isOnline(context)) {
+                if(forceSendByFormExecution){
+                    forceSendByFormExecution = false;
+                    mPresenter.prepareSyncProcess(mTicket, true);
+                }else{
+                    mPresenter.prepareSyncProcess(mTicket, forceSendByFormExecution);
+                }
                 resetForceSendByform();
-                mPresenter.prepareSyncProcess(mTicket);
             }else{
                 resetForceSendByform();
             }
@@ -1000,7 +1005,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             wsProcess = "";
             progressDialog.dismiss();
             mPresenter.processWS_SaveReturn(mLink);
-            mPresenter.prepareSyncProcess(mTicket);
+            mPresenter.prepareSyncProcess(mTicket, false);
         }
         //
     }

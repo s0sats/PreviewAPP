@@ -34,6 +34,7 @@ import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.Sql_Act075_001;
+import com.namoadigital.prj001.sql.Sql_Act075_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Rejection_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_002;
@@ -471,8 +472,8 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                     )
                     ) {
                         //Se erro, verifica se erro de processamento qual erro foi e pega msg
-                        if(!ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus())){
-                            ticketResult = ConstantBaseApp.MAIN_RESULT_OK.equals(actReturn.getRetStatus());
+                        if(actReturn.isProcessError()){
+                            ticketResult = !actReturn.isProcessError();
                             auxResult.put(ticketCode, actReturn.getRetMsg());
                         }
                     }
@@ -538,63 +539,50 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
 
     @Override
     public void saveAppliedProduct(TK_Ticket ticket, ArrayList<TK_Ticket_Product> getmValues) {
-        ticket.setUpdate_required_product(1);
-        ticketDao.addUpdate(ticket);
-        updateTicketProducts(getmValues);
+        saveProductOnBD(ticket, getmValues);
+    }
 
-        if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, ticket.getTicket_prefix(), ticket.getTicket_code())){
-            if(ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, ticket.getTicket_prefix(), ticket.getTicket_code())) {
-                mView.showAlert(
-                        hmAux_Trans.get("alert_form_location_pendency_ttl"),
-                        hmAux_Trans.get("alert_form_location_pendency_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                mView.callMoveOn();
-                            }
-                        },
-                        false
-                );
-            }else {
-                if (ToolBox_Con.isOnline(context)) {
-                    callWsSave();
-                } else {
-                    mView.showAlert(
-                            hmAux_Trans.get("alert_offline_save_ttl"),
-                            hmAux_Trans.get("alert_offline_save_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mView.callMoveOn();
-                                }
-                            },
-                            false
-                    );
-                }
-            }
-        }else {
-            executeTicketSaveProcess();
-        }
+    private void saveProductOnBD(TK_Ticket ticket, ArrayList<TK_Ticket_Product> getmValues) {
+        ticketDao.query(new Sql_Act075_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ticket.getTicket_prefix(),
+                ticket.getTicket_code()
+        ).toSqlQuery());
+        updateTicketProducts(getmValues);
     }
 
     @Override
     public void callWsSave() {
-        mView.setWsProcess(WS_Save.class.getName());
-        //
-        mView.showPD(
-                hmAux_Trans.get("dialog_ticket_form_save_ttl"),
-                hmAux_Trans.get("dialog_ticket_form_save_start")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_Save.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
-        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
-        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_ticket_form_save_ttl"),
+                    hmAux_Trans.get("dialog_ticket_form_save_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
+            bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+            bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
 
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            mView.showAlert(
+                    hmAux_Trans.get("alert_form_pendency_please_sync_ttl"),
+                    hmAux_Trans.get("alert_form_pendency_please_sync_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.callMoveOn();
+                        }
+                    },
+                    false
+            );
+        }
     }
 
     @Override
