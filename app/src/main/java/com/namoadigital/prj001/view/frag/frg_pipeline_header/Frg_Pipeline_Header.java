@@ -1,10 +1,12 @@
 package com.namoadigital.prj001.view.frag.frg_pipeline_header;
 
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.Group;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -87,8 +89,8 @@ public class Frg_Pipeline_Header extends Fragment {
     private TextView tv_schedule_desc;
     private TextView tv_schedule_date;
     private TextView tv_schedule_comment;
-
     private OnPipelineFragmentInteractionListener mListener;
+    private boolean forceRefreshDrawableOnFail = false;
 
     public Frg_Pipeline_Header() {
         // Required empty public constructor
@@ -222,7 +224,7 @@ public class Frg_Pipeline_Header extends Fragment {
         if (preference_site_code.equals(String.valueOf(site_code))) {
             tv_site_desc.setVisibility(View.GONE);
         }
-
+        //
         setTvContent();
         //
         return pipeline_header_view;
@@ -231,7 +233,9 @@ public class Frg_Pipeline_Header extends Fragment {
     public void setFragmentProfile() {
         switch (header_profile_param) {
             case PIPELINE:
-                cv_btn_sync.setVisibility(View.VISIBLE);
+                //LUCHE - 15/09/2020 - Comentado pois o btn será no ticket_id
+                cv_btn_sync.setVisibility(View.GONE);
+                //cv_btn_sync.setVisibility(View.VISIBLE);
                 frg_pipeline_header_ticket.setVisibility(View.VISIBLE);
                 tv_ticket_id.setVisibility(View.VISIBLE);
                 tv_status.setVisibility(View.VISIBLE);
@@ -244,16 +248,17 @@ public class Frg_Pipeline_Header extends Fragment {
                 gp_ticket.setVisibility(View.VISIBLE);
                 gp_step.setVisibility(View.GONE);
                 gp_schedule.setVisibility(View.GONE);
+                defineTicketIdLayout();
                 setBtnSyncVisibility();
                 //
                 setSyncListener();
                 //
-                ll_btn_sync.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mListener.syncPipeline();
-                    }
-                });
+//                ll_btn_sync.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        mListener.syncPipeline();
+//                    }
+//                });
                 //
                 break;
             case PRODUCT:
@@ -346,6 +351,48 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_schedule_date.setText(schedule_date);
     }
 
+    private void defineTicketIdLayout(){
+        if(PIPELINE.equals(header_profile_param)){
+            try {
+                Drawable drawableEnd = getContext().getDrawable(R.drawable.ic_sync_black_24dp);
+                drawableEnd.setColorFilter(ContextCompat.getColor(getContext(), R.color.font_normal), PorterDuff.Mode.SRC_ATOP);
+                //Background TicketId
+                Drawable ticketIdBgYellow = getContext().getDrawable(R.drawable.stroke_yellow_states);
+                Drawable ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_blue2_states);
+
+                tv_ticket_id.setPadding(8, 8, 8, 8);
+                tv_ticket_id.setCompoundDrawablesWithIntrinsicBounds(null, null, drawableEnd, null);
+                tv_ticket_id.setCompoundDrawablePadding(3);
+                tv_ticket_id.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mListener.syncPipeline();
+                    }
+                });
+                //
+                tv_ticket_id.setBackground(btn_sync_status_param ? ticketIdBgYellow : ticketIdBgDefault);
+            }catch (Exception e){
+                //LUCHE - 15/09/2020
+                //Ajuste feito para caso o context ser null, não crashsar.
+                //Seta flag que delega para o onResume a responsabilidade de tentar novamente setar
+                //o layoutcorreto.
+                forceRefreshDrawableOnFail = true;
+            }
+        }else{
+            tv_ticket_id.setOnClickListener(null);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(forceRefreshDrawableOnFail && getContext() != null) {
+            defineTicketIdLayout();
+        }
+        //reseta
+        forceRefreshDrawableOnFail = false;
+    }
+
     private void setCommentDataAndVisibility(String schedule_comment) {
         if(SCHEDULE.equals(header_profile_param) && schedule_comment != null && !schedule_comment.isEmpty()){
             tv_schedule_comment.setText(schedule_comment);
@@ -370,6 +417,7 @@ public class Frg_Pipeline_Header extends Fragment {
     }
 
     private void setBtnSyncVisibility() {
-        ll_btn_sync.setVisibility(btn_sync_status_param ? View.VISIBLE : View.GONE);
+        //ll_btn_sync.setVisibility(btn_sync_status_param ? View.VISIBLE : View.GONE);
+        defineTicketIdLayout();
     }
 }

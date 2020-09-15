@@ -226,7 +226,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         transList.add("alert_form_location_pendency_ttl");
         transList.add("alert_form_location_pendency_msg");
-
+        //
+        transList.add("alert_ticket_sync_confirm_ttl");
+        transList.add("alert_ticket_sync_confirm_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -323,7 +326,18 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void syncPipeline() {
-        mPresenter.prepareSyncProcess(mTicket);
+        showAlert(
+            hmAux_Trans.get("alert_ticket_sync_confirm_ttl"),
+            hmAux_Trans.get("alert_ticket_sync_confirm_msg"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    mPresenter.prepareSyncProcess(mTicket);
+                }
+            },
+            true
+        );
+
     }
 
     private void refreshUi() {

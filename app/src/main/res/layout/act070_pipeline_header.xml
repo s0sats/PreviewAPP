@@ -41,6 +41,27 @@
             app:layout_constraintStart_toStartOf="@id/frg_ticket_guide_start"
             app:layout_constraintTop_toTopOf="parent">
 
+<!--O layout comentado se refere a como ficará quando o botoa sync for habilitado             -->
+<!--            <TextView-->
+<!--                android:id="@+id/frg_ticket_tv_ticket_id"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textSize="13sp"-->
+<!--                android:textStyle="bold"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                tools:text="2019.999"-->
+<!--                android:drawableEnd="@drawable/ic_sync_black_24dp"-->
+<!--                android:gravity="center"-->
+<!--                android:paddingTop="3dp"-->
+<!--                android:paddingStart="8dp"-->
+<!--                android:paddingEnd="8dp"-->
+<!--                android:paddingBottom="3dp"-->
+<!--                android:background="@drawable/border_blue"-->
+<!--                android:drawablePadding="3dp"-->
+<!--                />-->
+
             <TextView
                 android:id="@+id/frg_ticket_tv_ticket_id"
                 android:layout_width="0dp"
@@ -50,7 +71,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="2019.999" />
+                tools:text="2019.999"
+                android:gravity="center"
+                />
 
             <TextView
                 android:id="@+id/frg_ticket_tv_status"
@@ -63,7 +86,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Pending" />
+                tools:text="Pending"
+                />
         </android.support.constraint.ConstraintLayout>
 
         <TextView
