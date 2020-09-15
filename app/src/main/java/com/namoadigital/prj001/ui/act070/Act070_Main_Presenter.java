@@ -1420,7 +1420,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         );
         //
         if(ticketsStep != null){
-            ArrayList<BaseStep> baseSteps = generateStepperSource(ticketsStep, mTicket.getCurrent_step_order(), mTicket.getForecast_date());
+            ArrayList<BaseStep> baseSteps = generateStepperSource(mTicket,ticketsStep);
             if(baseSteps != null){
                 mView.setStepperSource(baseSteps);
             }
@@ -1439,7 +1439,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
-    private ArrayList<BaseStep> generateStepperSource(List<TK_Ticket_Step> ticketStepList, Integer current_step_order, String forecast_date) {
+    private ArrayList<BaseStep> generateStepperSource(TK_Ticket mTicket, List<TK_Ticket_Step> ticketStepList) {
         ArrayList<BaseStep> baseSteps = new ArrayList<>();
         for (TK_Ticket_Step ticketStep : ticketStepList) {
             StepMain stepMain = new StepMain(
@@ -1452,7 +1452,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 ticketStep.getStep_end_date(),
                 ticketStep.getExec_type(),
                 ticketStep.getStep_status(),
-                isCurrentStep(ticketStep.getStep_order(),current_step_order),
+                isCurrentStep(ticketStep.getStep_order(),mTicket.getCurrent_step_order()),
                 ticketStep.getScan_serial() == 1,
                 ticketStep.getAllow_new_obj()== 1,
                 ticketStep.getMove_next_step()== 1
@@ -1470,10 +1470,24 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //
         if(!footerExists(baseSteps)){
             baseSteps.add(
-                new StepFooter(forecast_date)
+                new StepFooter(
+                    mTicket.getTicket_status(),
+                    getFooterDate(mTicket)
+                )
             );
         }
         return baseSteps;
+    }
+
+    /**
+     * Metodo que retona forecast_date ou close_date baseado no status do ticket.
+     * @param mTicket
+     * @return
+     */
+    private String getFooterDate(TK_Ticket mTicket) {
+        return ConstantBaseApp.SYS_STATUS_DONE.equals(mTicket.getTicket_status())
+            ? mTicket.getClose_date()
+            : mTicket.getForecast_date();
     }
 
     private boolean footerExists(ArrayList<BaseStep> baseSteps) {
