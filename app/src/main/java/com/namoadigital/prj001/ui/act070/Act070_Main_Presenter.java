@@ -678,7 +678,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                                         public void onClick(DialogInterface dialogInterface, int i) {
 
                                             if(ToolBox_Con.isOnline(context)) {
-                                                ToolBox_Inf.hasFormProductOutdate(context, mTicket.getTicket_prefix(), mTicket.getTicket_prefix());
+                                                ToolBox_Inf.hasFormProductOutdate(context, mTicket.getTicket_prefix(), mTicket.getTicket_code());
                                                 callWsSync();
                                             }else{
                                                 ToolBox_Inf.showNoConnectionDialog(context);

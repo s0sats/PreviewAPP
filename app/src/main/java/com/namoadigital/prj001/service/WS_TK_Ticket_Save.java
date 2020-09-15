@@ -633,9 +633,9 @@ public class WS_TK_Ticket_Save extends IntentService {
     private String getFormattedRetMsg(TicketSaveActReturn actReturn, T_TK_Ticket_Save_Rec_Result_Step resultStep) {
         String stepErroMsg = resultStep.getStep_desc() + " : ";
 
-        boolean hasError = resultStep.getRet_msg() != null && !resultStep.getRet_msg().isEmpty() ? true : false;
+        boolean hasError = resultStep.getRet_msg() != null && !resultStep.getRet_msg().isEmpty();
         //
-        if(hasError != false){
+        if(hasError){
             actReturn.setProcessError(hasError);
         }
         //
@@ -1134,6 +1134,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                 retResult.getRet_msg(),
                 reSend
         );
+        actReturn.setProcessError(retResult.getRet_msg() != null && !retResult.getRet_msg().isEmpty());
         //
         return actReturn;
     }
