@@ -159,12 +159,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void prepareSyncProcess(TK_Ticket mTicket) {
+    public void prepareSyncProcess(TK_Ticket mTicket, boolean allowOfflineSave) {
         //Verifica se há necessidade de envidar dados para o server.
         if(checkUpdateRequiredNeeds(mTicket)){
             if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
                 //callWsSave();
-                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code());
+                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), allowOfflineSave);
             }else {
                 executeTicketSaveProcess(false);
             }
@@ -241,34 +241,52 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
      * @param ticket_prefix
      * @param ticket_code
      */
-    private void defineFormWaitingSyncFlow(int ticket_prefix, int ticket_code){
+    private void defineFormWaitingSyncFlow(int ticket_prefix, int ticket_code, boolean allowOfflineSave){
         if(ToolBox_Inf.hasFormGpsPendencyWithinTicket(context,ticket_prefix,ticket_code)){
             mView.showAlert(
                 hmAux_Trans.get("alert_form_location_pendency_ttl"),
                 hmAux_Trans.get("alert_form_location_pendency_msg")
             );
         }else{
-            callWsSave();
+            callWsSave(allowOfflineSave);
         }
     }
 
-    private void callWsSave() {
-        mView.setWsProcess(WS_Save.class.getName());
-        //
-        mView.showPD(
-                hmAux_Trans.get("dialog_ticket_form_save_ttl"),
-                hmAux_Trans.get("dialog_ticket_form_save_start")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_Save.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
-        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
-        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
+    private void callWsSave(boolean allowOfflineSave) {
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_ticket_form_save_ttl"),
+                    hmAux_Trans.get("dialog_ticket_form_save_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
+            bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+            bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
 
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            if(allowOfflineSave){
+                mView.showAlert(
+                        hmAux_Trans.get("alert_offline_save_ttl"),
+                        hmAux_Trans.get("alert_offline_save_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mView.callRefreshUi();
+                            }
+                        },
+                        false
+                );
+            }else{
+                ToolBox_Inf.showNoConnectionDialog(context);
+            }
+        }
     }
 
 //    /**
@@ -1040,7 +1058,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         if(!daoObjReturn.hasError()){
             if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
                 //callWsSave();
-                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code());
+                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), true);
             }else {
                 executeTicketSaveProcess(true);
             }
@@ -1148,7 +1166,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         if(!daoObjReturn.hasError()){
             if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
                 //callWsSave();
-                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code());
+                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), true);
             }else {
                 executeTicketSaveProcess(true);
             }
@@ -1183,7 +1201,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         if(!daoObjReturn.hasError()){
             if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context,mTicket.getTicket_prefix(), mTicket.getTicket_code())){
                 //callWsSave();
-                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code());
+                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), true);
             }else {
                 executeTicketSaveProcess(true);
             }

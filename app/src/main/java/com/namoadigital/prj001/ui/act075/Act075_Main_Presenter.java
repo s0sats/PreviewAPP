@@ -553,22 +553,36 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
 
     @Override
     public void callWsSave() {
-        mView.setWsProcess(WS_Save.class.getName());
-        //
-        mView.showPD(
-                hmAux_Trans.get("dialog_ticket_form_save_ttl"),
-                hmAux_Trans.get("dialog_ticket_form_save_start")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_Save.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
-        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
-        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_ticket_form_save_ttl"),
+                    hmAux_Trans.get("dialog_ticket_form_save_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
+            bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+            bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
 
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            mView.showAlert(
+                    hmAux_Trans.get("alert_form_pendency_please_sync_ttl"),
+                    hmAux_Trans.get("alert_form_pendency_please_sync_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.callMoveOn();
+                        }
+                    },
+                    false
+            );
+        }
     }
 
     @Override

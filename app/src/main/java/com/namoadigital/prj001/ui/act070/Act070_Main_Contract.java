@@ -77,7 +77,7 @@ public interface Act070_Main_Contract {
 
         void processSaveReturn(int mPrefix, int mCode, String jsonRet);
 
-        void prepareSyncProcess(TK_Ticket mTicket);
+        void prepareSyncProcess(TK_Ticket mTicket, boolean allowOfflineSave);
 
         boolean checkOnlySyncNeeds(TK_Ticket mTicket);
 

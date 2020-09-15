@@ -323,7 +323,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void syncPipeline() {
-        mPresenter.prepareSyncProcess(mTicket);
+        mPresenter.prepareSyncProcess(mTicket, false);
     }
 
     private void refreshUi() {
@@ -576,8 +576,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             preventSyncLoop = false;
         }else {
             if ( (mPresenter.checkOnlySyncNeeds(mTicket) || forceSendByFormExecution) && ToolBox_Con.isOnline(context)) {
+                if(forceSendByFormExecution){
+                    forceSendByFormExecution = false;
+                    mPresenter.prepareSyncProcess(mTicket, true);
+                }else{
+                    mPresenter.prepareSyncProcess(mTicket, forceSendByFormExecution);
+                }
                 resetForceSendByform();
-                mPresenter.prepareSyncProcess(mTicket);
             }else{
                 resetForceSendByform();
             }
@@ -986,7 +991,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             wsProcess = "";
             progressDialog.dismiss();
             mPresenter.processWS_SaveReturn(mLink);
-            mPresenter.prepareSyncProcess(mTicket);
+            mPresenter.prepareSyncProcess(mTicket, false);
         }
         //
     }
