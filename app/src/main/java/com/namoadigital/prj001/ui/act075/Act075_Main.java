@@ -555,26 +555,42 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                                     }else{
                                         if(!mPresenter.getAppliedStatus(tkTicket)
                                                 || tkTicket.getInventory_control() == 0){
-                                            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)) {
-                                                if (ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkPrefix)) {
-                                                    showAlert(
-                                                            hmAux_Trans.get("alert_form_location_pendency_ttl"),
-                                                            hmAux_Trans.get("alert_form_location_pendency_msg"),
-                                                            new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialog, int which) {
-                                                                    callMoveOn();
-                                                                }
-                                                            },
-                                                            false
-                                                    );
+                                            mPresenter.saveAppliedProduct(tkTicket, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+                                            if (ToolBox_Con.isOnline(context)) {
+                                                if (ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)) {
+                                                    if (ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkCode)) {
+                                                        showAlert(
+                                                                hmAux_Trans.get("alert_form_location_pendency_ttl"),
+                                                                hmAux_Trans.get("alert_form_location_pendency_msg"),
+                                                                new DialogInterface.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(DialogInterface dialog, int which) {
+                                                                        callMoveOn();
+                                                                    }
+                                                                },
+                                                                false
+                                                        );
+                                                    } else {
+                                                        sync_ticket_form = true;
+                                                        mPresenter.callWsSave();
+                                                    }
                                                 } else {
-                                                    sync_ticket_form = true;
-                                                    mPresenter.callWsSave();
+                                                    mPresenter.executeTicketSaveProcess();
                                                 }
-                                            }else {
-                                                mPresenter.saveAppliedProduct(tkTicket, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
-                                            }
+                                            } else {
+
+                                                showAlert(
+                                                    hmAux_Trans.get("alert_offline_save_ttl"),
+                                                    hmAux_Trans.get("alert_offline_save_msg"),
+                                                    new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            callMoveOn();
+                                                        }
+                                                    },
+                                                    false
+                                                );
+                                        }
                                         }
                                     }
                                 }
@@ -752,31 +768,28 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             if(act_profile == 1) {
                 hasPendency = mPresenter.hasUpdatePendency(tkTicket);
             }
-            if(sync_ticket_form){
-                sync_ticket_form = false;
-                if(act_profile == 1) {
-                    if(!mPresenter.getWithdrawStatus(tkTicket)){
-                        if (ToolBox_Con.isOnline(context)) {
-                            mPresenter.saveproduct(tkTicket.getScn(), (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
-                        }else{
-                            ToolBox_Inf.showNoConnectionDialog(context);
-                        }
-                    }else if(!mPresenter.getAppliedStatus(tkTicket)){
-                        mPresenter.saveAppliedProduct(tkTicket, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
-                    }
-                }else{
-                    if(mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)) {
-                        saveApprovalFlow();
-                    }
-                }
-            }else {
-                mPresenter.processSaveReturn(tkTicket.getTicket_prefix(), tkTicket.getTicket_code(), mLink);
-            }
+            mPresenter.processSaveReturn(tkTicket.getTicket_prefix(), tkTicket.getTicket_code(), mLink);
         }else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
             progressDialog.dismiss();
             wsProcess = "";
             mPresenter.processWS_SaveReturn(mLink);
-            mPresenter.executeTicketSaveSyncFormProcess();
+            //
+            if(act_profile == 1) {
+                if(!mPresenter.getWithdrawStatus(tkTicket)
+                        && tkTicket.getInventory_control() == 1 ){
+                    if (ToolBox_Con.isOnline(context)) {
+                        mPresenter.saveproduct(tkTicket.getScn(), (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+                    }else{
+                        ToolBox_Inf.showNoConnectionDialog(context);
+                    }
+                }else if(!mPresenter.getAppliedStatus(tkTicket) || tkTicket.getInventory_control() == 0){
+                    mPresenter.executeTicketSaveProcess();
+                }
+            }else{
+                if(mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)) {
+                    saveApprovalFlow();
+                }
+            }
         }
     }
 
@@ -910,11 +923,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         }
         if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
-            if(sync_ticket_form) {
-                sync_ticket_form = false;
-                if (!wsResult.isEmpty()) {
-                    showResult(false);
-                }
+            if (!wsResult.isEmpty()) {
+                showResult(false);
             }
         }else{
             wsResult.clear();

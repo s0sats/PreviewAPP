@@ -317,7 +317,8 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                         product_cell_tv_extract.setVisibility(View.VISIBLE);
                         disableWithdrawLayout();
                         if(isEditable){
-                            if (ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mainUser.toString())) {
+                            if (mainUser != null &&
+                                    ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(mainUser.toString())) {
                                 enableAppliedLayout(position, tk_ticket_product);
                             }else{
                                 disableProductEdition(false);
