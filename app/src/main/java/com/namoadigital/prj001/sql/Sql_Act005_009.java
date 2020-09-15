@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -40,6 +39,7 @@ public class Sql_Act005_009 implements Specification{
                         TK_TicketDao.TABLE +" s\n" +
                         " WHERE \n" +
                         "   s.customer_code = '"+customer_code+"'\n" +
+                        "  and s.ticket_prefix > 0 \n" +
                         status_filtered +
                         "; \n")
                 .toString();

@@ -33,6 +33,7 @@ public class TK_Ticket_Sql_008 implements Specification {
                     "   " + TK_TicketDao.TABLE+ " t\n" +
                     " WHERE\n" +
                     "  t.customer_code = '"+customer_code+"'\n" +
+                    "  and t.ticket_prefix > 0 \n" +
                     "  and t.ticket_status in ('"+ ConstantBaseApp.SYS_STATUS_PENDING +"'," +
                                               "'"+ ConstantBaseApp.SYS_STATUS_PROCESS +"'," +
                                               "'"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"'" +
