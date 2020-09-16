@@ -466,6 +466,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_unsent_img_copy_error_msg");
         transList.add("alert_unsent_gps_nform_ttl");
         transList.add("alert_unsent_gps_nform_msg");
+        //Ws_Sync do Form de ticket
+        transList.add("progress_sync_tickets_form_ttl");
+        transList.add("progress_sync_tickets_form_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1073,7 +1076,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 alertTitle = hmAux_Trans.get("progress_support_ttl");
                 alertMsg = hmAux_Trans.get("progress_support_msg");
                 break;
-
+            case Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM:
+                alertTitle = hmAux_Trans.get("progress_sync_tickets_form_ttl");
+                alertMsg = hmAux_Trans.get("progress_sync_tickets_form_msg");
+                break;
             default:
                 break;
 
@@ -1816,6 +1822,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             if(sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
             }
+        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM)) {
+            progressDialog.dismiss();
+            setWsSoProcess("");
         } else {
             if(sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
@@ -2155,10 +2164,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 alertTitle = hmAux_Trans.get("alert_support_finish_ttl");
                 alertMsg = hmAux_Trans.get("alert_support_finish_msg");
                 break;
-
+            case Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM:
+                alertTitle = hmAux_Trans.get("alert_sync_finish_ttl");
+                alertMsg = hmAux_Trans.get("alert_sync_finish_msg");
+                break;
             default:
                 break;
-
         }
 
         wsProcess = "";
@@ -2243,6 +2254,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
      *       app e perca dados.
      */
     private void executeSync() {
+
+        boolean productOutdate = false;
+        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
+            productOutdate = ToolBox_Inf.hasFormProductOutdate(context);
+        }
+
         if (syncAfterSave) {
             setSyncAfterSave(false);
             if(ToolBox_Inf.getLocationPendencies(context) == 0) {
@@ -2256,6 +2273,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                         null,
                         0
                 );
+            }
+        }else{
+            if(productOutdate){
+                mPresenter.callWsSyncForTicketsForm();
             }
         }
     }

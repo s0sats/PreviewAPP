@@ -127,6 +127,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
      *
      **/
     private static final int SECUNDARY_MENU_QTY = 6;
+    public static final String SYNC_FOR_TICKETS_FORM = "SYNC_FOR_TICKETS_FORM";
 
     private Context context;
     private Act005_Main_View mView;
@@ -697,6 +698,31 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         //
         //mView.loadMenuV2(menuList);
         mView.loadMenuV2(grantedMenus,calculateNumColumns());
+    }
+
+    @Override
+    public void callWsSyncForTicketsForm() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(SYNC_FOR_TICKETS_FORM);
+            //
+            mView.showPD();
+            //
+            ArrayList<String> data_package = new ArrayList<>();
+            data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+            //
+            Intent mIntent = new Intent(context, WBR_Sync.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+            bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+            bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
+            bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+            bundle.putInt(Constant.GC_STATUS, 1);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }
+
     }
 
     private String handleTicketPendency() {
