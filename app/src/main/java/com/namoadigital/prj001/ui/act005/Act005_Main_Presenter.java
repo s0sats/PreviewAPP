@@ -74,6 +74,8 @@ public interface Act005_Main_Presenter {
 
     ArrayList<HMAux> processTicketSaveReturn(String mLink, String ticket_lbl);
 
+    void callWsSyncForTicketsForm();
+
     int processFakeMenus(ArrayList<MenuMainNamoa> menus, int columnsQty);
 
     @Nullable
