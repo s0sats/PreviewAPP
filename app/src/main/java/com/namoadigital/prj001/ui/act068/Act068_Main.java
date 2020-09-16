@@ -48,6 +48,7 @@ import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Sea
 
 public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_Main_Contract.I_View, On_Frg_Serial_Search {
 
+    public static final String IS_SYNC_PROCESS = "IS_SYNC_PROCESS";
     private Act068_Main_Presenter mPresenter;
     private int pendencies_qty;
     private FragmentManager fm;
@@ -537,14 +538,26 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             }
         } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())) {
             progressDialog.dismiss();
-            showMsg(
-                    hmAux_Trans.get("alert_ticket_syncronized_ttl"),
-                    hmAux_Trans.get("alert_ticket_syncronized_msg")
-            );
-            mPresenter.getSync();
+            if(mPresenter.verifyProductForForm()){
+                resultFromTicketSave = IS_SYNC_PROCESS;
+            }else {
+                showMsg(
+                        hmAux_Trans.get("alert_ticket_syncronized_ttl"),
+                        hmAux_Trans.get("alert_ticket_syncronized_msg")
+                );
+                mPresenter.getSync();
+            }
         } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             progressDialog.dismiss();
-            mPresenter.processSaveReturn(resultFromTicketSave);
+            if(IS_SYNC_PROCESS.equalsIgnoreCase(resultFromTicketSave)){
+                showMsg(
+                        hmAux_Trans.get("alert_ticket_syncronized_ttl"),
+                        hmAux_Trans.get("alert_ticket_syncronized_msg")
+                );
+                mPresenter.getSync();
+            }else {
+                mPresenter.processSaveReturn(resultFromTicketSave);
+            }
         } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
             wsProcess = "";
             progressDialog.dismiss();
