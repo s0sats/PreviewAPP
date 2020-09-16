@@ -37,8 +37,12 @@ public class RegistrationIntentService extends IntentService {
         try {
 
             String tt = ToolBox_Con.getPreference_Google_ID_OK(getApplicationContext());
-
-            if (!ToolBox_Con.getPreference_Google_ID_OK(getApplicationContext()).equalsIgnoreCase("OK")){
+            /**
+             * LUCHE - 16/09/2020
+             * Solicitaram que a chamada do getInstanceId fosse feito sempre e a comunicação com o
+             * WS_Google aconteca apenas se o id retornado foi diferente da preferencia
+             */
+            //if (!ToolBox_Con.getPreference_Google_ID_OK(getApplicationContext()).equalsIgnoreCase("OK")){
                 //String sToken = FirebaseInstanceId.getInstance().getToken();
                 /**
                  * LUCHE - 16/04/2020
@@ -54,15 +58,20 @@ public class RegistrationIntentService extends IntentService {
                                     return;
                                 }
                                 String sToken = task.getResult().getToken();
-                                //
-                                ToolBox_Con.setPreference_Google_ID(
+                                //LUCHE - 16/09/2020
+                                //Com a nova logica de sempre chamar o getInstanceId() na act005, a
+                                //atualização da preferencia e chama da do Ws deve ser feita apenas
+                                //se o token retornado for diferente da preferencia, indicando que
+                                //houve a troca.
+                                if(!ToolBox_Con.getPreference_Google_ID(getApplicationContext()).equalsIgnoreCase(sToken)) {
+                                    //
+                                    ToolBox_Con.setPreference_Google_ID(
                                         getApplicationContext(),
                                         sToken);
-
-                                //Log.d("ID_GOOGLE", sToken);
-                                //
-                                Intent mIntent = new Intent(getApplicationContext(), WS_Google.class);
-                                startService(mIntent);
+                                    //Log.d("ID_GOOGLE", sToken);
+                                    Intent mIntent = new Intent(getApplicationContext(), WS_Google.class);
+                                    startService(mIntent);
+                                }
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
@@ -77,7 +86,7 @@ public class RegistrationIntentService extends IntentService {
                                 ToolBox_Inf.registerException(getClass().getName(), new Exception("addOnCanceledListener"));
                             }
                         });
-            }
+            //}
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
 
