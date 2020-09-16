@@ -43,6 +43,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Approval;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.service.WS_Save;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
@@ -102,6 +103,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private ArrayList<HMAux> wsResult = new ArrayList<>();
     private boolean sync_ticket_form=false;
     private boolean hasPendency = false;
+    private String save_return;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -768,7 +770,11 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             if (act_profile == 1) {
                 hasPendency = mPresenter.hasUpdatePendency(tkTicket);
             }
-            mPresenter.processSaveReturn(tkTicket.getTicket_prefix(), tkTicket.getTicket_code(), mLink);
+            if(mPresenter.verifyProductForForm(tkTicket.getTicket_prefix(), tkTicket.getTicket_code())){
+                save_return = mLink;
+            }else {
+                mPresenter.processSaveReturn(tkTicket.getTicket_prefix(), tkTicket.getTicket_code(), mLink);
+            }
         } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
             progressDialog.dismiss();
             wsProcess = "";
@@ -790,6 +796,11 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                     saveApprovalFlow();
                 }
             }
+        } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            progressDialog.dismiss();
+            mPresenter.processSaveReturn(tkTicket.getTicket_prefix(), tkTicket.getTicket_code(), save_return);
+        } else{
+            progressDialog.dismiss();
         }
     }
 
@@ -896,6 +907,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         transList.add("act_ticket_return_material_approval_ttl");
         transList.add("act_ticket_operational_approval_ttl");
         //
+        transList.add("progress_sync_ttl");
+        transList.add("progress_sync_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -946,6 +960,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                     showResult(false);
                 }
             }
+        }else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            progressDialog.dismiss();
+            mPresenter.processSaveReturn(tkTicket.getTicket_prefix(), tkTicket.getTicket_code(), save_return);
         } else {
             wsResult.clear();
         }

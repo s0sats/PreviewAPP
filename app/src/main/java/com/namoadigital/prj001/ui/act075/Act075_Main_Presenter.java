@@ -20,6 +20,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ProductDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
 import com.namoadigital.prj001.model.TK_Ticket_Approval_Rejection;
@@ -28,9 +29,11 @@ import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
+import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_Save;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.Sql_Act075_001;
@@ -785,6 +788,39 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
             }
             //Se algo der erro poe label generico
             return"act_ticket_approval_ttl";
+        }
+    }
+
+    @Override
+    public boolean verifyProductForForm(int ticket_prefix, int ticket_code) {
+        if(ToolBox_Inf.hasFormProductOutdate(context, ticket_prefix, ticket_code)){
+            if (ToolBox_Con.isOnline(context)) {
+                mView.setWsProcess(WS_Sync.class.getName());
+                //
+                mView.showPD(
+                        hmAux_Trans.get("progress_sync_ttl"),
+                        hmAux_Trans.get("progress_sync_msg")
+                );
+                //
+                ArrayList<String> data_package = new ArrayList<>();
+                data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+                //
+                Intent mIntent = new Intent(context, WBR_Sync.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+                bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+                bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
+                bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+                bundle.putInt(Constant.GC_STATUS, 1);
+                //
+                mIntent.putExtras(bundle);
+                //
+                context.sendBroadcast(mIntent);
+                return true;
+            }
+            return false;
+        }else{
+            return false;
         }
     }
 }
