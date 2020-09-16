@@ -9,7 +9,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
@@ -43,25 +45,38 @@ public class RegistrationIntentService extends IntentService {
                  * Nova metodologia para resgatar o token, ja que FirebaseInstanceId.getInstance().getToken(), foi depreciada
                  */
                 FirebaseInstanceId.getInstance().getInstanceId()
-                    .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                            if (!task.isSuccessful()) {
-                                Log.d("ID_GOOGLE", "getInstanceId failed", task.getException());
-                                return;
-                            }
-                            String sToken = task.getResult().getToken();
-                            //
-                            ToolBox_Con.setPreference_Google_ID(
-                                getApplicationContext(),
-                                sToken);
+                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                if (!task.isSuccessful()) {
+                                    ToolBox_Inf.registerException(getClass().getName(),task.getException());
+                                    Log.d("ID_GOOGLE", "getInstanceId failed", task.getException());
+                                    return;
+                                }
+                                String sToken = task.getResult().getToken();
+                                //
+                                ToolBox_Con.setPreference_Google_ID(
+                                        getApplicationContext(),
+                                        sToken);
 
-                            //Log.d("ID_GOOGLE", sToken);
-                            //
-                            Intent mIntent = new Intent(getApplicationContext(), WS_Google.class);
-                            startService(mIntent);
-                        }
-                    });
+                                //Log.d("ID_GOOGLE", sToken);
+                                //
+                                Intent mIntent = new Intent(getApplicationContext(), WS_Google.class);
+                                startService(mIntent);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                ToolBox_Inf.registerException(getClass().getName(),e);
+                            }
+                        })
+                        .addOnCanceledListener(new OnCanceledListener() {
+                            @Override
+                            public void onCanceled() {
+                                ToolBox_Inf.registerException(getClass().getName(), new Exception("addOnCanceledListener"));
+                            }
+                        });
             }
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
