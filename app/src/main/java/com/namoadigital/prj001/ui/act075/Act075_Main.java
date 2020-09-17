@@ -588,6 +588,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                                                             new DialogInterface.OnClickListener() {
                                                                 @Override
                                                                 public void onClick(DialogInterface dialog, int which) {
+                                                                    hasUpdated = false;
                                                                     refreshUI();
                                                                 }
                                                             },
@@ -828,6 +829,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             setProductList(hasWithdrawnApproved, hasAppliedApproved);
             mAdapter.setmValues(tk_ticket_products);
             if (tkTicket.getUpdate_required_product() == 1
+                    && hasUpdated
                     && (isEditable(Constant.SYS_STATUS_PENDING, tkTicket.getTicket_status(), Constant.SYS_STATUS_PROCESS, tkTicket.getTicket_status()))) {
                 btnSave.setEnabled(true);
             } else {

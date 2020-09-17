@@ -23,7 +23,8 @@ public class Sql_Act005_010 implements Specification{
                         TK_TicketDao.TABLE +" s\n" +
                         " WHERE \n" +
                         "   s.customer_code = '"+customer_code+"'\n" +
-                        "   and s.update_required = 1\n" +
+                        "   and (s.update_required = 1" +
+                        "        or s.update_required_product = 1 )\n" +
                         "; \n")
                 .toString();
     }
