@@ -259,8 +259,8 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             //
             tv_product_info.setText(tk_ticket_product.getProduct_desc());
             //String.format("%,.2f", myValue);
-            product_cell_tv_withdrawn_qty.setText(String.format("%,.2f %s", tk_ticket_product.getQty(), tk_ticket_product.getUn()));
-            product_cell_tv_applied_qty.setText(String.format("%,.2f %s", tk_ticket_product.getQty_used(), tk_ticket_product.getUn()));
+            product_cell_tv_withdrawn_qty.setText(String.format("%,.2f %s", handleNullForQty(tk_ticket_product.getQty()), tk_ticket_product.getUn()));
+            product_cell_tv_applied_qty.setText(String.format("%,.2f %s", handleNullForQty(tk_ticket_product.getQty_used()), tk_ticket_product.getUn()));
 
             double qty_returned_for_approval = handleNullForQty(tk_ticket_product.getQty()) - handleNullForQty(tk_ticket_product.getQty_used());
             product_cell_tv_returned_qty.setText(String.format("%,.2f %s", qty_returned_for_approval, tk_ticket_product.getUn()));
@@ -273,6 +273,10 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                 product_cell_iv_withdrawn_substract.setEnabled(false);
             } else {
                 product_cell_iv_withdrawn_substract.setEnabled(true);
+            }
+            //LUCHE - 17/09/2020 - ARREMATE AOS MIL DO SEGUNDO TEMPO
+            if (tk_ticket_product.getQty_used() == null) {
+                tk_ticket_product.setQty_used(0.0);
             }
             if (tk_ticket_product.getQty_used() <= 0) {
                 product_cell_iv_applied_substract.setEnabled(false);

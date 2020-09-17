@@ -6,6 +6,12 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 
+/**
+ * LUCHE - 17/09/2020
+ *
+ * Modificado query adicionando filtro de ticket_prefix > 0 eliminando as actions agendadas e em processo
+ */
+
 public class Sql_Act012_008 implements Specification {
     public static final String PENDING_QTY = "pending_qty";
     public static final String TYPE = "type";
@@ -31,6 +37,7 @@ public class Sql_Act012_008 implements Specification {
                         TK_TicketDao.TABLE +" s\n" +
                         " WHERE \n" +
                         "   s.customer_code = '"+customer_code+"'\n" +
+                        "   and s.ticket_prefix > 0 \n" +
                         "   and s.ticket_status in (" +
                         "                       '"+ ConstantBase.SYS_STATUS_PROCESS +"'," +
                         "                       '"+ ConstantBase.SYS_STATUS_PENDING +"'," +
