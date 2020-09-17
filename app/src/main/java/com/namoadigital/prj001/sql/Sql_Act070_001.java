@@ -6,6 +6,9 @@ import com.namoadigital.prj001.database.Specification;
 /**
  * LUCHE - 23/07/2020
  * Query que seleciona os steps do ticket, excluindo a origem(step_code == 0)
+ *
+ * LUCHE - 17/09/2020
+ * Modificado ordenação da query, add o s.step_order_seq após o step_order
  */
 
 public class Sql_Act070_001 implements Specification {
@@ -34,6 +37,7 @@ public class Sql_Act070_001 implements Specification {
                     "      and s.step_code > 0 \n" +
                     " order by\n" +
                     "       s.step_order,\n" +
+                    "       s.step_order_seq,\n" +
                     "       s.step_code\n;"
             )
             .toString();

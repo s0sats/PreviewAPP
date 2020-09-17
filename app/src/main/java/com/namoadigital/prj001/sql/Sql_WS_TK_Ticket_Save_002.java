@@ -42,7 +42,7 @@ public class Sql_WS_TK_Ticket_Save_002 implements Specification {
         return sb
                 .append(" UPDATE "+ TK_TicketDao.TABLE+" set\n" +
                         "   update_required = '"+update_required+"',\n" +
-                        "   update_required_product = '"+update_required+"'\n" +
+                        "   update_required_product = '"+update_required_product+"'\n" +
                             syncUpdate +
                         " WHERE\n" +
                         "  customer_code = '"+customer_code+"'\n" +
