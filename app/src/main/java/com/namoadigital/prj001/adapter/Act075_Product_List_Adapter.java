@@ -30,12 +30,14 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_GET_MATERIAL;
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_OPERATIONAL;
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_RETURN_MATERIAL;
+import static com.namoadigital.prj001.view.dialog.ServiceRegisterDialog.DECIMAL_PRICE_PATTERN;
 
 public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -256,12 +258,12 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         public void onBind(final TK_Ticket_Product tk_ticket_product, final int position) {
             //
             tv_product_info.setText(tk_ticket_product.getProduct_desc());
-            //
-            product_cell_tv_withdrawn_qty.setText(String.format("%s %s", tk_ticket_product.getQty(), tk_ticket_product.getUn()));
-            product_cell_tv_applied_qty.setText(String.format("%s %s", tk_ticket_product.getQty_used(), tk_ticket_product.getUn()));
+            //String.format("%,.2f", myValue);
+            product_cell_tv_withdrawn_qty.setText(String.format("%,.2f %s", tk_ticket_product.getQty(), tk_ticket_product.getUn()));
+            product_cell_tv_applied_qty.setText(String.format("%,.2f %s", tk_ticket_product.getQty_used(), tk_ticket_product.getUn()));
 
             double qty_returned_for_approval = handleNullForQty(tk_ticket_product.getQty()) - handleNullForQty(tk_ticket_product.getQty_used());
-            product_cell_tv_returned_qty.setText(String.format("%s %s", qty_returned_for_approval, tk_ticket_product.getUn()));
+            product_cell_tv_returned_qty.setText(String.format("%,.2f %s", qty_returned_for_approval, tk_ticket_product.getUn()));
             //
             if (tk_ticket_product.getQty() == null) {
                 tk_ticket_product.setQty(0.0);
@@ -374,7 +376,8 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             double qtyUsed = 0.0;
             qtyUsed = handleNullForQty(tk_ticket_product.getQty_used());
             double balance = tk_ticket_product.getQty() - qtyUsed;
-            product_cell_tv_extract.setText(hmAux_Trans.get("product_extract_lbl") + " " + balance);
+            String balanceFormatted = (new DecimalFormat(DECIMAL_PRICE_PATTERN).format(balance));
+            product_cell_tv_extract.setText(hmAux_Trans.get("product_extract_lbl") + " " + balanceFormatted);
             tk_ticket_product.setQty_returned(balance);
         }
 

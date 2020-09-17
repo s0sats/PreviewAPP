@@ -70,7 +70,7 @@ public interface Act075_Main_Contract {
 
         List<TK_Ticket_Product> getTicketProductListForApproval(int mTkPrefix, int mTkCode);
 
-        void saveAppliedProduct(TK_Ticket ticket, ArrayList<TK_Ticket_Product> getmValues);
+        boolean saveAppliedProduct(TK_Ticket ticket, ArrayList<TK_Ticket_Product> getmValues);
 
         List<TK_Ticket_Product> getTicketProductList(TK_Ticket tkTicket);
         //

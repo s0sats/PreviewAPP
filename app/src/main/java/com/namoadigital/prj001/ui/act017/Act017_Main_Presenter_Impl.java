@@ -534,7 +534,12 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         );
         ticketStep.setStep_status(ConstantBaseApp.SYS_STATUS_PENDING);
         ticketStep.setUser_focus(1);
-        ticketStep.setUpdate_required(1);
+        /**
+         * BARRIONUEVO 16-09-2020
+         * Criando com update_required =0 para evitar se enviado ao servidor quando user desiste de
+         * finalizar a action.
+         */
+        ticketStep.setUpdate_required(0);
         ticketStep.setPK(tkTicket);
 //        ticketStep.getCtrl().add(
 //            createTicketCtrl(item, tkTicket, md_site, mdOperation)

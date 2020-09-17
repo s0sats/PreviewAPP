@@ -557,37 +557,51 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                                     }else{
                                         if(!mPresenter.getAppliedStatus(tkTicket)
                                                 || tkTicket.getInventory_control() == 0){
-                                            mPresenter.saveAppliedProduct(tkTicket, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
-                                            if (ToolBox_Con.isOnline(context)) {
-                                                if (ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)) {
-                                                    if (ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkCode)) {
-                                                        showAlert(
-                                                                hmAux_Trans.get("alert_form_location_pendency_ttl"),
-                                                                hmAux_Trans.get("alert_form_location_pendency_msg"),
-                                                                new DialogInterface.OnClickListener() {
-                                                                    @Override
-                                                                    public void onClick(DialogInterface dialog, int which) {
-                                                                        callMoveOn();
-                                                                    }
-                                                                },
-                                                                false
-                                                        );
+                                            boolean saveSuccess = mPresenter.saveAppliedProduct(tkTicket, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+                                            if(saveSuccess) {
+                                                if (ToolBox_Con.isOnline(context)) {
+                                                    if (ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)) {
+                                                        if (ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkCode)) {
+                                                            showAlert(
+                                                                    hmAux_Trans.get("alert_form_location_pendency_ttl"),
+                                                                    hmAux_Trans.get("alert_form_location_pendency_msg"),
+                                                                    new DialogInterface.OnClickListener() {
+                                                                        @Override
+                                                                        public void onClick(DialogInterface dialog, int which) {
+                                                                            callMoveOn();
+                                                                        }
+                                                                    },
+                                                                    false
+                                                            );
+                                                        } else {
+                                                            sync_ticket_form = true;
+                                                            mPresenter.callWsSave();
+                                                        }
                                                     } else {
-                                                        sync_ticket_form = true;
-                                                        mPresenter.callWsSave();
+                                                        mPresenter.executeTicketSaveProcess();
                                                     }
                                                 } else {
-                                                    mPresenter.executeTicketSaveProcess();
-                                                }
-                                            } else {
 
+                                                    showAlert(
+                                                            hmAux_Trans.get("alert_offline_save_ttl"),
+                                                            hmAux_Trans.get("alert_offline_save_msg"),
+                                                            new DialogInterface.OnClickListener() {
+                                                                @Override
+                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                    refreshUI();
+                                                                }
+                                                            },
+                                                            false
+                                                    );
+                                                }
+                                            }else{
                                                 showAlert(
-                                                        hmAux_Trans.get("alert_offline_save_ttl"),
-                                                        hmAux_Trans.get("alert_offline_save_msg"),
+                                                        hmAux_Trans.get("alert_error_on_save_product_ttl"),
+                                                        hmAux_Trans.get("alert_error_on_save_product_msg"),
                                                         new DialogInterface.OnClickListener() {
                                                             @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                callMoveOn();
+                                                            public void onClick(DialogInterface dialogInterface, int i) {
+
                                                             }
                                                         },
                                                         false
@@ -910,6 +924,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         transList.add("progress_sync_ttl");
         transList.add("progress_sync_msg");
         //
+        transList.add("alert_error_on_save_product_ttl");
+        transList.add("alert_error_on_save_product_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -991,7 +1008,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         View mDialogVIew = inflater.inflate(R.layout.act075_set_qties_dialog, null);
         TextView dialog_set_qty_lbl = mDialogVIew.findViewById(R.id.act075_dialog_set_qty_lbl);
         final MKEditTextNM dialog_set_mkedt_qty = mDialogVIew.findViewById(R.id.act075_dialog_set_mkedt_qty);
-        dialog_set_mkedt_qty.setmInputType("NUMBER");
+
         dialog_set_mkedt_qty.setText((new DecimalFormat(DECIMAL_PRICE_PATTERN).format(tk_ticket_product.getQty())).replace(".", ","));
         dialog_set_qty_lbl.setText(hmAux_Trans.get("set_product_qty_lbl"));
 
@@ -1030,7 +1047,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         View mDialogVIew = inflater.inflate(R.layout.act075_set_qties_dialog, null);
         TextView dialog_set_qty_lbl = mDialogVIew.findViewById(R.id.act075_dialog_set_qty_lbl);
         final MKEditTextNM dialog_set_mkedt_qty = mDialogVIew.findViewById(R.id.act075_dialog_set_mkedt_qty);
-        dialog_set_mkedt_qty.setmInputType("NUMBER");
+
         dialog_set_mkedt_qty.setText((new DecimalFormat(DECIMAL_PRICE_PATTERN).format(tk_ticket_product.getQty_used())).replace(".", ","));
         dialog_set_qty_lbl.setText(hmAux_Trans.get("set_product_qty_used_lbl"));
 

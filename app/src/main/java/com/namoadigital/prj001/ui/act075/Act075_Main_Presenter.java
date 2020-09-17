@@ -541,18 +541,17 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void saveAppliedProduct(TK_Ticket ticket, ArrayList<TK_Ticket_Product> getmValues) {
-        saveProductOnBD(ticket, getmValues);
-    }
-
-    private void saveProductOnBD(TK_Ticket ticket, ArrayList<TK_Ticket_Product> getmValues) {
+    public boolean saveAppliedProduct(TK_Ticket ticket, ArrayList<TK_Ticket_Product> getmValues) {
         ticketDao.query(new Sql_Act075_002(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 ticket.getTicket_prefix(),
                 ticket.getTicket_code()
         ).toSqlQuery());
-        updateTicketProducts(getmValues);
+
+        DaoObjReturn daoObjReturn = ticketProductDao.addUpdate(getmValues, false);
+        return !daoObjReturn.hasError();
     }
+
 
     @Override
     public void callWsSave() {
@@ -644,12 +643,6 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
             return tkTicket.getProduct();
         }
 
-    }
-
-    private void updateTicketProducts(ArrayList<TK_Ticket_Product> ticket_products) {
-        for (TK_Ticket_Product ticket_product : ticket_products) {
-            ticketProductDao.addUpdate(ticket_product);
-        }
     }
 
     @Override
