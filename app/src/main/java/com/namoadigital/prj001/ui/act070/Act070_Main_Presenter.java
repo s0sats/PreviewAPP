@@ -322,6 +322,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             && (mTicket.getUpdate_required() == 1
                 || mTicket.getUpdate_required_product() == 1
                 || ToolBox_Inf.isTicketInTokenFile(context, mTicket.getTicket_prefix(),mTicket.getTicket_code())
+                || ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
                 );
     }
 

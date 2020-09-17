@@ -140,7 +140,7 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
         ArrayList<TK_Ticket> ticketInToken = ToolBox_Inf.getTicketsWithinToken(ToolBox_Con.getPreference_Customer_Code(context));
         qtyToSend = qtyToSend + ticketInToken.size();
         //
-        return qtyToSend > 0;
+        return qtyToSend > 0 || hasFormWaitingSyncWithinAnyTicket(context);
     }
 
     @Override
@@ -250,6 +250,16 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
             mView.addResultList(auxResults);
         }
 
+    }
+
+    @Override
+    public void handlePendingForWSTicketDownload() {
+        if(hasFormWaitingSyncWithinAnyTicket(context)){
+            //callWsSave();
+            defineFormWaitingSyncFlow();
+        }else {
+            executeWSTicketDownload();
+        }
     }
 
     private boolean hasFormWaitingSyncWithinAnyTicket(Context context) {

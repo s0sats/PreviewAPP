@@ -56,7 +56,6 @@ public class Sql_WS_TK_Ticket_Save_001 implements Specification {
                     "                            and g.ticket_prefix = t.ticket_prefix\n" +
                     "                            and g.ticket_code = t.ticket_code  \n" +
                     "                            and g.custom_form_status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"'\n" +
-                    "                            and g.location_pendency = 1  \n" +
                     "                     )  " +
                     " GROUP BY\n" +
                     "     t.customer_code,\n" +

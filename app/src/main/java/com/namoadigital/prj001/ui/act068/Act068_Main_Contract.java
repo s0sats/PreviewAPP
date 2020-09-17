@@ -65,5 +65,7 @@ public interface Act068_Main_Contract {
        void defineWsToCall();
 
        void processWS_SaveReturn(String result);
+
+       void handlePendingForWSTicketDownload();
    }
 }
