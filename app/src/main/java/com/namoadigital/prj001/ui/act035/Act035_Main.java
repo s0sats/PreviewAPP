@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
@@ -1182,13 +1183,30 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             lv_messages.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
                     if (ToolBox_Con.isOnline(context, true)) {
-
+                        //
                         HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
-
-                        colorName = ((TextView) (view.findViewById(R.id.act035_main_content_cell_whats_tv_name))).getCurrentTextColor();
-
+                        //LUCHE - 18/09/2020
+                        //Adicionado switch para resgatar a cor da view correta. Como o nome da view
+                        // de name foi alterado nos layouts de ticket aqui da va exception.
+                        //A principio, a cor não é utilizada no caso das msg de ticket e form ap,
+                        //mas para deixa compativel com o futuro ja esta corrigido. Em caso de exception
+                        //como acontecia anteriormente, será setada uma cor padrão
+                        try {
+                            int itemViewType = act035_adapter_messages.getItemViewType(position);
+                            switch (itemViewType) {
+                                case Act035_Adapter_Messages.ITEM_VIEW_TYPE_TICKET_OTHER:
+                                case Act035_Adapter_Messages.ITEM_VIEW_TYPE_TICKET_MINE:
+                                    colorName = ((TextView) (view.findViewById(R.id.act035_main_content_cell_ticket_tv_name))).getCurrentTextColor();
+                                    break;
+                                default:
+                                    colorName = ((TextView) (view.findViewById(R.id.act035_main_content_cell_whats_tv_name))).getCurrentTextColor();
+                                    break;
+                            }
+                        }catch (Exception e){
+                            colorName = ContextCompat.getColor(context, R.color.namoa_status_error);
+                        }
+                        //
                         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
 
                         if (!hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")) {
@@ -2346,12 +2364,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     break;
 
                 case Constant.CHAT_ROOM_TYPE_AP:
+                case Constant.CHAT_MESSAGE_TYPE_TICKET:
                     ll_info.setVisibility(View.VISIBLE);
                     ll_view.setVisibility(View.GONE);
 
                     TextView tv_name_ap = (TextView) ll_info.findViewById(R.id.act035_room_info_tv_msg);
                     tv_name_ap.setText(hmAux_Trans.get(ch_Message.getMsg_type()));
-
                     break;
                 default:
                     break;
