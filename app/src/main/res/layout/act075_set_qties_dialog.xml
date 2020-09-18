@@ -28,7 +28,7 @@
         android:ems="10"
         android:inputType="text"
         app:mInputType="NUMBER"
-        app:mDecimal="2"
+        app:mDecimal="4"
         app:mOCR="false"
         app:mOCRVin="false"
         app:mBARCODE="false"

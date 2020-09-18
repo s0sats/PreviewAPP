@@ -37,7 +37,7 @@ import java.util.List;
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_GET_MATERIAL;
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_OPERATIONAL;
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_RETURN_MATERIAL;
-import static com.namoadigital.prj001.view.dialog.ServiceRegisterDialog.DECIMAL_PRICE_PATTERN;
+import static com.namoadigital.prj001.ui.act075.Act075_Main.DECIMAL_PRODUCT_QTY_PATTERN;
 
 public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -259,11 +259,12 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             //
             tv_product_info.setText(tk_ticket_product.getProduct_desc());
             //String.format("%,.2f", myValue);
-            product_cell_tv_withdrawn_qty.setText(String.format("%,.2f %s", handleNullForQty(tk_ticket_product.getQty()), tk_ticket_product.getUn()));
-            product_cell_tv_applied_qty.setText(String.format("%,.2f %s", handleNullForQty(tk_ticket_product.getQty_used()), tk_ticket_product.getUn()));
+
+            product_cell_tv_withdrawn_qty.setText(String.format("%s %s", (new DecimalFormat(DECIMAL_PRODUCT_QTY_PATTERN).format(handleNullForQty(tk_ticket_product.getQty()))), tk_ticket_product.getUn()));
+            product_cell_tv_applied_qty.setText(String.format("%s %s", (new DecimalFormat(DECIMAL_PRODUCT_QTY_PATTERN).format(handleNullForQty(tk_ticket_product.getQty_used()))), tk_ticket_product.getUn()));
 
             double qty_returned_for_approval = handleNullForQty(tk_ticket_product.getQty()) - handleNullForQty(tk_ticket_product.getQty_used());
-            product_cell_tv_returned_qty.setText(String.format("%,.2f %s", qty_returned_for_approval, tk_ticket_product.getUn()));
+            product_cell_tv_returned_qty.setText(String.format("%s %s", (new DecimalFormat(DECIMAL_PRODUCT_QTY_PATTERN).format(qty_returned_for_approval)), tk_ticket_product.getUn()));
             //
             if (tk_ticket_product.getQty() == null) {
                 tk_ticket_product.setQty(0.0);
@@ -284,10 +285,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                 product_cell_iv_applied_substract.setEnabled(true);
             }
             //
-            if (tk_ticket_product.getQty_used() == null) {
-                tk_ticket_product.setQty_used(0.0);
-                product_cell_iv_applied_add.setEnabled(true);
-            }
+            product_cell_iv_applied_add.setEnabled(true);
             //
             if(inventory_control == 1) {
                 if (tk_ticket_product.getQty_used() < tk_ticket_product.getQty().longValue()) {
@@ -380,7 +378,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             double qtyUsed = 0.0;
             qtyUsed = handleNullForQty(tk_ticket_product.getQty_used());
             double balance = tk_ticket_product.getQty() - qtyUsed;
-            String balanceFormatted = (new DecimalFormat(DECIMAL_PRICE_PATTERN).format(balance));
+            String balanceFormatted = (new DecimalFormat(DECIMAL_PRODUCT_QTY_PATTERN).format(balance));
             product_cell_tv_extract.setText(hmAux_Trans.get("product_extract_lbl") + " " + balanceFormatted);
             tk_ticket_product.setQty_returned(balance);
         }

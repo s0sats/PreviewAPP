@@ -60,11 +60,11 @@ import java.util.List;
 import static com.namoadigital.prj001.ui.act070.Act070_Main.IS_OPERATIONAL_PROCESS;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_PIPELINE_PRODUCT_STATUS_NO_CONTROL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_PIPELINE_PRODUCT_STATUS_PENDING;
-import static com.namoadigital.prj001.view.dialog.ServiceRegisterDialog.DECIMAL_PRICE_PATTERN;
 
 public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contract.I_View, Act075_Product_List_Adapter.OnProductInteract, Act075_Product_List_Adapter.OnApproveInteract {
     public static final String PRODUCT_LIST = "PRODUCT_LIST";
     public static final String IS_ADD_PRODUCT_LIST = "IS_ADD_PRODUCT_LIST";
+    public static final String DECIMAL_PRODUCT_QTY_PATTERN = "###0.####";
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private String mResource_CodeFrg = "0";
@@ -1011,7 +1011,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         TextView dialog_set_qty_lbl = mDialogVIew.findViewById(R.id.act075_dialog_set_qty_lbl);
         final MKEditTextNM dialog_set_mkedt_qty = mDialogVIew.findViewById(R.id.act075_dialog_set_mkedt_qty);
 
-        dialog_set_mkedt_qty.setText((new DecimalFormat(DECIMAL_PRICE_PATTERN).format(tk_ticket_product.getQty())).replace(".", ","));
+        dialog_set_mkedt_qty.setText((new DecimalFormat(DECIMAL_PRODUCT_QTY_PATTERN).format(tk_ticket_product.getQty())).replace(".", ","));
         dialog_set_qty_lbl.setText(hmAux_Trans.get("set_product_qty_lbl"));
 
         builder.setView(mDialogVIew)
@@ -1050,7 +1050,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         TextView dialog_set_qty_lbl = mDialogVIew.findViewById(R.id.act075_dialog_set_qty_lbl);
         final MKEditTextNM dialog_set_mkedt_qty = mDialogVIew.findViewById(R.id.act075_dialog_set_mkedt_qty);
 
-        dialog_set_mkedt_qty.setText((new DecimalFormat(DECIMAL_PRICE_PATTERN).format(tk_ticket_product.getQty_used())).replace(".", ","));
+        dialog_set_mkedt_qty.setText((new DecimalFormat(DECIMAL_PRODUCT_QTY_PATTERN).format(tk_ticket_product.getQty_used())).replace(".", ","));
         dialog_set_qty_lbl.setText(hmAux_Trans.get("set_product_qty_used_lbl"));
 
         builder.setView(mDialogVIew)
