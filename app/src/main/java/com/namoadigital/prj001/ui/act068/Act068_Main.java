@@ -184,13 +184,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                         checkFlow(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:
-                        if(mPresenter.hasItensToSend()){
-                            nextTicketsFlow = true;
-                            mPresenter.handlePendingForWSTicketDownload();
-                        }else{
-                            mPresenter.executeWSTicketDownload();
-                        }
-
+                        mPresenter.executeWSTicketDownload();
                         break;
                     case Frg_Serial_Search.BTN_OPTION_03:
                         processPendencies();
