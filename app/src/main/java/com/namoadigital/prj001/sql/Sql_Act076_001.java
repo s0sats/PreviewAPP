@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.sql;
 
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -30,8 +31,10 @@ public class Sql_Act076_001 implements Specification {
         this.site_logged = site_logged;
         this.ticketProductCode = ticketProductCode;
         this.ticketSerialCode = ticketSerialCode;
-        serial_filter = " and t.open_product_code = '" + ticketProductCode + "'\n" +
-                        " and t.open_serial_code = '" + ticketSerialCode + "'\n" ;
+        serial_filter = " and (\n(t.open_product_code = '" + ticketProductCode + "'\n" +
+                        " and t.open_serial_code = '" + ticketSerialCode + "')\n"  +
+                        " or( c.product_code = '" + ticketProductCode + "'\n" +
+                        " and c.serial_code = '" + ticketSerialCode + "')\n)\n" ;
     }
 
     @Override
@@ -73,6 +76,11 @@ public class Sql_Act076_001 implements Specification {
                         "     " + TK_Ticket_StepDao.TABLE + " s ON \n" +
                         "       t.ticket_code = s.ticket_code \n" +
                         "       AND t.ticket_prefix = s.ticket_prefix\n" +
+                        " LEFT JOIN\n" +
+                        "     " + TK_Ticket_CtrlDao.TABLE + " c ON \n" +
+                        "        s.ticket_prefix = c.ticket_prefix \n" +
+                        "       AND s.ticket_code = c.ticket_code \n" +
+                        "       AND s.step_code = c.step_code \n" +
                         " WHERE\n" +
                         " t.customer_code = '" + customer_code + "'\n" +
                         serial_filter +

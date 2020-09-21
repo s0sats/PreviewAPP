@@ -44,7 +44,6 @@ import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Sync;
-import com.namoadigital.prj001.service.WS_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -519,11 +518,11 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    if(!mPresenter.getWithdrawStatus(tkTicket)
-                                            && tkTicket.getInventory_control() == 1){
+                                    boolean saveSuccess = mPresenter.saveAppliedProduct(tkTicket, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+                                    if(saveSuccess) {
                                         if (ToolBox_Con.isOnline(context)) {
-                                            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)){
-                                                if(ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkCode)) {
+                                            if (ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)) {
+                                                if (ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkCode)) {
                                                     showAlert(
                                                             hmAux_Trans.get("alert_form_location_pendency_ttl"),
                                                             hmAux_Trans.get("alert_form_location_pendency_msg"),
@@ -535,85 +534,44 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                                                             },
                                                             false
                                                     );
-                                                }else{
-                                                    showAlert(
-                                                            hmAux_Trans.get("alert_form_pendency_please_sync_ttl"),
-                                                            hmAux_Trans.get("alert_form_pendency_please_sync_msg"),
-                                                            new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialog, int which) {
-                                                                    callMoveOn();
-                                                                }
-                                                            },
-                                                            false
-                                                    );
+                                                } else {
+                                                    sync_ticket_form = true;
+                                                    mPresenter.callWsSave();
                                                 }
-                                            }else {
-                                                mPresenter.saveproduct(tkTicket.getScn(), (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
+                                            } else {
+                                                mPresenter.executeTicketSaveProcess();
                                             }
                                         } else {
-                                            ToolBox_Inf.showNoConnectionDialog(context);
+
+                                            showAlert(
+                                                    hmAux_Trans.get("alert_offline_save_ttl"),
+                                                    hmAux_Trans.get("alert_offline_save_msg"),
+                                                    new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            hasUpdated = false;
+                                                            refreshUI();
+                                                        }
+                                                    },
+                                                    false
+                                            );
                                         }
                                     }else{
-                                        if(!mPresenter.getAppliedStatus(tkTicket)
-                                                || tkTicket.getInventory_control() == 0){
-                                            boolean saveSuccess = mPresenter.saveAppliedProduct(tkTicket, (ArrayList<TK_Ticket_Product>) mAdapter.getmValues());
-                                            if(saveSuccess) {
-                                                if (ToolBox_Con.isOnline(context)) {
-                                                    if (ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)) {
-                                                        if (ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkCode)) {
-                                                            showAlert(
-                                                                    hmAux_Trans.get("alert_form_location_pendency_ttl"),
-                                                                    hmAux_Trans.get("alert_form_location_pendency_msg"),
-                                                                    new DialogInterface.OnClickListener() {
-                                                                        @Override
-                                                                        public void onClick(DialogInterface dialog, int which) {
-                                                                            callMoveOn();
-                                                                        }
-                                                                    },
-                                                                    false
-                                                            );
-                                                        } else {
-                                                            sync_ticket_form = true;
-                                                            mPresenter.callWsSave();
-                                                        }
-                                                    } else {
-                                                        mPresenter.executeTicketSaveProcess();
+                                        showAlert(
+                                                hmAux_Trans.get("alert_error_on_save_product_ttl"),
+                                                hmAux_Trans.get("alert_error_on_save_product_msg"),
+                                                new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+
                                                     }
-                                                } else {
-
-                                                    showAlert(
-                                                            hmAux_Trans.get("alert_offline_save_ttl"),
-                                                            hmAux_Trans.get("alert_offline_save_msg"),
-                                                            new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialog, int which) {
-                                                                    hasUpdated = false;
-                                                                    refreshUI();
-                                                                }
-                                                            },
-                                                            false
-                                                    );
-                                                }
-                                            }else{
-                                                showAlert(
-                                                        hmAux_Trans.get("alert_error_on_save_product_ttl"),
-                                                        hmAux_Trans.get("alert_error_on_save_product_msg"),
-                                                        new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                                            }
-                                                        },
-                                                        false
-                                                );
-                                            }
-                                        }
+                                                },
+                                                false
+                                        );
                                     }
                                 }
                             },
                             1);
-
                 }else if(act_profile == 2){
                     if(mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)) {
                         ToolBox.alertMSG_YES_NO(context,
@@ -761,25 +719,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
-        if (WS_TK_Ticket_Product_Save.class.getName().equalsIgnoreCase(wsProcess)) {
-            progressDialog.dismiss();
-            if (hmAux.hasConsistentValue(WS_TK_Ticket_Product_Save.PRODUCT_SAVE_RETURN_KEY)) {
-                if (WS_TK_Ticket_Product_Save.PRODUCT_ADD.equalsIgnoreCase(hmAux.get(WS_TK_Ticket_Product_Save.PRODUCT_SAVE_RETURN_KEY))) {
-                    if (wsResult != null
-                            && wsResult.size() > 0) {
-                        showResult(false);
-                    } else {
-                        Toast.makeText(context, hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
-                        hasUpdated = false;
-                        onBackPressed();
-                    }
-                } else if (WS_TK_Ticket_Product_Save.TICKET_FULL.equalsIgnoreCase(hmAux.get(WS_TK_Ticket_Product_Save.PRODUCT_SAVE_RETURN_KEY))) {
-                    showResult(true);
-//                    showMsg(hmAux_Trans.get("alert_ticket_updated_ttl"), hmAux_Trans.get("alert_ticket_updated_msg"));
-                }
-            }
-            refreshUI();
-        } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+        if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             progressDialog.dismiss();
             wsProcess = "";
             if (act_profile == 1) {

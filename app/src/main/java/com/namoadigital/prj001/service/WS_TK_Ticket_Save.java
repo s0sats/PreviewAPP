@@ -631,15 +631,25 @@ public class WS_TK_Ticket_Save extends IntentService {
 
     @NonNull
     private String getFormattedRetMsg(TicketSaveActReturn actReturn, T_TK_Ticket_Save_Rec_Result_Step resultStep) {
-        String stepErroMsg = resultStep.getStep_desc() + " : ";
-
+        String stepErroMsg = "";
+        //
         boolean hasError = resultStep.getRet_msg() != null && !resultStep.getRet_msg().isEmpty();
         //
         if(hasError){
-            actReturn.setProcessError(hasError);
+            if(!actReturn.isProcessError()) {
+                actReturn.setProcessError(hasError);
+            }
+            if (resultStep.getStep_desc() != null) {
+                stepErroMsg = "- " + resultStep.getStep_desc() + " : ";
+                stepErroMsg += resultStep.getRet_msg() != null && !resultStep.getRet_msg().isEmpty() ? "\n" + resultStep.getRet_msg() : resultStep.getRet_status();
+            }else{
+                if (actReturn.getRetMsg() == null || actReturn.getRetMsg().isEmpty()) {
+                    stepErroMsg += resultStep.getRet_msg() != null && !resultStep.getRet_msg().isEmpty() ? resultStep.getRet_msg() : resultStep.getRet_status();
+                }else{
+                    stepErroMsg += "- " + (resultStep.getRet_msg() != null && !resultStep.getRet_msg().isEmpty() ? resultStep.getRet_msg() : resultStep.getRet_status());
+                }
+            }
         }
-        //
-        stepErroMsg += resultStep.getRet_msg() != null && !resultStep.getRet_msg().isEmpty() ? "\n" + resultStep.getRet_msg() : resultStep.getRet_status();
         //
         if (actReturn.getRetMsg() == null || actReturn.getRetMsg().isEmpty()) {
             return stepErroMsg + "\n";
