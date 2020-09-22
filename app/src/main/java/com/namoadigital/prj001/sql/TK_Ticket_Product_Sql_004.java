@@ -3,17 +3,20 @@ package com.namoadigital.prj001.sql;
 import com.namoadigital.prj001.dao.TK_Ticket_ProductDao;
 import com.namoadigital.prj001.database.Specification;
 
+
 /**
  *  BARRIONUEVO 22-09-2020
  *  Query responsável por listar os produtos para aprovacao de retirada.
- *      - Nao deve ser exibidos produtos com qty igual a zero.
+ *      - Nao deve ser exibidos produtos com qty_returned igual a zero.
+ *      - Foi feito a contabilizacao pois o server nao atualiza a variavel qty_returned antes da
+ *        aprovacao.
  */
-public class TK_Ticket_Product_Sql_003 implements Specification {
+public class TK_Ticket_Product_Sql_004  implements Specification {
     private long customer_code;
     private int ticket_prefix;
     private int ticket_code;
 
-    public TK_Ticket_Product_Sql_003(long customer_code, int ticket_prefix, int ticket_code) {
+    public TK_Ticket_Product_Sql_004(long customer_code, int ticket_prefix, int ticket_code) {
         this.customer_code = customer_code;
         this.ticket_prefix = ticket_prefix;
         this.ticket_code = ticket_code;
@@ -31,7 +34,7 @@ public class TK_Ticket_Product_Sql_003 implements Specification {
                         "      p.customer_code = '" + customer_code +"'\n" +
                         "      and p.ticket_prefix = '" + ticket_prefix +"'\n" +
                         "      and p.ticket_code = '" + ticket_code +"'\n" +
-                        "      and p.qty > 0" + "\n;"
+                        "      and p.qty > qty_used;\n"
                 )
                 .toString();
     }

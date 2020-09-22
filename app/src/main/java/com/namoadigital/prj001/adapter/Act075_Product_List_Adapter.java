@@ -42,8 +42,17 @@ import static com.namoadigital.prj001.ui.act075.Act075_Main.DECIMAL_PRODUCT_QTY_
 public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<TK_Ticket_Product> mValues = new ArrayList<>();
+    /**
+     *  BARRIONUEVO 22-09-2020
+     *  act_profile: Controla o perfil da tela: 1 - Tela de Produtos
+     *                                          2 - Tela de Aprovação.
+     */
     private int act_profile;
     private int inventory_control;
+    /**
+     *  BARRIONUEVO 22-09-2020
+     *  mainUser: Responsável pela aprovacao de retirada.
+     */
     private Integer mainUser;
     private static final int FOOTER_VIEW = 1;
     private String mResource_Code;
@@ -114,6 +123,9 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         transList.add("product_decline_option");
         transList.add("add_product_lbl");
         transList.add("product_comment_lbl");
+        //
+        transList.add("product_withdraw_approval_empty_list");
+        transList.add("product_applied_approval_empty_list");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -573,6 +585,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     public class ApprovalViewHolder extends RecyclerView.ViewHolder {
+        TextView tv_empty_list;
         TextView tv_ask_confirm;
         TextView tv_comment_lbl;
         TextInputLayout til_comment;
@@ -583,6 +596,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
         public ApprovalViewHolder(@NonNull View itemView) {
             super(itemView);
+            tv_empty_list = itemView.findViewById(R.id.act075_approval_form_tv_empty_list);
             tv_ask_confirm = itemView.findViewById(R.id.act075_approval_form_tv_ask_confirm);
             tv_comment_lbl = itemView.findViewById(R.id.act075_approval_form_tv_comment_lbl);
             til_comment = itemView.findViewById(R.id.act075_approval_form_til_comment);
@@ -605,6 +619,18 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             String question = tkTicketApproval.getApproval_question() != null ? tkTicketApproval.getApproval_question() : "";
             tv_ask_confirm.setText(question);
             String comments = tkTicketApproval.getApproval_comments() != null ? tkTicketApproval.getApproval_comments() : "";
+            if(mValues.isEmpty() && !APPROVAL_OPERATIONAL.equalsIgnoreCase(tkTicketApproval.getApproval_type())){
+                tv_empty_list.setVisibility(View.VISIBLE);
+                if(APPROVAL_GET_MATERIAL.equalsIgnoreCase(tkTicketApproval.getApproval_type())) {
+                    tv_empty_list.setText(hmAux_Trans.get("product_withdraw_approval_empty_list"));
+                }else if(APPROVAL_RETURN_MATERIAL.equalsIgnoreCase(tkTicketApproval.getApproval_type())) {
+                    tv_empty_list.setText(hmAux_Trans.get("product_applied_approval_empty_list"));
+                }else{
+                    tv_empty_list.setVisibility(View.INVISIBLE);
+                }
+            }else{
+                tv_empty_list.setVisibility(View.GONE);
+            }
             //
             mket_comment.setText(comments);
             //

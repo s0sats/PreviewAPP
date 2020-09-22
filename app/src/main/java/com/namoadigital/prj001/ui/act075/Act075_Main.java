@@ -297,10 +297,10 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         rvProduct.setLayoutManager(layoutManager);
         //
-        if(!isOperationalProcess) {
-            tk_ticket_products = mPresenter.getTicketProductListForApproval(mTkPrefix, mTkCode);
-        }
         TK_Ticket_Approval ticketApproval = mPresenter.getTicketApproval(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix, mTkCode, mTkSeq, mStepCode);
+        if(!isOperationalProcess) {
+            tk_ticket_products = mPresenter.getTicketProductListForApproval(ticketApproval);
+        }
         //
         mAdapter = new Act075_Product_List_Adapter(
                 context,

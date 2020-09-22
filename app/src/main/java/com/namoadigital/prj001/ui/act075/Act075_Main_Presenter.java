@@ -44,6 +44,7 @@ import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_003;
+import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -529,15 +530,23 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     }
 
     @Override
-    public List<TK_Ticket_Product> getTicketProductListForApproval(int mTkPrefix, int mTkCode) {
+    public List<TK_Ticket_Product> getTicketProductListForApproval(TK_Ticket_Approval ticketApproval) {
+        if(APPROVAL_GET_MATERIAL.equalsIgnoreCase(ticketApproval.getApproval_type())) {
+            return ticketProductDao.query(
+                    new TK_Ticket_Product_Sql_003(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            ticketApproval.getTicket_prefix(),
+                            ticketApproval.getTicket_code()
+                    ).toSqlQuery()
+            );
+        }
         return ticketProductDao.query(
-                new TK_Ticket_Product_Sql_003(
+                new TK_Ticket_Product_Sql_004(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        mTkPrefix,
-                        mTkCode
+                        ticketApproval.getTicket_prefix(),
+                        ticketApproval.getTicket_code()
                 ).toSqlQuery()
         );
-
     }
 
     @Override

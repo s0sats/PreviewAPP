@@ -68,7 +68,7 @@ public interface Act075_Main_Contract {
         //
         boolean hasApproveProfile(int mTkPrefix, int mTkCode, int mTkSeq, int stepCode);
 
-        List<TK_Ticket_Product> getTicketProductListForApproval(int mTkPrefix, int mTkCode);
+        List<TK_Ticket_Product> getTicketProductListForApproval(TK_Ticket_Approval ticketApproval);
 
         boolean saveAppliedProduct(TK_Ticket ticket, ArrayList<TK_Ticket_Product> getmValues);
 
