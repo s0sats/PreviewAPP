@@ -64,6 +64,8 @@ import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
+import com.namoadigital.prj001.ui.act077.Act077_Main;
+import com.namoadigital.prj001.ui.act078.Act078_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -75,6 +77,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MEASURE;
 
 public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private Context context;
@@ -787,6 +793,19 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 mView.addResultList(auxResults);
             }
 
+    }
+
+    @Override
+    public Intent getOriginIntent(String origin_type) {
+        switch (origin_type){
+            case TK_TICKET_ORIGIN_TYPE_MEASURE:
+                return new Intent(context, Act077_Main.class);
+             case TK_TICKET_ORIGIN_TYPE_BARCODE:
+             case TK_TICKET_ORIGIN_TYPE_MANUAL:
+                return new Intent(context, Act078_Main.class);
+            default:
+                return null;
+        }
     }
 
     private void showConfirmStartFormDialog(final TK_Ticket mTicket, final TK_Ticket_Step ticketStep, final TK_Ticket_Ctrl ticketCtrl) {

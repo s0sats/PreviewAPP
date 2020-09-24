@@ -70,7 +70,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I_View,Frg_Pipeline_Header.OnPipelineFragmentInteractionListener {
+public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I_View{
 
     public static final String TEMP_SUFIX_FILE = "temp-";
     private final double IV_PHOTO_EXISTS_WIDTH_PERCENT = 0.8;
@@ -425,12 +425,6 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         }else{
             paramErrorFlow();
         }
-    }
-
-    @Override
-    public void syncPipeline() {
-        //DO NOTHING
-
     }
     //endregion
 

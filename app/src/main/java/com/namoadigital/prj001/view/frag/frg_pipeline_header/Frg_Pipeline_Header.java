@@ -46,6 +46,11 @@ public class Frg_Pipeline_Header extends Fragment {
     private static final String TICKET_SCHEDULE_DESC_PARAM= "TICKET_SCHEDULE_DESC_PARAM";
     private static final String TICKET_SCHEDULE_COMMENT_PARAM= "TICKET_SCHEDULE_COMMENT_PARAM";
     //
+    private static final String ORIGIN_COMPLETE_PATH= "ORIGIN_COMPLETE_PATH";
+    private static final String ORIGIN_DESC= "ORIGIN_DESC";
+    private static final String ORIGIN_END_DATE= "ORIGIN_END_DATE";
+    private static final String ORIGIN_END_USER= "ORIGIN_END_USER";
+    //
     private String header_profile_param;
     private String ticket_id_param;
     private String ticket_date_param;
@@ -64,6 +69,10 @@ public class Frg_Pipeline_Header extends Fragment {
     private String schedule_desc;
     private String schedule_comment;
     private String schedule_date;
+    private String origin_complete_path;
+    private String origin_desc;
+    private String origin_end_date;
+    private String origin_end_user;
     //
     private TextView tv_ticket_id;
     private TextView tv_status;
@@ -89,8 +98,14 @@ public class Frg_Pipeline_Header extends Fragment {
     private TextView tv_schedule_desc;
     private TextView tv_schedule_date;
     private TextView tv_schedule_comment;
-    private OnPipelineFragmentInteractionListener mListener;
+    private OnPipelineFragmentInteractionListener mSyncListener;
+    private OnPipelineFragmentOriginListener mOriginListener;
     private boolean forceRefreshDrawableOnFail = false;
+    private TextView tv_origin_complete_path;
+    private TextView tv_origin_desc;
+    private TextView tv_origin_end_date;
+    private TextView tv_origin_end_user;
+    private View pipeline_origin_header;
 
     public Frg_Pipeline_Header() {
         // Required empty public constructor
@@ -148,6 +163,28 @@ public class Frg_Pipeline_Header extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+    public static Frg_Pipeline_Header newInstanceForOrigin(String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String origin_type, int status_color, String desc_origin_param, String origin_complete_path, String origin_desc, String origin_end_date, String origin_end_user) {
+        Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
+        Bundle args = new Bundle();
+        args.putString(HEADER_PROFILE_PARAM, ORIGIN);
+        args.putString(TICKET_ID_PARAM, ticket_id);
+        args.putString(PROD_DESC_PARAM, prod_desc);
+        args.putString(TICKET_DATE_PARAM, ticket_date);
+        args.putInt(SITE_CODE_PARAM, site_code);
+        args.putString(SITE_DESC_PARAM, site_desc);
+        args.putString(STATUS_DESC_PARAM, origin_type);
+        args.putInt(STATUS_COLOR_PARAM, status_color);
+        args.putString(SERIAL_ID_PARAM, serial_id);
+        args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
+        args.putString(ORIGIN_COMPLETE_PATH, origin_complete_path);
+        args.putString(ORIGIN_DESC, origin_desc);
+        args.putString(ORIGIN_END_DATE, origin_end_date);
+        args.putString(ORIGIN_END_USER, origin_end_user);
+
+        fragment.setArguments(args);
+        return fragment;
+    }
     //TODO IMPLEMENTAR O SET DAS INFORMAÇÕES - CONTINUAR DAQUI
     public static Frg_Pipeline_Header newInstanceForSchedule(String ticket_id, String serial_id, String prod_desc, String schedule_desc,String schedule_comment, String schedule_date) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
@@ -185,6 +222,10 @@ public class Frg_Pipeline_Header extends Fragment {
             schedule_desc = getArguments().getString(TICKET_SCHEDULE_DESC_PARAM,"");
             schedule_comment = getArguments().getString(TICKET_SCHEDULE_COMMENT_PARAM,"");
             schedule_date = getArguments().getString(TICKET_SCHEDULE_DATE_PARAM,"");
+            origin_complete_path = getArguments().getString(ORIGIN_COMPLETE_PATH,"");
+            origin_desc = getArguments().getString(ORIGIN_DESC,"");
+            origin_end_date = getArguments().getString(ORIGIN_END_DATE,"");
+            origin_end_user = getArguments().getString(ORIGIN_END_USER,"");
             //
         }
     }
@@ -215,6 +256,12 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_schedule_desc = pipeline_header_view.findViewById(R.id.frg_ticket_tv_schedule_desc);
         tv_schedule_date = pipeline_header_view.findViewById(R.id.frg_ticket_tv_schedule_date);
         tv_schedule_comment = pipeline_header_view.findViewById(R.id.frg_ticket_tv_schedule_comment);
+
+        tv_origin_complete_path = pipeline_header_view.findViewById(R.id.frg_ticket_tv_origin_complete_path);
+        tv_origin_desc = pipeline_header_view.findViewById(R.id.frg_ticket_tv_origin_desc);
+        tv_origin_end_date = pipeline_header_view.findViewById(R.id.frg_ticket_tv_origin_end_date);
+        tv_origin_end_user = pipeline_header_view.findViewById(R.id.frg_ticket_tv_origin_end_user);
+        pipeline_origin_header = pipeline_header_view.findViewById(R.id.frg_pipeline_origin_header);
         //
         initializeLayoutVisibility();
         //
@@ -230,72 +277,75 @@ public class Frg_Pipeline_Header extends Fragment {
         return pipeline_header_view;
     }
 
+    private void setmAction() {
+        frg_pipeline_header_ticket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mOriginListener != null) {
+                    mOriginListener.callOrigin();
+                }
+            }
+        });
+    }
+
     public void setFragmentProfile() {
-        switch (header_profile_param) {
+
+         switch (header_profile_param) {
             case PIPELINE:
                 //LUCHE - 15/09/2020 - Comentado pois o btn será no ticket_id
                 cv_btn_sync.setVisibility(View.GONE);
-                //cv_btn_sync.setVisibility(View.VISIBLE);
-                frg_pipeline_header_ticket.setVisibility(View.VISIBLE);
-                tv_ticket_id.setVisibility(View.VISIBLE);
                 tv_status.setVisibility(View.VISIBLE);
-                tv_ticket_date.setVisibility(View.VISIBLE);
-                tv_site_desc.setVisibility(View.VISIBLE);
-                tv_serial.setVisibility(View.VISIBLE);
                 tv_desc_origin.setVisibility(View.VISIBLE);
                 btn_sync_description.setVisibility(View.VISIBLE);
-                //ll_btn_sync.setVisibility(View.VISIBLE);
+                iv_action_shortcut.setVisibility(View.VISIBLE);
                 gp_ticket.setVisibility(View.VISIBLE);
                 gp_step.setVisibility(View.GONE);
                 gp_schedule.setVisibility(View.GONE);
+                setmAction();
                 defineTicketIdLayout();
                 setBtnSyncVisibility();
                 //
                 setSyncListener();
-                //
-//                ll_btn_sync.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        mListener.syncPipeline();
-//                    }
-//                });
+                setOriginListener();
                 //
                 break;
             case PRODUCT:
-                tv_ticket_id.setVisibility(View.VISIBLE);
-                tv_ticket_date.setVisibility(View.VISIBLE);
-                tv_site_desc.setVisibility(View.VISIBLE);
                 tv_prod_desc.setVisibility(View.VISIBLE);
-                tv_serial.setVisibility(View.VISIBLE);
-                frg_pipeline_header_ticket.setVisibility(View.VISIBLE);
                 gp_ticket.setVisibility(View.VISIBLE);
                 gp_step.setVisibility(View.GONE);
                 gp_schedule.setVisibility(View.GONE);
+                //
+                setOriginListener();
                 break;
             case ORIGIN:
+                cv_btn_sync.setVisibility(View.GONE);
+                frg_pipeline_header_ticket.setVisibility(View.GONE);
+                pipeline_origin_header.setVisibility(View.VISIBLE);
+                tv_status.setVisibility(View.VISIBLE);
+                tv_desc_origin.setVisibility(View.VISIBLE);
+                gp_step.setVisibility(View.GONE);
+                gp_schedule.setVisibility(View.GONE);
+                tv_origin_complete_path.setVisibility(View.VISIBLE);
+                tv_origin_desc.setVisibility(View.VISIBLE);
+                tv_origin_end_date.setVisibility(View.VISIBLE);
+                tv_origin_end_user.setVisibility(View.VISIBLE);
                 break;
             case APPROVAL:
                 cl_step_ticket.setVisibility(View.VISIBLE);
-                tv_ticket_id.setVisibility(View.VISIBLE);
-                tv_ticket_date.setVisibility(View.VISIBLE);
-                tv_site_desc.setVisibility(View.VISIBLE);
                 tv_prod_desc.setVisibility(View.VISIBLE);
-                tv_serial.setVisibility(View.VISIBLE);
-                frg_pipeline_header_ticket.setVisibility(View.VISIBLE);
                 gp_ticket.setVisibility(View.VISIBLE);
                 gp_step.setVisibility(View.VISIBLE);
                 gp_schedule.setVisibility(View.GONE);
+                //
+                setOriginListener();
                 break;
             case SCHEDULE:
                 cl_step_ticket.setVisibility(View.VISIBLE);
-                tv_ticket_id.setVisibility(View.VISIBLE);
-                tv_ticket_date.setVisibility(View.VISIBLE);
                 tv_site_desc.setVisibility(View.GONE);
                 tv_prod_desc.setVisibility(View.VISIBLE);
-                tv_serial.setVisibility(View.VISIBLE);
-                frg_pipeline_header_ticket.setVisibility(View.VISIBLE);
                 tv_status.setVisibility(View.GONE);
                 //
+                tv_ticket_date.setVisibility(View.GONE);
                 gp_ticket.setVisibility(View.GONE);
                 gp_step.setVisibility(View.GONE);
                 gp_schedule.setVisibility(View.VISIBLE);
@@ -305,10 +355,13 @@ public class Frg_Pipeline_Header extends Fragment {
 
     private void setSyncListener() {
         if (getContext() instanceof OnPipelineFragmentInteractionListener) {
-            mListener = (OnPipelineFragmentInteractionListener) getContext();
-        } else {
-            throw new RuntimeException(getContext().toString()
-                    + " must implement OnPipelineFragmentInteractionListener");
+            mSyncListener = (OnPipelineFragmentInteractionListener) getContext();
+        }
+    }
+
+    private void setOriginListener() {
+        if (getContext() instanceof OnPipelineFragmentInteractionListener) {
+            mOriginListener = (OnPipelineFragmentOriginListener) getContext();
         }
     }
 
@@ -316,10 +369,15 @@ public class Frg_Pipeline_Header extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mSyncListener = null;
+        mOriginListener = null;
     }
 
     private void initializeLayoutVisibility() {
+        tv_ticket_id.setVisibility(View.VISIBLE);
+        tv_ticket_date.setVisibility(View.VISIBLE);
+        tv_site_desc.setVisibility(View.VISIBLE);
+        tv_serial.setVisibility(View.VISIBLE);
         iv_action_shortcut.setVisibility(View.GONE);
         cv_btn_sync.setVisibility(View.GONE);
         frg_pipeline_header_ticket.setVisibility(View.GONE);
@@ -330,6 +388,7 @@ public class Frg_Pipeline_Header extends Fragment {
         gp_ticket.setVisibility(View.GONE);
         gp_step.setVisibility(View.GONE);
         gp_schedule.setVisibility(View.GONE);
+        pipeline_origin_header.setVisibility(View.GONE);
     }
 
     private void setTvContent() {
@@ -349,6 +408,11 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_schedule_desc.setText(schedule_desc);
         setCommentDataAndVisibility(schedule_comment);
         tv_schedule_date.setText(schedule_date);
+        tv_origin_complete_path.setText(origin_complete_path);
+        tv_origin_desc.setText(origin_desc);
+        tv_origin_end_date.setText(origin_end_date);
+        tv_origin_end_user.setText(origin_end_user);
+
     }
 
     private void defineTicketIdLayout(){
@@ -366,7 +430,9 @@ public class Frg_Pipeline_Header extends Fragment {
                 tv_ticket_id.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        mListener.syncPipeline();
+                        if(mSyncListener != null) {
+                            mSyncListener.syncPipeline();
+                        }
                     }
                 });
                 //
@@ -405,6 +471,11 @@ public class Frg_Pipeline_Header extends Fragment {
     public interface OnPipelineFragmentInteractionListener {
         void syncPipeline();
     }
+
+    public interface OnPipelineFragmentOriginListener {
+        void callOrigin();
+    }
+
 
     public void updateSyncRequired(boolean needToSync){
         btn_sync_status_param = needToSync;

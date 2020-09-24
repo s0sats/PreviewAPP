@@ -83,6 +83,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     FabMenu fabMenu;
     FabMenuItem fabStep;
     FabMenuItem fabProduct;
+    FabMenuItem fabOrigin;
     Act075_Main_Presenter mPresenter;
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
     private List<TK_Ticket_Product> tk_ticket_products = new ArrayList<>();
@@ -135,13 +136,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         );
         //
         loadTranslation();
-        loadTranslationFrg_Pipeline_Header();
         //
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-    }
-
-    private void loadTranslationFrg_Pipeline_Header() {
-
     }
 
     private void initVars() {
@@ -425,6 +421,16 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         int btnBgColor = getResources().getColor(R.color.namoa_sync_pipeline_background_btn);
         int iconColor = getResources().getColor(R.color.colorPrimary);
         //atalho para step
+        fabOrigin = new FabMenuItem(context);
+        fabOrigin.setTag("to_origin_lbl");
+        fabOrigin.setmLabel(hmAux_Trans.get("to_origin_lbl"));
+        fabOrigin.setmLabel_Back_Color(lblBgColor);
+        fabOrigin.setmLabel_Text_Color(lblColor);
+        fabOrigin.setmButton_Back_Color(btnBgColor);
+        fabOrigin.setmButton_Resource_Color(iconColor);
+        fabOrigin.setmButton_Resource(R.drawable.ic_baseline_error_outline_24dp_black);
+        fabMenuItems.add(fabOrigin);
+        //atalho para step
         fabStep = new FabMenuItem(context);
         fabStep.setTag("to_step_lbl");
         fabStep.setmLabel(hmAux_Trans.get("to_step_lbl"));
@@ -496,9 +502,10 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
                 if ((id == fabProduct.getId())) {
 
-
                 }else if (id == fabStep.getId()){
                     verifyChangesBeforeExit();
+                } else if (id == fabOrigin.getId()){
+                    callOrigin();
                 }
             }
 
@@ -812,6 +819,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         transList.add("exit_without_save_msg");
         transList.add("to_product_lbl");
         transList.add("to_step_lbl");
+        transList.add("to_origin_lbl");
         //
         transList.add("alert_product_add_sucess_ttl");
         transList.add("alert_product_add_sucess_msg");
@@ -1143,5 +1151,16 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     @Override
     public void addResultList(ArrayList<HMAux> resultList) {
         wsResult.addAll(resultList);
+    }
+
+
+    public void callOrigin() {
+        Intent intent = mPresenter.getOriginIntent(tkTicket.getOrigin_type());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        requestingBundle.putInt(TK_TicketDao.TICKET_PREFIX, mTkPrefix);
+        requestingBundle.putInt(TK_TicketDao.TICKET_CODE, mTkCode);
+        intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
     }
 }

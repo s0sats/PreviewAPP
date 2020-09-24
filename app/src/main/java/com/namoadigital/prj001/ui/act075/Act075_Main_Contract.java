@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act075;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.TK_Ticket;
@@ -87,5 +88,7 @@ public interface Act075_Main_Contract {
         String defineActTitle(int act_profile, int mTkPrefix, int mTkCode, int mTkSeq, int mStepCode);
 
         boolean verifyProductForForm(int ticket_prefix, int ticket_code);
+
+        Intent getOriginIntent(String origin_type);
     }
 }

@@ -72,7 +72,7 @@ import static com.namoadigital.prj001.ui.act075.Act075_Main.APPROVAL_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
-public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentInteractionListener {
+public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentInteractionListener, Frg_Pipeline_Header.OnPipelineFragmentOriginListener {
 
     public static final String PARAM_DENIED_BY_CHECKIN = "PARAM_DENIED_BY_CHECKIN";
     public static final String PARAM_CTRL_CREATION = "PARAM_CTRL_CREATION";
@@ -104,6 +104,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private FabMenu fabMenu;
     private FabMenuItem fabStep;
     private FabMenuItem fabProduct;
+    private FabMenuItem fabOrigin;
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
     private boolean hasFABActive=false;
     private String save_return = "";
@@ -184,6 +185,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         transList.add("to_product_lbl");
         transList.add("to_step_lbl");
+        transList.add("to_origin_lbl");
         //
         transList.add("alert_checkout_confirm_ttl");
         transList.add("alert_checkout_confirm_msg");
@@ -266,6 +268,16 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         int lblColor = getResources().getColor(R.color.padrao_WHITE);
         int btnBgColor = getResources().getColor(R.color.namoa_sync_pipeline_background_btn);
         int iconColor = getResources().getColor(R.color.colorPrimary);
+        //atalaho para origin.
+        fabOrigin = new FabMenuItem(context);
+        fabOrigin.setTag("to_origin_lbl");
+        fabOrigin.setmLabel(hmAux_Trans.get("to_origin_lbl"));
+        fabOrigin.setmLabel_Back_Color(lblBgColor);
+        fabOrigin.setmLabel_Text_Color(lblColor);
+        fabOrigin.setmButton_Back_Color(btnBgColor);
+        fabOrigin.setmButton_Resource_Color(iconColor);
+        fabOrigin.setmButton_Resource(R.drawable.ic_baseline_error_outline_24dp_black);
+        fabMenuItems.add(fabOrigin);
         //atalho para step
         fabStep = new FabMenuItem(context);
         fabStep.setTag("to_step_lbl");
@@ -800,6 +812,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     callAct075(PRODUCT_VIEW_ID);
                 }else if (id == fabStep.getId()){
 
+                }else if (id == fabOrigin.getId()){
+                    callOrigin();
                 }
             }
 
@@ -925,6 +939,17 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 }
             });
         }
+    }
+
+
+    public void callOrigin() {
+        Intent intent = mPresenter.getOriginIntent(mTicket.getOrigin_type());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        requestingBundle.putInt(TK_TicketDao.TICKET_PREFIX, mTkPrefix);
+        requestingBundle.putInt(TK_TicketDao.TICKET_CODE, mTkCode);
+        intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
     }
 
     class FCMReceiver extends BroadcastReceiver {
