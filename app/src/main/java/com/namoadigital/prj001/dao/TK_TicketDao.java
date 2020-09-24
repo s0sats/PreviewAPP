@@ -35,6 +35,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String TYPE_CODE = "type_code";
     public static final String TYPE_ID = "type_id";
     public static final String TYPE_DESC = "type_desc";
+    public static final String APP_PERSONAL_DATA = "app_personal_data";
     public static final String TYPE_PATH = "type_path";
     public static final String OPEN_COMMENTS = "open_comments";
     public static final String OPEN_PHOTO = "open_photo";
@@ -718,6 +719,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             tk_ticket.setType_code(cursor.getInt(cursor.getColumnIndex(TYPE_CODE)));
             tk_ticket.setType_id(cursor.getString(cursor.getColumnIndex(TYPE_ID)));
             tk_ticket.setType_desc(cursor.getString(cursor.getColumnIndex(TYPE_DESC)));
+            tk_ticket.setApp_personal_data(cursor.getInt(cursor.getColumnIndex(APP_PERSONAL_DATA)));
             if (cursor.isNull(cursor.getColumnIndex(TYPE_PATH))) {
                 tk_ticket.setType_path(null);
             } else {
@@ -911,6 +913,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
             if (tk_ticket.getType_desc() != null) {
                 contentValues.put(TYPE_DESC, tk_ticket.getType_desc());
+            }
+            if (tk_ticket.getApp_personal_data() > -1) {
+                contentValues.put(APP_PERSONAL_DATA, tk_ticket.getApp_personal_data());
             }
             contentValues.put(TYPE_PATH, tk_ticket.getType_path());
             contentValues.put(OPEN_COMMENTS, tk_ticket.getOpen_comments());

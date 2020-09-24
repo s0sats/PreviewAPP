@@ -27,6 +27,7 @@ public class TK_Ticket implements Cloneable {
     private int type_code;
     private String type_id;
     private String type_desc;
+    private int app_personal_data;
     private String type_path;
     private String open_comments;
     private String open_photo;
@@ -172,6 +173,14 @@ public class TK_Ticket implements Cloneable {
 
     public void setType_desc(String type_desc) {
         this.type_desc = type_desc;
+    }
+
+    public int getApp_personal_data() {
+        return app_personal_data;
+    }
+
+    public void setApp_personal_data(int app_personal_data) {
+        this.app_personal_data = app_personal_data;
     }
 
     @Nullable
