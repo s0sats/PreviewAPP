@@ -1,4 +1,4 @@
-package com.namoadigital.prj001.ui.act077;
+package com.namoadigital.prj001.ui.act079;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.ctls.FabMenuItem;
@@ -18,10 +20,13 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
@@ -32,7 +37,7 @@ import java.util.List;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
-public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contract.I_View {
+public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contract.I_View {
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
@@ -41,20 +46,32 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
     private FabMenuItem fabProduct;
     private FabMenuItem fabOrigin;
     private boolean hasFABActive=false;
-    private Act077_Main_Presenter mPresenter;
+    private Act079_Main_Presenter mPresenter;
     private Bundle requestingBundle;
     private int mTkPrefix;
     private int mTkCode;
+    ImageView iv_form_score;
+    TextView tv_form_score;
+    ImageView iv_form_nc_count;
+    TextView tv_form_nc_count;
+    ImageView iv_form_download_pdf;
+    TextView tv_form_download_pdf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act077_main);
+        setContentView(R.layout.act079_main);
         //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
-        fabMenu = (FabMenu) findViewById(R.id.act077_fabMenu_anchor);
+        fabMenu = (FabMenu) findViewById(R.id.act079_fabMenu_anchor);
+        iv_form_score = findViewById(R.id.act079_iv_form_score);
+        tv_form_score = findViewById(R.id.act079_tv_form_score);
+        iv_form_nc_count =  findViewById(R.id.act079_iv_form_nc_count);
+        tv_form_nc_count =  findViewById(R.id.act079_tv_form_nc_count);
+        iv_form_download_pdf =  findViewById(R.id.act079_iv_form_download_pdf);
+        tv_form_download_pdf =  findViewById(R.id.act079_tv_form_download_pdf);
         //
         iniSetup();
         //
@@ -65,13 +82,58 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
         initActions();
     }
 
+    private void iniSetup() {
+        fm = getSupportFragmentManager();
+        //
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                mModule_Code,
+                Constant.ACT079
+        );
+        //
+        loadTranslation();
+        //
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
+
+    private void loadTranslation() {
+        List<String> transList = new ArrayList<String>();
+        transList.add("act079_title");
+        transList.add("to_product_lbl");
+        transList.add("to_step_lbl");
+        transList.add("to_origin_lbl");
+        //
+        transList.add("form_origin_type_lbl");
+        transList.add("form_nc_origin_type_lbl");
+        transList.add("form_score_origin_type_lbl");
+        transList.add("download_form_pdf_lbl");
+        //
+        transList.add("alert_form_pdf_not_generated_ttl");
+        transList.add("alert_form_pdf_not_generated_msg");
+        transList.add("alert_form_pdf_not_downloaded_ttl");
+        transList.add("alert_form_pdf_not_downloaded_msg");
+        transList.add("alert_starting_pdf_not_supported_ttl");
+        transList.add("alert_starting_pdf_not_supported_msg");
+        //
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
+
+    }
+
     private void initVars() {
-        mPresenter = new Act077_Main_Presenter(context, this, hmAux_Trans);
+        mPresenter = new Act079_Main_Presenter(context, this, hmAux_Trans);
         recoverIntentsInfo();
         //
         if(mTkPrefix <= 0 || mTkCode <= 0){
             //todo callErrorParam
         }
+        //
+        tv_form_download_pdf.setText(hmAux_Trans.get("download_form_pdf_lbl"));
         //
         initFabMenuItens();
         mPresenter.getStepOrigin(mTkPrefix, mTkCode);
@@ -128,9 +190,20 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
     }
 
 
-    private void setHeaderFragment(TK_Ticket tkTicket) {
+    private void setHeaderFragment(TK_Ticket tkTicket, String custom_form_type_desc, String custom_form_desc, String step_end_date, String step_end_user_nick) {
         fm = getSupportFragmentManager();
-        TK_Ticket_Step originStep = tkTicket.getStep().get(0);
+
+        String origin_type = "";
+        if(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM.equalsIgnoreCase(tkTicket.getOrigin_type())) {
+            origin_type = hmAux_Trans.get("form_origin_type_lbl");
+        }else if(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC.equalsIgnoreCase(tkTicket.getOrigin_type())) {
+            origin_type = hmAux_Trans.get("form_nc_origin_type_lbl");
+        }else{
+            origin_type = hmAux_Trans.get("form_score_origin_type_lbl");
+        }
+
+
+
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForOrigin(
                 tkTicket.getTicket_id(),
                 ToolBox_Inf.millisecondsToString(
@@ -141,17 +214,17 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
                 tkTicket.getOpen_site_desc(),
                 tkTicket.getOpen_serial_id(),
                 tkTicket.getOpen_product_desc(),
-                hmAux_Trans.get("measure_origin_type_lbl"),
+                origin_type,
                 ToolBox_Inf.getStatusColorV2(context,Constant.SYS_STATUS_PENDING),
                 tkTicket.getOrigin_desc(),
-                tkTicket.getType_path(),
-                tkTicket.getOrigin_desc(),
-                originStep.getStep_end_date(),
-                originStep.getStep_end_user_nick()
+                custom_form_type_desc,
+                custom_form_desc,
+                step_end_date,
+                step_end_user_nick
         );
         //
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.act077_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
+        ft.replace(R.id.act079_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
         ft.addToBackStack(null);
         ft.commit();
     }
@@ -204,35 +277,14 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
         finish();
     }
 
-    private void iniSetup() {
-        fm = getSupportFragmentManager();
-        //
-        mResource_Code = ToolBox_Inf.getResourceCode(
-                context,
-                mModule_Code,
-                Constant.ACT077
-        );
-        //
-        loadTranslation();
-        //
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+    private void callAct070() {
+        Intent intent = new Intent(context, Act070_Main.class);
+        intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
     }
 
-    private void loadTranslation() {
-        List<String> transList = new ArrayList<String>();
-        transList.add("act077_title");
-        transList.add("to_product_lbl");
-        transList.add("to_step_lbl");
-        transList.add("to_origin_lbl");
-        //
-        hmAux_Trans = ToolBox_Inf.setLanguage(
-                context,
-                mModule_Code,
-                mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context),
-                transList
-        );
-    }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -248,8 +300,8 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT077;
-        mAct_Title = Constant.ACT077 + "_title";
+        mAct_Info = Constant.ACT079;
+        mAct_Title = Constant.ACT079 + "_title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -266,30 +318,59 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
         ToolBox_Inf.buildFooterDialog(context, false);
     }
 
+
     @Override
-    public void loadTicketOrigin(TK_Ticket tkTicket) {
-        setHeaderFragment(tkTicket);
+    public void loadTicketOrigin(TK_Ticket ticket) {
+
+        String custom_form_type_desc ="-";
+        String custom_form_desc ="-";
+        String step_end_date ="-";
+        String step_end_user_nick ="-";
+        TK_Ticket_Step originStep = ticket.getStep().get(0);
+        if(originStep != null ){
+            step_end_date = originStep.getStep_end_date();
+            step_end_user_nick = originStep.getStep_end_user_nick();
+            TK_Ticket_Ctrl originCtrl = originStep.getCtrl().get(0);
+            if(originCtrl != null){
+                final TK_Ticket_Form form = originCtrl.getForm();
+                try {
+                    custom_form_type_desc = form.getCustom_form_type_desc();
+                    custom_form_desc = form.getCustom_form_desc();
+                    if (form.getScore_perc() != null) {
+                        tv_form_score.setText(form.getScore_perc());
+                        tv_form_score.setTextColor(ToolBox_Inf.getScoreFormColor(form.getScore_status()));
+                    } else {
+                        tv_form_score.setVisibility(View.GONE);
+                        iv_form_score.setVisibility(View.GONE);
+                    }
+                    tv_form_nc_count.setText(String.format("%s", form.getNc()));
+
+                }catch (NullPointerException e){
+                    ToolBox_Inf.registerException(e);
+                    tv_form_score.setVisibility(View.GONE);
+                    iv_form_score.setVisibility(View.GONE);
+                    tv_form_nc_count.setVisibility(View.GONE);
+                    iv_form_nc_count.setVisibility(View.GONE);
+                    tv_form_download_pdf.setVisibility(View.GONE);
+                    iv_form_download_pdf.setVisibility(View.GONE);
+                }
+                tv_form_download_pdf.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mPresenter.tryOpenFormPDF(form);
+                    }
+                });
+            }
+        }
+
+        setHeaderFragment(ticket, custom_form_type_desc, custom_form_desc, step_end_date, step_end_user_nick);
+
+
+
     }
 
     @Override
-    public void showMsg(String ttl, String msg) {
+    public void showAlert(String ttl, String msg) {
 
-    }
-
-    @Override
-    public void showPD(String ttl, String msg) {
-
-    }
-
-    @Override
-    public void callAct070(Bundle bundle) {
-
-    }
-
-    private void callAct070() {
-        Intent intent = new Intent(context, Act070_Main.class);
-        intent.putExtras(requestingBundle);
-        startActivity(intent);
-        finish();
     }
 }

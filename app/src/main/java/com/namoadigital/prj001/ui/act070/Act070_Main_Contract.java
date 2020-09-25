@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui.act070;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -112,6 +111,5 @@ public interface Act070_Main_Contract {
 
         void processWS_SaveReturn(String mLink);
 
-        Intent getOriginIntent(String origin_type);
     }
 }

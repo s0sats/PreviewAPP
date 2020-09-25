@@ -47,8 +47,8 @@
             <!-- A cor do icone é definida via code-->
             <ImageView
                 android:id="@+id/act078_iv_open_photo"
-                android:layout_width="200dp"
-                android:layout_height="120dp"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
                 app:srcCompat="@drawable/ic_foto_ns_black" />

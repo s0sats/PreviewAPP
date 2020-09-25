@@ -48,7 +48,6 @@ import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
-import com.namoadigital.prj001.ui.act077.Act077_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -61,7 +60,6 @@ import java.util.Map;
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_GET_MATERIAL;
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_OPERATIONAL;
 import static com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao.APPROVAL_RETURN_MATERIAL;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MEASURE;
 
 public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     private final TK_Ticket_StepDao ticketStepDao;
@@ -828,12 +826,4 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
         }
     }
 
-    @Override
-    public Intent getOriginIntent(String origin_type) {
-        switch (origin_type){
-            case TK_TICKET_ORIGIN_TYPE_MEASURE:
-            default:
-                return new Intent(context, Act077_Main.class);
-        }
-    }
 }

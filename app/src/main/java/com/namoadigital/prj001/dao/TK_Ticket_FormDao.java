@@ -44,6 +44,11 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
     public static final String CUSTOM_FORM_DATA = "custom_form_data";
+
+    public static final String SCORE_STATUS = "score_status";
+    public static final String SCORE_PERC = "score_perc";
+    public static final String NC = "nc";
+
     public static final String CUSTOM_FORM_DATA_TMP = "custom_form_data_tmp";
     public static final String PDF_CODE = "pdf_code";
     public static final String PDF_NAME = "pdf_name";
@@ -625,6 +630,17 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }else{
                 tk_ticket_form.setCustom_form_data(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_DATA)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(SCORE_STATUS))){
+                tk_ticket_form.setScore_status(null);
+            }else{
+                tk_ticket_form.setScore_status(cursor.getString(cursor.getColumnIndex(SCORE_STATUS)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(SCORE_PERC))){
+                tk_ticket_form.setScore_perc(null);
+            }else{
+                tk_ticket_form.setScore_perc(cursor.getString(cursor.getColumnIndex(SCORE_PERC)));
+            }
+            tk_ticket_form.setNc(cursor.getInt(cursor.getColumnIndex(NC)));
             if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_DATA_TMP))){
                 tk_ticket_form.setCustom_form_data_tmp(null);
             }else{
@@ -697,6 +713,12 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 contentValues.put(CUSTOM_FORM_VERSION,tk_ticket_form.getCustom_form_version());
             }
             contentValues.put(CUSTOM_FORM_DATA,tk_ticket_form.getCustom_form_data());
+
+            contentValues.put(SCORE_STATUS,tk_ticket_form.getScore_status());
+            contentValues.put(SCORE_PERC,tk_ticket_form.getScore_perc());
+            if (tk_ticket_form.getNc() > -1) {
+                contentValues.put(NC, tk_ticket_form.getNc());
+            }
             contentValues.put(CUSTOM_FORM_DATA_TMP,tk_ticket_form.getCustom_form_data_tmp());
             contentValues.put(PDF_CODE,tk_ticket_form.getPdf_code());
             contentValues.put(PDF_NAME,tk_ticket_form.getPdf_name());

@@ -29,6 +29,11 @@ public class TK_Ticket_Form {
     @Nullable
     private Integer custom_form_data;
     @Nullable
+    private String score_status;
+    @Nullable
+    private String score_perc;
+    private int nc;
+    @Nullable
     private Integer custom_form_data_tmp;
     @Nullable
     private Integer pdf_code;
@@ -161,6 +166,32 @@ public class TK_Ticket_Form {
 
     public void setCustom_form_data(@Nullable Integer custom_form_data) {
         this.custom_form_data = custom_form_data;
+    }
+
+    @Nullable
+    public String getScore_status() {
+        return score_status;
+    }
+
+    public void setScore_status(@Nullable String score_status) {
+        this.score_status = score_status;
+    }
+
+    @Nullable
+    public String getScore_perc() {
+        return score_perc;
+    }
+
+    public void setScore_perc(@Nullable String score_perc) {
+        this.score_perc = score_perc;
+    }
+
+    public int getNc() {
+        return nc;
+    }
+
+    public void setNc(int nc) {
+        this.nc = nc;
     }
 
     @Nullable

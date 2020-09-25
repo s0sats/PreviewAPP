@@ -1155,12 +1155,14 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
 
 
     public void callOrigin() {
-        Intent intent = mPresenter.getOriginIntent(tkTicket.getOrigin_type());
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        requestingBundle.putInt(TK_TicketDao.TICKET_PREFIX, mTkPrefix);
-        requestingBundle.putInt(TK_TicketDao.TICKET_CODE, mTkCode);
-        intent.putExtras(requestingBundle);
-        startActivity(intent);
-        finish();
+        Intent intent = ToolBox_Inf.getOriginIntent(context, tkTicket.getOrigin_type());
+        if(intent != null) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            requestingBundle.putInt(TK_TicketDao.TICKET_PREFIX, mTkPrefix);
+            requestingBundle.putInt(TK_TicketDao.TICKET_CODE, mTkCode);
+            intent.putExtras(requestingBundle);
+            startActivity(intent);
+            finish();
+        }
     }
 }

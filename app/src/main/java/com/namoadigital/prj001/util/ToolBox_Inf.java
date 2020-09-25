@@ -89,7 +89,6 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
-import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_Obj;
@@ -186,7 +185,6 @@ import com.namoadigital.prj001.sql.Sql_Act005_010;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act070_005;
 import com.namoadigital.prj001.sql.Sql_Act070_008;
-import com.namoadigital.prj001.sql.Sql_Act075_001;
 import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
 import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
 import com.namoadigital.prj001.sql.Sql_Form_x_Product;
@@ -199,6 +197,9 @@ import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
+import com.namoadigital.prj001.ui.act077.Act077_Main;
+import com.namoadigital.prj001.ui.act078.Act078_Main;
+import com.namoadigital.prj001.ui.act079.Act079_Main;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -247,6 +248,12 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_SCORE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MEASURE;
 import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 
 /**
@@ -256,6 +263,9 @@ import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 public class ToolBox_Inf {
 
     private static final String CLASS_NAME = "com.namoadigital.prj001.util.ToolBox_Inf";
+    public static final String RANGE_RED = "RANGE_RED";
+    public static final String RANGE_YELLOW = "RANGE_YELLOW";
+    public static final String RANGE_GREEN = "RANGE_GREEN";
 
 //    private static final Map<Character, Character> ACCENT_MAP = initAccentMap();
 //
@@ -7395,4 +7405,37 @@ public class ToolBox_Inf {
                 return "\\" + ticketOriginDesc;
         }
     }
+
+    public static Intent getOriginIntent(Context context, String origin_type) {
+        switch (origin_type){
+            case TK_TICKET_ORIGIN_TYPE_MEASURE:
+                return new Intent(context, Act077_Main.class);
+            case TK_TICKET_ORIGIN_TYPE_BARCODE:
+            case TK_TICKET_ORIGIN_TYPE_MANUAL:
+                return new Intent(context, Act078_Main.class);
+            case TK_TICKET_ORIGIN_TYPE_FORM:
+            case TK_TICKET_ORIGIN_TYPE_FORM_NC:
+            case TK_TICKET_ORIGIN_TYPE_FORM_SCORE:
+                return new Intent(context, Act079_Main.class);
+            default:
+                return null;
+        }
+    }
+
+    public static int getScoreFormColor(@NonNull String score_status){
+
+        if(RANGE_RED.equalsIgnoreCase(score_status)){
+            return R.color.namoa_color_danger_red;
+        }
+        if(RANGE_YELLOW.equalsIgnoreCase(score_status)){
+            return R.color.namoa_color_warning_yellow;
+        }
+        if(RANGE_GREEN.equalsIgnoreCase(score_status)){
+            return R.color.namoa_color_success_green;
+        }
+
+        return R.color.namoa_color_gray_chat;
+
+    }
+
 }

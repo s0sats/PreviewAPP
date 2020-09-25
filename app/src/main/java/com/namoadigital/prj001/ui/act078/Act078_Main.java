@@ -22,16 +22,19 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
+import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +42,7 @@ import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
 public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contract.I_View {
+
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
@@ -62,6 +66,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
     private TextView tv_open_email_val;
     private TextView tv_open_phone_lbl;
     private TextView tv_open_phone_val;
+    private String actionPhotoLocalPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +120,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
     }
 
     private void setLabels() {
+        tv_open_photo_lbl.setText(hmAux_Trans.get("open_photo_lbl"));
         tv_open_comment_lbl.setText(hmAux_Trans.get("open_comment_lbl"));
         tv_open_username_lbl.setText(hmAux_Trans.get("open_username_lbl"));
         tv_open_email_lbl.setText(hmAux_Trans.get("open_email_lbl"));
@@ -175,6 +181,13 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
     private void setHeaderFragment(TK_Ticket tkTicket) {
         fm = getSupportFragmentManager();
 
+        String origin_type = "";
+        if(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE.equalsIgnoreCase(tkTicket.getOrigin_type())) {
+            origin_type = hmAux_Trans.get("barcode_origin_type_lbl");
+        }else{
+            origin_type = hmAux_Trans.get("manual_origin_type_lbl");
+        }
+
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForOrigin(
                 tkTicket.getTicket_id(),
                 ToolBox_Inf.millisecondsToString(
@@ -185,7 +198,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                 tkTicket.getOpen_site_desc(),
                 tkTicket.getOpen_serial_id(),
                 tkTicket.getOpen_product_desc(),
-                hmAux_Trans.get("barcode_manual_origin_type_lbl"),
+                origin_type,
                 ToolBox_Inf.getStatusColorV2(context, Constant.SYS_STATUS_PENDING),
                 tkTicket.getOrigin_desc(),
                 ToolBox_Inf.getFormattedTicketOriginDesc(tkTicket.getOrigin_type(), tkTicket.getOrigin_desc()),
@@ -250,9 +263,16 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
             @Override
             public void onClick(View v) {
                 Intent intent =  new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto",tv_open_email_val.getText().toString(), null));
+                        "mailto" , tv_open_email_val.getText().toString(), null));
                 intent.setType("text/plain");
                 startActivity(Intent.createChooser(intent, "Send Email"));
+            }
+        });
+
+        iv_open_photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callCameraAct();
             }
         });
     }
@@ -286,13 +306,21 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         transList.add("to_product_lbl");
         transList.add("to_step_lbl");
         transList.add("to_origin_lbl");
-        transList.add("barcode_manual_origin_type_lbl");
-
+        transList.add("manual_origin_type_lbl");
+        transList.add("barcode_origin_type_lbl");
+        transList.add("open_photo_lbl");
         transList.add("open_comment_lbl");
         transList.add("open_username_lbl");
         transList.add("open_email_lbl");
         transList.add("open_phone_lbl");
-
+        //
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                mModule_Code,
+                mResource_Code,
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
+        );
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -309,8 +337,8 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT077;
-        mAct_Title = Constant.ACT077 + "_title";
+        mAct_Info = Constant.ACT078;
+        mAct_Title = Constant.ACT078 + "_title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -332,20 +360,24 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         setHeaderFragment(ticket);
 
         setOpenFields(ticket);
+
+
     }
 
     private void setOpenFields(TK_Ticket ticket) {
         ll_privacy_fields.setVisibility(View.GONE);
+        //
         if (ticket.getApp_personal_data() == 1){
             ll_privacy_fields.setVisibility(View.VISIBLE);
             tv_open_username_val.setText(ticket.getOpen_user_name());
             tv_open_email_val.setText(ticket.getOpen_email());
             tv_open_phone_val.setText(ticket.getOpen_phone());
         }
+        //
         tv_open_comment_val.setText(ticket.getOpen_comments());
-
+        actionPhotoLocalPath = ticket.getOpen_photo_local();
         try{
-            Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + ticket.getOpen_photo_local());
+            Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
             iv_open_photo.setImageBitmap(bitmap);
         } catch (NullPointerException e ){
             e.printStackTrace();
@@ -359,5 +391,29 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         startActivity(intent);
         finish();
     }
+
+    private void callCameraAct() {
+        File sFile;
+        sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+
+        if (!sFile.exists()) {
+            return;
+        }
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(ConstantBase.PID, iv_open_photo.getId());
+        bundle.putInt(ConstantBase.PTYPE, 1);
+        bundle.putString(ConstantBase.PPATH, actionPhotoLocalPath);
+        bundle.putBoolean(ConstantBase.PEDIT, false);
+        bundle.putBoolean(ConstantBase.PENABLED, false);
+        bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
+        bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false);
+        //
+        Intent mIntent = new Intent(context, Camera_Activity.class);
+        mIntent.putExtras(bundle);
+        //
+        context.startActivity(mIntent);
+    }
+
 
 }
