@@ -18,7 +18,7 @@ public class Act080_Main_Presenter implements Act080_Main_Contract.I_Presenter{
     public Act080_Main_Presenter(Context context, Act080_Main_Contract.I_View mView, HMAux hmAux_trans) {
         this.context = context;
         this.mView = mView;
-        this.hmAux_Trans = hmAux_Trans;
+        this.hmAux_Trans = hmAux_trans;
         //
         this.ticketDao = new TK_TicketDao(
                 context,

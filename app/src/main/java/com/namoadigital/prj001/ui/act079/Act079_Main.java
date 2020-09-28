@@ -371,6 +371,12 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
 
     @Override
     public void showAlert(String ttl, String msg) {
-
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                null,
+                0
+        );
     }
 }

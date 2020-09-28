@@ -20,13 +20,13 @@ import java.io.File;
 public class Act079_Main_Presenter implements Act079_Main_Contract.I_Presenter{
     Context context;
     Act079_Main_Contract.I_View mView;
-    HMAux hmAux_Trans;
+    private HMAux hmAux_Trans;
     private TK_TicketDao ticketDao;
 
     public Act079_Main_Presenter(Context context, Act079_Main_Contract.I_View mView, HMAux hmAux_trans) {
         this.context = context;
         this.mView = mView;
-        this.hmAux_Trans = hmAux_Trans;
+        this.hmAux_Trans = hmAux_trans;
         //
         this.ticketDao = new TK_TicketDao(
                 context,
