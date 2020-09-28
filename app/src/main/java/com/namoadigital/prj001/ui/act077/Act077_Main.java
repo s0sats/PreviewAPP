@@ -224,6 +224,7 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
         transList.add("to_product_lbl");
         transList.add("to_step_lbl");
         transList.add("to_origin_lbl");
+        transList.add("measure_origin_type_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
