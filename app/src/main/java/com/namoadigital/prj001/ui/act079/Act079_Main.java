@@ -337,8 +337,8 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                     custom_form_type_desc = form.getCustom_form_type_desc();
                     custom_form_desc = form.getCustom_form_desc();
                     if (form.getScore_perc() != null) {
-                        tv_form_score.setText(form.getScore_perc());
-                        tv_form_score.setTextColor(ToolBox_Inf.getScoreFormColor(form.getScore_status()));
+                        tv_form_score.setText(form.getScore_perc().replace(".", ","));
+                        tv_form_score.setTextColor(context.getResources().getColor(ToolBox_Inf.getScoreFormColor(form.getScore_status())));
                     } else {
                         tv_form_score.setVisibility(View.GONE);
                         iv_form_score.setVisibility(View.GONE);

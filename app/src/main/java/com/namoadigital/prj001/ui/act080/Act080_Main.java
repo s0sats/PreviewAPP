@@ -1,11 +1,10 @@
-package com.namoadigital.prj001.ui.act078;
+package com.namoadigital.prj001.ui.act080;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
@@ -28,10 +26,12 @@ import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TK_Ticket_Action;
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
@@ -43,7 +43,7 @@ import java.util.List;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
-public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contract.I_View {
+public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contract.I_View {
 
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
@@ -53,28 +53,20 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
     private FabMenuItem fabProduct;
     private FabMenuItem fabOrigin;
     private boolean hasFABActive = false;
-    private Act078_Main_Presenter mPresenter;
+    private Act080_Main_Presenter mPresenter;
     private Bundle requestingBundle;
     private int mTkPrefix;
     private int mTkCode;
-    private TextView tv_open_photo_lbl;
-    private ImageView iv_open_photo;
-    private TextView tv_open_comment_lbl;
-    private TextView tv_open_comment_val;
-    private LinearLayout ll_privacy_fields;
-    private TextView tv_open_username_lbl;
-    private TextView tv_open_username_val;
-    private TextView tv_open_email_lbl;
-    private TextView tv_open_email_val;
-    private TextView tv_open_phone_lbl;
-    private TextView tv_open_phone_val;
+    private TextView tv_action_photo_lbl;
+    private ImageView iv_action_photo;
+    private TextView tv_action_comment_lbl;
+    private TextView tv_action_comment_val;
     private String actionPhotoLocalPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act078_main);
-        //
+        setContentView(R.layout.act080_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
@@ -89,23 +81,67 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         initActions();
     }
 
+    private void initActions() {
+        fabMenu.setOnFabClickListener(new FabMenu.IFabMenu() {
+            @Override
+            public void onFabClick(View view) {
+                int id = view.getId();
+                if ((id == fabProduct.getId())) {
+                    callAct075();
+                } else if (id == fabStep.getId()) {
+                    callAct070();
+                } else if (id == fabOrigin.getId()) {
+
+                }
+            }
+
+            @Override
+            public void onFabStatusChanged(boolean b) {
+                hasFABActive = b;
+            }
+        });
+
+        iv_action_photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callCameraAct();
+            }
+        });
+    }
+
+    private void callCameraAct() {
+        File sFile;
+        sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+
+        if (!sFile.exists()) {
+            return;
+        }
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(ConstantBase.PID, iv_action_photo.getId());
+        bundle.putInt(ConstantBase.PTYPE, 1);
+        bundle.putString(ConstantBase.PPATH, actionPhotoLocalPath);
+        bundle.putBoolean(ConstantBase.PEDIT, false);
+        bundle.putBoolean(ConstantBase.PENABLED, false);
+        bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
+        bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false);
+        //
+        Intent mIntent = new Intent(context, Camera_Activity.class);
+        mIntent.putExtras(bundle);
+        //
+        context.startActivity(mIntent);
+    }
+
     private void bindViews() {
-        fabMenu = (FabMenu) findViewById(R.id.act078_fabMenu_anchor);
-        tv_open_photo_lbl = findViewById(R.id.act078_tv_open_photo_lbl);
-        iv_open_photo = findViewById(R.id.act078_iv_open_photo);
-        tv_open_comment_lbl = findViewById(R.id.act078_tv_open_comment_lbl);
-        tv_open_comment_val = findViewById(R.id.act078_tv_open_comment_val);
-        ll_privacy_fields = findViewById(R.id.act078_ll_privacy_fields);
-        tv_open_username_lbl = findViewById(R.id.act078_tv_open_username_lbl);
-        tv_open_username_val = findViewById(R.id.act078_tv_open_username_val);
-        tv_open_email_lbl = findViewById(R.id.act078_tv_open_email_lbl);
-        tv_open_email_val = findViewById(R.id.act078_tv_open_email_val);
-        tv_open_phone_lbl = findViewById(R.id.act078_tv_open_phone_lbl);
-        tv_open_phone_val = findViewById(R.id.act078_tv_open_phone_val);
+        fabMenu = (FabMenu) findViewById(R.id.act080_fabMenu_anchor);
+        tv_action_photo_lbl = findViewById(R.id.act080_tv_open_photo_lbl);
+        iv_action_photo = findViewById(R.id.act080_iv_open_photo);
+        tv_action_comment_lbl = findViewById(R.id.act080_tv_open_comment_lbl);
+        tv_action_comment_val = findViewById(R.id.act080_tv_open_comment_val);
     }
 
     private void initVars() {
-        mPresenter = new Act078_Main_Presenter(context, this, hmAux_Trans);
+        mPresenter = new Act080_Main_Presenter(context, this, hmAux_Trans);
         //
         recoverIntentsInfo();
         //
@@ -120,13 +156,10 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         mPresenter.getStepOrigin(mTkPrefix, mTkCode);
         //
     }
-
     private void setLabels() {
-        tv_open_photo_lbl.setText(hmAux_Trans.get("open_photo_lbl"));
-        tv_open_comment_lbl.setText(hmAux_Trans.get("open_comment_lbl"));
-        tv_open_username_lbl.setText(hmAux_Trans.get("open_username_lbl"));
-        tv_open_email_lbl.setText(hmAux_Trans.get("open_email_lbl"));
-        tv_open_phone_lbl.setText(hmAux_Trans.get("open_phone_lbl"));
+        tv_action_photo_lbl.setText(hmAux_Trans.get("action_photo_lbl"));
+        tv_action_comment_lbl.setText(hmAux_Trans.get("action_comment_lbl"));
+
     }
 
     private void initFabMenuItens() {
@@ -179,16 +212,22 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         fabMenu.setmIcons_Enabled(true);
     }
 
+    private void iniSetup() {
+        fm = getSupportFragmentManager();
+        //
+        mResource_Code = ToolBox_Inf.getResourceCode(
+                context,
+                mModule_Code,
+                Constant.ACT080
+        );
+        //
+        loadTranslation();
+        //
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
 
     private void setHeaderFragment(TK_Ticket tkTicket) {
         fm = getSupportFragmentManager();
-
-        String origin_type = "";
-        if(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE.equalsIgnoreCase(tkTicket.getOrigin_type())) {
-            origin_type = hmAux_Trans.get("barcode_origin_type_lbl");
-        }else{
-            origin_type = hmAux_Trans.get("manual_origin_type_lbl");
-        }
 
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForOrigin(
                 tkTicket.getTicket_id(),
@@ -200,17 +239,17 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                 tkTicket.getOpen_site_desc(),
                 tkTicket.getOpen_serial_id(),
                 tkTicket.getOpen_product_desc(),
-                origin_type,
+                hmAux_Trans.get("schedule_action_origin_type_lbl"),
                 ToolBox_Inf.getStatusColorV2(context, Constant.SYS_STATUS_PENDING),
-                tkTicket.getOrigin_desc(),
+                "",
+                "",
                 ToolBox_Inf.getFormattedTicketOriginDesc(tkTicket.getOrigin_type(), tkTicket.getOrigin_desc()),
-                tkTicket.getType_desc(),
                 tkTicket.getOpen_date(),
                 tkTicket.getOpen_user_name()
         );
         //
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.act078_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
+        ft.replace(R.id.act080_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
         ft.addToBackStack(null);
         ft.commit();
     }
@@ -224,97 +263,15 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        if (hasFABActive) {
-            fabMenu.animateFAB();
-        } else {
-            callAct070();
-        }
-    }
-
-    private void initActions() {
-        fabMenu.setOnFabClickListener(new FabMenu.IFabMenu() {
-            @Override
-            public void onFabClick(View view) {
-                int id = view.getId();
-                if ((id == fabProduct.getId())) {
-                    callAct075();
-                } else if (id == fabStep.getId()) {
-                    callAct070();
-                } else if (id == fabOrigin.getId()) {
-
-                }
-            }
-
-            @Override
-            public void onFabStatusChanged(boolean b) {
-                hasFABActive = b;
-            }
-        });
-
-        tv_open_phone_val.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" +tv_open_phone_val.getText().toString()));
-                startActivity(intent);
-            }
-        });
-
-        tv_open_email_val.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent =  new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto" , tv_open_email_val.getText().toString(), null));
-                intent.setType("text/plain");
-                startActivity(Intent.createChooser(intent, "Send Email"));
-            }
-        });
-
-        iv_open_photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callCameraAct();
-            }
-        });
-    }
-
-    private void callAct075() {
-        Intent intent = new Intent(context, Act075_Main.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        requestingBundle.putInt(VIEW_PROFILE, PRODUCT_VIEW_ID);
-        intent.putExtras(requestingBundle);
-        startActivity(intent);
-        finish();
-    }
-
-    private void iniSetup() {
-        fm = getSupportFragmentManager();
-        //
-        mResource_Code = ToolBox_Inf.getResourceCode(
-                context,
-                mModule_Code,
-                Constant.ACT078
-        );
-        //
-        loadTranslation();
-        //
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-    }
-
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
-        transList.add("act078_title");
+        transList.add("act080_title");
         transList.add("to_product_lbl");
         transList.add("to_step_lbl");
         transList.add("to_origin_lbl");
-        transList.add("manual_origin_type_lbl");
-        transList.add("barcode_origin_type_lbl");
-        transList.add("open_photo_lbl");
-        transList.add("open_comment_lbl");
-        transList.add("open_username_lbl");
-        transList.add("open_email_lbl");
-        transList.add("open_phone_lbl");
+        transList.add("schedule_action_origin_type_lbl");
+        transList.add("action_photo_lbl");
+        transList.add("action_comment_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -339,8 +296,8 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         iniFooter();
         //
         mUser_Info = ToolBox_Con.getPreference_User_Code_Nick(context);
-        mAct_Info = Constant.ACT078;
-        mAct_Title = Constant.ACT078 + "_title";
+        mAct_Info = Constant.ACT080;
+        mAct_Title = Constant.ACT080 + "_title";
         //
         HMAux mFooter = ToolBox_Inf.loadFooterSiteOperationInfo(context);
         mSite_Value = mFooter.get(Constant.FOOTER_SITE);
@@ -357,46 +314,66 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         ToolBox_Inf.buildFooterDialog(context, false);
     }
 
+
     @Override
     public void loadTicketOrigin(TK_Ticket ticket) {
         setHeaderFragment(ticket);
 
         setOpenFields(ticket);
-
-
     }
 
     private void setOpenFields(TK_Ticket ticket) {
-        ll_privacy_fields.setVisibility(View.GONE);
         //
-        if (ticket.getApp_personal_data() == 1){
-            ll_privacy_fields.setVisibility(View.VISIBLE);
-            tv_open_username_val.setText(ticket.getOpen_user_name());
-            tv_open_email_val.setText(ticket.getOpen_email());
-            tv_open_phone_val.setText(ticket.getOpen_phone());
-        }
-        //
-        tv_open_comment_val.setText(ticket.getOpen_comments());
-        actionPhotoLocalPath = ticket.getOpen_photo_local();
-        if (actionPhotoLocalPath == null && (ticket.getOpen_photo() == null || ticket.getOpen_photo().isEmpty()) ) {
-            iv_open_photo.setImageDrawable(ToolBox_Inf.getNoPhotoDrawable(context));
-        }else {
-            try {
-                Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
-                if (bitmap == null) {
-                    Drawable dPlaceholder = getResources().getDrawable(R.drawable.sand_watch_transp);
-                    dPlaceholder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
-                    iv_open_photo.setImageDrawable(dPlaceholder);
-                } else {
-                    iv_open_photo.setImageBitmap(bitmap);
+        String step_end_date ="-";
+        String step_end_user_nick ="-";
+        TK_Ticket_Step originStep = ticket.getStep().get(0);
+        if(originStep != null) {
+            step_end_date = originStep.getStep_end_date();
+            step_end_user_nick = originStep.getStep_end_user_nick();
+            TK_Ticket_Ctrl originCtrl = originStep.getCtrl().get(0);
+            if(originCtrl != null) {
+                TK_Ticket_Action action = originCtrl.getAction();
+                if(action != null) {
+                    tv_action_comment_val.setText(action.getAction_comments());
+                    actionPhotoLocalPath = action.getAction_photo_local();
+                    if (actionPhotoLocalPath == null) {
+                        iv_action_photo.setImageDrawable(ToolBox_Inf.getNoPhotoDrawable(context));
+                    } else {
+                        try {
+                            Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                            if (bitmap == null) {
+                                Drawable dPlaceholder = getResources().getDrawable(R.drawable.sand_watch_transp);
+                                dPlaceholder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
+                                iv_action_photo.setImageDrawable(dPlaceholder);
+                            } else {
+                                iv_action_photo.setImageBitmap(bitmap);
+                            }
+                        } catch (NullPointerException e) {
+                            Bitmap placeholder = BitmapFactory.decodeResource(context.getResources(),
+                                    R.drawable.sand_watch_transp);
+                            iv_action_photo.setImageBitmap(placeholder);
+                            e.printStackTrace();
+                        }
+                    }
                 }
-            } catch (NullPointerException e) {
-                ToolBox_Inf.registerException(e);
-                e.printStackTrace();
             }
         }
     }
 
+    @Override
+    public void showAlert(String ttl, String msg) {
+
+    }
+    //
+    @Override
+    public void onBackPressed() {
+        if (hasFABActive) {
+            fabMenu.animateFAB();
+        } else {
+            callAct070();
+        }
+    }
+    //
     private void callAct070() {
         Intent intent = new Intent(context, Act070_Main.class);
         intent.putExtras(requestingBundle);
@@ -404,28 +381,12 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         finish();
     }
 
-    private void callCameraAct() {
-        File sFile;
-        sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
-
-        if (!sFile.exists()) {
-            return;
-        }
-        //
-        Bundle bundle = new Bundle();
-        bundle.putInt(ConstantBase.PID, iv_open_photo.getId());
-        bundle.putInt(ConstantBase.PTYPE, 1);
-        bundle.putString(ConstantBase.PPATH, actionPhotoLocalPath);
-        bundle.putBoolean(ConstantBase.PEDIT, false);
-        bundle.putBoolean(ConstantBase.PENABLED, false);
-        bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
-        bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false);
-        //
-        Intent mIntent = new Intent(context, Camera_Activity.class);
-        mIntent.putExtras(bundle);
-        //
-        context.startActivity(mIntent);
+    private void callAct075() {
+        Intent intent = new Intent(context, Act075_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        requestingBundle.putInt(VIEW_PROFILE, PRODUCT_VIEW_ID);
+        intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
     }
-
-
 }

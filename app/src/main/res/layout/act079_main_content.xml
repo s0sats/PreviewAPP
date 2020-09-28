@@ -64,6 +64,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/act079_tv_form_score"
         app:layout_constraintStart_toStartOf="@+id/act078_gdl_start"
         app:layout_constraintTop_toTopOf="@+id/act079_tv_form_score"
+        android:tint="@color/namoa_color_gray_4"
         app:srcCompat="@drawable/ic_baseline_star_24" />
 
     <ImageView

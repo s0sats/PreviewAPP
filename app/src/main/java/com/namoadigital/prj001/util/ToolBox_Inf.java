@@ -13,7 +13,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -200,6 +202,7 @@ import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act077.Act077_Main;
 import com.namoadigital.prj001.ui.act078.Act078_Main;
 import com.namoadigital.prj001.ui.act079.Act079_Main;
+import com.namoadigital.prj001.ui.act080.Act080_Main;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -254,6 +257,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_SCORE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MEASURE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE;
 import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 
 /**
@@ -3815,6 +3819,13 @@ public class ToolBox_Inf {
 //        sync.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd"));
         sync.setLast_update(last_update);
         syncChecklistDao.addUpdate(sync);
+    }
+
+    public static Drawable getNoPhotoDrawable(Context context) {
+        Drawable placeHolder;
+        placeHolder = context.getResources().getDrawable(R.drawable.ic_baseline_photo_camera_24);
+        placeHolder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
+        return placeHolder;
     }
 
     private static class GenericExtFilter implements FilenameFilter {
@@ -7417,6 +7428,8 @@ public class ToolBox_Inf {
             case TK_TICKET_ORIGIN_TYPE_FORM_NC:
             case TK_TICKET_ORIGIN_TYPE_FORM_SCORE:
                 return new Intent(context, Act079_Main.class);
+             case TK_TICKET_ORIGIN_TYPE_SCHEDULE:
+                return new Intent(context, Act080_Main.class);
             default:
                 return null;
         }
@@ -7428,7 +7441,7 @@ public class ToolBox_Inf {
             return R.color.namoa_color_danger_red;
         }
         if(RANGE_YELLOW.equalsIgnoreCase(score_status)){
-            return R.color.namoa_color_warning_yellow;
+            return R.color.namoa_color_yellow_2;
         }
         if(RANGE_GREEN.equalsIgnoreCase(score_status)){
             return R.color.namoa_color_success_green;
