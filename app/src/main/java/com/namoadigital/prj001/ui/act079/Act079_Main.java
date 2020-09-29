@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act079;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -99,6 +100,8 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act079_title");
+        transList.add("alert_ticket_parameter_error_ttl");
+        transList.add("alert_ticket_parameter_error_msg");
         transList.add("to_product_lbl");
         transList.add("to_step_lbl");
         transList.add("to_origin_lbl");
@@ -130,13 +133,25 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         recoverIntentsInfo();
         //
         if(mTkPrefix <= 0 || mTkCode <= 0){
-            //todo callErrorParam
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_ticket_parameter_error_ttl"),
+                    hmAux_Trans.get("alert_ticket_parameter_error_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onBackPressed();
+                        }
+                    },
+                    0
+            );
+        }else {
+            //
+            tv_form_download_pdf.setText(hmAux_Trans.get("download_form_pdf_lbl"));
+            //
+            initFabMenuItens();
+            mPresenter.getStepOrigin(mTkPrefix, mTkCode);
         }
-        //
-        tv_form_download_pdf.setText(hmAux_Trans.get("download_form_pdf_lbl"));
-        //
-        initFabMenuItens();
-        mPresenter.getStepOrigin(mTkPrefix, mTkCode);
     }
 
     private void initFabMenuItens() {
@@ -190,7 +205,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     }
 
 
-    private void setHeaderFragment(TK_Ticket tkTicket, String custom_form_type_desc, String custom_form_desc, String step_end_date, String step_end_user_nick) {
+    private void setHeaderFragment(TK_Ticket tkTicket, String custom_form_type_desc, String custom_form_desc, String step_date, String step_end_user_nick) {
         fm = getSupportFragmentManager();
 
         String origin_type = "";
@@ -201,8 +216,6 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         }else{
             origin_type = hmAux_Trans.get("form_score_origin_type_lbl");
         }
-
-
 
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForOrigin(
                 tkTicket.getTicket_id(),
@@ -215,11 +228,10 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                 tkTicket.getOpen_serial_id(),
                 tkTicket.getOpen_product_desc(),
                 origin_type,
-                ToolBox_Inf.getStatusColorV2(context,Constant.SYS_STATUS_PENDING),
-                tkTicket.getOrigin_desc(),
+                context.getResources().getColor(R.color.grid_header_normal),
                 custom_form_type_desc,
                 custom_form_desc,
-                step_end_date,
+                step_date,
                 step_end_user_nick
         );
         //
@@ -324,11 +336,22 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
 
         String custom_form_type_desc ="-";
         String custom_form_desc ="-";
-        String step_end_date ="-";
+        String step_date ="-";
         String step_end_user_nick ="-";
         TK_Ticket_Step originStep = ticket.getStep().get(0);
         if(originStep != null ){
-            step_end_date = originStep.getStep_end_date();
+            //
+            String dateStart = ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(originStep.getStep_start_date()),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            );
+            //
+            String dateEnd = ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(originStep.getStep_end_date()),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            );
+            //
+            step_date = ToolBox_Inf.formatScheduleIntervalDateFormatted(context, dateStart, dateEnd);
             step_end_user_nick = originStep.getStep_end_user_nick();
             TK_Ticket_Ctrl originCtrl = originStep.getCtrl().get(0);
             if(originCtrl != null){
@@ -363,7 +386,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             }
         }
 
-        setHeaderFragment(ticket, custom_form_type_desc, custom_form_desc, step_end_date, step_end_user_nick);
+        setHeaderFragment(ticket, custom_form_type_desc, custom_form_desc, step_date, step_end_user_nick);
 
 
 

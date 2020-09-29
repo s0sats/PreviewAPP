@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act077;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -86,11 +87,24 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
         recoverIntentsInfo();
         //
         if (mTkPrefix <= 0 || mTkCode <= 0) {
-            //todo callErrorParam
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_ticket_parameter_error_ttl"),
+                    hmAux_Trans.get("alert_ticket_parameter_error_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onBackPressed();
+                        }
+                    },
+                    0
+            );
+        }else {
+            //
+            tv_form_download_pdf.setText(hmAux_Trans.get("download_form_pdf_lbl"));
+            initFabMenuItens();
+            mPresenter.getStepOrigin(mTkPrefix, mTkCode);
         }
-        //
-        initFabMenuItens();
-        mPresenter.getStepOrigin(mTkPrefix, mTkCode);
     }
 
     private void initFabMenuItens() {
@@ -158,11 +172,13 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
                 tkTicket.getOpen_serial_id(),
                 tkTicket.getOpen_product_desc(),
                 hmAux_Trans.get("measure_origin_type_lbl"),
-                ToolBox_Inf.getStatusColorV2(context, Constant.SYS_STATUS_PENDING),
-                tkTicket.getOrigin_desc(),
+                context.getResources().getColor(R.color.grid_header_normal),
                 tkTicket.getType_path(),
                 tkTicket.getOrigin_desc(),
-                originStep.getStep_end_date(),
+                ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(originStep.getStep_end_date()),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                ),
                 originStep.getStep_end_user_nick()
         );
         //
@@ -237,10 +253,13 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act077_title");
+        transList.add("alert_ticket_parameter_error_ttl");
+        transList.add("alert_ticket_parameter_error_msg");
         transList.add("to_product_lbl");
         transList.add("to_step_lbl");
         transList.add("to_origin_lbl");
         transList.add("measure_origin_type_lbl");
+        transList.add("download_form_pdf_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

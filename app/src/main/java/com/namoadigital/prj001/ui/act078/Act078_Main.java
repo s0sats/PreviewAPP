@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act078;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,6 +29,7 @@ import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -68,6 +70,13 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
     private TextView tv_open_email_val;
     private TextView tv_open_phone_lbl;
     private TextView tv_open_phone_val;
+
+    private LinearLayout ll_open_phone;
+    private LinearLayout ll_open_email;
+    private LinearLayout ll_open_username;
+    private LinearLayout ll_open_comment;
+    private LinearLayout ll_open_photo;
+
     private String actionPhotoLocalPath;
 
     @Override
@@ -91,6 +100,13 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
 
     private void bindViews() {
         fabMenu = (FabMenu) findViewById(R.id.act078_fabMenu_anchor);
+
+        ll_open_phone = findViewById(R.id.act078_ll_open_phone);
+        ll_open_email = findViewById(R.id.act078_ll_open_email);
+        ll_open_username = findViewById(R.id.act078_ll_open_username);
+        ll_open_comment = findViewById(R.id.act078_ll_open_comment);
+        ll_open_photo = findViewById(R.id.act078_ll_open_photo);
+
         tv_open_photo_lbl = findViewById(R.id.act078_tv_open_photo_lbl);
         iv_open_photo = findViewById(R.id.act078_iv_open_photo);
         tv_open_comment_lbl = findViewById(R.id.act078_tv_open_comment_lbl);
@@ -112,13 +128,25 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         setLabels();
         //
         if (mTkPrefix <= 0 || mTkCode <= 0) {
-            //todo callErrorParam
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_ticket_parameter_error_ttl"),
+                    hmAux_Trans.get("alert_ticket_parameter_error_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onBackPressed();
+                        }
+                    },
+                    0
+            );
+        }else {
+            //
+            initFabMenuItens();
+            //
+            mPresenter.getStepOrigin(mTkPrefix, mTkCode);
+            //
         }
-        //
-        initFabMenuItens();
-        //
-        mPresenter.getStepOrigin(mTkPrefix, mTkCode);
-        //
     }
 
     private void setLabels() {
@@ -182,7 +210,6 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
 
     private void setHeaderFragment(TK_Ticket tkTicket) {
         fm = getSupportFragmentManager();
-
         String origin_type = "";
         if(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE.equalsIgnoreCase(tkTicket.getOrigin_type())) {
             origin_type = hmAux_Trans.get("barcode_origin_type_lbl");
@@ -190,6 +217,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
             origin_type = hmAux_Trans.get("manual_origin_type_lbl");
         }
 
+        TK_Ticket_Step originStep = tkTicket.getStep().get(0);
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForOrigin(
                 tkTicket.getTicket_id(),
                 ToolBox_Inf.millisecondsToString(
@@ -201,11 +229,13 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                 tkTicket.getOpen_serial_id(),
                 tkTicket.getOpen_product_desc(),
                 origin_type,
-                ToolBox_Inf.getStatusColorV2(context, Constant.SYS_STATUS_PENDING),
-                tkTicket.getOrigin_desc(),
-                ToolBox_Inf.getFormattedTicketOriginDesc(tkTicket.getOrigin_type(), tkTicket.getOrigin_desc()),
+                context.getResources().getColor(R.color.grid_header_normal),
+                tkTicket.getType_path(),
                 tkTicket.getType_desc(),
-                tkTicket.getOpen_date(),
+                ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(originStep.getStep_end_date()),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                ),
                 tkTicket.getOpen_user_name()
         );
         //
@@ -305,6 +335,8 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act078_title");
+        transList.add("alert_ticket_parameter_error_ttl");
+        transList.add("alert_ticket_parameter_error_msg");
         transList.add("to_product_lbl");
         transList.add("to_step_lbl");
         transList.add("to_origin_lbl");
@@ -362,8 +394,6 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         setHeaderFragment(ticket);
 
         setOpenFields(ticket);
-
-
     }
 
     private void setOpenFields(TK_Ticket ticket) {
@@ -371,15 +401,35 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         //
         if (ticket.getApp_personal_data() == 1){
             ll_privacy_fields.setVisibility(View.VISIBLE);
-            tv_open_username_val.setText(ticket.getOpen_user_name());
-            tv_open_email_val.setText(ticket.getOpen_email());
-            tv_open_phone_val.setText(ticket.getOpen_phone());
+            if(ticket.getOpen_name()==null || ticket.getOpen_name().isEmpty()){
+                ll_open_username.setVisibility(View.GONE);
+            }else{
+                tv_open_username_val.setText(ticket.getOpen_name());
+            }
+            //
+            if(ticket.getOpen_email()==null || ticket.getOpen_email().isEmpty()){
+                ll_open_email.setVisibility(View.GONE);
+            }else{
+                tv_open_email_val.setText(ticket.getOpen_email());
+            }
+            //
+            if(ticket.getOpen_phone()==null || ticket.getOpen_phone().isEmpty()){
+                ll_open_phone.setVisibility(View.GONE);
+            }else{
+                tv_open_phone_val.setText(ticket.getOpen_phone());
+            }
         }
         //
-        tv_open_comment_val.setText(ticket.getOpen_comments());
+        if(ticket.getOpen_comments()==null || ticket.getOpen_comments().isEmpty()){
+            ll_open_comment.setVisibility(View.GONE);
+        }else{
+            tv_open_comment_val.setText(ticket.getOpen_comments());
+        }
+        //
+
         actionPhotoLocalPath = ticket.getOpen_photo_local();
         if (actionPhotoLocalPath == null && (ticket.getOpen_photo() == null || ticket.getOpen_photo().isEmpty()) ) {
-            iv_open_photo.setImageDrawable(ToolBox_Inf.getNoPhotoDrawable(context));
+            ll_open_photo.setVisibility(View.GONE);
         }else {
             try {
                 Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);

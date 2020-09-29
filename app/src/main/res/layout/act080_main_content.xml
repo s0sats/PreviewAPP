@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:gravity="center_vertical"
@@ -32,57 +32,70 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/act080_tv_open_photo_lbl"
+            <LinearLayout
+                android:id="@+id/act080_ll_open_photo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:textStyle="bold"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintTop_toBottomOf="@id/act080_frg_pipeline_header"
-                tools:text="Photo" />
+                android:orientation="vertical">
 
-            <!-- A cor do icone é definida via code-->
-            <ImageView
-                android:id="@+id/act080_iv_open_photo"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                app:srcCompat="@drawable/ic_foto_ns_black" />
+                <TextView
+                    android:id="@+id/act080_tv_open_photo_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textStyle="bold"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintTop_toBottomOf="@id/act080_frg_pipeline_header"
+                    tools:text="Photo" />
 
-            <View
-                android:id="@+id/act080_divider_1"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="16dp"
-                android:background="@color/text_black" />
+                <!-- A cor do icone é definida via code-->
+                <ImageView
+                    android:id="@+id/act080_iv_open_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    app:srcCompat="@drawable/ic_foto_ns_black" />
 
-            <TextView
-                android:id="@+id/act080_tv_open_comment_lbl"
+                <View
+                    android:id="@+id/act080_divider_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/text_black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act080_ll_open_comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textStyle="bold"
-                tools:text="Comentario da Abertura - trad" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/act080_tv_open_comment_val"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toStartOf="@+id/act080_gdl_end"
-                app:layout_constraintStart_toStartOf="@+id/act080_gdl_start"
-                app:layout_constraintTop_toBottomOf="@id/act080_tv_open_comment_lbl"
-                tools:text="Comentario da Abertura - trad\nComentario da Abertura - trad" />
+                <TextView
+                    android:id="@+id/act080_tv_open_comment_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="bold"
+                    tools:text="Comentario da Abertura - trad" />
 
-            <View
-                android:id="@+id/act080_divider_2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="16dp"
-                android:background="@color/text_black" />
+                <TextView
+                    android:id="@+id/act080_tv_open_comment_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toStartOf="@+id/act080_gdl_end"
+                    app:layout_constraintStart_toStartOf="@+id/act080_gdl_start"
+                    app:layout_constraintTop_toBottomOf="@id/act080_tv_open_comment_lbl"
+                    tools:text="Comentario da Abertura - trad\nComentario da Abertura - trad" />
 
+                <View
+                    android:id="@+id/act080_divider_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/text_black" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

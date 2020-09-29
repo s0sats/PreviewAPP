@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act080;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
@@ -57,6 +59,8 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
     private Bundle requestingBundle;
     private int mTkPrefix;
     private int mTkCode;
+    private LinearLayout ll_open_photo;
+    private LinearLayout ll_open_comments;
     private TextView tv_action_photo_lbl;
     private ImageView iv_action_photo;
     private TextView tv_action_comment_lbl;
@@ -134,6 +138,8 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
 
     private void bindViews() {
         fabMenu = (FabMenu) findViewById(R.id.act080_fabMenu_anchor);
+        ll_open_photo = findViewById(R.id.act080_ll_open_photo);
+        ll_open_comments = findViewById(R.id.act080_ll_open_comment);
         tv_action_photo_lbl = findViewById(R.id.act080_tv_open_photo_lbl);
         iv_action_photo = findViewById(R.id.act080_iv_open_photo);
         tv_action_comment_lbl = findViewById(R.id.act080_tv_open_comment_lbl);
@@ -148,12 +154,24 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
         setLabels();
         //
         if (mTkPrefix <= 0 || mTkCode <= 0) {
-            //todo callErrorParam
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_ticket_parameter_error_ttl"),
+                    hmAux_Trans.get("alert_ticket_parameter_error_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onBackPressed();
+                        }
+                    },
+                    0
+            );
+        }else {
+            //
+            initFabMenuItens();
+            //
+            mPresenter.getStepOrigin(mTkPrefix, mTkCode);
         }
-        //
-        initFabMenuItens();
-        //
-        mPresenter.getStepOrigin(mTkPrefix, mTkCode);
         //
     }
     private void setLabels() {
@@ -228,7 +246,12 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
 
     private void setHeaderFragment(TK_Ticket tkTicket) {
         fm = getSupportFragmentManager();
+        String step_end_date ="-";
+        String step_end_user_nick ="-";
 
+        TK_Ticket_Step originStep = tkTicket.getStep().get(0);
+        step_end_date = originStep.getStep_end_date();
+        step_end_user_nick = originStep.getStep_end_user_nick();
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForOrigin(
                 tkTicket.getTicket_id(),
                 ToolBox_Inf.millisecondsToString(
@@ -240,11 +263,13 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
                 tkTicket.getOpen_serial_id(),
                 tkTicket.getOpen_product_desc(),
                 hmAux_Trans.get("schedule_action_origin_type_lbl"),
-                ToolBox_Inf.getStatusColorV2(context, Constant.SYS_STATUS_PENDING),
-                "",
+                context.getResources().getColor(R.color.grid_header_normal),
                 "",
                 ToolBox_Inf.getFormattedTicketOriginDesc(tkTicket.getOrigin_type(), tkTicket.getOrigin_desc()),
-                tkTicket.getOpen_date(),
+                ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(originStep.getStep_end_date()),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                ),
                 tkTicket.getOpen_user_name()
         );
         //
@@ -266,6 +291,8 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("act080_title");
+        transList.add("alert_ticket_parameter_error_ttl");
+        transList.add("alert_ticket_parameter_error_msg");
         transList.add("to_product_lbl");
         transList.add("to_step_lbl");
         transList.add("to_origin_lbl");
@@ -324,20 +351,20 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
 
     private void setOpenFields(TK_Ticket ticket) {
         //
-        String step_end_date ="-";
-        String step_end_user_nick ="-";
         TK_Ticket_Step originStep = ticket.getStep().get(0);
         if(originStep != null) {
-            step_end_date = originStep.getStep_end_date();
-            step_end_user_nick = originStep.getStep_end_user_nick();
             TK_Ticket_Ctrl originCtrl = originStep.getCtrl().get(0);
             if(originCtrl != null) {
                 TK_Ticket_Action action = originCtrl.getAction();
                 if(action != null) {
-                    tv_action_comment_val.setText(action.getAction_comments());
+                    if(action.getAction_comments() == null || action.getAction_comments().isEmpty()){
+                        ll_open_comments.setVisibility(View.GONE);
+                    }else {
+                        tv_action_comment_val.setText(action.getAction_comments());
+                    }
                     actionPhotoLocalPath = action.getAction_photo_local();
-                    if (actionPhotoLocalPath == null) {
-                        iv_action_photo.setImageDrawable(ToolBox_Inf.getNoPhotoDrawable(context));
+                    if (actionPhotoLocalPath == null || actionPhotoLocalPath.isEmpty()) {
+                        ll_open_photo.setVisibility(View.GONE);
                     } else {
                         try {
                             Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
@@ -389,4 +416,5 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
         startActivity(intent);
         finish();
     }
+
 }

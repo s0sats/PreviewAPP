@@ -105,6 +105,7 @@ public class Frg_Pipeline_Header extends Fragment {
     private TextView tv_origin_desc;
     private TextView tv_origin_end_date;
     private TextView tv_origin_end_user;
+    private ImageView iv_origin_end_user;
     private View pipeline_origin_header;
 
     public Frg_Pipeline_Header() {
@@ -164,7 +165,7 @@ public class Frg_Pipeline_Header extends Fragment {
         return fragment;
     }
 
-    public static Frg_Pipeline_Header newInstanceForOrigin(String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String origin_type, int status_color, String desc_origin_param, String origin_complete_path, String origin_desc, String origin_end_date, String origin_end_user) {
+    public static Frg_Pipeline_Header newInstanceForOrigin(String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String origin_type, int status_color, String origin_complete_path, String origin_desc, String origin_end_date, String origin_end_user) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
         args.putString(HEADER_PROFILE_PARAM, ORIGIN);
@@ -176,7 +177,6 @@ public class Frg_Pipeline_Header extends Fragment {
         args.putString(STATUS_DESC_PARAM, origin_type);
         args.putInt(STATUS_COLOR_PARAM, status_color);
         args.putString(SERIAL_ID_PARAM, serial_id);
-        args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
         args.putString(ORIGIN_COMPLETE_PATH, origin_complete_path);
         args.putString(ORIGIN_DESC, origin_desc);
         args.putString(ORIGIN_END_DATE, origin_end_date);
@@ -260,6 +260,7 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_origin_complete_path = pipeline_header_view.findViewById(R.id.frg_ticket_tv_origin_complete_path);
         tv_origin_desc = pipeline_header_view.findViewById(R.id.frg_ticket_tv_origin_desc);
         tv_origin_end_date = pipeline_header_view.findViewById(R.id.frg_ticket_tv_origin_end_date);
+        iv_origin_end_user = pipeline_header_view.findViewById(R.id.frg_ticket_iv_origin_end_user);
         tv_origin_end_user = pipeline_header_view.findViewById(R.id.frg_ticket_tv_origin_end_user);
         pipeline_origin_header = pipeline_header_view.findViewById(R.id.frg_pipeline_origin_header);
         //
@@ -322,13 +323,23 @@ public class Frg_Pipeline_Header extends Fragment {
                 frg_pipeline_header_ticket.setVisibility(View.GONE);
                 pipeline_origin_header.setVisibility(View.VISIBLE);
                 tv_status.setVisibility(View.VISIBLE);
-                tv_desc_origin.setVisibility(View.VISIBLE);
+                tv_desc_origin.setVisibility(View.GONE);
                 gp_step.setVisibility(View.GONE);
                 gp_schedule.setVisibility(View.GONE);
-                tv_origin_complete_path.setVisibility(View.VISIBLE);
+                if (origin_complete_path == null || origin_complete_path.isEmpty()) {
+                    tv_origin_complete_path.setVisibility(View.GONE);
+                }else {
+                    tv_origin_complete_path.setVisibility(View.VISIBLE);
+                }
                 tv_origin_desc.setVisibility(View.VISIBLE);
                 tv_origin_end_date.setVisibility(View.VISIBLE);
-                tv_origin_end_user.setVisibility(View.VISIBLE);
+                if(origin_end_user != null && !origin_end_user.isEmpty() ) {
+                    tv_origin_end_user.setVisibility(View.VISIBLE);
+                    iv_origin_end_user.setVisibility(View.VISIBLE);
+                }else{
+                    tv_origin_end_user.setVisibility(View.GONE);
+                    iv_origin_end_user.setVisibility(View.GONE);
+                }
                 break;
             case APPROVAL:
                 cl_step_ticket.setVisibility(View.VISIBLE);
