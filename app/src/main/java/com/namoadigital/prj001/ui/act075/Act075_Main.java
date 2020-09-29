@@ -503,9 +503,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 if ((id == fabProduct.getId())) {
 
                 }else if (id == fabStep.getId()){
-                    verifyChangesBeforeExit();
+                    verifyChangesBeforeExit(false);
                 } else if (id == fabOrigin.getId()){
-                    callOrigin();
+                    verifyChangesBeforeExit(true);
                 }
             }
 
@@ -698,7 +698,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         onBackPressed();
     }
 
-    private void verifyChangesBeforeExit() {
+    private void verifyChangesBeforeExit(final boolean goToOrigin) {
         if(hasUpdated) {
             ToolBox.alertMSG_YES_NO(
                     context,
@@ -707,13 +707,21 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            callAct070();
+                            if(goToOrigin) {
+                                callOrigin();
+                            }else{
+                                callAct070();
+                            }
                         }
                     },
                     1
             );
         }else{
-            callAct070();
+            if(goToOrigin) {
+                callOrigin();
+            }else{
+                callAct070();
+            }
         }
     }
 
@@ -1096,7 +1104,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         if (hasFABActive) {
             fabMenu.animateFAB();
         } else {
-            verifyChangesBeforeExit();
+            verifyChangesBeforeExit(false);
         }
     }
 

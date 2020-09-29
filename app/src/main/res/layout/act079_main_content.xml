@@ -32,8 +32,6 @@
         app:mButton_Resource="@drawable/ic_menu_hamburger"
         app:mButton_Resource_Color="@color/colorPrimary" />
 
-
-
     <include
         android:id="@+id/include"
         layout="@layout/footer_base"
@@ -44,14 +42,14 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/act078_gdl_start"
+        android:id="@+id/act079_gdl_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="8dp" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/act078_gdl_end"
+        android:id="@+id/act079_gdl_end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -62,7 +60,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/act079_tv_form_score"
-        app:layout_constraintStart_toStartOf="@+id/act078_gdl_start"
+        app:layout_constraintStart_toStartOf="@+id/act079_gdl_start"
         app:layout_constraintTop_toTopOf="@+id/act079_tv_form_score"
         android:tint="@color/namoa_color_gray_4"
         app:srcCompat="@drawable/ic_baseline_star_24" />
@@ -72,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="@+id/act078_gdl_start"
+        app:layout_constraintStart_toStartOf="@+id/act079_gdl_start"
         app:layout_constraintTop_toBottomOf="@+id/act079_tv_form_score"
         app:srcCompat="@drawable/ic_non_compliance_on" />
 
@@ -83,7 +81,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/act078_gdl_end"
+        app:layout_constraintEnd_toStartOf="@+id/act079_gdl_end"
         app:layout_constraintStart_toEndOf="@+id/act079_iv_form_score"
         app:layout_constraintTop_toBottomOf="@id/act079_frg_pipeline_header"
         tools:text="TextView" />
@@ -96,7 +94,7 @@
         android:textColor="@color/namoa_color_danger_red_lib"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/act079_iv_form_nc_count"
-        app:layout_constraintEnd_toStartOf="@+id/act078_gdl_end"
+        app:layout_constraintEnd_toStartOf="@+id/act079_gdl_end"
         app:layout_constraintStart_toEndOf="@+id/act079_iv_form_nc_count"
         app:layout_constraintTop_toTopOf="@+id/act079_iv_form_nc_count"
         tools:text="TextView" />
@@ -108,7 +106,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:tint="@color/namoa_pipeline_product_lbl"
-        app:layout_constraintStart_toStartOf="@+id/act078_gdl_start"
+        app:layout_constraintStart_toStartOf="@+id/act079_gdl_start"
         app:layout_constraintTop_toBottomOf="@+id/act079_tv_form_nc_count"
         app:srcCompat="@drawable/ic_baseline_get_app_24" />
 
@@ -120,7 +118,7 @@
         tools:text="TextView"
         android:textColor="@color/namoa_pipeline_product_lbl"
         app:layout_constraintBottom_toBottomOf="@+id/act079_iv_form_download_pdf"
-        app:layout_constraintEnd_toStartOf="@+id/act078_gdl_end"
+        app:layout_constraintEnd_toStartOf="@+id/act079_gdl_end"
         app:layout_constraintStart_toEndOf="@+id/act079_iv_form_download_pdf"
         app:layout_constraintTop_toTopOf="@+id/act079_iv_form_download_pdf" />
 </android.support.constraint.ConstraintLayout>
