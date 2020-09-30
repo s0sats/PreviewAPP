@@ -294,10 +294,18 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         tv_open_email_val.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent =  new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                        "mailto" , tv_open_email_val.getText().toString(), null));
+                try {
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.setData(Uri.parse("mailto:"));
+                    String[] email = new String[]{tv_open_email_val.getText().toString()};
+                    intent.putExtra(Intent.EXTRA_EMAIL, email);
 
-                startActivity(Intent.createChooser(intent, "Send Email"));
+                    if (intent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(intent);
+                    }
+                }catch (Exception e){
+                    ToolBox.registerException(getClass().getName(), e);
+                }
             }
         });
 
