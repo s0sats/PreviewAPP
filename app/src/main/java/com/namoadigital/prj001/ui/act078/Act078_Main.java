@@ -296,7 +296,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
             public void onClick(View v) {
                 Intent intent =  new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
                         "mailto" , tv_open_email_val.getText().toString(), null));
-                intent.setType("text/plain");
+
                 startActivity(Intent.createChooser(intent, "Send Email"));
             }
         });
