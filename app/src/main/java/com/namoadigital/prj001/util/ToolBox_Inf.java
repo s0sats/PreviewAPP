@@ -7413,7 +7413,7 @@ public class ToolBox_Inf {
             case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC:
             case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_TRANSFER:
             default:
-                return "\\" + ticketOriginDesc;
+                return ticketOriginDesc;
         }
     }
 

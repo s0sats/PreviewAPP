@@ -657,7 +657,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
             Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
             //trad
-            tv_title.setText(hmAux_Trans.get("alert_checkin_results_ttl"));
+            tv_title.setText(hmAux_Trans.get("alert_results_ttl"));
             btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
             //
             lv_results.setAdapter(
@@ -885,6 +885,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         transList.add("alert_error_on_save_product_ttl");
         transList.add("alert_error_on_save_product_msg");
         //
+        transList.add("alert_results_ttl");
+
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,

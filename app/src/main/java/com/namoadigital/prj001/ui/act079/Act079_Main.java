@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act079;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -360,13 +361,20 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                     custom_form_type_desc = form.getCustom_form_type_desc();
                     custom_form_desc = form.getCustom_form_desc();
                     if (form.getScore_perc() != null) {
-                        tv_form_score.setText(form.getScore_perc().replace(".", ","));
-                        tv_form_score.setTextColor(context.getResources().getColor(ToolBox_Inf.getScoreFormColor(form.getScore_status())));
+                        tv_form_score.setText(form.getScore_perc().replace(".", ",") + "%");
+                        int color = context.getResources().getColor(ToolBox_Inf.getScoreFormColor(form.getScore_status()));
+                        tv_form_score.setTextColor(color);
+                        iv_form_score.setImageTintList(ColorStateList.valueOf(color));
                     } else {
                         tv_form_score.setVisibility(View.GONE);
                         iv_form_score.setVisibility(View.GONE);
                     }
-                    tv_form_nc_count.setText(String.format("%s", form.getNc()));
+                    if(form.getNc() > 0 ) {
+                        tv_form_nc_count.setText(String.format("%s", form.getNc()));
+                    }else{
+                        tv_form_nc_count.setVisibility(View.GONE);
+                        iv_form_nc_count.setVisibility(View.GONE);
+                    }
 
                 }catch (NullPointerException e){
                     ToolBox_Inf.registerException(e);

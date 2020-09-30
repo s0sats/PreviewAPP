@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act077;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -261,6 +262,13 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
         transList.add("measure_origin_type_lbl");
         transList.add("download_form_pdf_lbl");
         //
+        transList.add("alert_form_pdf_not_generated_ttl");
+        transList.add("alert_form_pdf_not_generated_msg");
+        transList.add("alert_form_pdf_not_downloaded_ttl");
+        transList.add("alert_form_pdf_not_downloaded_msg");
+        transList.add("alert_starting_pdf_not_supported_ttl");
+        transList.add("alert_starting_pdf_not_supported_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -320,13 +328,20 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
                     final TK_Ticket_Form form = originCtrl.getForm();
                     try {
                         if (form.getScore_perc() != null) {
-                            tv_form_score.setText(form.getScore_perc().replace(".", ","));
-                            tv_form_score.setTextColor(context.getResources().getColor(ToolBox_Inf.getScoreFormColor(form.getScore_status())));
+                            tv_form_score.setText(form.getScore_perc().replace(".", ",") + "%");
+                            int color = context.getResources().getColor(ToolBox_Inf.getScoreFormColor(form.getScore_status()));
+                            tv_form_score.setTextColor(color);
+                            iv_form_score.setImageTintList(ColorStateList.valueOf(color));
                         } else {
                             tv_form_score.setVisibility(View.GONE);
                             iv_form_score.setVisibility(View.GONE);
                         }
-                        tv_form_nc_count.setText(String.format("%s", form.getNc()));
+                        if(form.getNc() > 0 ) {
+                            tv_form_nc_count.setText(String.format("%s", form.getNc()));
+                        }else{
+                            tv_form_nc_count.setVisibility(View.GONE);
+                            iv_form_nc_count.setVisibility(View.GONE);
+                        }
 
                     } catch (NullPointerException e) {
                         ToolBox_Inf.registerException(e);
