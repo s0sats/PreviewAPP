@@ -1333,7 +1333,7 @@ public class WS_Sync extends IntentService {
             //
 
             //Se existe product_code, seta controle para false, se não true.
-            productExist = product_code == -1L;
+            productExist = product_code == -1L || product_code == 0;
             File[] files_cf_product = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_product-");
 
             for (File _file : files_cf_product) {
