@@ -21,8 +21,9 @@ public class Act074_TicketVH {
     private String ticket_serial;
     private String ticket_step_desc;
     private String ticket_origin_desc;
-    private String ticket_forecast_start_date;
-    private String ticket_forecast_end_date;
+    private String ticket_forecast_date;
+    private String step_forecast_start_date;
+    private String step_forecast_end_date;
     private String ticket_step_id;
     private String ticket_current_step_order;
     private int ticket_step_qty;
@@ -40,9 +41,12 @@ public class Act074_TicketVH {
     private String fcm_user_nick;
     @Nullable
     private String schedule_erro_msg;
+    private int user_focus;
+    private int sync_required;
+    private boolean local_ticket;
 
 
-    public Act074_TicketVH(int ticket_customer, int ticket_scn, int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_start_date, String ticket_forecast_end_date, String ticket_step_id, String ticket_current_step_order, int ticket_step_qty, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg) {
+    public Act074_TicketVH(int ticket_customer, int ticket_scn, int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_date, String step_forecast_start_date, String step_forecast_end_date, String ticket_step_id, String ticket_current_step_order, int ticket_step_qty, int user_focus, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg, boolean local_ticket, int sync_required) {
         String separator = "|";
         this.ticket_pk = ticket_customer +  separator +  ticket_prefix +  separator + ticket_code +  separator +  ticket_scn;
         this.ticket_prefix = ticket_prefix;
@@ -54,8 +58,9 @@ public class Act074_TicketVH {
         this.ticket_serial = ticket_serial;
         this.ticket_step_desc = ticket_step_desc;
         this.ticket_origin_desc = ticket_origin_desc;
-        this.ticket_forecast_start_date = ticket_forecast_start_date;
-        this.ticket_forecast_end_date = ticket_forecast_end_date;
+        this.ticket_forecast_date = ticket_forecast_date;
+        this.step_forecast_start_date = step_forecast_start_date;
+        this.step_forecast_end_date = step_forecast_end_date;
         this.ticket_step_id = ticket_step_id;
         this.ticket_current_step_order = ticket_current_step_order;
         this.ticket_step_qty = ticket_step_qty;
@@ -66,9 +71,12 @@ public class Act074_TicketVH {
         this.fcm_new_status = fcm_new_status;
         this.fcm_user_nick = fcm_user_nick;
         this.schedule_erro_msg = schedule_erro_msg;
+        this.user_focus = user_focus;
+        this.local_ticket = local_ticket;
+        this.sync_required = sync_required;
     }
 
-    public static Act074_TicketVH getTicketVHObj(HMAux hmAux) {
+    public static Act074_TicketVH getTicketVHObj(HMAux hmAux, boolean local_ticket) {
 
         return new Act074_TicketVH(
                         ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.CUSTOMER_CODE)),
@@ -82,22 +90,26 @@ public class Act074_TicketVH {
                         hmAux.get(TK_TicketDao.OPEN_SERIAL_ID),
                         hmAux.get(TK_Ticket_StepDao.STEP_DESC),
                         hmAux.get(TK_TicketDao.ORIGIN_DESC),
+                        hmAux.get(TK_TicketDao.FORECAST_DATE),
                         hmAux.get(TK_Ticket_StepDao.FORECAST_START),
                         hmAux.get(TK_Ticket_StepDao.FORECAST_END),
                         hmAux.get(TK_Ticket_StepDao.STEP_ID),
                         hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER),
                         ToolBox_Inf.convertStringToInt(hmAux.get(TK_Ticket_StepDao.STEP_QTY)),
+                        hmAux.hasConsistentValue(TK_TicketDao.USER_FOCUS)? ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.USER_FOCUS)) : 1,
                         hmAux.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_PK) ? hmAux.get(MD_Schedule_ExecDao.SCHEDULE_PK) : " ",
                         hmAux.hasConsistentValue(TK_TicketDao.SCHEDULE_PREFIX) ? ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SCHEDULE_PREFIX)) : 0,
                         hmAux.hasConsistentValue(TK_TicketDao.SCHEDULE_CODE) ? ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SCHEDULE_CODE)) : 0,
                         hmAux.hasConsistentValue(TK_TicketDao.SCHEDULE_EXEC) ? ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SCHEDULE_EXEC)) : 0,
                         hmAux.hasConsistentValue(MD_Schedule_ExecDao.FCM_NEW_STATUS) ? hmAux.get(MD_Schedule_ExecDao.FCM_NEW_STATUS) : " ",
                         hmAux.hasConsistentValue(MD_Schedule_ExecDao.FCM_USER_NICK) ? hmAux.get(MD_Schedule_ExecDao.FCM_USER_NICK) : " ",
-                        hmAux.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) ? hmAux.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) : " "
+                        hmAux.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) ? hmAux.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) : " ",
+                        local_ticket,
+                        ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SYNC_REQUIRED))
         );
     }
 
-    public static Act074_TicketVH getTicketVHObj(TK_Next_Ticket ticket) {
+    public static Act074_TicketVH getTicketVHObj(TK_Next_Ticket ticket, int sync_required) {
 
         return new Act074_TicketVH(
                 ticket.getCustomerCode(),
@@ -111,18 +123,22 @@ public class Act074_TicketVH {
                 ticket.getOpenSerialId(),
                 ticket.getStepDesc(),
                 ticket.getOriginDesc(),
+                "",
                 ticket.getForecastStart(),
                 ticket.getForecastEnd(),
                         "",
                 String.valueOf(ticket.getCurrentStepOrder()),
                 ticket.getStepCount(),
+                1,
                         " ",
                        0,
                         0,
                         0,
                      " ",
                       " ",
-                  " "
+                  " ",
+                ticket.isTicket_local(),
+                sync_required
         );
     }
 
@@ -206,20 +222,20 @@ public class Act074_TicketVH {
         this.ticket_origin_desc = ticket_origin_desc;
     }
 
-    public String getTicket_forecast_start_date() {
-        return ticket_forecast_start_date;
+    public String getStep_forecast_start_date() {
+        return step_forecast_start_date;
     }
 
-    public void setTicket_forecast_start_date(String ticket_forecast_start_date) {
-        this.ticket_forecast_start_date = ticket_forecast_start_date;
+    public void setStep_forecast_start_date(String step_forecast_start_date) {
+        this.step_forecast_start_date = step_forecast_start_date;
     }
 
-    public String getTicket_forecast_end_date() {
-        return ticket_forecast_end_date;
+    public String getStep_forecast_end_date() {
+        return step_forecast_end_date;
     }
 
-    public void setTicket_forecast_end_date(String ticket_forecast_end_date) {
-        this.ticket_forecast_end_date = ticket_forecast_end_date;
+    public void setStep_forecast_end_date(String step_forecast_end_date) {
+        this.step_forecast_end_date = step_forecast_end_date;
     }
 
     public String getTicket_step_id() {
@@ -307,6 +323,31 @@ public class Act074_TicketVH {
     public void setSchedule_erro_msg(@Nullable String schedule_erro_msg) {
         this.schedule_erro_msg = schedule_erro_msg;
     }
+
+    public int getUser_focus() {
+        return user_focus;
+    }
+
+    public void setUser_focus(int user_focus) {
+        this.user_focus = user_focus;
+    }
+
+    public int getSync_required() {
+        return sync_required;
+    }
+
+    public void setSync_required(int sync_required) {
+        this.sync_required = sync_required;
+    }
+
+    public boolean isLocal_ticket() {
+        return local_ticket;
+    }
+
+    public void setLocal_ticket(boolean local_ticket) {
+        this.local_ticket = local_ticket;
+    }
+
     //
     public String getAllFieldForFilter(){
         return  (
@@ -319,11 +360,19 @@ public class Act074_TicketVH {
                         ticket_serial + "|" +
                         ticket_step_desc + "|" +
                         ticket_origin_desc + "|" +
-                        ticket_forecast_start_date +"|" +
+                        step_forecast_start_date +"|" +
                         ticket_step_id +"|" +
                         schedulePk)
                 .replace("null|","")
                 .replace("null","")
                 ;
+    }
+
+    public String getTicket_forecast_date() {
+        return ticket_forecast_date;
+    }
+
+    public void setTicket_forecast_date(String ticket_forecast_date) {
+        this.ticket_forecast_date = ticket_forecast_date;
     }
 }

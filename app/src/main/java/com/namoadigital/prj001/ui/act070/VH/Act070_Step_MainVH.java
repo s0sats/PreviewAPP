@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act070_Steps_Adapter;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
@@ -88,6 +89,12 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
         if(ToolBox_Inf.hasConsistentValueString(stepMain.getStepDescription())){
             tvDesc.setVisibility(View.VISIBLE);
             tvDesc.setText(stepMain.getStepDescription());
+            tvDesc.setTextColor(context.getResources().getColor(R.color.font_normal));
+            if ( stepMain.isCurrentStep()
+                    && stepMain.isUser_focus()
+                    && !ConstantBaseApp.SYS_STATUS_DONE.equals(stepMain.getStepStatus())){
+                tvDesc.setTextColor(context.getResources().getColor(R.color.namoa_sync_pipeline_background_btn));
+            }
         }
         if(ToolBox_Inf.hasConsistentValueString(stepMain.getForecastStartDate()) && ToolBox_Inf.hasConsistentValueString(stepMain.getForecastEndDate())){
             tvForecastDate.setText(ToolBox_Inf.getStepStartEndDateFormated(context,stepMain.getForecastStartDate(),stepMain.getForecastEndDate()));

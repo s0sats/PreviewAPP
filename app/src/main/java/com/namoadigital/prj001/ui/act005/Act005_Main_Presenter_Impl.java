@@ -660,8 +660,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             false,
                                             false,
                                             false,
-                                            false
-                                    ).toSqlQuery()
+                                            false,
+                                            true).toSqlQuery()
                             ).get(Sql_Act005_009.PENDING_QTY));
                         } catch (Exception e) {
                             qty = "0";
@@ -676,8 +676,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             false,
                                             false,
                                             true,
-                                            false
-                                    ).toSqlQuery()
+                                            false,
+                                            false).toSqlQuery()
                             ).get(Sql_Act005_009.PENDING_QTY));
                         } catch (Exception e) {
                             qtyBadge2 = "0";
@@ -741,8 +741,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         true,
                         false,
                         false,
-                        false
-                ).toSqlQuery()
+                        false,
+                        true).toSqlQuery()
         );
         //
         if(ticketPendencies.hasConsistentValue(PENDING_QTY)){

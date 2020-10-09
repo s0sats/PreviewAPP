@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -108,6 +109,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         List<String> transList = new ArrayList<>();
         transList.add("act068_title");
         transList.add("btn_pendencies");
+        transList.add("btn_my_tickets");
         transList.add("btn_check_exists");
         transList.add("btn_graphics");
         transList.add("btn_scheduled_tickets");
@@ -187,9 +189,6 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                         mPresenter.executeWSTicketDownload();
                         break;
                     case Frg_Serial_Search.BTN_OPTION_03:
-                        processPendencies();
-                        break;
-                    case Frg_Serial_Search.BTN_OPTION_04:
                         processNextTickets();
                         break;
                     case Frg_Serial_Search.BTN_OPTION_05:
@@ -210,12 +209,10 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_sync_ticket"));
         //
         mFrgSerialSearch.setBtn_Option_03_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_pendencies"));
+        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_my_tickets"));
         mFrgSerialSearch.setBtn_Option_03_Visibility(View.VISIBLE);
         //
-        mFrgSerialSearch.setBtn_Option_04_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_04_Label(hmAux_Trans.get("btn_next_tickets"));
-        mFrgSerialSearch.setBtn_Option_04_Visibility(View.VISIBLE);
+        mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
         //
         mFrgSerialSearch.setBtn_Option_05_BackGround(R.drawable.namoa_cell_2_states);
         mFrgSerialSearch.setBtn_Option_05_Label(hmAux_Trans.get("btn_scheduled_tickets"));
@@ -286,14 +283,12 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private void checkFlow(HMAux optionsInfo) {
         if(mPresenter.hasItensToSend()){
             mPresenter.defineWsToCall();
-            //mPresenter.executeWSTicketSave();
         }else{
             processSerialSearch(optionsInfo);
         }
     }
 
-
-    private void processSerialSearch(HMAux optionsInfo) {
+    private void processSerialSearch(@NonNull HMAux optionsInfo) {
         if (optionsInfo.get(PRODUCT_ID).trim().length() > 0
             || optionsInfo.get(Frg_Serial_Search.SERIAL).trim().length() > 0
             || optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0
@@ -309,10 +304,6 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                 hmAux_Trans.get("alert_no_value_filled_msg")
             );
         }
-    }
-
-    private void processPendencies() {
-        mPresenter.checkPendenciesFlow(pendencies_qty);
     }
 
     private void processGraphics() {
@@ -336,7 +327,10 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     @Override
     public void setPendenciesQty(int qty) {
         pendencies_qty = qty;
-        String btn_dependency_qty_text = hmAux_Trans.get("btn_pendencies") + " (" + pendencies_qty + ")";
+        String btn_dependency_qty_text= hmAux_Trans.get("btn_my_tickets");
+        if(pendencies_qty > 0){
+            btn_dependency_qty_text += " (" + pendencies_qty + ")";
+        }
         //
         mFrgSerialSearch.setBtn_Option_03_Label(btn_dependency_qty_text);
     }
@@ -448,15 +442,10 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     @Override
-    public void showResult(boolean ticketResult) {
+    public void  showResult(boolean ticketResult) {
         if(wsResult != null && wsResult.isEmpty() && ticketResult){
             Toast.makeText(context,  hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
-            if (nextTicketsFlow) {
-                nextTicketsFlow = false;
-            } else {
-                checkFlow(mFrgSerialSearch.getHMAuxValues());
-            }
-            wsResult.clear();
+            handleWSReturnFlow();
         }else {
             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -489,15 +478,19 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                 public void onClick(View v) {
                     show.dismiss();
                     //
-                    wsResult.clear();
-                    //
-                    if (nextTicketsFlow) {
-                        nextTicketsFlow = false;
-                    } else {
-                        checkFlow(mFrgSerialSearch.getHMAuxValues());
-                    }
+                    handleWSReturnFlow();
                 }
             });
+        }
+    }
+
+    private void handleWSReturnFlow() {
+        wsResult.clear();
+        //
+        if (nextTicketsFlow) {
+            callAct074();
+        } else {
+            checkFlow(mFrgSerialSearch.getHMAuxValues());
         }
     }
 

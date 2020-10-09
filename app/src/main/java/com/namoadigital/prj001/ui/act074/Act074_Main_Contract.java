@@ -3,17 +3,15 @@ package com.namoadigital.prj001.ui.act074;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoadigital.prj001.model.TK_Next_Ticket;
 import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface Act074_Main_Contract {
 
     interface I_Presenter{
 
-        void getTicketList();
+        void getMyTicketsList();
 
         int checkTicketToSync();
 
@@ -27,9 +25,17 @@ public interface Act074_Main_Contract {
 
         void checkTicketFlow(Act074_TicketVH item);
 
-        void setTicketVH(List<TK_Next_Ticket> tickets);
+        void setTicketVH();
 
         boolean verifyProductForForm(HMAux ticketPrefixCode);
+
+        void getOfflineTicketsList(boolean hasUserFocus);
+
+        List<Act074_TicketVH> getFocusList();
+
+        List<Act074_TicketVH> getUnfocusList();
+
+        void deleteNextTickets();
     }
 
     interface I_View {
@@ -38,7 +44,7 @@ public interface Act074_Main_Contract {
 
         void showPD(String ttl,String msg);
 
-        void loadTicketList(ArrayList<Act074_TicketVH> tickets);
+        void loadTicketList(List<Act074_TicketVH> tickets, boolean userFocusOnly);
 
         void showMsg(String title, String msg);
 

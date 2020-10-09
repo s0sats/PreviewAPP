@@ -264,7 +264,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
             if(mAdapter != null){
                 mAdapter.setOnTicketClickListener(new Act074_Next_Tickets_Adapter.OnTicketClickListener() {
                     @Override
-                    public void onTicketClickListner(Act074_TicketVH item) {
+                    public void onTicketClickListener(Act074_TicketVH item) {
                         //LUCHE - 18/03/2020
                         //Add chamada do metodo que define qual proximo step
                         mPresenter.checkTicketFlow(item);

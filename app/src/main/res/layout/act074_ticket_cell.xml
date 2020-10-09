@@ -140,11 +140,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="4dp"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/act074_ticket_cell_iv_schedule_icon"
-            app:layout_constraintEnd_toStartOf="@id/act074_ticket_cell_guide_end"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintEnd_toStartOf="@+id/act074_ticket_cell_iv_offline_icon"
             app:layout_constraintStart_toEndOf="@+id/act074_ticket_cell_iv_schedule_icon"
             app:layout_constraintTop_toTopOf="@+id/act074_ticket_cell_iv_schedule_icon"
             tools:text="99/99/9999" />
@@ -175,6 +174,31 @@
             android:src="@drawable/ic_baseline_date_range_24"
             app:layout_constraintStart_toStartOf="@+id/act074_ticket_cell_tv_step_desc"
             app:layout_constraintTop_toBottomOf="@+id/act074_ticket_cell_tv_step_desc"/>
+
+        <ImageView
+            android:id="@+id/act074_ticket_cell_iv_refresh_icon"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:tint="@color/namoa_pipeline_sync_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/act074_ticket_cell_guide_end"
+            app:srcCompat="@drawable/ic_baseline_sync_24" />
+
+        <ImageView
+            android:id="@+id/act074_ticket_cell_iv_offline_icon"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/act074_ticket_cell_iv_refresh_icon"
+            app:srcCompat="@drawable/ic_signal_wifi_off_black_24dp" />
+
+        <android.support.constraint.Group
+            android:id="@+id/act074_ticket_cell_gp_step"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="act074_ticket_cell_tv_step_id,act074_ticket_cell_tv_step_desc"
+            android:visibility="visible"
+            />
 
 
     </android.support.constraint.ConstraintLayout>

@@ -25,8 +25,6 @@ public interface Act076_Main_Contract {
 
     interface I_Presenter{
 
-        void getTicketList();
-
         void onBackPressedClicked(String requestingAct);
 
         void checkTicketFlow(Act074_TicketVH item);

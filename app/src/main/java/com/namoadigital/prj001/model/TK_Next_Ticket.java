@@ -13,6 +13,9 @@ public class TK_Next_Ticket {
     @SerializedName("ticket_code")
     @Expose
     private Integer ticketCode;
+    @SerializedName("ticket_id")
+    @Expose
+    private String ticketId;
     @SerializedName("scn")
     @Expose
     private Integer scn;
@@ -50,6 +53,9 @@ public class TK_Next_Ticket {
     @Expose
     private Integer stepCount;
 
+    private boolean ticket_local;
+    private int sync_required;
+
     public Integer getCustomerCode() {
         return customerCode;
     }
@@ -72,6 +78,14 @@ public class TK_Next_Ticket {
 
     public void setTicketCode(Integer ticketCode) {
         this.ticketCode = ticketCode;
+    }
+
+    public String getTicketId() {
+        return ticketId;
+    }
+
+    public void setTicketId(String ticketId) {
+        this.ticketId = ticketId;
     }
 
     public Integer getScn() {
@@ -168,5 +182,21 @@ public class TK_Next_Ticket {
 
     public void setStepCount(Integer stepCount) {
         this.stepCount = stepCount;
+    }
+
+    public boolean isTicket_local() {
+        return ticket_local;
+    }
+
+    public void setTicket_local(boolean ticket_local) {
+        this.ticket_local = ticket_local;
+    }
+
+    public int getSync_required() {
+        return sync_required;
+    }
+
+    public void setSync_required(int sync_required) {
+        this.sync_required = sync_required;
     }
 }

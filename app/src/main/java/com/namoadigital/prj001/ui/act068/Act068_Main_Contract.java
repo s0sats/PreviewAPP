@@ -44,8 +44,6 @@ public interface Act068_Main_Contract {
 
        void onBackPressedClicked();
 
-       void checkPendenciesFlow(int pendencies_qty);
-
        void executeSerialSearch(String product_id, String serial_id, String tracking);
 
        void extractSearchResult(String result);

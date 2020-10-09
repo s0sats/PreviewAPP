@@ -15,11 +15,12 @@ public class StepMain extends BaseStep{
     private boolean scan_serial;
     private boolean allow_new_obj;
     private boolean move_next_step;
+    private boolean user_focus;
 
     public StepMain() {
     }
 
-    public StepMain(int stepCode, String stepTtl, String stepNum, String forecastStartDate, String forecastEndDate, String checkInDate, String checkOutDate, String stepType, String stepStatus, boolean currentStep,boolean scan_serial, boolean allow_new_obj , boolean move_next_step) {
+    public StepMain(int stepCode, String stepTtl, String stepNum, String forecastStartDate, String forecastEndDate, String checkInDate, String checkOutDate, String stepType, String stepStatus, boolean currentStep, boolean scan_serial, boolean allow_new_obj, boolean move_next_step, boolean user_focus) {
         this.stepCode = stepCode;
         this.stepDescription = stepTtl;
         this.stepNum = stepNum;
@@ -34,6 +35,7 @@ public class StepMain extends BaseStep{
         this.scan_serial = scan_serial;
         this.allow_new_obj = allow_new_obj;
         this.move_next_step = move_next_step;
+        this.user_focus = user_focus;
     }
 
     public String getStepNum() {
@@ -129,6 +131,14 @@ public class StepMain extends BaseStep{
 
     public void setMove_next_step(boolean move_next_step) {
         this.move_next_step = move_next_step;
+    }
+
+    public boolean isUser_focus() {
+        return user_focus;
+    }
+
+    public void setUser_focus(boolean user_focus) {
+        this.user_focus = user_focus;
     }
 
     public static boolean usesStatusColorInStep(String stepStatus){

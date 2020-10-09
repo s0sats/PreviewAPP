@@ -6,7 +6,7 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
-import com.namoadigital.prj001.sql.Sql_Act076_001;
+import com.namoadigital.prj001.sql.Sql_Act076_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -39,7 +39,7 @@ public class Act076_Main_Presenter implements Act076_Main_Contract.I_Presenter {
 //                    getCtrlsSerialsList(aux);
                     //
                     tickets.add(
-                            Act074_TicketVH.getTicketVHObj(aux)
+                            Act074_TicketVH.getTicketVHObj(aux,true)
                     );
                 }
             } catch (Exception e) {
@@ -56,25 +56,11 @@ public class Act076_Main_Presenter implements Act076_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void getTicketList() {
-        ArrayList<HMAux> auxTickets = new ArrayList<>();
-        //
-        auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
-                new Sql_Act076_001(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        ToolBox_Con.getPreference_Site_Code(context)
-                ).toSqlQuery()
-        );
-        //
-        mView.loadTicketList(generateTicketVhList(auxTickets));
-    }
-
-    @Override
     public void getTicketListBySerial(long ticketProductCode, long ticketSerialCode) {
         ArrayList<HMAux> auxTickets = new ArrayList<>();
         //
         auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
-                new Sql_Act076_001(
+                new Sql_Act076_002(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         ToolBox_Con.getPreference_Site_Code(context),
                         ticketProductCode,

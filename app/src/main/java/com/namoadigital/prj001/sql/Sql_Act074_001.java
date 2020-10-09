@@ -6,20 +6,56 @@ import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
+import java.util.List;
+
 import static com.namoadigital.prj001.dao.TK_Ticket_StepDao.STEP_QTY;
 
-public class Sql_Act076_001 implements Specification {
+public class Sql_Act074_001 implements Specification {
     private long customer_code;
+    private long ticketProductCode;
+    private long ticketSerialCode;
     private String site_logged;
     private String serial_filter;
-
-    public Sql_Act076_001(long customer_code, String site_logged, long ticketProductCode, long ticketSerialCode) {
+    private int user_focus;
+    String ticket_filter;
+    String ids_filterred;
+    //
+    public Sql_Act074_001(long customer_code, String site_logged, int user_focus) {
         this.customer_code = customer_code;
         this.site_logged = site_logged;
+        this.user_focus = user_focus;
+        serial_filter = "";
+        ticket_filter = "";
+    }
+    //
+    public Sql_Act074_001(long customer_code, String site_logged, int user_focus, List<String> ticket_ids) {
+        this.customer_code = customer_code;
+        this.site_logged = site_logged;
+        this.user_focus = user_focus;
+        serial_filter = "";
+        ticket_filter = "";
+        ids_filterred = "";
+        if(ticket_ids != null && !ticket_ids.isEmpty()) {
+            ids_filterred = ticket_ids.get(0);
+            for (int i=1; i<ticket_ids.size(); i++) {
+                ids_filterred = ", " + ticket_ids.get(i) ;
+            }
+        }
+        if(!ids_filterred.isEmpty()) {
+            this.ticket_filter =
+                    " and t.ticket_id not in ('"+ids_filterred+  "')  \n" ;
+        }
+    }
+
+    public Sql_Act074_001(long customer_code, String site_logged, long ticketProductCode, long ticketSerialCode) {
+        this.customer_code = customer_code;
+        this.site_logged = site_logged;
+        this.ticketProductCode = ticketProductCode;
+        this.ticketSerialCode = ticketSerialCode;
         serial_filter = " and (\n(t.open_product_code = '" + ticketProductCode + "'\n" +
-                        " and t.open_serial_code = '" + ticketSerialCode + "')\n"  +
-                        " or( c.product_code = '" + ticketProductCode + "'\n" +
-                        " and c.serial_code = '" + ticketSerialCode + "')\n)\n" ;
+                " and t.open_serial_code = '" + ticketSerialCode + "')\n"  +
+                " or( c.product_code = '" + ticketProductCode + "'\n" +
+                " and c.serial_code = '" + ticketSerialCode + "')\n)\n" ;
     }
 
     @Override
@@ -47,6 +83,7 @@ public class Sql_Act076_001 implements Specification {
                         "       t.open_serial_id,\n" +
                         "       t.sync_required\n," +
                         "       t.origin_desc\n," +
+                        "       t.user_focus\n," +
                         "       s.step_code,\n" +
                         "       s.step_id,\n" +
                         "       s.step_desc,\n" +
@@ -54,7 +91,7 @@ public class Sql_Act076_001 implements Specification {
                         "       s.step_order_seq,\n" +
                         "       min(s.forecast_start) forecast_start,\n" +
                         "       max(s.forecast_end) forecast_end,\n" +
-                        "       count(s.step_code) " + STEP_QTY + "\n"+
+                        "       count(s.user_focus) " + STEP_QTY + "\n"+
                         " FROM\n" +
                         "     " + TK_TicketDao.TABLE + " t \n" +
                         " LEFT JOIN\n" +
@@ -69,19 +106,20 @@ public class Sql_Act076_001 implements Specification {
                         " WHERE\n" +
                         " t.customer_code = '" + customer_code + "'\n" +
                         serial_filter +
+                        ticket_filter +
                         " and s.step_status != '" + ConstantBaseApp.SYS_STATUS_DONE + "'  \n" +
                         " and t.ticket_status in ('" + ConstantBaseApp.SYS_STATUS_PENDING + "' , '" +
-                                                       ConstantBaseApp.SYS_STATUS_PROCESS + "' , '" +
-                                                       ConstantBaseApp.SYS_STATUS_WAITING_SYNC +
+                        ConstantBaseApp.SYS_STATUS_PROCESS + "' , '" +
+                        ConstantBaseApp.SYS_STATUS_WAITING_SYNC +
                         "')  \n" +
-                        "and t.current_step_order = s.step_order"+
+                        " and t.current_step_order = s.step_order \n" +
+                        " and t.user_focus = " + user_focus + "\n" +
                         " GROUP BY\n" +
                         "  T.customer_code,\n" +
                         "  t.ticket_prefix,\n" +
                         "  t.ticket_code \n" +
                         " ORDER BY \n" +
-                        "  t.user_focus desc,\n" +
-                        "  t.forecast_date asc,\n" +
+                        "  s.forecast_end asc,\n" +
                         "  t.ticket_prefix,\n" +
                         "  t.ticket_code\n"
                 )

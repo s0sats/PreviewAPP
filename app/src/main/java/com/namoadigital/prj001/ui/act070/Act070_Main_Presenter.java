@@ -1476,13 +1476,15 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 isCurrentStep(ticketStep.getStep_order(),mTicket.getCurrent_step_order()),
                 ticketStep.getScan_serial() == 1,
                 ticketStep.getAllow_new_obj()== 1,
-                ticketStep.getMove_next_step()== 1
+                ticketStep.getMove_next_step()== 1,
+                    ticketStep.getUser_focus() ==1
             );
             //
             baseSteps.add(stepMain);
             //Seta indice onde adapter precisa ser posicionado.
             if( mView.getCurrentStepFirstPosition() == -1
                 && stepMain.isCurrentStep()
+                && stepMain.isUser_focus()
                 && !ConstantBaseApp.SYS_STATUS_DONE.equals(stepMain.getStepStatus())
             ){
                 mView.setCurrentStepFirstPosition(baseSteps.indexOf(stepMain));

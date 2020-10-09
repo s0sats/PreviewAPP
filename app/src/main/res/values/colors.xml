@@ -164,5 +164,6 @@
     <color name="namoa_product_extract_check">#75CA40</color>
     <color name="namoa_amount_pipeline_background_btn">#FB9C0E</color>
     <color name="namoa_pipeline_header_icon">#848484</color>
+    <color name="namoa_pipeline_sync_icon">#7F22FD</color>
 
 </resources>

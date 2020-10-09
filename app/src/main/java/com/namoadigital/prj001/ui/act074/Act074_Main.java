@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -11,8 +12,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -20,7 +19,6 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act074_Next_Tickets_Adapter;
 import com.namoadigital.prj001.dao.TK_TicketDao;
-import com.namoadigital.prj001.model.T_TK_Next_Ticket_WS_Response;
 import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Sync;
@@ -41,7 +39,9 @@ import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_PARTNER_NO_PR
 import static com.namoadigital.prj001.ui.act069.Act069_Main.FILTER_PARTNER_PROFILE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FILTER_TEXT;
 
-public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I_View{
+public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I_View {
+    public static final String TAB_MY_TICKETS = "tab_my_tickets";
+    public static final String TAB_OTHER_TICKETS = "tab_other_tickets";
     private MKEditTextNM mketFilter;
     private RecyclerView rvTickets;
     private TextView tvNoResult;
@@ -64,6 +64,10 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     private boolean bStatusRejected;
     private Act074_Main_Presenter mPresenter;
     private HMAux mTicketDownloaded;
+    private TabLayout tabs;
+    private TabLayout.Tab tab_my_tickets;
+    private TabLayout.Tab tab_other_tickets;
+    private boolean isOnlineProcess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +117,8 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         transList.add("progress_next_tickets_msg");
         transList.add("progress_sync_ttl");
         transList.add("progress_sync_msg");
+        transList.add("my_tickets_option_tab");
+        transList.add("other_tickets_option_tab");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -136,15 +142,20 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
                 hmAux_Trans
         );
         //
-        if(ToolBox_Con.isOnline(context)) {
-            mPresenter.getTicketList();
-        }else{
-            ToolBox_Inf.showNoConnectionDialogWithInteraction(context, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mPresenter.onBackPressedClicked(requestingAct);
-                }
-            });
+        rvTickets.setLayoutManager(new LinearLayoutManager(context));
+        //
+        mAdapter = new Act074_Next_Tickets_Adapter(
+                context,
+                R.layout.act074_ticket_cell
+        );
+        rvTickets.setAdapter(mAdapter);
+        //
+        if (ToolBox_Con.isOnline(context)) {
+            isOnlineProcess = true;
+            mPresenter.getMyTicketsList();
+        } else {
+            isOnlineProcess = false;
+            mPresenter.getOfflineTicketsList(true);
         }
         //
     }
@@ -153,19 +164,19 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         Bundle bundle = getIntent().getExtras();
         //
         if (bundle != null) {
-            mketFilter.setText(bundle.getString(FILTER_TEXT,""));
-            bStatusPending = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_PENDING,true);
-            bStatusProcess = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_PROCESS,true);
-            bStatusWaitingSync = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,true);
-            bParterEmpty = bundle.getBoolean(FILTER_PARTNER_EMPTY,true);
-            bParterProfile= bundle.getBoolean(FILTER_PARTNER_PROFILE,true);
-            bParterNoProfile= bundle.getBoolean(FILTER_PARTNER_NO_PROFILE,false);
+            mketFilter.setText(bundle.getString(FILTER_TEXT, ""));
+            bStatusPending = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_PENDING, true);
+            bStatusProcess = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_PROCESS, true);
+            bStatusWaitingSync = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, true);
+            bParterEmpty = bundle.getBoolean(FILTER_PARTNER_EMPTY, true);
+            bParterProfile = bundle.getBoolean(FILTER_PARTNER_PROFILE, true);
+            bParterNoProfile = bundle.getBoolean(FILTER_PARTNER_NO_PROFILE, false);
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
             //
             ticketProductCode = bundle.getLong(TK_TicketDao.OPEN_PRODUCT_CODE, -1);
             ticketSerialCode = bundle.getLong(TK_TicketDao.OPEN_SERIAL_CODE, -1);
             //Aplica inicialização pelo historico
-            if(ConstantBaseApp.ACT014 .equalsIgnoreCase(requestingAct)){
+            if (ConstantBaseApp.ACT014.equalsIgnoreCase(requestingAct)) {
                 bStatusPending = false;
                 bStatusProcess = false;
                 bStatusWaitingSync = false;
@@ -174,13 +185,13 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
                 bParterNoProfile = false;
                 //
                 //LUCHE - 31/03/2020
-                bStatusDone = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_DONE,true);
-                bStatusNotExecuted = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED,true);
-                bStatusIgnored = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_IGNORED,false);
-                bStatusCanceled = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_CANCELLED,false);
-                bStatusRejected = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_REJECTED,false);
+                bStatusDone = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_DONE, true);
+                bStatusNotExecuted = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED, true);
+                bStatusIgnored = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_IGNORED, false);
+                bStatusCanceled = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_CANCELLED, false);
+                bStatusRejected = bundle.getBoolean(ConstantBaseApp.SYS_STATUS_REJECTED, false);
             }
-        }else{
+        } else {
             requestingAct = ConstantBaseApp.ACT068;
             iniFilters();
         }
@@ -190,6 +201,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         mketFilter = findViewById(R.id.act074_mket_filter);
         rvTickets = findViewById(R.id.act074_rv_ticket_list);
         tvNoResult = findViewById(R.id.act074_tv_no_result);
+        tabs = findViewById(R.id.act074_tabs);
         //
         setTranslation();
     }
@@ -197,37 +209,39 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     private void setTranslation() {
         mketFilter.setHint(hmAux_Trans.get("filter_hint"));
         tvNoResult.setText(hmAux_Trans.get("no_record_lbl"));
+        TabLayout.Tab tab_my_tickets = tabs.getTabAt(0);
+        tab_my_tickets.setTag(TAB_MY_TICKETS);
+        tab_my_tickets.setText(hmAux_Trans.get("my_tickets_option_tab"));
+        TabLayout.Tab tab_other_tickets = tabs.getTabAt(1);
+        tab_other_tickets.setTag(TAB_OTHER_TICKETS);
+        tab_other_tickets.setText(hmAux_Trans.get("other_tickets_option_tab"));
     }
 
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        processCloseACT(mLink,mRequired,new HMAux());
+        processCloseACT(mLink, mRequired, new HMAux());
     }
 
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
-        if(WS_TK_Next_Ticket.class.getName().equalsIgnoreCase(wsProcess)) {
+        if (WS_TK_Next_Ticket.class.getName().equalsIgnoreCase(wsProcess)) {
             wsProcess = "";
             progressDialog.dismiss();
-            Gson gson = new GsonBuilder().serializeNulls().create();
             //
-            T_TK_Next_Ticket_WS_Response rec = gson.fromJson(
-                    mLink,
-                    T_TK_Next_Ticket_WS_Response.class
-            );
+            isOnlineProcess = true;
+            mPresenter.setTicketVH();
             //
-            mPresenter.setTicketVH(rec.getNext_tickets());
-        } else if(WS_TK_Ticket_Download.class.getName().equalsIgnoreCase(wsProcess)) {
+        } else if (WS_TK_Ticket_Download.class.getName().equalsIgnoreCase(wsProcess)) {
             wsProcess = "";
             progressDialog.dismiss();
-            if(mPresenter.verifyProductForForm(hmAux)){
+            if (mPresenter.verifyProductForForm(hmAux)) {
                 mTicketDownloaded = hmAux;
-            }else {
+            } else {
                 processTicketDownloaded(hmAux);
             }
-        } else if(WS_Sync.class.getName().equalsIgnoreCase(wsProcess)) {
+        } else if (WS_Sync.class.getName().equalsIgnoreCase(wsProcess)) {
             wsProcess = "";
             progressDialog.dismiss();
             processTicketDownloaded(mTicketDownloaded);
@@ -245,9 +259,10 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
-        if(WS_TK_Next_Ticket.class.getName().equalsIgnoreCase(wsProcess)) {
-            mPresenter.onBackPressedClicked(requestingAct);
-        }else if(WS_Sync.class.getName().equalsIgnoreCase(wsProcess)) {
+        if (WS_TK_Next_Ticket.class.getName().equalsIgnoreCase(wsProcess)) {
+            isOnlineProcess = false;
+            mPresenter.getOfflineTicketsList(true);
+        } else if (WS_Sync.class.getName().equalsIgnoreCase(wsProcess)) {
             wsProcess = "";
             progressDialog.dismiss();
             processTicketDownloaded(mTicketDownloaded);
@@ -260,9 +275,10 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         //
-        if(WS_TK_Next_Ticket.class.getName().equalsIgnoreCase(wsProcess)) {
-            mPresenter.onBackPressedClicked(requestingAct);
-        }else if(WS_Sync.class.getName().equalsIgnoreCase(wsProcess)) {
+        if (WS_TK_Next_Ticket.class.getName().equalsIgnoreCase(wsProcess)) {
+            isOnlineProcess = false;
+            mPresenter.getOfflineTicketsList(true);
+        } else if (WS_Sync.class.getName().equalsIgnoreCase(wsProcess)) {
             wsProcess = "";
             progressDialog.dismiss();
             processTicketDownloaded(mTicketDownloaded);
@@ -342,45 +358,18 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     }
 
     @Override
-    public void loadTicketList(ArrayList<Act074_TicketVH> tickets){
-        if(tickets!= null && tickets.size() > 0) {
+    public void loadTicketList(List<Act074_TicketVH> tickets, boolean userFocusOnly) {
+        if (tickets != null && tickets.size() > 0) {
             tvNoResult.setVisibility(View.GONE);
             rvTickets.setVisibility(View.VISIBLE);
             //
-            rvTickets.setLayoutManager(new LinearLayoutManager(context));
-            //
-            mAdapter = new Act074_Next_Tickets_Adapter(
-                    context,
-                    R.layout.act074_ticket_cell,
-                    tickets
-            );
-            //
-            if(mAdapter != null){
-                mAdapter.setOnTicketClickListener(new Act074_Next_Tickets_Adapter.OnTicketClickListener() {
-                    @Override
-                    public void onTicketClickListner(Act074_TicketVH item) {
-
-                        mPresenter.executeTicketSync(item);
-                    }
-                });
+            if (mAdapter != null) {
+                mAdapter.setDataset(tickets, userFocusOnly, isOnlineProcess);
+                mketFilter.setText("");
+//                mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
             }
             //
-            mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
-            rvTickets.setAdapter(mAdapter);
-
-            rvTickets.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                    super.onScrollStateChanged(recyclerView, newState);
-                    //
-                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        mketFilter.setEnabled(true);
-                    } else {
-                        mketFilter.setEnabled(false);
-                    }
-                }
-            });
-        }else{
+        } else {
             tvNoResult.setVisibility(View.VISIBLE);
             rvTickets.setVisibility(View.INVISIBLE);
         }
@@ -395,6 +384,14 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
                 null,
                 0
         );
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(isOnlineProcess) {
+            mPresenter.deleteNextTickets();
+        }
     }
 
     @Override
@@ -430,16 +427,77 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             public void reportTextChange(String s) {
 
             }
+
             //
             @Override
             public void reportTextChange(String s, boolean b) {
-                if(mAdapter != null){
+                if (mAdapter != null) {
                     mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
                 }
             }
         });
         //
+        rvTickets.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                //
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    mketFilter.setEnabled(true);
+                } else {
+                    mketFilter.setEnabled(false);
+                }
+            }
+        });
+        //
+        mAdapter.setOnTicketClickListener(new Act074_Next_Tickets_Adapter.OnTicketClickListener() {
+            @Override
+            public void onTicketClickListener(Act074_TicketVH item) {
+                if(isOnlineProcess) {
+                    mPresenter.executeTicketSync(item);
+                }else{
+                    mPresenter.checkTicketFlow(item);
+                }
+            }
+        });
+        //
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getTag().equals(TAB_MY_TICKETS)) {
+                    List<Act074_TicketVH> focusList = mPresenter.getFocusList();
+                    if (focusList.isEmpty()) {
+                        if (ToolBox_Con.isOnline(context)) {
+                            mPresenter.getMyTicketsList();
+                        } else {
+                            mPresenter.getOfflineTicketsList(true);
+                        }
+                    } else {
+                        loadTicketList(focusList, true);
+                    }
+                } else if (tab.getTag().equals(TAB_OTHER_TICKETS)) {
+                    if (mPresenter.getUnfocusList().isEmpty()) {
+                        mPresenter.getOfflineTicketsList(false);
+                    } else {
+                        List<Act074_TicketVH> unfocusList = mPresenter.getUnfocusList();
+                        loadTicketList(unfocusList, false);
+                    }
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+        //
     }
+
     private void iniFilters() {
         bStatusPending = true;
         bStatusProcess = true;
@@ -459,7 +517,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     public void callAct070(Bundle bundle) {
         Intent intent = new Intent(context, Act070_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT074);
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT074);
         intent.putExtras(bundle);
         startActivity(intent);
         finish();

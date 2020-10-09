@@ -24,7 +24,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
+public class Act076_Serial_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     private Context context;
     private int resource;
@@ -33,12 +33,10 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     private String mResource_Code;
     private HMAux hmAux_Trans;
     private String mResource_Name = "Tickets_List_Adapter";
-    private Act074_Next_Tickets_Adapter.TicketFilter valueFilter;
-    private Act074_Next_Tickets_Adapter.OnTicketClickListener onTicketClickListener;
-    private boolean userFocusOnly;
-    private boolean isOnlineProcess;
+    private Act076_Serial_Tickets_Adapter.TicketFilter valueFilter;
+    private Act076_Serial_Tickets_Adapter.OnTicketClickListener onTicketClickListener;
 
-    public Act074_Next_Tickets_Adapter(Context context, int resource, ArrayList<Act074_TicketVH> mValues) {
+    public Act076_Serial_Tickets_Adapter(Context context, int resource, ArrayList<Act074_TicketVH> mValues) {
         this.context = context;
         this.resource = resource;
         this.mValues = mValues;
@@ -50,32 +48,6 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
         );
         //
         loadTranslation();
-    }
-
-    public Act074_Next_Tickets_Adapter(Context context, int resource) {
-        this.context = context;
-        this.resource = resource;
-        this.mResource_Code = ToolBox_Inf.getResourceCode(
-                context,
-                ConstantBaseApp.APP_MODULE,
-                mResource_Name
-        );
-        //
-        loadTranslation();
-    }
-
-    public void setDataset(List<Act074_TicketVH> mValues, boolean userFocusOnly, boolean isOnlineProcess) {
-        this.mValues = mValues;
-        this.mFilteredValues = mValues;
-        this.userFocusOnly = userFocusOnly;
-        this.isOnlineProcess = isOnlineProcess;
-        notifyDataSetChanged();
-    }
-
-    public void setVisibilityMode(boolean userFocusOnly) {
-        this.userFocusOnly = userFocusOnly;
-
-        notifyDataSetChanged();
     }
 
     private void loadTranslation() {
@@ -95,7 +67,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
         void onTicketClickListener(Act074_TicketVH item);
     }
 
-    public void setOnTicketClickListener(Act074_Next_Tickets_Adapter.OnTicketClickListener onTicketClickListener) {
+    public void setOnTicketClickListener(Act076_Serial_Tickets_Adapter.OnTicketClickListener onTicketClickListener) {
         this.onTicketClickListener = onTicketClickListener;
     }
 
@@ -104,26 +76,14 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(context)
                 .inflate(resource, viewGroup, false);
-        return new Act074_Next_Tickets_Adapter.TicketVH(view);
+        return new Act076_Serial_Tickets_Adapter.TicketVH(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
-        Act074_Next_Tickets_Adapter.TicketVH holder = (Act074_Next_Tickets_Adapter.TicketVH) viewHolder;
+        Act076_Serial_Tickets_Adapter.TicketVH holder = (Act076_Serial_Tickets_Adapter.TicketVH) viewHolder;
         //
-        if(userFocusOnly){
-            if(mFilteredValues.get(position).getUser_focus() == 1) {
-                holder.bindData(mFilteredValues.get(position));
-            }else{
-                holder.itemView.setVisibility(View.GONE);
-            }
-        }else {
-            if(mFilteredValues.get(position).getUser_focus() == 0) {
-                holder.bindData(mFilteredValues.get(position));
-            }else{
-                holder.itemView.setVisibility(View.GONE);
-            }
-        }
+        holder.bindData(mFilteredValues.get(position));
+        //
     }
 
     @Override
@@ -134,7 +94,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     @Override
     public Filter getFilter() {
         if (valueFilter == null) {
-            valueFilter = new Act074_Next_Tickets_Adapter.TicketFilter();
+            valueFilter = new Act076_Serial_Tickets_Adapter.TicketFilter();
         }
         return valueFilter;
     }
@@ -227,9 +187,6 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
                                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
                         )
                 );
-            }
-            if(!isOnlineProcess){
-                iv_offline_icon.setVisibility(View.VISIBLE);
             }
             //
         }
