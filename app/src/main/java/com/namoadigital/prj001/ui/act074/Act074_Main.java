@@ -42,6 +42,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.FILTER_TEXT;
 public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I_View {
     public static final String TAB_MY_TICKETS = "tab_my_tickets";
     public static final String TAB_OTHER_TICKETS = "tab_other_tickets";
+    public static final String ALL_TICKETS_UPDATED = "ALL_TICKETS_UPDATED";
     private MKEditTextNM mketFilter;
     private RecyclerView rvTickets;
     private TextView tvNoResult;
@@ -68,6 +69,8 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     private TabLayout.Tab tab_my_tickets;
     private TabLayout.Tab tab_other_tickets;
     private boolean isOnlineProcess;
+    private boolean allTicketsUpdated;
+    private LinearLayoutManager linearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +145,8 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
                 hmAux_Trans
         );
         //
-        rvTickets.setLayoutManager(new LinearLayoutManager(context));
+        linearLayoutManager = new LinearLayoutManager(context);
+        rvTickets.setLayoutManager(linearLayoutManager);
         //
         mAdapter = new Act074_Next_Tickets_Adapter(
                 context,
@@ -150,7 +154,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         );
         rvTickets.setAdapter(mAdapter);
         //
-        if (ToolBox_Con.isOnline(context)) {
+        if (ToolBox_Con.isOnline(context) && allTicketsUpdated) {
             isOnlineProcess = true;
             mPresenter.getMyTicketsList();
         } else {
@@ -171,6 +175,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             bParterEmpty = bundle.getBoolean(FILTER_PARTNER_EMPTY, true);
             bParterProfile = bundle.getBoolean(FILTER_PARTNER_PROFILE, true);
             bParterNoProfile = bundle.getBoolean(FILTER_PARTNER_NO_PROFILE, false);
+            allTicketsUpdated = bundle.getBoolean(ALL_TICKETS_UPDATED, false);
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
             //
             ticketProductCode = bundle.getLong(TK_TicketDao.OPEN_PRODUCT_CODE, -1);
@@ -454,7 +459,11 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             @Override
             public void onTicketClickListener(Act074_TicketVH item) {
                 if(isOnlineProcess) {
-                    mPresenter.executeTicketSync(item);
+                    if(item.isLocal_ticket()){
+                        mPresenter.checkTicketFlow(item);
+                    }else {
+                        mPresenter.executeTicketSync(item);
+                    }
                 }else{
                     mPresenter.checkTicketFlow(item);
                 }
@@ -466,6 +475,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getTag().equals(TAB_MY_TICKETS)) {
                     List<Act074_TicketVH> focusList = mPresenter.getFocusList();
+                    linearLayoutManager.scrollToPosition(0);
                     if (focusList.isEmpty()) {
                         if (ToolBox_Con.isOnline(context)) {
                             mPresenter.getMyTicketsList();
@@ -476,6 +486,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
                         loadTicketList(focusList, true);
                     }
                 } else if (tab.getTag().equals(TAB_OTHER_TICKETS)) {
+                    linearLayoutManager.scrollToPosition(0);
                     if (mPresenter.getUnfocusList().isEmpty()) {
                         mPresenter.getOfflineTicketsList(false);
                     } else {

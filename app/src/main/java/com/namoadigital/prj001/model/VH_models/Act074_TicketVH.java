@@ -10,7 +10,8 @@ import com.namoadigital.prj001.model.TK_Next_Ticket;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class Act074_TicketVH {
-//    public static final String CTRLS_SERIAL_LIST = "CTRLS_SERIAL_LIST";
+    public static final String LOCAL_TICKET = "local_ticket";
+    //    public static final String CTRLS_SERIAL_LIST = "CTRLS_SERIAL_LIST";
     private String ticket_pk;
     private int ticket_prefix;
     private int ticket_code;
@@ -76,7 +77,7 @@ public class Act074_TicketVH {
         this.sync_required = sync_required;
     }
 
-    public static Act074_TicketVH getTicketVHObj(HMAux hmAux, boolean local_ticket) {
+    public static Act074_TicketVH getTicketVHObj(HMAux hmAux) {
 
         return new Act074_TicketVH(
                         ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.CUSTOMER_CODE)),
@@ -104,7 +105,7 @@ public class Act074_TicketVH {
                         hmAux.hasConsistentValue(MD_Schedule_ExecDao.FCM_NEW_STATUS) ? hmAux.get(MD_Schedule_ExecDao.FCM_NEW_STATUS) : " ",
                         hmAux.hasConsistentValue(MD_Schedule_ExecDao.FCM_USER_NICK) ? hmAux.get(MD_Schedule_ExecDao.FCM_USER_NICK) : " ",
                         hmAux.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) ? hmAux.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) : " ",
-                        local_ticket,
+                        hmAux.hasConsistentValue(LOCAL_TICKET) ? "1".equalsIgnoreCase(hmAux.get(LOCAL_TICKET)) : true,
                         ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SYNC_REQUIRED))
         );
     }

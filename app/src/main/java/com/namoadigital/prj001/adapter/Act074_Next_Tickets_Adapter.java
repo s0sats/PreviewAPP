@@ -50,6 +50,9 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
         );
         //
         loadTranslation();
+        //
+        this.userFocusOnly = false;
+        this.isOnlineProcess = true;
     }
 
     public Act074_Next_Tickets_Adapter(Context context, int resource) {
@@ -69,12 +72,6 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
         this.mFilteredValues = mValues;
         this.userFocusOnly = userFocusOnly;
         this.isOnlineProcess = isOnlineProcess;
-        notifyDataSetChanged();
-    }
-
-    public void setVisibilityMode(boolean userFocusOnly) {
-        this.userFocusOnly = userFocusOnly;
-
         notifyDataSetChanged();
     }
 
@@ -142,7 +139,6 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     private class TicketVH extends RecyclerView.ViewHolder {
         View itemView;
         private ConstraintLayout cl_background;
-        private ConstraintLayout cl_ticket_id;
         private TextView tv_ticket_id;
         private TextView tv_status;
         private TextView tv_prod_desc;
@@ -162,7 +158,6 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             this.itemView = itemView;
             //
             cl_background = itemView.findViewById(R.id.act074_ticket_cell_cl_background);
-            cl_ticket_id = itemView.findViewById(R.id.act074_ticket_cell_cl_ticket_id);
             tv_ticket_id = itemView.findViewById(R.id.act074_ticket_cell_tv_ticket_id);
             tv_status = itemView.findViewById(R.id.act074_ticket_cell_tv_status);
             tv_prod_desc = itemView.findViewById(R.id.act074_ticket_cell_tv_prod_desc);
@@ -192,18 +187,26 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             //
             if(item.getSync_required() == 1){
                 iv_refresh_icon.setVisibility(View.VISIBLE);
+                iv_refresh_icon.setImageTintList(context.getResources().getColorStateList(R.color.namoa_pipeline_sync_icon));
+                iv_refresh_icon.setImageResource(R.drawable.ic_baseline_sync_24);
+            }else{
+                if(!item.isLocal_ticket()){
+                    iv_refresh_icon.setVisibility(View.VISIBLE);
+                    iv_refresh_icon.setImageTintList(context.getResources().getColorStateList(R.color.namoa_color_black));
+                    iv_refresh_icon.setImageResource(R.drawable.ic_file_download_black_24dp);
+                }
             }
             //
             tv_ticket_id.setText(getFormattedTicketID(item));
-            tv_status.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(item.getTicket_status())));
+            tv_status.setTextColor(ToolBox_Inf.getStatusColorV2(context,item.getTicket_status()));
             //
             setVisibilityByContent(tv_status, hmAux_Trans.get(item.getTicket_status()));
             setVisibilityByContent(tv_ticket_id, item.getTicket_id());
             setVisibilityByContent(tv_step_id, item.getTicket_current_step_order());
             //
-
-            //
-            if(item.getTicket_step_qty() <= 1) {
+            if(item.getTicket_step_qty() <= 1
+            && item.getTicket_step_desc() != null
+            && !item.getTicket_step_desc().isEmpty()) {
                 setVisibilityByContent(tv_step_desc, item.getTicket_step_desc());
             } else {
                 setVisibilityByContent(tv_step_desc, hmAux_Trans.get("other_steps_available_lbl"));

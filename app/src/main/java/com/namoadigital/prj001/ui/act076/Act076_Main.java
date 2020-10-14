@@ -34,6 +34,8 @@ import java.util.List;
 
 public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I_View{
 
+    public static final String TICKET_PRODUCT_CODE = "TICKET_PRODUCT_CODE";
+    public static final String TICKET_SERIAL_CODE = "TICKET_SERIAL_CODE";
     private MKEditTextNM mketFilter;
     //    private ImageView ivFilters;
     private RecyclerView rvTickets;
@@ -118,10 +120,9 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
                 hmAux_Trans
         );
         //
-        if(ticketProductCode > 0
-         && ticketSerialCode > 0){
-            mPresenter.getTicketListBySerial(ticketProductCode,ticketSerialCode);
-        }
+
+        mPresenter.getTicketListBySerial(ticketProductCode,ticketSerialCode);
+
     }
 
     private void recoverIntentsInfo() {
@@ -254,6 +255,8 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
         Intent intent = new Intent(context, Act070_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT076);
+        bundle.putLong(TICKET_PRODUCT_CODE, ticketProductCode);
+        bundle.putLong(TICKET_SERIAL_CODE, ticketSerialCode);
         if (mketFilter.getText().toString().isEmpty()) {
             bundle.putString(ConstantBaseApp.FILTER_TEXT,mketFilter.getText().toString());
         }

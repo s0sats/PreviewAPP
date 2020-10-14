@@ -102,7 +102,6 @@ public class Act076_Serial_Tickets_Adapter extends RecyclerView.Adapter<Recycler
     private class TicketVH extends RecyclerView.ViewHolder {
         View itemView;
         private ConstraintLayout cl_background;
-        private ConstraintLayout cl_ticket_id;
         private TextView tv_ticket_id;
         private TextView tv_status;
         private TextView tv_prod_desc;
@@ -122,7 +121,6 @@ public class Act076_Serial_Tickets_Adapter extends RecyclerView.Adapter<Recycler
             this.itemView = itemView;
             //
             cl_background = itemView.findViewById(R.id.act074_ticket_cell_cl_background);
-            cl_ticket_id = itemView.findViewById(R.id.act074_ticket_cell_cl_ticket_id);
             tv_ticket_id = itemView.findViewById(R.id.act074_ticket_cell_tv_ticket_id);
             tv_status = itemView.findViewById(R.id.act074_ticket_cell_tv_status);
             tv_prod_desc = itemView.findViewById(R.id.act074_ticket_cell_tv_prod_desc);
@@ -155,7 +153,7 @@ public class Act076_Serial_Tickets_Adapter extends RecyclerView.Adapter<Recycler
             }
             //
             tv_ticket_id.setText(getFormattedTicketID(item));
-            tv_status.setTextColor(context.getResources().getColor(ToolBox_Inf.getStatusColor(item.getTicket_status())));
+            tv_status.setTextColor(ToolBox_Inf.getStatusColorV2(context, item.getTicket_status()));
             //
             setVisibilityByContent(tv_status, hmAux_Trans.get(item.getTicket_status()));
             setVisibilityByContent(tv_ticket_id, item.getTicket_id());

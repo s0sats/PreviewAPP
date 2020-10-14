@@ -8,15 +8,18 @@ public class Sql_Act076_002 implements Specification {
     private long ticketProductCode;
     private long ticketSerialCode;
     private String site_logged;
-    private String serial_filter;
+    private String serial_filter ="";
 
     public Sql_Act076_002(long customerCode, String site_logged, long ticketProductCode, long ticketSerialCode) {
         this.customer_code = customerCode;
         this.site_logged = site_logged;
-        serial_filter = " and (\n(t.open_product_code = '" + ticketProductCode + "'\n" +
-                " and t.open_serial_code = '" + ticketSerialCode + "')\n"  +
-                " or( c.product_code = '" + ticketProductCode + "'\n" +
-                " and c.serial_code = '" + ticketSerialCode + "')\n)\n" ;
+        if(ticketProductCode > 0
+        && ticketSerialCode > 0 ) {
+            serial_filter = " and (\n(t.open_product_code = '" + ticketProductCode + "'\n" +
+                    " and t.open_serial_code = '" + ticketSerialCode + "')\n" +
+                    " or( c.product_code = '" + ticketProductCode + "'\n" +
+                    " and c.serial_code = '" + ticketSerialCode + "')\n)\n";
+        }
     }
 
 
@@ -55,7 +58,7 @@ public class Sql_Act076_002 implements Specification {
                         "            THEN 1\n" +
                         "            ELSE 0\n" +
                         "       END update_required,\n" +
-                        "       \"Ticket outer\" \n" +
+                        "       1 local_ticket \n" +
                         " FROM\n" +
                         "     tk_ticket t,\n" +
                         "     tk_ticket_ctrl c\n" +

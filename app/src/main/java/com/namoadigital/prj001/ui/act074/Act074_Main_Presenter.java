@@ -69,7 +69,7 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
         context.sendBroadcast(mIntent);
     }
 
-    private void generateTicketVhList(List<HMAux> auxTickets, boolean local_ticket) {
+    private void generateTicketVhList(List<HMAux> auxTickets) {
 
         if (auxTickets != null && auxTickets.size() > 0) {
             try {
@@ -176,11 +176,11 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
         }
         if(hasFocus){
             focusList.add(
-                    Act074_TicketVH.getTicketVHObj(aux, false)
+                    Act074_TicketVH.getTicketVHObj(aux)
             );
         }else{
             unfocusList.add(
-                    Act074_TicketVH.getTicketVHObj(aux, false)
+                    Act074_TicketVH.getTicketVHObj(aux)
             );
         }
     }
@@ -232,7 +232,7 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
 
         List<HMAux> auxTickets = getOffline_tickets();
 
-        generateTicketVhList(auxTickets, true);
+        generateTicketVhList(auxTickets);
 
         if(hasUserFocus){
             mView.loadTicketList(focusList, hasUserFocus);

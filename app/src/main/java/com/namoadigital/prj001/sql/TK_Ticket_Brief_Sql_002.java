@@ -49,7 +49,7 @@ public class TK_Ticket_Brief_Sql_002 implements Specification {
                         "            THEN 0\n" +
                         "            ELSE t.update_required\n" +
                         "        END update_required,\n" +
-                        "        \"Ticket_Brief outer\"\n" +
+                        "        0 local_ticket" +
                         " FROM tk_ticket_brief  tb\n" +
                         " left join  tk_ticket t \n" +
                         "      on t.customer_code =  tb.customer_code \n" +
@@ -87,7 +87,10 @@ public class TK_Ticket_Brief_Sql_002 implements Specification {
                         "            THEN 1\n" +
                         "            ELSE 0\n" +
                         "       END update_required,\n" +
-                        "       \"JOIN\"\n" +
+                        " CASE WHEN t.ticket_prefix = null \n" +
+                        "            THEN 0\n" +
+                        "            ELSE 1\n" +
+                        "       END local_ticket\n" +
                         " FROM\n" +
                         "     tk_ticket t \n" +
                         "INNER JOIN tk_ticket_brief tb ON\n" +
@@ -127,7 +130,7 @@ public class TK_Ticket_Brief_Sql_002 implements Specification {
                         "            THEN 1\n" +
                         "            ELSE 0\n" +
                         "       END update_required,\n" +
-                        "       \"Ticket outer\" \n" +
+                        "        1 local_ticket\n" +
                         " FROM\n" +
                         "     tk_ticket t,\n" +
                         "     tk_ticket_ctrl c\n" +

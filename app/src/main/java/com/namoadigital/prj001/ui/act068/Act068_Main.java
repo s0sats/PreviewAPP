@@ -45,6 +45,7 @@ import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.ui.act074.Act074_Main.ALL_TICKETS_UPDATED;
 import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
 
 public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_Main_Contract.I_View, On_Frg_Serial_Search {
@@ -189,7 +190,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                         mPresenter.executeWSTicketDownload();
                         break;
                     case Frg_Serial_Search.BTN_OPTION_03:
-                        processNextTickets();
+                        if(ToolBox_Con.isOnline(context)) {
+                            processNextTickets();
+                        }else{
+                            callAct074();
+                        }
                         break;
                     case Frg_Serial_Search.BTN_OPTION_05:
                         processScheduledTickets();
@@ -252,6 +257,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private void callAct074() {
         Intent intent = new Intent(context, Act074_Main.class);
         Bundle bundle = new Bundle();
+        bundle.putBoolean(ALL_TICKETS_UPDATED, !mPresenter.hasItensToSend());
         intent.putExtras(bundle);
         startActivity(intent);
         finish();
@@ -597,6 +603,10 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
             if(!wsResult.isEmpty()) {
                 showResult(false);
+            }else {
+                if (nextTicketsFlow) {
+                    callAct074();
+                }
             }
         }else{
             wsResult.clear();
@@ -616,6 +626,10 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
             if(!wsResult.isEmpty()) {
                 showResult(false);
+            }else {
+                if (nextTicketsFlow) {
+                    callAct074();
+                }
             }
         }else{
             wsResult.clear();

@@ -411,7 +411,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         try {
             for (int i = 0; i < sources.size(); i++) {
                 if(sources.get(i) instanceof StepMain){
-                    if(((StepMain) sources.get(i)).isCurrentStep() && !ConstantBaseApp.SYS_STATUS_DONE.equals(((StepMain) sources.get(i)).getStepStatus())) {
+                    if(((StepMain) sources.get(i)).isCurrentStep()
+                            && !ConstantBaseApp.SYS_STATUS_DONE.equals(((StepMain) sources.get(i)).getStepStatus())
+                            && ((StepMain) sources.get(i)).isUser_focus()) {
                         Act070_Step_MainVH stepMainVH = (Act070_Step_MainVH) rvTicketPipeline.findViewHolderForAdapterPosition(i);
                         if (stepMainVH != null) {
                             stepMainVH.itemView.performClick();

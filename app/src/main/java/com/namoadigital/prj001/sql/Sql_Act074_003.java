@@ -3,6 +3,10 @@ package com.namoadigital.prj001.sql;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
+/**
+ * BARRIONUEVO 13-10-2020
+ * Query que
+ */
 public class Sql_Act074_003 implements Specification {
     private long customer_code;
     private String site_logged;
@@ -48,7 +52,7 @@ public class Sql_Act074_003 implements Specification {
                         "            THEN 1\n" +
                         "            ELSE 0\n" +
                         "       END update_required,\n" +
-                        "       \"Ticket outer\" \n" +
+                        "       1 local_ticket" +
                         " FROM\n" +
                         "     tk_ticket t,\n" +
                         "     tk_ticket_ctrl c\n" +
