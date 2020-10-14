@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act019;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -126,6 +127,9 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
         transList.add("lbl_date");
         transList.add("lbl_msg_short");
         transList.add("lbl_msg");
+        transList.add("alert_message_error_ttl");
+        transList.add("alert_message_error_msg");
+
 
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
@@ -234,12 +238,14 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
 
     @Override
     public void loadMessage(HMAux fcmMessage) {
-        if (fcmMessage.get("type").equalsIgnoreCase("alert")) {
-            iv_icon.setImageResource(R.drawable.ic_alert_n);
-        }
-        if (fcmMessage.get("type").equalsIgnoreCase("warning")) {
-            iv_icon.setImageResource(R.drawable.ic_problem_n);
-        }
+
+        try {
+            if (fcmMessage.get("type").equalsIgnoreCase("alert")) {
+                iv_icon.setImageResource(R.drawable.ic_alert_n);
+            }
+            if (fcmMessage.get("type").equalsIgnoreCase("warning")) {
+                iv_icon.setImageResource(R.drawable.ic_problem_n);
+            }
 
 //        switch (fcmMessage.getModule()){
 //
@@ -250,27 +256,42 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
 //                iv_module.setImageDrawable(null);
 //        }
 
-        tv_title.setText(fcmMessage.get("title"));
-        tv_customer.setText(fcmMessage.get("customer_name"));
-        tv_module.setText(hmAux_Trans.get("lbl_module"));
-        tv_module_val.setText(hmAux_Trans.get(fcmMessage.get("module")));
-        //tv_type.setText(fcmMessage.getType());
-        tv_sender.setText(hmAux_Trans.get("lbl_sender"));
-        tv_sender_val.setText(fcmMessage.get("sender"));
-        tv_date.setText(hmAux_Trans.get("lbl_date"));
-        tv_date_val.setText(
-                ToolBox.millisecondsToString(
-                        Long.parseLong(fcmMessage.get("date_create_ms")),
-                        //ToolBox_Inf.nlsDate2SqliteDate(context).replace("%", " ").replace("/ ", "-").replace("Y","y").replace("m","M")
-                        ToolBox_Inf.nlsDateFormat(context)
-                )
-        );
-        tv_msg_short_lbl.setText(hmAux_Trans.get("lbl_msg_short"));
-        tv_msg_short_value.setText(fcmMessage.get("msg_short"));
+            tv_title.setText(fcmMessage.get("title"));
+            tv_customer.setText(fcmMessage.get("customer_name"));
+            tv_module.setText(hmAux_Trans.get("lbl_module"));
+            tv_module_val.setText(hmAux_Trans.get(fcmMessage.get("module")));
+            //tv_type.setText(fcmMessage.getType());
+            tv_sender.setText(hmAux_Trans.get("lbl_sender"));
+            tv_sender_val.setText(fcmMessage.get("sender"));
+            tv_date.setText(hmAux_Trans.get("lbl_date"));
+            tv_date_val.setText(
+                    ToolBox.millisecondsToString(
+                            Long.parseLong(fcmMessage.get("date_create_ms")),
+                            //ToolBox_Inf.nlsDate2SqliteDate(context).replace("%", " ").replace("/ ", "-").replace("Y","y").replace("m","M")
+                            ToolBox_Inf.nlsDateFormat(context)
+                    )
+            );
+            tv_msg_short_lbl.setText(hmAux_Trans.get("lbl_msg_short"));
+            tv_msg_short_value.setText(fcmMessage.get("msg_short"));
 
-        tv_msg_lbl.setText(hmAux_Trans.get("lbl_msg"));
-        tv_msg_value.setText(fcmMessage.get("msg_long"));
+            tv_msg_lbl.setText(hmAux_Trans.get("lbl_msg"));
+            tv_msg_value.setText(fcmMessage.get("msg_long"));
+        }catch (NullPointerException e ){
+            ToolBox.registerException(getClass().getName(), e);
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_message_error_ttl"),
+                    hmAux_Trans.get("alert_message_error_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onBackPressed();
+                        }
+                    },
+                    0
 
+            );
+        }
     }
 
     private void cleanNotification() {

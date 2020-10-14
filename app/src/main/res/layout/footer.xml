@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/namoa_color_light_blue"
     android:padding="10dp"
     android:orientation="vertical">
@@ -16,7 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="João Key Teste(6)"
+            android:text="Namoa Key Teste(6)"
             android:textColor="@color/colorFooterWhite"
             android:textSize="12sp" />
 
@@ -26,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:gravity="right"
-            android:text="MOSOLF SERVICE FACTORY(1)"
+            tools:text="Namoa SERVICE FACTORY(1)"
             android:textColor="@color/colorFooterWhite"
             android:textSize="12sp" />
     </LinearLayout>
