@@ -53,7 +53,7 @@ public class TK_Next_Ticket {
     @Expose
     private Integer stepCount;
 
-    private boolean ticket_local;
+    private int ticket_local;
     private int sync_required;
 
     public Integer getCustomerCode() {
@@ -184,11 +184,11 @@ public class TK_Next_Ticket {
         this.stepCount = stepCount;
     }
 
-    public boolean isTicket_local() {
+    public int getTicket_local() {
         return ticket_local;
     }
 
-    public void setTicket_local(boolean ticket_local) {
+    public void setTicket_local(int ticket_local) {
         this.ticket_local = ticket_local;
     }
 

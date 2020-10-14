@@ -9,8 +9,10 @@ import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.TK_Next_Ticket;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import static com.namoadigital.prj001.dao.TK_Ticket_BriefDao.LOCAL_TICKET;
+
 public class Act074_TicketVH {
-    public static final String LOCAL_TICKET = "local_ticket";
+
     //    public static final String CTRLS_SERIAL_LIST = "CTRLS_SERIAL_LIST";
     private String ticket_pk;
     private int ticket_prefix;
@@ -44,10 +46,10 @@ public class Act074_TicketVH {
     private String schedule_erro_msg;
     private int user_focus;
     private int sync_required;
-    private boolean local_ticket;
+    private int local_ticket;
 
 
-    public Act074_TicketVH(int ticket_customer, int ticket_scn, int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_date, String step_forecast_start_date, String step_forecast_end_date, String ticket_step_id, String ticket_current_step_order, int ticket_step_qty, int user_focus, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg, boolean local_ticket, int sync_required) {
+    public Act074_TicketVH(int ticket_customer, int ticket_scn, int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_date, String step_forecast_start_date, String step_forecast_end_date, String ticket_step_id, String ticket_current_step_order, int ticket_step_qty, int user_focus, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg, int local_ticket, int sync_required) {
         String separator = "|";
         this.ticket_pk = ticket_customer +  separator +  ticket_prefix +  separator + ticket_code +  separator +  ticket_scn;
         this.ticket_prefix = ticket_prefix;
@@ -105,7 +107,7 @@ public class Act074_TicketVH {
                         hmAux.hasConsistentValue(MD_Schedule_ExecDao.FCM_NEW_STATUS) ? hmAux.get(MD_Schedule_ExecDao.FCM_NEW_STATUS) : " ",
                         hmAux.hasConsistentValue(MD_Schedule_ExecDao.FCM_USER_NICK) ? hmAux.get(MD_Schedule_ExecDao.FCM_USER_NICK) : " ",
                         hmAux.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) ? hmAux.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) : " ",
-                        hmAux.hasConsistentValue(LOCAL_TICKET) ? "1".equalsIgnoreCase(hmAux.get(LOCAL_TICKET)) : true,
+                        hmAux.hasConsistentValue(LOCAL_TICKET) ? Integer.valueOf(hmAux.get(LOCAL_TICKET)) : 0,
                         ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SYNC_REQUIRED))
         );
     }
@@ -138,7 +140,7 @@ public class Act074_TicketVH {
                      " ",
                       " ",
                   " ",
-                ticket.isTicket_local(),
+                ticket.getTicket_local(),
                 sync_required
         );
     }
@@ -341,11 +343,11 @@ public class Act074_TicketVH {
         this.sync_required = sync_required;
     }
 
-    public boolean isLocal_ticket() {
+    public int getLocal_ticket() {
         return local_ticket;
     }
 
-    public void setLocal_ticket(boolean local_ticket) {
+    public void setLocal_ticket(int local_ticket) {
         this.local_ticket = local_ticket;
     }
 

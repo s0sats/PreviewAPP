@@ -8,7 +8,6 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_BriefDao;
 import com.namoadigital.prj001.model.DataPackage;
-import com.namoadigital.prj001.model.TK_Next_Ticket;
 import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Next_Ticket;
@@ -16,10 +15,11 @@ import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Next_Ticket;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
-import com.namoadigital.prj001.sql.Sql_Act074_001;
 import com.namoadigital.prj001.sql.Sql_Act074_003;
 import com.namoadigital.prj001.sql.TK_Ticket_Brief_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Brief_Sql_003;
+import com.namoadigital.prj001.sql.TK_Ticket_Brief_Sql_004;
+import com.namoadigital.prj001.sql.TK_Ticket_Brief_Sql_005;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -186,10 +186,27 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
     }
 
     private List<HMAux> getTk_next_tickets() {
-        return ticketBriefdao.query_HM( new TK_Ticket_Brief_Sql_002(
+        List<HMAux> tickets = new ArrayList<>();
+
+        List<HMAux> nextTickets = ticketBriefdao.query_HM( new TK_Ticket_Brief_Sql_004(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 ToolBox_Con.getPreference_Site_Code(context)
         ).toSqlQuery() );
+        tickets.addAll(nextTickets);
+
+        List<HMAux> mergeTickets = ticketBriefdao.query_HM( new TK_Ticket_Brief_Sql_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ToolBox_Con.getPreference_Site_Code(context)
+        ).toSqlQuery() );
+        tickets.addAll(mergeTickets);
+
+        List<HMAux> localTickets = ticketBriefdao.query_HM( new TK_Ticket_Brief_Sql_005(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ToolBox_Con.getPreference_Site_Code(context)
+        ).toSqlQuery() );
+        tickets.addAll(localTickets);
+
+        return tickets;
     }
 
     @Override
@@ -251,42 +268,6 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
                 ).toSqlQuery()
         );
         //
-        return auxTickets;
-    }
-
-    private ArrayList<HMAux> getLocalTickets(int user_focus, List<TK_Next_Ticket> tickets) {
-        ArrayList<HMAux> auxTickets = new ArrayList<>();
-        //
-        List<String> ticket_ids = new ArrayList<>();
-        if (tickets != null
-        && !tickets.isEmpty()) {
-            for (TK_Next_Ticket ticket : tickets) {
-                if (ticket.isTicket_local()) {
-                    ticket_ids.add(ticket.getTicketPrefix() + "." + ticket.getTicketCode());
-                }
-            }
-        }
-        if(!ticket_ids.isEmpty()){
-            if(user_focus == 0) {
-                auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
-                        new Sql_Act074_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                ToolBox_Con.getPreference_Site_Code(context),
-                                user_focus,
-                                ticket_ids
-                        ).toSqlQuery()
-                );
-            }
-        }else {
-            auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
-                    new Sql_Act074_001(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            ToolBox_Con.getPreference_Site_Code(context),
-                            user_focus
-                    ).toSqlQuery()
-            );
-        }
-
         return auxTickets;
     }
 

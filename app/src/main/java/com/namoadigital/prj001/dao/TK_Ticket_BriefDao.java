@@ -41,6 +41,7 @@ public class TK_Ticket_BriefDao extends BaseDao implements DaoWithReturn<TK_Tick
     public static final String FORECAST_END = "forecast_end";
     public static final String STEP_COUNT = "step_count";
     public static final String FCM = "fcm";
+    public static final String LOCAL_TICKET = "local_ticket";
 
     public TK_Ticket_BriefDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION,  Constant.DB_MODE_MULTI);
@@ -357,12 +358,10 @@ public class TK_Ticket_BriefDao extends BaseDao implements DaoWithReturn<TK_Tick
                 contentValues.put(FCM, tk_ticket_brief.getFcm());
             }
 
-            /**
-             * Atualizar somente via query update para evitar sobreposicao com o update do Ticket.
-             */
-//           if (tk_ticket_brief.getFcm() > -1) {
-//                contentValues.put(FCM, tk_ticket_brief.getFcm());
+//            if (tk_ticket_brief.getLocal_ticket() > -1) {
+//                contentValues.put(LOCAL_TICKET, tk_ticket_brief.getTicket_local());
 //            }
+
 
             return contentValues;
         }
@@ -415,6 +414,7 @@ public class TK_Ticket_BriefDao extends BaseDao implements DaoWithReturn<TK_Tick
                 tk_ticket_brief.setStep_count(cursor.getInt(cursor.getColumnIndex(STEP_COUNT)));
             }
             tk_ticket_brief.setFcm(cursor.getInt(cursor.getColumnIndex(FCM)));
+            //tk_ticket_brief.setLocal_ticket(cursor.getInt(cursor.getColumnIndex(LOCAL_TICKET)));
             //
             return tk_ticket_brief;
         }

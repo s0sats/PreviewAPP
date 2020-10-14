@@ -190,7 +190,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
                 iv_refresh_icon.setImageTintList(context.getResources().getColorStateList(R.color.namoa_pipeline_sync_icon));
                 iv_refresh_icon.setImageResource(R.drawable.ic_baseline_sync_24);
             }else{
-                if(!item.isLocal_ticket()){
+                if(item.getLocal_ticket() == 0){
                     iv_refresh_icon.setVisibility(View.VISIBLE);
                     iv_refresh_icon.setImageTintList(context.getResources().getColorStateList(R.color.namoa_color_black));
                     iv_refresh_icon.setImageResource(R.drawable.ic_file_download_black_24dp);
@@ -198,15 +198,19 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             }
             //
             tv_ticket_id.setText(getFormattedTicketID(item));
-            tv_status.setTextColor(ToolBox_Inf.getStatusColorV2(context,item.getTicket_status()));
+            try {
+                tv_status.setTextColor(ToolBox_Inf.getStatusColorV2(context, item.getTicket_status()));
+            }catch (NullPointerException e){
+                tv_status.setTextColor(context.getResources().getColor(R.color.namoa_status_stop));
+            }
             //
             setVisibilityByContent(tv_status, hmAux_Trans.get(item.getTicket_status()));
             setVisibilityByContent(tv_ticket_id, item.getTicket_id());
             setVisibilityByContent(tv_step_id, item.getTicket_current_step_order());
             //
             if(item.getTicket_step_qty() <= 1
-            && item.getTicket_step_desc() != null
-            && !item.getTicket_step_desc().isEmpty()) {
+                    && item.getTicket_step_desc() != null
+                    && !item.getTicket_step_desc().isEmpty()) {
                 setVisibilityByContent(tv_step_desc, item.getTicket_step_desc());
             } else {
                 setVisibilityByContent(tv_step_desc, hmAux_Trans.get("other_steps_available_lbl"));

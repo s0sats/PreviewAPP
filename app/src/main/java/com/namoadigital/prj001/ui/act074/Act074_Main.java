@@ -459,7 +459,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             @Override
             public void onTicketClickListener(Act074_TicketVH item) {
                 if(isOnlineProcess) {
-                    if(item.isLocal_ticket()){
+                    if(item.getLocal_ticket() == 1){
                         mPresenter.checkTicketFlow(item);
                     }else {
                         mPresenter.executeTicketSync(item);

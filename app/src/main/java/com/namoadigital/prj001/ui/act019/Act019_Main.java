@@ -72,6 +72,7 @@ public class Act019_Main extends Base_Activity implements Act019_Main_View {
         if (customer_code == -1L) {
             //if (user_code.trim().length() == 0) {
                 ToolBox_Inf.call_Act001_Main(context);
+                finish();
 //            } else {
 //            }
         } else {

@@ -18,6 +18,7 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Brief;
 import com.namoadigital.prj001.model.T_TK_Next_Ticket_WS_Response;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.TK_Ticket_Brief_Sql_003;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -74,6 +75,8 @@ public class WS_TK_Next_Ticket extends IntentService {
         //Seleciona traduções
         loadTranslation();
         //
+        deleteLocalNextTickets();
+        //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //
         Main_Header_Env env = new Main_Header_Env();
@@ -117,6 +120,12 @@ public class WS_TK_Next_Ticket extends IntentService {
 
     }
 
+    private void deleteLocalNextTickets() {
+        ticketBriefDao.remove(new TK_Ticket_Brief_Sql_003(
+                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+        ).toSqlQuery());
+    }
+
     private void processTicketReturn(T_TK_Next_Ticket_WS_Response response) {
         //
         checkSyncRequired(response.getNext_tickets());
@@ -135,7 +144,6 @@ public class WS_TK_Next_Ticket extends IntentService {
     private void checkSyncRequired(List<TK_Next_Ticket> next_tickets) {
 
         for (TK_Next_Ticket ticket: next_tickets){
-            TK_Ticket_Brief tk_ticket_brief = getTicketBrief(ticket);
 
             TK_Ticket local_ticket = ticketDao.getByString(
                     new TK_Ticket_Sql_001(
@@ -145,41 +153,38 @@ public class WS_TK_Next_Ticket extends IntentService {
                     ).toSqlQuery()
             );
             //
-            ticket.setSync_required(0);
             if(local_ticket != null) {
-                ticket.setTicket_local(true);
                 if (local_ticket.getScn() < ticket.getScn()) {
-                    ticket.setSync_required(1);
                     local_ticket.setSync_required(1);
                     ticketDao.addUpdate(local_ticket);
                 }
-            }else{
-                ticket.setTicket_local(false);
             }
+            TK_Ticket_Brief tk_ticket_brief = getTicketBrief(ticket);
             ticketBriefDao.addUpdate(tk_ticket_brief);
         }
     }
 
     private TK_Ticket_Brief getTicketBrief(TK_Next_Ticket ticket) {
-        return new TK_Ticket_Brief(
-                ticket.getCustomerCode(),
-                ticket.getTicketPrefix(),
-                ticket.getTicketCode(),
-                ticket.getTicketId(),
-                ticket.getScn(),
-                ticket.getOpenSiteCode(),
-                ticket.getOpenSiteDesc(),
-                ticket.getOpenProductDesc(),
-                ticket.getOpenSerialId(),
-                ticket.getCurrentStepOrder(),
-                ticket.getTicketStatus(),
-                ticket.getOriginDesc(),
-                ticket.getStepDesc(),
-                ticket.getForecastStart(),
-                ticket.getForecastEnd(),
-                ticket.getStepCount(),
-                0
-        );
+        TK_Ticket_Brief tk_ticket_brief = new TK_Ticket_Brief();
+        tk_ticket_brief.setCustomer_code(ticket.getCustomerCode());
+        tk_ticket_brief.setTicket_prefix(ticket.getTicketPrefix());
+        tk_ticket_brief.setTicket_code(ticket.getTicketCode());
+        tk_ticket_brief.setTicket_id(ticket.getTicketId());
+        tk_ticket_brief.setScn(ticket.getScn());
+        tk_ticket_brief.setOpen_site_code(ticket.getOpenSiteCode());
+        tk_ticket_brief.setOpen_site_desc(ticket.getOpenSiteDesc());
+        tk_ticket_brief.setOpen_product_desc(ticket.getOpenProductDesc());
+        tk_ticket_brief.setOpen_serial_id(ticket.getOpenSerialId());
+        tk_ticket_brief.setCurrent_step_order(ticket.getCurrentStepOrder());
+        tk_ticket_brief.setTicket_status(ticket.getTicketStatus());
+        tk_ticket_brief.setOrigin_desc(ticket.getOriginDesc());
+        tk_ticket_brief.setStep_desc(ticket.getStepDesc());
+        tk_ticket_brief.setForecast_start(ticket.getForecastStart());
+        tk_ticket_brief.setForecast_end(ticket.getForecastEnd());
+        tk_ticket_brief.setStep_count(ticket.getStepCount());
+        tk_ticket_brief.setFcm(0);
+//        tk_ticket_brief.setLocal_ticket(has_local_ticket);
+        return tk_ticket_brief;
     }
 
     private void createJsonFile(String file_name, String json) throws IOException {

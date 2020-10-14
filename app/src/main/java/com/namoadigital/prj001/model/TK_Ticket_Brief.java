@@ -46,28 +46,6 @@ public class TK_Ticket_Brief {
     private int fcm;
 
 
-    public TK_Ticket_Brief() {
-    }
-
-    public TK_Ticket_Brief(long customer_code, int ticket_prefix, int ticket_code, String ticket_id, int scn, Integer open_site_code, String open_site_desc, String open_product_desc, String open_serial_id, Integer current_step_order, String ticket_status, String origin_desc, String step_desc, String forecast_start, String forecast_end, Integer step_count, int fcm) {
-        this.customer_code = customer_code;
-        this.ticket_prefix = ticket_prefix;
-        this.ticket_code = ticket_code;
-        this.ticket_id = ticket_id;
-        this.scn = scn;
-        this.open_site_code = open_site_code;
-        this.open_site_desc = open_site_desc;
-        this.open_product_desc = open_product_desc;
-        this.open_serial_id = open_serial_id;
-        this.current_step_order = current_step_order;
-        this.ticket_status = ticket_status;
-        this.origin_desc = origin_desc;
-        this.step_desc = step_desc;
-        this.forecast_start = forecast_start;
-        this.forecast_end = forecast_end;
-        this.step_count = step_count;
-        this.fcm = fcm;
-    }
 
     public long getCustomer_code() {
         return customer_code;
