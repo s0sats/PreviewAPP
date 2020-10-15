@@ -1226,7 +1226,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         bundle.putInt(Constant.GC_STATUS, 1);
         //LUCHE - 07/06/2019
         //Add param que redefine timeout da chamada.Usada somente no sync full
-        bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, 180000);
+        bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, 300000);
 
         mIntent.putExtras(bundle);
         //
