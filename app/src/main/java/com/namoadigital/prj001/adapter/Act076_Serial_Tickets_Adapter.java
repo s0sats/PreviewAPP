@@ -23,7 +23,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Deprecated
 public class Act076_Serial_Tickets_Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     private Context context;

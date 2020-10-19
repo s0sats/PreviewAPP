@@ -59,6 +59,7 @@ public class Sql_Act076_002 implements Specification {
                         "       ELSE s.forecast_end"+
                         "       END  forecast_end,\n" +
                         "       count(s.step_code) STEP_QTY, \n" +
+                        "       s.step_order_seq,\n" +
                         "      0 fcm,\n" +
                         "       t.user_focus,\n" +
                         "       t.sync_required,\n" +

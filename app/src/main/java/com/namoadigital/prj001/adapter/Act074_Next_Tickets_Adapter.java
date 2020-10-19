@@ -35,10 +35,9 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     private String mResource_Name = "Tickets_List_Adapter";
     private Act074_Next_Tickets_Adapter.TicketFilter valueFilter;
     private Act074_Next_Tickets_Adapter.OnTicketClickListener onTicketClickListener;
-    private boolean userFocusOnly;
     private boolean isOnlineProcess;
 
-    public Act074_Next_Tickets_Adapter(Context context, int resource, ArrayList<Act074_TicketVH> mValues) {
+    public Act074_Next_Tickets_Adapter(Context context, boolean isOnlineProcess, int resource, ArrayList<Act074_TicketVH> mValues) {
         this.context = context;
         this.resource = resource;
         this.mValues = mValues;
@@ -51,11 +50,10 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
         //
         loadTranslation();
         //
-        this.userFocusOnly = false;
-        this.isOnlineProcess = true;
+        this.isOnlineProcess = isOnlineProcess;
     }
 
-    public Act074_Next_Tickets_Adapter(Context context, int resource) {
+    public Act074_Next_Tickets_Adapter(Context context, int resource, boolean isOnlineProcess) {
         this.context = context;
         this.resource = resource;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
@@ -67,13 +65,12 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
         loadTranslation();
     }
 
-    public void setDataset(List<Act074_TicketVH> mValues, boolean userFocusOnly, boolean isOnlineProcess) {
-        this.mValues.clear();
+    public void setDataset(List<Act074_TicketVH> mValues, boolean isOnlineProcess) {
         this.mValues.addAll(mValues);
         this.mFilteredValues.clear();
         this.mFilteredValues.addAll(mValues);
-        this.userFocusOnly = userFocusOnly;
         this.isOnlineProcess = isOnlineProcess;
+        notifyDataSetChanged();
     }
 
     private void loadTranslation() {
@@ -109,19 +106,8 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         Act074_Next_Tickets_Adapter.TicketVH holder = (Act074_Next_Tickets_Adapter.TicketVH) viewHolder;
         //
-        if(userFocusOnly){
-            if(mFilteredValues.get(position).getUser_focus() == 1) {
-                holder.bindData(mFilteredValues.get(position));
-            }else{
-                holder.itemView.setVisibility(View.GONE);
-            }
-        }else {
-            if(mFilteredValues.get(position).getUser_focus() == 0) {
-                holder.bindData(mFilteredValues.get(position));
-            }else{
-                holder.itemView.setVisibility(View.GONE);
-            }
-        }
+       holder.bindData(mFilteredValues.get(position));
+
     }
 
     @Override

@@ -17,7 +17,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Act076_Serial_Tickets_Adapter;
+import com.namoadigital.prj001.adapter.Act074_Next_Tickets_Adapter;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -41,7 +41,7 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
     private RecyclerView rvTickets;
     private TextView tvNoResult;
     private Act076_Main_Presenter mPresenter;
-    private Act076_Serial_Tickets_Adapter mAdapter;
+    private Act074_Next_Tickets_Adapter mAdapter;
     private String requestingAct;
     private String wsProcess;
     //
@@ -176,14 +176,15 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
             //
             rvTickets.setLayoutManager(new LinearLayoutManager(context));
             //
-            mAdapter = new Act076_Serial_Tickets_Adapter(
+            mAdapter = new Act074_Next_Tickets_Adapter(
                     context,
+                    true, //forca inibicao do icone de offline
                     R.layout.act074_ticket_cell,
                     tickets
             );
             //
             if(mAdapter != null){
-                mAdapter.setOnTicketClickListener(new Act076_Serial_Tickets_Adapter.OnTicketClickListener() {
+                mAdapter.setOnTicketClickListener(new Act074_Next_Tickets_Adapter.OnTicketClickListener() {
                     @Override
                     public void onTicketClickListener(Act074_TicketVH item) {
                         mPresenter.checkTicketFlow(item);

@@ -257,6 +257,7 @@ public class Act069_Main extends Base_Activity implements Act069_Main_Contract.I
             //
             mAdapter = new Act074_Next_Tickets_Adapter(
                 context,
+                true,
                 R.layout.act074_ticket_cell,
                 tickets
             );

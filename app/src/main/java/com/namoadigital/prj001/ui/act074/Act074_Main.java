@@ -150,7 +150,8 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         //
         mAdapter = new Act074_Next_Tickets_Adapter(
                 context,
-                R.layout.act074_ticket_cell
+                R.layout.act074_ticket_cell,
+                isOnlineProcess
         );
         rvTickets.setAdapter(mAdapter);
         //
@@ -374,7 +375,14 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             rvTickets.setVisibility(View.VISIBLE);
             //
             if (mAdapter != null) {
-                mAdapter.setDataset(tickets, userFocusOnly, isOnlineProcess);
+                //mAdapter.setDataset(tickets, isOnlineProcess);
+                mAdapter = new Act074_Next_Tickets_Adapter(
+                        context,
+                        isOnlineProcess, //forca inibicao do icone de offline
+                        R.layout.act074_ticket_cell,
+                        (ArrayList<Act074_TicketVH>) tickets
+                );
+                rvTickets.setAdapter(mAdapter);
                 mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
             }
             //
@@ -398,7 +406,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(isOnlineProcess) {
+        if (isOnlineProcess) {
             mPresenter.deleteNextTickets();
         }
     }
@@ -462,13 +470,13 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         mAdapter.setOnTicketClickListener(new Act074_Next_Tickets_Adapter.OnTicketClickListener() {
             @Override
             public void onTicketClickListener(Act074_TicketVH item) {
-                if(isOnlineProcess) {
-                    if(item.getLocal_ticket() == 1){
+                if (isOnlineProcess) {
+                    if (item.getLocal_ticket() == 1) {
                         mPresenter.checkTicketFlow(item);
-                    }else {
+                    } else {
                         mPresenter.executeTicketSync(item);
                     }
-                }else{
+                } else {
                     mPresenter.checkTicketFlow(item);
                 }
             }
@@ -489,7 +497,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
                 } else if (tab.getTag().equals(TAB_OTHER_TICKETS)) {
                     List<Act074_TicketVH> unfocusList = mPresenter.getUnfocusList();
                     if (unfocusList.isEmpty()
-                    && focusList.isEmpty()) {
+                            && focusList.isEmpty()) {
                         mPresenter.getOfflineTicketsList(false);
                     } else {
                         loadTicketList(unfocusList, false);
