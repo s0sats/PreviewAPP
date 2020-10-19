@@ -15,77 +15,95 @@
         android:id="@+id/act074_cl_result"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toTopOf="@id/include"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/act074_mket_filter"
-            android:layout_width="0dp"
+        <android.support.v7.widget.CardView
+            android:id="@+id/act074_cv_header"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Search Desc - Trad"
-            android:inputType="text"
+            android:elevation="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            app:mBARCODE="false"
-            app:mNFC="false"
-            app:mOCR="false" />
+            app:layout_constraintVertical_bias="0.0">
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/act074_tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            app:tabMaxWidth="0dp"
-            app:tabGravity="fill"
-            app:tabMode="fixed"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/act074_mket_filter"
-            app:tabIndicatorColor="@color/namoa_amount_pipeline_background_btn"
-            app:tabSelectedTextColor="@color/namoa_amount_pipeline_background_btn"
-            app:tabTextColor="@color/namoa_pipeline_header_icon">
-
-            <android.support.design.widget.TabItem
-                android:id="@+id/act074_tab_my_tickets"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:text="MEUS TICKETS" />
+                android:layout_height="wrap_content">
 
-            <android.support.design.widget.TabItem
-                android:id="@+id/act074_tab_other_tickets"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:text="OUTROS" />
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act074_mket_filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="Search Desc - Trad"
+                    android:inputType="text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:mBARCODE="false"
+                    app:mNFC="false"
+                    app:mOCR="false" />
 
-        </android.support.design.widget.TabLayout>
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/act074_tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act074_mket_filter"
+                    app:tabGravity="fill"
+                    app:tabIndicatorColor="@color/namoa_amount_pipeline_background_btn"
+                    app:tabMaxWidth="0dp"
+                    app:tabMode="fixed"
+                    app:tabSelectedTextColor="@color/namoa_amount_pipeline_background_btn"
+                    app:tabTextColor="@color/namoa_pipeline_header_icon">
+
+                    <android.support.design.widget.TabItem
+                        android:id="@+id/act074_tab_my_tickets"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:text="MEUS TICKETS" />
+
+                    <android.support.design.widget.TabItem
+                        android:id="@+id/act074_tab_other_tickets"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:text="OUTROS" />
+
+                </android.support.design.widget.TabLayout>
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
 
         <TextView
             android:id="@+id/act074_tv_no_result"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/act074_mket_filter"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="NENHUM ITEM ENCONTRADO"
             android:gravity="center"
             android:visibility="gone"
-            />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/act074_cv_header"
+            tools:text="NENHUM ITEM ENCONTRADO" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/act074_rv_ticket_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
             app:layoutManager="LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/act074_tabs"
+            app:layout_constraintTop_toBottomOf="@id/act074_cv_header"
             app:layout_constraintVertical_bias="1.0"
             tools:listitem="@layout/act074_ticket_cell" />
 

@@ -4,6 +4,7 @@ import com.namoadigital.prj001.database.Specification;
 /**
  *  BARRIONUEVO 14/10/2020
  *  Query que lista os tickts que vieram do proximo ticket mergeando com os locais, mantendo as infos
+ *  Query que lista os tickts que vieram do proximo ticket mergeando com os locais, mantendo as infos
  *  do proximos tickets e os controles dos tickets locais.
  *
  */
@@ -40,6 +41,7 @@ public class TK_Ticket_Brief_Sql_002 implements Specification {
                         "       tb.forecast_start,\n" +
                         "       tb.forecast_end,\n" +
                         "       tb.step_count STEP_QTY, \n" +
+                        "       tb.step_order_seq,\n" +
                         "       tb.fcm,\n" +
                         "       1 user_focus,\n" +
                         "       t.sync_required,\n" +

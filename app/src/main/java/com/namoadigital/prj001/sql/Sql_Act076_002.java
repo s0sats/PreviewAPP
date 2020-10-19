@@ -3,13 +3,20 @@ package com.namoadigital.prj001.sql;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
+/**
+ *  BARRIONUEVO 16-10-2020
+ *  CARREGA LISTA DE TICKETS LOCAIS FORMATANDO PARA OS ADAPTER DAS TELAS ACT076
+ */
 public class Sql_Act076_002 implements Specification {
     private long customer_code;
-    private long ticketProductCode;
-    private long ticketSerialCode;
     private String site_logged;
     private String serial_filter ="";
 
+    public Sql_Act076_002(long customerCode, String site_logged) {
+        this.customer_code = customerCode;
+        this.site_logged = site_logged;
+        serial_filter ="";
+    }
     public Sql_Act076_002(long customerCode, String site_logged, long ticketProductCode, long ticketSerialCode) {
         this.customer_code = customerCode;
         this.site_logged = site_logged;
@@ -42,8 +49,9 @@ public class Sql_Act076_002 implements Specification {
                         "       t.ticket_status,\n" +
                         "       t.origin_desc,\n" +
                         "       s.step_desc,\n" +
+                        "       t.forecast_date, \n " +
                         "       CASE WHEN t.user_focus = 0 "+
-                        "       THEN t.forecast_date"+
+                        "       THEN null "+
                         "       ELSE s.forecast_start"+
                         "       END  forecast_start,\n" +
                         "       CASE WHEN t.user_focus = 0 "+
@@ -87,9 +95,13 @@ public class Sql_Act076_002 implements Specification {
                         " AND s.step_code = c.step_code \n" +
                         " and  tb.ticket_prefix is null\n" +
                         "GROUP BY\n" +
-                        "  T.customer_code,\n" +
+                        "  t.customer_code,\n" +
                         "  t.ticket_prefix,\n" +
-                        "  t.ticket_code")
+                        "  t.ticket_code" +
+                        " ORDER BY \n" +
+                        "  t.forecast_date asc,\n"+
+                        "  s.forecast_start asc\n"
+                )
                 .toString();
     }
 }

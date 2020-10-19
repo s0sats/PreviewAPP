@@ -15,7 +15,7 @@ import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Next_Ticket;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
-import com.namoadigital.prj001.sql.Sql_Act074_003;
+import com.namoadigital.prj001.sql.Sql_Act076_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Brief_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Brief_Sql_003;
 import com.namoadigital.prj001.sql.TK_Ticket_Brief_Sql_004;
@@ -25,6 +25,8 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
@@ -77,6 +79,7 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
                     //
                     setTicketLists(aux);
                 }
+                sortTicketsList();
             } catch (Exception e) {
                 ToolBox_Inf.registerException(getClass().getName(),e);
                 mView.showMsg(
@@ -85,6 +88,26 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
                 );
             }
         }
+    }
+
+    private void sortTicketsList() {
+        Collections.sort(focusList, new Comparator<Act074_TicketVH>() {
+            @Override
+            public int compare(Act074_TicketVH o1, Act074_TicketVH o2) {
+                long mDate =  ToolBox_Inf.dateToMilliseconds(o1.getStep_forecast_start_date(), "");
+                long cDate =  ToolBox_Inf.dateToMilliseconds(o2.getStep_forecast_start_date(), "");
+                return Long.compare(mDate, cDate);
+            }
+        });
+
+        Collections.sort(unfocusList, new Comparator<Act074_TicketVH>() {
+            @Override
+            public int compare(Act074_TicketVH o1, Act074_TicketVH o2) {
+                long mDate = ToolBox_Inf.dateToMilliseconds(o1.getTicket_forecast_date(), "");
+                long cDate = ToolBox_Inf.dateToMilliseconds(o2.getTicket_forecast_date(), "");
+                return Long.compare(mDate, cDate);
+            }
+        });
     }
 
     @Override
@@ -144,7 +167,6 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
     @Override
     public void setTicketVH() {
         List<HMAux> tickets = getTk_next_tickets();
-        List<Act074_TicketVH> ticketsVH = new ArrayList<>();
         if (tickets != null && tickets.size() > 0) {
             try {
                 for (HMAux aux : tickets) {
@@ -154,7 +176,7 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
 //                    }
                     setTicketLists(aux);
                 }
-
+                sortTicketsList();
                 mView.loadTicketList(focusList, true);
             } catch (Exception e) {
                 ToolBox_Inf.registerException(getClass().getName(),e);
@@ -165,7 +187,7 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
                 );
             }
         }else{
-            mView.showEmptyListMsg(hmAux_Trans.get("alert_no_next_tickets_ttl"), hmAux_Trans.get("alert_no_next_tickets_msg"));
+            mView.showEmptyListMsg(hmAux_Trans.get("alert_no_tickets_ttl"), hmAux_Trans.get("alert_no_tickets_msg"));
         }
     }
 
@@ -262,7 +284,7 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
         ArrayList<HMAux> auxTickets = new ArrayList<>();
         //
         auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
-                new Sql_Act074_003(
+                new Sql_Act076_002(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         ToolBox_Con.getPreference_Site_Code(context)
                 ).toSqlQuery()

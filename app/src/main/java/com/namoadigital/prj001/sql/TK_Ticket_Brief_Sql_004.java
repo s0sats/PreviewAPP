@@ -38,6 +38,7 @@ public class TK_Ticket_Brief_Sql_004 implements Specification {
                         "       tb.forecast_start,\n" +
                         "       tb.forecast_end,\n" +
                         "       tb.step_count,\n" +
+                        "       tb.step_order_seq,\n" +
                         "       tb.fcm,\n" +
                         "        1 user_focus, \n" +
                         "        CASE WHEN t.sync_required is null \n" +

@@ -1057,6 +1057,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //
         mTicket.getStep().set(stepIdx,ticketStep);
         //
+        mTicket.getNextUserFocus(stepIdx);
+        //
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
             if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
@@ -1199,7 +1201,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //
         int stepIdx = getStepIdx(ticketStep,mTicket);
         mTicket.setUpdate_required(1);
+        //
         mTicket.getStep().set(stepIdx,ticketStep);
+        //
+        mTicket.getNextUserFocus(stepIdx);
+        //
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
             if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context,mTicket.getTicket_prefix(), mTicket.getTicket_code())){
@@ -1484,7 +1490,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             //Seta indice onde adapter precisa ser posicionado.
             if( mView.getCurrentStepFirstPosition() == -1
                 && stepMain.isCurrentStep()
-                && stepMain.isUser_focus()
                 && !ConstantBaseApp.SYS_STATUS_DONE.equals(stepMain.getStepStatus())
             ){
                 mView.setCurrentStepFirstPosition(baseSteps.indexOf(stepMain));

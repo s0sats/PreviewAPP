@@ -114,8 +114,8 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         transList.add("dialog_download_ticket_ttl");
         transList.add("dialog_download_ticket_start");
         //
-        transList.add("alert_no_next_tickets_ttl");
-        transList.add("alert_no_next_tickets_msg");
+        transList.add("alert_no_tickets_ttl");
+        transList.add("alert_no_tickets_msg");
         transList.add("progress_next_tickets_ttl");
         transList.add("progress_next_tickets_msg");
         transList.add("progress_sync_ttl");
@@ -154,6 +154,11 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         );
         rvTickets.setAdapter(mAdapter);
         //
+        getFocusTicketsFlow();
+        //
+    }
+
+    private void getFocusTicketsFlow() {
         if (ToolBox_Con.isOnline(context) && allTicketsUpdated) {
             isOnlineProcess = true;
             mPresenter.getMyTicketsList();
@@ -161,7 +166,6 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             isOnlineProcess = false;
             mPresenter.getOfflineTicketsList(true);
         }
-        //
     }
 
     private void recoverIntentsInfo() {
@@ -214,10 +218,11 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     private void setTranslation() {
         mketFilter.setHint(hmAux_Trans.get("filter_hint"));
         tvNoResult.setText(hmAux_Trans.get("no_record_lbl"));
-        TabLayout.Tab tab_my_tickets = tabs.getTabAt(0);
+        tab_my_tickets = tabs.getTabAt(0);
         tab_my_tickets.setTag(TAB_MY_TICKETS);
         tab_my_tickets.setText(hmAux_Trans.get("my_tickets_option_tab"));
-        TabLayout.Tab tab_other_tickets = tabs.getTabAt(1);
+
+        tab_other_tickets = tabs.getTabAt(1);
         tab_other_tickets.setTag(TAB_OTHER_TICKETS);
         tab_other_tickets.setText(hmAux_Trans.get("other_tickets_option_tab"));
     }
@@ -370,8 +375,7 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             //
             if (mAdapter != null) {
                 mAdapter.setDataset(tickets, userFocusOnly, isOnlineProcess);
-                mketFilter.setText("");
-//                mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
+                mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
             }
             //
         } else {
@@ -473,27 +477,25 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+
+                linearLayoutManager.scrollToPosition(0);
+                List<Act074_TicketVH> focusList = mPresenter.getFocusList();
                 if (tab.getTag().equals(TAB_MY_TICKETS)) {
-                    List<Act074_TicketVH> focusList = mPresenter.getFocusList();
-                    linearLayoutManager.scrollToPosition(0);
                     if (focusList.isEmpty()) {
-                        if (ToolBox_Con.isOnline(context)) {
-                            mPresenter.getMyTicketsList();
-                        } else {
-                            mPresenter.getOfflineTicketsList(true);
-                        }
+                        getFocusTicketsFlow();
                     } else {
                         loadTicketList(focusList, true);
                     }
                 } else if (tab.getTag().equals(TAB_OTHER_TICKETS)) {
-                    linearLayoutManager.scrollToPosition(0);
-                    if (mPresenter.getUnfocusList().isEmpty()) {
+                    List<Act074_TicketVH> unfocusList = mPresenter.getUnfocusList();
+                    if (unfocusList.isEmpty()
+                    && focusList.isEmpty()) {
                         mPresenter.getOfflineTicketsList(false);
                     } else {
-                        List<Act074_TicketVH> unfocusList = mPresenter.getUnfocusList();
                         loadTicketList(unfocusList, false);
                     }
                 }
+
             }
 
             @Override

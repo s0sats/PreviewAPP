@@ -5,8 +5,8 @@ import android.support.annotation.Nullable;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_BriefDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
-import com.namoadigital.prj001.model.TK_Next_Ticket;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import static com.namoadigital.prj001.dao.TK_Ticket_BriefDao.LOCAL_TICKET;
@@ -29,6 +29,7 @@ public class Act074_TicketVH {
     private String step_forecast_end_date;
     private String ticket_step_id;
     private String ticket_current_step_order;
+    private String step_order_seq;
     private int ticket_step_qty;
     //Add atribuots do agendamento - Ainda faz sentido?
     private String schedulePk;
@@ -49,7 +50,7 @@ public class Act074_TicketVH {
     private int local_ticket;
 
 
-    public Act074_TicketVH(int ticket_customer, int ticket_scn, int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_date, String step_forecast_start_date, String step_forecast_end_date, String ticket_step_id, String ticket_current_step_order, int ticket_step_qty, int user_focus, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg, int local_ticket, int sync_required) {
+    public Act074_TicketVH(int ticket_customer, int ticket_scn, int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_date, String step_forecast_start_date, String step_forecast_end_date, String ticket_step_id, String ticket_current_step_order, String step_order_seq, int ticket_step_qty, int user_focus, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg, int local_ticket, int sync_required) {
         String separator = "|";
         this.ticket_pk = ticket_customer +  separator +  ticket_prefix +  separator + ticket_code +  separator +  ticket_scn;
         this.ticket_prefix = ticket_prefix;
@@ -66,6 +67,7 @@ public class Act074_TicketVH {
         this.step_forecast_end_date = step_forecast_end_date;
         this.ticket_step_id = ticket_step_id;
         this.ticket_current_step_order = ticket_current_step_order;
+        this.step_order_seq = step_order_seq;
         this.ticket_step_qty = ticket_step_qty;
         this.schedulePk = schedulePk;
         this.schedule_prefix = schedule_prefix;
@@ -98,6 +100,7 @@ public class Act074_TicketVH {
                         hmAux.get(TK_Ticket_StepDao.FORECAST_END),
                         hmAux.get(TK_Ticket_StepDao.STEP_ID),
                         hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER),
+                        hmAux.get(TK_Ticket_BriefDao.STEP_ORDER_SEQ),
                         ToolBox_Inf.convertStringToInt(hmAux.get(TK_Ticket_StepDao.STEP_QTY)),
                         hmAux.hasConsistentValue(TK_TicketDao.USER_FOCUS)? ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.USER_FOCUS)) : 1,
                         hmAux.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_PK) ? hmAux.get(MD_Schedule_ExecDao.SCHEDULE_PK) : " ",
@@ -112,38 +115,39 @@ public class Act074_TicketVH {
         );
     }
 
-    public static Act074_TicketVH getTicketVHObj(TK_Next_Ticket ticket, int sync_required) {
-
-        return new Act074_TicketVH(
-                ticket.getCustomerCode(),
-                ticket.getScn(),
-                ticket.getTicketPrefix(),
-                ticket.getTicketCode(),
-                ticket.getTicketPrefix() + "." + ticket.getTicketCode(),
-                ticket.getTicketStatus(),
-                ticket.getOpenProductDesc(),
-                ticket.getOpenSiteDesc(),
-                ticket.getOpenSerialId(),
-                ticket.getStepDesc(),
-                ticket.getOriginDesc(),
-                "",
-                ticket.getForecastStart(),
-                ticket.getForecastEnd(),
-                        "",
-                String.valueOf(ticket.getCurrentStepOrder()),
-                ticket.getStepCount(),
-                1,
-                        " ",
-                       0,
-                        0,
-                        0,
-                     " ",
-                      " ",
-                  " ",
-                ticket.getTicket_local(),
-                sync_required
-        );
-    }
+//    public static Act074_TicketVH getTicketVHObj(TK_Next_Ticket ticket, int sync_required) {
+//
+//        return new Act074_TicketVH(
+//                ticket.getCustomerCode(),
+//                ticket.getScn(),
+//                ticket.getTicketPrefix(),
+//                ticket.getTicketCode(),
+//                ticket.getTicketPrefix() + "." + ticket.getTicketCode(),
+//                ticket.getTicketStatus(),
+//                ticket.getOpenProductDesc(),
+//                ticket.getOpenSiteDesc(),
+//                ticket.getOpenSerialId(),
+//                ticket.getStepDesc(),
+//                ticket.getOriginDesc(),
+//                "",
+//                ticket.getForecastStart(),
+//                ticket.getForecastEnd(),
+//                        "",
+//                String.valueOf(ticket.getCurrentStepOrder()),
+//                null,
+//                ticket.getStepCount(),
+//                1,
+//                        " ",
+//                       0,
+//                        0,
+//                        0,
+//                     " ",
+//                      " ",
+//                  " ",
+//                ticket.getTicket_local(),
+//                sync_required
+//        );
+//    }
 
     public String getTicket_pk() {
         return ticket_pk;
@@ -255,6 +259,14 @@ public class Act074_TicketVH {
 
     public void setTicket_current_step_order(String ticket_current_step_order) {
         this.ticket_current_step_order = ticket_current_step_order;
+    }
+
+    public String getStep_order_seq() {
+        return step_order_seq;
+    }
+
+    public void setStep_order_seq(String step_order_seq) {
+        this.step_order_seq = step_order_seq;
     }
 
     public int getTicket_step_qty() {

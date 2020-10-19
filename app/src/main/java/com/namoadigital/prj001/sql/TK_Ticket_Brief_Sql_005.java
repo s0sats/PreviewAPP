@@ -23,7 +23,7 @@ public class TK_Ticket_Brief_Sql_005 implements Specification {
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
         return sb
-                .append( "SELECT distinct  t.customer_code,\n" +
+                .append( "SELECT t.customer_code,\n" +
                         "       t.scn,\n" +
                         "       t.ticket_prefix,\n" +
                         "       t.ticket_code,\n" +
@@ -37,12 +37,20 @@ public class TK_Ticket_Brief_Sql_005 implements Specification {
                         "       t.current_step_order,\n" +
                         "       t.ticket_status,\n" +
                         "       t.origin_desc,\n" +
-                        "       s.step_desc,\n" +
+                        "       CASE WHEN SUM(s.user_focus) = 1 \n" +
+                        "            THEN s.step_desc\n" +
+                        "            ELSE null\n" +
+                        "       END step_desc,\n" +
+                        "       forecast_date,\n" +
                         "       s.forecast_start,\n" +
                         "       s.forecast_end,\n" +
                         "       count(s.step_code) STEP_QTY, \n" +
+                        "       CASE WHEN SUM(s.user_focus) = 1 \n" +
+                        "            THEN s.step_order_seq\n" +
+                        "            ELSE null\n" +
+                        "       END step_order_seq,\n" +
                         "       0 fcm,\n" +
-                        "       t.user_focus,\n" +
+                        "       0 user_focus,\n" +
                         "       t.sync_required,\n" +
                         "       CASE WHEN t.update_required + t.update_required_product > 0 \n" +
                         "            THEN 1\n" +

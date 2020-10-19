@@ -417,6 +417,10 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 //
                 checkCloseStepForWaitingSync(ticketStep,mTicketCtrl);
                 //
+                if(! mView.isScheduledTicket() ) {
+                    tkTicket.getNextUserFocus(stepIdx);
+                }
+                //
                 mTicketCtrl.setUpdate_required(1);
                 ticketStep.setUpdate_required(1);
                 tkTicket.setUpdate_required(1);

@@ -1,51 +1,24 @@
 package com.namoadigital.prj001.model;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 public class TK_Ticket_Brief {
     private long customer_code;
     private int ticket_prefix;
     private int ticket_code;
     private String ticket_id;
     private int scn;
-    @SerializedName("open_site_code")
-    @Expose
     private Integer open_site_code;
-    @SerializedName("open_site_desc")
-    @Expose
     private String open_site_desc;
-    @SerializedName("open_product_desc")
-    @Expose
     private String open_product_desc;
-    @SerializedName("open_serial_id")
-    @Expose
     private String open_serial_id;
-    @SerializedName("current_step_order")
-    @Expose
     private Integer current_step_order;
-    @SerializedName("ticket_status")
-    @Expose
     private String ticket_status;
-    @SerializedName("origin_desc")
-    @Expose
     private String origin_desc;
-    @SerializedName("step_desc")
-    @Expose
     private String step_desc;
-    @SerializedName("forecast_start")
-    @Expose
+    private String step_order_seq;
     private String forecast_start;
-    @SerializedName("forecast_end")
-    @Expose
     private String forecast_end;
-    @SerializedName("step_count")
-    @Expose
     private Integer step_count;
-
     private int fcm;
-
-
 
     public long getCustomer_code() {
         return customer_code;
@@ -183,4 +156,11 @@ public class TK_Ticket_Brief {
         this.fcm = fcm;
     }
 
+    public String getStep_order_seq() {
+        return step_order_seq;
+    }
+
+    public void setStep_order_seq(String step_order_seq) {
+        this.step_order_seq = step_order_seq;
+    }
 }

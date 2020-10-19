@@ -68,11 +68,12 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     public void setDataset(List<Act074_TicketVH> mValues, boolean userFocusOnly, boolean isOnlineProcess) {
-        this.mValues = mValues;
-        this.mFilteredValues = mValues;
+        this.mValues.clear();
+        this.mValues.addAll(mValues);
+        this.mFilteredValues.clear();
+        this.mFilteredValues.addAll(mValues);
         this.userFocusOnly = userFocusOnly;
         this.isOnlineProcess = isOnlineProcess;
-        notifyDataSetChanged();
     }
 
     private void loadTranslation() {
@@ -206,10 +207,15 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             //
             setVisibilityByContent(tv_status, hmAux_Trans.get(item.getTicket_status()));
             setVisibilityByContent(tv_ticket_id, item.getTicket_id());
-            setVisibilityByContent(tv_step_id, item.getTicket_current_step_order());
+
+            String step_order = item.getTicket_current_step_order();
+            if(item.getStep_order_seq() != null
+            && !item.getStep_order_seq().isEmpty() ){
+                step_order += "." + item.getStep_order_seq();
+            }
+            setVisibilityByContent(tv_step_id, step_order);
             //
-            if(item.getTicket_step_qty() <= 1
-                    && item.getTicket_step_desc() != null
+            if(item.getTicket_step_desc() != null
                     && !item.getTicket_step_desc().isEmpty()) {
                 setVisibilityByContent(tv_step_desc, item.getTicket_step_desc());
             } else {

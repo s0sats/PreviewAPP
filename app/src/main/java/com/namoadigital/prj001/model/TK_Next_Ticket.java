@@ -43,6 +43,9 @@ public class TK_Next_Ticket {
     @SerializedName("step_desc")
     @Expose
     private String stepDesc;
+    @SerializedName("step_order_seq")
+    @Expose
+    private String step_order_seq;
     @SerializedName("forecast_start")
     @Expose
     private String forecastStart;
@@ -158,6 +161,14 @@ public class TK_Next_Ticket {
 
     public void setStepDesc(String stepDesc) {
         this.stepDesc = stepDesc;
+    }
+
+    public String getStep_order_seq() {
+        return step_order_seq;
+    }
+
+    public void setStep_order_seq(String step_order_seq) {
+        this.step_order_seq = step_order_seq;
     }
 
     public String getForecastStart() {

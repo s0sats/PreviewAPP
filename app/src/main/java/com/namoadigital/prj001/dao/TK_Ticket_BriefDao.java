@@ -37,6 +37,7 @@ public class TK_Ticket_BriefDao extends BaseDao implements DaoWithReturn<TK_Tick
     public static final String TICKET_STATUS = "ticket_status";
     public static final String ORIGIN_DESC = "origin_desc";
     public static final String STEP_DESC = "step_desc";
+    public static final String STEP_ORDER_SEQ = "step_order_seq";
     public static final String FORECAST_START = "forecast_start";
     public static final String FORECAST_END = "forecast_end";
     public static final String STEP_COUNT = "step_count";
@@ -350,6 +351,7 @@ public class TK_Ticket_BriefDao extends BaseDao implements DaoWithReturn<TK_Tick
             }
 
             contentValues.put(STEP_DESC, tk_ticket_brief.getStep_desc());
+            contentValues.put(STEP_ORDER_SEQ, tk_ticket_brief.getStep_order_seq());
             contentValues.put(FORECAST_START, tk_ticket_brief.getForecast_start());
             contentValues.put(FORECAST_END, tk_ticket_brief.getForecast_end());
             contentValues.put(STEP_COUNT, tk_ticket_brief.getStep_count());
@@ -397,6 +399,11 @@ public class TK_Ticket_BriefDao extends BaseDao implements DaoWithReturn<TK_Tick
                 tk_ticket_brief.setStep_desc(null);
             } else {
                 tk_ticket_brief.setStep_desc(cursor.getString(cursor.getColumnIndex(STEP_DESC)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(STEP_ORDER_SEQ))) {
+                tk_ticket_brief.setStep_order_seq(null);
+            } else {
+                tk_ticket_brief.setStep_order_seq(cursor.getString(cursor.getColumnIndex(STEP_ORDER_SEQ)));
             }
             if (cursor.isNull(cursor.getColumnIndex(FORECAST_START))) {
                 tk_ticket_brief.setForecast_start(null);

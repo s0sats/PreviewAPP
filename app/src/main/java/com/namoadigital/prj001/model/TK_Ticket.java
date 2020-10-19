@@ -912,4 +912,48 @@ public class TK_Ticket implements Cloneable {
             }
         }
     }
+
+    public void getNextUserFocus(int stepIdx){
+
+        TK_Ticket_Step current_step = getStep().get(stepIdx);
+
+        boolean hasUserFocus = false;
+        boolean hasSingleSteps = current_step.getStep_order_seq() == null;
+        int pendingSteps = getPendingStepAmount(current_step.getStep_order(),stepIdx);
+        if(!hasSingleSteps && pendingSteps >0) {
+            for (int i = 0; i < step.size(); i++) {
+                if (i != stepIdx) {
+                    TK_Ticket_Step ticket_step = step.get(i);
+                    if (current_step.getStep_order() == ticket_step.getStep_order()) {
+                        if ((ticket_step.getStep_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PENDING)
+                                        || ticket_step.getStep_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS))
+                                && ticket_step.getUser_focus() == 1) {
+                            hasUserFocus = true;
+                        }
+                    }
+                }
+            }
+            if (hasUserFocus) {
+                this.setUser_focus(1);
+            } else {
+                this.setUser_focus(0);
+            }
+        }
+    }
+
+    private int getPendingStepAmount(int step_order, int stepIdx) {
+        int pendingSteps=0;
+        for(int i=0; i< step.size(); i++){
+            TK_Ticket_Step ticket_step = step.get(i);
+            if(ticket_step.getStep_order() == step_order
+            && stepIdx != i
+            && (ticket_step.getStep_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PENDING)
+                || ticket_step.getStep_status().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_PROCESS))){
+                pendingSteps++;
+            }
+        }
+        return pendingSteps;
+    }
+
+
 }

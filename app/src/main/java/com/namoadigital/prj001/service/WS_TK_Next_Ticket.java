@@ -25,8 +25,6 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,37 +128,31 @@ public class WS_TK_Next_Ticket extends IntentService {
         //
         checkSyncRequired(response.getNext_tickets());
         //
-        String jsonActReturn = gson.toJson(response);
-        try {
-            createJsonFile(WS_TK_Next_Ticket.class.getSimpleName() ,jsonActReturn);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //
-        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), jsonActReturn, "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), "", "0");
         //
     }
 
     private void checkSyncRequired(List<TK_Next_Ticket> next_tickets) {
+        if(next_tickets != null) {
+            for (TK_Next_Ticket ticket : next_tickets) {
 
-        for (TK_Next_Ticket ticket: next_tickets){
-
-            TK_Ticket local_ticket = ticketDao.getByString(
-                    new TK_Ticket_Sql_001(
-                            ticket.getCustomerCode(),
-                            ticket.getTicketPrefix(),
-                            ticket.getTicketCode()
-                    ).toSqlQuery()
-            );
-            //
-            if(local_ticket != null) {
-                if (local_ticket.getScn() < ticket.getScn()) {
-                    local_ticket.setSync_required(1);
-                    ticketDao.addUpdate(local_ticket);
+                TK_Ticket local_ticket = ticketDao.getByString(
+                        new TK_Ticket_Sql_001(
+                                ticket.getCustomerCode(),
+                                ticket.getTicketPrefix(),
+                                ticket.getTicketCode()
+                        ).toSqlQuery()
+                );
+                //
+                if (local_ticket != null) {
+                    if (local_ticket.getScn() < ticket.getScn()) {
+                        local_ticket.setSync_required(1);
+                        ticketDao.addUpdate(local_ticket);
+                    }
                 }
+                TK_Ticket_Brief tk_ticket_brief = getTicketBrief(ticket);
+                ticketBriefDao.addUpdate(tk_ticket_brief);
             }
-            TK_Ticket_Brief tk_ticket_brief = getTicketBrief(ticket);
-            ticketBriefDao.addUpdate(tk_ticket_brief);
         }
     }
 
@@ -179,22 +171,13 @@ public class WS_TK_Next_Ticket extends IntentService {
         tk_ticket_brief.setTicket_status(ticket.getTicketStatus());
         tk_ticket_brief.setOrigin_desc(ticket.getOriginDesc());
         tk_ticket_brief.setStep_desc(ticket.getStepDesc());
+        tk_ticket_brief.setStep_order_seq(ticket.getStep_order_seq());
         tk_ticket_brief.setForecast_start(ticket.getForecastStart());
         tk_ticket_brief.setForecast_end(ticket.getForecastEnd());
         tk_ticket_brief.setStep_count(ticket.getStepCount());
         tk_ticket_brief.setFcm(0);
 //        tk_ticket_brief.setLocal_ticket(has_local_ticket);
         return tk_ticket_brief;
-    }
-
-    private void createJsonFile(String file_name, String json) throws IOException {
-        File file = new File(Constant.CACHE_PATH, file_name);
-        //
-        if(file.exists()){
-            file.delete();
-        }
-        //
-        ToolBox_Inf.writeIn(json,file);
     }
 
     private void loadTranslation() {
