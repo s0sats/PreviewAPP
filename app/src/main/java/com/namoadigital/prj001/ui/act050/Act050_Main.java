@@ -13,7 +13,6 @@ import android.view.WindowManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -25,6 +24,7 @@ import com.namoadigital.prj001.model.SM_SO_Client;
 import com.namoadigital.prj001.model.SO_Creation_Obj;
 import com.namoadigital.prj001.model.SO_Favorite_Contract;
 import com.namoadigital.prj001.model.SO_Favorite_Item;
+import com.namoadigital.prj001.model.SO_Favorite_PO;
 import com.namoadigital.prj001.model.SO_Favorite_Pipeline;
 import com.namoadigital.prj001.model.SO_Favorite_Priority;
 import com.namoadigital.prj001.model.SO_Favorite_Response;
@@ -60,9 +60,7 @@ public class Act050_Main extends Base_Activity_Frag implements
     public static final String IS_CREATION_FILLED = "IS_CREATION_FILLED";
     public static final String IS_EMPTY = "IS_EMPTY";
     public static final String IS_FINISHING = "IS_FINISHING";
-
-
-
+    public static final String PIPELINE_DEADLINE_AUTOMATIC = "PIPELINE_DEADLINE_AUTOMATIC";
 
     private Bundle bundle;
     private FragmentManager fm;
@@ -515,7 +513,20 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public List<SO_Favorite_Pipeline> getPipelineList() {
-        return response.getPipeline();
+        //return response.getPipeline();
+        for (SO_Favorite_Contract contract : response.getContract()) {
+            if(contract.getContractCode() == mSOCreationObj.getContract_code()){
+                if(contract.getPoList() != null){
+                    for (SO_Favorite_PO po : contract.getPoList()) {
+                        if(po.getPoCode() != null  && po.getPoCode() == mSOCreationObj.getPo_code()){
+                           return po.getPipeline() != null ? po.getPipeline(): new ArrayList<SO_Favorite_Pipeline>() ;
+                        }
+                    }
+                }
+            }
+        }
+        //
+        return new ArrayList<SO_Favorite_Pipeline>();
     }
 
     @Override
