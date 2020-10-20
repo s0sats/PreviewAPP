@@ -380,21 +380,19 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
                 mAdapter.setDataset(tickets, isOnlineProcess);
                 mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
             }
-
-            rvTickets.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-
-                    ((ViewGroup) tabs.getChildAt(0)).getChildAt(0).setClickable(true);
-                    ((ViewGroup) tabs.getChildAt(0)).getChildAt(1).setClickable(true);
-                }
-            });
-
             //
         } else {
             tvNoResult.setVisibility(View.VISIBLE);
             rvTickets.setVisibility(View.INVISIBLE);
         }
+
+        rvTickets.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                ((ViewGroup) tabs.getChildAt(0)).getChildAt(0).setClickable(true);
+                ((ViewGroup) tabs.getChildAt(0)).getChildAt(1).setClickable(true);
+            }
+        });
     }
 
     @Override
@@ -490,8 +488,6 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-
-
                 ((ViewGroup) tabs.getChildAt(0)).getChildAt(0).setClickable(false);
                 ((ViewGroup) tabs.getChildAt(0)).getChildAt(1).setClickable(false);
                 linearLayoutManager.scrollToPosition(0);
