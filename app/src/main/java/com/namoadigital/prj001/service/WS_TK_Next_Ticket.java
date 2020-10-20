@@ -18,6 +18,7 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Brief;
 import com.namoadigital.prj001.model.T_TK_Next_Ticket_WS_Response;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Brief_Sql_003;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -146,8 +147,16 @@ public class WS_TK_Next_Ticket extends IntentService {
                 //
                 if (local_ticket != null) {
                     if (local_ticket.getScn() < ticket.getScn()) {
-                        local_ticket.setSync_required(1);
-                        ticketDao.addUpdate(local_ticket);
+                        ticketDao.addUpdate(
+                                new Sql_WS_TK_Ticket_Save_002(
+                                        local_ticket.getCustomer_code(),
+                                        local_ticket.getTicket_prefix(),
+                                        local_ticket.getTicket_code(),
+                                        local_ticket.getUpdate_required(),
+                                        local_ticket.getUpdate_required_product(),
+                                        1
+                                ).toSqlQuery()
+                        );
                     }
                 }
                 TK_Ticket_Brief tk_ticket_brief = getTicketBrief(ticket);

@@ -40,8 +40,8 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     public Act074_Next_Tickets_Adapter(Context context, boolean isOnlineProcess, int resource, ArrayList<Act074_TicketVH> mValues) {
         this.context = context;
         this.resource = resource;
-        this.mValues = mValues;
-        this.mFilteredValues = mValues;
+        this.mValues.addAll(mValues);
+        this.mFilteredValues.addAll(mValues);
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 ConstantBaseApp.APP_MODULE,
@@ -66,9 +66,8 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     public void setDataset(List<Act074_TicketVH> mValues, boolean isOnlineProcess) {
-        this.mValues.addAll(mValues);
-        this.mFilteredValues.clear();
-        this.mFilteredValues.addAll(mValues);
+        this.mValues = mValues;
+        this.mFilteredValues = mValues;
         this.isOnlineProcess = isOnlineProcess;
         notifyDataSetChanged();
     }

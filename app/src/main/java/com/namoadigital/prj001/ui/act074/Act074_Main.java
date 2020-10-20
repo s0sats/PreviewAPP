@@ -9,6 +9,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -375,16 +377,19 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             rvTickets.setVisibility(View.VISIBLE);
             //
             if (mAdapter != null) {
-                //mAdapter.setDataset(tickets, isOnlineProcess);
-                mAdapter = new Act074_Next_Tickets_Adapter(
-                        context,
-                        isOnlineProcess, //forca inibicao do icone de offline
-                        R.layout.act074_ticket_cell,
-                        (ArrayList<Act074_TicketVH>) tickets
-                );
-                rvTickets.setAdapter(mAdapter);
+                mAdapter.setDataset(tickets, isOnlineProcess);
                 mAdapter.getFilter().filter(mketFilter.getText().toString().trim());
             }
+
+            rvTickets.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+
+                    ((ViewGroup) tabs.getChildAt(0)).getChildAt(0).setClickable(true);
+                    ((ViewGroup) tabs.getChildAt(0)).getChildAt(1).setClickable(true);
+                }
+            });
+
             //
         } else {
             tvNoResult.setVisibility(View.VISIBLE);
@@ -486,6 +491,9 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
+
+                ((ViewGroup) tabs.getChildAt(0)).getChildAt(0).setClickable(false);
+                ((ViewGroup) tabs.getChildAt(0)).getChildAt(1).setClickable(false);
                 linearLayoutManager.scrollToPosition(0);
                 List<Act074_TicketVH> focusList = mPresenter.getFocusList();
                 if (tab.getTag().equals(TAB_MY_TICKETS)) {
@@ -503,7 +511,6 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
                         loadTicketList(unfocusList, false);
                     }
                 }
-
             }
 
             @Override

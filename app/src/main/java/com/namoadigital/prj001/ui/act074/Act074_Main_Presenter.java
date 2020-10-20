@@ -96,7 +96,15 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
             public int compare(Act074_TicketVH o1, Act074_TicketVH o2) {
                 long mDate =  ToolBox_Inf.dateToMilliseconds(o1.getStep_forecast_start_date(), "");
                 long cDate =  ToolBox_Inf.dateToMilliseconds(o2.getStep_forecast_start_date(), "");
-                return Long.compare(mDate, cDate);
+                int dateCriteria = Long.compare(mDate, cDate);
+                if(dateCriteria == 0){
+                    int prefixCriteria = Integer.compare(o1.getTicket_prefix(), o2.getTicket_prefix());
+                    if(prefixCriteria == 0){
+                        return Integer.compare(o1.getTicket_code(), o2.getTicket_code());
+                    }
+                    return prefixCriteria;
+                }
+                return dateCriteria;
             }
         });
 
@@ -105,7 +113,16 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
             public int compare(Act074_TicketVH o1, Act074_TicketVH o2) {
                 long mDate = ToolBox_Inf.dateToMilliseconds(o1.getTicket_forecast_date(), "");
                 long cDate = ToolBox_Inf.dateToMilliseconds(o2.getTicket_forecast_date(), "");
-                return Long.compare(mDate, cDate);
+                int dateCriteria = Long.compare(mDate, cDate);
+                if(dateCriteria == 0){
+                    int prefixCriteria = Integer.compare(o1.getTicket_prefix(), o2.getTicket_prefix());
+                    if(prefixCriteria == 0){
+                        return Integer.compare(o1.getTicket_code(), o2.getTicket_code());
+                    }
+                    return prefixCriteria;
+                }
+
+                return dateCriteria;
             }
         });
     }
