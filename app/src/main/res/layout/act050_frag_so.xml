@@ -171,7 +171,7 @@
                     android:textSize="@dimen/font_size_title_md"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_client_ll" />
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_pipeline_code" />
 
                 <Switch
                     android:id="@+id/act050_frag_so_has_manual_dealine"
@@ -204,7 +204,8 @@
                     android:layout_marginTop="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_manual_deadline" />
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_client_ll"
+                    />
 
                 <TextView
                     android:id="@+id/act050_frag_so_tv_priority_lbl"
@@ -212,7 +213,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_pipeline_code"
+                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_manual_deadline"
                     android:visibility="gone"/>
 
                 <com.namoa_digital.namoa_library.ctls.SearchableSpinner
