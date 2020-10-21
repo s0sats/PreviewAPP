@@ -49,34 +49,47 @@
                     app:mNFC="false"
                     app:mOCR="false" />
 
-                <android.support.design.widget.TabLayout
+                <RadioGroup
                     android:id="@+id/act074_tabs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/act074_mket_filter"
-                    app:tabGravity="fill"
-                    app:tabIndicatorColor="@color/namoa_amount_pipeline_background_btn"
-                    app:tabMaxWidth="0dp"
-                    app:tabMode="fixed"
-                    app:tabSelectedTextColor="@color/namoa_amount_pipeline_background_btn"
-                    app:tabTextColor="@color/namoa_pipeline_header_icon">
+                    app:layout_constraintTop_toBottomOf="@id/act074_mket_filter">
 
-                    <android.support.design.widget.TabItem
+                    <RadioButton
                         android:id="@+id/act074_tab_my_tickets"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        tools:text="MEUS TICKETS" />
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:textColor="@color/my_tickets_radio"
+                        android:layout_weight="1"
+                        android:background="@drawable/act074_radio_states"
+                        tools:text="MEUS TICKETS"
+                        android:checked="true"
+                        android:gravity="center"
+                        android:button="@null" />
 
-                    <android.support.design.widget.TabItem
+                    <View
+                        android:layout_width="2dp"
+                        android:layout_height="match_parent" />
+
+                    <RadioButton
                         android:id="@+id/act074_tab_other_tickets"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        tools:text="OUTROS" />
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:textColor="@color/my_tickets_radio"
+                        android:layout_weight="1"
+                        tools:text="OUTROS"
+                        android:background="@drawable/act074_radio_states"
+                        android:gravity="center"
+                        android:button="@null" />
 
-                </android.support.design.widget.TabLayout>
+                </RadioGroup>
+
+
+
             </android.support.constraint.ConstraintLayout>
         </android.support.v7.widget.CardView>
 
@@ -106,6 +119,17 @@
             app:layout_constraintTop_toBottomOf="@id/act074_cv_header"
             app:layout_constraintVertical_bias="1.0"
             tools:listitem="@layout/act074_ticket_cell" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:visibility="gone"
+            android:indeterminateTint="@color/namoa_amount_pipeline_background_btn"
+            app:layout_constraintBottom_toBottomOf="@+id/act074_rv_ticket_list"
+            app:layout_constraintEnd_toEndOf="@+id/act074_rv_ticket_list"
+            app:layout_constraintStart_toStartOf="@+id/act074_rv_ticket_list"
+            app:layout_constraintTop_toBottomOf="@+id/act074_cv_header" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -81,7 +81,7 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
                 }
                 sortTicketsList();
             } catch (Exception e) {
-                ToolBox_Inf.registerException(getClass().getName(),e);
+                ToolBox_Inf.registerException(getClass().getName(), e);
                 mView.showMsg(
                         hmAux_Trans.get("alert_error_on_generate_list_ttl"),
                         hmAux_Trans.get("alert_error_on_generate_list_msg")
@@ -91,15 +91,16 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
     }
 
     private void sortTicketsList() {
+
         Collections.sort(focusList, new Comparator<Act074_TicketVH>() {
             @Override
             public int compare(Act074_TicketVH o1, Act074_TicketVH o2) {
-                long mDate =  ToolBox_Inf.dateToMilliseconds(o1.getStep_forecast_start_date(), "");
-                long cDate =  ToolBox_Inf.dateToMilliseconds(o2.getStep_forecast_start_date(), "");
+                long mDate = ToolBox_Inf.dateToMilliseconds(o1.getStep_forecast_start_date(), "");
+                long cDate = ToolBox_Inf.dateToMilliseconds(o2.getStep_forecast_start_date(), "");
                 int dateCriteria = Long.compare(mDate, cDate);
-                if(dateCriteria == 0){
+                if (dateCriteria == 0) {
                     int prefixCriteria = Integer.compare(o1.getTicket_prefix(), o2.getTicket_prefix());
-                    if(prefixCriteria == 0){
+                    if (prefixCriteria == 0) {
                         return Integer.compare(o1.getTicket_code(), o2.getTicket_code());
                     }
                     return prefixCriteria;
@@ -114,9 +115,9 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
                 long mDate = ToolBox_Inf.dateToMilliseconds(o1.getTicket_forecast_date(), "");
                 long cDate = ToolBox_Inf.dateToMilliseconds(o2.getTicket_forecast_date(), "");
                 int dateCriteria = Long.compare(mDate, cDate);
-                if(dateCriteria == 0){
+                if (dateCriteria == 0) {
                     int prefixCriteria = Integer.compare(o1.getTicket_prefix(), o2.getTicket_prefix());
-                    if(prefixCriteria == 0){
+                    if (prefixCriteria == 0) {
                         return Integer.compare(o1.getTicket_code(), o2.getTicket_code());
                     }
                     return prefixCriteria;
@@ -153,7 +154,7 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
         //
         Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
         Bundle bundle = new Bundle();
-        bundle.putString(TK_TicketDao.TICKET_PREFIX,item.getTicket_pk());
+        bundle.putString(TK_TicketDao.TICKET_PREFIX, item.getTicket_pk());
         //
         mIntent.putExtras(bundle);
         //
@@ -162,7 +163,7 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
 
     @Override
     public void onBackPressedClicked(String requestingAct) {
-        switch (requestingAct){
+        switch (requestingAct) {
             default:
                 mView.callAct068();
                 break;
@@ -176,36 +177,44 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
 
     private Bundle generateAct070Bundle(Act074_TicketVH item) {
         Bundle bundle = new Bundle();
-        bundle.putInt(TK_TicketDao.TICKET_PREFIX,item.getTicket_prefix());
-        bundle.putInt(TK_TicketDao.TICKET_CODE,item.getTicket_code());
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, item.getTicket_prefix());
+        bundle.putInt(TK_TicketDao.TICKET_CODE, item.getTicket_code());
         return bundle;
     }
 
     @Override
     public void setTicketVH() {
-        List<HMAux> tickets = getTk_next_tickets();
-        if (tickets != null && tickets.size() > 0) {
-            try {
-                for (HMAux aux : tickets) {
-                    //
-//                    if(ToolBox_Con.getPreference_Site_Code(context).equals(String.valueOf(aux.getOpen_site_code()))){
-//                        aux.setOpen_site_desc("");
-//                    }
-                    setTicketLists(aux);
+        //Handler utilizado para soltar o prgress quando há um processamento de ticket grande.
+        Thread mThread = new Thread( new Runnable() {
+            @Override
+            public void run() {
+                List<HMAux> tickets = getTk_next_tickets();
+                if (tickets != null && tickets.size() > 0) {
+                    try {
+                        for (HMAux aux : tickets) {
+                            //
+                            setTicketLists(aux);
+                        }
+                        sortTicketsList();
+                        ((Act074_Main) context).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mView.loadTicketList(focusList, true);
+                            }
+                        });
+                    } catch (Exception e) {
+                        ToolBox_Inf.registerException(getClass().getName(), e);
+                        mView.showEmptyListMsg(
+                                hmAux_Trans.get("alert_error_on_generate_list_ttl"),
+                                hmAux_Trans.get("alert_error_on_generate_list_msg")
+                        );
+                    }
+                } else {
+                    mView.showEmptyListMsg(hmAux_Trans.get("alert_no_tickets_ttl"), hmAux_Trans.get("alert_no_tickets_msg"));
                 }
-                sortTicketsList();
-                mView.loadTicketList(focusList, true);
-            } catch (Exception e) {
-                ToolBox_Inf.registerException(getClass().getName(),e);
-
-                mView.showEmptyListMsg(
-                        hmAux_Trans.get("alert_error_on_generate_list_ttl"),
-                        hmAux_Trans.get("alert_error_on_generate_list_msg")
-                );
             }
-        }else{
-            mView.showEmptyListMsg(hmAux_Trans.get("alert_no_tickets_ttl"), hmAux_Trans.get("alert_no_tickets_msg"));
-        }
+        });
+        mThread.start();
     }
 
     private void setTicketLists(HMAux aux) {
@@ -213,11 +222,11 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
         if (aux.hasConsistentValue(TK_TicketDao.USER_FOCUS)) {
             hasFocus = aux.get(TK_TicketDao.USER_FOCUS).equals("1");
         }
-        if(hasFocus){
+        if (hasFocus) {
             focusList.add(
                     Act074_TicketVH.getTicketVHObj(aux)
             );
-        }else{
+        } else {
             unfocusList.add(
                     Act074_TicketVH.getTicketVHObj(aux)
             );
@@ -227,22 +236,22 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
     private List<HMAux> getTk_next_tickets() {
         List<HMAux> tickets = new ArrayList<>();
 
-        List<HMAux> nextTickets = ticketBriefdao.query_HM( new TK_Ticket_Brief_Sql_004(
+        List<HMAux> nextTickets = ticketBriefdao.query_HM(new TK_Ticket_Brief_Sql_004(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 ToolBox_Con.getPreference_Site_Code(context)
-        ).toSqlQuery() );
+        ).toSqlQuery());
         tickets.addAll(nextTickets);
 
-        List<HMAux> mergeTickets = ticketBriefdao.query_HM( new TK_Ticket_Brief_Sql_002(
+        List<HMAux> mergeTickets = ticketBriefdao.query_HM(new TK_Ticket_Brief_Sql_002(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 ToolBox_Con.getPreference_Site_Code(context)
-        ).toSqlQuery() );
+        ).toSqlQuery());
         tickets.addAll(mergeTickets);
 
-        List<HMAux> localTickets = ticketBriefdao.query_HM( new TK_Ticket_Brief_Sql_005(
+        List<HMAux> localTickets = ticketBriefdao.query_HM(new TK_Ticket_Brief_Sql_005(
                 ToolBox_Con.getPreference_Customer_Code(context),
                 ToolBox_Con.getPreference_Site_Code(context)
-        ).toSqlQuery() );
+        ).toSqlQuery());
         tickets.addAll(localTickets);
 
         return tickets;
@@ -250,9 +259,9 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
 
     @Override
     public boolean verifyProductForForm(HMAux ticketPrefixCode) {
-        int ticketPrefix = ticketPrefixCode.hasConsistentValue(TK_TicketDao.TICKET_PREFIX) ? Integer.valueOf(ticketPrefixCode.get(TK_TicketDao.TICKET_PREFIX)) : -1 ;
-        int ticketCode = ticketPrefixCode.hasConsistentValue(TK_TicketDao.TICKET_CODE) ? Integer.valueOf(ticketPrefixCode.get(TK_TicketDao.TICKET_CODE)) : -1 ;
-        if(ToolBox_Inf.hasFormProductOutdate(context, ticketPrefix, ticketCode)){
+        int ticketPrefix = ticketPrefixCode.hasConsistentValue(TK_TicketDao.TICKET_PREFIX) ? Integer.valueOf(ticketPrefixCode.get(TK_TicketDao.TICKET_PREFIX)) : -1;
+        int ticketCode = ticketPrefixCode.hasConsistentValue(TK_TicketDao.TICKET_CODE) ? Integer.valueOf(ticketPrefixCode.get(TK_TicketDao.TICKET_CODE)) : -1;
+        if (ToolBox_Inf.hasFormProductOutdate(context, ticketPrefix, ticketCode)) {
             if (ToolBox_Con.isOnline(context)) {
                 mView.setWsProcess(WS_Sync.class.getName());
                 //
@@ -278,23 +287,34 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
                 return true;
             }
             return false;
-        }else{
+        } else {
             return false;
         }
     }
+
     //
     @Override
-    public void getOfflineTicketsList(boolean hasUserFocus) {
+    public void getOfflineTicketsList(final boolean hasUserFocus) {
+        Thread mThread = new Thread( new Runnable() {
+            @Override
+            public void run() {
+                List<HMAux> auxTickets = getOffline_tickets();
 
-        List<HMAux> auxTickets = getOffline_tickets();
+                generateTicketVhList(auxTickets);
 
-        generateTicketVhList(auxTickets);
-
-        if(hasUserFocus){
-            mView.loadTicketList(focusList, hasUserFocus);
-        }else{
-            mView.loadTicketList(unfocusList, hasUserFocus);
-        }
+                ((Act074_Main) context).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (hasUserFocus) {
+                            mView.loadTicketList(focusList, hasUserFocus);
+                        } else {
+                            mView.loadTicketList(unfocusList, hasUserFocus);
+                        }
+                    }
+                });
+            }
+        });
+        mThread.start();
     }
 
     private List<HMAux> getOffline_tickets() {
@@ -315,6 +335,7 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
     public List<Act074_TicketVH> getFocusList() {
         return focusList;
     }
+
     //
     @Override
     public List<Act074_TicketVH> getUnfocusList() {

@@ -41,4 +41,9 @@
         <item name="android:textColor">@color/padrao_WHITE</item>
     </style>
 
+    <style name="MyTicketRadioButtton" parent="@android:style/Widget.Button">
+        <item name="android:background">@color/padrao_TRANSPARENT</item>
+        <item name="android:textColor">@color/namoa_amount_pipeline_background_btn</item>
+    </style>
+
 </resources>

@@ -1,17 +1,20 @@
 package com.namoadigital.prj001.ui.act074;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
@@ -67,12 +70,13 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     private boolean bStatusRejected;
     private Act074_Main_Presenter mPresenter;
     private HMAux mTicketDownloaded;
-    private TabLayout tabs;
-    private TabLayout.Tab tab_my_tickets;
-    private TabLayout.Tab tab_other_tickets;
+    private RadioGroup tabs;
+    private RadioButton tab_my_tickets;
+    private RadioButton tab_other_tickets;
     private boolean isOnlineProcess;
     private boolean allTicketsUpdated;
     private LinearLayoutManager linearLayoutManager;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,6 +218,9 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         rvTickets = findViewById(R.id.act074_rv_ticket_list);
         tvNoResult = findViewById(R.id.act074_tv_no_result);
         tabs = findViewById(R.id.act074_tabs);
+        tab_my_tickets = findViewById(R.id.act074_tab_my_tickets);
+        tab_other_tickets = findViewById(R.id.act074_tab_other_tickets);
+        progressBar = findViewById(R.id.progressBar);
         //
         setTranslation();
     }
@@ -221,11 +228,10 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     private void setTranslation() {
         mketFilter.setHint(hmAux_Trans.get("filter_hint"));
         tvNoResult.setText(hmAux_Trans.get("no_record_lbl"));
-        tab_my_tickets = tabs.getTabAt(0);
+
         tab_my_tickets.setTag(TAB_MY_TICKETS);
         tab_my_tickets.setText(hmAux_Trans.get("my_tickets_option_tab"));
 
-        tab_other_tickets = tabs.getTabAt(1);
         tab_other_tickets.setTag(TAB_OTHER_TICKETS);
         tab_other_tickets.setText(hmAux_Trans.get("other_tickets_option_tab"));
     }
@@ -242,6 +248,8 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         if (WS_TK_Next_Ticket.class.getName().equalsIgnoreCase(wsProcess)) {
             wsProcess = "";
             progressDialog.dismiss();
+            //
+            progressBar.setVisibility(View.VISIBLE);
             //
             isOnlineProcess = true;
             mPresenter.setTicketVH();
@@ -386,13 +394,16 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             rvTickets.setVisibility(View.INVISIBLE);
         }
 
-        rvTickets.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        rvTickets.postDelayed(new Runnable() {
             @Override
-            public void onGlobalLayout() {
-                ((ViewGroup) tabs.getChildAt(0)).getChildAt(0).setClickable(true);
-                ((ViewGroup) tabs.getChildAt(0)).getChildAt(1).setClickable(true);
+            public void run() {
+                progressBar.setVisibility(View.GONE);
+                tab_my_tickets.setEnabled(true);
+                tab_my_tickets.setClickable(true);
+                tab_other_tickets.setEnabled(true);
+                tab_other_tickets.setClickable(true);
             }
-        });
+        }, 900);
     }
 
     @Override
@@ -415,19 +426,26 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     }
 
     @Override
-    public void showEmptyListMsg(String title, String msg) {
-        ToolBox.alertMSG(
-                context,
-                title,
-                msg,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mPresenter.onBackPressedClicked(requestingAct);
-                    }
-                },
-                0
-        );
+    public void showEmptyListMsg(final String title, final String msg) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ToolBox.alertMSG(
+                        context,
+                        title,
+                        msg,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                mPresenter.onBackPressedClicked(requestingAct);
+                            }
+                        },
+                        0
+                );
+            }
+        });
+
     }
 
     @Override
@@ -485,40 +503,40 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
             }
         });
         //
-        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabs.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                ((ViewGroup) tabs.getChildAt(0)).getChildAt(0).setClickable(false);
-                ((ViewGroup) tabs.getChildAt(0)).getChildAt(1).setClickable(false);
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mketFilter.getWindowToken(), 0);
+                rvTickets.setVisibility(View.INVISIBLE);
                 linearLayoutManager.scrollToPosition(0);
-                List<Act074_TicketVH> focusList = mPresenter.getFocusList();
-                if (tab.getTag().equals(TAB_MY_TICKETS)) {
-                    if (focusList.isEmpty()) {
-                        getFocusTicketsFlow();
-                    } else {
+
+                //
+                switch (checkedId) {
+                    case R.id.act074_tab_my_tickets:
+                        List<Act074_TicketVH> focusList = mPresenter.getFocusList();
+                        if(focusList!= null
+                        && !focusList.isEmpty()) {
+                            progressBar.setVisibility(View.VISIBLE);
+                        }
+                        tab_other_tickets.setEnabled(false);
+                        tab_other_tickets.setClickable(false);
                         loadTicketList(focusList, true);
-                    }
-                } else if (tab.getTag().equals(TAB_OTHER_TICKETS)) {
-                    List<Act074_TicketVH> unfocusList = mPresenter.getUnfocusList();
-                    if (unfocusList.isEmpty()
-                            && focusList.isEmpty()) {
-                        mPresenter.getOfflineTicketsList(false);
-                    } else {
+                        break;
+                    case R.id.act074_tab_other_tickets:
+                        List<Act074_TicketVH> unfocusList = mPresenter.getUnfocusList();
+                        if(unfocusList!= null
+                                && !unfocusList.isEmpty()) {
+                            progressBar.setVisibility(View.VISIBLE);
+                        }
+                        tab_my_tickets.setEnabled(false);
+                        tab_my_tickets.setClickable(false);
                         loadTicketList(unfocusList, false);
-                    }
+                        break;
                 }
             }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
         });
+
         //
     }
 

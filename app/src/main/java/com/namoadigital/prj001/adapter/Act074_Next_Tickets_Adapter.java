@@ -69,7 +69,6 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
         this.mValues = mValues;
         this.mFilteredValues = mValues;
         this.isOnlineProcess = isOnlineProcess;
-        notifyDataSetChanged();
     }
 
     private void loadTranslation() {

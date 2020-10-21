@@ -1,0 +1,25 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:state_checked="true"
+        android:drawable="@drawable/my_tickets_tab"
+        />
+
+    <item android:state_checked="false">
+        <shape android:shape="rectangle">
+            <solid
+                android:color="@color/padrao_TRANSPARENT" />
+        </shape>
+    </item>
+
+    <item
+        android:state_enabled="false"
+        android:drawable="@color/namoa_color_light_green4"
+        >
+        <shape android:shape="rectangle">
+            <solid
+                android:color="@color/padrao_TRANSPARENT" />
+        </shape>
+    </item>
+
+</selector>
