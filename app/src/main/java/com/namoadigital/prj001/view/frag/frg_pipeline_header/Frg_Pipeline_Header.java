@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 public class Frg_Pipeline_Header extends Fragment {
@@ -41,6 +42,7 @@ public class Frg_Pipeline_Header extends Fragment {
     private static final String STEP_MAIN_STEP_NUM_PARAM = "STEP_MAIN_STEP_NUM_PARAM";
     private static final String STEP_MAIN_DESC_PARAM = "STEP_MAIN_DESC_PARAM";
     private static final String STEP_MAIN_STEP_NUM_COLOR_PARAM = "STEP_MAIN_STEP_NUM_COLOR_PARAM";
+    private static final String TICKET_OBJ_PARAM = "TICKET_OBJ_PARAM";
     //LUCHE - 14/08/2020 - Agendamento
     private static final String TICKET_SCHEDULE_DATE_PARAM = "TICKET_SCHEDULE_DATE_PARAM";
     private static final String TICKET_SCHEDULE_DESC_PARAM= "TICKET_SCHEDULE_DESC_PARAM";
@@ -79,6 +81,8 @@ public class Frg_Pipeline_Header extends Fragment {
     private TextView tv_prod_desc;
     private TextView tv_ticket_date;
     private TextView tv_site_desc;
+    private TextView tv_client;
+    private TextView tv_contract;
     private TextView tv_serial;
     private TextView tv_desc_origin;
     private ImageView iv_action_shortcut;
@@ -107,12 +111,13 @@ public class Frg_Pipeline_Header extends Fragment {
     private TextView tv_origin_end_user;
     private ImageView iv_origin_end_user;
     private View pipeline_origin_header;
+    private TK_Ticket mTicket;
 
     public Frg_Pipeline_Header() {
         // Required empty public constructor
     }
 
-    public static Frg_Pipeline_Header newInstanceForPipeline(String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String status_desc, int status_color, String desc_origin_param, String btn_sync_description_param, boolean btn_sync_status_param) {
+    public static Frg_Pipeline_Header newInstanceForPipeline(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String status_desc, int status_color, String desc_origin_param, String btn_sync_description_param, boolean btn_sync_status_param) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
         args.putString(HEADER_PROFILE_PARAM, PIPELINE);
@@ -127,12 +132,13 @@ public class Frg_Pipeline_Header extends Fragment {
         args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
         args.putString(BTN_SYNC_DESCRIPTION_PARAM, btn_sync_description_param);
         args.putBoolean(BTN_SYNC_STATUS_PARAM, btn_sync_status_param);
+        args.putSerializable(TICKET_OBJ_PARAM, mTicket );
         //
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static Frg_Pipeline_Header newInstanceForApprovalOrAction(String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String desc_origin_param, int step_main_step_num_color_param, String step_main_step_num_param, String step_main_desc_param) {
+    public static Frg_Pipeline_Header newInstanceForApprovalOrAction(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String desc_origin_param, int step_main_step_num_color_param, String step_main_step_num_param, String step_main_desc_param) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
         args.putString(HEADER_PROFILE_PARAM, APPROVAL);
@@ -146,11 +152,12 @@ public class Frg_Pipeline_Header extends Fragment {
         args.putInt(STEP_MAIN_STEP_NUM_COLOR_PARAM, step_main_step_num_color_param);
         args.putString(STEP_MAIN_STEP_NUM_PARAM, step_main_step_num_param);
         args.putString(STEP_MAIN_DESC_PARAM, step_main_desc_param);
+        args.putSerializable(TICKET_OBJ_PARAM, mTicket );
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static Frg_Pipeline_Header newInstanceForProduct(String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String desc_origin_param) {
+    public static Frg_Pipeline_Header newInstanceForProduct(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String desc_origin_param) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
         args.putString(HEADER_PROFILE_PARAM, PRODUCT);
@@ -161,11 +168,12 @@ public class Frg_Pipeline_Header extends Fragment {
         args.putString(SITE_DESC_PARAM, site_desc);
         args.putString(SERIAL_ID_PARAM, serial_id);
         args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
+        args.putSerializable(TICKET_OBJ_PARAM, mTicket );
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static Frg_Pipeline_Header newInstanceForOrigin(String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String origin_type, int status_color, String origin_complete_path, String origin_desc, String origin_end_date, String origin_end_user) {
+    public static Frg_Pipeline_Header newInstanceForOrigin(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String origin_type, int status_color, String origin_complete_path, String origin_desc, String origin_end_date, String origin_end_user) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
         args.putString(HEADER_PROFILE_PARAM, ORIGIN);
@@ -181,11 +189,12 @@ public class Frg_Pipeline_Header extends Fragment {
         args.putString(ORIGIN_DESC, origin_desc);
         args.putString(ORIGIN_END_DATE, origin_end_date);
         args.putString(ORIGIN_END_USER, origin_end_user);
+        args.putSerializable(TICKET_OBJ_PARAM, mTicket );
 
         fragment.setArguments(args);
         return fragment;
     }
-    //TODO IMPLEMENTAR O SET DAS INFORMAÇÕES - CONTINUAR DAQUI
+
     public static Frg_Pipeline_Header newInstanceForSchedule(String ticket_id, String serial_id, String prod_desc, String schedule_desc,String schedule_comment, String schedule_date) {
         Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
         Bundle args = new Bundle();
@@ -226,6 +235,7 @@ public class Frg_Pipeline_Header extends Fragment {
             origin_desc = getArguments().getString(ORIGIN_DESC,"");
             origin_end_date = getArguments().getString(ORIGIN_END_DATE,"");
             origin_end_user = getArguments().getString(ORIGIN_END_USER,"");
+            mTicket = (TK_Ticket) getArguments().getSerializable(TICKET_OBJ_PARAM);
             //
         }
     }
@@ -242,6 +252,8 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_prod_desc = pipeline_header_view.findViewById(R.id.frg_ticket_tv_prod_desc);
         tv_ticket_date = pipeline_header_view.findViewById(R.id.frg_ticket_tv_ticket_date);
         tv_site_desc = pipeline_header_view.findViewById(R.id.frg_ticket_tv_site_desc);
+        tv_client = pipeline_header_view.findViewById(R.id.frg_ticket_tv_client_name);
+        tv_contract = pipeline_header_view.findViewById(R.id.frg_ticket_tv_contract_desc);
         tv_serial = pipeline_header_view.findViewById(R.id.frg_ticket_tv_serial);
         tv_desc_origin = pipeline_header_view.findViewById(R.id.frg_ticket_tv_desc_origin);
         iv_action_shortcut = pipeline_header_view.findViewById(R.id.frg_ticket_iv_action_shortcut);
@@ -388,6 +400,8 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_ticket_id.setVisibility(View.VISIBLE);
         tv_ticket_date.setVisibility(View.VISIBLE);
         tv_site_desc.setVisibility(View.VISIBLE);
+        tv_contract.setVisibility(View.VISIBLE);
+        tv_client.setVisibility(View.VISIBLE);
         tv_serial.setVisibility(View.VISIBLE);
         iv_action_shortcut.setVisibility(View.GONE);
         cv_btn_sync.setVisibility(View.GONE);
@@ -406,6 +420,18 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_ticket_id.setText(ticket_id_param);
         tv_ticket_date.setText(ticket_date_param);
         tv_site_desc.setText(site_desc_param);
+        if(mTicket != null) {
+            if(mTicket.getContract_desc() != null) {
+                tv_contract.setText(mTicket.getContract_desc());
+            }else{
+                tv_contract.setVisibility(View.GONE);
+            }
+            if(mTicket.getClient_name() != null) {
+                tv_client.setText(mTicket.getClient_name());
+            }else{
+                tv_client.setVisibility(View.GONE);
+            }
+        }
         tv_serial.setText(serial_id_param);
         tv_prod_desc.setText(prod_desc_param);
         tv_status.setText(status_desc_param);

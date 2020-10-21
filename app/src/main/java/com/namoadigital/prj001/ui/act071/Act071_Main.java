@@ -401,6 +401,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             }
         }else{
             mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForApprovalOrAction(
+                mPresenter.getTicketbyPk(mActionPrefix,mActionCode),
                 mTicketID,
                 ToolBox_Inf.millisecondsToString(
                     ToolBox_Inf.dateToMilliseconds(mPipelineHeaderOpen_date),

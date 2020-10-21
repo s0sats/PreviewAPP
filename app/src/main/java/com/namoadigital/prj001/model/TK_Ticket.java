@@ -12,9 +12,10 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class TK_Ticket implements Cloneable {
+public class TK_Ticket implements Cloneable, Serializable {
     @Expose
     private long customer_code;//pk
     @Expose
@@ -97,6 +98,38 @@ public class TK_Ticket implements Cloneable {
     @Expose
     @Nullable
     private Integer schedule_exec;
+    @Nullable
+    private Integer client_code;
+    @Nullable
+    private String client_id;
+    @Nullable
+    private String client_name;
+    @Nullable
+    private String address_country;
+    @Nullable
+    private String address_state;
+    @Nullable
+    private String address_city;
+    @Nullable
+    private String address_district;
+    @Nullable
+    private String address_street;
+    @Nullable
+    private String address_num;
+    @Nullable
+    private String address_complement;
+    @Nullable
+    private String address_zipcode;
+    @Nullable
+    private String address_lat;
+    @Nullable
+    private String address_lng;
+    @Nullable
+    private Integer contract_code;
+    @Nullable
+    private String contract_id;
+    @Nullable
+    private String contract_desc;
     @Expose
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
     @Expose
@@ -614,6 +647,150 @@ public class TK_Ticket implements Cloneable {
         this.schedule_exec = schedule_exec;
     }
 
+    @Nullable
+    public Integer getClient_code() {
+        return client_code;
+    }
+
+    public void setClient_code(@Nullable Integer client_code) {
+        this.client_code = client_code;
+    }
+
+    @Nullable
+    public String getClient_id() {
+        return client_id;
+    }
+
+    public void setClient_id(@Nullable String client_id) {
+        this.client_id = client_id;
+    }
+
+    @Nullable
+    public String getClient_name() {
+        return client_name;
+    }
+
+    public void setClient_name(@Nullable String client_name) {
+        this.client_name = client_name;
+    }
+
+    @Nullable
+    public String getAddress_country() {
+        return address_country;
+    }
+
+    public void setAddress_country(@Nullable String address_country) {
+        this.address_country = address_country;
+    }
+
+    @Nullable
+    public String getAddress_state() {
+        return address_state;
+    }
+
+    public void setAddress_state(@Nullable String address_state) {
+        this.address_state = address_state;
+    }
+
+    @Nullable
+    public String getAddress_city() {
+        return address_city;
+    }
+
+    public void setAddress_city(@Nullable String address_city) {
+        this.address_city = address_city;
+    }
+
+    @Nullable
+    public String getAddress_district() {
+        return address_district;
+    }
+
+    public void setAddress_district(@Nullable String address_district) {
+        this.address_district = address_district;
+    }
+
+    @Nullable
+    public String getAddress_street() {
+        return address_street;
+    }
+
+    public void setAddress_street(@Nullable String address_street) {
+        this.address_street = address_street;
+    }
+
+    @Nullable
+    public String getAddress_num() {
+        return address_num;
+    }
+
+    public void setAddress_num(@Nullable String address_num) {
+        this.address_num = address_num;
+    }
+
+    @Nullable
+    public String getAddress_complement() {
+        return address_complement;
+    }
+
+    public void setAddress_complement(@Nullable String address_complement) {
+        this.address_complement = address_complement;
+    }
+
+    @Nullable
+    public String getAddress_zipcode() {
+        return address_zipcode;
+    }
+
+    public void setAddress_zipcode(@Nullable String address_zipcode) {
+        this.address_zipcode = address_zipcode;
+    }
+
+    @Nullable
+    public String getAddress_lat() {
+        return address_lat;
+    }
+
+    public void setAddress_lat(@Nullable String address_lat) {
+        this.address_lat = address_lat;
+    }
+
+    @Nullable
+    public String getAddress_lng() {
+        return address_lng;
+    }
+
+    public void setAddress_lng(@Nullable String address_lng) {
+        this.address_lng = address_lng;
+    }
+
+    @Nullable
+    public Integer getContract_code() {
+        return contract_code;
+    }
+
+    public void setContract_code(@Nullable Integer contract_code) {
+        this.contract_code = contract_code;
+    }
+
+    @Nullable
+    public String getContract_id() {
+        return contract_id;
+    }
+
+    public void setContract_id(@Nullable String contract_id) {
+        this.contract_id = contract_id;
+    }
+
+    @Nullable
+    public String getContract_desc() {
+        return contract_desc;
+    }
+
+    public void setContract_desc(@Nullable String contract_desc) {
+        this.contract_desc = contract_desc;
+    }
+
     public ArrayList<TK_Ticket_Step> getStep() {
         return step;
     }
@@ -629,7 +806,6 @@ public class TK_Ticket implements Cloneable {
     public void setProduct(ArrayList<TK_Ticket_Product> product) {
         this.product = product;
     }
-
 
 //TODO - VERIFICAR SE METODO AINDA UTEIS E MOVER PARA STEP QE É QUE TEM LISTA DE CONTROLS AGORA.
 //region NOVO_TICKET_CTRL_NA_STEP

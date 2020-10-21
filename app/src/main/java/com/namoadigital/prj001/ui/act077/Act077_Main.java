@@ -163,6 +163,7 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
         fm = getSupportFragmentManager();
         TK_Ticket_Step originStep = tkTicket.getStep().get(0);
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForOrigin(
+                tkTicket,
                 tkTicket.getTicket_id(),
                 ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(tkTicket.getOpen_date()),

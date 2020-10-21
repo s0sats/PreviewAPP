@@ -219,6 +219,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         }
 
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForOrigin(
+                tkTicket,
                 tkTicket.getTicket_id(),
                 ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(tkTicket.getOpen_date()),

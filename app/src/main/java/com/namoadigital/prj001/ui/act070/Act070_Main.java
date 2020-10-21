@@ -314,6 +314,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     private void iniHeaderFrag() {
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForPipeline(
+            mTicket,
             mTicket.getTicket_id(),
             ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(mTicket.getOpen_date()),

@@ -219,7 +219,8 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
 
         TK_Ticket_Step originStep = tkTicket.getStep().get(0);
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForOrigin(
-                tkTicket.getTicket_id(),
+            tkTicket,
+            tkTicket.getTicket_id(),
                 ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(tkTicket.getOpen_date()),
                         ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
