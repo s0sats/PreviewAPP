@@ -26,9 +26,6 @@ public class SO_Favorite_Response implements Serializable {
     @SerializedName("priority")
     @Expose
     private List<SO_Favorite_Priority> priority;
-    @SerializedName("pipeline")
-    @Expose
-    private List<SO_Favorite_Pipeline> pipeline;
 
     public String getApp() {
         return app;
@@ -68,14 +65,6 @@ public class SO_Favorite_Response implements Serializable {
 
     public void setPriority(List<SO_Favorite_Priority> priority) {
         this.priority = priority;
-    }
-
-    public List<SO_Favorite_Pipeline> getPipeline() {
-        return pipeline;
-    }
-
-    public void setPipeline(List<SO_Favorite_Pipeline> pipeline) {
-        this.pipeline = pipeline;
     }
 
     public String getLink_url() {
