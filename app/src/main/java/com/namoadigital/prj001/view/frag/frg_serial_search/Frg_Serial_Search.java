@@ -31,6 +31,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Frg_Serial_Search extends Fragment {
@@ -143,7 +144,9 @@ public class Frg_Serial_Search extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frg_serial_search, container, false);
         mPresenter = new Frg_Serial_Search_Presenter(getContext());
+
         iniVar(view);
+
         iniAction();
 
         return view;
@@ -530,7 +533,6 @@ public class Frg_Serial_Search extends Fragment {
         //
         setTranslation();
     }
-
     private void setTranslation() {
         btn_nfc_reader.setText(hmAux_Trans.get("btn_enable_nfc"));
         tv_product_id.setText(hmAux_Trans.get("product_lbl"));

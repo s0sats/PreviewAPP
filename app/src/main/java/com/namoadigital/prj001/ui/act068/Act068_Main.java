@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,6 +44,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
 import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
+import com.namoadigital.prj001.view.frag.frg_ticket_search.Frg_Ticket_Search;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +70,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private int syncs_qty;
     private boolean nextTicketsFlow=false;
     private ArrayList<HMAux> wsResult = new ArrayList<>();
+    private ViewPager vpSerialTicket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,9 +177,28 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private void initVars() {
         recoverIntentsInfo();
         //
+        vpSerialTicket = findViewById(R.id.act068_vp_serial_ticket);
+        //
         fm = getSupportFragmentManager();
         //
-        mFrgSerialSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.act068_frg_serial_search);
+        setFrgSerialSearch();
+        SearchPagerAdapter adapter = new SearchPagerAdapter(fm , mFrgSerialSearch, new Frg_Ticket_Search());
+        vpSerialTicket.setAdapter(adapter);
+        //
+        mPresenter = new Act068_Main_Presenter(
+            context,this,hmAux_Trans
+        );
+        //
+        mPresenter.getSync();
+        mPresenter.getPendencies();
+        mPresenter.getMD_Products();
+        //
+        applyBundleSearchParams();
+    }
+
+    private void setFrgSerialSearch() {
+        //        mFrgSerialSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.act068_frg_serial_search);
+        mFrgSerialSearch = new Frg_Serial_Search();
         mFrgSerialSearch.setHmAux_Trans(hmAux_Trans_frg_serial_search);
         mFrgSerialSearch.setSupportNFC(supportNFC);
         controls_sta.addAll(mFrgSerialSearch.getControlsSta());
@@ -222,16 +246,6 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         mFrgSerialSearch.setBtn_Option_05_BackGround(R.drawable.namoa_cell_2_states);
         mFrgSerialSearch.setBtn_Option_05_Label(hmAux_Trans.get("btn_scheduled_tickets"));
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.VISIBLE);
-        //
-        mPresenter = new Act068_Main_Presenter(
-            context,this,hmAux_Trans
-        );
-        //
-        mPresenter.getSync();
-        mPresenter.getPendencies();
-        mPresenter.getMD_Products();
-        //
-        applyBundleSearchParams();
     }
 
     private void processScheduledTickets() {
@@ -766,5 +780,29 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     protected void processRefreshMessage(String mType, String mValue, String mActivity) {
         super.processRefreshMessage(mType, mValue, mActivity);
         iniUIFooter();
+    }
+
+    /**
+     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
+     * sequence.
+     */
+    private class SearchPagerAdapter extends FragmentStatePagerAdapter {
+        List<Fragment> fragments = new ArrayList<>();
+
+        public SearchPagerAdapter(FragmentManager fm, Frg_Serial_Search frgSerialSearch, Frg_Ticket_Search frgTicketSearch) {
+            super(fm);
+            fragments.add(frgSerialSearch);
+            fragments.add(frgTicketSearch);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
     }
 }
