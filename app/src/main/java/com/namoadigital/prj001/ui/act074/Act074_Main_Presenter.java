@@ -299,19 +299,24 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
             @Override
             public void run() {
                 List<HMAux> auxTickets = getOffline_tickets();
+                if (auxTickets != null && auxTickets.size() > 0) {
 
-                generateTicketVhList(auxTickets);
 
-                ((Act074_Main) context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (hasUserFocus) {
-                            mView.loadTicketList(focusList, hasUserFocus);
-                        } else {
-                            mView.loadTicketList(unfocusList, hasUserFocus);
+                    generateTicketVhList(auxTickets);
+
+                    ((Act074_Main) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (hasUserFocus) {
+                                mView.loadTicketList(focusList, hasUserFocus);
+                            } else {
+                                mView.loadTicketList(unfocusList, hasUserFocus);
+                            }
                         }
-                    }
-                });
+                    });
+                }else{
+                    mView.showEmptyListMsg(hmAux_Trans.get("alert_no_tickets_ttl"), hmAux_Trans.get("alert_no_tickets_msg"));
+                }
             }
         });
         mThread.start();
