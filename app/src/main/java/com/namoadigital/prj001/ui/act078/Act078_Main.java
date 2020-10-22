@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -76,8 +78,27 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
     private LinearLayout ll_open_username;
     private LinearLayout ll_open_comment;
     private LinearLayout ll_open_photo;
-
     private String actionPhotoLocalPath;
+    //Implementação contrato e cliente
+    private ConstraintLayout cl_client_address;
+    private TextView tv_client_address_ttl;
+    private TextView tv_client_address_street_lbl;
+    private TextView tv_client_address_street_val;
+    private TextView tv_client_address_num_lbl;
+    private TextView tv_client_address_num_val;
+    private TextView tv_client_address_district_lbl;
+    private TextView tv_client_address_district_val;
+    private ImageButton btn_navegation;
+    private TextView tv_client_address_city_lbl;
+    private TextView tv_client_address_city_val;
+    private TextView tv_client_address_state_lbl;
+    private TextView tv_client_address_state_val;
+    private TextView tv_client_address_country_lbl;
+    private TextView tv_client_address_country_val;
+    private TextView tv_client_address_complement_lbl;
+    private TextView tv_client_address_complement_val;
+    private TextView tv_client_address_zipcode_lbl;
+    private TextView tv_client_address_zipcode_val;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +139,26 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         tv_open_email_val = findViewById(R.id.act078_tv_open_email_val);
         tv_open_phone_lbl = findViewById(R.id.act078_tv_open_phone_lbl);
         tv_open_phone_val = findViewById(R.id.act078_tv_open_phone_val);
+        //Campos contract e client
+        cl_client_address = findViewById(R.id.act078_cl_client_address);
+        tv_client_address_ttl = findViewById(R.id.act078_tv_client_address_ttl);
+        tv_client_address_street_lbl = findViewById(R.id.act078_tv_client_address_street_lbl);
+        tv_client_address_street_val = findViewById(R.id.act078_tv_client_address_street_val);
+        tv_client_address_num_lbl = findViewById(R.id.act078_tv_client_address_num_lbl);
+        tv_client_address_num_val = findViewById(R.id.act078_tv_client_address_num_val);
+        tv_client_address_district_lbl = findViewById(R.id.act078_tv_client_address_district_lbl);
+        tv_client_address_district_val = findViewById(R.id.act078_tv_client_address_district_val);
+        btn_navegation = findViewById(R.id.act078_btn_navegation);
+        tv_client_address_city_lbl = findViewById(R.id.act078_tv_client_address_city_lbl);
+        tv_client_address_city_val = findViewById(R.id.act078_tv_client_address_city_val);
+        tv_client_address_state_lbl = findViewById(R.id.act078_tv_client_address_state_lbl);
+        tv_client_address_state_val = findViewById(R.id.act078_tv_client_address_state_val);
+        tv_client_address_country_lbl = findViewById(R.id.act078_tv_client_address_country_lbl);
+        tv_client_address_country_val = findViewById(R.id.act078_tv_client_address_country_val);
+        tv_client_address_complement_lbl = findViewById(R.id.act078_tv_client_address_complement_lbl);
+        tv_client_address_complement_val = findViewById(R.id.act078_tv_client_address_complement_val);
+        tv_client_address_zipcode_lbl = findViewById(R.id.act078_tv_client_address_zipcode_lbl);
+        tv_client_address_zipcode_val = findViewById(R.id.act078_tv_client_address_zipcode_val);
     }
 
     private void initVars() {
@@ -155,6 +196,16 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         tv_open_username_lbl.setText(hmAux_Trans.get("open_username_lbl"));
         tv_open_email_lbl.setText(hmAux_Trans.get("open_email_lbl"));
         tv_open_phone_lbl.setText(hmAux_Trans.get("open_phone_lbl"));
+        //
+        tv_client_address_ttl.setText(hmAux_Trans.get("client_address_ttl"));
+        tv_client_address_street_lbl.setText(hmAux_Trans.get("client_address_street_lbl"));
+        tv_client_address_num_lbl.setText(hmAux_Trans.get("client_address_num_lbl"));
+        tv_client_address_district_lbl.setText(hmAux_Trans.get("client_address_district_lbl"));
+        tv_client_address_city_lbl.setText(hmAux_Trans.get("client_address_city_lbl"));
+        tv_client_address_state_lbl.setText(hmAux_Trans.get("client_address_state_lbl"));
+        tv_client_address_country_lbl.setText(hmAux_Trans.get("client_address_country_lbl"));
+        tv_client_address_complement_lbl.setText(hmAux_Trans.get("client_address_complement_lbl"));
+        tv_client_address_zipcode_lbl.setText(hmAux_Trans.get("client_address_zipcode_lbl"));
     }
 
     private void initFabMenuItens() {
@@ -357,6 +408,18 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         transList.add("open_email_lbl");
         transList.add("open_phone_lbl");
         //
+        transList.add("client_address_ttl");
+        transList.add("client_address_street_lbl");
+        transList.add("client_address_num_lbl");
+        transList.add("client_address_district_lbl");
+        transList.add("client_address_city_lbl");
+        transList.add("client_address_state_lbl");
+        transList.add("client_address_country_lbl");
+        transList.add("client_address_complement_lbl");
+        transList.add("client_address_zipcode_lbl");
+        transList.add("alert_no_navegation_app_found_ttl");
+        transList.add("alert_no_navegation_app_found_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -403,6 +466,61 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         setHeaderFragment(ticket);
 
         setOpenFields(ticket);
+
+        setContractAndClientFields(ticket);
+    }
+
+    private void setContractAndClientFields(final TK_Ticket ticket) {
+        //
+        if(ticket.getAddress_country() != null && !ticket.getAddress_country().isEmpty()) {
+            tv_client_address_street_val.setText(ticket.getAddress_street());
+            tv_client_address_num_val.setText(ticket.getAddress_num());
+            tv_client_address_district_val.setText(ticket.getAddress_district());
+            tv_client_address_city_val.setText(ticket.getAddress_city());
+            tv_client_address_state_val.setText(ticket.getAddress_state());
+            tv_client_address_country_val.setText(ticket.getAddress_country());
+            tv_client_address_complement_val.setText(ticket.getAddress_complement());
+            tv_client_address_zipcode_val.setText(ticket.getAddress_zipcode());
+            //
+            if (ticket.getAddress_complement() == null || ticket.getAddress_complement().isEmpty()) {
+                tv_client_address_complement_lbl.setVisibility(View.GONE);
+                tv_client_address_complement_val.setVisibility(View.GONE);
+            }
+            //
+            if (ticket.getAddress_zipcode() == null || ticket.getAddress_zipcode().isEmpty()) {
+                tv_client_address_zipcode_lbl.setVisibility(View.GONE);
+                tv_client_address_zipcode_val.setVisibility(View.GONE);
+            }
+            //
+            btn_navegation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    callNavegationIntent(
+                        mPresenter.getNavegationIntentData(ticket)
+                    );
+                }
+            });
+        }else{
+            cl_client_address.setVisibility(View.GONE);
+        }
+    }
+
+    private void callNavegationIntent(String navegationInfo){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        //Uri geoLocation = Uri.parse("geo:0,0?q=Alameda+São+Bernardo+268+09210725+Santo+André");
+        Uri geoLocation = Uri.parse(navegationInfo);
+        intent.setData(geoLocation);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }else{
+            ToolBox.alertMSG(
+                context,
+                hmAux_Trans.get("alert_no_navegation_app_found_ttl"),
+                hmAux_Trans.get("alert_no_navegation_app_found_msg"),
+                null,
+                0
+            );
+        }
     }
 
     private void setOpenFields(TK_Ticket ticket) {

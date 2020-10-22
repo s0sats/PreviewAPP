@@ -5,7 +5,9 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 
-public class TK_Ticket_Approval {
+import java.io.Serializable;
+
+public class TK_Ticket_Approval implements Serializable {
     @Expose
     private long customer_code;//pk
     @Expose

@@ -39,4 +39,21 @@ public class Act078_Main_Presenter implements Act078_Main_Contract.I_Presenter{
 
         mView.loadTicketOrigin(ticket);
     }
+
+    @Override
+    public String getNavegationIntentData(TK_Ticket ticket) {
+        StringBuilder sb = new StringBuilder();
+        sb
+            .append("geo:")
+            .append(ticket.getAddress_lat())
+            .append(ticket.getAddress_lng())
+            .append("?q=")
+            .append(ticket.getAddress_street() != null ? ticket.getAddress_street().trim().replace(" ","+") + "+" : "")
+            .append(ticket.getAddress_num() != null ? ticket.getAddress_num().trim().replace(" ","+") + "+" : "")
+            .append(ticket.getAddress_zipcode() != null ? ticket.getAddress_zipcode().trim().replace(" ","+") + "+" : "")
+            .append(ticket.getAddress_city() != null ? ticket.getAddress_city().trim().replace(" ","+") + "+" : "")
+            ;
+        //
+        return sb.toString();
+    }
 }

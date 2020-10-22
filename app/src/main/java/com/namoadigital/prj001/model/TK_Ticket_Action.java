@@ -4,7 +4,9 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 
-public class TK_Ticket_Action {
+import java.io.Serializable;
+
+public class TK_Ticket_Action implements Serializable {
     private long customer_code;//pk
     private int ticket_prefix;//pk
     private int ticket_code;//pk

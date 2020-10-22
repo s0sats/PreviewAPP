@@ -2,7 +2,9 @@ package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
 
-public class TK_Ticket_Measure {
+import java.io.Serializable;
+
+public class TK_Ticket_Measure implements Serializable {
     @Expose
     private long customer_code;//pk
     @Expose

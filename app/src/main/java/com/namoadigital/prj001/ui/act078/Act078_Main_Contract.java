@@ -11,5 +11,7 @@ public interface Act078_Main_Contract {
     interface I_Presenter{
 
         void getStepOrigin(int mTkPrefix, int mTkCode);
+
+        String getNavegationIntentData(TK_Ticket ticket);
     }
 }
