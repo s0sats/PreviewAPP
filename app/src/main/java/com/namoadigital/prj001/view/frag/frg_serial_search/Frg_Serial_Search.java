@@ -121,9 +121,20 @@ public class Frg_Serial_Search extends Fragment {
         void onSearchClick(String btn_Action, HMAux optionsInfo);
 
     }
+    private I_Frg_Serial_Search_Load load_delegate;
+    public interface I_Frg_Serial_Search_Load{
+        /**
+         * Interface disparada após rodar Setar as views.
+         */
+        void onFragIsReady();
+    }
 
     public void setOnSearchClickListener(I_Frg_Serial_Search delegate) {
         this.delegate = delegate;
+    }
+
+    public void setLoad_delegate(I_Frg_Serial_Search_Load load_delegate) {
+        this.load_delegate = load_delegate;
     }
 
     private ArrayList<MKEditTextNM> controls_sta;
@@ -146,6 +157,10 @@ public class Frg_Serial_Search extends Fragment {
         mPresenter = new Frg_Serial_Search_Presenter(getContext());
 
         iniVar(view);
+
+        if(load_delegate != null){
+            load_delegate.onFragIsReady();
+        }
 
         iniAction();
 

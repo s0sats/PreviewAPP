@@ -5,8 +5,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
+
+import static com.namoadigital.prj001.util.ConstantBaseApp.MAIN_HMAUX_TRANS_KEY;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,10 +27,31 @@ public class Frg_Ticket_Search extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    public static final String CONTRACT_ID = "CONTRACT_ID";
+    public static final String CLIENT_ID = "CLIENT_ID";
+    public static final String TICKET_ID = "TICKET_ID";
+    private Frg_Serial_Search.I_Frg_Serial_Search delegate;
+
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private HMAux hmAux_Trans;
+    private Frg_Ticket_Search_Presenter mPresenter;
+    private Button btn_option_01;
+    private Button btn_option_02;
+    private Button btn_option_03;
+    private Button btn_option_04;
+    private Button btn_option_05;
+    private LinearLayout ll_contract;
+    private LinearLayout ll_client;
+    private LinearLayout ll_ticket;
+    private MKEditTextNM mket_contract;
+    private MKEditTextNM mket_client;
+    private MKEditTextNM mket_ticket;
+
+
+    public void setOnSearchClickListener(Frg_Serial_Search.I_Frg_Serial_Search delegate) {
+        this.delegate = delegate;
+    }
 
     public Frg_Ticket_Search() {
         // Required empty public constructor
@@ -32,16 +61,15 @@ public class Frg_Ticket_Search extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     *
      * @return A new instance of fragment Frg_Ticket_Search.
      */
     // TODO: Rename and change types and number of parameters
-    public static Frg_Ticket_Search newInstance(String param1, String param2) {
+    public static Frg_Ticket_Search newInstance(HMAux hmAux_Trans) {
         Frg_Ticket_Search fragment = new Frg_Ticket_Search();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+
+        args.putSerializable(MAIN_HMAUX_TRANS_KEY, hmAux_Trans);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,15 +78,117 @@ public class Frg_Ticket_Search extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            hmAux_Trans = (HMAux) getArguments().getSerializable(MAIN_HMAUX_TRANS_KEY);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.frg_ticket_search, container, false);
+        View view = inflater.inflate(R.layout.frg_ticket_search, container, false);
+
+        mPresenter = new Frg_Ticket_Search_Presenter(getContext());
+
+        iniVar(view);
+
+        iniAction();
+
+        return view;
+    }
+
+    private void iniAction() {
+        btn_option_01.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delegate.onSearchClick(Frg_Serial_Search.BTN_OPTION_01,getHMAuxValues());
+            }
+        });
+        btn_option_02.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delegate.onSearchClick(Frg_Serial_Search.BTN_OPTION_02,null);
+            }
+        });
+        btn_option_03.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delegate.onSearchClick(Frg_Serial_Search.BTN_OPTION_03,null);
+            }
+        });
+
+        btn_option_05.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delegate.onSearchClick(Frg_Serial_Search.BTN_OPTION_05,null);
+            }
+        });
+    }
+
+    private void iniVar(View view) {
+        //
+        bindViews(view);
+        //
+        initButtonsVisibility();
+        //
+        setupButton();
+        //
+        apllyUserProfile();
+        //
+
+    }
+
+    private void setupButton() {
+        btn_option_01.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_3_states));
+        btn_option_01.setText(hmAux_Trans.get("btn_check_exists"));
+        btn_option_02.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
+        btn_option_02.setText(hmAux_Trans.get("btn_sync_ticket"));
+        btn_option_03.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
+        btn_option_03.setText(hmAux_Trans.get("btn_my_tickets"));
+        btn_option_05.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
+        btn_option_05.setText(hmAux_Trans.get("btn_scheduled_tickets"));
+    }
+
+    private void apllyUserProfile() {
+        if(mPresenter.getProfileForSearchContractId()) {
+            ll_contract.setVisibility(View.VISIBLE);
+        }else{
+            ll_contract.setVisibility(View.GONE);
+        }
+        //
+        if(mPresenter.getProfileForSearchClientId()) {
+            ll_client.setVisibility(View.VISIBLE);
+        }else{
+            ll_client.setVisibility(View.GONE);
+        }
+    }
+
+    private void initButtonsVisibility() {
+        btn_option_01.setVisibility(View.VISIBLE);
+        btn_option_02.setVisibility(View.VISIBLE);
+        btn_option_03.setVisibility(View.VISIBLE);
+        btn_option_04.setVisibility(View.GONE);
+        btn_option_05.setVisibility(View.VISIBLE);
+    }
+
+    private void bindViews(View view) {
+        btn_option_01 =  view.findViewById(R.id.frg_ticket_search_btn_option_01);
+        btn_option_02 =  view.findViewById(R.id.frg_ticket_search_btn_option_02);
+        btn_option_03 =  view.findViewById(R.id.frg_ticket_search_btn_option_03);
+        btn_option_04 =  view.findViewById(R.id.frg_ticket_search_btn_option_04);
+        btn_option_05 =  view.findViewById(R.id.frg_ticket_search_btn_option_05);
+        ll_contract =  view.findViewById(R.id.frg_serial_search_ll_contract);
+        mket_contract =  view.findViewById(R.id.frg_serial_search_mket_contract);
+        ll_client =  view.findViewById(R.id.frg_ticket_search_ll_client);
+        mket_client =  view.findViewById(R.id.frg_ticket_search_mket_client);
+        ll_ticket =  view.findViewById(R.id.frg_ticket_search_ll_ticket);
+        mket_ticket =  view.findViewById(R.id.frg_ticket_search_mket_ticket);
+    }
+
+    public HMAux getHMAuxValues() {
+        HMAux values = new HMAux();
+        values.put(CONTRACT_ID, ToolBox_Inf.removeAllLineBreaks(mket_contract.getText().toString().trim().isEmpty()  ? "" : mket_contract.getText().toString().trim()));
+        values.put(CLIENT_ID, ToolBox_Inf.removeAllLineBreaks(mket_client.getText().toString().trim().isEmpty() ? "" : mket_client.getText().toString().trim()));
+        values.put(TICKET_ID, ToolBox_Inf.removeAllLineBreaks(mket_ticket.getText().toString().trim().isEmpty() ? "" : mket_ticket.getText().toString().trim()));
+        return values;
     }
 }

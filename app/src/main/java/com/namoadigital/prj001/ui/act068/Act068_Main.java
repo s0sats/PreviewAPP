@@ -4,11 +4,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,13 +54,14 @@ import java.util.List;
 import static com.namoadigital.prj001.ui.act074.Act074_Main.ALL_TICKETS_UPDATED;
 import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
 
-public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_Main_Contract.I_View, On_Frg_Serial_Search {
+public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_Main_Contract.I_View, On_Frg_Serial_Search, Frg_Serial_Search.I_Frg_Serial_Search {
 
     public static final String IS_SYNC_PROCESS = "IS_SYNC_PROCESS";
     private Act068_Main_Presenter mPresenter;
     private int pendencies_qty;
     private FragmentManager fm;
     private Frg_Serial_Search mFrgSerialSearch;
+    private Frg_Ticket_Search mFrgTicketSearch;
     private HMAux hmAux_Trans_frg_serial_search;
     protected String mResource_CodeSS = "0";
     private String fragProduct_ID;
@@ -70,7 +73,10 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private int syncs_qty;
     private boolean nextTicketsFlow=false;
     private ArrayList<HMAux> wsResult = new ArrayList<>();
-    private ViewPager vpSerialTicket;
+    private RadioGroup tabs;
+    private RadioButton tab_serial_search;
+    private RadioButton tab_ticket_search;
+    private boolean isFragSerialSearch = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +161,9 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         transList.add("alert_form_location_pendency_ttl");
         transList.add("alert_form_location_pendency_msg");
         //
+        transList.add("serial_search_option_tab");
+        transList.add("ticket_search_option_tab");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -177,57 +186,40 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private void initVars() {
         recoverIntentsInfo();
         //
-        vpSerialTicket = findViewById(R.id.act068_vp_serial_ticket);
+        tabs = findViewById(R.id.act068_tabs);
+        tab_serial_search = findViewById(R.id.act068_tab_serial_search);
+        tab_ticket_search = findViewById(R.id.act068_tab_ticket_search);
+        //
+        tab_serial_search.setText(hmAux_Trans.get("serial_search_option_tab"));
+        tab_ticket_search.setText(hmAux_Trans.get("ticket_search_option_tab"));
         //
         fm = getSupportFragmentManager();
         //
-        setFrgSerialSearch();
-        SearchPagerAdapter adapter = new SearchPagerAdapter(fm , mFrgSerialSearch, new Frg_Ticket_Search());
-        vpSerialTicket.setAdapter(adapter);
+        initFragment();
         //
         mPresenter = new Act068_Main_Presenter(
             context,this,hmAux_Trans
         );
+    }
+
+    private void setupFragSearch() {
+        //
+        applyBundleSearchParams();
         //
         mPresenter.getSync();
         mPresenter.getPendencies();
         mPresenter.getMD_Products();
-        //
-        applyBundleSearchParams();
+
     }
 
     private void setFrgSerialSearch() {
         //        mFrgSerialSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.act068_frg_serial_search);
-        mFrgSerialSearch = new Frg_Serial_Search();
+
         mFrgSerialSearch.setHmAux_Trans(hmAux_Trans_frg_serial_search);
         mFrgSerialSearch.setSupportNFC(supportNFC);
         controls_sta.addAll(mFrgSerialSearch.getControlsSta());
         mFrgSerialSearch.setClickListener(actionBTN);
-        mFrgSerialSearch.setOnSearchClickListener(new Frg_Serial_Search.I_Frg_Serial_Search() {
-            @Override
-            public void onSearchClick(String btn_Action, HMAux optionsInfo) {
-                switch (btn_Action) {
-                    case Frg_Serial_Search.BTN_OPTION_01:
-                        checkFlow(optionsInfo);
-                        break;
-                    case Frg_Serial_Search.BTN_OPTION_02:
-                        mPresenter.executeWSTicketDownload();
-                        break;
-                    case Frg_Serial_Search.BTN_OPTION_03:
-                        if(ToolBox_Con.isOnline(context)) {
-                            processNextTickets();
-                        }else{
-                            callAct074();
-                        }
-                        break;
-                    case Frg_Serial_Search.BTN_OPTION_05:
-                        processScheduledTickets();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
+        mFrgSerialSearch.setOnSearchClickListener(this);
         //
         mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
@@ -287,6 +279,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             } else {
                 mFrgSerialSearch.setShowTree(true);
             }
+        }else{
+            mFrgSerialSearch.setShowTree(true);
         }
         //
         if (!fragSerial_ID.isEmpty() || !fragTracking.isEmpty()) {
@@ -443,13 +437,28 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     private void initAction() {
-
+        tabs.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                //
+                switch (checkedId) {
+                    case R.id.act068_tab_serial_search:
+                        isFragSerialSearch = true;
+                        setFrag(mFrgSerialSearch, "Frg_Serial_Search");
+                        break;
+                    case R.id.act068_tab_ticket_search:
+                        isFragSerialSearch = false;
+                        setFrag(mFrgTicketSearch, "Frg_Ticket_Search");
+                        break;
+                }
+            }
+        });
     }
 
 
     @Override
     public boolean hasHideSerialInfoChk() {
-        return true;
+        return true ;
     }
 
     @Override
@@ -510,6 +519,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         if (nextTicketsFlow) {
             callAct074();
         } else {
+            //todo verificar qual fragment esta ativo.
             checkFlow(mFrgSerialSearch.getHMAuxValues());
         }
     }
@@ -782,27 +792,57 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         iniUIFooter();
     }
 
-    /**
-     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
-     * sequence.
-     */
-    private class SearchPagerAdapter extends FragmentStatePagerAdapter {
-        List<Fragment> fragments = new ArrayList<>();
+    private void initFragment() {
+        FragmentTransaction transaction = fm.beginTransaction();
 
-        public SearchPagerAdapter(FragmentManager fm, Frg_Serial_Search frgSerialSearch, Frg_Ticket_Search frgTicketSearch) {
-            super(fm);
-            fragments.add(frgSerialSearch);
-            fragments.add(frgTicketSearch);
-        }
+        mFrgTicketSearch = Frg_Ticket_Search.newInstance(hmAux_Trans_frg_serial_search);
+        mFrgTicketSearch.setOnSearchClickListener(this);
+        mFrgSerialSearch = new Frg_Serial_Search();
+        mFrgSerialSearch.setLoad_delegate(new Frg_Serial_Search.I_Frg_Serial_Search_Load() {
+            @Override
+            public void onFragIsReady() {
+                setFrgSerialSearch();
+                setupFragSearch();
+            }
+        });
+        //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
+        transaction.add(R.id.act068_frg_placeholder, mFrgSerialSearch, "Frg_Serial_Search");
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
 
-        @Override
-        public Fragment getItem(int position) {
-            return fragments.get(position);
-        }
+    private <T extends Fragment> void setFrag(T type, String sTag) {
+//        if (fm.findFragmentByTag(sTag) == null) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.act068_frg_placeholder, type, sTag);
+            ft.addToBackStack(null);
+            ft.commit();
+//        } else {
+//            //type.loadDataToScreen();
+//        }
+    }
 
-        @Override
-        public int getCount() {
-            return fragments.size();
+    @Override
+    public void onSearchClick(String btn_Action, HMAux optionsInfo) {
+        switch (btn_Action) {
+            case Frg_Serial_Search.BTN_OPTION_01:
+                checkFlow(optionsInfo);
+                break;
+            case Frg_Serial_Search.BTN_OPTION_02:
+                mPresenter.executeWSTicketDownload();
+                break;
+            case Frg_Serial_Search.BTN_OPTION_03:
+                if(ToolBox_Con.isOnline(context)) {
+                    processNextTickets();
+                }else{
+                    callAct074();
+                }
+                break;
+            case Frg_Serial_Search.BTN_OPTION_05:
+                processScheduledTickets();
+                break;
+            default:
+                break;
         }
     }
 }

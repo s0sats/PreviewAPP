@@ -553,6 +553,8 @@ public class ConstantBaseApp extends ConstantBase {
     //Profile Ticket
     public static final String PROFILE_MENU_TICKET = "PRJ001_TICKET";
     public static final String PROFILE_MENU_TICKET_PARAM_ACTION_EXEC = "ACTION_EXEC";
+    public static final String PROFILE_MENU_TICKET_PARAM_SEARCH_CONTRACT_ID = "SEARCH_CONTRACT_ID";
+    public static final String PROFILE_MENU_TICKET_PARAM_SEARCH_CLIENT_ID = "SEARCH_CLIENT_ID";
 
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";

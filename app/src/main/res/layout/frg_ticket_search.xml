@@ -1,14 +1,220 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.frag.frg_ticket_search.Frg_Ticket_Search">
+    android:layout_marginTop="10dp"
+    android:background="@color/padrao_WHITE"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="5dp" />-->
+
+            <TextView
+                android:id="@+id/frg_ticket_search_tv_product_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Prod Id"
+                android:textSize="@dimen/font_size_title_md"
+                android:visibility="gone" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <TextView
+                android:id="@+id/frg_ticket_search_tv_serial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:text="Serial id"
+                android:textSize="@dimen/font_size_title_md"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/frg_serial_search_ll_contract"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_back"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/frg_serial_search_mket_contract"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:paddingLeft="10dp"
+                    app:mBARCODE="true"
+                    app:mNFC="false"
+                    app:mOCR="false" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:id="@+id/frg_ticket_search_ll_client"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_back"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/frg_ticket_search_mket_client"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:paddingLeft="10dp"
+                        android:layout_margin="0dp"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:id="@+id/frg_ticket_search_ll_ticket"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_back"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                        android:id="@+id/frg_ticket_search_mket_ticket"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:paddingLeft="10dp"
+                        android:layout_margin="0dp"
+                        app:mBARCODE="false"
+                        app:mNFC="false"
+                        app:mOCR="false" />
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <Button
+                android:id="@+id/frg_ticket_search_btn_option_01"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/namoa_cell_2_states"
+                android:gravity="left"
+                android:padding="20dp"
+                android:text="Option 01"
+                android:textColor="@color/padrao_WHITE" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <Button
+                android:id="@+id/frg_ticket_search_btn_option_02"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/namoa_cell_2_states"
+                android:gravity="left"
+                android:padding="20dp"
+                android:text="Option 02"
+                android:textColor="@color/padrao_WHITE" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <Button
+                android:id="@+id/frg_ticket_search_btn_option_03"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/namoa_cell_2_states"
+                android:gravity="left"
+                android:padding="20dp"
+                android:text="Option 03"
+                android:textColor="@color/padrao_WHITE" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:id="@+id/frg_ticket_search_ll_btn_option_04"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/frg_ticket_search_btn_option_04"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/namoa_cell_2_states"
+                    android:gravity="left"
+                    android:padding="20dp"
+                    android:text="Option 04"
+                    android:textColor="@color/padrao_WHITE" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/frg_ticket_search_ll_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <Button
+                android:id="@+id/frg_ticket_search_btn_option_05"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/namoa_cell_2_states"
+                android:gravity="left"
+                android:padding="20dp"
+                android:text="Option 05"
+                android:textColor="@color/padrao_WHITE" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>
+
