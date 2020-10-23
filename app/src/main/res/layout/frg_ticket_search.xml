@@ -61,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="text"
                     android:paddingLeft="10dp"
-                    app:mBARCODE="true"
+                    app:mBARCODE="false"
                     app:mNFC="false"
                     app:mOCR="false" />
 

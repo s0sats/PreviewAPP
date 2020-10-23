@@ -47,6 +47,10 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
     //
     private long ticketProductCode = -1;
     private long ticketSerialCode = -1;
+    private String ticketContractId;
+    private String ticketClientId;
+    private String ticketId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,6 +136,9 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
             ticketProductCode = bundle.getLong(TK_TicketDao.OPEN_PRODUCT_CODE, -1);
             ticketSerialCode = bundle.getLong(TK_TicketDao.OPEN_SERIAL_CODE,-1);
+            ticketContractId = bundle.getString(TK_TicketDao.CONTRACT_ID);
+            ticketClientId = bundle.getString(TK_TicketDao.CLIENT_ID);
+            ticketId = bundle.getString(TK_TicketDao.TICKET_ID);
         }else{
             requestingAct = ConstantBaseApp.ACT068;
         }

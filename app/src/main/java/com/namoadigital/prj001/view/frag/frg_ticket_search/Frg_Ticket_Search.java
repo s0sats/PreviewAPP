@@ -30,6 +30,7 @@ public class Frg_Ticket_Search extends Fragment {
     public static final String CONTRACT_ID = "CONTRACT_ID";
     public static final String CLIENT_ID = "CLIENT_ID";
     public static final String TICKET_ID = "TICKET_ID";
+    public static final String SYNCS_QTY = "SYNCS_QTY";
     private Frg_Serial_Search.I_Frg_Serial_Search delegate;
 
 
@@ -47,6 +48,7 @@ public class Frg_Ticket_Search extends Fragment {
     private MKEditTextNM mket_contract;
     private MKEditTextNM mket_client;
     private MKEditTextNM mket_ticket;
+    private int syncs_qty =0;
 
 
     public void setOnSearchClickListener(Frg_Serial_Search.I_Frg_Serial_Search delegate) {
@@ -134,6 +136,7 @@ public class Frg_Ticket_Search extends Fragment {
         //
         apllyUserProfile();
         //
+        mket_ticket.setHint(hmAux_Trans.get("ticket_hint"));
 
     }
 
@@ -141,7 +144,15 @@ public class Frg_Ticket_Search extends Fragment {
         btn_option_01.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_3_states));
         btn_option_01.setText(hmAux_Trans.get("btn_check_exists"));
         btn_option_02.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
-        btn_option_02.setText(hmAux_Trans.get("btn_sync_ticket"));
+        String btn_text = hmAux_Trans.get("btn_sync_ticket");
+        if(syncs_qty >0) {
+            btn_text.concat(" (" + syncs_qty + ")");
+            btn_option_02.setText(btn_text);
+        }else{
+            btn_option_02.setVisibility(View.GONE);
+        }
+
+
         btn_option_03.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
         btn_option_03.setText(hmAux_Trans.get("btn_my_tickets"));
         btn_option_05.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
@@ -151,12 +162,14 @@ public class Frg_Ticket_Search extends Fragment {
     private void apllyUserProfile() {
         if(mPresenter.getProfileForSearchContractId()) {
             ll_contract.setVisibility(View.VISIBLE);
+            mket_contract.setHint(hmAux_Trans.get("contract_hint"));
         }else{
             ll_contract.setVisibility(View.GONE);
         }
         //
         if(mPresenter.getProfileForSearchClientId()) {
             ll_client.setVisibility(View.VISIBLE);
+            mket_client.setHint(hmAux_Trans.get("client_hint"));
         }else{
             ll_client.setVisibility(View.GONE);
         }
@@ -164,7 +177,11 @@ public class Frg_Ticket_Search extends Fragment {
 
     private void initButtonsVisibility() {
         btn_option_01.setVisibility(View.VISIBLE);
-        btn_option_02.setVisibility(View.VISIBLE);
+        if(syncs_qty >0) {
+            btn_option_02.setVisibility(View.VISIBLE);
+        }else{
+            btn_option_02.setVisibility(View.GONE);
+        }
         btn_option_03.setVisibility(View.VISIBLE);
         btn_option_04.setVisibility(View.GONE);
         btn_option_05.setVisibility(View.VISIBLE);
@@ -190,5 +207,9 @@ public class Frg_Ticket_Search extends Fragment {
         values.put(CLIENT_ID, ToolBox_Inf.removeAllLineBreaks(mket_client.getText().toString().trim().isEmpty() ? "" : mket_client.getText().toString().trim()));
         values.put(TICKET_ID, ToolBox_Inf.removeAllLineBreaks(mket_ticket.getText().toString().trim().isEmpty() ? "" : mket_ticket.getText().toString().trim()));
         return values;
+    }
+
+    public void setSyncsQty(int sync_qty) {
+        this.syncs_qty = sync_qty;
     }
 }

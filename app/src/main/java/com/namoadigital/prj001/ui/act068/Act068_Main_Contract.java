@@ -33,6 +33,7 @@ public interface Act068_Main_Contract {
        void setSync(int qty);
 
        void addResultList(ArrayList<HMAux> resultList);
+
    }
 
    interface I_Presenter{
@@ -63,5 +64,7 @@ public interface Act068_Main_Contract {
        void defineWsToCall();
 
        void processWS_SaveReturn(String result);
+
+       void executeTicketSearch(String contract_id, String client_id, String ticket_id);
    }
 }

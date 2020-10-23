@@ -161,7 +161,7 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
             context.sendBroadcast(mIntent);
         } else {
             //LUCHE - 21/01/2020
-            //Enquanto não houver o processo de criaçãode ticket via App, não haverá lista offline.
+            //Enquanto não houver o processo de criaçãode ticket via App, não haverá lista offline. ( Rah Rah)
             //Por hora, será exibida msg de que esta offline e para ele buscar nos itens pendentes.
             //offlineSerialSearch();
             mView.showMsg(
@@ -239,6 +239,20 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
             mView.addResultList(auxResults);
         }
 
+    }
+
+    @Override
+    public void executeTicketSearch(String contract_id, String client_id, String ticket_id) {
+
+        if (ToolBox_Con.isOnline(context)) {
+            //TODO chamar o servico de busca
+        } else {
+            Bundle bundleForAct076 = new Bundle();
+            bundleForAct076.putString(TK_TicketDao.CONTRACT_ID, contract_id);
+            bundleForAct076.putString(TK_TicketDao.CLIENT_ID, client_id);
+            bundleForAct076.putString(TK_TicketDao.TICKET_ID, ticket_id);
+            mView.callAct076(bundleForAct076);
+        }
     }
 
     private boolean hasFormWaitingSyncWithinAnyTicket(Context context) {

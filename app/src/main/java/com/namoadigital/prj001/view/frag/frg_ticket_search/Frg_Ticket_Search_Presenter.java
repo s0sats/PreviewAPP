@@ -16,11 +16,11 @@ public class Frg_Ticket_Search_Presenter implements Frg_Ticket_Search_Contract.P
 
     @Override
     public boolean getProfileForSearchContractId() {
-        return ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_SEARCH_CONTRACT_ID);
+        return ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_SEARCH_CONTRACT_ID);
     }
 
     @Override
     public boolean getProfileForSearchClientId() {
-        return ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_PRODUCT_SERIAL, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_SEARCH_CLIENT_ID);
+        return ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_SEARCH_CLIENT_ID);
     }
 }
