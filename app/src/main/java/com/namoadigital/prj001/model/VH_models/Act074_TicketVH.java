@@ -48,9 +48,12 @@ public class Act074_TicketVH {
     private int user_focus;
     private int sync_required;
     private int local_ticket;
+    private Integer client_code;
+    private String client_name;
+    private Integer contract_code;
+    private String contract_desc;
 
-
-    public Act074_TicketVH(int ticket_customer, int ticket_scn, int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_date, String step_forecast_start_date, String step_forecast_end_date, String ticket_step_id, String ticket_current_step_order, String step_order_seq, int ticket_step_qty, int user_focus, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg, int local_ticket, int sync_required) {
+    public Act074_TicketVH(int ticket_customer, int ticket_scn, int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_date, String step_forecast_start_date, String step_forecast_end_date, String ticket_step_id, String ticket_current_step_order, String step_order_seq, int ticket_step_qty, int user_focus, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg, int local_ticket, int sync_required,Integer client_code, String client_name, Integer contract_code, String contract_desc) {
         String separator = "|";
         this.ticket_pk = ticket_customer +  separator +  ticket_prefix +  separator + ticket_code +  separator +  ticket_scn;
         this.ticket_prefix = ticket_prefix;
@@ -79,6 +82,10 @@ public class Act074_TicketVH {
         this.user_focus = user_focus;
         this.local_ticket = local_ticket;
         this.sync_required = sync_required;
+        this.client_code = client_code ;
+        this.client_name = client_name ;
+        this.contract_code = contract_code ;
+        this.contract_desc = contract_desc ;
     }
 
     public static Act074_TicketVH getTicketVHObj(HMAux hmAux) {
@@ -111,7 +118,11 @@ public class Act074_TicketVH {
                         hmAux.hasConsistentValue(MD_Schedule_ExecDao.FCM_USER_NICK) ? hmAux.get(MD_Schedule_ExecDao.FCM_USER_NICK) : " ",
                         hmAux.hasConsistentValue(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) ? hmAux.get(MD_Schedule_ExecDao.SCHEDULE_ERRO_MSG) : " ",
                         hmAux.hasConsistentValue(LOCAL_TICKET) ? Integer.valueOf(hmAux.get(LOCAL_TICKET)) : 0,
-                        ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SYNC_REQUIRED))
+                        ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.SYNC_REQUIRED)),
+                        ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.CLIENT_CODE)),
+                        hmAux.get(TK_TicketDao.CLIENT_NAME),
+                        ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.CONTRACT_CODE)),
+                        hmAux.get(TK_TicketDao.CONTRACT_DESC)
         );
     }
 
@@ -377,7 +388,9 @@ public class Act074_TicketVH {
                         ticket_origin_desc + "|" +
                         step_forecast_start_date +"|" +
                         ticket_step_id +"|" +
-                        schedulePk)
+                        schedulePk +"|" +
+                        client_name +"|" +
+                        contract_desc)
                 .replace("null|","")
                 .replace("null","")
                 ;
@@ -389,5 +402,37 @@ public class Act074_TicketVH {
 
     public void setTicket_forecast_date(String ticket_forecast_date) {
         this.ticket_forecast_date = ticket_forecast_date;
+    }
+
+    public Integer getClient_code() {
+        return client_code;
+    }
+
+    public void setClient_code(Integer client_code) {
+        this.client_code = client_code;
+    }
+
+    public String getClient_name() {
+        return client_name;
+    }
+
+    public void setClient_name(String client_name) {
+        this.client_name = client_name;
+    }
+
+    public Integer getContract_code() {
+        return contract_code;
+    }
+
+    public void setContract_code(Integer contract_code) {
+        this.contract_code = contract_code;
+    }
+
+    public String getContract_desc() {
+        return contract_desc;
+    }
+
+    public void setContract_desc(String contract_desc) {
+        this.contract_desc = contract_desc;
     }
 }

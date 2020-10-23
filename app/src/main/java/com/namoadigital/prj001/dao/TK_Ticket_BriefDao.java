@@ -43,6 +43,10 @@ public class TK_Ticket_BriefDao extends BaseDao implements DaoWithReturn<TK_Tick
     public static final String STEP_COUNT = "step_count";
     public static final String FCM = "fcm";
     public static final String LOCAL_TICKET = "local_ticket";
+    public static final String CLIENT_CODE = "client_code";
+    public static final String CLIENT_NAME = "client_name";
+    public static final String CONTRACT_CODE = "contract_code";
+    public static final String CONTRACT_DESC = "contract_desc";
 
     public TK_Ticket_BriefDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION,  Constant.DB_MODE_MULTI);
@@ -363,7 +367,10 @@ public class TK_Ticket_BriefDao extends BaseDao implements DaoWithReturn<TK_Tick
 //            if (tk_ticket_brief.getLocal_ticket() > -1) {
 //                contentValues.put(LOCAL_TICKET, tk_ticket_brief.getTicket_local());
 //            }
-
+            contentValues.put(CLIENT_CODE, tk_ticket_brief.getClient_code());
+            contentValues.put(CLIENT_NAME, tk_ticket_brief.getClient_name());
+            contentValues.put(CONTRACT_CODE, tk_ticket_brief.getContract_code());
+            contentValues.put(CONTRACT_DESC, tk_ticket_brief.getContract_desc());
 
             return contentValues;
         }
@@ -423,6 +430,26 @@ public class TK_Ticket_BriefDao extends BaseDao implements DaoWithReturn<TK_Tick
             tk_ticket_brief.setFcm(cursor.getInt(cursor.getColumnIndex(FCM)));
             //tk_ticket_brief.setLocal_ticket(cursor.getInt(cursor.getColumnIndex(LOCAL_TICKET)));
             //
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_CODE))) {
+                tk_ticket_brief.setClient_code(null);
+            } else {
+                tk_ticket_brief.setClient_code(cursor.getInt(cursor.getColumnIndex(CLIENT_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_NAME))) {
+                tk_ticket_brief.setClient_name(null);
+            } else {
+                tk_ticket_brief.setClient_name(cursor.getString(cursor.getColumnIndex(CLIENT_NAME)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(CONTRACT_CODE))) {
+                tk_ticket_brief.setContract_code(null);
+            } else {
+                tk_ticket_brief.setContract_code(cursor.getInt(cursor.getColumnIndex(CONTRACT_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(CONTRACT_DESC))) {
+                tk_ticket_brief.setContract_desc(null);
+            } else {
+                tk_ticket_brief.setContract_desc(cursor.getString(cursor.getColumnIndex(CONTRACT_DESC)));
+            }
             return tk_ticket_brief;
         }
     }

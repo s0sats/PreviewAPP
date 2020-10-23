@@ -19,6 +19,10 @@ public class TK_Ticket_Brief {
     private String forecast_end;
     private Integer step_count;
     private int fcm;
+    private Integer client_code;
+    private String client_name;
+    private Integer contract_code;
+    private String contract_desc;
 
     public long getCustomer_code() {
         return customer_code;
@@ -162,5 +166,37 @@ public class TK_Ticket_Brief {
 
     public void setStep_order_seq(String step_order_seq) {
         this.step_order_seq = step_order_seq;
+    }
+
+    public Integer getClient_code() {
+        return client_code;
+    }
+
+    public void setClient_code(Integer client_code) {
+        this.client_code = client_code;
+    }
+
+    public String getClient_name() {
+        return client_name;
+    }
+
+    public void setClient_name(String client_name) {
+        this.client_name = client_name;
+    }
+
+    public Integer getContract_code() {
+        return contract_code;
+    }
+
+    public void setContract_code(Integer contract_code) {
+        this.contract_code = contract_code;
+    }
+
+    public String getContract_desc() {
+        return contract_desc;
+    }
+
+    public void setContract_desc(String contract_desc) {
+        this.contract_desc = contract_desc;
     }
 }

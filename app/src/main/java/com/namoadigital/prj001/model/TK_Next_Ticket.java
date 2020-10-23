@@ -58,6 +58,10 @@ public class TK_Next_Ticket {
 
     private int ticket_local;
     private int sync_required;
+    private Integer client_code;
+    private String client_name;
+    private Integer contract_code;
+    private String contract_desc;
 
     public Integer getCustomerCode() {
         return customerCode;
@@ -209,5 +213,37 @@ public class TK_Next_Ticket {
 
     public void setSync_required(int sync_required) {
         this.sync_required = sync_required;
+    }
+
+    public Integer getClient_code() {
+        return client_code;
+    }
+
+    public void setClient_code(Integer client_code) {
+        this.client_code = client_code;
+    }
+
+    public String getClient_name() {
+        return client_name;
+    }
+
+    public void setClient_name(String client_name) {
+        this.client_name = client_name;
+    }
+
+    public Integer getContract_code() {
+        return contract_code;
+    }
+
+    public void setContract_code(Integer contract_code) {
+        this.contract_code = contract_code;
+    }
+
+    public String getContract_desc() {
+        return contract_desc;
+    }
+
+    public void setContract_desc(String contract_desc) {
+        this.contract_desc = contract_desc;
     }
 }

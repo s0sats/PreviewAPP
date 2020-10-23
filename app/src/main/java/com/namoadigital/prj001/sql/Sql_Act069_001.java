@@ -200,7 +200,12 @@ public class Sql_Act069_001 implements Specification {
                 "       t.schedule_exec\n," +
                 "       s.fcm_new_status\n," +
                 "       s.fcm_user_nick\n," +
-                "       s.schedule_erro_msg\n" +
+                "       s.schedule_erro_msg,\n" +
+                "       1 local_ticket, \n" +
+                "       t.client_code,\n" +
+                "       t.client_name,\n" +
+                "       t.contract_code,\n" +
+                "       t.contract_desc\n" +
                 " FROM\n" +
                 "     " + TK_TicketDao.TABLE + " t \n" +
                 " LEFT JOIN\n" +
