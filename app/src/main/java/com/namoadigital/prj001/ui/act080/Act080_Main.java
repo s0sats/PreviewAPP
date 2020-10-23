@@ -253,6 +253,7 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
         step_end_date = originStep.getStep_end_date();
         step_end_user_nick = originStep.getStep_end_user_nick();
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForOrigin(
+                tkTicket,
                 tkTicket.getTicket_id(),
                 ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(tkTicket.getOpen_date()),

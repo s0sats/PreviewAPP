@@ -5,9 +5,10 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class TK_Ticket_Step {
+public class TK_Ticket_Step implements Serializable {
     private long customer_code;//pk
     private int ticket_prefix;//pk
     private int ticket_code;//pk

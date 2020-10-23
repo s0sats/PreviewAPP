@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
@@ -128,6 +129,8 @@ public interface Act071_Main_Contract {
         boolean hasActionExecProfile();
 
         boolean isReadOnlyStatus(String ticketStatus);*/
+
+        TK_Ticket getTicketbyPk(int ticket_prefix, int ticket_code);
     }
 
 }

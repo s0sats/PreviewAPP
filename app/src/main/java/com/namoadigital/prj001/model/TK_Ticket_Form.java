@@ -6,7 +6,9 @@ import android.support.annotation.Nullable;
 import com.google.gson.annotations.Expose;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
-public class TK_Ticket_Form {
+import java.io.Serializable;
+
+public class TK_Ticket_Form implements Serializable {
     @Expose
     private long customer_code;//pk
     @Expose

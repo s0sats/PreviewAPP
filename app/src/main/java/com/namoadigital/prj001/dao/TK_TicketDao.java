@@ -88,6 +88,22 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String SCHEDULE_PREFIX = "schedule_prefix";
     public static final String SCHEDULE_CODE = "schedule_code";
     public static final String SCHEDULE_EXEC = "schedule_exec";
+    public static final String CLIENT_CODE = "client_code";
+    public static final String CLIENT_ID = "client_id";
+    public static final String CLIENT_NAME = "client_name";
+    public static final String ADDRESS_COUNTRY = "address_country";
+    public static final String ADDRESS_STATE = "address_state";
+    public static final String ADDRESS_CITY = "address_city";
+    public static final String ADDRESS_DISTRICT = "address_district";
+    public static final String ADDRESS_STREET = "address_street";
+    public static final String ADDRESS_NUM = "address_num";
+    public static final String ADDRESS_COMPLEMENT = "address_complement";
+    public static final String ADDRESS_ZIPCODE = "address_zipcode";
+    public static final String ADDRESS_LAT = "address_lat";
+    public static final String ADDRESS_LNG = "address_lng";
+    public static final String CONTRACT_CODE = "contract_code";
+    public static final String CONTRACT_ID = "contract_id";
+    public static final String CONTRACT_DESC = "contract_desc";
 
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -881,6 +897,86 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             } else {
                 tk_ticket.setSchedule_exec(cursor.getInt(cursor.getColumnIndex(SCHEDULE_EXEC)));
             }
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_CODE))) {
+                tk_ticket.setClient_code(null);
+            } else {
+                tk_ticket.setClient_code(cursor.getInt(cursor.getColumnIndex(CLIENT_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_ID))) {
+                tk_ticket.setClient_id(null);
+            } else {
+                tk_ticket.setClient_id(cursor.getString(cursor.getColumnIndex(CLIENT_ID)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(CLIENT_NAME))) {
+                tk_ticket.setClient_name(null);
+            } else {
+                tk_ticket.setClient_name(cursor.getString(cursor.getColumnIndex(CLIENT_NAME)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(ADDRESS_COUNTRY))) {
+                tk_ticket.setAddress_country(null);
+            } else {
+                tk_ticket.setAddress_country(cursor.getString(cursor.getColumnIndex(ADDRESS_COUNTRY)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(ADDRESS_STATE))) {
+                tk_ticket.setAddress_state(null);
+            } else {
+                tk_ticket.setAddress_state(cursor.getString(cursor.getColumnIndex(ADDRESS_STATE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(ADDRESS_CITY))) {
+                tk_ticket.setAddress_city(null);
+            } else {
+                tk_ticket.setAddress_city(cursor.getString(cursor.getColumnIndex(ADDRESS_CITY)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(ADDRESS_DISTRICT))) {
+                tk_ticket.setAddress_district(null);
+            } else {
+                tk_ticket.setAddress_district(cursor.getString(cursor.getColumnIndex(ADDRESS_DISTRICT)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(ADDRESS_STREET))) {
+                tk_ticket.setAddress_street(null);
+            } else {
+                tk_ticket.setAddress_street(cursor.getString(cursor.getColumnIndex(ADDRESS_STREET)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(ADDRESS_NUM))) {
+                tk_ticket.setAddress_num(null);
+            } else {
+                tk_ticket.setAddress_num(cursor.getString(cursor.getColumnIndex(ADDRESS_NUM)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(ADDRESS_COMPLEMENT))) {
+                tk_ticket.setAddress_complement(null);
+            } else {
+                tk_ticket.setAddress_complement(cursor.getString(cursor.getColumnIndex(ADDRESS_COMPLEMENT)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(ADDRESS_ZIPCODE))) {
+                tk_ticket.setAddress_zipcode(null);
+            } else {
+                tk_ticket.setAddress_zipcode(cursor.getString(cursor.getColumnIndex(ADDRESS_ZIPCODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(ADDRESS_LAT))) {
+                tk_ticket.setAddress_lat(null);
+            } else {
+                tk_ticket.setAddress_lat(cursor.getString(cursor.getColumnIndex(ADDRESS_LAT)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(ADDRESS_LNG))) {
+                tk_ticket.setAddress_lng(null);
+            } else {
+                tk_ticket.setAddress_lng(cursor.getString(cursor.getColumnIndex(ADDRESS_LNG)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(CONTRACT_CODE))) {
+                tk_ticket.setContract_code(null);
+            } else {
+                tk_ticket.setContract_code(cursor.getInt(cursor.getColumnIndex(CONTRACT_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(CONTRACT_ID))) {
+                tk_ticket.setContract_id(null);
+            } else {
+                tk_ticket.setContract_id(cursor.getString(cursor.getColumnIndex(CONTRACT_ID)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(CONTRACT_DESC))) {
+                tk_ticket.setContract_desc(null);
+            } else {
+                tk_ticket.setContract_desc(cursor.getString(cursor.getColumnIndex(CONTRACT_DESC)));
+            }
             //
             return tk_ticket;
         }
@@ -1025,6 +1121,23 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             contentValues.put(SCHEDULE_PREFIX,tk_ticket.getSchedule_prefix());
             contentValues.put(SCHEDULE_CODE,tk_ticket.getSchedule_code());
             contentValues.put(SCHEDULE_EXEC,tk_ticket.getSchedule_exec());
+            //Campos show off
+            contentValues.put(CLIENT_CODE, tk_ticket.getClient_code());
+            contentValues.put(CLIENT_ID, tk_ticket.getClient_id());
+            contentValues.put(CLIENT_NAME, tk_ticket.getClient_name());
+            contentValues.put(ADDRESS_COUNTRY, tk_ticket.getAddress_country());
+            contentValues.put(ADDRESS_STATE, tk_ticket.getAddress_state());
+            contentValues.put(ADDRESS_CITY, tk_ticket.getAddress_city());
+            contentValues.put(ADDRESS_DISTRICT, tk_ticket.getAddress_district());
+            contentValues.put(ADDRESS_STREET, tk_ticket.getAddress_street());
+            contentValues.put(ADDRESS_NUM, tk_ticket.getAddress_num());
+            contentValues.put(ADDRESS_COMPLEMENT, tk_ticket.getAddress_complement());
+            contentValues.put(ADDRESS_ZIPCODE, tk_ticket.getAddress_zipcode());
+            contentValues.put(ADDRESS_LAT, tk_ticket.getAddress_lat());
+            contentValues.put(ADDRESS_LNG, tk_ticket.getAddress_lng());
+            contentValues.put(CONTRACT_CODE, tk_ticket.getContract_code());
+            contentValues.put(CONTRACT_ID, tk_ticket.getContract_id());
+            contentValues.put(CONTRACT_DESC, tk_ticket.getContract_desc());
             //
             return contentValues;
         }

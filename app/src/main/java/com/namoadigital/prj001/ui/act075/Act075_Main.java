@@ -345,6 +345,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         //
         if(act_profile == 1) {
             mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForProduct(
+                    tkTicket,
                     tkTicket.getTicket_id(),
                     ToolBox_Inf.millisecondsToString(
                             ToolBox_Inf.dateToMilliseconds(tkTicket.getOpen_date()),
@@ -360,6 +361,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             ticketStep = mPresenter.getSelectedStep(mTkPrefix,mTkCode, mStepCode);
             //
             mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForApprovalOrAction(
+                    tkTicket,
                     tkTicket.getTicket_id(),
                     ToolBox_Inf.millisecondsToString(
                             ToolBox_Inf.dateToMilliseconds(tkTicket.getOpen_date()),

@@ -6,9 +6,10 @@ import com.google.gson.annotations.Expose;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class TK_Ticket_Ctrl {
+public class TK_Ticket_Ctrl implements Serializable {
     private long customer_code;//pk
     private int ticket_prefix;//pk
     private int ticket_code;//pk

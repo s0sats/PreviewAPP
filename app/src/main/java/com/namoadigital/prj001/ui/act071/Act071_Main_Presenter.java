@@ -1011,7 +1011,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         }
     }
 
-    private TK_Ticket getTicketbyPk(int ticket_prefix, int ticket_code) {
+    @Override
+    public TK_Ticket getTicketbyPk(int ticket_prefix, int ticket_code) {
         return getTicket(
             new TK_Ticket_Sql_001(
                 ToolBox_Con.getPreference_Customer_Code(context),
