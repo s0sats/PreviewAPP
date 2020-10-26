@@ -23,11 +23,13 @@ import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Client_Contract_Search;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Sync;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Client_Contract_Search;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
@@ -245,13 +247,29 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
     public void executeTicketSearch(String contract_id, String client_id, String ticket_id) {
 
         if (ToolBox_Con.isOnline(context)) {
-            //TODO chamar o servico de busca
+''            //
+            mView.setWsProcess(WS_TK_Ticket_Client_Contract_Search.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_ticket_search_ttl"),
+                    hmAux_Trans.get("dialog_ticket_search_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_TK_Ticket_Client_Contract_Search.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(TK_TicketDao.CONTRACT_ID, contract_id);
+            bundle.putString(TK_TicketDao.CLIENT_ID, client_id);
+            bundle.putString(TK_TicketDao.TICKET_ID, ticket_id);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+
         } else {
-            Bundle bundleForAct076 = new Bundle();
-            bundleForAct076.putString(TK_TicketDao.CONTRACT_ID, contract_id);
-            bundleForAct076.putString(TK_TicketDao.CLIENT_ID, client_id);
-            bundleForAct076.putString(TK_TicketDao.TICKET_ID, ticket_id);
-            mView.callAct076(bundleForAct076);
+            mView.showMsg(
+                    hmAux_Trans.get("alert_no_conection_ttl"),//Title é recurso sys.(usado no metodo showNoConnectionDialog)
+                    hmAux_Trans.get("alert_no_connection_try_pendencies_msg")
+            );
         }
     }
 

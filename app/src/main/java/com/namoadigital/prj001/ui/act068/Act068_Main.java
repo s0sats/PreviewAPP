@@ -33,6 +33,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Sync;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Client_Contract_Search;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -167,6 +168,9 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         transList.add("contract_hint");
         transList.add("client_hint");
         transList.add("ticket_hint");
+        //
+        transList.add("dialog_ticket_search_ttl");
+        transList.add("dialog_ticket_search_start");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -617,6 +621,10 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             progressDialog.dismiss();
             mPresenter.processWS_SaveReturn(result);
             mPresenter.executeWSTicketSave();
+        }  else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Client_Contract_Search.class.getName())) {
+            //TODO Tratar retorno do WS
+            wsProcess = "";
+            progressDialog.dismiss();
         } else{
             //
             progressDialog.dismiss();
