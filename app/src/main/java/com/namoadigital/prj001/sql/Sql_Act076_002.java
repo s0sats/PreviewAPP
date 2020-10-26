@@ -67,7 +67,11 @@ public class Sql_Act076_002 implements Specification {
                         "            THEN 1\n" +
                         "            ELSE 0\n" +
                         "       END update_required,\n" +
-                        "       1 local_ticket \n" +
+                        "       1 local_ticket, \n" +
+                        "       t.client_code,\n" +
+                        "       t.client_name,\n" +
+                        "       t.contract_code,\n" +
+                        "       t.contract_desc\n" +
                         " FROM\n" +
                         "     tk_ticket t,\n" +
                         "     tk_ticket_ctrl c\n" +

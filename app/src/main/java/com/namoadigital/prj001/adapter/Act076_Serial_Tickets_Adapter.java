@@ -104,6 +104,8 @@ public class Act076_Serial_Tickets_Adapter extends RecyclerView.Adapter<Recycler
         private ConstraintLayout cl_background;
         private TextView tv_ticket_id;
         private TextView tv_status;
+        private TextView tv_client_name;
+        private TextView tv_contract_desc;
         private TextView tv_prod_desc;
         private TextView tv_site_desc;
         private TextView tv_serial;
@@ -123,6 +125,8 @@ public class Act076_Serial_Tickets_Adapter extends RecyclerView.Adapter<Recycler
             cl_background = itemView.findViewById(R.id.act074_ticket_cell_cl_background);
             tv_ticket_id = itemView.findViewById(R.id.act074_ticket_cell_tv_ticket_id);
             tv_status = itemView.findViewById(R.id.act074_ticket_cell_tv_status);
+            tv_client_name = itemView.findViewById(R.id.act074_ticket_cell_tv_client_name);
+            tv_contract_desc = itemView.findViewById(R.id.act074_ticket_cell_tv_contract_desc);
             tv_prod_desc = itemView.findViewById(R.id.act074_ticket_cell_tv_prod_desc);
             tv_site_desc = itemView.findViewById(R.id.act074_ticket_cell_tv_site_desc);
             tv_serial = itemView.findViewById(R.id.act074_ticket_cell_tv_serial);
@@ -166,6 +170,9 @@ public class Act076_Serial_Tickets_Adapter extends RecyclerView.Adapter<Recycler
             } else {
                 setVisibilityByContent(tv_step_desc, hmAux_Trans.get("other_steps_available_lbl"));
             }
+            //
+            setVisibilityByContent(tv_client_name, item.getClient_name());
+            setVisibilityByContent(tv_contract_desc, item.getContract_desc());
             //
             setVisibilityByContent(tv_prod_desc, item.getTicket_prod_desc());
             setSiteVisibility(tv_site_desc, item.getTicket_site_desc());
@@ -219,6 +226,8 @@ public class Act076_Serial_Tickets_Adapter extends RecyclerView.Adapter<Recycler
         private void resetVisibility() {
             tv_ticket_id.setVisibility(View.GONE);
             tv_status.setVisibility(View.GONE);
+            tv_client_name.setVisibility(View.GONE);
+            tv_contract_desc.setVisibility(View.GONE);
             tv_prod_desc.setVisibility(View.GONE);
             tv_site_desc.setVisibility(View.GONE);
             tv_serial.setVisibility(View.GONE);

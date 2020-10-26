@@ -64,7 +64,7 @@
             tools:text="Pending" />
 
         <TextView
-            android:id="@+id/act074_ticket_cell_tv_prod_desc"
+            android:id="@+id/act074_ticket_cell_tv_client_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -76,6 +76,36 @@
             app:layout_constraintEnd_toStartOf="@id/act074_ticket_cell_guide_end"
             app:layout_constraintStart_toStartOf="@id/act074_ticket_cell_guide_start"
             app:layout_constraintTop_toBottomOf="@id/act074_ticket_cell_tv_site_desc"
+            tools:text="Client Name" />
+
+        <TextView
+            android:id="@+id/act074_ticket_cell_tv_contract_desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/act074_ticket_cell_guide_end"
+            app:layout_constraintStart_toStartOf="@id/act074_ticket_cell_guide_start"
+            app:layout_constraintTop_toBottomOf="@id/act074_ticket_cell_tv_client_name"
+            tools:text="Contrato 01" />
+
+        <TextView
+            android:id="@+id/act074_ticket_cell_tv_prod_desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/act074_ticket_cell_guide_end"
+            app:layout_constraintStart_toStartOf="@id/act074_ticket_cell_guide_start"
+            app:layout_constraintTop_toBottomOf="@id/act074_ticket_cell_tv_contract_desc"
             tools:text="Desc Prod" />
 
         <TextView

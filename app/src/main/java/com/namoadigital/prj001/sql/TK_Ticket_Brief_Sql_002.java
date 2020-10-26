@@ -52,10 +52,14 @@ public class TK_Ticket_Brief_Sql_002 implements Specification {
                         " CASE WHEN t.ticket_prefix = null \n" +
                         "            THEN 0\n" +
                         "            ELSE 1\n" +
-                        "       END local_ticket\n" +
+                        "       END local_ticket\n," +
+                        "       tb.client_code,\n" +
+                        "       tb.client_name,\n" +
+                        "       tb.contract_code,\n" +
+                        "       tb.contract_desc\n" +
                         " FROM\n" +
                         "     tk_ticket t \n" +
-                        "INNER JOIN tk_ticket_brief tb ON\n" +
+                        " INNER JOIN tk_ticket_brief tb ON\n" +
                         "      tb.customer_code = t.customer_code\n" +
                         "       AND  tb.ticket_prefix = t.ticket_prefix \n" +
                         "       AND  tb.ticket_code = t.ticket_code  \n" +

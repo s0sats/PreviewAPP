@@ -49,7 +49,11 @@ public class TK_Ticket_Brief_Sql_004 implements Specification {
                         "            THEN 0\n" +
                         "            ELSE t.update_required\n" +
                         "        END update_required,\n" +
-                        "        0 local_ticket" +
+                        "        0 local_ticket," +
+                        "       tb.client_code,\n" +
+                        "       tb.client_name,\n" +
+                        "       tb.contract_code,\n" +
+                        "       tb.contract_desc\n" +
                         " FROM tk_ticket_brief  tb\n" +
                         " left join  tk_ticket t \n" +
                         "      on t.customer_code =  tb.customer_code \n" +

@@ -186,6 +186,10 @@ public class WS_TK_Next_Ticket extends IntentService {
         tk_ticket_brief.setStep_count(ticket.getStepCount());
         tk_ticket_brief.setFcm(0);
 //        tk_ticket_brief.setLocal_ticket(has_local_ticket);
+        tk_ticket_brief.setClient_code(ticket.getClient_code());
+        tk_ticket_brief.setClient_name(ticket.getClient_name());
+        tk_ticket_brief.setContract_code(ticket.getContract_code());
+        tk_ticket_brief.setContract_desc(ticket.getContract_desc());
         return tk_ticket_brief;
     }
 

@@ -888,10 +888,12 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_SO_Create_Room" />
         <receiver android:name=".receiver.WBR_TK_Next_Ticket" />
         <receiver android:name=".receiver.WBR_TK_Ticket_Product_Save" />
+        <receiver android:name=".receiver.WBR_TK_Ticket_Client_Contract_Search" />
 
         <service android:name=".service.WS_SO_Create_Room" />
         <service android:name=".service.WS_TK_Next_Ticket" />
         <service android:name=".service.WS_TK_Ticket_Product_Save" />
+        <service android:name=".service.WS_TK_Ticket_Client_Contract_Search" />
     </application>
 
 </manifest>
