@@ -426,6 +426,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SCHEDULE_N_FORM_AP_FILTER_PREFERENCE = "schedule_n_form_ap_filter";
     public static final String SCHEDULE_N_TICKET_FILTER_PREFERENCE = "schedule_n_ticket_filter";
     public static final String SCHEDULE_SITE_LOGGED_FILTER_PREFERENCE = "schedule_site_logged_filter";
+    public static final String ACT068_TAB_SELECTED = "act068_tab_selected";
 
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";

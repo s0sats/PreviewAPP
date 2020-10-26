@@ -45,6 +45,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.frag.frg_ticket_search.Frg_Ticket_Search;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -271,6 +272,51 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
                     hmAux_Trans.get("alert_no_connection_try_pendencies_msg")
             );
         }
+    }
+
+    @Override
+    public void processSearchByTicketTab(HMAux hmAux) {
+        if(hmAux != null && hmAux.size() > 0 ){
+            int qtyReturned =
+                hmAux.hasConsistentValue(WS_TK_Ticket_Client_Contract_Search.RETURNED_TICKET_QTY)
+                    ? ToolBox_Inf.convertStringToInt(hmAux.get(WS_TK_Ticket_Client_Contract_Search.RETURNED_TICKET_QTY))
+                    : 0 ;
+            if(qtyReturned == 0){
+                mView.showMsg(
+                    hmAux_Trans.get("alert_no_ticket_found_ttl"),
+                    hmAux_Trans.get("alert_no_ticket_found_msg")
+                );
+            }else if(qtyReturned == 1){
+                if(hmAux.hasConsistentValue(TK_TicketDao.TICKET_PREFIX)
+                    && hmAux.hasConsistentValue(TK_TicketDao.TICKET_CODE)
+                ) {
+                    //Chama Act com a pk do ticket.
+                    mView.callAct070(
+                        buildAct070Bundle(hmAux)
+                    );
+                }else{
+                    mView.showMsg(
+                        hmAux_Trans.get("alert_ticket_params_not_found_ttl"),
+                        hmAux_Trans.get("alert_ticket_params_not_found_msg")
+                    );
+                }
+            }else{
+                mView.callAct076();
+            }
+        }else{
+            mView.showMsg(
+                hmAux_Trans.get("alert_invalid_ticket_return_ttl"),
+                hmAux_Trans.get("alert_invalid_ticket_return_msg")
+            );
+        }
+    }
+
+    private Bundle buildAct070Bundle(HMAux hmAux) {
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT073);
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)));
+        bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
+        return bundle;
     }
 
     private boolean hasFormWaitingSyncWithinAnyTicket(Context context) {
@@ -620,6 +666,25 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
        );
        //
        return md_product;
+    }
+
+    @Override
+    public void updateTabPreference(String sTag) {
+        ToolBox_Con.setStringPreference(context,ConstantBaseApp.ACT068_TAB_SELECTED,sTag);
+    }
+
+    @Override
+    public void setFragTicketSearchParamsIntoBundle(Bundle bundle, HMAux hmAuxValues) {
+        bundle.putString(
+            TK_TicketDao.CONTRACT_ID,
+            hmAuxValues.hasConsistentValue(Frg_Ticket_Search.CONTRACT_ID) ?  hmAuxValues.get(Frg_Ticket_Search.CONTRACT_ID) : ""
+        );
+        bundle.putString(TK_TicketDao.CLIENT_ID,
+            hmAuxValues.hasConsistentValue(Frg_Ticket_Search.CLIENT_ID) ?  hmAuxValues.get(Frg_Ticket_Search.CLIENT_ID) : ""
+        );
+        bundle.putString(TK_TicketDao.TICKET_ID,
+            hmAuxValues.hasConsistentValue(Frg_Ticket_Search.TICKET_ID) ?  hmAuxValues.get(Frg_Ticket_Search.TICKET_ID) : ""
+        );
     }
 
     @Override

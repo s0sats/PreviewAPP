@@ -11,11 +11,13 @@ public class Sql_Act076_002 implements Specification {
     private long customer_code;
     private String site_logged;
     private String serial_filter ="";
+    private String ticket_filter ="";
 
     public Sql_Act076_002(long customerCode, String site_logged) {
         this.customer_code = customerCode;
         this.site_logged = site_logged;
-        serial_filter ="";
+        this.serial_filter ="";
+        this.ticket_filter = "";
     }
     public Sql_Act076_002(long customerCode, String site_logged, long ticketProductCode, long ticketSerialCode) {
         this.customer_code = customerCode;
@@ -26,6 +28,26 @@ public class Sql_Act076_002 implements Specification {
                     " and t.open_serial_code = '" + ticketSerialCode + "')\n" +
                     " or( c.product_code = '" + ticketProductCode + "'\n" +
                     " and c.serial_code = '" + ticketSerialCode + "')\n)\n";
+        }
+    }
+
+    public Sql_Act076_002(long customer_code, String site_code, long ticketProductCode, long ticketSerialCode, String ticketContractId, String ticketClientId, String ticketId) {
+        this.customer_code = customer_code;
+        this.site_logged = site_logged;
+        if(ticketProductCode > 0
+            && ticketSerialCode > 0 ) {
+            serial_filter = " and (\n(t.open_product_code = '" + ticketProductCode + "'\n" +
+                " and t.open_serial_code = '" + ticketSerialCode + "')\n" +
+                " or( c.product_code = '" + ticketProductCode + "'\n" +
+                " and c.serial_code = '" + ticketSerialCode + "')\n)\n";
+        }
+        if((ticketContractId != null && !ticketContractId.isEmpty())
+            || (ticketClientId != null && !ticketClientId.isEmpty())
+            || (ticketId != null && !ticketId.isEmpty())
+        ){
+            this.ticket_filter += ticketContractId != null && !ticketContractId.isEmpty() ? " and t.contract_id = '"+ticketContractId+"' \n" : "";
+            this.ticket_filter += ticketClientId != null && !ticketClientId.isEmpty() ? " and t.client_id = '"+ticketClientId+"' \n"  : "";
+            this.ticket_filter += ticketId != null && !ticketId.isEmpty() ? " and t.ticket_id = '"+ticketId+"' \n" : "";
         }
     }
 
@@ -87,6 +109,7 @@ public class Sql_Act076_002 implements Specification {
                         " WHERE\n" +
                         "     t.customer_code =\n" +customer_code+ "\n" +
                                 serial_filter +
+                                ticket_filter +
                         " and s.step_status != '" + ConstantBaseApp.SYS_STATUS_DONE + "'  \n" +
                         " and t.ticket_status in ('" + ConstantBaseApp.SYS_STATUS_PENDING + "' , '" +
                         ConstantBaseApp.SYS_STATUS_PROCESS + "' , '" +

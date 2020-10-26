@@ -23,18 +23,13 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.MAIN_HMAUX_TRANS_KEY;
  */
 public class Frg_Ticket_Search extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     public static final String CONTRACT_ID = "CONTRACT_ID";
     public static final String CLIENT_ID = "CLIENT_ID";
     public static final String TICKET_ID = "TICKET_ID";
     public static final String SYNCS_QTY = "SYNCS_QTY";
     private Frg_Serial_Search.I_Frg_Serial_Search delegate;
+    private Frg_Serial_Search.I_Frg_Serial_Search_Load load_delegate;
 
-
-    // TODO: Rename and change types of parameters
     private HMAux hmAux_Trans;
     private Frg_Ticket_Search_Presenter mPresenter;
     private Button btn_option_01;
@@ -48,11 +43,15 @@ public class Frg_Ticket_Search extends Fragment {
     private MKEditTextNM mket_contract;
     private MKEditTextNM mket_client;
     private MKEditTextNM mket_ticket;
-    private int syncs_qty =0;
-
+    private int syncs_qty = 0;
+    private int myTicketQty = 0;
 
     public void setOnSearchClickListener(Frg_Serial_Search.I_Frg_Serial_Search delegate) {
         this.delegate = delegate;
+    }
+
+    public void setLoad_delegate(Frg_Serial_Search.I_Frg_Serial_Search_Load load_delegate) {
+        this.load_delegate = load_delegate;
     }
 
     public Frg_Ticket_Search() {
@@ -92,6 +91,10 @@ public class Frg_Ticket_Search extends Fragment {
         mPresenter = new Frg_Ticket_Search_Presenter(getContext());
 
         iniVar(view);
+
+        if(load_delegate != null){
+            load_delegate.onFragIsReady();
+        }
 
         iniAction();
 
@@ -143,20 +146,31 @@ public class Frg_Ticket_Search extends Fragment {
     private void setupButton() {
         btn_option_01.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_3_states));
         btn_option_01.setText(hmAux_Trans.get("btn_check_exists"));
+        setupSyncButton();
+        setupMyTicketsButton();
+        btn_option_05.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
+        btn_option_05.setText(hmAux_Trans.get("btn_scheduled_tickets"));
+    }
+
+    private void setupMyTicketsButton() {
+        btn_option_03.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
+        String btn_text = hmAux_Trans.get("btn_my_tickets")
+            +  (myTicketQty > 0
+                      ? " (" + myTicketQty + ")"
+                      : ""
+                );
+        btn_option_03.setText(btn_text);
+    }
+
+    private void setupSyncButton() {
         btn_option_02.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
         String btn_text = hmAux_Trans.get("btn_sync_ticket");
-        if(syncs_qty >0) {
+        if(syncs_qty > 0) {
             btn_text.concat(" (" + syncs_qty + ")");
             btn_option_02.setText(btn_text);
         }else{
             btn_option_02.setVisibility(View.GONE);
         }
-
-
-        btn_option_03.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
-        btn_option_03.setText(hmAux_Trans.get("btn_my_tickets"));
-        btn_option_05.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
-        btn_option_05.setText(hmAux_Trans.get("btn_scheduled_tickets"));
     }
 
     private void apllyUserProfile() {
@@ -177,7 +191,7 @@ public class Frg_Ticket_Search extends Fragment {
 
     private void initButtonsVisibility() {
         btn_option_01.setVisibility(View.VISIBLE);
-        if(syncs_qty >0) {
+        if(syncs_qty > 0) {
             btn_option_02.setVisibility(View.VISIBLE);
         }else{
             btn_option_02.setVisibility(View.GONE);
@@ -211,5 +225,11 @@ public class Frg_Ticket_Search extends Fragment {
 
     public void setSyncsQty(int sync_qty) {
         this.syncs_qty = sync_qty;
+        setupSyncButton();
+    }
+
+    public void setMyTicketsQty(int myTicketsQty) {
+        this.myTicketQty = myTicketsQty;
+        setupMyTicketsButton();
     }
 }

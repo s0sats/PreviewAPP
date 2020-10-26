@@ -26,13 +26,15 @@ public interface Act068_Main_Contract {
 
        void callAct005();
 
-       void callAct076(Bundle bundle);
+       void callAct076();
 
        void showResult(boolean ticketResult);
 
        void setSync(int qty);
 
        void addResultList(ArrayList<HMAux> resultList);
+
+       void callAct070(Bundle buildAct070Bundle);
 
    }
 
@@ -66,5 +68,11 @@ public interface Act068_Main_Contract {
        void processWS_SaveReturn(String result);
 
        void executeTicketSearch(String contract_id, String client_id, String ticket_id);
+
+       void updateTabPreference(String sTag);
+
+       void processSearchByTicketTab(HMAux hmAux);
+
+       void setFragTicketSearchParamsIntoBundle(Bundle bundle, HMAux hmAuxValues);
    }
 }
