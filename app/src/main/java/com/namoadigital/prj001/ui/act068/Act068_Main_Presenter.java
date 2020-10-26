@@ -247,7 +247,7 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
     public void executeTicketSearch(String contract_id, String client_id, String ticket_id) {
 
         if (ToolBox_Con.isOnline(context)) {
-''            //
+            //
             mView.setWsProcess(WS_TK_Ticket_Client_Contract_Search.class.getName());
             //
             mView.showPD(
