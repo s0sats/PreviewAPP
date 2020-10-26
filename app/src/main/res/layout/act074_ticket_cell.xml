@@ -182,7 +182,6 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/step_status"
             android:gravity="center"
-            android:padding="2dp"
             android:textColor="@color/namoa_color_white_alpha"
             android:textStyle="bold"
             android:visibility="visible"

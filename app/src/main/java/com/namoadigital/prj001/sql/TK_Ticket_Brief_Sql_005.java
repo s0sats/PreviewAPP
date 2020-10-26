@@ -62,11 +62,11 @@ public class TK_Ticket_Brief_Sql_005 implements Specification {
                         "       t.contract_code,\n" +
                         "       t.contract_desc\n" +
                         " FROM\n" +
-                        "     tk_ticket t,\n" +
-                        "     tk_ticket_ctrl c\n" +
-                        " LEFT JOIN\n" +
+                        "     tk_ticket t\n" +
+                        " JOIN\n" +
                         "     tk_ticket_step s ON \n" +
-                        "       t.ticket_code = s.ticket_code \n" +
+                        "       t.customer_code = s.customer_code \n" +
+                        "       AND t.ticket_code = s.ticket_code \n" +
                         "       AND t.ticket_prefix = s.ticket_prefix\n" +
                         "   LEFT JOIN\n" +
                         "     tk_ticket_brief tb ON\n" +
@@ -81,11 +81,9 @@ public class TK_Ticket_Brief_Sql_005 implements Specification {
                         ConstantBaseApp.SYS_STATUS_WAITING_SYNC +
                         "')  \n" +
                         " and t.current_step_order = s.step_order\n" +
+                        " and t.customer_code = s.customer_code \n" +
                         " and t.ticket_code = s.ticket_code \n" +
                         " AND t.ticket_prefix = s.ticket_prefix\n" +
-                        " and s.ticket_prefix = c.ticket_prefix \n" +
-                        " AND s.ticket_code = c.ticket_code \n" +
-                        " AND s.step_code = c.step_code \n" +
                         " and  tb.ticket_prefix is null\n" +
                         "GROUP BY\n" +
                         "  T.customer_code,\n" +

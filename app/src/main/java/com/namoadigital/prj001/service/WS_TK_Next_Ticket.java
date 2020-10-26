@@ -134,6 +134,7 @@ public class WS_TK_Next_Ticket extends IntentService {
     }
 
     private void checkSyncRequired(List<TK_Next_Ticket> next_tickets) {
+        List<TK_Ticket_Brief> ticketBriefList = new ArrayList<>();
         if(next_tickets != null) {
             for (TK_Next_Ticket ticket : next_tickets) {
 
@@ -160,8 +161,12 @@ public class WS_TK_Next_Ticket extends IntentService {
                     }
                 }
                 TK_Ticket_Brief tk_ticket_brief = getTicketBrief(ticket);
-                ticketBriefDao.addUpdate(tk_ticket_brief);
+                ticketBriefList.add(tk_ticket_brief);
+
             }
+        }
+        if(!ticketBriefList.isEmpty()) {
+            ticketBriefDao.addUpdate(ticketBriefList, false);
         }
     }
 

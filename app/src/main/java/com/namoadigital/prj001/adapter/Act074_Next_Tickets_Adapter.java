@@ -195,20 +195,23 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             //
             setVisibilityByContent(tv_status, hmAux_Trans.get(item.getTicket_status()));
             setVisibilityByContent(tv_ticket_id, item.getTicket_id());
-
-            String step_order = item.getTicket_current_step_order();
-            if(item.getStep_order_seq() != null
-            && !item.getStep_order_seq().isEmpty() ){
-                step_order += "." + item.getStep_order_seq();
-            }
-            setVisibilityByContent(tv_step_id, step_order);
             //
-            if(item.getTicket_step_desc() != null
-                    && !item.getTicket_step_desc().isEmpty()) {
-                setVisibilityByContent(tv_step_desc, item.getTicket_step_desc());
-            } else {
+            String step_order = item.getTicket_current_step_order();
+
+            if((item.getTicket_step_desc() != null && item.getTicket_step_qty() > 1)
+            || (item.getTicket_step_desc() == null)) {
                 setVisibilityByContent(tv_step_desc, hmAux_Trans.get("other_steps_available_lbl"));
+            } else {
+                if(item.getStep_order_seq() != null
+                        && !item.getStep_order_seq().isEmpty()
+                        &&  step_order != null){
+                    step_order += "." + item.getStep_order_seq();
+                    step_order.concat(item.getStep_order_seq());
+                }
+                setVisibilityByContent(tv_step_desc, item.getTicket_step_desc());
             }
+            //
+            setVisibilityByContent(tv_step_id, step_order);
             //
             setVisibilityByContent(tv_client_name, item.getClient_name());
             setVisibilityByContent(tv_contract_desc, item.getContract_desc());
@@ -222,6 +225,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             setVisibilityByContent(tv_planned_date_val,
                     formatted_planned_date
             );
+
             if(item.getUser_focus() == 0){
                 gp_step.setVisibility(View.GONE);
                 setVisibilityByContent(tv_planned_date_val,

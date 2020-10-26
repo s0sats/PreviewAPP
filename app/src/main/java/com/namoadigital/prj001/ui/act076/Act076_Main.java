@@ -262,7 +262,13 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
     public void callAct070(Bundle bundle) {
         Intent intent = new Intent(context, Act070_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT076);
+        /**
+         * BARRIONUEVO - 26-10-2020
+         * Mudança feita para direcionar o onbackpressed na tela act070
+         * No Fluxo de Pesquisa de Serial deve retornar para tela principal do Ticket
+         * No Fluxo de Pendentes volta para a tela de lista de pendentes.
+         */
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingAct);
         bundle.putLong(TICKET_PRODUCT_CODE, ticketProductCode);
         bundle.putLong(TICKET_SERIAL_CODE, ticketSerialCode);
         if (mketFilter.getText().toString().isEmpty()) {

@@ -34,7 +34,7 @@ public class Sql_Act076_002 implements Specification {
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
         return sb
-                .append("SELECT distinct  t.customer_code,\n" +
+                .append("SELECT t.customer_code,\n" +
                         "       t.scn,\n" +
                         "       t.ticket_prefix,\n" +
                         "       t.ticket_code,\n" +
@@ -51,7 +51,7 @@ public class Sql_Act076_002 implements Specification {
                         "       s.step_desc,\n" +
                         "       t.forecast_date, \n " +
                         "       CASE WHEN t.user_focus = 0 "+
-                        "       THEN null "+
+                        "       THEN t.forecast_date "+
                         "       ELSE s.forecast_start"+
                         "       END  forecast_start,\n" +
                         "       CASE WHEN t.user_focus = 0 "+
@@ -60,7 +60,7 @@ public class Sql_Act076_002 implements Specification {
                         "       END  forecast_end,\n" +
                         "       count(s.step_code) STEP_QTY, \n" +
                         "       s.step_order_seq,\n" +
-                        "      0 fcm,\n" +
+                        "       0 fcm,\n" +
                         "       t.user_focus,\n" +
                         "       t.sync_required,\n" +
                         "       CASE WHEN t.update_required + t.update_required_product > 0 \n" +
@@ -73,39 +73,31 @@ public class Sql_Act076_002 implements Specification {
                         "       t.contract_code,\n" +
                         "       t.contract_desc\n" +
                         " FROM\n" +
-                        "     tk_ticket t,\n" +
-                        "     tk_ticket_ctrl c\n" +
-                        " LEFT JOIN\n" +
+                        "     tk_ticket t\n" +
+                        " JOIN\n" +
                         "     tk_ticket_step s ON \n" +
-                        "       t.ticket_code = s.ticket_code \n" +
+                        "           t.customer_code = s.customer_code \n" +
+                        "       AND t.ticket_code = s.ticket_code \n" +
                         "       AND t.ticket_prefix = s.ticket_prefix\n" +
-                        "   LEFT JOIN\n" +
-                        "     tk_ticket_brief tb ON\n" +
-                        "      tb.customer_code = t.customer_code\n" +
-                        "       AND  tb.ticket_prefix = t.ticket_prefix \n" +
-                        "       AND tb.ticket_code = t.ticket_code       \n" +
                         " WHERE\n" +
                         "     t.customer_code =\n" +customer_code+ "\n" +
-                                serial_filter +
-                        " and s.step_status != '" + ConstantBaseApp.SYS_STATUS_DONE + "'  \n" +
+                        serial_filter +
+                        " and s.step_status not in ('" + ConstantBaseApp.SYS_STATUS_DONE + "',  \n" +
+                        " '" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "' ) \n" +
                         " and t.ticket_status in ('" + ConstantBaseApp.SYS_STATUS_PENDING + "' , '" +
                         ConstantBaseApp.SYS_STATUS_PROCESS + "' , '" +
                         ConstantBaseApp.SYS_STATUS_WAITING_SYNC +
                         "')  \n" +
                         " and t.current_step_order = s.step_order\n" +
+                        " and t.customer_code = s.customer_code\n" +
                         " and t.ticket_code = s.ticket_code \n" +
                         " AND t.ticket_prefix = s.ticket_prefix\n" +
-                        " and s.ticket_prefix = c.ticket_prefix \n" +
-                        " AND s.ticket_code = c.ticket_code \n" +
-                        " AND s.step_code = c.step_code \n" +
-                        " and  tb.ticket_prefix is null\n" +
                         "GROUP BY\n" +
                         "  t.customer_code,\n" +
                         "  t.ticket_prefix,\n" +
                         "  t.ticket_code" +
                         " ORDER BY \n" +
-                        "  t.forecast_date asc,\n"+
-                        "  s.forecast_start asc\n"
+                        "  forecast_start asc\n"
                 )
                 .toString();
     }

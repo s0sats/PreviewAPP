@@ -40,7 +40,7 @@
                 android:textColor="@color/my_tickets_radio"
                 android:layout_weight="1"
                 android:background="@drawable/act074_radio_states"
-                tools:text="MEUS TICKETS"
+                tools:text="SERIAL"
                 android:checked="true"
                 android:gravity="center"
                 android:button="@null" />
@@ -55,7 +55,7 @@
                 android:layout_height="50dp"
                 android:textColor="@color/my_tickets_radio"
                 android:layout_weight="1"
-                tools:text="OUTROS"
+                tools:text="TICKET"
                 android:background="@drawable/act074_radio_states"
                 android:gravity="center"
                 android:button="@null" />

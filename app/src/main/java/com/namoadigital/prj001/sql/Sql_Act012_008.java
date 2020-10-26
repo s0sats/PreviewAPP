@@ -38,6 +38,7 @@ public class Sql_Act012_008 implements Specification {
                         " WHERE \n" +
                         "   s.customer_code = '"+customer_code+"'\n" +
                         "   and s.ticket_prefix > 0 \n" +
+                        "   and s.user_focus = 1 \n"+
                         "   and s.ticket_status in (" +
                         "                       '"+ ConstantBase.SYS_STATUS_PROCESS +"'," +
                         "                       '"+ ConstantBase.SYS_STATUS_PENDING +"'," +

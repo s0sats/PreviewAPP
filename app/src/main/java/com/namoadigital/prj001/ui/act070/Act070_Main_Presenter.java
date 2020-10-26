@@ -1926,7 +1926,13 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             case ConstantBaseApp.ACT069:
                 mView.callAct069();
                 break;
-            case ConstantBaseApp.ACT076:
+            /**
+             * BARRIONUEVO - 26-10-2020
+             * Mudança feita para direcionar o onbackpressed na tela act070
+             * No Fluxo de Pesquisa de Serial deve retornar para tela principal do Ticket
+             * No Fluxo de Pendentes volta para a tela de lista de pendentes.
+             */
+            case ConstantBaseApp.ACT012:
                 mView.callAct076();
                 break;
             default:
