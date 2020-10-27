@@ -22,6 +22,7 @@ import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_Truncate;
 import com.namoadigital.prj001.sql.EV_User_Sql_Truncate;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_Truncate;
+import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -198,7 +199,12 @@ public class WS_GetCustomer extends IntentService {
                 Collections.addAll(listToDelete,files_support);
                 //
                 ToolBox_Inf.deleteFileListExceptionSafe(listToDelete);
-                //
+                //LUCHE - 26/10/2020 - Reseta prefencia da tab da act068
+                ToolBox_Con.setStringPreference(
+                    getApplicationContext(),
+                    ConstantBaseApp.ACT068_TAB_SELECTED,
+                    Act068_Main.TAG_FRG_SERIAL_SEARCH
+                );
             }
             //
             ev_userDao.addUpdate(users, true);

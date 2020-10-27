@@ -56,7 +56,7 @@ public class Act076_Main_Presenter implements Act076_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void getTicketListBySerial(long ticketProductCode, long ticketSerialCode) {
+    public void getTicketListBySerial(long ticketProductCode, long ticketSerialCode, String ticketContractId, String ticketClientId, String ticketId) {
         ArrayList<HMAux> auxTickets = new ArrayList<>();
         //
         auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
@@ -64,7 +64,10 @@ public class Act076_Main_Presenter implements Act076_Main_Contract.I_Presenter {
                         ToolBox_Con.getPreference_Customer_Code(context),
                         ToolBox_Con.getPreference_Site_Code(context),
                         ticketProductCode,
-                        ticketSerialCode
+                        ticketSerialCode,
+                        ticketContractId,
+                        ticketClientId,
+                        ticketId
                 ).toSqlQuery()
         );
         //

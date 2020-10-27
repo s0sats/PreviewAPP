@@ -31,7 +31,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Frg_Serial_Search extends Fragment {
@@ -140,6 +139,8 @@ public class Frg_Serial_Search extends Fragment {
     private ArrayList<MKEditTextNM> controls_sta;
     private View.OnClickListener clickListener;
     private boolean supportNFC;
+    private boolean forceExactSearch = false;
+    private MKEditTextNM.IMKEditTextChangeText mketSerialTextChangeListener;
 
     @Override
     public void onAttach(Context context) {
@@ -287,12 +288,27 @@ public class Frg_Serial_Search extends Fragment {
         btn_option_05.setOnClickListener(btnActionListener);
 
         mket_serial.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
-
             @Override
             public void reportTextBySpecialist(String s) {
+                //LUCHE - 27/10/2020
+                //Seta var q define busca exata
+                forceExactSearch = true;
                 btn_option_01.performClick();
             }
         });
+        //Interface que identifica digitação no campo e reseta var forceExactSearch
+        mketSerialTextChangeListener = new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                forceExactSearch = false;
+            }
+        };
+        mket_serial.setOnReportTextChangeListner(mketSerialTextChangeListener);
         //
         mket_product_id.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
@@ -339,6 +355,10 @@ public class Frg_Serial_Search extends Fragment {
      */
     private void setProductDesc(String productDesc) {
         til_product.setHelperText(productDesc);
+    }
+
+    public boolean isForceExactSearch() {
+        return forceExactSearch;
     }
 
     private View.OnClickListener btnActionListener = new View.OnClickListener() {
@@ -534,8 +554,13 @@ public class Frg_Serial_Search extends Fragment {
     public HMAux getHMAuxValues() {
         HMAux values = new HMAux();
         values.put(PRODUCT_ID, (mket_product_id.getText().toString().trim().isEmpty() || iv_product_change.getVisibility() == View.VISIBLE) ? "" : mket_product_id.getText().toString().trim());
+        //LUCHE - 27/10/2020
+        //Como o setOnReportTextChangeListner reseta a var de busca exata, foi removido o listener nesse momento.
         String serial_id = ToolBox_Inf.removeForbidenChars(mket_serial.getText().toString().trim());
+        mket_serial.setOnReportTextChangeListner(null);
         mket_serial.setText(serial_id);
+        mket_serial.setOnReportTextChangeListner(mketSerialTextChangeListener);
+        //
         values.put(SERIAL, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim().isEmpty() ? "" : mket_serial.getText().toString().trim()));
         values.put(TRACKING, mket_tracking.getText().toString().trim().isEmpty() ? "" : mket_tracking.getText().toString().trim());
 

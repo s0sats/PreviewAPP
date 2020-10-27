@@ -125,7 +125,7 @@ public class Act076_Main extends Base_Activity implements Act076_Main_Contract.I
         );
         //
 
-        mPresenter.getTicketListBySerial(ticketProductCode,ticketSerialCode);
+        mPresenter.getTicketListBySerial(ticketProductCode,ticketSerialCode, ticketContractId, ticketClientId ,ticketId);
 
     }
 

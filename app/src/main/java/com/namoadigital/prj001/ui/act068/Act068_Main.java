@@ -38,6 +38,7 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act072.Act072_Main;
 import com.namoadigital.prj001.ui.act074.Act074_Main;
 import com.namoadigital.prj001.ui.act076.Act076_Main;
@@ -58,6 +59,10 @@ import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Sea
 public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_Main_Contract.I_View, On_Frg_Serial_Search, Frg_Serial_Search.I_Frg_Serial_Search {
 
     public static final String IS_SYNC_PROCESS = "IS_SYNC_PROCESS";
+    //LUCHE - 26/10/2020 - eSSA CONSTANTES SÃO USADAS COMO VALOR DE UM PREFENCIA !!!
+    public static final String TAG_FRG_SERIAL_SEARCH = "Frg_Serial_Search";
+    public static final String TAG_FRG_TICKET_SEARCH = "Frg_Ticket_Search";
+
     private Act068_Main_Presenter mPresenter;
     private int pendencies_qty;
     private FragmentManager fm;
@@ -78,6 +83,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private RadioButton tab_serial_search;
     private RadioButton tab_ticket_search;
     private boolean isFragSerialSearch = true;
+    private HMAux hmAuxFragTicketSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,9 +98,16 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         initVars();
         //
         iniUIFooter();
-
+        //
         initAction();
+        //
+        setTabByPreference();
+    }
 
+    private void setTabByPreference() {
+        if(TAG_FRG_TICKET_SEARCH.equals(ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.ACT068_TAB_SELECTED,TAG_FRG_SERIAL_SEARCH))){
+            tab_ticket_search.performClick();
+        }
     }
 
     private void iniSetup() {
@@ -171,6 +184,13 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         //
         transList.add("dialog_ticket_search_ttl");
         transList.add("dialog_ticket_search_start");
+        //
+        transList.add("alert_no_ticket_found_ttl");
+        transList.add("alert_no_ticket_found_msg");
+        transList.add("alert_ticket_params_not_found_ttl");
+        transList.add("alert_ticket_params_not_found_msg");
+        transList.add("alert_invalid_ticket_return_ttl");
+        transList.add("alert_invalid_ticket_return_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -278,6 +298,14 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         finish();
     }
 
+    @Override
+    public void callAct070(Bundle buildAct070Bundle) {
+        Intent intent = new Intent(context, Act070_Main.class);
+        intent.putExtras(buildAct070Bundle);
+        startActivity(intent);
+        finish();
+    }
+
     private void applyBundleSearchParams() {
         if (!fragProduct_ID.isEmpty()) {
             mFrgSerialSearch.setProductIdText(fragProduct_ID);
@@ -342,7 +370,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             mPresenter.executeSerialSearch(
                 optionsInfo.get(PRODUCT_ID),
                 optionsInfo.get(Frg_Serial_Search.SERIAL),
-                optionsInfo.get(Frg_Serial_Search.TRACKING)
+                optionsInfo.get(Frg_Serial_Search.TRACKING),
+                mFrgSerialSearch.isForceExactSearch()
             );
         } else {
           showMsg(
@@ -476,14 +505,20 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                 switch (checkedId) {
                     case R.id.act068_tab_serial_search:
                         isFragSerialSearch = true;
-                        setFrag(mFrgSerialSearch, "Frg_Serial_Search");
+                        setFrag(mFrgSerialSearch, TAG_FRG_SERIAL_SEARCH);
                         break;
                     case R.id.act068_tab_ticket_search:
                         isFragSerialSearch = false;
                         mFrgTicketSearch = Frg_Ticket_Search.newInstance(hmAux_Trans);
                         mFrgTicketSearch.setOnSearchClickListener((Act068_Main)context);
-                        mFrgTicketSearch.setSyncsQty(syncs_qty);
-                        setFrag(mFrgTicketSearch, "Frg_Ticket_Search");
+                        mFrgTicketSearch.setLoad_delegate(new Frg_Serial_Search.I_Frg_Serial_Search_Load() {
+                            @Override
+                            public void onFragIsReady() {
+                                mFrgTicketSearch.setSyncsQty(syncs_qty);
+                                mFrgTicketSearch.setMyTicketsQty(pendencies_qty);
+                            }
+                        });
+                        setFrag(mFrgTicketSearch, TAG_FRG_TICKET_SEARCH);
                         break;
                 }
             }
@@ -497,9 +532,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     @Override
-    public void callAct076(Bundle bundle){
+    public void callAct076(){
         Intent intent = new Intent(context, Act076_Main.class);
+        Bundle bundle = new Bundle();
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
+        mPresenter.setFragTicketSearchParamsIntoBundle(bundle, mFrgTicketSearch.getHMAuxValues());
         intent.putExtras(bundle);
         startActivity(intent);
         finish();
@@ -554,8 +591,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         if (nextTicketsFlow) {
             callAct074();
         } else {
-            //todo verificar qual fragment esta ativo.
-            checkFlow(mFrgSerialSearch.getHMAuxValues());
+             checkFlow(
+                 isFragSerialSearch
+                     ? mFrgSerialSearch.getHMAuxValues()
+                     : mFrgTicketSearch.getHMAuxValues()
+             );
         }
     }
 
@@ -614,7 +654,12 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                 );
                 mPresenter.getSync();
             }else {
-                mPresenter.processSaveReturn(resultFromTicketSave);
+                if(hmAuxFragTicketSearch != null && hmAuxFragTicketSearch.size() > 0){
+                    mPresenter.processSearchByTicketTab(hmAuxFragTicketSearch);
+                    hmAuxFragTicketSearch = null;
+                }else {
+                    mPresenter.processSaveReturn(resultFromTicketSave);
+                }
             }
         } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
             wsProcess = "";
@@ -622,9 +667,15 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             mPresenter.processWS_SaveReturn(result);
             mPresenter.executeWSTicketSave();
         }  else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Client_Contract_Search.class.getName())) {
-            //TODO Tratar retorno do WS
             wsProcess = "";
+            hmAuxFragTicketSearch = null;
             progressDialog.dismiss();
+            //
+            if(mPresenter.verifyProductForForm()){
+                hmAuxFragTicketSearch = hmAux;
+            }else{
+                mPresenter.processSearchByTicketTab(hmAux);
+            }
         } else{
             //
             progressDialog.dismiss();
@@ -766,7 +817,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                         mFrgSerialSearch.setProductIdText(product_id);
                         mFrgSerialSearch.setSerialIdText("");
                         mFrgSerialSearch.setTrackingText("");
-                        mPresenter.executeSerialSearch(product_id, "", "");
+                        mPresenter.executeSerialSearch(product_id, "", "", false);
                     } else {
                         ToolBox.alertMSG(
                             context,
@@ -789,7 +840,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                         mFrgSerialSearch.setTrackingText("");
                         //
                         HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
-                        mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "");
+                        mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "", true);
                     } else {
                         ToolBox.alertMSG(
                             context,
@@ -851,6 +902,9 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 
     private <T extends Fragment> void setFrag(T type, String sTag) {
 //        if (fm.findFragmentByTag(sTag) == null) {
+            //LUCHE - 26/10/2020 - atualzia preferencia de qual tab deve vir carregada.
+            mPresenter.updateTabPreference(sTag);
+            //
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.act068_frg_placeholder, type, sTag);
             ft.addToBackStack(null);

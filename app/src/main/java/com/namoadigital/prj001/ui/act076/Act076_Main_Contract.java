@@ -29,6 +29,6 @@ public interface Act076_Main_Contract {
 
         void checkTicketFlow(Act074_TicketVH item);
 
-        void getTicketListBySerial(long ticketProductCode, long ticketSerialCode);
+        void getTicketListBySerial(long ticketProductCode, long ticketSerialCode, String ticketContractId, String ticketClientId, String ticketId);
     }
 }
