@@ -226,7 +226,14 @@ public class Frg_Ticket_Search extends Fragment {
 
     public void setSyncsQty(int sync_qty) {
         this.syncs_qty = sync_qty;
-        setupSyncButton();
+        /**
+         *  BARRIONUEVO 27-10-2020
+         *  Colocado para evitar o crash de NullPointer na inicializacao dos fragmento
+         *  Sera necessário revisar como inicializar a qty para sincronizar
+         */
+        if(btn_option_02 != null) {
+            setupSyncButton();
+        }
     }
 
     public void setMyTicketsQty(int myTicketsQty) {

@@ -228,8 +228,6 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         );
         //
         initFragment();
-        //
-        mPresenter.getSync();
     }
 
     private void setupFragSearch() {
@@ -509,7 +507,9 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                         break;
                     case R.id.act068_tab_ticket_search:
                         isFragSerialSearch = false;
-                        mFrgTicketSearch = Frg_Ticket_Search.newInstance(hmAux_Trans);
+                        if(mFrgTicketSearch == null) {
+                            mFrgTicketSearch = Frg_Ticket_Search.newInstance(hmAux_Trans);
+                        }
                         mFrgTicketSearch.setOnSearchClickListener((Act068_Main)context);
                         mFrgTicketSearch.setLoad_delegate(new Frg_Serial_Search.I_Frg_Serial_Search_Load() {
                             @Override
@@ -684,10 +684,17 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 
     @Override
     public void setSync(int qty) {
-        if (qty > 0) {
-            syncs_qty = qty;
-        } else {
-            syncs_qty = 0;
+        syncs_qty = qty;
+        if (isFragSerialSearch) {
+            if (syncs_qty > 0) {
+                String btn_text = hmAux_Trans.get("btn_sync_ticket") + " (" + syncs_qty + ")";
+                mFrgSerialSearch.setBtn_Option_02_Label(btn_text);
+                mFrgSerialSearch.setBtn_Option_02_Visibility(View.VISIBLE);
+            } else {
+                mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
+            }
+        }else{
+            mFrgTicketSearch.setSyncsQty(syncs_qty);
         }
     }
 
@@ -885,13 +892,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             public void onFragIsReady() {
                 setFrgSerialSearch();
                 setupFragSearch();
-                if (syncs_qty > 0) {
-                    String btn_text = hmAux_Trans.get("btn_sync_ticket") + " (" + syncs_qty + ")";
-                    mFrgSerialSearch.setBtn_Option_02_Label(btn_text);
-                    mFrgSerialSearch.setBtn_Option_02_Visibility(View.VISIBLE);
-                } else {
-                    mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
-                }
+                mPresenter.getSync();
             }
         });
         //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
