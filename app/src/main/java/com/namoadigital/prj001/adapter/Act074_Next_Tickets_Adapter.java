@@ -199,7 +199,7 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
             String step_order = item.getTicket_current_step_order();
 
             if((item.getTicket_step_desc() != null && item.getTicket_step_qty() > 1)
-            || (item.getTicket_step_desc() == null)) {
+            || (item.getTicket_step_desc() == null || item.getTicket_step_desc().isEmpty() )) {
                 setVisibilityByContent(tv_step_desc, hmAux_Trans.get("other_steps_available_lbl"));
             } else {
                 if(item.getStep_order_seq() != null

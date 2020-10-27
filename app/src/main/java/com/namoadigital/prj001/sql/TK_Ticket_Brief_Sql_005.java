@@ -75,7 +75,8 @@ public class TK_Ticket_Brief_Sql_005 implements Specification {
                         "       AND tb.ticket_code = t.ticket_code       \n" +
                         " WHERE\n" +
                         "     t.customer_code =\n" +customer_code+ "\n" +
-                        " and s.step_status != '" + ConstantBaseApp.SYS_STATUS_DONE + "'  \n" +
+                        " and s.step_status in ('" + ConstantBaseApp.SYS_STATUS_PENDING + "',  \n" +
+                        " '" + ConstantBaseApp.SYS_STATUS_PROCESS + "' ) \n" +
                         " and t.ticket_status in ('" + ConstantBaseApp.SYS_STATUS_PENDING + "' , '" +
                         ConstantBaseApp.SYS_STATUS_PROCESS + "' , '" +
                         ConstantBaseApp.SYS_STATUS_WAITING_SYNC +
