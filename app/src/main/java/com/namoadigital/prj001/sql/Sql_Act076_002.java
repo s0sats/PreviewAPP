@@ -42,7 +42,7 @@ public class Sql_Act076_002 implements Specification {
 
     public Sql_Act076_002(long customer_code, String site_code, long ticketProductCode, long ticketSerialCode, String ticketContractId, String ticketClientId, String ticketId) {
         this.customer_code = customer_code;
-        this.site_logged = site_logged;
+        this.site_logged = site_code;
         if(ticketProductCode > 0
                 && ticketSerialCode > 0 ) {
             serial_filter = " and (\n(t.open_product_code = '" + ticketProductCode + "'\n" +

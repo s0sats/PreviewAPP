@@ -166,8 +166,9 @@ public class Frg_Ticket_Search extends Fragment {
         btn_option_02.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
         String btn_text = hmAux_Trans.get("btn_sync_ticket");
         if(syncs_qty > 0) {
-            btn_text.concat(" (" + syncs_qty + ")");
+            btn_text += " (" + syncs_qty + ")";
             btn_option_02.setText(btn_text);
+            btn_option_02.setVisibility(View.VISIBLE);
         }else{
             btn_option_02.setVisibility(View.GONE);
         }
