@@ -44,11 +44,20 @@ public class Sql_Act076_002 implements Specification {
         this.customer_code = customer_code;
         this.site_logged = site_logged;
         if(ticketProductCode > 0
-            && ticketSerialCode > 0 ) {
+                && ticketSerialCode > 0 ) {
             serial_filter = " and (\n(t.open_product_code = '" + ticketProductCode + "'\n" +
-                " and t.open_serial_code = '" + ticketSerialCode + "')\n" +
-                " or( c.product_code = '" + ticketProductCode + "'\n" +
-                " and c.serial_code = '" + ticketSerialCode + "')\n)\n";
+                    " and t.open_serial_code = '" + ticketSerialCode + "')\n" +
+                    " or exists ( " +
+                    "       select 1 \n" +
+                    "              from tk_ticket_ctrl c \n" +
+                    "       where s.customer_code = c.customer_code\n" +
+                    "       and s.ticket_prefix = c.ticket_prefix\n" +
+                    "       and s.ticket_code = c.ticket_code \n" +
+                    "       and s.step_code = c.step_code \n" +
+                    " and c.ctrl_status in ('" + ConstantBaseApp.SYS_STATUS_PENDING + "',  \n" +
+                    " '" + ConstantBaseApp.SYS_STATUS_WAITING_SYNC + "',  \n" +
+                    " '" + ConstantBaseApp.SYS_STATUS_PROCESS + "' ) \n" +
+                    ") \n )";
         }
         if((ticketContractId != null && !ticketContractId.isEmpty())
             || (ticketClientId != null && !ticketClientId.isEmpty())
