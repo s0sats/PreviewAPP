@@ -244,6 +244,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 
         mFrgSerialSearch.setHmAux_Trans(hmAux_Trans_frg_serial_search);
         mFrgSerialSearch.setSupportNFC(supportNFC);
+        controls_sta.clear();
         controls_sta.addAll(mFrgSerialSearch.getControlsSta());
         mFrgSerialSearch.setClickListener(actionBTN);
         mFrgSerialSearch.setOnSearchClickListener(this);
