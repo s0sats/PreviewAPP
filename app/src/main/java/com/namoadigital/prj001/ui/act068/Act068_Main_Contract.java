@@ -47,7 +47,7 @@ public interface Act068_Main_Contract {
 
        void onBackPressedClicked();
 
-       void executeSerialSearch(String product_id, String serial_id, String tracking);
+       void executeSerialSearch(String product_id, String serial_id, String tracking, boolean forceExactSearch);
 
        void extractSearchResult(String result);
 

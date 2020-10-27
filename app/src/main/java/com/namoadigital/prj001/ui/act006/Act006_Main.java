@@ -297,7 +297,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             mPresenter.executeSerialSearch(
                     optionsInfo.get(PRODUCT_ID),
                     optionsInfo.get(Frg_Serial_Search.SERIAL),
-                    optionsInfo.get(Frg_Serial_Search.TRACKING)
+                    optionsInfo.get(Frg_Serial_Search.TRACKING),
+                    mFrgSerialSearch.isForceExactSearch()
             );
         } else {
             ToolBox.alertMSG(
@@ -590,7 +591,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                         mFrgSerialSearch.setProductIdText(product_id);
                         mFrgSerialSearch.setSerialIdText("");
                         mFrgSerialSearch.setTrackingText("");
-                        mPresenter.executeSerialSearch(product_id, "", "");
+                        mPresenter.executeSerialSearch(product_id, "", "", false);
                     } else {
                         ToolBox.alertMSG(
                                 context,
@@ -613,7 +614,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                         mFrgSerialSearch.setTrackingText("");
                         //
                         HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
-                        mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "");
+                        mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "", true);
                     } else {
                         ToolBox.alertMSG(
                                 context,

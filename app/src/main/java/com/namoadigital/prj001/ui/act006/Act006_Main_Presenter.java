@@ -19,7 +19,7 @@ public interface Act006_Main_Presenter {
 
     void checkPendenciesFlow(int pendencies_qty);
 
-    void executeSerialSearch(String product_id, String serial_id, String tracking);
+    void executeSerialSearch(String product_id, String serial_id, String tracking, boolean forceExactSearch);
 
     void offlineSerialSearch();
 
