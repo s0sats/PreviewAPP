@@ -379,10 +379,9 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
     }
 
     @Override
-    public void loadTicketList(List<Act074_TicketVH> tickets, boolean userFocusOnly) {
+    public void loadTicketList(final List<Act074_TicketVH> tickets, boolean userFocusOnly) {
         if (tickets != null && tickets.size() > 0) {
             tvNoResult.setVisibility(View.GONE);
-            rvTickets.setVisibility(View.VISIBLE);
             //
             if (mAdapter != null) {
                 mAdapter.setDataset(tickets, isOnlineProcess);
@@ -397,13 +396,14 @@ public class Act074_Main extends Base_Activity implements Act074_Main_Contract.I
         rvTickets.postDelayed(new Runnable() {
             @Override
             public void run() {
+                rvTickets.setVisibility( tickets != null && tickets.size() > 0 ? View.VISIBLE : View.INVISIBLE);
                 progressBar.setVisibility(View.GONE);
                 tab_my_tickets.setEnabled(true);
                 tab_my_tickets.setClickable(true);
                 tab_other_tickets.setEnabled(true);
                 tab_other_tickets.setClickable(true);
             }
-        }, 900);
+        }, 100);
     }
 
     @Override

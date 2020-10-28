@@ -305,9 +305,28 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     private class TicketFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
+//            String charString = ToolBox.AccentMapper(constraint.toString().toLowerCase());
+//            if (charString.isEmpty()) {
+//                mFilteredValues = mValues;
+//            } else {
+//                ArrayList<Act074_TicketVH> filteredList = new ArrayList<>();
+//                for (Act074_TicketVH row : mValues) {
+//                    //Resgata todos os campos concatenado e com remoção de acentuacao
+//                    String rowFields = ToolBox.AccentMapper(row.getAllFieldForFilter().toLowerCase());
+//                    if (rowFields.contains(charString)) {
+//                        filteredList.add(row);
+//                    }
+//                }
+//                mFilteredValues = filteredList;
+//            }
+//            FilterResults filterResults = new FilterResults();
+//            filterResults.count = mFilteredValues.size();
+//            filterResults.values = mFilteredValues;
+//            return filterResults;
+            List<Act074_TicketVH> temp = new ArrayList<>();
             String charString = ToolBox.AccentMapper(constraint.toString().toLowerCase());
             if (charString.isEmpty()) {
-                mFilteredValues = mValues;
+                temp = mValues;
             } else {
                 ArrayList<Act074_TicketVH> filteredList = new ArrayList<>();
                 for (Act074_TicketVH row : mValues) {
@@ -317,11 +336,11 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
                         filteredList.add(row);
                     }
                 }
-                mFilteredValues = filteredList;
+                temp = filteredList;
             }
             FilterResults filterResults = new FilterResults();
-            filterResults.count = mFilteredValues.size();
-            filterResults.values = mFilteredValues;
+            filterResults.count = temp.size();
+            filterResults.values = temp;
             return filterResults;
         }
 
