@@ -26,47 +26,50 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <RadioGroup
-            android:id="@+id/act068_tabs"
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
+            app:cardElevation="8dp">
 
-            <RadioButton
-                android:id="@+id/act068_tab_serial_search"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:textColor="@color/my_tickets_radio"
-                android:layout_weight="1"
-                android:background="@drawable/act074_radio_states"
-                tools:text="SERIAL"
-                android:checked="true"
-                android:gravity="center"
-                android:button="@null" />
+            <RadioGroup
+                android:id="@+id/act068_tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <View
-                android:layout_width="2dp"
-                android:layout_height="match_parent" />
+                <RadioButton
+                    android:id="@+id/act068_tab_serial_search"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/act074_radio_states"
+                    android:button="@null"
+                    android:checked="true"
+                    android:gravity="center"
+                    android:textColor="@color/my_tickets_radio"
+                    tools:text="SERIAL" />
 
-            <RadioButton
-                android:id="@+id/act068_tab_ticket_search"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:textColor="@color/my_tickets_radio"
-                android:layout_weight="1"
-                tools:text="TICKET"
-                android:background="@drawable/act074_radio_states"
-                android:gravity="center"
-                android:button="@null" />
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent" />
 
-        </RadioGroup>
+                <RadioButton
+                    android:id="@+id/act068_tab_ticket_search"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/act074_radio_states"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:textColor="@color/my_tickets_radio"
+                    tools:text="TICKET" />
+            </RadioGroup>
+        </android.support.v7.widget.CardView>
 
         <FrameLayout
             android:id="@+id/act068_frg_placeholder"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="4dp"
             android:layout_weight="1" />
 
 
