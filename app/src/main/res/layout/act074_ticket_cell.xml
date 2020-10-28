@@ -82,7 +82,6 @@
             android:id="@+id/act074_ticket_cell_tv_contract_desc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="1"

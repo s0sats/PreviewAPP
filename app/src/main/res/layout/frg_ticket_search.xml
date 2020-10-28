@@ -48,6 +48,31 @@
                 android:visibility="gone" />
 
             <LinearLayout
+                android:id="@+id/frg_ticket_search_ll_client"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_back"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/frg_ticket_search_mket_client"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:paddingLeft="10dp"
+                    android:layout_margin="0dp"
+                    app:mBARCODE="false"
+                    app:mNFC="false"
+                    app:mOCR="false" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <LinearLayout
                 android:id="@+id/frg_serial_search_ll_contract"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,31 +89,6 @@
                     app:mBARCODE="false"
                     app:mNFC="false"
                     app:mOCR="false" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dp" />
-
-            <LinearLayout
-                android:id="@+id/frg_ticket_search_ll_client"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_back"
-                android:orientation="vertical"
-                android:padding="5dp">
-
-                    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-                        android:id="@+id/frg_ticket_search_mket_client"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textMultiLine"
-                        android:paddingLeft="10dp"
-                        android:layout_margin="0dp"
-                        app:mBARCODE="false"
-                        app:mNFC="false"
-                        app:mOCR="false" />
 
             </LinearLayout>
 
