@@ -781,6 +781,18 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         finish();
     }
 
+    @Override
+    public void callAct081(Bundle bundle) {
+        Intent intent = new Intent(context, Act017_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
+        intent.putExtras(bundle);
+        //
+        startActivity(intent);
+        finish();
+    }
+
     private void iniUIFooter() {
         iniFooter();
         //

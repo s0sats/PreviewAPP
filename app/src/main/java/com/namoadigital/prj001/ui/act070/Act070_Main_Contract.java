@@ -61,6 +61,8 @@ public interface Act070_Main_Contract {
         void callact075ForApproval(int step_code, int ticket_seq, boolean currentStep, boolean isOperational);
 
         void callAct011(Bundle act011Bundle);
+
+        void callAct081(Bundle act081Bundle);
     }
 
     interface I_Presenter{

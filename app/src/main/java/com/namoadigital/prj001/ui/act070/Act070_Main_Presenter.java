@@ -578,10 +578,99 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 );
                 break;
             case ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_ADD_NEW:
-                showNewProcessDialog(mTicket, hmAux_Trans,stepProcessBtn);
+                //showNewProcessDialog(mTicket, hmAux_Trans,stepProcessBtn);
+                //
+                prepareCallAct081(mTicket,stepProcessBtn.getStepCode());
                 break;
         }
 
+    }
+
+    /**
+     * LUCHE - 29/10/2020
+     * Metodo que prepara a chamada da Act081 definindo qual produto / serial deve aparecer como
+     * sugestão na act.
+     * Busca o step selecionado e verifica o usr tem acesso ao produto do obj planejado. Se tiver, usa esse.
+     * Se não tiver, verifica se possui acesso ao produto da abertura do ticket. Se tiver, usa esse.
+     * Se não tiver, define como vazio.
+     * @param mTicket
+     * @param stepCode
+     */
+    private void prepareCallAct081(TK_Ticket mTicket, int stepCode) {
+        int productCode = -1;
+        String productDesc = null;
+        String productId = null;
+        String serialId = null;
+        TK_Ticket_Step selectedStep = getSelectedStep(mTicket.getTicket_prefix(), mTicket.getTicket_code(), stepCode);
+        //
+        TK_Ticket_Ctrl plannedObj = getPlannedObj(selectedStep.getCtrl());
+        //Se encontrou objPlanejado verifica se usr tem acesso ao produto e se tiver, seta os dados.
+        if(plannedObj != null) {
+            if (plannedObj.getProduct_code() != null && userHasProductAccess(plannedObj.getProduct_code())) {
+                productCode = plannedObj.getProduct_code();
+                productId = plannedObj.getProduct_id();
+                productDesc = plannedObj.getProduct_desc();
+                serialId = plannedObj.getSerial_id();
+            }
+        }
+        //Se produto  ainda não preenchido, verifica se usr tem acesso ao produto de abertura.
+        if(productCode == -1){
+            if(userHasProductAccess(mTicket.getOpen_product_code())){
+                productCode = mTicket.getOpen_product_code();
+                productId = mTicket.getOpen_product_id();
+                productDesc = mTicket.getOpen_product_desc();
+                serialId = mTicket.getOpen_serial_id();
+            }
+        }
+        //Chama Act passando bundle como param.
+        mView.callAct081(
+            getAct081Bundle(mTicket, selectedStep, productCode,productId,productDesc,serialId)
+        );
+
+    }
+
+    /**
+     * LUCHE - 29/10/2020
+     * Metodo que gera bundle a ser usado na act081
+     * @param mTicket
+     * @param selectedStep
+     * @param productCode
+     * @param productId
+     * @param productDesc
+     * @param serialId
+     * @return
+     */
+    private Bundle getAct081Bundle(TK_Ticket mTicket, TK_Ticket_Step selectedStep, int productCode, String productId, String productDesc, String serialId) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket.getTicket_prefix());
+        bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket.getTicket_code());
+        bundle.putString(TK_TicketDao.TICKET_ID, mTicket.getTicket_id());
+        bundle.putInt(TK_Ticket_StepDao.STEP_CODE, selectedStep.getStep_code());
+        bundle.putString(TK_Ticket_StepDao.STEP_DESC, selectedStep.getStep_desc());
+        bundle.putInt(TK_Ticket_CtrlDao.PRODUCT_CODE, productCode);
+        bundle.putString(TK_Ticket_CtrlDao.PRODUCT_ID, productId);
+        bundle.putString(TK_Ticket_CtrlDao.PRODUCT_DESC, productDesc);
+        bundle.putString(TK_Ticket_CtrlDao.SERIAL_ID, serialId);
+        return bundle;
+    }
+
+    /**
+     * LUCHE - 29/10/2020
+     * Busca obj planejado na lista de TK_Ticket_Ctrl do TK_Ticket_Step
+     * @param ctrls
+     * @return Ctrl planejado ou null
+     */
+    @Nullable
+    private TK_Ticket_Ctrl getPlannedObj(ArrayList<TK_Ticket_Ctrl> ctrls) {
+        if(ctrls != null && ctrls.size() > 0){
+            for (TK_Ticket_Ctrl ctrl : ctrls) {
+                if(ctrl.getObj_planned() == 1){
+                    return ctrl;
+                }
+            }
+        }
+        //
+        return null;
     }
 
     private void showNewProcessDialog(final TK_Ticket mTicket, HMAux hmAux_trans, StepProcessBtn stepProcessBtn) {
