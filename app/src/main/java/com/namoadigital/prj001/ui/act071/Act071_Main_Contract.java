@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act071;
 
 import android.content.DialogInterface;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
@@ -131,6 +132,8 @@ public interface Act071_Main_Contract {
         boolean isReadOnlyStatus(String ticketStatus);*/
 
         TK_Ticket getTicketbyPk(int ticket_prefix, int ticket_code);
+
+        void defineProductSerialViews(int mActionPrefix, int mActionCode, TK_Ticket_Ctrl mTicketCtrl, TextView tvProduct, TextView tvSerial);
     }
 
 }

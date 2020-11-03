@@ -85,6 +85,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private ConstraintLayout clFinalize;
     private ImageView ivFinalizeIcon;
     private TextView tvFinalizeLbl;
+    private TextView tvProduct;
+    private TextView tvSerial;
     private TextView tvPhotoLbl;
     private ImageView ivActionPhoto;
     private TextView tvCommentsLbl;
@@ -321,6 +323,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         clFinalize = findViewById(R.id.act071_cl_finalize);
         ivFinalizeIcon = findViewById(R.id.act071_iv_finalize_icon);
         tvFinalizeLbl = findViewById(R.id.act071_tv_finalize_lbl);
+        tvProduct = findViewById(R.id.act071_tv_prod_desc);
+        tvSerial = findViewById(R.id.act071_tv_serial);
         tvPhotoLbl = findViewById(R.id.act071_tv_photo_lbl);
         ivActionPhoto = findViewById(R.id.act071_iv_action_photo);
         tvCommentsLbl = findViewById(R.id.act071_tv_comment_lbl);
@@ -816,11 +820,16 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 //    }
 
     private void setDataToViews() {
+        defineProductSerial();
         defineComments();
         //Define tamanho imageView., considerand que img já existe.
         defineActionPhotoMetrics(IV_PHOTO_EXISTS_WIDTH_PERCENT,IV_PHOTO_EXISTS_HEIGHT_PERCENT);
         defineActionPhoto();
         defineDoneInfo();
+    }
+
+    private void defineProductSerial() {
+        mPresenter.defineProductSerialViews(mActionPrefix,mActionCode,mTicketCtrl, tvProduct,tvSerial);
     }
 
     private void defineComments() {

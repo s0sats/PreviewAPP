@@ -70,15 +70,49 @@
                 app:layout_constraintVertical_bias="0.0">
 
                 <TextView
+                    android:id="@+id/act071_tv_prod_desc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textSize="@dimen/pipeline_smallest_font_size"
+                    android:textStyle="bold"
+                    tools:text="Produto"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:visibility="gone"
+                    />
+
+                <TextView
+                    android:id="@+id/act071_tv_serial"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:text="Serial Id"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act071_tv_prod_desc"
+                    android:visibility="gone"
+                    />
+
+                <TextView
                     android:id="@+id/act071_tv_photo_lbl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     tools:text="Photo"
                     android:textStyle="bold"
+                    android:layout_marginTop="@dimen/pipeline_step_info_margin_top"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@id/act071_tv_serial" />
 
                 <!-- A cor do icone é definida via code-->
                 <ImageView

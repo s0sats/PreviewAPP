@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -1083,6 +1085,24 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         }
         //
         return false;
+    }
+
+    @Override
+    public void defineProductSerialViews(int mActionPrefix, int mActionCode, TK_Ticket_Ctrl mTicketCtrl, TextView tvProduct, TextView tvSerial) {
+        TK_Ticket tkTicket = getTicketbyPk(mActionPrefix, mActionCode);
+        if( mTicketCtrl.getProduct_code() != null
+            && tkTicket.getOpen_product_code() != mTicketCtrl.getProduct_code()
+        ){
+          tvProduct.setText(mTicketCtrl.getProduct_desc());
+          tvProduct.setVisibility(View.VISIBLE);
+        }
+        //
+        if( mTicketCtrl.getSerial_id() != null
+            && !tkTicket.getOpen_serial_id().equals(mTicketCtrl.getSerial_id())
+        ){
+            tvSerial.setText(mTicketCtrl.getSerial_id());
+            tvSerial.setVisibility(View.VISIBLE);
+        }
     }
 
     //
