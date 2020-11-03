@@ -35,10 +35,12 @@ import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_Save;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
@@ -162,14 +164,35 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     public void prepareSyncProcess(TK_Ticket mTicket, boolean allowOfflineSave) {
         //Verifica se há necessidade de envidar dados para o server.
         if(checkUpdateRequiredNeeds(mTicket)){
-            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
-                //callWsSave();
-                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), allowOfflineSave);
-            }else {
-                executeTicketSaveProcess(false);
-            }
+//            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+//                //callWsSave();
+//                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), allowOfflineSave);
+//            }else {
+//                executeTicketSaveProcess(false);
+//            }
+            //defineWsToCall(mTicket,allowOfflineSave,false);
+            //provalvemente aqui o booleano é false.
+            executeSerialSave(allowOfflineSave);
         }else{
             executeSyncProcess(mTicket.getTicket_prefix(), mTicket.getTicket_code(),mTicket.getScn());
+        }
+    }
+
+    /**
+     * LUCHE - 03/11/2020
+     * Metodo que faz a definição de qual WS chamar , se form ou ticket.
+     * Ess metodo representa a extração de codigo que era repetido em 3 locais diferentes, tendo apenas
+     * a variação das vars bool entre si
+     * @param mTicket
+     * @param formAllowOfflineSave
+     * @param ticketSaveAllowOffline
+     */
+    @Override
+    public void defineWsToCall(TK_Ticket mTicket, boolean formAllowOfflineSave, boolean ticketSaveAllowOffline){
+        if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+            defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), formAllowOfflineSave);
+        }else {
+            executeTicketSaveProcess(ticketSaveAllowOffline);
         }
     }
 
@@ -229,6 +252,86 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             }else{
                 ToolBox_Inf.showNoConnectionDialog(context);
             }
+        }
+    }
+
+    @Override
+    public void executeSerialSave(boolean allowOfflineSave) {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Serial_Save.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("progress_serial_save_ttl"),
+                hmAux_Trans.get("progress_serial_save_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Serial_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            //SE FOR SAVE, EXIBE MSG , SE FOR SYNC, NÃO EXIBE
+            if(allowOfflineSave) {
+                mView.showAlert(
+                    hmAux_Trans.get("alert_offline_save_ttl"),
+                    hmAux_Trans.get("alert_offline_save_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.callRefreshUi();
+                        }
+                    },
+                    false
+                );
+            }else{
+                ToolBox_Inf.showNoConnectionDialog(context);
+            }
+        }
+    }
+
+    @Override
+    public void processWsSerialSavelReturn(HMAux hmAux) {
+        if (!hmAux.isEmpty() && hmAux.size() > 0) {
+            ArrayList<HMAux> hmAuxList = new ArrayList<>();
+            for (Map.Entry<String, String> item : hmAux.entrySet()) {
+                HMAux aux = new HMAux();
+                /**
+                 * [0] - Product_code
+                 * [1] - Serial ID
+                 */
+                String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
+                String status = item.getValue();
+                String productInfo = getFormatedProductInfo(getMdProduct(ToolBox_Inf.convertStringToInt(pk[0])));
+                //O mHmAux abaixo é copia da act011, e foi modificado pra essa tela.
+//                HMAux mHmAux = new HMAux();
+//                mHmAux.put("label", "" + productInfo + " - " + pk[1]);
+//                mHmAux.put("type", "SERIAL");
+//                mHmAux.put("status", status);
+//                mHmAux.put("final_status", productInfo + " - " + pk[1] + " / " + status);
+                //
+                aux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("serial_lbl"));
+                aux.put(Generic_Results_Adapter.LABEL_ITEM_1, productInfo + " - " + pk[1] );
+                aux.put(Generic_Results_Adapter.VALUE_ITEM_1, status);
+                //
+                if (!ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(status)) {
+                    //Só colocado dentro da lista pois o metodo addResultList requer uma lista.
+                    hmAuxList.add(aux);
+                }
+            }
+            if(hmAuxList.size() > 0){
+                mView.addResultList(hmAuxList);
+            }
+        }
+    }
+
+    private String getFormatedProductInfo(MD_Product mdProduct) {
+        if (mdProduct != null) {
+            return mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc();
+        } else {
+            return "";
         }
     }
 
@@ -323,6 +426,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 || mTicket.getUpdate_required_product() == 1
                 || ToolBox_Inf.isTicketInTokenFile(context, mTicket.getTicket_prefix(),mTicket.getTicket_code())
                 || ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
+                || ToolBox_Inf.hasSerialUpdateRequiredWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
                 );
     }
 
@@ -987,24 +1091,30 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     private boolean userHasProductAccess(int open_product_code) {
+        MD_Product md_product = null;
+        md_product = getMdProduct(open_product_code);
+        //
+        if (ToolBox_Inf.isValidProduct(md_product)) {
+            return true;
+        }
+        return false;
+    }
+
+    private MD_Product getMdProduct(int product_code) {
+        MD_Product md_product;
         MD_ProductDao md_productDao = new MD_ProductDao(
                 context,
                 ToolBox_Con.customDBPath(
                         ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
-        MD_Product md_product = null;
         md_product = md_productDao.getByString(
                 new MD_Product_Sql_001(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        open_product_code
+                    product_code
                 ).toSqlQuery()
         );
-        //
-        if (ToolBox_Inf.isValidProduct(md_product)) {
-            return true;
-        }
-        return false;
+        return md_product;
     }
 
     /**
@@ -1150,12 +1260,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
-                //callWsSave();
-                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), true);
-            }else {
-                executeTicketSaveProcess(true);
-            }
+//            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+//                //callWsSave();
+//                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), true);
+//            }else {
+//                executeTicketSaveProcess(true);
+//            }
+            //defineWsToCall(mTicket,true,true);
+            executeSerialSave(true);
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_error_on_save_none_ttl"),
@@ -1258,12 +1370,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         mTicket.getStep().set(stepIdx,ticketStep);
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
-                //callWsSave();
-                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), true);
-            }else {
-                executeTicketSaveProcess(true);
-            }
+//            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+//                //callWsSave();
+//                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), true);
+//            }else {
+//                executeTicketSaveProcess(true);
+//            }
+            //defineWsToCall(mTicket,true,true);
+            executeSerialSave(true);
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_error_on_set_checkin_ttl"),
@@ -1297,12 +1411,13 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context,mTicket.getTicket_prefix(), mTicket.getTicket_code())){
-                //callWsSave();
-                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), true);
-            }else {
-                executeTicketSaveProcess(true);
-            }
+//            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context,mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+//                //callWsSave();
+//                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), true);
+//            }else {
+//                executeTicketSaveProcess(true);
+//            }
+            executeSerialSave(true);
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_error_on_set_checkout_ttl"),

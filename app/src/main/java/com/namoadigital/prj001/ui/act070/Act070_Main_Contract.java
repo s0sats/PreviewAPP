@@ -113,5 +113,10 @@ public interface Act070_Main_Contract {
 
         void processWS_SaveReturn(String mLink);
 
+        void executeSerialSave(boolean allowOfflineSave);
+
+        void processWsSerialSavelReturn(HMAux hmAux);
+
+        void defineWsToCall(TK_Ticket mTicket, boolean formAllowOfflineSave, boolean ticketSaveAllowOffline);
     }
 }

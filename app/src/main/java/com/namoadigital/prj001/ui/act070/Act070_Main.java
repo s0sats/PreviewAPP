@@ -39,6 +39,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.service.WS_Save;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
@@ -231,6 +232,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         transList.add("alert_ticket_sync_confirm_ttl");
         transList.add("alert_ticket_sync_confirm_msg");
+        //
+        transList.add("progress_serial_save_ttl");
+        transList.add("progress_serial_save_msg");
+        transList.add("serial_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -1048,8 +1053,23 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             progressDialog.dismiss();
             mPresenter.processWS_SaveReturn(mLink);
             mPresenter.prepareSyncProcess(mTicket, false);
+        } else if(wsProcess.equals(WS_Serial_Save.class.getName())){
+            //LUCHE - 03/11/2020
+            //Add envio de serial no bolo. Esse será o primeiro WS a ser chamado
+            wsProcess = "";
+            progressDialog.dismiss();
+            mPresenter.processWsSerialSavelReturn(hmAux);
+            //Após rodar tratativa, se tiver itens pendentes de envio, chama o fluxo atual.
+            //Caso contrario, significa que o WS_Serial_Save foi chamado do sincronismo.
+            if(mPresenter.checkUpdateRequiredNeeds(mTicket)) {
+                mPresenter.defineWsToCall(mTicket, true, true);
+            }else{
+                mPresenter.prepareSyncProcess(mTicket,false);
+            }
+        }else{
+            wsProcess = "";
+            progressDialog.dismiss();
         }
-        //
     }
 
 

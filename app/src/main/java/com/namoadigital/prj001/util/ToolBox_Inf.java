@@ -174,6 +174,7 @@ import com.namoadigital.prj001.sql.IO_Outbound_Sql_013;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_015;
+import com.namoadigital.prj001.sql.MD_Product_Serial_x_TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
 import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
@@ -7449,6 +7450,28 @@ public class ToolBox_Inf {
 
         return R.color.namoa_color_gray_chat;
 
+    }
+
+    /**
+     * LUCHE - 03/11/2020
+     * Metodo que verifica se alguma serial do ticket esta marcado com update required.
+     * @param context
+     * @param ticket_prefix
+     * @param ticket_code
+     * @return True se encontrar alguma serial do ticket na condição de atualização
+     */
+    public static boolean hasSerialUpdateRequiredWithinTicket(Context context, int ticket_prefix, int ticket_code) {
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
+        //
+        List<MD_Product_Serial> serialList = serialDao.query(
+            new MD_Product_Serial_x_TK_Ticket_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ticket_prefix,
+                ticket_code
+            ).toSqlQuery()
+        );
+        //
+        return serialList != null && serialList.size() > 0;
     }
 
 }
