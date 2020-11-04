@@ -499,7 +499,11 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
                 mView.callAct013(context);
             }
         }else {
-            mView.callAct006(context);
+            if(requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT081)) {
+                mView.callAct081(context);
+            }else {
+                mView.callAct006(context);
+            }
         }
     }
 

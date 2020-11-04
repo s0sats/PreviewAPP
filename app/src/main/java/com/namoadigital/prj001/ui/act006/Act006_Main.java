@@ -344,7 +344,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     private void initActions() {
         if(hasNFormSelected()){
             ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
-            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_nform_new_header);
+            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_process_new_header);
             ivClose.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
