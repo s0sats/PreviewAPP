@@ -682,9 +682,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 );
                 break;
             case ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_ADD_NEW:
-                //showNewProcessDialog(mTicket, hmAux_Trans,stepProcessBtn);
+                showNewProcessDialog(mTicket, hmAux_Trans,stepProcessBtn);
                 //
-                prepareCallAct081(mTicket,stepProcessBtn.getStepCode());
+                //prepareCallAct081(mTicket,stepProcessBtn.getStepCode());
                 break;
         }
 

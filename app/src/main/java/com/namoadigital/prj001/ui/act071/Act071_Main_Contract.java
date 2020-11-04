@@ -134,6 +134,12 @@ public interface Act071_Main_Contract {
         TK_Ticket getTicketbyPk(int ticket_prefix, int ticket_code);
 
         void defineProductSerialViews(int mActionPrefix, int mActionCode, TK_Ticket_Ctrl mTicketCtrl, TextView tvProduct, TextView tvSerial);
+
+        void defineNextSaveFlow(int mActionPrefix, int mActionCode);
+
+        void processWsSerialSavelReturn(HMAux hmAux);
+
+        void executeSerialSave();
     }
 
 }

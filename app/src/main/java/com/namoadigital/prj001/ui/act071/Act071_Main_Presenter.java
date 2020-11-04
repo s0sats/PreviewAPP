@@ -19,6 +19,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
@@ -27,6 +28,7 @@ import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Partner;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
@@ -34,13 +36,16 @@ import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.WS_Save;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
@@ -840,37 +845,6 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         }
     }
 
-    /**
-     * LUCHE - 10/09/2020
-     * DEVE SEMPRE SER PRECEDIDO DA CHAMADA DO hasFormWaitingSyncWithinTicket
-     * Metodo que define fluxo quando identificado que existe form pendente de envio para o ticket
-     * @param mActionPrefix
-     * @param mActionCode
-     */
-    @Override
-    public void defineFormWaitingSyncFlow(int mActionPrefix, int mActionCode) {
-        if(ToolBox_Inf.hasFormGpsPendencyWithinTicket(context,mActionPrefix,mActionCode)){
-            if (checkOfflineTicketDone(mView.getAction())) {
-                mView.showAlert(
-                    hmAux_Trans.get("alert_form_location_pendency_ttl"),
-                    hmAux_Trans.get("alert_offline_save_by_location_pendency_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mView.postTicketSave();
-                        }
-                    }
-                );
-            }
-        }else{
-            if(ToolBox_Con.isOnline(context)) {
-                callWsSave();
-            }else{
-                execTicketSave(true);
-            }
-        }
-    }
-
     @Override
     public void processSaveReturn(int mPrefix, int mCode, String jsonRet) {
         Gson gson = new GsonBuilder().serializeNulls().create();
@@ -952,6 +926,134 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 null
             );
         }
+    }
+
+    /**
+     * LUCHE - 10/09/2020
+     * DEVE SEMPRE SER PRECEDIDO DA CHAMADA DO hasFormWaitingSyncWithinTicket
+     * Metodo que define fluxo quando identificado que existe form pendente de envio para o ticket
+     * @param mActionPrefix
+     * @param mActionCode
+     */
+    @Override
+    public void defineFormWaitingSyncFlow(int mActionPrefix, int mActionCode) {
+        if(ToolBox_Inf.hasFormGpsPendencyWithinTicket(context,mActionPrefix,mActionCode)){
+            if (checkOfflineTicketDone(mView.getAction())) {
+                mView.showAlert(
+                    hmAux_Trans.get("alert_form_location_pendency_ttl"),
+                    hmAux_Trans.get("alert_offline_save_by_location_pendency_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.postTicketSave();
+                        }
+                    }
+                );
+            }
+        }else{
+            if(ToolBox_Con.isOnline(context)) {
+                callWsSave();
+            }else{
+                execTicketSave(true);
+            }
+        }
+    }
+
+    @Override
+    public void defineNextSaveFlow(int mActionPrefix, int mActionCode) {
+        if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mActionPrefix, mActionCode)){
+            defineFormWaitingSyncFlow(mActionPrefix, mActionCode);
+        }else {
+            execTicketSave(false);
+        }
+    }
+
+    @Override
+    public void executeSerialSave() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Serial_Save.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("progress_serial_save_ttl"),
+                hmAux_Trans.get("progress_serial_save_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Serial_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            if (checkOfflineTicketDone(mView.getAction())) {
+                mView.showAlert(
+                    hmAux_Trans.get("alert_form_location_pendency_ttl"),
+                    hmAux_Trans.get("alert_offline_save_by_location_pendency_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.postTicketSave();
+                        }
+                    }
+                );
+            }
+        }
+    }
+
+    @Override
+    public void processWsSerialSavelReturn(HMAux hmAux) {
+        if (!hmAux.isEmpty() && hmAux.size() > 0) {
+            ArrayList<HMAux> hmAuxList = new ArrayList<>();
+            for (Map.Entry<String, String> item : hmAux.entrySet()) {
+                HMAux aux = new HMAux();
+                /**
+                 * [0] - Product_code
+                 * [1] - Serial ID
+                 */
+                String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
+                String status = item.getValue();
+                String productInfo = getFormatedProductInfo(getMdProduct(ToolBox_Inf.convertStringToInt(pk[0])));
+                //
+                aux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("serial_lbl"));
+                aux.put(Generic_Results_Adapter.LABEL_ITEM_1, productInfo + " - " + pk[1] );
+                aux.put(Generic_Results_Adapter.VALUE_ITEM_1, status);
+                //
+                if (!ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(status)) {
+                    //Só colocado dentro da lista pois o metodo addResultList requer uma lista.
+                    hmAuxList.add(aux);
+                }
+            }
+            //
+            if(hmAuxList.size() > 0){
+                mView.addResultList(hmAuxList);
+            }
+        }
+    }
+
+    private String getFormatedProductInfo(MD_Product mdProduct) {
+        if (mdProduct != null) {
+            return mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc();
+        } else {
+            return "";
+        }
+    }
+
+    private MD_Product getMdProduct(int product_code) {
+        MD_Product md_product;
+        MD_ProductDao md_productDao = new MD_ProductDao(
+            context,
+            ToolBox_Con.customDBPath(
+                ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        md_product = md_productDao.getByString(
+            new MD_Product_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                product_code
+            ).toSqlQuery()
+        );
+        return md_product;
     }
 
     private boolean isScheduleCreationForThisAction(WS_TK_Ticket_Save.TicketSaveActReturn actReturn) {

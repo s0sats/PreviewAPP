@@ -49,6 +49,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.service.WS_Save;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
@@ -220,6 +221,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         //
         transList.add("alert_form_location_pendency_ttl");
         transList.add("alert_offline_save_by_location_pendency_msg");
+        //
+        transList.add("progress_serial_save_ttl");
+        transList.add("progress_serial_save_msg");
+        transList.add("serial_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -490,12 +495,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                     if(mPresenter.updateTicketAction(mTicketCtrl)){
                                         updateCreationParams();
                                         deletePhotoFile(TEMP_SUFIX_FILE + actionPhotoLocalPath);
-                                        if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mActionPrefix, mActionCode)){
-                                            mPresenter.defineFormWaitingSyncFlow(mActionPrefix, mActionCode);
-                                        }else {
-                                            mPresenter.execTicketSave(false);
-                                        }
-
+                                        //TODO CHAMAR WS DE SERIAL, SOMENTE SE NÃO FOR AGENDAMENTO ?
+                                        mPresenter.executeSerialSave();
+                                        //mPresenter.defineNextSaveFlow(mActionPrefix, mActionCode);
                                     }
                                 }catch (Exception e){
                                     e.printStackTrace();
@@ -1248,6 +1250,14 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             wsProcess = "";
             mPresenter.processWS_SaveReturn(mLink);
             mPresenter.execTicketSave(false);
+        } else if(wsProcess.equals(WS_Serial_Save.class.getName())){
+            wsProcess = "";
+            progressDialog.dismiss();
+            mPresenter.processWsSerialSavelReturn(hmAux);
+            mPresenter.defineNextSaveFlow(mActionPrefix,mActionCode);
+        }else{
+            wsProcess = "";
+            progressDialog.dismiss();
         }
         //
     }

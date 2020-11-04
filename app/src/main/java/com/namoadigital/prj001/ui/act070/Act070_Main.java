@@ -1052,7 +1052,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             wsProcess = "";
             progressDialog.dismiss();
             mPresenter.processWS_SaveReturn(mLink);
-            mPresenter.prepareSyncProcess(mTicket, false);
+            //mPresenter.prepareSyncProcess(mTicket, false);
+            mPresenter.defineWsToCall(mTicket, true, true);
         } else if(wsProcess.equals(WS_Serial_Save.class.getName())){
             //LUCHE - 03/11/2020
             //Add envio de serial no bolo. Esse será o primeiro WS a ser chamado

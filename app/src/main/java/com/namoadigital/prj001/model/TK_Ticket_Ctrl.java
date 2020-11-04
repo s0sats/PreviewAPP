@@ -19,14 +19,17 @@ public class TK_Ticket_Ctrl implements Serializable {
     private int ticket_seq_tmp;//pk
     @Expose
     private String ctrl_type;
+    @Expose
     @Nullable
     private Integer product_code;
     @Nullable
     private String product_id;
     @Nullable
     private String product_desc;
+    @Expose
     @Nullable
     private Integer serial_code;
+    @Expose
     @Nullable
     private String serial_id;
     @Expose
