@@ -192,6 +192,9 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         transList.add("alert_invalid_ticket_return_ttl");
         transList.add("alert_invalid_ticket_return_msg");
         //
+        transList.add("alert_serial_pendencies_ttl");
+        transList.add("alert_serial_pendencies_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,

@@ -10,7 +10,9 @@ import android.widget.LinearLayout;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
 
@@ -105,7 +107,19 @@ public class Frg_Ticket_Search extends Fragment {
         btn_option_01.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                delegate.onSearchClick(Frg_Serial_Search.BTN_OPTION_01,getHMAuxValues());
+                if (ToolBox_Con.isOnline(getActivity()) &&
+                    ToolBox_Inf.checkSerialTokenURStatus(getActivity())
+                ) {
+                    ToolBox.alertMSG(
+                        getActivity(),
+                        hmAux_Trans.get("alert_serial_pendencies_ttl"),
+                        hmAux_Trans.get("alert_serial_pendencies_msg"),
+                        null,
+                        0
+                    );
+                }else {
+                    delegate.onSearchClick(Frg_Serial_Search.BTN_OPTION_01, getHMAuxValues());
+                }
             }
         });
         btn_option_02.setOnClickListener(new View.OnClickListener() {
