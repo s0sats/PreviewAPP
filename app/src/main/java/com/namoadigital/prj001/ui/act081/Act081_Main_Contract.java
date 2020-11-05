@@ -34,6 +34,6 @@ public interface Act081_Main_Contract {
 
         void offlineSerialSearch();
 
-        long getProductCode();
+
     }
 }

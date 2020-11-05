@@ -539,10 +539,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 mStepCode = bundle.getInt(TK_Ticket_StepDao.STEP_CODE, -1);
                 act081Bundle = new Bundle();
                 act081Bundle.putBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND,isOffHandForm);
-                act081Bundle.putString(MD_ProductDao.PRODUCT_CODE, bundle.getString(MD_ProductDao.PRODUCT_CODE, ""));
-                act081Bundle.putString(MD_ProductDao.PRODUCT_DESC, bundle.getString(MD_ProductDao.PRODUCT_DESC, ""));
-                act081Bundle.putString(MD_ProductDao.PRODUCT_ID, bundle.getString(MD_ProductDao.PRODUCT_ID, ""));
-                act081Bundle.putString(MD_Product_SerialDao.SERIAL_ID, bundle.getString(MD_Product_SerialDao.SERIAL_ID, ""));
 
                 act081Bundle.putInt(TK_TicketDao.TICKET_PREFIX,mTkTicketPrefix);
                 act081Bundle.putInt(TK_TicketDao.TICKET_CODE, mTkTicketCode);
@@ -1128,6 +1124,12 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     @Override
     public void callAct071(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act071_Main.class);
+        act081Bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, mdProductSerial.getSerial_code());
+        act081Bundle.putLong(MD_Product_SerialDao.SERIAL_TMP, mdProductSerial.getSerial_tmp());
+        act081Bundle.putString(MD_Product_SerialDao.SERIAL_ID, mdProductSerial.getSerial_id());
+        act081Bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mdProductSerial.getProduct_code()));
+        act081Bundle.putString(MD_ProductDao.PRODUCT_DESC, mdProductSerial.getProduct_desc());
+        act081Bundle.putString(MD_ProductDao.PRODUCT_ID, mdProductSerial.getProduct_id());
         bundle.putAll(act081Bundle);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, requesting_process);
         mIntent.putExtras(bundle);
