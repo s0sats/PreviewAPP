@@ -2,8 +2,8 @@ package com.namoadigital.prj001.ui.act081;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -24,7 +23,6 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.service.WS_Serial_Search;
-import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -180,9 +178,12 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements Act081_
             fragIsOnlyOne = false;
         }
         //
-        if (!fragSerial_ID.isEmpty()){
-            mFrgSerialSearch.setSerialIdText(fragSerial_ID);
-        }
+//        if (!fragSerial_ID.isEmpty()){
+//            mFrgSerialSearch.setSerialIdText(fragSerial_ID);
+//        }
+        //LUCHE - 05/11/2020
+        //Correção do bug que não exibia o serial enviado da act070.
+        restoreSerialIdValue();
         //
         if (!fragTracking.isEmpty()) {
             mFrgSerialSearch.setTrackingText(fragTracking);
@@ -514,6 +515,18 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements Act081_
             restoredProductId = fragProduct_ID;
         }
         mFrgSerialSearch.setProductIdText(restoredProductId);
+    }
+
+    /**
+     * LUCHE - 05/11/2020
+     * Metodo que seta valor do serialId analisandoa s duas var de bundle possiveis
+     */
+    private void restoreSerialIdValue() {
+        String restoreSerialId = serialId;
+        if(!fragSerial_ID.isEmpty()){
+            restoreSerialId = fragSerial_ID;
+        }
+        mFrgSerialSearch.setSerialIdText(restoreSerialId);
     }
 
 
