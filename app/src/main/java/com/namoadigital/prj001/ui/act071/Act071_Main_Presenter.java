@@ -1252,8 +1252,17 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
 //            case ConstantBaseApp.ACT069:
 //                mView.callAct069(true);
 //                break;
-            case ConstantBaseApp.ACT070:
+            case ConstantBaseApp.ACT012:
+            case ConstantBaseApp.ACT074:
             case ConstantBaseApp.ACT068:
+                if(mView.has_tk_ticket_is_form_off_hand()){
+                    mView.callAct081();
+                }else{
+                    mView.callAct070();
+                }
+                break;
+            case ConstantBaseApp.ACT070:
+
             case ConstantBaseApp.ACT076:
             default:
                 mView.callAct070();

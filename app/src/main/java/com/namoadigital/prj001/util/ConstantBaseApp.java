@@ -104,6 +104,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT078 = "act078";
     public static final String ACT079 = "act079";
     public static final String ACT080 = "act080";
+    public static final String ACT081 = "act081";
 
     public static final String title_lbl = "_title";
 
@@ -663,6 +664,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_PIPELINE_PRODUCT_STATUS_PENDING = "PENDING";
     public static final String TK_PIPELINE_PRODUCT_STATUS_NO_CONTROL = "NO_CONTROL";
     public static final String TK_TICKET_FORM_GPS_LOCATION_UPDATE = "TK_TICKET_FORM_GPS_LOCATION_UPDATE";
+    public static final String TK_TICKET_IS_FORM_OFF_HAND = "TK_TICKET_FORM_OFF_HAND";
 
     /*
      * Constantes agendamento

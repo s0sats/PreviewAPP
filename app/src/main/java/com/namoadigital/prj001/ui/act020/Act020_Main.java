@@ -28,6 +28,8 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.service.WS_Sync;
@@ -38,6 +40,7 @@ import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
+import com.namoadigital.prj001.ui.act081.Act081_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -107,8 +110,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     //LUCHE - 03/03/2020 - Novo Agendamento
     private Bundle scheduleBundle = new Bundle();
     private Bundle act013Bundle = new Bundle();
+    private Bundle act081Bundle = new Bundle();
     private String requestingAct;
     private boolean scheduled_profile_check;
+    private boolean isOffHandForm;
+    private boolean mtk_ticket_is_form_off_hand;
 
 
     @Override
@@ -387,6 +393,28 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, false));
                 act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,false));
             }
+
+            mtk_ticket_is_form_off_hand = bundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
+
+            if(mtk_ticket_is_form_off_hand){
+                isOffHandForm = bundle.getBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND, false);
+                act081Bundle.putBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND,isOffHandForm);
+                act081Bundle.putString(Constant.MAIN_REQUESTING_ACT,requestingAct);
+                act081Bundle.putString(MD_ProductDao.PRODUCT_CODE, bundle.getString(MD_ProductDao.PRODUCT_CODE, ""));
+                act081Bundle.putString(MD_ProductDao.PRODUCT_DESC, bundle.getString(MD_ProductDao.PRODUCT_DESC, ""));
+                act081Bundle.putString(MD_ProductDao.PRODUCT_ID, bundle.getString(MD_ProductDao.PRODUCT_ID, ""));
+                act081Bundle.putString(MD_Product_SerialDao.SERIAL_ID, bundle.getString(MD_Product_SerialDao.SERIAL_ID, ""));
+
+                act081Bundle.putInt(TK_TicketDao.TICKET_PREFIX, bundle.getInt(TK_TicketDao.TICKET_PREFIX,-1));
+                act081Bundle.putInt(TK_TicketDao.TICKET_CODE, bundle.getInt(TK_TicketDao.TICKET_CODE,-1));
+                act081Bundle.putString(TK_TicketDao.TICKET_ID, bundle.getString(TK_TicketDao.TICKET_ID, ""));
+                act081Bundle.putInt(TK_Ticket_StepDao.STEP_CODE, bundle.getInt(TK_Ticket_StepDao.STEP_CODE,-1));
+                act081Bundle.putString(TK_Ticket_StepDao.STEP_DESC, bundle.getString(TK_Ticket_StepDao.STEP_DESC, ""));
+
+                act081Bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);
+                act081Bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, fragSerial_ID);
+                act081Bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, fragTracking);
+            }
         }
     }
 
@@ -474,7 +502,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //
         if(hasNFormSelected()){
             ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
-            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_nform_new_header);
+            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_process_new_header);
             ivClose.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -628,6 +656,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         }
         bundle.putAll(scheduleBundle);
         bundle.putAll(act013Bundle);
+        bundle.putAll(act081Bundle);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, requestingAct);
         mIntent.putExtras(bundle);
         //
@@ -679,7 +708,26 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         finish();
     }
 
-//    @Override
+    @Override
+    public void callAct081(Context context) {
+        Intent mIntent = new Intent(context, Act081_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(act081Bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public boolean hasTk_ticket_is_form_off_hand() {
+        return mtk_ticket_is_form_off_hand;
+    }
+
+    @Override
+    public boolean isOffHandForm() {
+        return isOffHandForm;
+    }
+
+    //    @Override
 //    public void closeDrawer() {
 //        mDrawerLayout.closeDrawer(GravityCompat.START);
 //    }

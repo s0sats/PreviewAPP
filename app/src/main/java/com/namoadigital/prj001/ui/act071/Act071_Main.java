@@ -41,9 +41,12 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
@@ -56,6 +59,7 @@ import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act076.Act076_Main;
+import com.namoadigital.prj001.ui.act081.Act081_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -135,6 +139,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private int mActionSeqTmp;
     private String ticket_result;
     private ArrayList<HMAux> wsResult = new ArrayList<>();
+    private boolean has_tk_ticket_is_form_off_hand;
+    private Bundle act081Bundle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -295,6 +302,29 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             isCreationAction = requestingBundle.getBoolean(Act070_Main.PARAM_ACTION_CREATION,false);
             //LUCHE 14/08/2020 - Movido metodo para ca pois agora as vars de cima fazem parte do processo de validação.
             mIsSchedule = defineIsScheduleAttr();
+
+            has_tk_ticket_is_form_off_hand = requestingBundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
+
+            if(has_tk_ticket_is_form_off_hand){
+                act081Bundle = new Bundle();
+                act081Bundle.putString(MD_ProductDao.PRODUCT_CODE, requestingBundle.getString(MD_ProductDao.PRODUCT_CODE, ""));
+                act081Bundle.putString(MD_ProductDao.PRODUCT_DESC, requestingBundle.getString(MD_ProductDao.PRODUCT_DESC, ""));
+                act081Bundle.putString(MD_ProductDao.PRODUCT_ID, requestingBundle.getString(MD_ProductDao.PRODUCT_ID, ""));
+                act081Bundle.putString(MD_Product_SerialDao.SERIAL_ID, requestingBundle.getString(MD_Product_SerialDao.SERIAL_ID, ""));
+                act081Bundle.putBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND, requestingBundle.getBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND));
+                act081Bundle.putInt(TK_TicketDao.TICKET_PREFIX, mActionPrefix);
+                act081Bundle.putInt(TK_TicketDao.TICKET_CODE, mActionCode);
+                act081Bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, mActionSeq);
+
+                act081Bundle.putString(TK_TicketDao.TICKET_ID, requestingBundle.getString(TK_TicketDao.TICKET_ID, ""));
+                act081Bundle.putInt(TK_Ticket_StepDao.STEP_CODE, mStepCode);
+                act081Bundle.putString(TK_Ticket_StepDao.STEP_DESC, requestingBundle.getString(TK_Ticket_StepDao.STEP_DESC, ""));
+
+                act081Bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, requestingBundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, ""));
+                act081Bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, requestingBundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, ""));
+                act081Bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, requestingBundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, ""));
+            }
+
         } else {
             requestingAct = ConstantBaseApp.ACT070;
             mActionPrefix = -1;
@@ -1339,5 +1369,19 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
+    }
+
+    @Override
+    public boolean has_tk_ticket_is_form_off_hand() {
+        return has_tk_ticket_is_form_off_hand;
+    }
+
+    @Override
+    public void callAct081() {
+        Intent mIntent = new Intent(context, Act081_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(act081Bundle);
+        startActivity(mIntent);
+        finish();
     }
 }

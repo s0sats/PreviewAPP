@@ -200,41 +200,45 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
             prepareAct008();
         } else{
             //
-            if (!hasSyncRegister()) {
-                if (ToolBox_Con.isOnline(context)) {
-                    executeSyncProcess();
-                } else {
-                    //ToolBox_Inf.showNoConnectionDialog(context);
-                    if(no_serial) {
-                        ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_no_connection_no_form_found_ttl"),
-                            hmAux_Trans.get("alert_no_form_found_msg"),
-                            null,
-                            0
-                        );
-                    }else{
-                        ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_no_form_found_ttl"),
-                            hmAux_Trans.get("alert_no_form_but_go_to_serial_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    prepareAct008();
-                                }
-                            },
-                            1
-                        );
-                    }
+            if(mView.hasTk_ticket_is_form_off_hand() && !mView.isOffHandForm()){
+                prepareAct008();
+            }else {
+                if (!hasSyncRegister()) {
+                    if (ToolBox_Con.isOnline(context)) {
+                        executeSyncProcess();
+                    } else {
+                        //ToolBox_Inf.showNoConnectionDialog(context);
+                        if (no_serial) {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_no_connection_no_form_found_ttl"),
+                                    hmAux_Trans.get("alert_no_form_found_msg"),
+                                    null,
+                                    0
+                            );
+                        } else {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_no_form_found_ttl"),
+                                    hmAux_Trans.get("alert_no_form_but_go_to_serial_msg"),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            prepareAct008();
+                                        }
+                                    },
+                                    1
+                            );
+                        }
 
-                }
-            } else {
-                //Se for um criação sem serial, chama metodo que encaminha para lista de tipo de formulários.
-                if(no_serial){
-                    prepareAct009();
-                }else{
-                    prepareAct008();
+                    }
+                } else {
+                    //Se for um criação sem serial, chama metodo que encaminha para lista de tipo de formulários.
+                    if (no_serial) {
+                        prepareAct009();
+                    } else {
+                        prepareAct008();
+                    }
                 }
             }
         }
@@ -499,7 +503,11 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
                 mView.callAct013(context);
             }
         }else {
-            mView.callAct006(context);
+            if(mView.hasTk_ticket_is_form_off_hand()) {
+                mView.callAct081(context);
+            }else {
+                mView.callAct006(context);
+            }
         }
     }
 

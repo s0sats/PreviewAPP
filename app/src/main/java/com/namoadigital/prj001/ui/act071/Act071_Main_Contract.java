@@ -57,6 +57,10 @@ public interface Act071_Main_Contract {
         boolean isCreationCtrl();
 
         void addResultList(ArrayList<HMAux> auxResults);
+
+        boolean has_tk_ticket_is_form_off_hand();
+
+        void callAct081();
     }
 
     interface I_Presenter{
