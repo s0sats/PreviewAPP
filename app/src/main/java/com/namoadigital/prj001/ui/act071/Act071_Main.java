@@ -381,7 +381,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     private void updateActionData() {
         if(isCreationCtrl){
-            mTicketCtrl = mPresenter.createTicketCtrlObj(mActionPrefix, mActionCode, mStepCode);
+            mTicketCtrl = mPresenter.createTicketCtrlObj(mActionPrefix, mActionCode, mStepCode,act081Bundle);
             if(mTicketCtrl != null) {
                 setActionDataToUI();
             }else{

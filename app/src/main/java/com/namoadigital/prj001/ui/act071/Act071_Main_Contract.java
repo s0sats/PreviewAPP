@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act071;
 
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -117,7 +118,7 @@ public interface Act071_Main_Contract {
 
         void setStartInfoIfNeed(TK_Ticket_Ctrl mTicketCtrl);
 
-        TK_Ticket_Ctrl createTicketCtrlObj(int mActionPrefix, int mActionCode, int mStepCode);
+        TK_Ticket_Ctrl createTicketCtrlObj(int mActionPrefix, int mActionCode, int mStepCode, Bundle act081Bundle);
 
         MD_Schedule_Exec getScheduleExec(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec);
 
