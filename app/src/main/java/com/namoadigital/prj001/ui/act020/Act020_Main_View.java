@@ -41,6 +41,10 @@ public interface Act020_Main_View {
 
     void callAct081(Context context);
 
+    boolean hasTk_ticket_is_form_off_hand();
+
+    boolean isOffHandForm();
+
     //void closeDrawer();
 
 }

@@ -15,12 +15,15 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.Sync_Checklist;
+import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
@@ -39,6 +42,8 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act008_003;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -71,8 +76,11 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     private MD_Product_SerialDao serialDao;
     private MD_Product_Serial_TrackingDao trackingDao;
     private MD_Schedule_ExecDao scheduleExecDao;
+    private int mTkPrefix;
+    private int mTkCode;
+    private int mStepCode;
 
-    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, GE_Custom_Form_LocalDao geCustomFormLocalDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule, String requesting_process, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao, boolean isFinishPlusNew) {
+    public Act008_Main_Presenter_Impl(Context context, Act008_Main_View mView, Sync_ChecklistDao syncChecklistDao, MD_ProductDao mdProductDao, GE_Custom_Form_LocalDao geCustomFormLocalDao, Long product_code, HMAux hmAux_Trans, GE_Custom_Form_OperationDao formOperationDao, boolean isSchedule, String requesting_process, MD_Product_SerialDao serialDao, MD_Product_Serial_TrackingDao trackingDao, boolean isFinishPlusNew,int mTkPrefix, int mTkCode, int mStepCode) {
         this.context = context;
         this.mView = mView;
         this.syncChecklistDao = syncChecklistDao;
@@ -91,6 +99,10 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
         );
+        this.mTkPrefix = mTkPrefix;
+        this.mTkCode = mTkCode;
+        this.mStepCode = mStepCode;
+
     }
 
     @Override
@@ -243,7 +255,9 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     //region Fluxo pós modificação Serial
     @Override
     public void checkFlow() {
-        if (checkSyncChecklistV2()) {
+        if(mView.isHas_tk_ticket_is_form_off_hand() && !mView.isOffHandForm()){
+            defineFlow();
+        }else if (checkSyncChecklistV2()) {
             checkNextStepV2();
         } else {
             if(isSchedule) {
@@ -700,7 +714,15 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         if (isSchedule || isFinishPlusNew) {
             mView.callAct011(context);
         } else {
-            mView.callAct009(context);
+            if(mView.isHas_tk_ticket_is_form_off_hand()) {
+                if (mView.isOffHandForm()) {
+                    mView.callAct009(context);
+                }else{
+                    mView.callAct071(context,getAct071Bundle());
+                }
+            }else {
+                mView.callAct009(context);
+            }
         }
     }
 
@@ -713,9 +735,52 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                 mView.callAct017(context);
             }
         } else {
-            //mView.callAct007(context);
-            mView.callAct006(context);
+            if(mView.isHas_tk_ticket_is_form_off_hand()) {
+                mView.callAct081(context);
+            }else {
+                mView.callAct006(context);
+            }
         }
+    }
+    private Bundle getAct071Bundle() {
+        Bundle bundle = new Bundle();
+        TK_Ticket mTicket = getTicketObj();
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket.getTicket_prefix());
+        bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket.getTicket_code());
+        bundle.putInt(TK_Ticket_ActionDao.TICKET_SEQ, 0);
+        bundle.putInt(TK_Ticket_ActionDao.TICKET_SEQ_TMP, 0);
+        bundle.putInt(TK_Ticket_ActionDao.STEP_CODE, mStepCode);
+        bundle.putString(TK_TicketDao.TICKET_ID, mTicket.getTicket_id());
+        bundle.putString(TK_TicketDao.TYPE_PATH, mTicket.getType_path());
+        bundle.putString(TK_TicketDao.TYPE_DESC, mTicket.getType_desc());
+        //params header
+        bundle.putString(TK_TicketDao.OPEN_DATE, mTicket.getOpen_date());
+        bundle.putInt(TK_TicketDao.OPEN_SITE_CODE, mTicket.getOpen_site_code());
+        bundle.putString(TK_TicketDao.OPEN_SITE_DESC, mTicket.getOpen_site_desc());
+        bundle.putString(TK_TicketDao.OPEN_SERIAL_ID, mTicket.getOpen_serial_id());
+        bundle.putString(TK_TicketDao.OPEN_PRODUCT_DESC, mTicket.getOpen_product_desc());
+        bundle.putString(TK_TicketDao.ORIGIN_DESC, mTicket.getOrigin_desc());
+        bundle.putBoolean(TK_TicketDao.CURRENT_STEP_ORDER, true);
+        bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, true);
+        bundle.putBoolean(Act070_Main.PARAM_ACTION_CREATION, true);
+        return bundle;
+    }
 
+    public TK_Ticket getTicketObj() {
+        TK_TicketDao ticketDao = new TK_TicketDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        TK_Ticket ticket = ticketDao.getByString(
+                new TK_Ticket_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        mTkPrefix,
+                        mTkCode
+                ).toSqlQuery()
+        );
+        //
+        return ticket;
     }
 }

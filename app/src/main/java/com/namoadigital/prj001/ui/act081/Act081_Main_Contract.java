@@ -33,5 +33,7 @@ public interface Act081_Main_Contract {
         void getMD_Products();
 
         void offlineSerialSearch();
+
+        long getProductCode();
     }
 }

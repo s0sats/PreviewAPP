@@ -114,6 +114,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private String requestingAct;
     private boolean scheduled_profile_check;
     private boolean isOffHandForm;
+    private boolean mtk_ticket_is_form_off_hand;
 
 
     @Override
@@ -393,11 +394,13 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC,false));
             }
 
+            mtk_ticket_is_form_off_hand = bundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
 
-
-            if(requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT081)){
+            if(mtk_ticket_is_form_off_hand){
                 isOffHandForm = bundle.getBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND, false);
-                act081Bundle.putInt(MD_ProductDao.PRODUCT_CODE, bundle.getInt(MD_ProductDao.PRODUCT_CODE, -1));
+                act081Bundle.putBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND,isOffHandForm);
+                act081Bundle.putString(Constant.MAIN_REQUESTING_ACT,requestingAct);
+                act081Bundle.putString(MD_ProductDao.PRODUCT_CODE, bundle.getString(MD_ProductDao.PRODUCT_CODE, ""));
                 act081Bundle.putString(MD_ProductDao.PRODUCT_DESC, bundle.getString(MD_ProductDao.PRODUCT_DESC, ""));
                 act081Bundle.putString(MD_ProductDao.PRODUCT_ID, bundle.getString(MD_ProductDao.PRODUCT_ID, ""));
                 act081Bundle.putString(MD_Product_SerialDao.SERIAL_ID, bundle.getString(MD_Product_SerialDao.SERIAL_ID, ""));
@@ -653,6 +656,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         }
         bundle.putAll(scheduleBundle);
         bundle.putAll(act013Bundle);
+        bundle.putAll(act081Bundle);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, requestingAct);
         mIntent.putExtras(bundle);
         //
@@ -713,7 +717,17 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         finish();
     }
 
-//    @Override
+    @Override
+    public boolean hasTk_ticket_is_form_off_hand() {
+        return mtk_ticket_is_form_off_hand;
+    }
+
+    @Override
+    public boolean isOffHandForm() {
+        return isOffHandForm;
+    }
+
+    //    @Override
 //    public void closeDrawer() {
 //        mDrawerLayout.closeDrawer(GravityCompat.START);
 //    }

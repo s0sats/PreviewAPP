@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -111,8 +112,9 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements Act081_
                         processSerialSearch(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:
-                        isForm = true;
-                        processSerialSearch(optionsInfo);
+                        Toast.makeText(context, "Função em Desenvolvimento", Toast.LENGTH_SHORT).show();
+                        //isForm = true;
+                        //processSerialSearch(optionsInfo);
                         break;
                     default:
                         break;
@@ -522,12 +524,12 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements Act081_
 
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {
-            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT081);
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, mainRequestingAct);
             bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);
             bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, fragSerial_ID);
             bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, fragTracking);
             
-            bundle.putInt(MD_ProductDao.PRODUCT_CODE, productCode);
+            bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mPresenter.getProductCode()));
             bundle.putString(MD_ProductDao.PRODUCT_DESC, productDesc);
             bundle.putString(MD_ProductDao.PRODUCT_ID, productId);
             bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);

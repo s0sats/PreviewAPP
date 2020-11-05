@@ -35,6 +35,8 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -46,6 +48,8 @@ import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
+import com.namoadigital.prj001.ui.act071.Act071_Main;
+import com.namoadigital.prj001.ui.act081.Act081_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -100,6 +104,15 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private String customFormCodeDesc;
     private boolean bundle_from_offline_source;
     private boolean scheduled_profile_check;
+    private boolean isOffHandForm;
+    private Bundle act081Bundle;
+    private int mStepCode;
+    private int mTkTicketPrefix;
+    private int mTkTicketCode;
+
+
+
+    private boolean has_tk_ticket_is_form_off_hand;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -236,7 +249,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 requesting_process,
                 new MD_Product_SerialDao(context),
                 new MD_Product_Serial_TrackingDao(context),
-                isFinishPlusNew()
+                isFinishPlusNew(),
+                mTkTicketPrefix,
+                mTkTicketCode,
+                mStepCode
         );
         //
         mPresenter.getProductInfo(bundle);
@@ -515,6 +531,30 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             }else{
                 initalizeBundleForFinishPlusNew();
             }
+            has_tk_ticket_is_form_off_hand = bundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
+            if(has_tk_ticket_is_form_off_hand){
+                isOffHandForm = bundle.getBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND, false);
+                mTkTicketPrefix =  bundle.getInt(TK_TicketDao.TICKET_PREFIX,-1);
+                mTkTicketCode  = bundle.getInt(TK_TicketDao.TICKET_CODE,-1);
+                mStepCode = bundle.getInt(TK_Ticket_StepDao.STEP_CODE, -1);
+                act081Bundle = new Bundle();
+                act081Bundle.putBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND,isOffHandForm);
+                act081Bundle.putString(MD_ProductDao.PRODUCT_CODE, bundle.getString(MD_ProductDao.PRODUCT_CODE, ""));
+                act081Bundle.putString(MD_ProductDao.PRODUCT_DESC, bundle.getString(MD_ProductDao.PRODUCT_DESC, ""));
+                act081Bundle.putString(MD_ProductDao.PRODUCT_ID, bundle.getString(MD_ProductDao.PRODUCT_ID, ""));
+                act081Bundle.putString(MD_Product_SerialDao.SERIAL_ID, bundle.getString(MD_Product_SerialDao.SERIAL_ID, ""));
+
+                act081Bundle.putInt(TK_TicketDao.TICKET_PREFIX,mTkTicketPrefix);
+                act081Bundle.putInt(TK_TicketDao.TICKET_CODE, mTkTicketCode);
+                act081Bundle.putString(TK_TicketDao.TICKET_ID, bundle.getString(TK_TicketDao.TICKET_ID, ""));
+                act081Bundle.putInt(TK_Ticket_StepDao.STEP_CODE, mStepCode);
+                act081Bundle.putString(TK_Ticket_StepDao.STEP_DESC, bundle.getString(TK_Ticket_StepDao.STEP_DESC, ""));
+
+                act081Bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, ""));
+                act081Bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, ""));
+                act081Bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, ""));
+            }
+
 
         } else {
             bundle_product_code = 0L;
@@ -920,6 +960,15 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         finish();
     }
 
+    @Override
+    public void callAct081(Context context) {
+        Intent mIntent = new Intent(context, Act081_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(act081Bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
     /**
      * Nota: 08/08/2018
      * No retorno do WS_Serial_Save, INDEPENDENTEMENTE de haver ou não
@@ -1070,4 +1119,26 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
     }
+
+    @Override
+    public boolean isOffHandForm() {
+        return isOffHandForm;
+    }
+
+    @Override
+    public void callAct071(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act071_Main.class);
+        bundle.putAll(act081Bundle);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, requesting_process);
+        mIntent.putExtras(bundle);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public boolean isHas_tk_ticket_is_form_off_hand() {
+        return has_tk_ticket_is_form_off_hand;
+    }
+
 }
