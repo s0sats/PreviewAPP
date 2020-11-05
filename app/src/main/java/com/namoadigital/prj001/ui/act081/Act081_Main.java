@@ -112,9 +112,8 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements Act081_
                         processSerialSearch(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:
-                        Toast.makeText(context, "Função em Desenvolvimento", Toast.LENGTH_SHORT).show();
-                        //isForm = true;
-                        //processSerialSearch(optionsInfo);
+                        isForm = true;
+                        processSerialSearch(optionsInfo);
                         break;
                     default:
                         break;
@@ -528,11 +527,7 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements Act081_
             bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);
             bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, fragSerial_ID);
             bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, fragTracking);
-            
-            bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mPresenter.getProductCode()));
-            bundle.putString(MD_ProductDao.PRODUCT_DESC, productDesc);
-            bundle.putString(MD_ProductDao.PRODUCT_ID, productId);
-            bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
+
 
             bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix);
             bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode);

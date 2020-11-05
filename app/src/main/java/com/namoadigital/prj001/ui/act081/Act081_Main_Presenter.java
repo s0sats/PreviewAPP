@@ -252,11 +252,4 @@ public class Act081_Main_Presenter implements Act081_Main_Contract.I_Presenter{
         return local_serial_list;
     }
 
-    @Override
-    public long getProductCode(){
-        MD_Product product =  searchProduct(mProduct_id);
-
-        return product != null ? product.getProduct_code() : -1;
-    }
-
 }
