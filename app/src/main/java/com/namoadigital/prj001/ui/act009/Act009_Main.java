@@ -10,7 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -22,11 +24,14 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act010.Act010_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act028.Act028_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -46,12 +51,16 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private Bundle bundle;
     private Lib_Custom_Cell_Adapter mAdapter;
     //private boolean back_act020 = false;
+    private View vStepSelected;
     private int back_action;
     private Integer mSo_Prefix;
     private Integer mSo_Code;
     private String actResqueting="";
     //Revisão novo fluxo n-form 06/06/2018
     private String site_code_form_param;
+    private boolean has_tk_ticket_is_form_off_hand;
+    private String mTkTicketId;
+    private String mStepDesc;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -109,7 +118,14 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         lv_form_types = (ListView) findViewById(R.id.act009_lv_form_types);
         //
         mPresenter.setAdapterData(product_code, "", serial_id );
-
+        if(has_tk_ticket_is_form_off_hand){
+            vStepSelected = findViewById(R.id.act009_process_in_progress);
+            ImageView ivClose = vStepSelected.findViewById(R.id.iv_nform_new_header);
+            TextView tvNFormSelected = vStepSelected.findViewById(R.id.tv_process_new_header);
+            ivClose.setVisibility(View.GONE);
+            tvNFormSelected.setText( mTkTicketId + " - " + mStepDesc);
+            vStepSelected.setVisibility(View.VISIBLE);
+        }
     }
 
     private void recoverIntentsInfo() {
@@ -125,6 +141,13 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
             //Novo fluxo N-Form 06/06/2018
             site_code_form_param = bundle.getString(MD_SiteDao.SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
             //site_code_form_param = bundle.getString(Constant.ACT008_SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
+
+            has_tk_ticket_is_form_off_hand = bundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
+
+            if(has_tk_ticket_is_form_off_hand){
+                mTkTicketId  = bundle.getString(TK_TicketDao.TICKET_ID, "");
+                mStepDesc = bundle.getString(TK_Ticket_StepDao.STEP_DESC, "");
+            }
         } else {
         }
     }
