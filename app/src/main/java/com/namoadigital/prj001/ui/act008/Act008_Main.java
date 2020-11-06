@@ -610,6 +610,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 }
             });
             tvNFormSelected.setText(customFormCodeDesc);
+        }else{
+            if(has_tk_ticket_is_form_off_hand) {
+                ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
+                TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_process_new_header);
+                ivClose.setVisibility(View.GONE);
+                tvNFormSelected.setText(mPresenter.getFormattedTicketInfo(act081Bundle));
+                vNFormSelected.setVisibility(View.VISIBLE);
+            }
         }
     }
 
