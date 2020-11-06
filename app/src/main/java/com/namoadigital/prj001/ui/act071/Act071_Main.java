@@ -326,6 +326,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 act081Bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, requestingBundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, ""));
                 act081Bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, requestingBundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, ""));
                 act081Bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, requestingBundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, ""));
+                act081Bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingBundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT070));
             }
 
         } else {

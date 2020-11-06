@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -110,8 +111,9 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements Act081_
                         processSerialSearch(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:
-                        isForm = true;
-                        processSerialSearch(optionsInfo);
+                        Toast.makeText(context, "Função em Desenvolvimento", Toast.LENGTH_SHORT).show();
+//                        isForm = true;
+//                        processSerialSearch(optionsInfo);
                         break;
                     default:
                         break;
@@ -492,11 +494,12 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements Act081_
         if (productList.size() > 1) {
             if(fragProduct_ID.isEmpty() && productId.isEmpty()) {
                 mFrgSerialSearch.setProductIdText(hmAux_Trans_frg_serial_search.get("product_all_lbl"));
-                mFrgSerialSearch.setShowAll(true);
+                mFrgSerialSearch.setShowTree(false);
             }else{
                 restoreProductIdValue();
+                mFrgSerialSearch.setShowTree(true);
             }
-            mFrgSerialSearch.setShowTree(true);
+            mFrgSerialSearch.setShowAll(true);
             fragIsOnlyOne = false;
         } else if (productList.size() == 1) {
             restoreProductIdValue();
