@@ -1495,8 +1495,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
+    /**
+     * LUCHE - 06/11/2020
+     * Alterado metodo adicionando OR no status do step, possibilitando executar processo
+     * oneTouch quando ja existe checkin
+     * */
     private boolean isOneTouchActionExecution(TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
-        return  ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketStep.getStep_status())
+        return  (ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketStep.getStep_status())
+                || ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketStep.getStep_status()))
                 && ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
                 && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type());
     }

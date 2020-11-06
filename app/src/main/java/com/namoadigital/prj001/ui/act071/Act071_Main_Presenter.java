@@ -121,7 +121,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      *
      * @param mTkActionPrefix - Ticket Prefix
      * @param mTkActionCode   - Ticket Code
-     * @param mTkActionSeqTmp    - Ticket Seq
+     * @param mTkActionSeqTmp - Ticket Seq
      * @param mSchedulePrefix - Schedule Prefix
      * @param mScheduleCode   - Schedule Code
      * @param mScheduleExec   - Schedule Exec
