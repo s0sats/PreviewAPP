@@ -503,6 +503,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      * LUCHE - 05/08/2020
      * <p></p>
      * Se step for one_touch, seta data de inicio
+     * LUCHE - 09/11/2020
+     * Modificado metodo adicionando a chamada do metdo forceNoneObjToWaitingSync que fecha o processo none planejado caso exista
      * @param ticketStep
      * @param mTicketCtrl
      */
@@ -513,6 +515,10 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             ticketStep.setStep_start_date(mTicketCtrl.getCtrl_start_date());
             ticketStep.setStep_start_user(mTicketCtrl.getCtrl_start_user());
             ticketStep.setStep_start_user_nick(mTicketCtrl.getCtrl_start_user_name());
+            //LUCHE - 09/11/2020
+            //Com a nova definição, se o step é check in manual e seu obj planejado é none, esse deve ser
+            //finalizado junto com o checkin...
+            ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep);
         }
     }
     /**
