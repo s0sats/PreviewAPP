@@ -116,6 +116,7 @@ import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.TSerial_Save_Env;
@@ -7476,6 +7477,32 @@ public class ToolBox_Inf {
         );
         //
         return serialList != null && serialList.size() > 0;
+    }
+
+    /**
+     * LUCHE - 09/11/2020
+     * Metodo que executa obj none pendente ao executar check-in manual no step.
+     * Regra solicita em 09/11/2020
+     * @param ticketStep
+     */
+    public static void forceNoneObjToWaitingSync(TK_Ticket_Step ticketStep) {
+        if(ticketStep.getCtrl() != null) {
+            for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
+                if(ConstantBaseApp.TK_TICKET_CRTL_TYPE_NONE.equals(ticketCtrl.getCtrl_type())
+                    && ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
+                ){
+                    ticketCtrl.setCtrl_start_date(ticketStep.getStep_start_date());
+                    ticketCtrl.setCtrl_start_user(ticketStep.getStep_start_user());
+                    ticketCtrl.setCtrl_start_user_name(ticketStep.getStep_start_user_nick());
+                    //Sim, o end do ctrl é o start do step, ja que a sua exicução é imediata
+                    ticketCtrl.setCtrl_end_date(ticketStep.getStep_start_date());
+                    ticketCtrl.setCtrl_end_user(ticketStep.getStep_start_user());
+                    ticketCtrl.setCtrl_end_user_name(ticketStep.getStep_start_user_nick());
+                    ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+                    ticketCtrl.setUpdate_required(1);
+                }
+            }
+        }
     }
 
 }

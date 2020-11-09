@@ -1415,19 +1415,16 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         ticketStep.setUpdate_required(1);
         ticketStep.setStep_status(ConstantBaseApp.SYS_STATUS_PROCESS);
         mTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PROCESS);
+        //LUCHE - 09/11/2020
+        //Com a nova definição, se o step é check in manual e seu obj planejado é none, esse deve ser
+        //finalizado junto com o checkin...
+        ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep);
         //
         int stepIdx = getStepIdx(ticketStep,mTicket);
         mTicket.setUpdate_required(1);
         mTicket.getStep().set(stepIdx,ticketStep);
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-//            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
-//                //callWsSave();
-//                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), true);
-//            }else {
-//                executeTicketSaveProcess(true);
-//            }
-            //defineWsToCall(mTicket,true,true);
             executeSerialSave(true);
         }else{
             mView.showAlert(

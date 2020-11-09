@@ -134,6 +134,7 @@ public class Act070_Step_NoneVH extends Act070_Step_Abstract_ProcessVH {
     private void removeClickByStatus(String processStatus) {
         if(!ConstantBaseApp.SYS_STATUS_PENDING.equals(processStatus)){
             clBackground.setOnClickListener(null);
+            clBackground.setVisibility(View.GONE);
         }
     }
 
