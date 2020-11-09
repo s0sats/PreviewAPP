@@ -238,6 +238,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("progress_serial_save_msg");
         transList.add("serial_lbl");
         //
+        transList.add("alert_exists_ctrl_open_ttl");
+        transList.add("alert_exists_ctrl_open_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
