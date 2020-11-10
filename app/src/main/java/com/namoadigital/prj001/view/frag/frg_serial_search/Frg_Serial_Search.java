@@ -81,6 +81,7 @@ public class Frg_Serial_Search extends Fragment {
 
     private Frg_Serial_Search_Presenter mPresenter;
     private On_Frg_Serial_Search mFragListener;
+    private On_Frg_Serial_Search.onProductSelectionReturnListener mFragOnProductSelectionReturnListener;
 
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
@@ -148,6 +149,11 @@ public class Frg_Serial_Search extends Fragment {
         //
         if (context instanceof On_Frg_Serial_Search) {
             mFragListener = (On_Frg_Serial_Search) context;
+        }
+        //LUCHE - 10/11/2020
+        //Tenta inicializar interface via context da act.
+        if(context instanceof On_Frg_Serial_Search.onProductSelectionReturnListener){
+            mFragOnProductSelectionReturnListener = (On_Frg_Serial_Search.onProductSelectionReturnListener) context;
         }
     }
 
@@ -687,7 +693,15 @@ public class Frg_Serial_Search extends Fragment {
     private void processResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
-
+            //LUCHE - 10/11/2020
+            //Ao retornar da seleção de produto, dispara interface com valor do product id atual + o
+            //retornado.
+            if(mFragOnProductSelectionReturnListener != null){
+                mFragOnProductSelectionReturnListener.onProductSelectionReturn(
+                    mket_product_id.getText().toString().trim(),
+                    pAux.getProduct_id()
+                );
+            }
             mket_product_id.setText(String.valueOf(pAux.getProduct_id()));
             //LUCHE - 08/11/2019
             //Comentado o codigo abaixo pois, o setText acima ja dispara a chamada
