@@ -560,7 +560,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             //LUCHE - 09/11/2020
             //Com a nova definição, se o step é check in manual e seu obj planejado é none, esse deve ser
             //finalizado junto com o checkin...
-            ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep);
+            ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep, true);
         }
     }
 

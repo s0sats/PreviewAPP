@@ -129,11 +129,29 @@ public class Act070_Step_NoneVH extends Act070_Step_Abstract_ProcessVH {
         );
         //
         removeClickByStatus(stepNone.getProcessStatus());
+        //
+        defineVhVisibility(stepNone);
     }
 
     private void removeClickByStatus(String processStatus) {
         if(!ConstantBaseApp.SYS_STATUS_PENDING.equals(processStatus)){
             clBackground.setOnClickListener(null);
+        }
+    }
+
+    /**
+     * LUCHE - 10/11/2020
+     * Metodo que define a visibilidade do viewHolder.
+     * Em 09/11/2020, foi definido que ele não deve mais aparecer se seu status for != pending
+     * ou se for pending , mas o step for start_end.
+     * @param stepNone
+     */
+    private void defineVhVisibility(StepNone stepNone) {
+        if(!ConstantBaseApp.SYS_STATUS_PENDING.equals(stepNone.getProcessStatus())
+            || (ConstantBaseApp.SYS_STATUS_PENDING.equals(stepNone.getProcessStatus())
+                && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(stepNone.getStepType())
+                )
+        ){
             clBackground.setVisibility(View.GONE);
         }
     }
@@ -160,5 +178,8 @@ public class Act070_Step_NoneVH extends Act070_Step_Abstract_ProcessVH {
         tvPartner.setVisibility(View.GONE);
         ivProcessAction.setVisibility(View.GONE);
         tvProcessAction.setVisibility(View.GONE);
+        //Após 09/11/2020 onde o none não deve ser exibido em certos momentos, necessario
+        //resetar a visibilidade
+        clBackground.setVisibility(View.VISIBLE);
     }
 }

@@ -7484,8 +7484,10 @@ public class ToolBox_Inf {
      * Metodo que executa obj none pendente ao executar check-in manual no step.
      * Regra solicita em 09/11/2020
      * @param ticketStep
+     * @param setStepUpdateOnForceNone - Define se ao "finalizar" um none, deve setar o step como
+     * update_required.(faz sentido na chamada da act011)
      */
-    public static void forceNoneObjToWaitingSync(TK_Ticket_Step ticketStep) {
+    public static void forceNoneObjToWaitingSync(TK_Ticket_Step ticketStep, boolean setStepUpdateOnForceNone) {
         if(ticketStep.getCtrl() != null) {
             for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
                 if(ConstantBaseApp.TK_TICKET_CRTL_TYPE_NONE.equals(ticketCtrl.getCtrl_type())
@@ -7500,6 +7502,10 @@ public class ToolBox_Inf {
                     ticketCtrl.setCtrl_end_user_name(ticketStep.getStep_start_user_nick());
                     ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
                     ticketCtrl.setUpdate_required(1);
+                    //Se flag true, seta o step tb para atualização.
+                    if(setStepUpdateOnForceNone){
+                        ticketStep.setUpdate_required(1);
+                    }
                 }
             }
         }

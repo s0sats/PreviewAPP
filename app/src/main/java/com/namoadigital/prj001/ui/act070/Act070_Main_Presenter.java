@@ -1418,7 +1418,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //LUCHE - 09/11/2020
         //Com a nova definição, se o step é check in manual e seu obj planejado é none, esse deve ser
         //finalizado junto com o checkin...
-        ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep);
+        ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep, false);
         //
         int stepIdx = getStepIdx(ticketStep,mTicket);
         mTicket.setUpdate_required(1);
@@ -2174,7 +2174,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         StepNone stepNone = new StepNone();
         //Dados do StepAbs
         stepNone.setStepCode(tkStepCtrl.getStep_code());
-        stepNone.setStepDescription(hmAux_Trans.get("process_none_tll"));
+        stepNone.setStepDescription(hmAux_Trans.get("optional_check_in_lbl"));
         stepNone.setStepType(stepMain.getStepType());
         stepNone.setProcessStatus(tkStepCtrl.getCtrl_status());
         stepNone.setCurrentStep(stepMain.isCurrentStep());

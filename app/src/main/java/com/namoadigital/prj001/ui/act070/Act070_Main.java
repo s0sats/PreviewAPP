@@ -201,7 +201,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("dialog_pipeline_btn_process_action");
         transList.add("dialog_pipeline_btn_cancel");
         //
-        transList.add("process_none_tll");
         transList.add("alert_start_process_ttl");
         transList.add("alert_start_process_msg");
         transList.add("alert_process_access_denied_ttl");
@@ -241,6 +240,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_exists_ctrl_open_ttl");
         transList.add("alert_exists_ctrl_open_msg");
         //
+        transList.add("optional_check_in_lbl");
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
