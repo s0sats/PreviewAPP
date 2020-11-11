@@ -613,6 +613,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
     }
 
+    /**
+     * LUCHE - 09/11/2020
+     * Modificado metodo adicionando a chamada do metdo forceNoneObjToWaitingSync que fecha o processo none planejado caso exista
+     * @param ticketStep
+     * @param mTicketCtrl
+     */
     private void setCheckInIntoStepWhenOneTouchStep(TK_Ticket_Step ticketStep, TK_Ticket_Ctrl mTicketCtrl) {
         if(ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())
             && !ToolBox_Inf.hasConsistentValueString(ticketStep.getStep_start_date())
@@ -620,6 +626,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             ticketStep.setStep_start_date(mTicketCtrl.getCtrl_start_date());
             ticketStep.setStep_start_user(mTicketCtrl.getCtrl_start_user());
             ticketStep.setStep_start_user_nick(mTicketCtrl.getCtrl_start_user_name());
+            //LUCHE - 09/11/2020
+            //Com a nova definição, se o step é check in manual e seu obj planejado é none, esse deve ser
+            //finalizado junto com o checkin...
+            ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep, true);
         }
     }
 

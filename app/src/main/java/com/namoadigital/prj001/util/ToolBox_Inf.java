@@ -116,6 +116,7 @@ import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.TSerial_Save_Env;
@@ -3170,32 +3171,34 @@ public class ToolBox_Inf {
     }
 
     public static void callPendencyNotification(Context context) {
-        HMAux hmAux_trans = new HMAux();
-        List<String> translateList = new ArrayList<>();
-        translateList.add("sys_notification_pendency_form_lbl");
-        translateList.add("sys_notification_pendency_form_ap_lbl");
-        translateList.add("sys_notification_pendency_serial_lbl");
-        translateList.add("sys_notification_pendency_assets_lbl");
-        translateList.add("sys_notification_pendency_services_lbl");
-        hmAux_trans = ToolBox_Inf.setLanguage(
-                context,
-                Constant.APP_MODULE,
-                ToolBox_Inf.getResourceCode(
-                        context,
-                        Constant.APP_MODULE,
-                        "sys"
-                ),
-                ToolBox_Con.getPreference_Translate_Code(context),
-                translateList
-        );
-        //
-        if (hmAux_trans == null || hmAux_trans.size() == 0) {
-            if(hmAux_trans == null){
-                hmAux_trans = new HMAux();
+        if(ToolBox_Con.getPreference_Customer_Code(context) > 0) {
+            HMAux hmAux_trans = new HMAux();
+            List<String> translateList = new ArrayList<>();
+            translateList.add("sys_notification_pendency_form_lbl");
+            translateList.add("sys_notification_pendency_form_ap_lbl");
+            translateList.add("sys_notification_pendency_serial_lbl");
+            translateList.add("sys_notification_pendency_assets_lbl");
+            translateList.add("sys_notification_pendency_services_lbl");
+            hmAux_trans = ToolBox_Inf.setLanguage(
+                    context,
+                    Constant.APP_MODULE,
+                    ToolBox_Inf.getResourceCode(
+                            context,
+                            Constant.APP_MODULE,
+                            "sys"
+                    ),
+                    ToolBox_Con.getPreference_Translate_Code(context),
+                    translateList
+            );
+            //
+            if (hmAux_trans == null || hmAux_trans.size() == 0) {
+                if (hmAux_trans == null) {
+                    hmAux_trans = new HMAux();
+                }
             }
-        }
 
-        callPendencyNotification(context, hmAux_trans);
+            callPendencyNotification(context, hmAux_trans);
+        }
     }
 
     /**
@@ -3207,8 +3210,10 @@ public class ToolBox_Inf {
      */
     @NonNull
     public static void callPendencyNotification(Context context, HMAux hmAux_Trans){
-        NotificationHelper notificationHelper = new NotificationHelper(context, hmAux_Trans);
-        notificationHelper.call_Notification();
+        if(ToolBox_Con.getPreference_Customer_Code(context) > 0) {
+            NotificationHelper notificationHelper = new NotificationHelper(context, hmAux_Trans);
+            notificationHelper.call_Notification();
+        }
     }
 
     public static StringBuilder wsExceptionTreatment(Context context, Exception e) {
@@ -7472,6 +7477,38 @@ public class ToolBox_Inf {
         );
         //
         return serialList != null && serialList.size() > 0;
+    }
+
+    /**
+     * LUCHE - 09/11/2020
+     * Metodo que executa obj none pendente ao executar check-in manual no step.
+     * Regra solicita em 09/11/2020
+     * @param ticketStep
+     * @param setStepUpdateOnForceNone - Define se ao "finalizar" um none, deve setar o step como
+     * update_required.(faz sentido na chamada da act011)
+     */
+    public static void forceNoneObjToWaitingSync(TK_Ticket_Step ticketStep, boolean setStepUpdateOnForceNone) {
+        if(ticketStep.getCtrl() != null) {
+            for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
+                if(ConstantBaseApp.TK_TICKET_CRTL_TYPE_NONE.equals(ticketCtrl.getCtrl_type())
+                    && ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
+                ){
+                    ticketCtrl.setCtrl_start_date(ticketStep.getStep_start_date());
+                    ticketCtrl.setCtrl_start_user(ticketStep.getStep_start_user());
+                    ticketCtrl.setCtrl_start_user_name(ticketStep.getStep_start_user_nick());
+                    //Sim, o end do ctrl é o start do step, ja que a sua exicução é imediata
+                    ticketCtrl.setCtrl_end_date(ticketStep.getStep_start_date());
+                    ticketCtrl.setCtrl_end_user(ticketStep.getStep_start_user());
+                    ticketCtrl.setCtrl_end_user_name(ticketStep.getStep_start_user_nick());
+                    ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+                    ticketCtrl.setUpdate_required(1);
+                    //Se flag true, seta o step tb para atualização.
+                    if(setStepUpdateOnForceNone){
+                        ticketStep.setUpdate_required(1);
+                    }
+                }
+            }
+        }
     }
 
 }

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act020;
 
+import android.os.Bundle;
+
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 
@@ -32,4 +34,6 @@ public interface Act020_Main_Presenter {
     boolean hasSyncRegister();
 
     void prepareAct008();
+
+    String getFormattedTicketInfo(Bundle act081Bundle);
 }

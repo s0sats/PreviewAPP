@@ -17,6 +17,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Product;
@@ -782,5 +783,20 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         );
         //
         return ticket;
+    }
+
+    /**
+     * LUCHE - 06/11/2020
+     * Metodo que retorna ticket id + step desc formatada.
+     * @param act081Bundle
+     * @return
+     */
+    @Override
+    public String getFormattedTicketInfo(Bundle act081Bundle) {
+        if(act081Bundle == null) {
+            return "";
+        }
+        return  act081Bundle.getString(TK_TicketDao.TICKET_ID, "")
+                +" - "+ act081Bundle.getString(TK_Ticket_StepDao.STEP_DESC, "");
     }
 }

@@ -17,7 +17,6 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -311,16 +310,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 act081Bundle.putString(MD_ProductDao.PRODUCT_CODE, requestingBundle.getString(MD_ProductDao.PRODUCT_CODE, ""));
                 act081Bundle.putString(MD_ProductDao.PRODUCT_DESC, requestingBundle.getString(MD_ProductDao.PRODUCT_DESC, ""));
                 act081Bundle.putString(MD_ProductDao.PRODUCT_ID, requestingBundle.getString(MD_ProductDao.PRODUCT_ID, ""));
-                String product_id = requestingBundle.getString(MD_ProductDao.PRODUCT_ID, "");
-                long serial_code = requestingBundle.getLong(MD_Product_SerialDao.SERIAL_CODE, -1);
-                long serial_tmp = requestingBundle.getLong(MD_Product_SerialDao.SERIAL_TMP, -1);
-                String serial_id = requestingBundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
-                Log.d("TICKET_TEST", "product_id: " + product_id);
-                Log.d("TICKET_TEST", "serial_code: " + serial_code);
-                Log.d("TICKET_TEST", "serial_tmp: " + serial_tmp);
-                Log.d("TICKET_TEST", "serial_id: " + serial_id);
-
-
+                act081Bundle.putString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(requestingBundle.getLong(MD_Product_SerialDao.SERIAL_CODE, 0)));
+                act081Bundle.putString(MD_Product_SerialDao.SERIAL_TMP, String.valueOf(requestingBundle.getLong(MD_Product_SerialDao.SERIAL_TMP, 0)));
+                act081Bundle.putString(MD_Product_SerialDao.SERIAL_ID, requestingBundle.getString(MD_Product_SerialDao.SERIAL_ID, ""));
 
                 act081Bundle.putBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND, requestingBundle.getBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND));
                 act081Bundle.putInt(TK_TicketDao.TICKET_PREFIX, mActionPrefix);
@@ -334,6 +326,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 act081Bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, requestingBundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, ""));
                 act081Bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, requestingBundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, ""));
                 act081Bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, requestingBundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, ""));
+                act081Bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingBundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT070));
             }
 
         } else {
@@ -392,7 +385,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     private void updateActionData() {
         if(isCreationCtrl){
-            mTicketCtrl = mPresenter.createTicketCtrlObj(mActionPrefix, mActionCode, mStepCode);
+            mTicketCtrl = mPresenter.createTicketCtrlObj(mActionPrefix, mActionCode, mStepCode,act081Bundle);
             if(mTicketCtrl != null) {
                 setActionDataToUI();
             }else{
@@ -1391,6 +1384,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     public void callAct081() {
         Intent mIntent = new Intent(context, Act081_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        act081Bundle.remove(MD_Product_SerialDao.SERIAL_CODE);
+        act081Bundle.remove(MD_Product_SerialDao.SERIAL_TMP);
+        act081Bundle.remove(MD_Product_SerialDao.SERIAL_ID);
         mIntent.putExtras(act081Bundle);
         startActivity(mIntent);
         finish();

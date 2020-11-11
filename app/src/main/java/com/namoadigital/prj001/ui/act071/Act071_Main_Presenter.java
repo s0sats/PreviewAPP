@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
+import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
@@ -119,7 +121,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      *
      * @param mTkActionPrefix - Ticket Prefix
      * @param mTkActionCode   - Ticket Code
-     * @param mTkActionSeqTmp    - Ticket Seq
+     * @param mTkActionSeqTmp - Ticket Seq
      * @param mSchedulePrefix - Schedule Prefix
      * @param mScheduleCode   - Schedule Code
      * @param mScheduleExec   - Schedule Exec
@@ -218,23 +220,29 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     }
 
     @Override
-    public TK_Ticket_Ctrl createTicketCtrlObj(int mActionPrefix, int mActionCode, int mStepCode) {
+    public TK_Ticket_Ctrl createTicketCtrlObj(int mActionPrefix, int mActionCode, int mStepCode, Bundle act081Bundle) {
         TK_Ticket tkTicket = getTicketbyPk(mActionPrefix, mActionCode);
         TK_Ticket_Step stepInfo = getStepInfo(mActionPrefix, mActionCode, mStepCode);
         TK_Ticket_Ctrl ticketCtrl = null;
         if(tkTicket!= null  && stepInfo != null) {
             try {
+                String product_code = getBundleOrTicketInfo(tkTicket,act081Bundle,MD_ProductDao.PRODUCT_CODE);
+                String product_id = getBundleOrTicketInfo(tkTicket,act081Bundle,MD_ProductDao.PRODUCT_ID);
+                String product_desc = getBundleOrTicketInfo(tkTicket,act081Bundle,MD_ProductDao.PRODUCT_DESC);
+                String serial_code = getBundleOrTicketInfo(tkTicket,act081Bundle,MD_Product_SerialDao.SERIAL_CODE);
+                String serial_id = getBundleOrTicketInfo(tkTicket,act081Bundle,MD_Product_SerialDao.SERIAL_ID);
+                //
                 ticketCtrl = new TK_Ticket_Ctrl(
                                 0,
                                 ticketCtrlDao.getNextCtrlTicketSeqTmp(
                                     stepInfo.getCustomer_code(),stepInfo.getTicket_prefix(),stepInfo.getTicket_code(),stepInfo.getStep_code(),null
                                 ),
                                 ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION,
-                                tkTicket.getOpen_product_code(),
-                                tkTicket.getOpen_product_id(),
-                                tkTicket.getOpen_product_desc(),
-                                tkTicket.getOpen_serial_code(),
-                                tkTicket.getOpen_serial_id(),
+                                ToolBox_Inf.convertStringToInt(product_code),
+                                product_id,
+                                product_desc,
+                                ToolBox_Inf.convertStringToInt(serial_code),
+                                serial_id,
                                 ConstantBaseApp.SYS_STATUS_PENDING,
                                 stepInfo.getStep_order(),
                                 0
@@ -249,6 +257,37 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             }
         }
         return ticketCtrl;
+    }
+
+    /**
+     * LUCHE - 05/11/2020
+     * Metodo usado na criação de ctrl espontaneo e define se usa o dado do bundle ou do cabeçalho do ticket.
+     * Qual informação é retornada é definida pelo param infoKey
+     * Caso o bundle exista, significa que veio do fluxo espontaneo novo. Se não, é processo antigo
+     * ou agendamento.
+     * @param tkTicket
+     * @param act081Bundle
+     * @param infoKey
+     * @return
+     */
+    private String getBundleOrTicketInfo(TK_Ticket tkTicket, @Nullable Bundle act081Bundle, String infoKey) {
+        if(act081Bundle == null){
+            act081Bundle = new Bundle();
+        }
+        switch (infoKey){
+            case MD_ProductDao.PRODUCT_CODE:
+                return act081Bundle.getString(MD_ProductDao.PRODUCT_CODE, String.valueOf(tkTicket.getOpen_product_code()));
+            case MD_ProductDao.PRODUCT_DESC:
+                return act081Bundle.getString(MD_ProductDao.PRODUCT_DESC, tkTicket.getOpen_product_desc());
+            case MD_ProductDao.PRODUCT_ID:
+                return act081Bundle.getString(MD_ProductDao.PRODUCT_ID, tkTicket.getOpen_product_id());
+            case MD_Product_SerialDao.SERIAL_CODE:
+                return act081Bundle.getString(MD_Product_SerialDao.SERIAL_CODE, String.valueOf(tkTicket.getOpen_serial_code()));
+            case MD_Product_SerialDao.SERIAL_ID:
+                return act081Bundle.getString(MD_Product_SerialDao.SERIAL_ID, tkTicket.getOpen_serial_id());
+            default:
+                return "";
+        }
     }
 
     //endregion
@@ -464,6 +503,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
      * LUCHE - 05/08/2020
      * <p></p>
      * Se step for one_touch, seta data de inicio
+     * LUCHE - 09/11/2020
+     * Modificado metodo adicionando a chamada do metdo forceNoneObjToWaitingSync que fecha o processo none planejado caso exista
      * @param ticketStep
      * @param mTicketCtrl
      */
@@ -474,6 +515,10 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             ticketStep.setStep_start_date(mTicketCtrl.getCtrl_start_date());
             ticketStep.setStep_start_user(mTicketCtrl.getCtrl_start_user());
             ticketStep.setStep_start_user_nick(mTicketCtrl.getCtrl_start_user_name());
+            //LUCHE - 09/11/2020
+            //Com a nova definição, se o step é check in manual e seu obj planejado é none, esse deve ser
+            //finalizado junto com o checkin...
+            ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep, false);
         }
     }
     /**

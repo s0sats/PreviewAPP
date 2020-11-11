@@ -669,17 +669,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 );
                 break;
             case ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKOUT:
-                mView.showAlert(
-                    hmAux_Trans.get("alert_checkout_confirm_ttl"),
-                    hmAux_Trans.get("alert_checkout_confirm_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            setCheckOutToStep(mTicket,stepProcessBtn.getStepCode());
-                        }
-                    },
-                    true
-                );
+                checkForCheckoutAction(mTicket, stepProcessBtn);
                 break;
             case ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_ADD_NEW:
                 //showNewProcessDialog(mTicket, hmAux_Trans,stepProcessBtn);
@@ -688,6 +678,67 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 break;
         }
 
+    }
+
+    /**
+     * LUCHE - 09/11/2020
+     * Metodo que verifica fluxo a ser seguido.
+     * Caso step esteja apto a ser finalizado, exibe msg de confirmação, caso contrario, informa
+     * que existem processo em aberto.
+     * @param mTicket
+     * @param stepProcessBtn
+     */
+    private void checkForCheckoutAction(final TK_Ticket mTicket, final StepProcessBtn stepProcessBtn) {
+        if(isReadyToCheckout(mTicket,stepProcessBtn.getStepCode())) {
+            mView.showAlert(
+                hmAux_Trans.get("alert_checkout_confirm_ttl"),
+                hmAux_Trans.get("alert_checkout_confirm_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        setCheckOutToStep(mTicket, stepProcessBtn.getStepCode());
+                    }
+                },
+                true
+            );
+        }else{
+            mView.showAlert(
+                hmAux_Trans.get("alert_exists_ctrl_open_ttl"),
+                hmAux_Trans.get("alert_exists_ctrl_open_msg")
+            );
+        }
+    }
+
+    /**
+     * LUCHE - 09/11/2020
+     * Metodo que verifica se o step esta pronto para o checkout valiando:
+     *  - Se não existem forms pendente de GPS.
+     *  - Se todos o planejados estão finalizado(Done ou WaitingSync)
+     * @param mTicket
+     * @param stepCode
+     * @return True se as duas condições supracitadas forem verdadeiras.
+     */
+    private boolean isReadyToCheckout(TK_Ticket mTicket, int stepCode) {
+        TK_Ticket_Step selectedStep = getSelectedStep(mTicket.getTicket_prefix(), mTicket.getTicket_code(), stepCode);
+        int plannedObjCounter = 0;
+        int plannedObjDoneCounter = 0;
+        //Se existe form pendente de GPS, ja retorna false
+        if(hasFormWithGpsPendency(mTicket, stepCode)){
+          return false;
+        }
+        //Caso não exista, verifica os status dos planejados.
+        if(selectedStep != null){
+            for (TK_Ticket_Ctrl ticketCtrl : selectedStep.getCtrl()) {
+                if(ticketCtrl.getObj_planned() == 1){
+                    plannedObjCounter++;
+                    if(isDoneOrWaitingSync(ticketCtrl.getCtrl_status())){
+                        plannedObjDoneCounter++;
+                    }
+                }
+            }
+        }
+        //Se existe um obj planejado e qtd todos planejados estão como done, retorna verdadeiro.
+        return plannedObjCounter > 0 && plannedObjCounter == plannedObjDoneCounter ;
     }
 
     /**
@@ -1364,19 +1415,16 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         ticketStep.setUpdate_required(1);
         ticketStep.setStep_status(ConstantBaseApp.SYS_STATUS_PROCESS);
         mTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PROCESS);
+        //LUCHE - 09/11/2020
+        //Com a nova definição, se o step é check in manual e seu obj planejado é none, esse deve ser
+        //finalizado junto com o checkin...
+        ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep, false);
         //
         int stepIdx = getStepIdx(ticketStep,mTicket);
         mTicket.setUpdate_required(1);
         mTicket.getStep().set(stepIdx,ticketStep);
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-//            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
-//                //callWsSave();
-//                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), true);
-//            }else {
-//                executeTicketSaveProcess(true);
-//            }
-            //defineWsToCall(mTicket,true,true);
             executeSerialSave(true);
         }else{
             mView.showAlert(
@@ -1495,8 +1543,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
+    /**
+     * LUCHE - 06/11/2020
+     * Alterado metodo adicionando OR no status do step, possibilitando executar processo
+     * oneTouch quando ja existe checkin
+     * */
     private boolean isOneTouchActionExecution(TK_Ticket_Step ticketStep, TK_Ticket_Ctrl ticketCtrl) {
-        return  ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketStep.getStep_status())
+        return  (ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketStep.getStep_status())
+                || ConstantBaseApp.SYS_STATUS_PROCESS.equals(ticketStep.getStep_status()))
                 && ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
                 && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type());
     }
@@ -1786,6 +1840,17 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
+    /**
+     * LUCHE - ???????
+     * Metodo que verifica se o btn de checkout deve aparecer.
+     * LUCHE - 09/11/2020
+     * Alterado validação de obj planejado, pois antes existia somente 1 e agora podem ser N.
+     * Utilizado o metodo isReadyToCheckout para substituir antiga logica, que esta comentada.
+     * @param tkTicket
+     * @param source
+     * @param mainPosition
+     * @param stepsCtrls
+     */
     private void addCheckOutCtrl(TK_Ticket tkTicket, ArrayList<BaseStep> source, int mainPosition, ArrayList<BaseStep> stepsCtrls) {
         StepMain stepMain = (StepMain) source.get(mainPosition);
         //
@@ -1794,7 +1859,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             //&& ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(stepMain.getStepType())
             && !stepMain.isMove_next_step()
         ){
-            BaseStep firstPlannedObj = getFirstPlannedObj(stepsCtrls);
+            /*BaseStep firstPlannedObj = getFirstPlannedObj(stepsCtrls);
             if(firstPlannedObj != null){
                 if(firstPlannedObj instanceof StepAbstractProcess){
                     String processStatus = ((StepAbstractProcess) firstPlannedObj).getProcessStatus();
@@ -1810,6 +1875,16 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                         }
                     }
                 }
+            }*/
+            //
+            if(isReadyToCheckout(tkTicket,stepMain.getStepCode())){
+                StepProcessBtn stepProcessBtn = new StepProcessBtn(
+                    stepMain.getStepCode(),
+                    hmAux_Trans.get("process_check_out_btn"),
+                    ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKOUT
+                );
+                //
+                stepsCtrls.add(stepsCtrls.size(),stepProcessBtn);
             }
         }
     }
@@ -1830,13 +1905,27 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
      * @param firstPlannedObj Obj planeajdo
      * @return - Verdadeiro houver alguma form do step aguardando pendencia GPS.
      */
+    @Deprecated
     private boolean hasFormWithGpsPendency(TK_Ticket tkTicket, StepAbstractProcess firstPlannedObj) {
+        return hasFormWithGpsPendency(tkTicket,firstPlannedObj.getStepCode());
+    }
+
+    /**
+     * LUCHE - 09/09/2020
+     * <p></p>
+     * Metodo que verifica se existe algum form com pendencia de GPS no step.
+     * Nova assinatura para o metodo, pois é necessario apenas o step_code.
+     * @param tkTicket Ticket
+     * @param stepCode Obj planeajdo
+     * @return - Verdadeiro houver alguma form do step aguardando pendencia GPS.
+     */
+    private boolean hasFormWithGpsPendency(TK_Ticket tkTicket, int stepCode) {
         List<GE_Custom_Form_Data> formWithGpsPendency = formDataDao.query(
             new Sql_Act070_007(
                 tkTicket.getCustomer_code(),
                 tkTicket.getTicket_prefix(),
                 tkTicket.getTicket_code(),
-                firstPlannedObj.getStepCode()
+                stepCode
             ).toSqlQuery()
         );
         //
@@ -2085,7 +2174,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         StepNone stepNone = new StepNone();
         //Dados do StepAbs
         stepNone.setStepCode(tkStepCtrl.getStep_code());
-        stepNone.setStepDescription(hmAux_Trans.get("process_none_tll"));
+        stepNone.setStepDescription(hmAux_Trans.get("optional_check_in_lbl"));
         stepNone.setStepType(stepMain.getStepType());
         stepNone.setProcessStatus(tkStepCtrl.getCtrl_status());
         stepNone.setCurrentStep(stepMain.isCurrentStep());

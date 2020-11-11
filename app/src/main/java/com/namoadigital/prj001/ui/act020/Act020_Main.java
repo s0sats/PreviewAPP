@@ -286,6 +286,20 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
         if(hasNFormSelected()){
             vNFormSelected.setVisibility(View.VISIBLE);
+        }else{
+            //Quando a tela vier do fluxo de criação de processo espontaneo do ticket,
+            //exibe card view com dados dos ticket
+            if(mtk_ticket_is_form_off_hand) {
+                ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
+                TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_process_new_header);
+                ivClose.setVisibility(View.GONE);
+                tvNFormSelected.setText(mPresenter.getFormattedTicketInfo(act081Bundle));
+                vNFormSelected.setVisibility(View.VISIBLE);
+                //LUCHE - 10/11/2020
+                //Quando a tela vier do fluxo de criação de processo espontaneo do ticket, a obj de
+                //sem serial nunca deve ser exibida.
+                btn_no_serial.setVisibility(View.GONE);
+            }
         }
     }
 
