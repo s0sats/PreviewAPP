@@ -226,6 +226,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private Integer mTicket_seq_tmp;
     private Integer mStep_code;
     private String requestingAct;
+    private boolean isOffHandForm=false;
+    private Bundle act081Bundle;
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -411,6 +413,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         transList.add("alert_ticket_step_or_ctrl_not_found_ttl");
         transList.add("alert_ticket_step_or_ctrl_not_found_msg");
         transList.add("lbl_ticket");
+        //
+        transList.add("alert_error_on_create_ctrl_ttl");
+        transList.add("alert_error_on_create_ctrl_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1152,6 +1157,29 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             mTicket_seq_tmp = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) : null;
             mStep_code = bundle.containsKey(TK_Ticket_CtrlDao.STEP_CODE) ? bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE) : null;
             requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT005);
+            isOffHandForm = bundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
+
+            if(isOffHandForm){
+                mTicket_seq = 0;
+                mTicket_seq_tmp = mPresenter.getSeqTmpForFormOffHand(context, mTicket_prefix, mTicket_code, mStep_code);
+                act081Bundle = new Bundle();
+                act081Bundle.putString(MD_ProductDao.PRODUCT_CODE, bundle.getString(MD_ProductDao.PRODUCT_CODE, ""));
+                act081Bundle.putString(MD_ProductDao.PRODUCT_DESC, bundle.getString(MD_ProductDao.PRODUCT_DESC, ""));
+                act081Bundle.putString(MD_ProductDao.PRODUCT_ID, bundle.getString(MD_ProductDao.PRODUCT_ID, ""));
+
+                act081Bundle.putBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND, bundle.getBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND));
+                act081Bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket_prefix);
+                act081Bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket_code);
+
+                act081Bundle.putString(TK_TicketDao.TICKET_ID, bundle.getString(TK_TicketDao.TICKET_ID, ""));
+                act081Bundle.putInt(TK_Ticket_StepDao.STEP_CODE, mStep_code);
+                act081Bundle.putString(TK_Ticket_StepDao.STEP_DESC, bundle.getString(TK_Ticket_StepDao.STEP_DESC, ""));
+
+                act081Bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, ""));
+                act081Bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, ""));
+                act081Bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, ""));
+
+            }
         } else {
             mSo_Prefix = null;
             mSo_Code = null;
@@ -2332,7 +2360,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
          */
         canSave = false;
         //LUCHE - 31/08/2020
-        if(ConstantBaseApp.ACT070.equals(requestingAct) && mPresenter.isFormCreateByTicket(formLocal)){
+        if(mPresenter.isaTicketForm()){
             callAct070();
             return;
         }
@@ -2514,6 +2542,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     @Override
+    public boolean isOffHandForm() {
+        return isOffHandForm;
+    }
+
+    @Override
     public void onBackPressed() {
         //super.onBackPressed();
         //mPresenter.onBackPressedClicked();
@@ -2536,7 +2569,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
      *
      */
     private void checkBackFlow() {
-        if(ConstantBaseApp.ACT070.equals(requestingAct)){
+        if(mPresenter.isaTicketForm()){
             callAct070();
         }else {
             if (formData.getCustom_form_status().equals(Constant.SYS_STATUS_DONE)) {

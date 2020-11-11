@@ -61,6 +61,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String TICKET_CODE = "ticket_code";
     public static final String TICKET_SEQ = "ticket_seq";
     public static final String TICKET_SEQ_TMP = "ticket_seq_tmp";
+    public static final String PIPELINE_CODE = "pipeline_code";
     public static final String STEP_CODE = "step_code";
     public static final String TICKET_CHECKIN_DATE = "ticket_checkin_date";
 
@@ -516,6 +517,12 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
                 custom_form_data.setTicket_seq_tmp(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ_TMP)));
             }
 
+            if(cursor.isNull(cursor.getColumnIndex(PIPELINE_CODE))){
+                custom_form_data.setPipeline_code(null);
+            }else{
+                custom_form_data.setPipeline_code(cursor.getInt(cursor.getColumnIndex(PIPELINE_CODE)));
+            }
+
             if(cursor.isNull(cursor.getColumnIndex(STEP_CODE))){
                 custom_form_data.setStep_code(null);
             }else{
@@ -625,6 +632,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             contentValues.put(TICKET_CODE, custom_form_data.getTicket_code());
             contentValues.put(TICKET_SEQ, custom_form_data.getTicket_seq());
             contentValues.put(TICKET_SEQ_TMP, custom_form_data.getTicket_seq_tmp());
+            contentValues.put(PIPELINE_CODE, custom_form_data.getPipeline_code());
             contentValues.put(STEP_CODE, custom_form_data.getStep_code());
             contentValues.put(TICKET_CHECKIN_DATE, custom_form_data.getTicket_checkin_date());
             return contentValues;

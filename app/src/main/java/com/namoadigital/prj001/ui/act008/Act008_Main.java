@@ -851,6 +851,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             bundle.putString(MD_SiteDao.SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
             //bundle.putString(Constant.ACT008_SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
             //
+
+            bundle.putAll(act081Bundle);
             mIntent.putExtras(bundle);
             //
             startActivity(mIntent);

@@ -103,6 +103,8 @@ public class GE_Custom_Form_Data {
     @Expose
     private Integer ticket_seq_tmp;
     @Expose
+    private Integer pipeline_code;
+    @Expose
     private Integer step_code;
     @Expose
     private String ticket_checkin_date;
@@ -143,6 +145,7 @@ public class GE_Custom_Form_Data {
         this.ticket_code=null;
         this.ticket_seq=null;
         this.ticket_seq_tmp=null;
+        this.pipeline_code=null;
         this.step_code=null;
         this.ticket_checkin_date = null;
     }
@@ -417,6 +420,14 @@ public class GE_Custom_Form_Data {
 
     public void setTicket_seq_tmp(Integer ticket_seq_tmp) {
         this.ticket_seq_tmp = ticket_seq_tmp;
+    }
+
+    public Integer getPipeline_code() {
+        return pipeline_code;
+    }
+
+    public void setPipeline_code(Integer pipeline_code) {
+        this.pipeline_code = pipeline_code;
     }
 
     public Integer getStep_code() {

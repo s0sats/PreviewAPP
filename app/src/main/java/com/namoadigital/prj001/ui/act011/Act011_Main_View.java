@@ -46,4 +46,6 @@ public interface Act011_Main_View {
     String getRequestingAct();
 
     void callAct070();
+
+    boolean isOffHandForm();
 }
