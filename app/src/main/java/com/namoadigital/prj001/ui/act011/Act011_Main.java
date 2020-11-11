@@ -2530,6 +2530,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket_prefix != null ? mTicket_prefix : -1 );
         bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket_code != null ? mTicket_code : -1 );
+        //
+        bundle.putInt(TK_Ticket_CtrlDao.STEP_CODE, mStep_code);
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, mTicket_seq_tmp);
+        //
+        if(isOffHandForm){
+             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
+        }
         //LUCHE - 08/09/2020
         //Se é finalização do form e esta voltando pra act070, seta flag para forçar o envio ao chegar na act
         if(mPresenter.setForceSentByForm(formData.getCustomer_code(),formData.getCustom_form_type(),formData.getCustom_form_code(),formData.getCustom_form_version(), (int) formData.getCustom_form_data())){

@@ -105,7 +105,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private boolean bundle_from_offline_source;
     private boolean scheduled_profile_check;
     private boolean isOffHandForm;
-    private Bundle act081Bundle;
+    private Bundle act081Bundle = new Bundle();
     private int mStepCode;
     private int mTkTicketPrefix;
     private int mTkTicketCode;
@@ -537,7 +537,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 mTkTicketPrefix =  bundle.getInt(TK_TicketDao.TICKET_PREFIX,-1);
                 mTkTicketCode  = bundle.getInt(TK_TicketDao.TICKET_CODE,-1);
                 mStepCode = bundle.getInt(TK_Ticket_StepDao.STEP_CODE, -1);
-                act081Bundle = new Bundle();
+
                 act081Bundle.putBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND,isOffHandForm);
 
                 act081Bundle.putInt(TK_TicketDao.TICKET_PREFIX,mTkTicketPrefix);

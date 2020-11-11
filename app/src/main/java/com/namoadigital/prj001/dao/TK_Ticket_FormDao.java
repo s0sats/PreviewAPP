@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
@@ -181,10 +182,15 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 Constant.DB_VERSION_CUSTOM
             );
             //
+            /**
+             * BARRIONUEVO - 11-11-2020
+             * ADICIONADO CLAUSULA  dbTicketForm.getTicket_seq() > 0 PARA EVITAR CANCELAR FORM ESPONTANEOS.
+             */
             if (tk_ticket_form.getCustom_form_data() != null
                 && tk_ticket_form.getCustom_form_data() > 0
                 && dbTicketForm.getCustom_form_data_tmp() != null
                 && dbTicketForm.getCustom_form_data_tmp() > 0
+                && dbTicketForm.getTicket_seq() > 0
             ) {
                 if (ConstantBaseApp.SYS_STATUS_PENDING.equals(dbTicketForm.getForm_status())
                     || ConstantBaseApp.SYS_STATUS_PROCESS.equals(dbTicketForm.getForm_status())

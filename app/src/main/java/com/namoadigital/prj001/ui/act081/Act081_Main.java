@@ -111,9 +111,9 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements Act081_
                         processSerialSearch(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:
-                        Toast.makeText(context, "Função em Desenvolvimento", Toast.LENGTH_SHORT).show();
-//                        isForm = true;
-//                        processSerialSearch(optionsInfo);
+//                        Toast.makeText(context, "Função em Desenvolvimento", Toast.LENGTH_SHORT).show();
+                        isForm = true;
+                        processSerialSearch(optionsInfo);
                         break;
                     default:
                         break;
