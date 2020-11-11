@@ -2126,6 +2126,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepApproval.setStepCode(tkStepCtrl.getStep_code());
         stepApproval.setStepType(stepMain.getStepType());
         stepApproval.setProcessTkSeq(tkStepCtrl.getTicket_seq());
+        stepApproval.setProcessTkSeqTmp(tkStepCtrl.getTicket_seq_tmp());
         stepApproval.setProcessStatus(tkStepCtrl.getCtrl_status());
         stepApproval.setApprovalType(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_type() : null);
         stepApproval.setApprovalQuestion(tkStepCtrl.getApproval()  != null ? tkStepCtrl.getApproval().getApproval_question() : null);
@@ -2181,6 +2182,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepNone.setStepAlreadyCheckedIn(ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate()));
         stepNone.setProcessPlanned(tkStepCtrl.getObj_planned() == 1);
         stepNone.setProcessTkSeq(tkStepCtrl.getTicket_seq());
+        stepNone.setProcessTkSeqTmp(tkStepCtrl.getTicket_seq_tmp());
         //Dados do proprio componente
         stepNone.setProductDesc(tkStepCtrl.getProduct_desc());
         stepNone.setSerialId(tkStepCtrl.getSerial_id());

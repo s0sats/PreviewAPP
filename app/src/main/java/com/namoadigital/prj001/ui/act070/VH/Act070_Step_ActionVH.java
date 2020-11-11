@@ -126,6 +126,9 @@ public class Act070_Step_ActionVH extends Act070_Step_Abstract_ProcessVH {
             stepAction.isCurrentStep(),
             stepAction.isStepAlreadyCheckedIn()
         );
+        //TODO  se não or seguir com animação ou highlight, apagar.
+        highlightNavVh(clBackground,stepAction.isBackProcessHighlight());
+        stepAction.setBackProcessHighlight(false);
     }
 
     private void resetVisibility() {

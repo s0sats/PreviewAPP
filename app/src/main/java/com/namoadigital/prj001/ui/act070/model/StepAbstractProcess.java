@@ -8,8 +8,10 @@ public abstract class StepAbstractProcess extends BaseStep{
     protected boolean processPlanned;
     //TicketSeq
     protected int processTkSeq;
+    protected int processTkSeqTmp;
     protected boolean isProductDifferentThanTicket;
     protected boolean isSerialDifferentThanTicket;
+    protected boolean backProcessHighlight;
 
     public String getStepType() {
         return stepType;
@@ -59,6 +61,14 @@ public abstract class StepAbstractProcess extends BaseStep{
         this.processTkSeq = processTkSeq;
     }
 
+    public int getProcessTkSeqTmp() {
+        return processTkSeqTmp;
+    }
+
+    public void setProcessTkSeqTmp(int processTkSeqTmp) {
+        this.processTkSeqTmp = processTkSeqTmp;
+    }
+
     public boolean isProductDifferentThanTicket() {
         return isProductDifferentThanTicket;
     }
@@ -73,5 +83,13 @@ public abstract class StepAbstractProcess extends BaseStep{
 
     public void setSerialDifferentThanTicket(boolean serialDifferentThanTicket) {
         isSerialDifferentThanTicket = serialDifferentThanTicket;
+    }
+
+    public void setBackProcessHighlight(boolean backProcessHighlight) {
+        this.backProcessHighlight = backProcessHighlight;
+    }
+
+    public boolean isBackProcessHighlight() {
+        return backProcessHighlight;
     }
 }

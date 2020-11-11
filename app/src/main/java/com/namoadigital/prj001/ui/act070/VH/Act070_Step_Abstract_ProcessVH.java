@@ -8,6 +8,8 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -159,6 +161,29 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
                 textView.setTextColor(ContextCompat.getColor(context, fontColor));
             }
         }
+    }
+
+    protected void highlightNavVh(ConstraintLayout clBackground, boolean backProcessHighlight){
+        if(backProcessHighlight) {
+            Animation anim = new AlphaAnimation(0.5f, 1.0f);
+            anim.setDuration(800); //You can manage the blinking time with this parameter
+            anim.setStartOffset(20);
+            anim.setRepeatMode(Animation.REVERSE);
+            anim.setRepeatCount(5);
+            //
+            //clBackground.startAnimation(anim);
+            clBackground.setBackground(context.getDrawable(R.drawable.pipeline_step_highligh_states));
+        }
+    }
+
+    protected void highlightNavVh(ConstraintLayout clBackground){
+            Animation anim = new AlphaAnimation(0.5f, 1.0f);
+            anim.setDuration(800); //You can manage the blinking time with this parameter
+            anim.setStartOffset(20);
+            anim.setRepeatMode(Animation.REVERSE);
+            anim.setRepeatCount(5);
+            //
+            clBackground.startAnimation(anim);
     }
 
 }

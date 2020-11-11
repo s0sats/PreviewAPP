@@ -1231,6 +1231,12 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         requestingBundle.remove(TK_TicketDao.TICKET_ID);
         requestingBundle.remove(TK_TicketDao.TYPE_PATH);
         requestingBundle.remove(TK_TicketDao.TYPE_DESC);
+        //LUCHE - 11/11/2020
+        //Add infos para posicionamento ao voltar.
+        if(!mPresenter.isClosedStatus(mTicketCtrl.getCtrl_status())) {
+            requestingBundle.remove(TK_Ticket_CtrlDao.STEP_CODE);
+            requestingBundle.remove(TK_Ticket_CtrlDao.TICKET_SEQ_TMP);
+        }
         intent.putExtras(requestingBundle);
         startActivity(intent);
         finish();
