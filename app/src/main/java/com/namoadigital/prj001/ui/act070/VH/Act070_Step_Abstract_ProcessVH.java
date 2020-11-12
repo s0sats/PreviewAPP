@@ -171,19 +171,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
             anim.setRepeatMode(Animation.REVERSE);
             anim.setRepeatCount(5);
             //
-            //clBackground.startAnimation(anim);
-            clBackground.setBackground(context.getDrawable(R.drawable.pipeline_step_highligh_states));
+            clBackground.startAnimation(anim);
         }
     }
-
-    protected void highlightNavVh(ConstraintLayout clBackground){
-            Animation anim = new AlphaAnimation(0.5f, 1.0f);
-            anim.setDuration(800); //You can manage the blinking time with this parameter
-            anim.setStartOffset(20);
-            anim.setRepeatMode(Animation.REVERSE);
-            anim.setRepeatCount(5);
-            //
-            clBackground.startAnimation(anim);
-    }
-
 }

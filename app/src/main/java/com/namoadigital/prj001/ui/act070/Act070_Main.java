@@ -19,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
@@ -50,8 +49,6 @@ import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
-import com.namoadigital.prj001.ui.act070.VH.Act070_Step_Abstract_ProcessVH;
-import com.namoadigital.prj001.ui.act070.VH.Act070_Step_ActionVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_MainVH;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAbstractProcess;
@@ -119,8 +116,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     //LUCHE - 08/09/2020 - Var que define se deve forçar ou não envio ao chegar na act.
     private boolean forceSendByFormExecution = false;
     private Integer mNavStepCode;
+    private Integer mNavTicketSeq;
     private Integer mNavTicketSeqTmp;
-    private int lastProcessInteractionPostion = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -393,6 +390,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             room_code = requestingBundle.getString(CH_RoomDao.ROOM_CODE, null);
             forceSendByFormExecution = requestingBundle.getBoolean(PARAM_FORCE_SEND_BY_FORM_EXEC, false);
             mNavStepCode = requestingBundle.getInt(TK_Ticket_CtrlDao.STEP_CODE, -1);
+            mNavTicketSeq = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ, -1);
             mNavTicketSeqTmp = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, -1);
             //
         } else {
@@ -402,6 +400,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             room_code = null;
             forceSendByFormExecution = false;
             mNavStepCode = -1;
+            mNavTicketSeq = -1;
             mNavTicketSeqTmp = -1;
         }
     }
@@ -420,16 +419,20 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             new Runnable() {
                 @Override
                 public void run() {
-                    if(mNavStepCode == -1 && mNavTicketSeqTmp == -1) {
+                    if(hasNavegationBundleParam()) {
+                        openLastProcessInteraction();
+                    }else {
                         openCurrentSteps();
                         moveToCurrentStep(currentStepFirstPosition);
-                    }else{
-                        openLastProcessInteraction();
                     }
                 }
             },100
         );
         //
+    }
+
+    private boolean hasNavegationBundleParam() {
+        return mNavStepCode > 0 && (mNavTicketSeq > 0 || mNavTicketSeqTmp > 0);
     }
 
     private void openCurrentSteps() {
@@ -471,13 +474,16 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                                     public void run() {
                                         for (int i = 0; i < sources.size(); i++) {
                                             if(sources.get(i) instanceof StepAbstractProcess){
-                                                if(((StepAbstractProcess) sources.get(i)).getStepCode() == mNavStepCode
-                                                    && ((StepAbstractProcess) sources.get(i)).getProcessTkSeqTmp() == mNavTicketSeqTmp ){
+                                                StepAbstractProcess process = (StepAbstractProcess) sources.get(i);
+                                                if(process.getStepCode() == mNavStepCode
+                                                    && (   (mNavTicketSeq > 0 && process.getProcessTkSeq() == mNavTicketSeq)
+                                                            || (mNavTicketSeq <= 0 && process.getProcessTkSeqTmp() == mNavTicketSeqTmp)
+                                                        )
+                                                ){
                                                     smoothMoveToItemAndScrollItToTop(i);
-                                                    //lastProcessInteractionPostion = i;
-//                                                    ((StepAbstractProcess) sources.get(i)).setBackProcessHighlight(true);
-//                                                    mAdapter.notifyItemChanged(i);
-                                                     resetNavegationVars();
+                                                    process.setBackProcessHighlight(true);
+                                                    mAdapter.notifyItemChanged(i);
+                                                    resetNavegationVars();
                                                 }
                                             }
                                         }
@@ -497,6 +503,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
    private void resetNavegationVars() {
         mNavStepCode = -1;
+        mNavTicketSeq = -1;
         mNavTicketSeqTmp = -1;
     }
 
@@ -910,23 +917,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 hasFABActive = b;
             }
         });
-        //
-        //TODO Se defir caminho via set no bj da lista, remover esse listener
-        rvTicketPipeline.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if(lastProcessInteractionPostion != -1){
-                    Act070_Step_Abstract_ProcessVH navVh = (Act070_Step_Abstract_ProcessVH) rvTicketPipeline.findViewHolderForAdapterPosition(lastProcessInteractionPostion);
-                    if(navVh instanceof Act070_Step_ActionVH) {
-                       // ((Act070_Step_ActionVH) navVh).applyHighlightNavVh();
-                    }
-                    //
-                    lastProcessInteractionPostion = -1;
-                    resetNavegationVars();
-                }
-            }
-        });
-
     }
 
     @Override

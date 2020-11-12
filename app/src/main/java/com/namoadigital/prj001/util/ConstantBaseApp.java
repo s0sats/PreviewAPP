@@ -650,6 +650,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_TICKET_ORIGIN_TYPE_FORM_SCORE = "FORM_SCORE";
     public static final String TK_TICKET_ORIGIN_TYPE_FORM_NC = "FORM_NC";
     public static final String TK_TICKET_ORIGIN_TYPE_TRANSFER = "TRANSFER";
+    //BROADCAST DE PARA
+    public static final String BR_TICKET_SAVE = "BR_TICKET_SAVE";
+    public static final String TK_TICKET_INTENT_FILTER_ACTION_CTRL_UPDATE = "ACTION_CTRL_UPDATE";
     /*
      * Constantes Pipeline
      */

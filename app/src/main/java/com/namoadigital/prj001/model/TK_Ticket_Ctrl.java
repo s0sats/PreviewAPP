@@ -56,6 +56,8 @@ public class TK_Ticket_Ctrl implements Serializable {
     private Integer step_order;
     private int obj_planned;
     private int update_required;
+    //LUCHE - 12/11/2020 - Propriedade que define se o de para deve ser reportado a tela via broadcast
+    private int from_to_notify;
     @Expose
     @Nullable
     private TK_Ticket_Action action;
@@ -391,6 +393,14 @@ public class TK_Ticket_Ctrl implements Serializable {
 
     public void setUpdate_required(int update_required) {
         this.update_required = update_required;
+    }
+
+    public int getFrom_to_notify() {
+        return from_to_notify;
+    }
+
+    public void setFrom_to_notify(int from_to_notify) {
+        this.from_to_notify = from_to_notify;
     }
 
     @Nullable

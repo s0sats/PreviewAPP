@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.ui.act071;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
@@ -16,6 +18,7 @@ import android.support.constraint.Group;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -141,6 +144,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private ArrayList<HMAux> wsResult = new ArrayList<>();
     private boolean has_tk_ticket_is_form_off_hand;
     private Bundle act081Bundle;
+    private int mNavStepCode;
+    private int mNavTicketSeq;
+    private int mNavTicketSeqTmp;
+    private CtrlFromToReceiver ctrlFromToReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -259,6 +266,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         if (mPresenter.validateBundleParams(mActionPrefix, mActionCode, mActionSeqTmp, mSchedulePrefix, mScheduleCode, mScheduleExec,isCreationCtrl)) {
             iniHeaderFrag();
             updateActionData();
+            updateNavegationVar(mTicketCtrl.getStep_code(), mTicketCtrl.getTicket_seq(), mTicketCtrl.getTicket_seq_tmp());
             //
             if(mIsSchedule && mPresenter.isScheduleAbortProcess(mSchedulePrefix, mScheduleCode, mScheduleExec)){
                 svMain.setVisibility(View.INVISIBLE);
@@ -267,6 +275,12 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         } else {
             paramErrorFlow();
         }
+    }
+
+    private void updateNavegationVar(int navStepCode, int navTicketSeq, int navTicketSeqTmp) {
+        mNavStepCode = navStepCode;
+        mNavTicketSeq = navTicketSeq;
+        mNavTicketSeqTmp = navTicketSeqTmp;
     }
 
     private void recoverIntentsInfo() {
@@ -384,6 +398,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     }
 
     private void updateActionData() {
+        initCtrlReceiver();
         if(isCreationCtrl){
             mTicketCtrl = mPresenter.createTicketCtrlObj(mActionPrefix, mActionCode, mStepCode,act081Bundle);
             if(mTicketCtrl != null) {
@@ -626,6 +641,10 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
 
     //TODO REVISA PROCESSO DE FOTO PARA SABER SE AIND AÉ NECESSARIO OS CONTROLES ANTIGOS
     private void setDataToObj() {
+        //LUCHE - 12/11/2020
+        //Se é espontaneo, seta flag que notificará qual será o Ticket_seq após de-para.
+        //Informação usado para navegação do pipeline.
+        mTicketCtrl.setFrom_to_notify(mTicketCtrl.getTicket_seq() == 0 ? 1 : 0);
         //
         mTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
         mTicketCtrl.getAction().setAction_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
@@ -754,6 +773,11 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 }else{
                     updateActionData();
                 }*/
+                    //LUCHE - 12/11/2020
+                    //Se erro, reseta vars de navegação.
+                    if(!ticketResult){
+                        updateNavegationVar(-1,-1,-1);
+                    }
                     checkPostTicketSaveFlow();
                     //
                     wsResult.clear();
@@ -1231,11 +1255,14 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         requestingBundle.remove(TK_TicketDao.TICKET_ID);
         requestingBundle.remove(TK_TicketDao.TYPE_PATH);
         requestingBundle.remove(TK_TicketDao.TYPE_DESC);
+        requestingBundle.remove(TK_Ticket_CtrlDao.STEP_CODE);
+        requestingBundle.remove(TK_Ticket_CtrlDao.TICKET_SEQ_TMP);
         //LUCHE - 11/11/2020
         //Add infos para posicionamento ao voltar.
-        if(!mPresenter.isClosedStatus(mTicketCtrl.getCtrl_status())) {
-            requestingBundle.remove(TK_Ticket_CtrlDao.STEP_CODE);
-            requestingBundle.remove(TK_Ticket_CtrlDao.TICKET_SEQ_TMP);
+        if(mPresenter.isClosedStatus(mTicketCtrl.getCtrl_status())) {
+            requestingBundle.putInt(TK_Ticket_CtrlDao.STEP_CODE,mNavStepCode);
+            requestingBundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ,mNavTicketSeq);
+            requestingBundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP,mNavTicketSeqTmp);
         }
         intent.putExtras(requestingBundle);
         startActivity(intent);
@@ -1396,5 +1423,47 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         mIntent.putExtras(act081Bundle);
         startActivity(mIntent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        startStopCtrlReceiver(false);
+        super.onDestroy();
+    }
+
+    private void initCtrlReceiver() {
+        ctrlFromToReceiver = new CtrlFromToReceiver();
+        //
+        startStopCtrlReceiver(true);
+    }
+
+    private void startStopCtrlReceiver(boolean start) {
+        if(ctrlFromToReceiver != null) {
+            if (start) {
+                IntentFilter filter = new IntentFilter();
+                filter.addAction(ConstantBaseApp.BR_TICKET_SAVE);
+                filter.addCategory(Intent.CATEGORY_DEFAULT);
+                LocalBroadcastManager.getInstance(this).registerReceiver(ctrlFromToReceiver, filter);
+            } else {
+                LocalBroadcastManager.getInstance(this).unregisterReceiver(ctrlFromToReceiver);
+            }
+        }
+    }
+
+    class CtrlFromToReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            if (bundle != null
+                && bundle.containsKey(ConstantBaseApp.SW_TYPE)
+                && bundle.getString(ConstantBaseApp.SW_TYPE).equals(ConstantBaseApp.TK_TICKET_INTENT_FILTER_ACTION_CTRL_UPDATE)
+            ) {
+                int stepCode = bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE, -1);
+                int ticketSeq = bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ, -1);
+                int ticketSeqTmp =bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP,-1);
+                //
+                updateNavegationVar(stepCode,ticketSeq,ticketSeqTmp);
+            }
+        }
     }
 }
