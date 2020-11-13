@@ -33,12 +33,10 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         this.transWaitingSync = transWaitingSync;
     }
 
-    protected void setProductVisibility(TextView tvProduct, boolean isProductDifferentThanTicket){
-        tvProduct.setVisibility(isProductDifferentThanTicket ? View.VISIBLE : View.GONE);
-    }
-
-    protected void setSerialVisibility(TextView tvSerial, boolean isProductDifferentThanTicket, boolean isSerialDifferentThanTicket){
-        tvSerial.setVisibility(isProductDifferentThanTicket || isSerialDifferentThanTicket ? View.VISIBLE : View.GONE);
+    protected void setProductAndSerialVisibility(TextView tvProduct, TextView tvSerial, boolean isProductDifferentThanTicket, boolean isSerialDifferentThanTicket){
+        int visibility =  isProductDifferentThanTicket || isSerialDifferentThanTicket ? View.VISIBLE : View.GONE;
+        tvProduct.setVisibility(visibility);
+        tvSerial.setVisibility(visibility);
     }
 
     protected void defineCheckInOutIcon(ImageView ivStartEndDateIcon,  boolean hasCheckOutDate) {

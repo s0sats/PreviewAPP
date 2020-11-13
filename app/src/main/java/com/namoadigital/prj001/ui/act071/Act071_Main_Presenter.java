@@ -1229,21 +1229,30 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         return false;
     }
 
+    /**
+     * LUCHE - 13/11/2020
+     * Metodo que controla a visibilida das infos de produto e serial
+     * @param mActionPrefix
+     * @param mActionCode
+     * @param mTicketCtrl
+     * @param tvProduct
+     * @param tvSerial
+     */
     @Override
     public void defineProductSerialViews(int mActionPrefix, int mActionCode, TK_Ticket_Ctrl mTicketCtrl, TextView tvProduct, TextView tvSerial) {
         TK_Ticket tkTicket = getTicketbyPk(mActionPrefix, mActionCode);
-        if( mTicketCtrl.getProduct_code() != null
-            && tkTicket.getOpen_product_code() != mTicketCtrl.getProduct_code()
-        ){
+        int visibility = (mTicketCtrl.getProduct_code() != null
+            && tkTicket.getOpen_product_code() != mTicketCtrl.getProduct_code())
+            || (mTicketCtrl.getSerial_id() != null
+            && !tkTicket.getOpen_serial_id().equals(mTicketCtrl.getSerial_id())) ? View.VISIBLE : View.GONE;
+
+        if(mTicketCtrl.getProduct_code() != null &&  mTicketCtrl.getProduct_desc() != null && !mTicketCtrl.getProduct_desc().isEmpty()){
           tvProduct.setText(mTicketCtrl.getProduct_desc());
-          tvProduct.setVisibility(View.VISIBLE);
+          tvProduct.setVisibility(visibility);
         }
-        //
-        if( mTicketCtrl.getSerial_id() != null
-            && !tkTicket.getOpen_serial_id().equals(mTicketCtrl.getSerial_id())
-        ){
+        if(mTicketCtrl.getSerial_id() != null && !mTicketCtrl.getSerial_id().isEmpty()){
             tvSerial.setText(mTicketCtrl.getSerial_id());
-            tvSerial.setVisibility(View.VISIBLE);
+            tvSerial.setVisibility(visibility);
         }
     }
 
