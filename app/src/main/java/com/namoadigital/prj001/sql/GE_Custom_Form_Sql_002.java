@@ -94,8 +94,10 @@ public class GE_Custom_Form_Sql_002 implements Specification {
                 "      AND ( '"+s_serial_id+"' IS NOT NULL OR cf.require_serial_done = 0)\n"+
                 "    \n" +
                 "    ORDER BY\n" +
-                "      cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+",\n" +
-                "      cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+";")
+            /*    "      cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+",\n" +
+                "      cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+";"*/
+                "      upper(" +    GE_Custom_FormDao.CUSTOM_FORM_DESC + ") \n;"
+            )
                 //GE_Custom_FormDao.CUSTOMER_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_FormDao.CUSTOM_FORM_CODE+"#"+GE_Custom_FormDao.CUSTOM_FORM_VERSION+"#"+GE_Custom_FormDao.CUSTOM_FORM_DESC)
                 .toString()
                 .replace("'null'","null");
