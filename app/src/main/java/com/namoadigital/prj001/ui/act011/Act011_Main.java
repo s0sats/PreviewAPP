@@ -1111,7 +1111,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         mPresenter.resetTicketCtrlFormDataIfNeeds(formLocal);
         //
-        callAct005(context);
+        if(mPresenter.isaTicketForm()){
+            callAct070();
+        }else {
+            callAct005(context);
+        }
     }
 
     private void recoverGetIntents() {

@@ -1009,7 +1009,11 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mActionPrefix, mActionCode)){
             defineFormWaitingSyncFlow(mActionPrefix, mActionCode);
         }else {
-            execTicketSave(false);
+            if(ToolBox_Inf.hasOffHandFormInProcess(context,mActionPrefix,mActionCode)){
+                execTicketSave(true);
+            }else {
+                execTicketSave(false);
+            }
         }
     }
 

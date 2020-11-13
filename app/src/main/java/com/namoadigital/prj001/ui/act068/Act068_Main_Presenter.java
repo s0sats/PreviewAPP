@@ -39,6 +39,7 @@ import com.namoadigital.prj001.sql.Sql_Act068_002;
 import com.namoadigital.prj001.sql.Sql_Act068_003;
 import com.namoadigital.prj001.sql.Sql_Act068_004;
 import com.namoadigital.prj001.sql.Sql_Act069_002;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_008;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -125,10 +126,15 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
 
     @Override
     public boolean hasItensToSend() {
-        int qtyToSend =
-            ToolBox_Inf.convertStringToInt(
-                ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context))
-            );
+        List<TK_Ticket> pendencies = ticketDao.query(
+                new Sql_WS_TK_Ticket_Save_001(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        int qtyToSend = pendencies != null ? pendencies.size() : 0;
+//            ToolBox_Inf.convertStringToInt(
+//                ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context))
+//            );
         ArrayList<TK_Ticket> ticketInToken = ToolBox_Inf.getTicketsWithinToken(ToolBox_Con.getPreference_Customer_Code(context));
         qtyToSend = qtyToSend + ticketInToken.size();
         //

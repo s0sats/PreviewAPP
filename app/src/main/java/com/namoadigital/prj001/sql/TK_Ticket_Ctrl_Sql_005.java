@@ -8,12 +8,14 @@ public class TK_Ticket_Ctrl_Sql_005 implements Specification {
     private int ticket_prefix;
     private int ticket_code;
     private int ticket_seq_tmp;
+    private int step_code;
 
-    public TK_Ticket_Ctrl_Sql_005(long customer_code, int ticket_prefix, int ticket_code,int ticket_seq_tmp) {
+    public TK_Ticket_Ctrl_Sql_005(long customer_code, int ticket_prefix, int ticket_code, int ticket_seq_tmp, int step_code) {
         this.customer_code = customer_code;
         this.ticket_prefix = ticket_prefix;
         this.ticket_code = ticket_code;
         this.ticket_seq_tmp = ticket_seq_tmp;
+        this.step_code = step_code;
     }
 
     @Override
@@ -27,6 +29,7 @@ public class TK_Ticket_Ctrl_Sql_005 implements Specification {
                         "      and ticket_prefix = '" + ticket_prefix +"'\n" +
                         "      and ticket_code = '" + ticket_code +"'\n" +
                         //"      and c.ticket_seq ='0\n" +
+                        "      and step_code = '" + step_code +"'\n" +
                         "      and ticket_seq_tmp = '" + ticket_seq_tmp +"'\n"
                 )
                 .toString();

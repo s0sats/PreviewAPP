@@ -150,35 +150,47 @@ public class WS_TK_Ticket_Download extends IntentService {
             DaoObjReturn daoObjReturn = new DaoObjReturn();
             //
             HMAux hmAux = new HMAux();
+            List<TK_Ticket> tickets = new ArrayList<>();
             for (TK_Ticket tkTicket : ticketList) {
                 tkTicket.setPK();
                 TK_Ticket dbTicket = getDbTicket(tkTicket);
+
                 if(dbTicket != null) {
-                    //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
-                    //for alterado, o que significa que mudaram a foto no server...
-                    TK_Ticket.checkActionPhotoResetNeeds(
-                        dbTicket,
-                        tkTicket
-                    );
-                    //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
-                    tkTicket.updateLocalImagesPathIfExists();
-                    //Busca ctrls tipo form em andamento e que seriam resetados.
-                    tkTicket.updateTicketCtrlFormInProcess(getApplicationContext());
-                    //
-                    daoObjReturn = ticketDao.removeFullV2(tkTicket);
+                    /*
+                        Barrionuevo - 2020-11-13
+                        Tratativa para impedir que ticket com form espontaneo em processo seja atualizado pelo server.
+                     */
+                    if(!ToolBox_Inf.hasOffHandFormInProcess(getApplicationContext(), dbTicket.getTicket_prefix(), dbTicket.getTicket_code())) {
+                        tickets.add(dbTicket);
+
+                        //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
+                        //for alterado, o que significa que mudaram a foto no server...
+                        TK_Ticket.checkActionPhotoResetNeeds(
+                                dbTicket,
+                                tkTicket
+                        );
+                        //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
+                        tkTicket.updateLocalImagesPathIfExists();
+                        //Busca ctrls tipo form em andamento e que seriam resetados.
+                        tkTicket.updateTicketCtrlFormInProcess(getApplicationContext());
+                        //
+                        daoObjReturn = ticketDao.removeFullV2(tkTicket);
+                    }
                 }
                 //
                 if(daoObjReturn.hasError()) {
                     break;
-                }else {
-                    if (ticketList.size() == 1) {
-                        hmAux.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
-                        hmAux.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
-                    }
                 }
             }
+            //
+            if (tickets.size() == 1) {
+                TK_Ticket tkTicket = tickets.get(0);
+                hmAux.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
+                hmAux.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
+            }
+            //
             if(!daoObjReturn.hasError()) {
-                daoObjReturn = ticketDao.addUpdate(ticketList, false);
+                daoObjReturn = ticketDao.addUpdate(tickets, false);
                 if(!daoObjReturn.hasError()){
                     startDownloadServices();
                     //

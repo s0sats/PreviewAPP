@@ -91,6 +91,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_Obj;
@@ -116,6 +117,7 @@ import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
@@ -195,8 +197,10 @@ import com.namoadigital.prj001.sql.Sql_Form_x_Product;
 import com.namoadigital.prj001.sql.Sql_Form_x_Site;
 import com.namoadigital.prj001.sql.Sql_Notification_Schedule_001;
 import com.namoadigital.prj001.sql.Sql_Notification_Schedule_002;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_004;
+import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_006;
 import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -3834,6 +3838,24 @@ public class ToolBox_Inf {
         return placeHolder;
     }
 
+
+    public static boolean hasOffHandFormInProcess(Context context, int ticket_prefix, int ticket_code) {
+        long preference_customer_code = ToolBox_Con.getPreference_Customer_Code(context);
+        TK_Ticket_FormDao ticketFormDao = new TK_Ticket_FormDao(
+                context,
+                ToolBox_Con.customDBPath(preference_customer_code),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        List<TK_Ticket_Form> query = ticketFormDao.query(new TK_Ticket_Form_Sql_006(
+                preference_customer_code,
+                ticket_prefix,
+                ticket_code
+        ).toSqlQuery());
+        return query != null && query.size() > 0 ;
+    }
+
+
     private static class GenericExtFilter implements FilenameFilter {
         private String[] exts;
 
@@ -6514,18 +6536,18 @@ public class ToolBox_Inf {
     private static String getTicketUpdateRequiredCount(Context context, Long customer_code) {
         TK_TicketDao tk_ticketDao = new TK_TicketDao(context,ToolBox_Con.customDBPath(customer_code), Constant.DB_VERSION_CUSTOM);
         int pendencies=0;
-        //
-        HMAux ticketUpdateReq = tk_ticketDao.getByStringHM((
-                new Sql_Act005_010(
+
+        ArrayList<TK_Ticket> ticketUpdateReq = (ArrayList<TK_Ticket>) tk_ticketDao.query((
+                new Sql_WS_TK_Ticket_Save_001(
                     customer_code
                 )
             ).toSqlQuery()
         );
         //
-        if(ticketUpdateReq != null && ticketUpdateReq.hasConsistentValue(Sql_Act005_010.QTY)
+        if(ticketUpdateReq != null && ticketUpdateReq.size() > 0
         ){
             try {
-                pendencies += Integer.valueOf(ticketUpdateReq.get(Sql_Act005_010.QTY));
+                pendencies +=  ticketUpdateReq.size();
             } catch (Exception e) {
                 pendencies = 0;
                 registerException(CLASS_NAME,e);

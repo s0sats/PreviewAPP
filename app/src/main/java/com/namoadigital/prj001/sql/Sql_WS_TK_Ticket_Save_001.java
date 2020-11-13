@@ -51,12 +51,17 @@ public class Sql_WS_TK_Ticket_Save_001 implements Specification {
                     "            OR c.update_required = 1\n" +
                     "           )\n" +
                     "      and not exists( SELECT 1\n" +
-                    "                      FROM "+ GE_Custom_Form_DataDao.TABLE +" g\n" +
-                    "                      WHERE g.customer_code = t.current_step_order\n" +
+                    "                      FROM "+ GE_Custom_Form_DataDao.TABLE +" g \n"+
+                    "                      WHERE g.customer_code = t.customer_code\n" +
                     "                            and g.ticket_prefix = t.ticket_prefix\n" +
                     "                            and g.ticket_code = t.ticket_code  \n" +
-                    "                            and g.custom_form_status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"'\n" +
-                    "                     )  " +
+                    "                            and ( " +
+                    "                                    (g.ticket_seq > 0 and g.custom_form_status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"')\n" +
+                    "                                 or ( g.ticket_seq = 0 " +"\n" +
+                    "                                  and g.ticket_seq_tmp > 0 " +"\n" +
+                    "                                  and g.custom_form_status = '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING +"') \n" +
+                    "                            ) \n " +
+                    "                   )  \n" +
                     " GROUP BY\n" +
                     "     t.customer_code,\n" +
                     "     t.ticket_prefix,\n" +

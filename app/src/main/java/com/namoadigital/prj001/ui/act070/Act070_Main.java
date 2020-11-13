@@ -241,6 +241,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_exists_ctrl_open_msg");
         //
         transList.add("optional_check_in_lbl");
+        //
+        transList.add("alert_ticket_has_off_hand_form_in_process_ttl");
+        transList.add("alert_ticket_has_off_hand_form_in_process_msg");
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -348,18 +351,24 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void syncPipeline() {
-        showAlert(
-            hmAux_Trans.get("alert_ticket_sync_confirm_ttl"),
-            hmAux_Trans.get("alert_ticket_sync_confirm_msg"),
-            new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    mPresenter.prepareSyncProcess(mTicket, false);
-                }
-            },
-            true
-        );
-
+        if (ToolBox_Inf.hasOffHandFormInProcess(context, mTkPrefix, mTkCode)) {
+            showAlert(
+                    hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
+                    hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
+            );
+        }else {
+            showAlert(
+                    hmAux_Trans.get("alert_ticket_sync_confirm_ttl"),
+                    hmAux_Trans.get("alert_ticket_sync_confirm_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mPresenter.prepareSyncProcess(mTicket, false);
+                        }
+                    },
+                    true
+            );
+        }
     }
 
     private void refreshUi() {

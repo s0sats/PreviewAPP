@@ -54,6 +54,7 @@ import com.namoadigital.prj001.sql.Sql_Act070_004;
 import com.namoadigital.prj001.sql.Sql_Act070_006;
 import com.namoadigital.prj001.sql.Sql_Act070_007;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_006;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -174,7 +175,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             //provalvemente aqui o booleano é false.
             executeSerialSave(allowOfflineSave);
         }else{
-            executeSyncProcess(mTicket.getTicket_prefix(), mTicket.getTicket_code(),mTicket.getScn());
+            if(!ToolBox_Inf.hasOffHandFormInProcess(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())){
+                executeSyncProcess(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mTicket.getScn());
+            }
         }
     }
 
@@ -427,7 +430,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 || ToolBox_Inf.isTicketInTokenFile(context, mTicket.getTicket_prefix(),mTicket.getTicket_code())
                 || ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
                 || ToolBox_Inf.hasSerialUpdateRequiredWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
-                );
+                )
+                && !ToolBox_Inf.hasOffHandFormInProcess(context,mTicket.getTicket_prefix(), mTicket.getTicket_code());
     }
 
     @Override
@@ -899,7 +903,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     @Override
     public void defineFormFlow(final TK_Ticket mTicket, StepForm stepForm) {
         final TK_Ticket_Step ticketStep = getSelectedStep(mTicket.getTicket_prefix(),mTicket.getTicket_code(), stepForm.getStepCode());
-        final TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFromDb(mTicket.getTicket_prefix(),mTicket.getTicket_code(),stepForm.getProcessTkSeq(),stepForm.getStepCode());
+        final TK_Ticket_Ctrl ticketCtrl = getSelectedCtrlFormFromDb(mTicket.getTicket_prefix(),mTicket.getTicket_code(),stepForm.getProcessTkSeq(),stepForm.getProcessTkSeqTmp(),stepForm.getStepCode());
         //
         if(ticketStep != null && ticketCtrl != null && ticketCtrl.getForm() != null){
             if(!isDoneOrWaitingSync(ticketStep.getStep_status())){
@@ -990,6 +994,19 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 hmAux_Trans.get("alert_step_or_ctrl_not_found_msg")
             );
         }
+    }
+
+    private TK_Ticket_Ctrl getSelectedCtrlFormFromDb(int ticket_prefix, int ticket_code, int processTkSeq, int processTkSeqTmp, int stepCode) {
+        return ticketCtrlDao.getByString(
+                new TK_Ticket_Ctrl_Sql_006(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ticket_prefix,
+                        ticket_code,
+                        processTkSeq,
+                        processTkSeqTmp,
+                        stepCode
+                ).toSqlQuery()
+        );
     }
 
     @Override

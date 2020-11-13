@@ -57,6 +57,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_002;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_005;
 import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_005;
@@ -678,12 +679,26 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     @Override
     public void resetTicketCtrlFormDataIfNeeds(GE_Custom_Form_Local formLocal) {
         if (isFormCreateByTicket(formLocal)) {
-            if (mView.isOffHandForm()) {
+            if (isaOffHandTicketForm(formLocal)) {
                 deleteCtrlFormData(formLocal);
             } else {
                 resetCtrlFormData(formLocal);
             }
         }
+    }
+
+    private boolean isaOffHandTicketForm(GE_Custom_Form_Local formLocal) {
+        TK_Ticket_CtrlDao ticketCtrlDao = getTicketCtrlDao();
+        TK_Ticket_Ctrl tk_ctrl = ticketCtrlDao.getByString(
+                new TK_Ticket_Ctrl_Sql_004(
+                        formLocal.getCustomer_code(),
+                        formLocal.getTicket_prefix(),
+                        formLocal.getTicket_code(),
+                        formLocal.getTicket_seq_tmp()
+                ).toSqlQuery()
+        );
+
+        return tk_ctrl.getObj_planned() == 0;
     }
 
     private void deleteCtrlFormData(GE_Custom_Form_Local customFormLocal) {
@@ -705,7 +720,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                         customFormLocal.getCustomer_code(),
                         customFormLocal.getTicket_prefix(),
                         customFormLocal.getTicket_code(),
-                        customFormLocal.getTicket_seq_tmp()
+                        customFormLocal.getTicket_seq_tmp(),
+                        customFormLocal.getStep_code()
                 ).toSqlQuery()
         );
 
@@ -1168,11 +1184,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
     @Override
     public boolean isaTicketForm() {
-        String requestingAct = mView.getRequestingAct();
-        return (ConstantBaseApp.ACT070.equals(requestingAct)
-                || ConstantBaseApp.ACT074.equals(requestingAct)
-                || ConstantBaseApp.ACT012.equals(requestingAct)
-        ) && isTicketProcess;
+        return isTicketProcess;
     }
 
     private void checkGpsFlow(GE_Custom_Form_Data formData, int require_location){
@@ -1484,26 +1496,34 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     /**
      * BARRIONUEVO - Cria ctrl e Tk_Form para formulario espontaneo.
-     * @param formLocal
+     * @param customFormLocal
      * @param mTicketPrefix
      * @param mTicketCode
      * @param mStepCode
      */
-    public void createTicketCtrlObj(GE_Custom_Form_Local formLocal, int mTicketPrefix, int mTicketCode, int mStepCode) {
+    public void createTicketCtrlObj(GE_Custom_Form_Local customFormLocal, int mTicketPrefix, int mTicketCode, int mStepCode) {
         TK_Ticket tkTicket = getTicketbyPk(mTicketPrefix, mTicketCode);
         TK_Ticket_Step stepInfo = getStepInfo(mTicketPrefix, mTicketCode, mStepCode);
         TK_Ticket_Ctrl ticketCtrl = null;
-
+        //
+        MD_Product_Serial serialInfo = md_product_serialDao.getByString(
+                new MD_Product_Serial_Sql_002(
+                        customFormLocal.getCustomer_code(),
+                        customFormLocal.getCustom_product_code(),
+                        customFormLocal.getSerial_id()
+                ).toSqlQuery()
+        );
+        //
         if (tkTicket != null && stepInfo != null) {
             try { ticketCtrl = new TK_Ticket_Ctrl(
                         0,
                         mTicketSeqTmp,
                         ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM,
-                        tkTicket.getOpen_product_code(),
-                        tkTicket.getOpen_product_id(),
-                        tkTicket.getOpen_product_desc(),
-                        tkTicket.getOpen_serial_code(),
-                        tkTicket.getOpen_serial_id(),
+                        customFormLocal.getCustom_product_code(),
+                        customFormLocal.getCustom_product_id(),
+                        customFormLocal.getCustom_product_desc(),
+                        (int) serialInfo.getSerial_code(),
+                        serialInfo.getSerial_id(),
                         ConstantBaseApp.SYS_STATUS_PROCESS,
                         stepInfo.getStep_order(),
                         0
@@ -1519,12 +1539,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
                 TK_Ticket_Form tk_ticket_form = new TK_Ticket_Form();
                 tk_ticket_form.setPK(ticketCtrl);
-                tk_ticket_form.setCustom_form_type(formLocal.getCustom_form_type());
-                tk_ticket_form.setCustom_form_type_desc(formLocal.getCustom_form_type_desc());
-                tk_ticket_form.setCustom_form_code(formLocal.getCustom_form_code());
-                tk_ticket_form.setCustom_form_version(formLocal.getCustom_form_version());
-                tk_ticket_form.setCustom_form_desc(formLocal.getCustom_form_desc());
-                tk_ticket_form.setCustom_form_data((int) formLocal.getCustom_form_data());
+                tk_ticket_form.setCustom_form_type(customFormLocal.getCustom_form_type());
+                tk_ticket_form.setCustom_form_type_desc(customFormLocal.getCustom_form_type_desc());
+                tk_ticket_form.setCustom_form_code(customFormLocal.getCustom_form_code());
+                tk_ticket_form.setCustom_form_version(customFormLocal.getCustom_form_version());
+                tk_ticket_form.setCustom_form_desc(customFormLocal.getCustom_form_desc());
+                tk_ticket_form.setCustom_form_data((int) customFormLocal.getCustom_form_data());
                 ticketCtrl.setForm(tk_ticket_form);
 
             } catch (Exception e) {
