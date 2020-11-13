@@ -1146,14 +1146,9 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
     private void proceedPostSaveFlow(TK_Ticket tkTicket) {
         if (tkTicket != null && tkTicket.getCustomer_code() > 0) {
             if(!mView.isScheduledTicket()){
-                if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(tkTicket.getTicket_status())
-                    || !hasActionNotExec(tkTicket)
-                ) {
-                    //mView.callAct069(false);
-                    mView.callAct076();
-                } else {
-                    mView.callAct070();
-                }
+                //LUCHE - 13/11/2020
+                //Modificado navegação pos save para sempre navegar para act070.
+                mView.callAct070();
             }else{
                 mView.callAct017();
             }
