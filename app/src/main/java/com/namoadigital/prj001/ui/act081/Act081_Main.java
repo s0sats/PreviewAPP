@@ -347,13 +347,12 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
     /**
      * LUCHE - 13/11/2020
      * Implementaçãoda interface acionada quando o usuario digita no textView do productId
+     * Se alterou o texto, apaga serial.
      * @param typed_product_id
      */
     @Override
     public void onProductTyping(String typed_product_id) {
-        if(productId != null && !productId.isEmpty() && !productId.equals(typed_product_id)){
-            mFrgSerialSearch.setSerialIdText("");
-        }
+        mFrgSerialSearch.setSerialIdText("");
     }
 
     private void iniUIFooter() {
