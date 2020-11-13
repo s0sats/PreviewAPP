@@ -82,6 +82,7 @@ public class Frg_Serial_Search extends Fragment {
     private Frg_Serial_Search_Presenter mPresenter;
     private On_Frg_Serial_Search mFragListener;
     private On_Frg_Serial_Search.onProductSelectionReturnListener mFragOnProductSelectionReturnListener;
+    private On_Frg_Serial_Search.onProductTypingListener mFragOnProductTypingListener ;
 
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
@@ -154,6 +155,11 @@ public class Frg_Serial_Search extends Fragment {
         //Tenta inicializar interface via context da act.
         if(context instanceof On_Frg_Serial_Search.onProductSelectionReturnListener){
             mFragOnProductSelectionReturnListener = (On_Frg_Serial_Search.onProductSelectionReturnListener) context;
+        }
+        //LUCHE - 13/11/2020
+        //Inicializa interface via context da act
+        if(context instanceof On_Frg_Serial_Search.onProductSelectionReturnListener){
+            mFragOnProductTypingListener = (On_Frg_Serial_Search.onProductTypingListener) context;
         }
     }
 
@@ -324,6 +330,11 @@ public class Frg_Serial_Search extends Fragment {
 
             @Override
             public void reportTextChange(String text, boolean hasText) {
+                if(mFragOnProductTypingListener != null){
+                    mFragOnProductTypingListener.onProductTyping(
+                        text.trim()
+                    );
+                }
                 if (hasText) {
                     MD_Product mdProduct = productValidCheck(text);
                     //
