@@ -7487,7 +7487,8 @@ public class ToolBox_Inf {
      * @param setStepUpdateOnForceNone - Define se ao "finalizar" um none, deve setar o step como
      * update_required.(faz sentido na chamada da act011)
      */
-    public static void forceNoneObjToWaitingSync(TK_Ticket_Step ticketStep, boolean setStepUpdateOnForceNone) {
+    public static boolean forceNoneObjToWaitingSync(TK_Ticket_Step ticketStep, boolean setStepUpdateOnForceNone) {
+        boolean anyNoneFinalizaed = false;
         if(ticketStep.getCtrl() != null) {
             for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
                 if(ConstantBaseApp.TK_TICKET_CRTL_TYPE_NONE.equals(ticketCtrl.getCtrl_type())
@@ -7506,9 +7507,12 @@ public class ToolBox_Inf {
                     if(setStepUpdateOnForceNone){
                         ticketStep.setUpdate_required(1);
                     }
+                    //
+                    anyNoneFinalizaed = true;
                 }
             }
         }
+        return anyNoneFinalizaed;
     }
 
 }

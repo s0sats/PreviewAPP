@@ -1418,7 +1418,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //LUCHE - 09/11/2020
         //Com a nova definição, se o step é check in manual e seu obj planejado é none, esse deve ser
         //finalizado junto com o checkin...
-        ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep, false);
+        if(ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep, false)){
+            //Se fechou o obj none, verifica se o checkout deve ser feito caso ele seja o unico obj.
+            //Como o obj none é sempre o planejado, será o indice
+            checkCloseStepForWaitingSync(ticketStep,ticketStep.getCtrl().get(0));
+        }
         //
         int stepIdx = getStepIdx(ticketStep,mTicket);
         mTicket.setUpdate_required(1);
