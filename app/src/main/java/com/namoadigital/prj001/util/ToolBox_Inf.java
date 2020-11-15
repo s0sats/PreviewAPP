@@ -91,7 +91,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
-import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_Obj;
@@ -117,7 +117,6 @@ import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
-import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
@@ -187,7 +186,6 @@ import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.Sql_Act002_001;
 import com.namoadigital.prj001.sql.Sql_Act005_007;
 import com.namoadigital.prj001.sql.Sql_Act005_008;
-import com.namoadigital.prj001.sql.Sql_Act005_010;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act070_005;
 import com.namoadigital.prj001.sql.Sql_Act070_008;
@@ -200,7 +198,7 @@ import com.namoadigital.prj001.sql.Sql_Notification_Schedule_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_004;
-import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_006;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_007;
 import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -3841,13 +3839,13 @@ public class ToolBox_Inf {
 
     public static boolean hasOffHandFormInProcess(Context context, int ticket_prefix, int ticket_code) {
         long preference_customer_code = ToolBox_Con.getPreference_Customer_Code(context);
-        TK_Ticket_FormDao ticketFormDao = new TK_Ticket_FormDao(
+        TK_Ticket_CtrlDao tkTicketCtrlDao = new TK_Ticket_CtrlDao(
                 context,
                 ToolBox_Con.customDBPath(preference_customer_code),
                 Constant.DB_VERSION_CUSTOM
         );
 
-        List<TK_Ticket_Form> query = ticketFormDao.query(new TK_Ticket_Form_Sql_006(
+        List<TK_Ticket_Ctrl> query = tkTicketCtrlDao.query(new TK_Ticket_Ctrl_Sql_007(
                 preference_customer_code,
                 ticket_prefix,
                 ticket_code

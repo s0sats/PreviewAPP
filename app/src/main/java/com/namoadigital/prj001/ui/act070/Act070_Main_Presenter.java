@@ -731,9 +731,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
           return false;
         }
         //Caso não exista, verifica os status dos planejados.
+        /**
+         * BARRRIONUEVO 15-11-2020
+         * Adicionado condicao para form espontaneo.
+         */
         if(selectedStep != null){
             for (TK_Ticket_Ctrl ticketCtrl : selectedStep.getCtrl()) {
-                if(ticketCtrl.getObj_planned() == 1){
+                if(ticketCtrl.getObj_planned() == 1
+                || (ticketCtrl.getObj_planned() == 0 && ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM.equals(ticketCtrl.getCtrl_type()))){
                     plannedObjCounter++;
                     if(isDoneOrWaitingSync(ticketCtrl.getCtrl_status())){
                         plannedObjDoneCounter++;
