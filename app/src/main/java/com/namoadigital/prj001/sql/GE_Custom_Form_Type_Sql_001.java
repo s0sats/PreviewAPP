@@ -93,7 +93,7 @@ public class GE_Custom_Form_Type_Sql_001 implements Specification {
                         "   AND (f.all_site = 1 OR s.site_code = '"+s_site_code+"')\n"+
                         "   AND ( '"+s_serial_id+"' IS NOT NULL OR f.require_serial_done = 0)\n"+
                         " ORDER BY \n" +
-                        "   t.custom_form_type\n"
+                        "   upper(" + GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC+ ") \n"
                 )
                 .append(";")
                 //.append(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)

@@ -38,7 +38,12 @@ import java.util.List;
 
 import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
 
-public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements Act081_Main_Contract.I_View, On_Frg_Serial_Search, On_Frg_Serial_Search.onProductSelectionReturnListener {
+public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
+    Act081_Main_Contract.I_View,
+    On_Frg_Serial_Search,
+    On_Frg_Serial_Search.onProductSelectionReturnListener,
+    On_Frg_Serial_Search.onProductTypingListener
+{
 
     public static final String LIST_LABEL = "list_label";
     public static final String LIST_OPT = "list_opt";
@@ -337,6 +342,17 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements Act081_
         ){
             mFrgSerialSearch.setSerialIdText("");
         }
+    }
+
+    /**
+     * LUCHE - 13/11/2020
+     * Implementaçãoda interface acionada quando o usuario digita no textView do productId
+     * Se alterou o texto, apaga serial.
+     * @param typed_product_id
+     */
+    @Override
+    public void onProductTyping(String typed_product_id) {
+        mFrgSerialSearch.setSerialIdText("");
     }
 
     private void iniUIFooter() {

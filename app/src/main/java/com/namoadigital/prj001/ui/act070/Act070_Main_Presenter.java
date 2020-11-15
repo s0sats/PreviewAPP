@@ -1435,7 +1435,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //LUCHE - 09/11/2020
         //Com a nova definição, se o step é check in manual e seu obj planejado é none, esse deve ser
         //finalizado junto com o checkin...
-        ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep, false);
+        if(ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep, false)){
+            //Se fechou o obj none, verifica se o checkout deve ser feito caso ele seja o unico obj.
+            //Como o obj none é sempre o planejado, será o indice
+            checkCloseStepForWaitingSync(ticketStep,ticketStep.getCtrl().get(0));
+        }
         //
         int stepIdx = getStepIdx(ticketStep,mTicket);
         mTicket.setUpdate_required(1);
@@ -2143,6 +2147,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepApproval.setStepCode(tkStepCtrl.getStep_code());
         stepApproval.setStepType(stepMain.getStepType());
         stepApproval.setProcessTkSeq(tkStepCtrl.getTicket_seq());
+        stepApproval.setProcessTkSeqTmp(tkStepCtrl.getTicket_seq_tmp());
         stepApproval.setProcessStatus(tkStepCtrl.getCtrl_status());
         stepApproval.setApprovalType(tkStepCtrl.getApproval() != null ? tkStepCtrl.getApproval().getApproval_type() : null);
         stepApproval.setApprovalQuestion(tkStepCtrl.getApproval()  != null ? tkStepCtrl.getApproval().getApproval_question() : null);
@@ -2198,6 +2203,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepNone.setStepAlreadyCheckedIn(ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate()));
         stepNone.setProcessPlanned(tkStepCtrl.getObj_planned() == 1);
         stepNone.setProcessTkSeq(tkStepCtrl.getTicket_seq());
+        stepNone.setProcessTkSeqTmp(tkStepCtrl.getTicket_seq_tmp());
         //Dados do proprio componente
         stepNone.setProductDesc(tkStepCtrl.getProduct_desc());
         stepNone.setSerialId(tkStepCtrl.getSerial_id());

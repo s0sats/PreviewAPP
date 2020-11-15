@@ -51,6 +51,7 @@ import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_MainVH;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
+import com.namoadigital.prj001.ui.act070.model.StepAbstractProcess;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.ui.act070.model.StepApproval;
 import com.namoadigital.prj001.ui.act070.model.StepForm;
@@ -114,6 +115,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private boolean preventSyncLoop = false;
     //LUCHE - 08/09/2020 - Var que define se deve forçar ou não envio ao chegar na act.
     private boolean forceSendByFormExecution = false;
+    private Integer mNavStepCode;
+    private Integer mNavTicketSeq;
+    private Integer mNavTicketSeqTmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -394,6 +398,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mTkCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
             room_code = requestingBundle.getString(CH_RoomDao.ROOM_CODE, null);
             forceSendByFormExecution = requestingBundle.getBoolean(PARAM_FORCE_SEND_BY_FORM_EXEC, false);
+            mNavStepCode = requestingBundle.getInt(TK_Ticket_CtrlDao.STEP_CODE, -1);
+            mNavTicketSeq = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ, -1);
+            mNavTicketSeqTmp = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, -1);
             //
         } else {
             requestingAct = ConstantBaseApp.ACT069;
@@ -401,6 +408,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mTkCode = -1;
             room_code = null;
             forceSendByFormExecution = false;
+            mNavStepCode = -1;
+            mNavTicketSeq = -1;
+            mNavTicketSeqTmp = -1;
         }
     }
 
@@ -418,12 +428,20 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             new Runnable() {
                 @Override
                 public void run() {
-                    openCurrentSteps();
-                    moveToCurrentStep(currentStepFirstPosition);
+                    if(hasNavegationBundleParam()) {
+                        openLastProcessInteraction();
+                    }else {
+                        openCurrentSteps();
+                        moveToCurrentStep(currentStepFirstPosition);
+                    }
                 }
             },100
         );
         //
+    }
+
+    private boolean hasNavegationBundleParam() {
+        return mNavStepCode > 0 && (mNavTicketSeq > 0 || mNavTicketSeqTmp > 0);
     }
 
     private void openCurrentSteps() {
@@ -443,6 +461,59 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }catch (Exception e){
             ToolBox.toastMSG(context, e.getMessage());
         }
+    }
+
+    /**
+     * LUCHE - 11/11/2020
+     * Metodo que varrre os itens da lista para abri e navegar para o step e process
+     * recebido via bundle.
+     */
+    private void openLastProcessInteraction() {
+        try {
+            for (int i = 0; i < sources.size(); i++) {
+                if(sources.get(i) instanceof StepMain){
+                    if(((StepMain) sources.get(i)).getStepCode() == mNavStepCode){
+                        Act070_Step_MainVH stepMainVH = (Act070_Step_MainVH) rvTicketPipeline.findViewHolderForAdapterPosition(i);
+                        if (stepMainVH != null) {
+                            stepMainVH.itemView.performClick();
+                            //
+                            new Handler().postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        for (int i = 0; i < sources.size(); i++) {
+                                            if(sources.get(i) instanceof StepAbstractProcess){
+                                                StepAbstractProcess process = (StepAbstractProcess) sources.get(i);
+                                                if(process.getStepCode() == mNavStepCode
+                                                    && (   (mNavTicketSeq > 0 && process.getProcessTkSeq() == mNavTicketSeq)
+                                                            || (mNavTicketSeq <= 0 && process.getProcessTkSeqTmp() == mNavTicketSeqTmp)
+                                                        )
+                                                ){
+                                                    smoothMoveToItemAndScrollItToTop(i);
+                                                    process.setBackProcessHighlight(true);
+                                                    mAdapter.notifyItemChanged(i);
+                                                    resetNavegationVars();
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                500
+                            );
+                            break;
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+            ToolBox.toastMSG(context, e.getMessage());
+        }
+    }
+
+   private void resetNavegationVars() {
+        mNavStepCode = -1;
+        mNavTicketSeq = -1;
+        mNavTicketSeqTmp = -1;
     }
 
     @Override

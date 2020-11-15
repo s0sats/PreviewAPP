@@ -8,6 +8,8 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,12 +33,10 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         this.transWaitingSync = transWaitingSync;
     }
 
-    protected void setProductVisibility(TextView tvProduct, boolean isProductDifferentThanTicket){
-        tvProduct.setVisibility(isProductDifferentThanTicket ? View.VISIBLE : View.GONE);
-    }
-
-    protected void setSerialVisibility(TextView tvSerial, boolean isProductDifferentThanTicket, boolean isSerialDifferentThanTicket){
-        tvSerial.setVisibility(isProductDifferentThanTicket || isSerialDifferentThanTicket ? View.VISIBLE : View.GONE);
+    protected void setProductAndSerialVisibility(TextView tvProduct, TextView tvSerial, boolean isProductDifferentThanTicket, boolean isSerialDifferentThanTicket){
+        int visibility =  isProductDifferentThanTicket || isSerialDifferentThanTicket ? View.VISIBLE : View.GONE;
+        tvProduct.setVisibility(visibility);
+        tvSerial.setVisibility(visibility);
     }
 
     protected void defineCheckInOutIcon(ImageView ivStartEndDateIcon,  boolean hasCheckOutDate) {
@@ -161,4 +161,15 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         }
     }
 
+    protected void highlightNavVh(ConstraintLayout clBackground, boolean backProcessHighlight){
+        if(backProcessHighlight) {
+            Animation anim = new AlphaAnimation(0.5f, 1.0f);
+            anim.setDuration(800); //You can manage the blinking time with this parameter
+            anim.setStartOffset(20);
+            anim.setRepeatMode(Animation.REVERSE);
+            anim.setRepeatCount(5);
+            //
+            clBackground.startAnimation(anim);
+        }
+    }
 }

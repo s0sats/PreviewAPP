@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -782,6 +783,13 @@ public class WS_TK_Ticket_Save extends IntentService {
                         //
                         ticketCtrl.setFinalNameIntoActionPhoto(newName);
                     }
+                    //LUCHE - 12/11/2020 - Tenta notificar tela que houve de-para e atualiza var de navegação
+                    //da tela.
+                    if(ticketCtrl.getFrom_to_notify() == 1) {
+                        sendCtrlFromToStatus(ticketCtrl.getStep_code(), ticketCtrl.getTicket_seq(), ticketCtrl.getTicket_seq_tmp());
+                        //após notificar, reseta var
+                        ticketCtrl.setFrom_to_notify(0);
+                    }
                     //Atualiza ctrl
                     ticketCtrlDao.addUpdateTmp(ticketCtrl, null);
                     //Se processo de token e servidor informa que ainda tem atualização,
@@ -1241,6 +1249,28 @@ public class WS_TK_Ticket_Save extends IntentService {
         mIntentPDF.putExtras(bundle);
         getApplicationContext().sendBroadcast(mIntentPIC);
         getApplicationContext().sendBroadcast(mIntentPDF);
+    }
+
+    /**
+     * LUCHE - 12/11/2020
+     * Metodo que enviar via bradcast receiver as informaçãos de step_code, ticket_seq(agora oficial)
+     * e ticket_seq_tmp
+     * @param stepCode
+     * @param ticketSeq
+     * @param ticketSeqTmp
+     */
+    private void sendCtrlFromToStatus(int stepCode, int ticketSeq, int ticketSeqTmp) {
+        Intent mIntent = new Intent();
+        mIntent.setAction(ConstantBaseApp.BR_TICKET_SAVE);
+        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.SW_TYPE, ConstantBaseApp.TK_TICKET_INTENT_FILTER_ACTION_CTRL_UPDATE);
+        bundle.putInt(TK_Ticket_CtrlDao.STEP_CODE, stepCode);
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ticketSeq);
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP,ticketSeqTmp);
+        mIntent.putExtras(bundle);
+        //
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(mIntent);
     }
 
     private void loadTranslation() {

@@ -70,11 +70,11 @@ public class Act070_Step_ActionVH extends Act070_Step_Abstract_ProcessVH {
         tvActionDesc.setText(stepAction.getStepDescription());
 
         if(ToolBox_Inf.hasConsistentValueString(stepAction.getProductDesc())) {
-            setProductVisibility(tvProduct,stepAction.isProductDifferentThanTicket());
+            setProductAndSerialVisibility(tvProduct,tvSerial, stepAction.isProductDifferentThanTicket(), stepAction.isSerialDifferentThanTicket());
             tvProduct.setText(stepAction.getProductDesc());
         }
         if(ToolBox_Inf.hasConsistentValueString(stepAction.getSerialId())) {
-            setSerialVisibility(tvSerial, stepAction.isProductDifferentThanTicket(), stepAction.isSerialDifferentThanTicket());
+            setProductAndSerialVisibility(tvProduct,tvSerial, stepAction.isProductDifferentThanTicket(), stepAction.isSerialDifferentThanTicket());
             tvSerial.setText(stepAction.getSerialId());
         }
         //Sem necessidade de chamar o hasConsistentValueString, pois já é chamado internamento
@@ -126,6 +126,9 @@ public class Act070_Step_ActionVH extends Act070_Step_Abstract_ProcessVH {
             stepAction.isCurrentStep(),
             stepAction.isStepAlreadyCheckedIn()
         );
+        //Chama metodo que executara a animaão no vh
+        highlightNavVh(clBackground,stepAction.isBackProcessHighlight());
+        stepAction.setBackProcessHighlight(false);
     }
 
     private void resetVisibility() {

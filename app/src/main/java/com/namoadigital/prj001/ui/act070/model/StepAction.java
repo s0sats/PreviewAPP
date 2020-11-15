@@ -1,7 +1,6 @@
 package com.namoadigital.prj001.ui.act070.model;
 
 public class StepAction extends StepAbstractProcess {
-    private int processTkSeqTmp;
     private String productDesc;
     private String serialId;
     private String siteDesc;
@@ -9,14 +8,6 @@ public class StepAction extends StepAbstractProcess {
     private String endDate;
     private String endUser;
     private String partnerDesc;
-
-    public int getProcessTkSeqTmp() {
-        return processTkSeqTmp;
-    }
-
-    public void setProcessTkSeqTmp(int processTkSeqTmp) {
-        this.processTkSeqTmp = processTkSeqTmp;
-    }
 
     public String getProductDesc() {
         return productDesc;

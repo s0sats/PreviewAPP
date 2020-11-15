@@ -70,11 +70,11 @@ public class Act070_Step_NoneVH extends Act070_Step_Abstract_ProcessVH {
         //
         tvActionDesc.setText(stepNone.getStepDescription());
         if(ToolBox_Inf.hasConsistentValueString(stepNone.getProductDesc())) {
-            setProductVisibility(tvProduct,stepNone.isProductDifferentThanTicket());
+            setProductAndSerialVisibility(tvProduct,tvSerial, stepNone.isProductDifferentThanTicket(), stepNone.isSerialDifferentThanTicket());
             tvProduct.setText(stepNone.getProductDesc());
         }
         if(ToolBox_Inf.hasConsistentValueString(stepNone.getSerialId())) {
-            setSerialVisibility(tvSerial, stepNone.isProductDifferentThanTicket(),stepNone.isSerialDifferentThanTicket());
+            setProductAndSerialVisibility(tvProduct,tvSerial, stepNone.isProductDifferentThanTicket(), stepNone.isSerialDifferentThanTicket());
             tvSerial.setText(stepNone.getSerialId());
         }
         //Sem necessidade de chamar o hasConsistentValueString, pois já é chamado internamento

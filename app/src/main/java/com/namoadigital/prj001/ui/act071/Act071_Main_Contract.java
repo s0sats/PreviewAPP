@@ -53,8 +53,6 @@ public interface Act071_Main_Contract {
 
         String getRequestingAct();
 
-        void callAct076();
-
         boolean isCreationCtrl();
 
         void addResultList(ArrayList<HMAux> auxResults);
