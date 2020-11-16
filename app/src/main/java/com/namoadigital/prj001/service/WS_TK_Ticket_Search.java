@@ -173,10 +173,10 @@ public class WS_TK_Ticket_Search extends IntentService {
                                         0
                                 ).toSqlQuery()
                         );
-                        if (ticketList.size() == 1) {
-                            hmAux.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
-                            hmAux.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
-                        }
+                    }
+                    if (ticketList.size() == 1) {
+                        hmAux.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
+                        hmAux.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
                     }
                     //LUCHE - 31/03/2020
                     //Atualiza dados do agendamento
@@ -214,7 +214,9 @@ public class WS_TK_Ticket_Search extends IntentService {
                 //Se sucesso, vai para insert do ticket.
                 if(!daoObjReturn.hasError()) {
                     //
-                    daoObjReturn = ticketDao.addUpdate(tickets, false);
+                    if(tickets != null && !tickets.isEmpty()) {
+                        daoObjReturn = ticketDao.addUpdate(tickets, false);
+                    }
                     if (!daoObjReturn.hasError()) {
                         startDownloadServices();
                         //

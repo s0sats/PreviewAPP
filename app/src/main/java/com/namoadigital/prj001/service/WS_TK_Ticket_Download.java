@@ -182,14 +182,16 @@ public class WS_TK_Ticket_Download extends IntentService {
                 //
             }
             //
-            if (tickets.size() == 1) {
-                TK_Ticket tkTicket = tickets.get(0);
+            if (ticketList.size() == 1) {
+                TK_Ticket tkTicket = ticketList.get(0);
                 hmAux.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
                 hmAux.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
             }
             //
             if(!daoObjReturn.hasError()) {
-                daoObjReturn = ticketDao.addUpdate(tickets, false);
+                if(tickets != null && !tickets.isEmpty()) {
+                    daoObjReturn = ticketDao.addUpdate(tickets, false);
+                }
                 if(!daoObjReturn.hasError()){
                     startDownloadServices();
                     //
