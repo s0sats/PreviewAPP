@@ -930,7 +930,17 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                 break;
             case Frg_Serial_Search.BTN_OPTION_03:
                 if(ToolBox_Con.isOnline(context)) {
-                    processNextTickets();
+                    if(ToolBox_Inf.checkSerialTokenURStatus(context)){
+                        ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_serial_pendencies_ttl"),
+                            hmAux_Trans.get("alert_serial_pendencies_msg"),
+                            null,
+                            0
+                        );
+                    }else{
+                        processNextTickets();
+                    }
                 }else{
                     callAct074();
                 }

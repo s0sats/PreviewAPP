@@ -127,6 +127,9 @@ public class Act070_Step_FormVH extends Act070_Step_Abstract_ProcessVH {
             stepForm.isCurrentStep(),
             stepForm.isStepAlreadyCheckedIn()
         );
+        //Chama metodo que executara a animaão no vh
+        highlightNavVh(clBackground,stepForm.isBackProcessHighlight());
+        stepForm.setBackProcessHighlight(false);
     }
 
     private void resetVisibility() {

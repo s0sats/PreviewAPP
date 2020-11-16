@@ -53,4 +53,6 @@ public interface Act011_Main_Presenter {
     boolean setForceSentByForm(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data);
 
     Integer getSeqTmpForFormOffHand(Context context, Integer mTicket_prefix, Integer mTicket_code, Integer mStep_code);
+
+    String getDialogTicketInfo(Integer ticket_prefix, Integer ticket_code, Integer step_code);
 }

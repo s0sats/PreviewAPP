@@ -2536,6 +2536,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket_code != null ? mTicket_code : -1 );
         //
         bundle.putInt(TK_Ticket_CtrlDao.STEP_CODE, mStep_code);
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, mTicket_seq);
         bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, mTicket_seq_tmp);
         //
         if(isOffHandForm){
@@ -2885,8 +2886,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         if (formData != null
             && formData.getTicket_prefix() != null
-            && formData.getTicket_code() != null) {
-            tv_ticket_info_desc.setText(String.valueOf(formData.getTicket_prefix()) + "." + String.valueOf(formData.getTicket_code()));
+            && formData.getTicket_code() != null
+        ) {
+            String ticketDesc = formData.getTicket_prefix() + "." + formData.getTicket_code();
+            //
+            if(formData.getStep_code() != null) {
+                ticketDesc = mPresenter.getDialogTicketInfo(formData.getTicket_prefix(), formData.getTicket_code(), formData.getStep_code());
+            }
+            tv_ticket_info_desc.setText(ticketDesc);
         } else {
             tv_ticket_info_desc.setText("");
             //

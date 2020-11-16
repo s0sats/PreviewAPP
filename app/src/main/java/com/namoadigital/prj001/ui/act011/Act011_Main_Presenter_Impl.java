@@ -1620,6 +1620,28 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         return ticketStep;
     }
 
+    /**
+     * LUCHE - 16/11/2020
+     * Metodo que retorna formata da a informação do ticket a ser exibido no dialog.
+     * @param ticket_prefix
+     * @param ticket_code
+     * @param step_code
+     * @return
+     */
+    @Override
+    public String getDialogTicketInfo(Integer ticket_prefix, Integer ticket_code, Integer step_code) {
+        if(ticket_prefix != null && ticket_code != null && step_code != null) {
+            TK_Ticket tkTicket = getTicketbyPk(ticket_prefix, ticket_code);
+            TK_Ticket_Step stepInfo = getStepInfo(ticket_prefix, ticket_code, step_code);
+            //
+            if (tkTicket != null && stepInfo != null) {
+                return tkTicket.getTicket_id() + " - " + stepInfo.getStep_desc();
+            }
+        }
+        //Não deveria acontecer, mas ....
+        return ticket_prefix + "." + ticket_code;
+    }
+
     private TK_Ticket getTicketbyPk(int ticket_prefix, int ticket_code) {
         TK_TicketDao ticketDao = getTicketDao();
         return ticketDao.getByString(new TK_Ticket_Sql_001(
