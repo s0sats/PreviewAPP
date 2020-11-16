@@ -248,6 +248,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         transList.add("alert_ticket_has_off_hand_form_in_process_ttl");
         transList.add("alert_ticket_has_off_hand_form_in_process_msg");
+        //
+        transList.add("alert_form_not_ready_title");
+        transList.add("alert_form_not_ready_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,

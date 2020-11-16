@@ -34,6 +34,8 @@ import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
@@ -922,7 +924,22 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                          */
                         if(userHasProductAccess(ticketCtrl.getProduct_code())) {
                             if (checkFormMasterDataExists(ticketCtrl.getForm())) {
-                                showConfirmStartFormDialog(mTicket, ticketStep, ticketCtrl);
+                                if(isFormReady(ticketCtrl.getForm())) {
+                                    showConfirmStartFormDialog(mTicket, ticketStep, ticketCtrl);
+                                }else{
+                                    ToolBox.alertMSG(
+                                        context,
+                                        hmAux_Trans.get("alert_form_not_ready_title"),
+                                        hmAux_Trans.get("alert_form_not_ready_msg"),
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                startDownloadServices();
+                                            }
+                                        },
+                                        0
+                                    );
+                                }
                             } else {
                                 mView.showAlert(
                                     hmAux_Trans.get("alert_form_master_data_not_found_ttl"),
@@ -999,6 +1016,41 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 hmAux_Trans.get("alert_step_or_ctrl_not_found_msg")
             );
         }
+    }
+
+    private void startDownloadServices() {
+        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
+        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+        Bundle bundle = new Bundle();
+        //
+        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+        //
+        mIntentPDF.putExtras(bundle);
+        mIntentPIC.putExtras(bundle);
+        //
+        if (!WBR_DownLoad_PDF.IS_RUNNING) {
+            context.sendBroadcast(mIntentPDF);
+        }
+        if (!WBR_DownLoad_Picture.IS_RUNNING) {
+            context.sendBroadcast(mIntentPIC);
+        }
+    }
+
+    /**
+     * LUCHE - 16/11/2020
+     * Metodo que verifica se formulario possui os seus resources como pdf e imagens ja baixados.
+     * @param form
+     * @return True se todos os resources tiverem baixados no device.
+     */
+    private boolean isFormReady(TK_Ticket_Form form) {
+        return
+            ToolBox_Inf.checkFormIsReady(
+                context,
+                ToolBox_Con.getPreference_Customer_Code(context),
+                form.getCustom_form_type(),
+                form.getCustom_form_code(),
+                form.getCustom_form_version()
+                );
     }
 
     private TK_Ticket_Ctrl getSelectedCtrlFormFromDb(int ticket_prefix, int ticket_code, int processTkSeq, int processTkSeqTmp, int stepCode) {
