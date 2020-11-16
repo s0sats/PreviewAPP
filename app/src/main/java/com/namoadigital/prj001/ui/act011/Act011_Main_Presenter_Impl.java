@@ -1170,7 +1170,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //Se form for do tipo ticket e fluxo do ticket, seta msgType que finaliza SEM CHAMAR O WS, pois
         //o Ws será chamado encadeadamento na Act070
         int msgType =
-            isTicketProcess && ConstantBaseApp.ACT070.equals(mView.getRequestingAct())
+            isTicketProcess && isFromTicketActs()
                 ? Act011_Main.SHOW_MSG_TYPE_TICKET_FORM_FINALIZED
                 : 2
             ;
@@ -1182,6 +1182,14 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
 
     }
+
+    private boolean isFromTicketActs() {
+        return ConstantBaseApp.ACT070.equals(mView.getRequestingAct())
+                || ConstantBaseApp.ACT068.equals(mView.getRequestingAct())
+                || ConstantBaseApp.ACT012.equals(mView.getRequestingAct())
+                || ConstantBaseApp.ACT074.equals(mView.getRequestingAct());
+    }
+
     @Override
     public boolean isaTicketForm() {
         return isTicketProcess;

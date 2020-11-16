@@ -87,5 +87,9 @@ public interface Act075_Main_Contract {
         String defineActTitle(int act_profile, int mTkPrefix, int mTkCode, int mTkSeq, int mStepCode);
 
         boolean verifyProductForForm(int ticket_prefix, int ticket_code);
+
+        void executeSerialSave();
+
+        void processWsSerialSavelReturn(HMAux hmAux);
     }
 }

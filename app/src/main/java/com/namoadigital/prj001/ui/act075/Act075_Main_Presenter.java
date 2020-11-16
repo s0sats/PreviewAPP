@@ -13,6 +13,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao;
 import com.namoadigital.prj001.dao.TK_Ticket_Approval_RejectionDao;
@@ -21,6 +22,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_ProductDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
 import com.namoadigital.prj001.model.TK_Ticket_Approval_Rejection;
@@ -29,13 +31,16 @@ import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
+import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_Save;
+import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act075_001;
 import com.namoadigital.prj001.sql.Sql_Act075_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Approval_Rejection_Sql_001;
@@ -824,6 +829,99 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
         }else{
             return false;
         }
+    }
+
+    @Override
+    public void executeSerialSave() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Serial_Save.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_serial_save_ttl"),
+                    hmAux_Trans.get("progress_serial_save_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Serial_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(Constant.PROCESS_MENU_SEND, true);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            mView.showAlert(
+                    hmAux_Trans.get("alert_offline_save_ttl"),
+                        hmAux_Trans.get("alert_offline_save_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mView.callMoveOn();
+                        }
+                    },
+                    false
+            );
+        }
+    }
+
+    @Override
+    public void processWsSerialSavelReturn(HMAux hmAux) {
+        if (!hmAux.isEmpty() && hmAux.size() > 0) {
+            ArrayList<HMAux> hmAuxList = new ArrayList<>();
+            for (Map.Entry<String, String> item : hmAux.entrySet()) {
+                HMAux aux = new HMAux();
+                /**
+                 * [0] - Product_code
+                 * [1] - Serial ID
+                 */
+                String[] pk = item.getKey().split(Constant.MAIN_CONCAT_STRING);
+                String status = item.getValue();
+                String productInfo = getFormatedProductInfo(getMdProduct(ToolBox_Inf.convertStringToInt(pk[0])));
+                //O mHmAux abaixo é copia da act011, e foi modificado pra essa tela.
+//                HMAux mHmAux = new HMAux();
+//                mHmAux.put("label", "" + productInfo + " - " + pk[1]);
+//                mHmAux.put("type", "SERIAL");
+//                mHmAux.put("status", status);
+//                mHmAux.put("final_status", productInfo + " - " + pk[1] + " / " + status);
+                //
+                aux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("serial_lbl"));
+                aux.put(Generic_Results_Adapter.LABEL_ITEM_1, productInfo + " - " + pk[1] );
+                aux.put(Generic_Results_Adapter.VALUE_ITEM_1, status);
+                //
+                if (!ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(status)) {
+                    //Só colocado dentro da lista pois o metodo addResultList requer uma lista.
+                    hmAuxList.add(aux);
+                }
+            }
+            if(hmAuxList.size() > 0){
+                mView.addResultList(hmAuxList);
+            }
+        }
+    }
+
+    private String getFormatedProductInfo(MD_Product mdProduct) {
+        if (mdProduct != null) {
+            return mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc();
+        } else {
+            return "";
+        }
+    }
+
+
+    private MD_Product getMdProduct(int product_code) {
+        MD_Product md_product;
+        MD_ProductDao md_productDao = new MD_ProductDao(
+                context,
+                ToolBox_Con.customDBPath(
+                        ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+        md_product = md_productDao.getByString(
+                new MD_Product_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        product_code
+                ).toSqlQuery()
+        );
+        return md_product;
     }
 
 }
