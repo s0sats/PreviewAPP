@@ -296,7 +296,7 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void saveApproval(TK_Ticket_Approval ticketApproval, boolean isApproved, String approveComments) {
+    public boolean saveApproval(TK_Ticket_Approval ticketApproval, boolean isApproved, String approveComments) {
         if (!isApproved) {
             ticketApproval.setApproval_status(ConstantBaseApp.SYS_STATUS_REJECTED);
             TK_Ticket_Approval_Rejection rejection = getRejectionPKObj(ticketApproval);
@@ -362,16 +362,10 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                 ticketStep.setUpdate_required(1);
                 tkTicket.setUpdate_required(1);
                 DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
-                if (!daoObjReturn.hasError()) {
-                    executeTicketSaveProcess();
-                } else {
-                    mView.showMsg(
-                            hmAux_Trans.get("alert_error_on_approve_ttl"),
-                            hmAux_Trans.get("alert_error_on_approve_msg")
-                    );
-                }
+                return !daoObjReturn.hasError();
             }
         }
+        return false;
     }
 
     @Override

@@ -59,7 +59,7 @@ public interface Act075_Main_Contract {
         //
         String getStepDesc(TK_Ticket_Step ticketStep);
         //
-        void saveApproval(TK_Ticket_Approval ticketApproval, boolean isApproved, String approveComments);
+        boolean saveApproval(TK_Ticket_Approval ticketApproval, boolean isApproved, String approveComments);
 
         void executeTicketSaveProcess();
 

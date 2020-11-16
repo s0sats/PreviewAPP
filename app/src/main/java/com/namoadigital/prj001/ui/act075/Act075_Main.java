@@ -571,25 +571,54 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)) {
-                                            if (ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkPrefix)) {
+                                        boolean saveSuccess = saveApprovalFlow();
+                                        if(saveSuccess) {
+                                            if (ToolBox_Con.isOnline(context)) {
+                                                mPresenter.executeSerialSave();
+                                            } else {
                                                 showAlert(
-                                                        hmAux_Trans.get("alert_form_location_pendency_ttl"),
-                                                        hmAux_Trans.get("alert_form_location_pendency_msg"),
+                                                        hmAux_Trans.get("alert_offline_save_ttl"),
+                                                        hmAux_Trans.get("alert_offline_save_msg"),
                                                         new DialogInterface.OnClickListener() {
                                                             @Override
                                                             public void onClick(DialogInterface dialog, int which) {
-                                                                callMoveOn();
+                                                                hasUpdated = false;
+                                                                refreshUI();
                                                             }
                                                         },
                                                         false
                                                 );
-                                            } else {
-                                                sync_ticket_form = true;
-                                                mPresenter.callWsSave();
                                             }
-                                        }else {
-                                            saveApprovalFlow();
+//                                            if (ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)) {
+//                                                if (ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkPrefix)) {
+//                                                    showAlert(
+//                                                            hmAux_Trans.get("alert_form_location_pendency_ttl"),
+//                                                            hmAux_Trans.get("alert_form_location_pendency_msg"),
+//                                                            new DialogInterface.OnClickListener() {
+//                                                                @Override
+//                                                                public void onClick(DialogInterface dialog, int which) {
+//                                                                    callMoveOn();
+//                                                                }
+//                                                            },
+//                                                            false
+//                                                    );
+//                                                } else {
+//                                                    sync_ticket_form = true;
+//                                                    mPresenter.callWsSave();
+//                                                }
+//                                            }
+                                        }else{
+                                            showAlert(
+                                                    hmAux_Trans.get("alert_error_on_approve_ttl"),
+                                                    hmAux_Trans.get("alert_error_on_approve_msg"),
+                                                    new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                        }
+                                                    },
+                                                    false
+                                            );
                                         }
                                     }
                                 },
@@ -629,9 +658,9 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         }
     }
 
-    private void saveApprovalFlow() {
+    private boolean saveApprovalFlow() {
         TK_Ticket_Approval ticketApproval = mPresenter.getTicketApproval(ToolBox_Con.getPreference_Customer_Code(context), mTkPrefix, mTkCode, mTkSeq, mStepCode);
-        mPresenter.saveApproval(ticketApproval, isApproved, mAdapter.getApprovalCommments());
+        return mPresenter.saveApproval(ticketApproval, isApproved, mAdapter.getApprovalCommments());
     }
 
     @Override
@@ -761,7 +790,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                     mPresenter.executeTicketSaveProcess();
             } else {
                 if (mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)) {
-                    saveApprovalFlow();
+                    mPresenter.executeTicketSaveProcess();
                 }
             }
         } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
