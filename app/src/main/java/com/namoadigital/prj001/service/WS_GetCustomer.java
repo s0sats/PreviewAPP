@@ -100,6 +100,7 @@ public class WS_GetCustomer extends IntentService {
         env.setPassword(password);
         env.setNfc_code(nfc);
         env.setStatus_jump(statusjump);
+        env.setCurrent_time(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_GETCUSTOMERS,
@@ -110,6 +111,21 @@ public class WS_GetCustomer extends IntentService {
                 resultado,
                 TGC_Rec.class
         );
+        /**
+         * LUCHE - 17/11/2020
+         * Adicionado tratativa caso o usuario esteja em um horario diferente do atual.
+         * Aqui é considerado um tolerancia, que esta definida no servidor.
+         */
+        if(isInvalidCurrentTime(rec.getValid_time())){
+            ToolBox.sendBCStatus(
+                getApplicationContext(),
+                Constant.PD_TYPE_ERROR_1,
+                getString(R.string.msg_login_invalid_current_time),
+                "",
+                "0");
+            return;
+        }
+
         /**
          * LUCHE - 06/01/2019
          *
@@ -276,11 +292,19 @@ public class WS_GetCustomer extends IntentService {
         ToolBox_Con.setPreference_User_Pwd(getApplicationContext(), password);
         ToolBox_Con.setPreference_User_NFC(getApplicationContext(), String.valueOf(nfc));
         ToolBox_Con.setPreference_Last_User_Logged(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
-
+        //NOVAS PREFERENCIAS DE VALIDAÇÃO DE DATA
+        //TODO ADD NOVAS PREFERENCIAS DE:
+        //  - horario_atual_do_device
+        //	- tolerancia
+        //	- esta_bloqueado
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", getString(R.string.msg_finishing_processsing), "", "0");
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
 
+    }
+
+    private boolean isInvalidCurrentTime(int valid_time) {
+        return valid_time != 1;
     }
 
     /**

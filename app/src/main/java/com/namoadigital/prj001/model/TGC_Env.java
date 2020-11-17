@@ -11,7 +11,7 @@ public class TGC_Env extends Main_Header_Env {
     private String password;
     private String nfc_code;
     private int status_jump;
-
+    private String current_time;
 
     public String getDevice_code() {
         return device_code;
@@ -51,5 +51,13 @@ public class TGC_Env extends Main_Header_Env {
 
     public void setStatus_jump(int status_jump) {
         this.status_jump = status_jump;
+    }
+
+    public String getCurrent_time() {
+        return current_time;
+    }
+
+    public void setCurrent_time(String current_time) {
+        this.current_time = current_time;
     }
 }

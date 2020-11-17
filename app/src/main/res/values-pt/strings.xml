@@ -107,6 +107,7 @@
     <string name="install_app_error_msg">Erro ao atualizar o aplicativo!\nTente novamente !</string>
     <string name="msg_customer_pendencies_list">Cliente :\n</string>
     <string name="msg_update_required_warning">Nova versão disponível!\nPara atualizar, envie os dados pendentes.</string>
+    <string name="msg_login_invalid_current_time">A data/hora do seu aparelho está incompatível com o servidor Namoa.\nAjuste a data/hora do seu aparelho e tente novamente.</string>
 
 
 </resources>

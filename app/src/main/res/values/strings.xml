@@ -108,5 +108,6 @@
     <string name="install_app_error_msg">Error on trying app update !\nPlease try again !</string>
     <string name="msg_customer_pendencies_list">Customer :\n</string>
     <string name="msg_update_required_warning">New version available!\nTo update, please submit pending data.</string>
+    <string name="msg_login_invalid_current_time">The date / time of your device is incompatible with the Namoa server. \n Set the date / time of your device and try again.</string>
 
 </resources>
