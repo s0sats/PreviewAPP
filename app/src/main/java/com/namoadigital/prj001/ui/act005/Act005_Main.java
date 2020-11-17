@@ -2404,6 +2404,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //abre uma noticação do app e é enviado para act019
         //Rever isso no momento propicio
         mPresenter.getMenuItensV2(hmAux_Trans);
+
+        if(ToolBox_Con.getLocalDatetime(context)){
+            //disable menu itens
+        }
+
     }
 
     public void startDownloadServices() {
