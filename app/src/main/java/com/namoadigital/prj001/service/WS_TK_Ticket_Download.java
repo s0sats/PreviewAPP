@@ -178,6 +178,8 @@ public class WS_TK_Ticket_Download extends IntentService {
                             break;
                         }
                     }
+                }else{
+                    tickets.add(tkTicket);
                 }
                 //
             }
