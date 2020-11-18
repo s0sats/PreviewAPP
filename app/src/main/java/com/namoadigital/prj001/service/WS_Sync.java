@@ -345,30 +345,6 @@ public class WS_Sync extends IntentService {
                 TSync_Rec.class
         );
 
-        /**
-         * LUCHE - 17/11/2020
-         * Adicionado tratativa caso o usuario esteja em um horario diferente do atual, com uma pequena
-         * tolerancia, que esta definida no servidor.
-         * Aqui no sincronismo caso data seja invalida, além de abortar o processamento,
-         * seta preferencia pra false.
-         * Caso seja valida, atualiza as preferencias.
-         */
-        if(isInvalidCurrentTime(rec.getValid_time())){
-            ToolBox.sendBCStatus(
-                getApplicationContext(),
-                Constant.PD_TYPE_ERROR_1,
-                getString(R.string.msg_login_invalid_current_time),
-                "",
-                "0");
-            //
-            ToolBox_Con.setBooleanPreference(getApplicationContext(),ConstantBaseApp.DATETIME_IS_VALID,false);
-            return;
-        }else{
-            ToolBox_Con.setBooleanPreference(getApplicationContext(),ConstantBaseApp.DATETIME_IS_VALID,true);
-            ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_TOLERANCE,rec.getTolerance_time());
-            ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_LAST_VALID_TIME,ToolBox_Inf.dateToMilliseconds(env.getCurrent_time()));
-        }
-
         if (!ToolBox_Inf.processWSCheckValidation(
                 getApplicationContext(),
                 rec.getValidation(),
@@ -1633,7 +1609,31 @@ public class WS_Sync extends IntentService {
         } else if (dataPackageType.contains(DataPackage.DATA_PACKAGE_SO) && !zoneExist) {
             ToolBox.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", hmAux_Trans.get("msg_lost_access_to_zone"), rec.getLink_url(), "0");
         } else {
-            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
+            /**
+             * LUCHE - 17/11/2020
+             * Adicionado tratativa caso o usuario esteja em um horario diferente do atual, com uma pequena
+             * tolerancia, que esta definida no servidor.
+             * Aqui no sincronismo caso data seja invalida, NÃO abortar o processamento,
+             * seta preferencia pra false.
+             * Caso seja valida, atualiza as preferencias.
+             */
+            if(isInvalidCurrentTime(rec.getValid_time())){
+                ToolBox.sendBCStatus(
+                    getApplicationContext(),
+                    Constant.PD_TYPE_ERROR_1,
+                    getString(R.string.msg_login_invalid_current_time),
+                    "",
+                    "0");
+                //
+                ToolBox_Con.setBooleanPreference(getApplicationContext(),ConstantBaseApp.DATETIME_IS_VALID,false);
+                return;
+            }else{
+                ToolBox_Con.setBooleanPreference(getApplicationContext(),ConstantBaseApp.DATETIME_IS_VALID,true);
+                ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_TOLERANCE,rec.getTolerance_time());
+                ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_LAST_VALID_TIME,ToolBox_Inf.dateToMilliseconds(env.getCurrent_time()));
+                //
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
+            }
         }
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
     }
