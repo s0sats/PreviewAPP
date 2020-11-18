@@ -1239,99 +1239,110 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     public void accessMenuItem(String menu_id, int jump_validation_UR) {
 
         mView.setWsSoProcess("");
+        /*
+         * BARRIONUEVO - 18-11-2020
+         * Quando usuario estiver com a data muito discrepanta a ultima data valida, as funcoes do
+         * menu principal serão travadas.
+         */
+        if(!isLocalDatetimeOk()
+        && (!menu_id.equals(Act005_Main.MENU_ID_SEND_DATA)
+        && !menu_id.equals(Act005_Main.MENU_ID_SYNC_DATA))
+        ){
+            mView.handleInvalidLocalDatetime();
+        }else {
+            try {
+                switch (menu_id) {
+                    case Act005_Main.MENU_ID_CHECKLIST:
+                        mView.callAct006(context);
+                        break;
 
-        try {
-            switch (menu_id) {
-                case Act005_Main.MENU_ID_CHECKLIST:
-                    mView.callAct006(context);
-                    break;
+                    case Act005_Main.MENU_ID_FORM_AP:
+                        mView.callAct036(context);
+                        break;
+                    case Act005_Main.MENU_ID_TICKET:
+                        mView.callAct068(context);
+                        break;
+                    case Act005_Main.MENU_ID_SERVICE:
+                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER)) {
+                            mView.callAct040(context);
+                        } else {
+                            mView.callAct021(context);
+                        }
+                        break;
 
-                case Act005_Main.MENU_ID_FORM_AP:
-                    mView.callAct036(context);
-                    break;
-                case Act005_Main.MENU_ID_TICKET:
-                    mView.callAct068(context);
-                    break;
-                case Act005_Main.MENU_ID_SERVICE:
-                    if(ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER)){
-                        mView.callAct040(context);
-                    }else {
-                        mView.callAct021(context);
-                    }
-                    break;
+                    case Act005_Main.MENU_ID_SCHEDULE_DATA:
+                        //mView.callAct016(context);
+                        mView.callAct046(context);
+                        break;
 
-                case Act005_Main.MENU_ID_SCHEDULE_DATA:
-                    //mView.callAct016(context);
-                    mView.callAct046(context);
-                    break;
+                    case Act005_Main.MENU_ID_SERIAL:
+                        mView.callAct030(context);
+                        break;
 
-                case Act005_Main.MENU_ID_SERIAL:
-                    mView.callAct030(context);
-                    break;
+                    case Act005_Main.MENU_ID_IO_ASSETS:
+                        if (isSiteLoggedIoControl()) {
+                            mView.callAct051(context);
+                        } else {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_site_no_io_control_ttl"),
+                                    hmAux_Trans.get("alert_site_no_io_control_msg"),
+                                    null,
+                                    0
+                            );
+                        }
+                        break;
 
-                case Act005_Main.MENU_ID_IO_ASSETS:
-                    if (isSiteLoggedIoControl()) {
-                        mView.callAct051(context);
-                    } else {
-                        ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_site_no_io_control_ttl"),
-                                hmAux_Trans.get("alert_site_no_io_control_msg"),
-                                null,
-                                0
-                        );
-                    }
-                    break;
+                    case Act005_Main.MENU_ID_PENDING_DATA:
+                        mView.callAct012(context);
+                        break;
 
-                case Act005_Main.MENU_ID_PENDING_DATA:
-                    mView.callAct012(context);
-                    break;
+                    case Act005_Main.MENU_ID_HISTORIC_DATA:
+                        mView.callAct014(context);
+                        break;
 
-                case Act005_Main.MENU_ID_HISTORIC_DATA:
-                    mView.callAct014(context);
-                    break;
+                    case Act005_Main.MENU_ID_MESSAGES:
+                        mView.callAct018(context);
+                        break;
 
-                case Act005_Main.MENU_ID_MESSAGES:
-                    mView.callAct018(context);
-                    break;
+                    case Act005_Main.MENU_ID_SEND_DATA:
+                        if (ToolBox_Con.isOnline(context)) {
+                            mView.setWsProcess(Act005_Main.WS_PROCESS_SEND);
+                            mView.setWsSoProcess(WS_Serial_Save.class.getSimpleName());
+                            mView.showPD();
+                            mView.cleanUpResults();
+                            //executeSaveProcess();
+                            executeSerialSave();
+                        } else {
+                            mView.showNoConnectionDialog();
+                        }
 
-                case Act005_Main.MENU_ID_SEND_DATA:
-                    if (ToolBox_Con.isOnline(context)) {
-                        mView.setWsProcess(Act005_Main.WS_PROCESS_SEND);
-                        mView.setWsSoProcess(WS_Serial_Save.class.getSimpleName());
-                        mView.showPD();
-                        mView.cleanUpResults();
-                        //executeSaveProcess();
-                        executeSerialSave();
-                    } else {
-                        mView.showNoConnectionDialog();
-                    }
+                        break;
 
-                    break;
+                    case Act005_Main.MENU_ID_SYNC_DATA:
+                        if (ToolBox_Con.isOnline(context)) {
+                            mView.setWsProcess(Act005_Main.WS_PROCESS_SYNC);
+                            mView.showPD();
+                            executeSyncProcess(jump_validation_UR);
+                        } else {
+                            mView.showNoConnectionDialog();
+                        }
+                        break;
 
-                case Act005_Main.MENU_ID_SYNC_DATA:
-                    if (ToolBox_Con.isOnline(context)) {
-                        mView.setWsProcess(Act005_Main.WS_PROCESS_SYNC);
-                        mView.showPD();
-                        executeSyncProcess(jump_validation_UR);
-                    } else {
-                        mView.showNoConnectionDialog();
-                    }
-                    break;
+                    case Act005_Main.MENU_ID_CHAT:
+                        mView.callAct034(context);
+                        break;
 
-                case Act005_Main.MENU_ID_CHAT:
-                    mView.callAct034(context);
-                    break;
-
-                case Act005_Main.MENU_ID_CLOSE:
-                    mView.closeApp();
-                    break;
-                default:
-                    break;
+                    case Act005_Main.MENU_ID_CLOSE:
+                        mView.closeApp();
+                        break;
+                    default:
+                        break;
+                }
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(getClass().getName(), e);
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(), e);
-            e.printStackTrace();
         }
     }
 
@@ -1917,5 +1928,29 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             return actReturnList.size();
         }
         return okInboundItem;
+    }
+    /**
+     * BARRIONUEVO - 18-11-2020
+     * Metodo responsavel por verificar a ultima data valida.
+     */
+    @Override
+    public boolean isLocalDatetimeOk() {
+        String sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+        long currentTimeMillis = ToolBox_Inf.dateToMilliseconds(sDate);
+        boolean isDatetimeValid = ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.DATETIME_IS_VALID, true);
+        long lastValidTime = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
+        long datetimeTolerance = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_TOLERANCE, 4200000);
+
+        if(isDatetimeValid) {
+            if ((currentTimeMillis + datetimeTolerance) >= lastValidTime) {
+                if(currentTimeMillis >= lastValidTime) {
+                    ToolBox_Con.setLongPreference(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
+                }
+                return true;
+            }
+        }
+
+        ToolBox_Con.setBooleanPreference(context, ConstantBaseApp.DATETIME_IS_VALID, false);
+        return false;
     }
 }

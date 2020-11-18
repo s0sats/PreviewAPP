@@ -1128,29 +1128,6 @@ public class ToolBox_Con {
 
     //endregion
 
-    //region Approval Type
-    public static void setLocalDatetime(Context context, boolean localDatetime) {
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context);
-
-        sharedPreferences.edit().putBoolean(
-                Constant.PROFILE_PRJ001_LOCAL_DATETIME,
-                localDatetime
-        ).apply();
-    }
-
-    public static boolean getLocalDatetime(Context context) {
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context);
-
-        return sharedPreferences.getBoolean(
-                Constant.PROFILE_PRJ001_LOCAL_DATETIME,
-                true
-        );
-    }
-
-    //endregion
-
 
     public static void cleanPreferences(Context context) {
         SharedPreferences sharedPreferences =

@@ -75,4 +75,6 @@ public interface Act005_Main_View {
 
     void addWsResults(ArrayList<HMAux> auxResults);
 
+    void handleInvalidLocalDatetime();
+
 }

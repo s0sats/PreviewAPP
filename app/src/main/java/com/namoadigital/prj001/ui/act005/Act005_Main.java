@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -174,10 +176,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private static final int TOOLBAR_ENABLE_NFC = 2;
     private static final int TOOLBAR_CANCEL_NFC = 3;
     private static final int TOOLBAR_SUPPORT = 4;
+    public static final int SETTINGS_FOR_DATETIME = 10001;
 
     private ArrayList<HMAux> wsResults = new ArrayList<>();
 
     private Context context;
+
+    private CardView cv_invalid_datetime_card;
+    private ImageView iv_datetime_warning;
+    private TextView tv_datetime_warning;
+
     private GridView gv_menu;
     private Act005_Main_Presenter mPresenter;
     private Act005_Adapter mAdapter;
@@ -470,6 +478,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("progress_sync_tickets_form_ttl");
         transList.add("progress_sync_tickets_form_msg");
         //
+        transList.add("lbl_invalid_datetime_warning");
+        transList.add("alert_invalid_local_datetime_ttl");
+        transList.add("alert_invalid_local_datetime_msg");
+        transList.add("alert_go_to_settings");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -492,6 +505,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
         wsProcess = "";
         wsSoProcess = "";
+
+        initializeInvalidDatetimeViews();
 
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act005_drawer);
@@ -609,21 +624,25 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                             );
 
                         } else {
-                            alertTitle = hmAux_Trans.get("drawer_change_customer_alert_ttl");
-                            alertMsg = hmAux_Trans.get("drawer_change_customer_alert_msg");
-                            //
-                            listener = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    //if(ToolBox_Con.isOnline(context)) {
-                                    //Reseta preferencias do Customer e volta para
-                                    //Act002 - lista de customer
-                                    changeCustomer();
+                            if(!mPresenter.isLocalDatetimeOk()){
+                                handleInvalidLocalDatetime();
+                            }else {
+                                alertTitle = hmAux_Trans.get("drawer_change_customer_alert_ttl");
+                                alertMsg = hmAux_Trans.get("drawer_change_customer_alert_msg");
+                                //
+                                listener = new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        //if(ToolBox_Con.isOnline(context)) {
+                                        //Reseta preferencias do Customer e volta para
+                                        //Act002 - lista de customer
+                                        changeCustomer();
 //                                }else{
 //                                    ToolBox_Inf.showNoConnectionDialog(Act005_Main.this);
 //                                }
-                                }
-                            };
+                                    }
+                                };
+                            }
                         }
 
                         break;
@@ -853,6 +872,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     }
 
+    private void initializeInvalidDatetimeViews() {
+        cv_invalid_datetime_card = findViewById(R.id.act005_cv_invalid_datetime_card);
+        iv_datetime_warning = findViewById(R.id.act005_iv_datetime_warning);
+        tv_datetime_warning = findViewById(R.id.act005_tv_datetime_warning);
+        tv_datetime_warning.setText(hmAux_Trans.get("lbl_invalid_datetime_warning"));
+    }
+
     @Override
     public boolean getPendingForms() {
 
@@ -975,6 +1001,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         );
         //
         gv_menu.setAdapter(mAdapter);
+        //
+        if(!mPresenter.isLocalDatetimeOk()){
+            cv_invalid_datetime_card.setVisibility(View.VISIBLE);
+        }else{
+            cv_invalid_datetime_card.setVisibility(View.GONE);
+        }
     }
 
     private void iniUIFooter() {
@@ -1882,6 +1914,32 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         );
     }
 
+    /**
+     * BARRIONUEVO - 18-11-2020
+     * Metodo responsavel por alertar o usuario sobre a necessidade de arrumar o relogio para o tempo
+     * correto.
+     */
+    @Override
+    public void handleInvalidLocalDatetime() {
+        android.app.AlertDialog.Builder alertInvalidDatetime = new android.app.AlertDialog.Builder(context);
+
+        alertInvalidDatetime.setTitle(hmAux_Trans.get("alert_invalid_local_datetime_ttl"));
+        alertInvalidDatetime.setMessage(hmAux_Trans.get("alert_invalid_local_datetime_msg"));
+        alertInvalidDatetime.setCancelable(false);
+        //
+        alertInvalidDatetime.setPositiveButton(hmAux_Trans.get("alert_go_to_settings"), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivityForResult(new Intent(android.provider.Settings.ACTION_DATE_SETTINGS), 0);
+            }
+        });
+
+        alertInvalidDatetime.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), null);
+        //
+        alertInvalidDatetime.show();
+
+    }
+
     @Override
     public void refreshResume(int layout_id, boolean isDone, int sucessAmount, int totalAmount) {
         try {
@@ -2405,11 +2463,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //Rever isso no momento propicio
         mPresenter.getMenuItensV2(hmAux_Trans);
 
-        if(ToolBox_Con.getLocalDatetime(context)){
-            //disable menu itens
-        }
-
     }
+
+
 
     public void startDownloadServices() {
 

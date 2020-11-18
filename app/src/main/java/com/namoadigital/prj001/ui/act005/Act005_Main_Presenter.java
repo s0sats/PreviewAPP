@@ -82,4 +82,6 @@ public interface Act005_Main_Presenter {
     ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn> getTicketSaveActReturns(String jsonRet, ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn> checkinReturns);
 
     void processWS_SaveReturn(String wsRet);
+
+    boolean isLocalDatetimeOk();
 }

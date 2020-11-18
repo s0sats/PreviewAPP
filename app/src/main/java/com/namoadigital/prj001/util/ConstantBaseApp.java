@@ -539,7 +539,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_PRJ001_SCHEDULE_CHECKLIST = "PRJ001_SCHEDULE_CHECKLIST";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL = "PRJ001_PRODUCT_SERIAL";
     public static final String PROFILE_PRJ001_OI = "PRJ001_IO";
-    public static final String PROFILE_PRJ001_LOCAL_DATETIME = "PROFILE_PRJ001_LOCAL_DATETIME";
+
     //Profiles Mket Serial
     public static final String PROFILE_MENU_PROFILE = "PROFILE";
     public static final String PROFILE_MENU_PROFILE_SERIAL_BARCODE = "SERIAL_BARCODE";
