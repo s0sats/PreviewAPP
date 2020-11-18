@@ -10,6 +10,8 @@ public class TGC_Rec extends Main_Header_Rec {
     private String zip;
     private Integer db_version;
     private Integer user_code;
+    private int valid_time = -1 ;
+    private long tolerance_time = -1;
 
     public String getVersion() {
         return version;
@@ -51,4 +53,19 @@ public class TGC_Rec extends Main_Header_Rec {
         this.user_code = user_code;
     }
 
+    public int getValid_time() {
+        return valid_time;
+    }
+
+    public void setValid_time(int valid_time) {
+        this.valid_time = valid_time;
+    }
+
+    public long getTolerance_time() {
+        return tolerance_time;
+    }
+
+    public void setTolerance_time(long tolerance_time) {
+        this.tolerance_time = tolerance_time;
+    }
 }

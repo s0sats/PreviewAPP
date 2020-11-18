@@ -12,6 +12,7 @@ public class TSync_Env extends Main_Header_Env {
         return data_package;
     }
     private String current_time;
+    private int valid_time;
 
     public void setData_package(DataPackage data_package) {
         this.data_package = data_package;
@@ -31,5 +32,13 @@ public class TSync_Env extends Main_Header_Env {
 
     public void setCurrent_time(String current_time) {
         this.current_time = current_time;
+    }
+
+    public int getValid_time() {
+        return valid_time;
+    }
+
+    public void setValid_time(int valid_time) {
+        this.valid_time = valid_time;
     }
 }
