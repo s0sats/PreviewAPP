@@ -428,6 +428,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SCHEDULE_N_TICKET_FILTER_PREFERENCE = "schedule_n_ticket_filter";
     public static final String SCHEDULE_SITE_LOGGED_FILTER_PREFERENCE = "schedule_site_logged_filter";
     public static final String ACT068_TAB_SELECTED = "act068_tab_selected";
+    public static final String DATETIME_IS_VALID = "DATETIME_IS_VALID";
+    public static final String DATETIME_LAST_VALID_TIME = "DATETIME_LAST_VALID_TIME";
+    public static final String DATETIME_TOLERANCE= "DATETIME_TOLERANCE";
 
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";

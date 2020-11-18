@@ -292,11 +292,11 @@ public class WS_GetCustomer extends IntentService {
         ToolBox_Con.setPreference_User_Pwd(getApplicationContext(), password);
         ToolBox_Con.setPreference_User_NFC(getApplicationContext(), String.valueOf(nfc));
         ToolBox_Con.setPreference_Last_User_Logged(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
-        //NOVAS PREFERENCIAS DE VALIDAÇÃO DE DATA
-        //TODO ADD NOVAS PREFERENCIAS DE:
-        //  - horario_atual_do_device
-        //	- tolerancia
-        //	- esta_bloqueado
+        //LUCHE - 18/11/2020 -NOVAS PREFERENCIAS DE VALIDAÇÃO DE DATA
+        ToolBox_Con.setBooleanPreference(getApplicationContext(),ConstantBaseApp.DATETIME_IS_VALID,true);
+        ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_TOLERANCE,rec.getTolerance_time());
+        ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_LAST_VALID_TIME,ToolBox_Inf.dateToMilliseconds(env.getCurrent_time()));
+        //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", getString(R.string.msg_finishing_processsing), "", "0");
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
