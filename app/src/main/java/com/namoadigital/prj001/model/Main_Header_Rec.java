@@ -16,10 +16,6 @@ public class Main_Header_Rec {
     protected String link_url;
     @Expose
     protected String error_msg;
-    @Expose
-    protected int valid_time = -1 ;
-    @Expose
-    protected long tolerance_time = -1;
 
     public String getApp() {
         return app;
@@ -51,21 +47,5 @@ public class Main_Header_Rec {
 
     public void setError_msg(String error_msg) {
         this.error_msg = error_msg;
-    }
-
-    public int getValid_time() {
-        return valid_time;
-    }
-
-    public void setValid_time(int valid_time) {
-        this.valid_time = valid_time;
-    }
-
-    public long getTolerance_time() {
-        return tolerance_time;
-    }
-
-    public void setTolerance_time(long tolerance_time) {
-        this.tolerance_time = tolerance_time;
     }
 }
