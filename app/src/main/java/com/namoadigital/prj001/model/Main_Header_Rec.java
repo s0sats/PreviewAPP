@@ -1,20 +1,25 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.Expose;
+
 /**
- * Created by neomatrix on 7/15/16.
+ * LUCHE - 18/11/2020
+ * CLASSE CRIADA CM A PROPOSTA DE SER A CLASSE PAI DE TODOS OS OBJ DE RESPONSE, CONTENDO OS RETORNOS
+ * PADRÕES DO WS
  */
-
-public class TSync_Rec {
-
-    private String app;
-    private String validation;
-    private String link_url;
-    private String error_msg;
-    private String zip;
-    private Integer db_version;
-    private Integer user_code;
-    private int valid_time = -1 ;
-    private long tolerance_time = -1;
+public class Main_Header_Rec {
+    @Expose
+    protected String app;
+    @Expose
+    protected String validation;
+    @Expose
+    protected String link_url;
+    @Expose
+    protected String error_msg;
+    @Expose
+    protected int valid_time = -1 ;
+    @Expose
+    protected long tolerance_time = -1;
 
     public String getApp() {
         return app;
@@ -46,30 +51,6 @@ public class TSync_Rec {
 
     public void setError_msg(String error_msg) {
         this.error_msg = error_msg;
-    }
-
-    public String getZip() {
-        return zip;
-    }
-
-    public void setZip(String zip) {
-        this.zip = zip;
-    }
-
-    public Integer getDb_version() {
-        return db_version;
-    }
-
-    public void setDb_version(Integer db_version) {
-        this.db_version = db_version;
-    }
-
-    public Integer getUser_code() {
-        return user_code;
-    }
-
-    public void setUser_code(Integer user_code) {
-        this.user_code = user_code;
     }
 
     public int getValid_time() {

@@ -329,6 +329,7 @@ public class WS_Sync extends IntentService {
         env.setData_package(dataPackage);
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         env.setStatus_jump(jump_validation);
+        env.setCurrent_time(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
 
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
         //LUCHE - 07/06/2019
@@ -343,6 +344,30 @@ public class WS_Sync extends IntentService {
                 resultado,
                 TSync_Rec.class
         );
+
+        /**
+         * LUCHE - 17/11/2020
+         * Adicionado tratativa caso o usuario esteja em um horario diferente do atual, com uma pequena
+         * tolerancia, que esta definida no servidor.
+         * Aqui no sincronismo caso data seja invalida, além de abortar o processamento,
+         * seta preferencia pra false.
+         * Caso seja valida, atualiza as preferencias.
+         */
+        if(isInvalidCurrentTime(rec.getValid_time())){
+            ToolBox.sendBCStatus(
+                getApplicationContext(),
+                Constant.PD_TYPE_ERROR_1,
+                getString(R.string.msg_login_invalid_current_time),
+                "",
+                "0");
+            //
+            ToolBox_Con.setBooleanPreference(getApplicationContext(),ConstantBaseApp.DATETIME_IS_VALID,false);
+            return;
+        }else{
+            ToolBox_Con.setBooleanPreference(getApplicationContext(),ConstantBaseApp.DATETIME_IS_VALID,true);
+            ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_TOLERANCE,rec.getTolerance_time());
+            ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_LAST_VALID_TIME,ToolBox_Inf.dateToMilliseconds(env.getCurrent_time()));
+        }
 
         if (!ToolBox_Inf.processWSCheckValidation(
                 getApplicationContext(),
@@ -1611,6 +1636,10 @@ public class WS_Sync extends IntentService {
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
         }
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
+    }
+
+    private boolean isInvalidCurrentTime(int valid_time) {
+        return valid_time != 1;
     }
 
     private void loadTranslation() {
