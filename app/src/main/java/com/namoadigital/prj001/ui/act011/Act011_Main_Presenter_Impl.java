@@ -1170,7 +1170,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //Se form for do tipo ticket e fluxo do ticket, seta msgType que finaliza SEM CHAMAR O WS, pois
         //o Ws será chamado encadeadamento na Act070
         int msgType =
-            isTicketProcess && isFromTicketActs()
+                isaTicketFlowForm()
                 ? Act011_Main.SHOW_MSG_TYPE_TICKET_FORM_FINALIZED
                 : 2
             ;
@@ -1179,20 +1179,19 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 hmAux_Trans.get("alert_finalize_msg"),//"Registro Finalizado!!!",
             msgType
         );
-
-
     }
 
     private boolean isFromTicketActs() {
         return ConstantBaseApp.ACT070.equals(mView.getRequestingAct())
                 || ConstantBaseApp.ACT068.equals(mView.getRequestingAct())
                 || ConstantBaseApp.ACT012.equals(mView.getRequestingAct())
+                || ConstantBaseApp.ACT073.equals(mView.getRequestingAct())
                 || ConstantBaseApp.ACT074.equals(mView.getRequestingAct());
     }
 
     @Override
-    public boolean isaTicketForm() {
-        return isTicketProcess;
+    public boolean isaTicketFlowForm() {
+        return isTicketProcess && isFromTicketActs();
     }
 
     private void checkGpsFlow(GE_Custom_Form_Data formData, int require_location){
@@ -1311,7 +1310,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     @Override
     public void onBackPressedClicked() {
-        if (isaTicketForm()) {
+        if (isaTicketFlowForm()) {
             mView.callAct070();
         }else{
             mView.callAct005(context);

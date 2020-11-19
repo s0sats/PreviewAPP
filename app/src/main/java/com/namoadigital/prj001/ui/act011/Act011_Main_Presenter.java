@@ -22,7 +22,7 @@ public interface Act011_Main_Presenter {
 
     void checkData(GE_Custom_Form_Data formData, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location);
 
-    boolean isaTicketForm();
+    boolean isaTicketFlowForm();
 
     MD_Schedule_Exec getMdScheduleExec(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec);
 

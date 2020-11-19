@@ -1111,7 +1111,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         mPresenter.resetTicketCtrlFormDataIfNeeds(formLocal);
         //
-        if(mPresenter.isaTicketForm()){
+        if(mPresenter.isaTicketFlowForm()){
             callAct070();
         }else {
             callAct005(context);
@@ -2364,7 +2364,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
          */
         canSave = false;
         //LUCHE - 31/08/2020
-        if(mPresenter.isaTicketForm()){
+        if(mPresenter.isaTicketFlowForm()){
             callAct070();
             return;
         }
@@ -2535,9 +2535,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket_prefix != null ? mTicket_prefix : -1 );
         bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket_code != null ? mTicket_code : -1 );
         //
-        bundle.putInt(TK_Ticket_CtrlDao.STEP_CODE, mStep_code);
-        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, mTicket_seq);
-        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, mTicket_seq_tmp);
+        bundle.putInt(TK_Ticket_CtrlDao.STEP_CODE, formData.getStep_code());
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, formData.getTicket_seq());
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, formData.getTicket_seq_tmp());
         //
         if(isOffHandForm){
              bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
@@ -2581,7 +2581,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
      *
      */
     private void checkBackFlow() {
-        if(mPresenter.isaTicketForm()){
+        if(mPresenter.isaTicketFlowForm()){
             callAct070();
         }else {
             if (formData.getCustom_form_status().equals(Constant.SYS_STATUS_DONE)) {
