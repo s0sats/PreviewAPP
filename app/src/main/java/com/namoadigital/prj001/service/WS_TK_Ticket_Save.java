@@ -469,6 +469,7 @@ public class WS_TK_Ticket_Save extends IntentService {
                         ticket.setTicket_prefix(recResult.getTicket_prefix());
                         ticket.setTicket_code(recResult.getTicket_code());
                         ticket.setTicket_status(ConstantBase.SYS_STATUS_DONE);
+                        ticket.setTicket_id(recResult.getTicket_prefix() +"."+recResult.getTicket_code());
                         ticket.setPK();
                         //
                         scheduleExec.setStatus(recResult.getSchedule_status());
