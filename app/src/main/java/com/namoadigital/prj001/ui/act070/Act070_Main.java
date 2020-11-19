@@ -252,6 +252,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_form_not_ready_title");
         transList.add("alert_form_not_ready_msg");
         //
+        transList.add("alert_ticket_struct_error_ttl");
+        transList.add("alert_ticket_struct_error_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -658,11 +661,26 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         mTicket = mPresenter.getTicketObj(mTkPrefix, mTkCode);
         //
         if (mTicket != null) {
-            iniHeaderFrag();
-            mPresenter.getStepsList(mTicket);
-            setReadOnly();
-            initFCMReceiver();
-            checkSyncNeeds();
+            if(mTicket.getValid_structure_step() == 1) {
+                iniHeaderFrag();
+                mPresenter.getStepsList(mTicket);
+                setReadOnly();
+                initFCMReceiver();
+                checkSyncNeeds();
+            }else{
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_ticket_struct_error_ttl"),
+                        hmAux_Trans.get("alert_ticket_struct_error_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                onBackPressed();
+                            }
+                        },
+                        0
+                );
+            }
         } else {
             paramErrorFlow();
         }
