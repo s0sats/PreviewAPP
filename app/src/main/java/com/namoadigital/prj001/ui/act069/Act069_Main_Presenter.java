@@ -88,9 +88,17 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
                         Alterado a data de forecast para de finalizado compatibilizando o layout
                         do ticket sem foco para o usuário e reaproveitando o adpter da act074.
                      */
-                    Act074_TicketVH ticketVHObj = Act074_TicketVH.getTicketVHObj(aux);
+                    Act074_TicketVH ticketVHObj = Act074_TicketVH.getTicketVHObj(context,hmAux_Trans,aux);
                     ticketVHObj.setTicket_forecast_date(aux.get(TK_TicketDao.CLOSE_DATE));
                     ticketVHObj.setUser_focus(0);
+                    //Add set da propriedade suada na busca do filtro, como só usa nessa tela, ficou
+                    //via set
+                    ticketVHObj.setTicket_forecast_date_formmated(
+                        ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(aux.get(TK_TicketDao.CLOSE_DATE)),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                        )
+                    );
                     //
                     tickets.add(
                         ticketVHObj

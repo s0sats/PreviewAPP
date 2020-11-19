@@ -224,11 +224,11 @@ public class Act074_Main_Presenter implements Act074_Main_Contract.I_Presenter {
         }
         if (hasFocus) {
             focusList.add(
-                    Act074_TicketVH.getTicketVHObj(aux)
+                    Act074_TicketVH.getTicketVHObj(context,hmAux_Trans, aux)
             );
         } else {
             unfocusList.add(
-                    Act074_TicketVH.getTicketVHObj(aux)
+                    Act074_TicketVH.getTicketVHObj(context,hmAux_Trans, aux)
             );
         }
     }

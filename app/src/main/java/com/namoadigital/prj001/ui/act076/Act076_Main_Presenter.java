@@ -39,7 +39,7 @@ public class Act076_Main_Presenter implements Act076_Main_Contract.I_Presenter {
 //                    getCtrlsSerialsList(aux);
                     //
                     tickets.add(
-                            Act074_TicketVH.getTicketVHObj(aux)
+                            Act074_TicketVH.getTicketVHObj(context,hmAux_Trans,aux)
                     );
                 }
             } catch (Exception e) {

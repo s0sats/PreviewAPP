@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.model.VH_models;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -7,6 +8,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_BriefDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import static com.namoadigital.prj001.dao.TK_Ticket_BriefDao.LOCAL_TICKET;
@@ -52,14 +54,22 @@ public class Act074_TicketVH {
     private String client_name;
     private Integer contract_code;
     private String contract_desc;
+    //LUCHE - 19/11/2020
+    //As propriedades abaixo são usadas apenas nas pesquisa de filtro, não necessitam de getter e setter
+    private String ticket_status_translated;//Status traduzido
+    private String step_forecast_start_date_formmated;//Data formatada como o usuario ve
+    private String ticket_forecast_date_formmated;//Data formatada como o usuario ve
 
-    public Act074_TicketVH(int ticket_customer, int ticket_scn, int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_date, String step_forecast_start_date, String step_forecast_end_date, String ticket_step_id, String ticket_current_step_order, String step_order_seq, int ticket_step_qty, int user_focus, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg, int local_ticket, int sync_required,Integer client_code, String client_name, Integer contract_code, String contract_desc) {
+    //LUCHE - 19/11/2020
+    //Alterado construtor adicionando as novas propriedades ticket_status_translated e step_forecast_start_date_formmated, campos que será usados apenas nos filtros.
+    public Act074_TicketVH(int ticket_customer, int ticket_scn, int ticket_prefix, int ticket_code, String ticket_id, String ticket_status, String ticket_status_translated, String ticket_prod_desc, String ticket_site_desc, String ticket_serial, String ticket_step_desc, String ticket_origin_desc, String ticket_forecast_date, String step_forecast_start_date, String step_forecast_end_date, String step_forecast_start_date_formmated,  String ticket_step_id, String ticket_current_step_order, String step_order_seq, int ticket_step_qty, int user_focus, String schedulePk, @Nullable Integer schedule_prefix, @Nullable Integer schedule_code, @Nullable Integer schedule_exec, @Nullable String fcm_new_status, @Nullable String fcm_user_nick, @Nullable String schedule_erro_msg, int local_ticket, int sync_required, Integer client_code, String client_name, Integer contract_code, String contract_desc) {
         String separator = "|";
         this.ticket_pk = ticket_customer +  separator +  ticket_prefix +  separator + ticket_code +  separator +  ticket_scn;
         this.ticket_prefix = ticket_prefix;
         this.ticket_code = ticket_code;
         this.ticket_id = ticket_id;
         this.ticket_status = ticket_status;
+        this.ticket_status_translated = ticket_status_translated;
         this.ticket_prod_desc = ticket_prod_desc;
         this.ticket_site_desc = ticket_site_desc;
         this.ticket_serial = ticket_serial;
@@ -67,6 +77,7 @@ public class Act074_TicketVH {
         this.ticket_origin_desc = ticket_origin_desc;
         this.ticket_forecast_date = ticket_forecast_date;
         this.step_forecast_start_date = step_forecast_start_date;
+        this.step_forecast_start_date_formmated = step_forecast_start_date_formmated;
         this.step_forecast_end_date = step_forecast_end_date;
         this.ticket_step_id = ticket_step_id;
         this.ticket_current_step_order = ticket_current_step_order;
@@ -88,7 +99,15 @@ public class Act074_TicketVH {
         this.contract_desc = contract_desc ;
     }
 
-    public static Act074_TicketVH getTicketVHObj(HMAux hmAux) {
+    /**
+     * LUCHE - 19/11/2020
+     * Alterado assinatura do metodo, adicionando contexto e hmAuxTrans
+     * @param context
+     * @param hmAuxTrans
+     * @param hmAux
+     * @return
+     */
+    public static Act074_TicketVH getTicketVHObj(Context context, HMAux hmAuxTrans, HMAux hmAux) {
 
         return new Act074_TicketVH(
                         ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.CUSTOMER_CODE)),
@@ -97,6 +116,7 @@ public class Act074_TicketVH {
                         ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.TICKET_CODE)),
                         hmAux.get(TK_TicketDao.TICKET_ID),
                         hmAux.get(TK_TicketDao.TICKET_STATUS),
+                        hmAuxTrans.get(hmAux.get(TK_TicketDao.TICKET_STATUS)),
                         hmAux.get(TK_TicketDao.OPEN_PRODUCT_DESC),
                         hmAux.get(TK_TicketDao.OPEN_SITE_DESC),
                         hmAux.get(TK_TicketDao.OPEN_SERIAL_ID),
@@ -105,6 +125,7 @@ public class Act074_TicketVH {
                         hmAux.get(TK_TicketDao.FORECAST_DATE),
                         hmAux.get(TK_Ticket_StepDao.FORECAST_START),
                         hmAux.get(TK_Ticket_StepDao.FORECAST_END),
+                        ToolBox_Inf.getStepStartEndDateFormated(context, hmAux.get(TK_Ticket_StepDao.FORECAST_START), hmAux.get(TK_Ticket_StepDao.FORECAST_END)),
                         hmAux.get(TK_Ticket_StepDao.STEP_ID),
                         hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER),
                         hmAux.get(TK_Ticket_BriefDao.STEP_ORDER_SEQ),
@@ -374,23 +395,34 @@ public class Act074_TicketVH {
         this.local_ticket = local_ticket;
     }
 
-    //
+    /**
+     * LUCHE - 19/11/2020
+     * Alterado metodo , adicionando trativa de qual data usar pois as datas exibidas e buscada
+     * são diferentes entra act069 e as demais.
+     * @return
+     */
     public String getAllFieldForFilter(){
         return  (
-                ticket_prefix+ "|" +
+                        ticket_prefix+ "|" +
                         ticket_code+ "|" +
                         ticket_id+ "|" +
-                        ticket_status+ "|" +
+                        //ticket_status+ "|" +//substituido por ticket_status_translated
+                        ticket_status_translated+ "|" +
                         ticket_prod_desc+ "|" +
                         ticket_site_desc+ "|" +
                         ticket_serial + "|" +
                         ticket_step_desc + "|" +
                         ticket_origin_desc + "|" +
-                        step_forecast_start_date +"|" +
+                        //step_forecast_start_date +"|" +//substituido pelo step_forecast_start_date_formmated
                         ticket_step_id +"|" +
                         schedulePk +"|" +
                         client_name +"|" +
-                        contract_desc)
+                        contract_desc + "|" +
+                        (ConstantBaseApp.SYS_STATUS_DONE.equals(ticket_status)
+                            ? ticket_forecast_date_formmated
+                            : step_forecast_start_date_formmated
+                        )
+                )
                 .replace("null|","")
                 .replace("null","")
                 ;
@@ -434,5 +466,13 @@ public class Act074_TicketVH {
 
     public void setContract_desc(String contract_desc) {
         this.contract_desc = contract_desc;
+    }
+
+    public String getTicket_forecast_date_formmated() {
+        return ticket_forecast_date_formmated;
+    }
+
+    public void setTicket_forecast_date_formmated(String ticket_forecast_date_formmated) {
+        this.ticket_forecast_date_formmated = ticket_forecast_date_formmated;
     }
 }
