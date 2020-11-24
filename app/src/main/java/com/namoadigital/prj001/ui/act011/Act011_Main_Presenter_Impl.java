@@ -1185,6 +1185,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         return ConstantBaseApp.ACT070.equals(mView.getRequestingAct())
                 || ConstantBaseApp.ACT068.equals(mView.getRequestingAct())
                 || ConstantBaseApp.ACT012.equals(mView.getRequestingAct())
+                || ConstantBaseApp.ACT017.equals(mView.getRequestingAct())
                 || ConstantBaseApp.ACT073.equals(mView.getRequestingAct())
                 || ConstantBaseApp.ACT074.equals(mView.getRequestingAct());
     }
