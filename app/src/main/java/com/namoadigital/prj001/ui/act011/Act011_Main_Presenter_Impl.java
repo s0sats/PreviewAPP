@@ -362,9 +362,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             formData.setPipeline_code(tkTicket.getPipeline_code());
                             //
                         }
-                    }
-
-                    updateTicketCtrl(
+                        //
+                        updateTicketCtrl(
                             customFormLocal.getCustomer_code(),
                             customFormLocal.getTicket_prefix(),
                             customFormLocal.getTicket_code(),
@@ -374,6 +373,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             customFormLocal.getCustom_form_data(),
                             ConstantBaseApp.SYS_STATUS_PROCESS,
                             formData.getLocation_pendency());
+                    }
 
                     if(formData.getTicket_checkin_date() == null ||formData.getTicket_checkin_date().isEmpty()) {
                         //Resgata Step para setar data de checkin no form.

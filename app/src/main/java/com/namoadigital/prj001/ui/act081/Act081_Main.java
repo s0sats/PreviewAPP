@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -370,6 +369,12 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         setMenuLanguage(hmAux_Trans);
         setTitleLanguage();
         setFooter();
+    }
+
+    @Override
+    protected void footerCreateDialog() {
+        //super.footerCreateDialog();
+        ToolBox_Inf.buildFooterDialog(context);
     }
 
     //TRATA SESSION_NOT_FOUND
