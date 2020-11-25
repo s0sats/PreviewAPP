@@ -49,6 +49,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_005;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_019;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
@@ -141,18 +142,36 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //LUCHE - 14/03/2019
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         MD_Schedule_Exec scheduleExec = new MD_Schedule_Exec();
-        GE_Custom_Form_Local customFormLocal = custom_form_LocalDao.getByString(
-            new GE_Custom_Form_Local_Sql_003(
-                customer_code,
-                formtype_code,
-                form_code,
-                formversion_code,
-                s_form_data,
-                product_code,
-                serial_id
-            ).toSqlQuery().toString().toLowerCase()
-        );
-
+        GE_Custom_Form_Local customFormLocal;
+        if(mTicket_prefix != null && mTicket_code != null &&  mTicket_seq!= null &&  mTicket_seq_tmp!= null &&  mStep_code!= null){
+            customFormLocal = custom_form_LocalDao.getByString(
+                    new GE_Custom_Form_Local_Sql_019(
+                            customer_code,
+                            formtype_code,
+                            form_code,
+                            formversion_code,
+                            s_form_data,
+                            product_code,
+                            serial_id,
+                            mTicket_prefix,
+                            mTicket_code,
+                            mTicket_seq,
+                            mTicket_seq_tmp
+                    ).toSqlQuery().toString().toLowerCase()
+            );
+        }else{
+            customFormLocal = custom_form_LocalDao.getByString(
+                new GE_Custom_Form_Local_Sql_003(
+                    customer_code,
+                    formtype_code,
+                    form_code,
+                    formversion_code,
+                    s_form_data,
+                    product_code,
+                    serial_id
+                ).toSqlQuery().toString().toLowerCase()
+            );
+        }
         List<HMAux> cf_fields = null;
         int index = -1;
 
