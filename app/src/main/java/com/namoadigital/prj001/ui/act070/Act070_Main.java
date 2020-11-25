@@ -351,7 +351,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             ToolBox_Inf.getStatusColorV2(context,mTicket.getTicket_status()),
             ToolBox_Inf.getFormattedTicketOriginDesc(mTicket.getOrigin_type(), mTicket.getOrigin_desc()),
             hmAux_Trans.get("please_sync_lbl"),
-            mPresenter.checkOnlySyncNeeds(mTicket) || mPresenter.checkUpdateRequiredNeeds(mTicket)
+            mPresenter.getSyncStatusParam(mTicket)
         );
         //
         FragmentTransaction ft = fm.beginTransaction();

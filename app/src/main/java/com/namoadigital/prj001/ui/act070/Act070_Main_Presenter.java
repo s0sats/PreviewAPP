@@ -426,14 +426,37 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     public boolean checkUpdateRequiredNeeds(TK_Ticket mTicket) {
+        return checkUpdateRequired(mTicket)
+            && !ToolBox_Inf.hasOffHandFormInProcess(context, mTicket.getTicket_prefix(), mTicket.getTicket_code());
+    }
+
+    /**
+     * LUCHE - 25/11/2020
+     * Metodo que retorna se existe algum update_required para o ticket.
+     * Verifica se flags update_required 1, e se existe arquivo de token, form para sincronzar ou
+     * serial update required vncualado ao ticket.
+     * @param mTicket
+     * @return
+     */
+    private boolean checkUpdateRequired(TK_Ticket mTicket) {
         return mTicket != null
             && (mTicket.getUpdate_required() == 1
-                || mTicket.getUpdate_required_product() == 1
-                || ToolBox_Inf.isTicketInTokenFile(context, mTicket.getTicket_prefix(),mTicket.getTicket_code())
-                || ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
-                || ToolBox_Inf.hasSerialUpdateRequiredWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
-                )
-                && !ToolBox_Inf.hasOffHandFormInProcess(context,mTicket.getTicket_prefix(), mTicket.getTicket_code());
+            || mTicket.getUpdate_required_product() == 1
+            || ToolBox_Inf.isTicketInTokenFile(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
+            || ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
+            || ToolBox_Inf.hasSerialUpdateRequiredWithinTicket(context, mTicket.getTicket_prefix(), mTicket.getTicket_code())
+        );
+    }
+
+    /**
+     * LUCHE - 25/11/2020
+     * Metodo que verifica se deve acender ou não btn de sync
+     * @param mTicket
+     * @return
+     */
+    @Override
+    public boolean getSyncStatusParam(TK_Ticket mTicket) {
+        return checkOnlySyncNeeds(mTicket) || checkUpdateRequired(mTicket);
     }
 
     @Override
