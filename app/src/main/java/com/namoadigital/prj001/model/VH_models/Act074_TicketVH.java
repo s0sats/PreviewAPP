@@ -2,6 +2,7 @@ package com.namoadigital.prj001.model.VH_models;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
@@ -108,6 +109,13 @@ public class Act074_TicketVH {
      * @return
      */
     public static Act074_TicketVH getTicketVHObj(Context context, HMAux hmAuxTrans, HMAux hmAux) {
+        String stepStartEndFormatted = "";
+
+        if (hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_START) && !hmAux.get(TK_Ticket_StepDao.FORECAST_START).isEmpty()  &&
+        hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_END) && !hmAux.get(TK_Ticket_StepDao.FORECAST_END).isEmpty() ) {
+            stepStartEndFormatted = ToolBox_Inf.getStepStartEndDateFormated(context, hmAux.get(TK_Ticket_StepDao.FORECAST_START), hmAux.get(TK_Ticket_StepDao.FORECAST_END));
+
+        }
 
         return new Act074_TicketVH(
                         ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.CUSTOMER_CODE)),
@@ -125,7 +133,7 @@ public class Act074_TicketVH {
                         hmAux.get(TK_TicketDao.FORECAST_DATE),
                         hmAux.get(TK_Ticket_StepDao.FORECAST_START),
                         hmAux.get(TK_Ticket_StepDao.FORECAST_END),
-                        ToolBox_Inf.getStepStartEndDateFormated(context, hmAux.get(TK_Ticket_StepDao.FORECAST_START), hmAux.get(TK_Ticket_StepDao.FORECAST_END)),
+                        stepStartEndFormatted,
                         hmAux.get(TK_Ticket_StepDao.STEP_ID),
                         hmAux.get(TK_TicketDao.CURRENT_STEP_ORDER),
                         hmAux.get(TK_Ticket_BriefDao.STEP_ORDER_SEQ),
