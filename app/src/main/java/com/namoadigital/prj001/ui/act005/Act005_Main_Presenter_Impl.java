@@ -1244,7 +1244,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
          * Quando usuario estiver com a data muito discrepanta a ultima data valida, as funcoes do
          * menu principal serão travadas.
          */
-        if(!isLocalDatetimeOk()
+        if(!ToolBox_Inf.isLocalDatetimeOk(context)
         && (!menu_id.equals(Act005_Main.MENU_ID_SEND_DATA)
         && !menu_id.equals(Act005_Main.MENU_ID_SYNC_DATA))
         ){
@@ -1929,28 +1929,28 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         return okInboundItem;
     }
-    /**
-     * BARRIONUEVO - 18-11-2020
-     * Metodo responsavel por verificar a ultima data valida.
-     */
-    @Override
-    public boolean isLocalDatetimeOk() {
-        String sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
-        long currentTimeMillis = ToolBox_Inf.dateToMilliseconds(sDate);
-        boolean isDatetimeValid = ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.DATETIME_IS_VALID, true);
-        long lastValidTime = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
-        long datetimeTolerance = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_TOLERANCE, 4200000);
-
-        if(isDatetimeValid) {
-            if ((currentTimeMillis + datetimeTolerance) >= lastValidTime) {
-                if(currentTimeMillis >= lastValidTime) {
-                    ToolBox_Con.setLongPreference(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
-                }
-                return true;
-            }
-        }
-
-        ToolBox_Con.setBooleanPreference(context, ConstantBaseApp.DATETIME_IS_VALID, false);
-        return false;
-    }
+//    /**
+//     * BARRIONUEVO - 18-11-2020
+//     * Metodo responsavel por verificar a ultima data valida.
+//     */
+//    @Override
+//    public boolean isLocalDatetimeOk() {
+//        String sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+//        long currentTimeMillis = ToolBox_Inf.dateToMilliseconds(sDate);
+//        boolean isDatetimeValid = ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.DATETIME_IS_VALID, true);
+//        long lastValidTime = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
+//        long datetimeTolerance = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_TOLERANCE, 4200000);
+//
+//        if(isDatetimeValid) {
+//            if ((currentTimeMillis + datetimeTolerance) >= lastValidTime) {
+//                if(currentTimeMillis >= lastValidTime) {
+//                    ToolBox_Con.setLongPreference(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
+//                }
+//                return true;
+//            }
+//        }
+//
+//        ToolBox_Con.setBooleanPreference(context, ConstantBaseApp.DATETIME_IS_VALID, false);
+//        return false;
+//    }
 }

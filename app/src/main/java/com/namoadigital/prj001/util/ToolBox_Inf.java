@@ -7535,4 +7535,28 @@ public class ToolBox_Inf {
         return anyNoneFinalizaed;
     }
 
+    /**
+     * BARRIONUEVO - 18-11-2020
+     * Metodo responsavel por verificar a ultima data valida.
+     */
+    public static boolean isLocalDatetimeOk(Context context) {
+        String sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+        long currentTimeMillis = ToolBox_Inf.dateToMilliseconds(sDate);
+        boolean isDatetimeValid = ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.DATETIME_IS_VALID, true);
+        long lastValidTime = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
+        long datetimeTolerance = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_TOLERANCE, 4200000);
+
+        if(isDatetimeValid) {
+            if ((currentTimeMillis + datetimeTolerance) >= lastValidTime) {
+                if(currentTimeMillis >= lastValidTime) {
+                    ToolBox_Con.setLongPreference(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
+                }
+                return true;
+            }
+        }
+
+        ToolBox_Con.setBooleanPreference(context, ConstantBaseApp.DATETIME_IS_VALID, false);
+        return false;
+    }
+
 }

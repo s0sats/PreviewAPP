@@ -624,7 +624,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                             );
 
                         } else {
-                            if(!mPresenter.isLocalDatetimeOk()){
+                            if(!ToolBox_Inf.isLocalDatetimeOk(context)){
                                 handleInvalidLocalDatetime();
                             }else {
                                 alertTitle = hmAux_Trans.get("drawer_change_customer_alert_ttl");
@@ -1002,7 +1002,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         gv_menu.setAdapter(mAdapter);
         //
-        if(!mPresenter.isLocalDatetimeOk()){
+        if(!ToolBox_Inf.isLocalDatetimeOk(context)){
             cv_invalid_datetime_card.setVisibility(View.VISIBLE);
         }else{
             cv_invalid_datetime_card.setVisibility(View.GONE);
