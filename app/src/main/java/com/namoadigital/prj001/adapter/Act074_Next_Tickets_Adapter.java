@@ -290,7 +290,14 @@ public class Act074_Next_Tickets_Adapter extends RecyclerView.Adapter<RecyclerVi
     @NonNull
     private String getFormatted_planned_date(Act074_TicketVH item) {
         //
-        return ToolBox_Inf.getStepStartEndDateFormated(context, item.getStep_forecast_start_date(), item.getStep_forecast_end_date());
+        String stepStartEndFormatted = "";
+        if (item.getStep_forecast_start_date() != null
+                && !item.getStep_forecast_start_date().isEmpty()
+                && item.getStep_forecast_end_date() != null
+                && !item.getStep_forecast_end_date().isEmpty() ) {
+            stepStartEndFormatted =ToolBox_Inf.getStepStartEndDateFormated(context, item.getStep_forecast_start_date(), item.getStep_forecast_end_date());
+        }
+        return stepStartEndFormatted;
     }
 
     private void setSiteVisibility(TextView tv_site_desc, String ticket_site_desc) {

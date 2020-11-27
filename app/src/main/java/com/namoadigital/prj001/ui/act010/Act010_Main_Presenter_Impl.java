@@ -129,7 +129,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
 
         if (formDataList == null || formDataList.size() == 0) {
             return true;
-        } else if (formDataList.size() > 1) {
+        } else if (formDataList.size() > 1 && !mView.isHas_tk_ticket_is_form_off_hand()) {
             //isso nunca deveria acontecer
             mView.showAlertMsg(
                     hmAux_Trans.get("alert_more_than_one_form_ttl"),
