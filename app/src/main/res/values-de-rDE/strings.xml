@@ -105,5 +105,5 @@
     <string name="install_app_error_msg"> Fehler bei der Aktualisierung der App!\nBitte erneut über die Synchronisation versuchen.</string>
     <string name="msg_customer_pendencies_list">Account :\n</string>
     <string name="msg_update_required_warning">Neue Version verfügbar!\nSenden Sie bitte die ausstehende Daten, um aktualisieren zu können.</string>
-    <string name="msg_login_invalid_current_time">The date / time of your device is incompatible with the Namoa server. \n Set the date / time of your device and try again.</string>
+    <string name="msg_login_invalid_current_time">Ihr Tablet-/Telefondatum ist nicht korrekt!\n Stellen Sie Datum und Uhrzeit bitte ein und versuchen Sie es erneut.</string>
 </resources>

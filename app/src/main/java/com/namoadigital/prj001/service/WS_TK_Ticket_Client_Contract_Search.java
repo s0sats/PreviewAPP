@@ -22,7 +22,7 @@ import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Client_Contract_Search;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
-import com.namoadigital.prj001.sql.TK_Ticket_Sql_004;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -152,27 +152,33 @@ public class WS_TK_Ticket_Client_Contract_Search extends IntentService {
                 //
                 for (TK_Ticket tkTicket : ticketList) {
                     tkTicket.setPK();
-                      /*
+                    TK_Ticket dbTicket = getDbTicket(tkTicket);
+
+                    if(dbTicket != null) {
+                    /*
                         Barrionuevo - 2020-11-13
                         Tratativa para impedir que ticket com form espontaneo em processo seja atualizado pelo server.
                      */
-                    if(!ToolBox_Inf.hasOffHandFormInProcess(getApplicationContext(), tkTicket.getTicket_prefix(), tkTicket.getTicket_code())) {
+                        if(!ToolBox_Inf.hasOffHandFormInProcess(getApplicationContext(), dbTicket.getTicket_prefix(), dbTicket.getTicket_code())) {
+                            //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
+                            //for alterado, o que significa que mudaram a foto no server...
+                            TK_Ticket.checkActionPhotoResetNeeds(
+                                dbTicket,
+                                tkTicket
+                            );
+                            //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
+                            tkTicket.updateLocalImagesPathIfExists();
+                            //Busca ctrls tipo form em andamento e que seriam resetados.
+                            tkTicket.updateTicketCtrlFormInProcess(getApplicationContext());
+                            //
+                            daoObjReturn = ticketDao.removeFullV2(tkTicket);
+                            tickets.add(tkTicket);
+                            if(daoObjReturn.hasError()) {
+                                break;
+                            }
+                        }
+                    }else{
                         tickets.add(tkTicket);
-                    //Reseta sync_required para 0 via query, pois add update via obj não o atualiza.
-                    /**
-                     * TODO TALVEZ O MELHOR FOSSE INSERIR UMA A UMA E VERIFICANDO O RETORNO, CASO SUCESSO, RESETA O SYNC REQUIRED
-                     * DO JEITO QUE ESTA CORRE O RISCO DE RESETAR O SYNC REQUIRED E DAR PAU NO ADD UPDATE
-                     * É UM RISCO MUITO BAIXO MAS.....
-                     *
-                     * */
-                        ticketDao.addUpdate(
-                                new TK_Ticket_Sql_004(
-                                        tkTicket.getCustomer_code(),
-                                        tkTicket.getTicket_prefix(),
-                                        tkTicket.getTicket_code(),
-                                        0
-                                ).toSqlQuery()
-                        );
                     }
                     if (ticketList.size() == 1) {
                         hmAux.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
@@ -231,6 +237,16 @@ public class WS_TK_Ticket_Client_Contract_Search extends IntentService {
         }else{
             ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_data_returned"), new HMAux(), "", "0");
         }
+    }
+
+    private TK_Ticket getDbTicket(TK_Ticket tkTicket){
+        return ticketDao.getByString(
+            new TK_Ticket_Sql_001(
+                tkTicket.getCustomer_code(),
+                tkTicket.getTicket_prefix(),
+                tkTicket.getTicket_code()
+            ).toSqlQuery()
+        );
     }
 
     /**

@@ -971,6 +971,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         Intent intent = new Intent(context, Act075_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         requestingBundle.putInt(VIEW_PROFILE, act_profile);
+        //LUCHE - 27/11/2020
+        //Removido os parametros de navegação no envio do bundle.
+        //Correção do bug que fazia com q o pipeline abrise no ultimo item navegado.
+        requestingBundle.remove(TK_Ticket_CtrlDao.STEP_CODE);
+        requestingBundle.remove(TK_Ticket_CtrlDao.TICKET_SEQ);
+        requestingBundle.remove(TK_Ticket_CtrlDao.TICKET_SEQ_TMP);
         intent.putExtras(requestingBundle);
         startActivity(intent);
         finish();
