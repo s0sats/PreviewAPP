@@ -417,11 +417,18 @@ public class WS_TK_Ticket_Save extends IntentService {
                                     dbTicketCtrl.copyCtrlStatusForInnerProcess();
                                     break;
                             }
-                            //
-                            ctrlsToUpdate.add(dbTicketCtrl);
+                            /**LUCHE - 26/11/2020
+                             * Modificado metodologia de insertUpdate dos controles pois quando
+                             * quando haviam controles espontanoes estava gerando exception
+                             * Agora a cada loop será atualizado o item no device usando o metodo
+                             * AddUpdate para ctrl planejados e addUpdateTmp para o espontaneos.
+                             */
+                            if(dbTicketCtrl.getTicket_seq() > 0){
+                                ticketCtrlDao.addUpdate(dbTicketCtrl);
+                            }else{
+                                ticketCtrlDao.addUpdateTmp(dbTicketCtrl,null);
+                            }
                         }
-                        //
-                        ticketCtrlDao.addUpdate(ctrlsToUpdate, false);
                     }
                     //LUCHE - 27/08/2020
                     //Removido condição de ticket_update = 0

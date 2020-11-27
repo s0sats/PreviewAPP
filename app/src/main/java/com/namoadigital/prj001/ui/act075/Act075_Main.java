@@ -812,6 +812,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                             public void onClick(DialogInterface dialog, int which) {
                                 hasUpdated = false;
                                 refreshUI();
+                                onBackPressed();
                             }
                         },
                         false

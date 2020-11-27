@@ -111,20 +111,6 @@ public class WS_GetCustomer extends IntentService {
                 resultado,
                 TGC_Rec.class
         );
-        /**
-         * LUCHE - 17/11/2020
-         * Adicionado tratativa caso o usuario esteja em um horario diferente do atual.
-         * Aqui é considerado um tolerancia, que esta definida no servidor.
-         */
-        if(isInvalidCurrentTime(rec.getValid_time())){
-            ToolBox.sendBCStatus(
-                getApplicationContext(),
-                Constant.PD_TYPE_ERROR_1,
-                getString(R.string.msg_login_invalid_current_time),
-                "",
-                "0");
-            return;
-        }
 
         /**
          * LUCHE - 06/01/2019
@@ -163,6 +149,21 @@ public class WS_GetCustomer extends IntentService {
                 1,
                 rec.getDb_version()
         )) {
+            return;
+        }
+        //
+        /**
+         * LUCHE - 17/11/2020
+         * Adicionado tratativa caso o usuario esteja em um horario diferente do atual.
+         * Aqui é considerado um tolerancia, que esta definida no servidor.
+         */
+        if(isInvalidCurrentTime(rec.getValid_time())){
+            ToolBox.sendBCStatus(
+                getApplicationContext(),
+                Constant.PD_TYPE_ERROR_1,
+                getString(R.string.msg_login_invalid_current_time),
+                "",
+                "0");
             return;
         }
         //
