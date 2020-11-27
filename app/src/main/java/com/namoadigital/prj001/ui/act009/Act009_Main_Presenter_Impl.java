@@ -72,15 +72,9 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
         switch (actResqueting){
             case Constant.ACT070:
             case Constant.ACT068:
+            case Constant.ACT073:
             case Constant.ACT074:
                 mView.callAct081(context);
-                break;
-            case Constant.ACT012:
-                if(mView.isHas_tk_ticket_is_form_off_hand()){
-                    mView.callAct081(context);
-                }else{
-                    mView.callAct006(context);
-                }
                 break;
             case Constant.ACT020:
                 mView.callAct006(context);
@@ -91,8 +85,13 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
             case Constant.ACT028:
                 mView.callAct028(context);
                 break;
+            case Constant.ACT012:
             default:
-                mView.callAct006(context);
+                if(mView.isHas_tk_ticket_is_form_off_hand()){
+                    mView.callAct081(context);
+                }else{
+                    mView.callAct006(context);
+                }
         }
     }
 }

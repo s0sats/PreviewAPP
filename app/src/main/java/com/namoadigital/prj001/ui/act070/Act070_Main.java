@@ -898,6 +898,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
+        if (ConstantBaseApp.ACT035.equals(requestingAct)) {
+            bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
+        }
         intent.putExtras(bundle);
         //
         startActivity(intent);
