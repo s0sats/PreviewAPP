@@ -17,6 +17,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
@@ -83,6 +84,7 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
     private boolean forceExactSearch = false;
     private String wsProcess;
     private boolean isForm;
+    private String room_code;
 
 
     @Override
@@ -211,7 +213,7 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
             fragProduct_ID = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, "");
             fragSerial_ID = bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
             fragTracking = bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
-
+            room_code = bundle.getString(CH_RoomDao.ROOM_CODE);
             productCode = bundle.getInt(MD_ProductDao.PRODUCT_CODE, -1);
             productDesc = bundle.getString(MD_ProductDao.PRODUCT_DESC, "");
             productId = bundle.getString(MD_ProductDao.PRODUCT_ID, "");
@@ -492,6 +494,7 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, mainRequestingAct);
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix);
         bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode);
+        bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
         //
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtras(bundle);
@@ -581,7 +584,7 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
             bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);
             bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, fragSerial_ID);
             bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, fragTracking);
-
+            bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
 
             bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix);
             bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode);

@@ -20,6 +20,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act020_Prod_Serial_Adapter;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
@@ -414,7 +415,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 isOffHandForm = bundle.getBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND, false);
                 act081Bundle.putBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND,isOffHandForm);
                 act081Bundle.putString(Constant.MAIN_REQUESTING_ACT,requestingAct);
-
+                act081Bundle.putString(CH_RoomDao.ROOM_CODE, bundle.getString(CH_RoomDao.ROOM_CODE));
                 act081Bundle.putInt(TK_TicketDao.TICKET_PREFIX, bundle.getInt(TK_TicketDao.TICKET_PREFIX,-1));
                 act081Bundle.putInt(TK_TicketDao.TICKET_CODE, bundle.getInt(TK_TicketDao.TICKET_CODE,-1));
                 act081Bundle.putString(TK_TicketDao.TICKET_ID, bundle.getString(TK_TicketDao.TICKET_ID, ""));

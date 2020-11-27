@@ -54,6 +54,7 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
@@ -228,6 +229,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private String requestingAct;
     private boolean isOffHandForm=false;
     private Bundle act081Bundle;
+    private String room_code;
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -1170,7 +1172,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 act081Bundle.putString(MD_ProductDao.PRODUCT_CODE, bundle.getString(MD_ProductDao.PRODUCT_CODE, ""));
                 act081Bundle.putString(MD_ProductDao.PRODUCT_DESC, bundle.getString(MD_ProductDao.PRODUCT_DESC, ""));
                 act081Bundle.putString(MD_ProductDao.PRODUCT_ID, bundle.getString(MD_ProductDao.PRODUCT_ID, ""));
-
+                room_code = bundle.getString(CH_RoomDao.ROOM_CODE);
                 act081Bundle.putBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND, bundle.getBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND));
                 act081Bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket_prefix);
                 act081Bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket_code);
@@ -2542,6 +2544,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if(isOffHandForm){
              bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
         }
+        bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
         //LUCHE - 08/09/2020
         //Se é finalização do form e esta voltando pra act070, seta flag para forçar o envio ao chegar na act
         if(mPresenter.setForceSentByForm(formData.getCustomer_code(),formData.getCustom_form_type(),formData.getCustom_form_code(),formData.getCustom_form_version(), (int) formData.getCustom_form_data())){
