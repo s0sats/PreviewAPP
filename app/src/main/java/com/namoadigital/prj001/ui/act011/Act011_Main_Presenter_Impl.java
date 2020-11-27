@@ -156,7 +156,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                             mTicket_prefix,
                             mTicket_code,
                             mTicket_seq,
-                            mTicket_seq_tmp
+                            mStep_code
                     ).toSqlQuery().toString().toLowerCase()
             );
         }else{
