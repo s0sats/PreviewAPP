@@ -1526,7 +1526,23 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         mTicket.getStep().set(stepIdx,ticketStep);
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-            executeSerialSave(true);
+            //LUCHE - 30/11/2020
+            //Se ao executar o check in tiver form pendente, ao invés de chamar Ws, chama o refresh da tela.
+            if(!ToolBox_Inf.hasOffHandFormInProcess(context,mTicket.getTicket_prefix(),mTicket.getTicket_code())) {
+                executeSerialSave(true);
+            }else{
+                mView.showAlert(
+                    hmAux_Trans.get("alert_offline_save_by_form_pendency_ttl"),
+                    hmAux_Trans.get("alert_offline_save_by_form_pendency_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mView.callRefreshUi();
+                        }
+                    },
+                    false
+                );
+            }
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_error_on_set_checkin_ttl"),
@@ -1560,13 +1576,23 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //
         DaoObjReturn daoObjReturn  = ticketDao.addUpdate(mTicket);
         if(!daoObjReturn.hasError()){
-//            if(ToolBox_Inf.hasFormWaitingSyncWithinTicket(context,mTicket.getTicket_prefix(), mTicket.getTicket_code())){
-//                //callWsSave();
-//                defineFormWaitingSyncFlow(mTicket.getTicket_prefix(), mTicket.getTicket_code(), true);
-//            }else {
-//                executeTicketSaveProcess(true);
-//            }
-            executeSerialSave(true);
+            //LUCHE - 30/11/2020
+            //Se ao executar o check in tiver form pendente, ao invés de chamar Ws, chama o refresh da tela.
+            if(!ToolBox_Inf.hasOffHandFormInProcess(context,mTicket.getTicket_prefix(),mTicket.getTicket_code())) {
+                executeSerialSave(true);
+            }else{
+                mView.showAlert(
+                    hmAux_Trans.get("alert_offline_save_by_open_form_ttl"),
+                    hmAux_Trans.get("alert_offline_save_by_open_form_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mView.callRefreshUi();
+                        }
+                    },
+                    false
+                );
+            }
         }else{
             mView.showAlert(
                 hmAux_Trans.get("alert_error_on_set_checkout_ttl"),
