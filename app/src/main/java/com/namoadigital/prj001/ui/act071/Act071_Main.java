@@ -239,6 +239,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         transList.add("progress_serial_save_msg");
         transList.add("serial_lbl");
         //
+        transList.add("alert_offline_save_by_open_form_ttl");
+        transList.add("alert_offline_save_by_open_form_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -543,8 +546,14 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                     if(mPresenter.updateTicketAction(mTicketCtrl)){
                                         updateCreationParams();
                                         deletePhotoFile(TEMP_SUFIX_FILE + actionPhotoLocalPath);
-                                        //TODO CHAMAR WS DE SERIAL, SOMENTE SE NÃO FOR AGENDAMENTO ?
-                                        mPresenter.executeSerialSave();
+                                        //LUCHE - 30/11/2020
+                                        //Adicionando validação de offhand antes de salvar.Caso existe form em processom
+                                        //segue novo fluxo informando ousr que foi salvo offline pelo montvo offhand
+                                        if(!ToolBox_Inf.hasOffHandFormInProcess(context,mActionPrefix,mActionCode)) {
+                                            mPresenter.executeSerialSave();
+                                        }else{
+                                            mPresenter.proceedOffHandSaveFlow(context,mActionPrefix,mActionCode);
+                                        }
                                         //mPresenter.defineNextSaveFlow(mActionPrefix, mActionCode);
                                     }
                                 }catch (Exception e){

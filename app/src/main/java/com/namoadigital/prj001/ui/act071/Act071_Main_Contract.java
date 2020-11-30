@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act071;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -143,6 +144,8 @@ public interface Act071_Main_Contract {
         void processWsSerialSavelReturn(HMAux hmAux);
 
         void executeSerialSave();
+
+        void proceedOffHandSaveFlow(Context context, int mActionPrefix, int mActionCode);
     }
 
 }
