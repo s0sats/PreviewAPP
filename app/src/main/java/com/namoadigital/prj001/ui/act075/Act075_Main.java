@@ -157,31 +157,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         //
         if(act_profile == 1) {
             //
-            if(!hasWithdrawnApproved && tkTicket.getInventory_control() ==1) {
-                hasPendency = mPresenter.hasUpdatePendency(tkTicket);
-                if (hasPendency) {
-                    if (ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, mTkPrefix, mTkCode)) {
-                        showAlert(
-                                hmAux_Trans.get("alert_form_location_pendency_ttl"),
-                                hmAux_Trans.get("alert_form_location_pendency_msg"),
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        callMoveOn();
-                                    }
-                                },
-                                false
-                        );
-                    } else {
-                        if (ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, mTkPrefix, mTkCode)) {
-                            sync_ticket_form = false;
-                            mPresenter.callWsSave();
-                        } else {
-                            mPresenter.executeTicketSaveSyncFormProcess();
-                        }
-                    }
-                }
-            }
+            hasPendency = mPresenter.hasUpdatePendency(tkTicket);
+            //
             setProductList(hasWithdrawnApproved, hasAppliedApproved);
             if(tkTicket.getUpdate_required_product() == 1
                     || !hasUpdated) {
@@ -278,7 +255,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                 tkTicket.getMain_user(),
                 hasWithdrawnApproved,
                 hasAppliedApproved,
-                hasPendency,
+                mPresenter.hasApprovalPendency(tkTicket),
                 this
         );
         //

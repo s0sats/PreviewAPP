@@ -57,7 +57,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
-import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_002;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_008;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_005;
 import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_002;
@@ -548,12 +548,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     //Se finalizou o ctrl, seta sync required tb no ticket.
                     if(tkTicketStep.getUpdate_required() == 1){
                         ticketStepDao.addUpdate(
-                            new Sql_WS_TK_Ticket_Save_002(
+                            new Sql_WS_TK_Ticket_Save_008(
                                 tkTicketStep.getCustomer_code(),
                                 tkTicketStep.getTicket_prefix(),
                                 tkTicketStep.getTicket_code(),
-                                1,
-                                0
+                                1
                             ).toSqlQuery()
                         );
                     }

@@ -178,12 +178,7 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
 
     @Override
     public boolean getWithdrawStatus(TK_Ticket ticket) {
-        List<TK_Ticket_Approval> approvals = ticketApprovalDao.query(
-                new TK_Ticket_Approval_Sql_002(
-                        ToolBox_Con.getPreference_Customer_Code(context),
-                        ticket.getTicket_prefix(),
-                        ticket.getTicket_code()
-                ).toSqlQuery());
+        List<TK_Ticket_Approval> approvals = getTicketApprovals(ticket);
 
         if (approvals != null) {
             for (TK_Ticket_Approval approval :
@@ -206,14 +201,18 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
         return false;
     }
 
-    @Override
-    public boolean getAppliedStatus(TK_Ticket ticket) {
-        List<TK_Ticket_Approval> approvals = ticketApprovalDao.query(
+    private List<TK_Ticket_Approval> getTicketApprovals(TK_Ticket ticket) {
+        return ticketApprovalDao.query(
                 new TK_Ticket_Approval_Sql_002(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         ticket.getTicket_prefix(),
                         ticket.getTicket_code()
                 ).toSqlQuery());
+    }
+
+    @Override
+    public boolean getAppliedStatus(TK_Ticket ticket) {
+        List<TK_Ticket_Approval> approvals = getTicketApprovals(ticket);
 
         if (approvals != null) {
             for (TK_Ticket_Approval approval :
@@ -693,7 +692,42 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                 || ToolBox_Inf.isTicketInTokenFile(context, tkTicket.getTicket_prefix(),tkTicket.getTicket_code());
     }
 
+    /**
+     * BARRIONUEVO  30-11-2020
+     *     Verifica se ha aprovacao de retirada de materiais para desabilitar a adicao/edicao
+     * de materais
+     * @param ticket
+     * @return
+     */
+    @Override
+    public boolean hasApprovalPendency(TK_Ticket ticket) {
+        List<TK_Ticket_Approval> approvals = getTicketApprovals(ticket);
 
+        if (approvals != null) {
+            for (TK_Ticket_Approval approval :
+                    approvals) {
+                if (APPROVAL_GET_MATERIAL.equalsIgnoreCase(approval.getApproval_type())) {
+                    if (ConstantBaseApp.SYS_STATUS_DONE.equalsIgnoreCase(approval.getApproval_status())) {
+                        TK_Ticket_Ctrl ctrl = tkTicketCtrlDao.getByString(
+                                new TK_Ticket_Ctrl_Sql_001(
+                                        ToolBox_Con.getPreference_Customer_Code(context),
+                                        approval.getTicket_prefix(),
+                                        approval.getTicket_code(),
+                                        approval.getTicket_seq(),
+                                        approval.getStep_code()
+                                ).toSqlQuery());
+                        if (ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equalsIgnoreCase(ctrl.getCtrl_status())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
+    @Deprecated
     public boolean userHasMaterialWithdrawApprovalAccess(Integer main_user) {
         if (main_user != null) {
             if (ToolBox_Con.getPreference_User_Code(context).equalsIgnoreCase(main_user.toString())) {

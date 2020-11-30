@@ -84,6 +84,8 @@ public interface Act075_Main_Contract {
 
         boolean hasUpdatePendency(TK_Ticket tkTicket);
 
+        boolean hasApprovalPendency(TK_Ticket ticket);
+
         String defineActTitle(int act_profile, int mTkPrefix, int mTkCode, int mTkSeq, int mStepCode);
 
         boolean verifyProductForForm(int ticket_prefix, int ticket_code);

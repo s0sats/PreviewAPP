@@ -118,8 +118,10 @@ public class Sql_Act076_002 implements Specification {
                         "     t.customer_code =\n" +customer_code+ "\n" +
                         serial_filter +
                         ticket_filter +
-                        " and s.step_status in ('" + ConstantBaseApp.SYS_STATUS_PENDING + "',  \n" +
-                        " '" + ConstantBaseApp.SYS_STATUS_PROCESS + "' ) \n" +
+                        " and s.step_status in ('" + ConstantBaseApp.SYS_STATUS_PENDING + "', '" +
+                        ConstantBaseApp.SYS_STATUS_PROCESS + "' , '" +
+                        ConstantBaseApp.SYS_STATUS_WAITING_SYNC +
+                         "' ) \n" +
                         " and t.ticket_status in ('" + ConstantBaseApp.SYS_STATUS_PENDING + "' , '" +
                         ConstantBaseApp.SYS_STATUS_PROCESS + "' , '" +
                         ConstantBaseApp.SYS_STATUS_WAITING_SYNC +
