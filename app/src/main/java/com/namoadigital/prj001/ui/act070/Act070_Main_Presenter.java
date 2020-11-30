@@ -1532,8 +1532,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 executeSerialSave(true);
             }else{
                 mView.showAlert(
-                    hmAux_Trans.get("alert_offline_save_by_form_pendency_ttl"),
-                    hmAux_Trans.get("alert_offline_save_by_form_pendency_msg"),
+                    hmAux_Trans.get("alert_offline_save_by_open_form_ttl"),
+                    hmAux_Trans.get("alert_offline_save_by_open_form_msg"),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {

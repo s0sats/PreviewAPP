@@ -858,6 +858,31 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         context.sendBroadcast(mIntent);
     }
 
+    /**
+     * LUCHE - 30/11/2020
+     * Metodo que verifica necessidade de fechar o ticket se for ultimo processo e que exibe
+     * msg de dados salvos offline por causa de form espontaneo em aberto.
+     * @param context
+     * @param mActionPrefix
+     * @param mActionCode
+     */
+    @Override
+    public void proceedOffHandSaveFlow(Context context, int mActionPrefix, int mActionCode) {
+        //Se falso, será exibi msg na tela.
+        if (checkOfflineTicketDone(mView.getAction())) {
+            mView.showAlert(
+                hmAux_Trans.get("alert_offline_save_by_open_form_ttl"),
+                hmAux_Trans.get("alert_offline_save_by_open_form_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mView.postTicketSave();
+                    }
+                }
+            );
+        }
+    }
+
     @Override
     public void execTicketSave(boolean forceOfflineProcess) {
         if (!forceOfflineProcess && ToolBox_Con.isOnline(context)) {
