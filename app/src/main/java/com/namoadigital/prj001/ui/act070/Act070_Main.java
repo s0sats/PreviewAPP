@@ -255,6 +255,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_ticket_struct_error_ttl");
         transList.add("alert_ticket_struct_error_msg");
         //
+        transList.add("alert_offline_save_by_open_form_ttl");
+        transList.add("alert_offline_save_by_open_form_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -810,13 +813,23 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void showAlert(String ttl, String msg, DialogInterface.OnClickListener listenerOk, boolean showNegative) {
-        ToolBox.alertMSG_YES_NO(
-            context,
-            ttl,
-            msg,
-            listenerOk,
-            showNegative ? 1 : 0
-        );
+        if(showNegative){
+            ToolBox.alertMSG_YES_NO(
+                context,
+                ttl,
+                msg,
+                listenerOk,
+                showNegative ? 1 : 0
+            );
+        }else{
+            ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                listenerOk,
+                showNegative ? 1 : 0
+            );
+        }
     }
 
     @Override

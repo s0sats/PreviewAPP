@@ -1037,8 +1037,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         } else {
             if (checkOfflineTicketDone(mView.getAction())) {
                 mView.showAlert(
-                    hmAux_Trans.get("alert_form_location_pendency_ttl"),
-                    hmAux_Trans.get("alert_offline_save_by_location_pendency_msg"),
+                    hmAux_Trans.get("alert_offline_save_ttl"),
+                    hmAux_Trans.get("alert_offline_save_msg"),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
