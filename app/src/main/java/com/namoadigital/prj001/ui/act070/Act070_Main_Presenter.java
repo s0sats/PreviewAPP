@@ -146,15 +146,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     @Override
     public boolean getReadOnlyDefinition(TK_Ticket mTicket) {
-        return isReadOnlyStatus(mTicket.getTicket_status()) || missingProfile();
-    }
-
-    private boolean missingProfile() {
-        return !ToolBox_Inf.profileExists(
-            context,
-            ConstantBaseApp.PROFILE_MENU_TICKET,
-            ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_ACTION_EXEC
-        );
+        return isReadOnlyStatus(mTicket.getTicket_status());
     }
 
     @Override

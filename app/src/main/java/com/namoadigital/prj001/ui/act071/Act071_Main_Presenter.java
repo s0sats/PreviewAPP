@@ -311,8 +311,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
 
     @Override
     public boolean getReadOnlyDefinition(TK_Ticket_Ctrl mTicketCtrl) {
-        return isReadOnlyStatus(mTicketCtrl.getCtrl_status())
-            || !hasActionExecProfile();
+        return isReadOnlyStatus(mTicketCtrl.getCtrl_status());
     }
 
     /**
@@ -339,14 +338,6 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         }
         //
         return false;
-    }
-
-    private boolean hasActionExecProfile() {
-        return ToolBox_Inf.profileExists(
-            context,
-            ConstantBaseApp.PROFILE_MENU_TICKET,
-            ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_ACTION_EXEC
-        );
     }
 
     public boolean hasCheckinAlertByStatus(String ticketStatus) {
