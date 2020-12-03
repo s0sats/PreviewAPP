@@ -22,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
-import com.namoa_digital.namoa_library.ctls.FabMenuItem;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -179,7 +178,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
             );
         }else {
             //
-            ToolBox_Inf.setFabMenu(context, fabMenu, hmAux_Trans,
+            ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
                     new FabMenu.IFabMenu() {
                         @Override
                         public void onFabClick(View view) {

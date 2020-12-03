@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
-import com.namoa_digital.namoa_library.ctls.FabMenuItem;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
@@ -100,7 +99,7 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
         }else {
             //
             tv_form_download_pdf.setText(hmAux_Trans.get("download_form_pdf_lbl"));
-            ToolBox_Inf.setFabMenu(context, fabMenu, hmAux_Trans,
+            ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
                         new FabMenu.IFabMenu() {
                             @Override
                             public void onFabClick(View view) {

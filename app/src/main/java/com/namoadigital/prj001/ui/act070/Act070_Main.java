@@ -26,7 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
-import com.namoa_digital.namoa_library.ctls.FabMenuItem;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
@@ -62,6 +61,7 @@ import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
 import com.namoadigital.prj001.ui.act076.Act076_Main;
 import com.namoadigital.prj001.ui.act081.Act081_Main;
+import com.namoadigital.prj001.ui.act082.Act082_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -278,7 +278,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         recoverIntentsInfo();
         //
-        ToolBox_Inf.setFabMenu(context, fabMenu, hmAux_Trans,
+        ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
                 new FabMenu.IFabMenu() {
                     @Override
                     public void onFabClick(View view) {
@@ -292,6 +292,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                                 callAct075(PRODUCT_VIEW_ID);
                                 break;
                             case ConstantBaseApp.FAB_TO_STEP_LBL:
+                                break;
+                            case ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL:
+                                callAct082();
                                 break;
                         }
                         //
@@ -309,6 +312,16 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         } else {
             paramErrorFlow();
         }
+    }
+
+    private void callAct082() {
+        Intent intent = new Intent(context, Act082_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        intent.putExtras(requestingBundle);
+        //
+        startActivity(intent);
+        finish();
     }
 
     private void iniHeaderFrag() {

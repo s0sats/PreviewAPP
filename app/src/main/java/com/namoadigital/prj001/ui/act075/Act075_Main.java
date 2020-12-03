@@ -27,7 +27,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
-import com.namoa_digital.namoa_library.ctls.FabMenuItem;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -187,7 +186,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         }
         //
 
-        ToolBox_Inf.setFabMenu(context, fabMenu, hmAux_Trans,
+        ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
                 new FabMenu.IFabMenu() {
                     @Override
                     public void onFabClick(View view) {

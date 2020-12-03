@@ -7572,7 +7572,7 @@ public class ToolBox_Inf {
      * @param hmAux_Trans
      * @param listener
      */
-    public static void setFabMenu(Context context, FabMenu fabMenu, HMAux hmAux_Trans, FabMenu.IFabMenu listener) {
+    public static void setPipelineFabMenu(Context context, FabMenu fabMenu, HMAux hmAux_Trans, FabMenu.IFabMenu listener) {
         ArrayList<FabMenuItem> fabMenuItems  = initFabMenuItens(context, hmAux_Trans);
         //
         fabMenu.setFabMenuItens(fabMenuItems);
