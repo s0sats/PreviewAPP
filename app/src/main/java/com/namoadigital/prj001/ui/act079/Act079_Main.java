@@ -42,11 +42,7 @@ import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contract.I_View {
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
-    private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
     private FabMenu fabMenu;
-    private FabMenuItem fabStep;
-    private FabMenuItem fabProduct;
-    private FabMenuItem fabOrigin;
     private boolean hasFABActive=false;
     private Act079_Main_Presenter mPresenter;
     private Bundle requestingBundle;
@@ -106,6 +102,8 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         transList.add("to_product_lbl");
         transList.add("to_step_lbl");
         transList.add("to_origin_lbl");
+        transList.add("to_work_group_edit_lbl");
+        transList.add("to_header_edit_lbl");
         //
         transList.add("form_origin_type_lbl");
         transList.add("form_nc_origin_type_lbl");
@@ -150,59 +148,29 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             //
             tv_form_download_pdf.setText(hmAux_Trans.get("download_form_pdf_lbl"));
             //
-            initFabMenuItens();
+            ToolBox_Inf.setFabMenu(context, fabMenu, hmAux_Trans,
+                    new FabMenu.IFabMenu() {
+                        @Override
+                        public void onFabClick(View view) {
+                            String tag = (String) view.getTag();
+                            switch (tag){
+                                case ConstantBaseApp.FAB_TO_PRODUCT_LBL:
+                                    callAct075();
+                                    break;
+                                case ConstantBaseApp.FAB_TO_STEP_LBL:
+                                    callAct070();
+                                    break;
+                            }
+                        }
+
+                        @Override
+                        public void onFabStatusChanged(boolean b) {
+                            hasFABActive = b;
+                        }
+                    }
+                );
             mPresenter.getStepOrigin(mTkPrefix, mTkCode);
         }
-    }
-
-    private void initFabMenuItens() {
-        int lblBgColor = getResources().getColor(R.color.namoa_pipeline_background_icon);
-        int lblColor = getResources().getColor(R.color.padrao_WHITE);
-        int btnBgColor = getResources().getColor(R.color.namoa_sync_pipeline_background_btn);
-        int iconColor = getResources().getColor(R.color.colorPrimary);
-        //atalaho para origin.
-        fabOrigin = new FabMenuItem(context);
-        fabOrigin.setTag("to_origin_lbl");
-        fabOrigin.setmLabel(hmAux_Trans.get("to_origin_lbl"));
-        fabOrigin.setmLabel_Back_Color(lblBgColor);
-        fabOrigin.setmLabel_Text_Color(lblColor);
-        fabOrigin.setmButton_Back_Color(btnBgColor);
-        fabOrigin.setmButton_Resource_Color(iconColor);
-        fabOrigin.setmButton_Resource(R.drawable.ic_baseline_error_outline_24dp_black);
-        fabMenuItems.add(fabOrigin);
-        //atalho para step
-        fabStep = new FabMenuItem(context);
-        fabStep.setTag("to_step_lbl");
-        fabStep.setmLabel(hmAux_Trans.get("to_step_lbl"));
-        fabStep.setmLabel_Back_Color(lblBgColor);
-        fabStep.setmLabel_Text_Color(lblColor);
-        fabStep.setmButton_Back_Color(btnBgColor);
-        fabStep.setmButton_Resource_Color(iconColor);
-        fabStep.setmButton_Resource(R.drawable.ic_baseline_assignment_24);
-        fabMenuItems.add(fabStep);
-        //atalaho para produto.
-        fabProduct = new FabMenuItem(context);
-        fabProduct.setTag("to_product_lbl");
-        fabProduct.setmLabel(hmAux_Trans.get("to_product_lbl"));
-        fabProduct.setmLabel_Back_Color(lblBgColor);
-        fabProduct.setmLabel_Text_Color(lblColor);
-        fabProduct.setmButton_Back_Color(btnBgColor);
-        fabProduct.setmButton_Resource_Color(iconColor);
-        fabProduct.setmButton_Resource(R.drawable.ic_baseline_build_24);
-        fabMenuItems.add(fabProduct);
-        fabMenu.setFabMenuItens(fabMenuItems);
-        //
-        //Seta tradução e itens no FabMenu
-        for (FabMenuItem item : fabMenuItems) {
-            if (item != null && hmAux_Trans.get((String) item.getTag()) != null) {
-                item.setmLabel(hmAux_Trans.get((String) item.getTag()));
-            } else {
-                item.setmLabel(ToolBox.setNoTrans(mModule_Code, mResource_Code, (String) item.getTag()));
-            }
-        }
-        //
-        fabMenu.setFabMenuItens(fabMenuItems);
-        fabMenu.setmIcons_Enabled(true);
     }
 
 
@@ -262,24 +230,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     }
 
     private void initActions() {
-        fabMenu.setOnFabClickListener(new FabMenu.IFabMenu() {
-            @Override
-            public void onFabClick(View view) {
-                int id = view.getId();
-                if ((id == fabProduct.getId())) {
-                    callAct075();
-                }else if (id == fabStep.getId()){
-                    callAct070();
-                }else if (id == fabOrigin.getId()){
 
-                }
-            }
-
-            @Override
-            public void onFabStatusChanged(boolean b) {
-                hasFABActive = b;
-            }
-        });
     }
 
     private void callAct075() {

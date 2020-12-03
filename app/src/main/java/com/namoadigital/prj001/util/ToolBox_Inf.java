@@ -53,6 +53,8 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.namoa_digital.namoa_library.ctls.FabMenu;
+import com.namoa_digital.namoa_library.ctls.FabMenuItem;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -251,6 +253,8 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
@@ -274,6 +278,7 @@ public class ToolBox_Inf {
     public static final String RANGE_RED = "RANGE_RED";
     public static final String RANGE_YELLOW = "RANGE_YELLOW";
     public static final String RANGE_GREEN = "RANGE_GREEN";
+
 
 //    private static final Map<Character, Character> ACCENT_MAP = initAccentMap();
 //
@@ -1508,7 +1513,7 @@ public class ToolBox_Inf {
      * Em resumo, sera retornada a lista de banco dos customer que terminam com a versão atual do banco,
      * Constant.DB_VERSION_CUSTOM. Dessa forma, os bancos antigos com pendencia de envio,
      * não serão listados
-     * 
+     *
      *
      * @param context - Contexto
      * @param db_version - Versão do banco de dados enviada pelo server.
@@ -7557,6 +7562,91 @@ public class ToolBox_Inf {
 
         ToolBox_Con.setBooleanPreference(context, ConstantBaseApp.DATETIME_IS_VALID, false);
         return false;
+    }
+
+    /**
+     * BARRIONUEVO - 03-12-2020
+     * Encapsulamento de configuração de FABMenu do Pipeline.
+     * @param context
+     * @param fabMenu
+     * @param hmAux_Trans
+     * @param listener
+     */
+    public static void setFabMenu(Context context, FabMenu fabMenu, HMAux hmAux_Trans, FabMenu.IFabMenu listener) {
+        ArrayList<FabMenuItem> fabMenuItems  = initFabMenuItens(context, hmAux_Trans);
+        //
+        fabMenu.setFabMenuItens(fabMenuItems);
+        fabMenu.setmIcons_Enabled(true);
+        fabMenu.setOnFabClickListener(listener);
+    }
+
+    private static ArrayList<FabMenuItem> initFabMenuItens(Context context, HMAux hmAux_Trans) {
+        FabMenuItem fabStep;
+        FabMenuItem fabProduct;
+        FabMenuItem fabOrigin;
+        FabMenuItem fabEditHeader;
+
+        ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
+        int lblBgColor = context.getResources().getColor(R.color.namoa_pipeline_background_icon);
+        int lblColor = context.getResources().getColor(R.color.padrao_WHITE);
+        int btnBgColor = context.getResources().getColor(R.color.namoa_sync_pipeline_background_btn);
+        int iconColor = context.getResources().getColor(R.color.colorPrimary);
+
+        //atalho para edicao de cabecalho.
+        fabEditHeader = new FabMenuItem(context);
+        fabEditHeader.setTag(ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL);
+        fabEditHeader.setmLabel(hmAux_Trans.get("to_header_edit_lbl"));
+        fabEditHeader.setmLabel_Back_Color(lblBgColor);
+        fabEditHeader.setmLabel_Text_Color(lblColor);
+        fabEditHeader.setmButton_Back_Color(btnBgColor);
+        fabEditHeader.setmButton_Resource_Color(iconColor);
+        fabEditHeader.setmButton_Resource(R.drawable.ic_baseline_pipeline_header_24);
+        fabMenuItems.add(fabEditHeader);
+        //atalho para edicao de grupo de trabalho.
+        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP)) {
+            FabMenuItem fabEditWorkGroup;
+            fabEditWorkGroup = new FabMenuItem(context);
+            fabEditWorkGroup.setTag(ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL);
+            fabEditWorkGroup.setmLabel(hmAux_Trans.get("to_work_group_edit_lbl"));
+            fabEditWorkGroup.setmLabel_Back_Color(lblBgColor);
+            fabEditWorkGroup.setmLabel_Text_Color(lblColor);
+            fabEditWorkGroup.setmButton_Back_Color(btnBgColor);
+            fabEditWorkGroup.setmButton_Resource_Color(iconColor);
+            fabEditWorkGroup.setmButton_Resource(R.drawable.ic_baseline_pipeline_header_24);
+            fabMenuItems.add(fabEditWorkGroup);
+        }
+        //atalaho para origin.
+        fabOrigin = new FabMenuItem(context);
+        fabOrigin.setTag(ConstantBaseApp.FAB_TO_ORIGIN_LBL);
+        fabOrigin.setmLabel(hmAux_Trans.get("to_origin_lbl"));
+        fabOrigin.setmLabel_Back_Color(lblBgColor);
+        fabOrigin.setmLabel_Text_Color(lblColor);
+        fabOrigin.setmButton_Back_Color(btnBgColor);
+        fabOrigin.setmButton_Resource_Color(iconColor);
+        fabOrigin.setmButton_Resource(R.drawable.ic_baseline_error_outline_24dp_black);
+        fabMenuItems.add(fabOrigin);
+        //atalho para step
+        fabStep = new FabMenuItem(context);
+        fabStep.setTag(ConstantBaseApp.FAB_TO_STEP_LBL);
+        fabStep.setmLabel(hmAux_Trans.get("to_step_lbl"));
+        fabStep.setmLabel_Back_Color(lblBgColor);
+        fabStep.setmLabel_Text_Color(lblColor);
+        fabStep.setmButton_Back_Color(btnBgColor);
+        fabStep.setmButton_Resource_Color(iconColor);
+        fabStep.setmButton_Resource(R.drawable.ic_baseline_assignment_24);
+        fabMenuItems.add(fabStep);
+        //atalaho para produto.
+        fabProduct = new FabMenuItem(context);
+        fabProduct.setTag(ConstantBaseApp.FAB_TO_PRODUCT_LBL);
+        fabProduct.setmLabel(hmAux_Trans.get("to_product_lbl"));
+        fabProduct.setmLabel_Back_Color(lblBgColor);
+        fabProduct.setmLabel_Text_Color(lblColor);
+        fabProduct.setmButton_Back_Color(btnBgColor);
+        fabProduct.setmButton_Resource_Color(iconColor);
+        fabProduct.setmButton_Resource(R.drawable.ic_baseline_build_24);
+        fabMenuItems.add(fabProduct);
+        //
+        return fabMenuItems;
     }
 
 }
