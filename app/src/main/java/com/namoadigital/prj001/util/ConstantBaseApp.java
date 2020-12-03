@@ -561,6 +561,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_TICKET_PARAM_ACTION_EXEC = "ACTION_EXEC";
     public static final String PROFILE_MENU_TICKET_PARAM_SEARCH_CONTRACT_ID = "SEARCH_CONTRACT_ID";
     public static final String PROFILE_MENU_TICKET_PARAM_SEARCH_CLIENT_ID = "SEARCH_CLIENT_ID";
+    public static final String PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP = "CHANGE_WORKGROUP";
+    public static final String PROFILE_MENU_TICKET_PARAM_EDIT_FORECAST = "EDIT_FORECAST";
+    public static final String PROFILE_MENU_TICKET_PARAM_EDIT_HEADER = "EDIT_HEADER";
+    public static final String PROFILE_MENU_TICKET_PARAM_STEP_EDIT_TIME = "STEP_EDIT_TIME";
 
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
