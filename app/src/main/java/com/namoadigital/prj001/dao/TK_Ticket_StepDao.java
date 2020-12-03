@@ -50,9 +50,13 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String USER_FOCUS = "user_focus";
     public static final String GROUP_CODE = "group_code";
     public static final String GROUP_DESC = "group_desc";
+    public static final String ZONE_SITE_GROUP_CODE = "zone_site_group_code";
+    public static final String ZONE_SITE_GROUP_DESC = "zone_site_group_desc";
     public static final String PC_LEVEL_TARGET = "pc_level_target";
     public static final String AP_GROUP_CODE = "ap_group_code";
     public static final String AP_GROUP_DESC = "ap_group_desc";
+    public static final String AP_ZONE_SITE_GROUP_CODE = "ap_zone_site_group_code";
+    public static final String AP_ZONE_SITE_GROUP_DESC = "ap_zone_site_group_desc";
     public static final String AP_PC_LEVEL_TARGET = "ap_pc_level_target";
     public static final String UPDATE_REQUIRED = "update_required";
     //UTILIZADO NA CONSULTA DA TELA DE TICKETS PENDENTES
@@ -556,6 +560,16 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
             } else {
                 tk_ticket_step.setGroup_desc(cursor.getString(cursor.getColumnIndex(GROUP_DESC)));
             }
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_SITE_GROUP_CODE))) {
+                tk_ticket_step.setZone_site_group_code(null);
+            } else {
+                tk_ticket_step.setZone_site_group_code(cursor.getInt(cursor.getColumnIndex(ZONE_SITE_GROUP_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(ZONE_SITE_GROUP_DESC))) {
+                tk_ticket_step.setZone_site_group_desc(null);
+            } else {
+                tk_ticket_step.setZone_site_group_desc(cursor.getString(cursor.getColumnIndex(ZONE_SITE_GROUP_DESC)));
+            }
             if (cursor.isNull(cursor.getColumnIndex(PC_LEVEL_TARGET))) {
                 tk_ticket_step.setPc_level_target(null);
             } else {
@@ -570,6 +584,17 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 tk_ticket_step.setAp_group_desc(null);
             } else {
                 tk_ticket_step.setAp_group_desc(cursor.getString(cursor.getColumnIndex(AP_GROUP_DESC)));
+            }
+            //AP_ZONE_SITE_GROUP_CODE
+            if (cursor.isNull(cursor.getColumnIndex(AP_ZONE_SITE_GROUP_CODE))) {
+                tk_ticket_step.setAp_zone_site_group_code(null);
+            } else {
+                tk_ticket_step.setAp_zone_site_group_code(cursor.getInt(cursor.getColumnIndex(AP_ZONE_SITE_GROUP_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(AP_ZONE_SITE_GROUP_DESC))) {
+                tk_ticket_step.setAp_zone_site_group_desc(null);
+            } else {
+                tk_ticket_step.setAp_zone_site_group_desc(cursor.getString(cursor.getColumnIndex(AP_ZONE_SITE_GROUP_DESC)));
             }
             if (cursor.isNull(cursor.getColumnIndex(AP_PC_LEVEL_TARGET))) {
                 tk_ticket_step.setAp_pc_level_target(null);
@@ -631,9 +656,13 @@ public class TK_Ticket_StepDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }
             contentValues.put(GROUP_CODE, tk_ticket_step.getGroup_code());
             contentValues.put(GROUP_DESC, tk_ticket_step.getGroup_desc());
+            contentValues.put(ZONE_SITE_GROUP_CODE, tk_ticket_step.getZone_site_group_code());
+            contentValues.put(ZONE_SITE_GROUP_DESC, tk_ticket_step.getZone_site_group_desc());
             contentValues.put(PC_LEVEL_TARGET, tk_ticket_step.getPc_level_target());
             contentValues.put(AP_GROUP_CODE, tk_ticket_step.getAp_group_code());
             contentValues.put(AP_GROUP_DESC, tk_ticket_step.getAp_group_desc());
+            contentValues.put(AP_ZONE_SITE_GROUP_CODE, tk_ticket_step.getAp_zone_site_group_code());
+            contentValues.put(AP_ZONE_SITE_GROUP_DESC, tk_ticket_step.getAp_zone_site_group_desc());
             contentValues.put(AP_PC_LEVEL_TARGET, tk_ticket_step.getAp_pc_level_target());
             if (tk_ticket_step.getUpdate_required() > -1) {
                 contentValues.put(UPDATE_REQUIRED, tk_ticket_step.getUpdate_required());

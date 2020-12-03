@@ -85,10 +85,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        tools:text="20/05/2020 17:00"
         app:layout_constraintEnd_toEndOf="@+id/step_main_tv_desc"
         app:layout_constraintStart_toEndOf="@+id/step_main_iv_end_date"
-        app:layout_constraintTop_toBottomOf="@+id/step_main_tv_forecast_date" />
+        app:layout_constraintTop_toBottomOf="@+id/step_main_tv_forecast_date"
+        tools:text="20/05/2020 17:00" />
 
 
     <ImageView
@@ -115,12 +115,10 @@
         android:id="@+id/step_main_v_divider"
         android:layout_width="0dp"
         android:layout_height="2dp"
-        android:layout_marginTop="8dp"
         android:background="@color/namoa_color_gray3"
-        app:layout_constraintStart_toStartOf="@id/gl_start"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/step_main_tv_end_date"
-        />
+        app:layout_constraintStart_toStartOf="@id/gl_start"
+        app:layout_constraintTop_toBottomOf="@id/step_main_tv_pc_level_target" />
 
     <ImageView
         android:id="@+id/step_main_iv_forecast_date"
@@ -145,5 +143,73 @@
         app:layout_constraintStart_toEndOf="@+id/step_main_iv_forecast_date"
         app:layout_constraintTop_toBottomOf="@+id/step_main_tv_desc" />
 
+    <ImageView
+        android:id="@+id/step_main_iv_workgroup"
+        android:layout_width="@dimen/pipeline_step_icon_width"
+        android:layout_height="@dimen/pipeline_step_icon_width"
+        app:layout_constraintBottom_toBottomOf="@+id/step_main_ss_workgroup"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="@+id/step_main_ss_workgroup"
+        app:srcCompat="@drawable/ic_account_switch_24dp_black"
+        android:tint="@color/namoa_color_gray_4"
+        />
+
+    <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+        android:id="@+id/step_main_ss_workgroup"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/step_main_iv_toggle_icon"
+        app:layout_constraintStart_toEndOf="@id/step_main_iv_workgroup"
+        app:layout_constraintTop_toBottomOf="@+id/step_main_tv_end_date"
+        app:layout_constraintHorizontal_bias="0.0"
+        />
+
+    <ImageView
+        android:id="@+id/step_main_iv_zone_site_group"
+        android:layout_width="@dimen/pipeline_step_icon_width"
+        android:layout_height="@dimen/pipeline_step_icon_width"
+        app:layout_constraintBottom_toBottomOf="@+id/step_main_tv_zone_site_group"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="@+id/step_main_tv_zone_site_group"
+        app:srcCompat="@drawable/ic_baseline_person_pin_circle_24"
+        android:tint="@color/namoa_color_gray_4"
+        />
+
+    <TextView
+        android:id="@+id/step_main_tv_zone_site_group"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        tools:text="Grupo de Limpeza"
+        app:layout_constraintEnd_toStartOf="@+id/step_main_iv_toggle_icon"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/step_main_iv_zone_site_group"
+        app:layout_constraintTop_toBottomOf="@+id/step_main_ss_workgroup" />
+
+    <ImageView
+        android:id="@+id/step_main_iv_pc_level_target"
+        android:layout_width="@dimen/pipeline_step_icon_width"
+        android:layout_height="@dimen/pipeline_step_icon_width"
+        app:layout_constraintBottom_toBottomOf="@+id/step_main_tv_pc_level_target"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="@+id/step_main_tv_pc_level_target"
+        app:srcCompat="@drawable/ic_baseline_business_24_black"
+        android:tint="@color/namoa_color_gray_4"
+        />
+
+    <TextView
+        android:id="@+id/step_main_tv_pc_level_target"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        tools:text="Supervisor"
+        app:layout_constraintEnd_toStartOf="@+id/step_main_iv_toggle_icon"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/step_main_iv_pc_level_target"
+        app:layout_constraintTop_toBottomOf="@+id/step_main_tv_zone_site_group" />
 
 </android.support.constraint.ConstraintLayout>

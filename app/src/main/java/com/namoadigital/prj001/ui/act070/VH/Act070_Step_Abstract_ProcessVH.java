@@ -23,14 +23,16 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
     protected String transReviewProcess;
     protected String transWaitingSync;
     protected String transContinue;
+    protected boolean isInWgEditMode;
 
-    public Act070_Step_Abstract_ProcessVH(Context context, @NonNull View itemView, String transStartProcess, String transReviewProcess, String transContinueProcess, String transWaitingSync) {
+    public Act070_Step_Abstract_ProcessVH(Context context, @NonNull View itemView, String transStartProcess, String transReviewProcess, String transContinueProcess, String transWaitingSync, boolean isInWgEditMode) {
         super(itemView);
         this.context = context;
         this.transStartProcess = transStartProcess;
         this.transReviewProcess = transReviewProcess;
         this.transContinue = transContinueProcess;
         this.transWaitingSync = transWaitingSync;
+        this.isInWgEditMode = isInWgEditMode;
     }
 
     protected void setProductAndSerialVisibility(TextView tvProduct, TextView tvSerial, boolean isProductDifferentThanTicket, boolean isSerialDifferentThanTicket){
@@ -80,10 +82,13 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         if(drawable != null){
             drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP);
         }
+        //TODO VALIDAR ESSE IF, POIS FOI ADICIONANDO O isInWgEditMode
         if(
-            !ConstantBaseApp.SYS_STATUS_CANCELLED.equals(processStatus)
+            (!ConstantBaseApp.SYS_STATUS_CANCELLED.equals(processStatus)
             && !ConstantBaseApp.SYS_STATUS_REJECTED.equals(processStatus)
-            &&(ConstantBaseApp.SYS_STATUS_DONE.equals(processStatus)
+            && !isInWgEditMode)
+
+            || (ConstantBaseApp.SYS_STATUS_DONE.equals(processStatus)
             || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(processStatus)
             || isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn)
             )

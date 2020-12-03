@@ -23,11 +23,13 @@ public class Act070_Step_Process_Btn_VH extends RecyclerView.ViewHolder{
     private ImageView ivBtnIcon;
     private TextView tvBtnLbl;
     private Act070_Steps_Adapter.OnProcessBtnClickListener onProcessBtnClickListener;
+    private boolean isInWgEditMode = false;
 
-    public Act070_Step_Process_Btn_VH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnProcessBtnClickListener onProcessBtnClickListener) {
+    public Act070_Step_Process_Btn_VH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnProcessBtnClickListener onProcessBtnClickListener,boolean isInWgEditMode) {
         super(itemView);
         this.context = context;
         this.onProcessBtnClickListener = onProcessBtnClickListener;
+        this.isInWgEditMode = isInWgEditMode;
         bindViews();
     }
 
@@ -56,6 +58,18 @@ public class Act070_Step_Process_Btn_VH extends RecyclerView.ViewHolder{
             tvBtnLbl.setVisibility(View.VISIBLE);
             tvBtnLbl.setText(stepProcessBtn.getStepDescription());
         }
+        //LUCHE - 03/12/2020
+        applyEditVisivilityIfNeeds();
+    }
+
+    /**
+     * LUCHE - 03 /12/2020
+     * Se modo edição, oculta botões de processo
+     */
+    private void applyEditVisivilityIfNeeds() {
+        if(isInWgEditMode){
+            clBackground.setVisibility(View.GONE);
+        }
     }
 
     private void configBtnByType(String processType) {
@@ -83,6 +97,7 @@ public class Act070_Step_Process_Btn_VH extends RecyclerView.ViewHolder{
     }
 
     private void resetVisibility() {
+        clBackground.setVisibility(View.VISIBLE);
         ivBtnIcon.setVisibility(View.GONE);
         tvBtnLbl.setVisibility(View.GONE);
     }

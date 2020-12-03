@@ -156,6 +156,11 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     @Override
+    public ArrayList<HMAux> getWorkgroupChangeList() {
+        return null;
+    }
+
+    @Override
     public void prepareSyncProcess(TK_Ticket mTicket, boolean allowOfflineSave) {
         //Verifica se há necessidade de envidar dados para o server.
         if(checkUpdateRequiredNeeds(mTicket)){
@@ -1860,7 +1865,17 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 ticketStep.getScan_serial() == 1,
                 ticketStep.getAllow_new_obj()== 1,
                 ticketStep.getMove_next_step()== 1,
-                    ticketStep.getUser_focus() ==1
+                ticketStep.getUser_focus() == 1,
+                String.valueOf(ticketStep.getGroup_code()),
+                ticketStep.getGroup_desc(),
+                String.valueOf(ticketStep.getZone_site_group_code()),
+                ticketStep.getZone_site_group_desc(),
+                getPcLevelTranslate(ticketStep.getPc_level_target()),
+                String.valueOf(ticketStep.getAp_group_code()),
+                ticketStep.getAp_group_desc(),
+                String.valueOf(ticketStep.getAp_zone_site_group_code()),
+                ticketStep.getAp_zone_site_group_desc(),
+                getPcLevelTranslate(ticketStep.getAp_pc_level_target())
             );
             //
             baseSteps.add(stepMain);
@@ -1882,6 +1897,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             );
         }
         return baseSteps;
+    }
+
+    private String getPcLevelTranslate(String pc_level_target) {
+        return pc_level_target != null
+                ? hmAux_Trans.get(pc_level_target)
+                : null;
     }
 
     /**

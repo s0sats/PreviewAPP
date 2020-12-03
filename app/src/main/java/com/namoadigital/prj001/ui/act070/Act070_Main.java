@@ -82,6 +82,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public static final String PARAM_ACTION_CREATION = "PARAM_ACTION_CREATION";
     public static final String IS_OPERATIONAL_PROCESS = "IS_OPERATIONAL_PROCESS";
     public static final String PARAM_FORCE_SEND_BY_FORM_EXEC = "PARAM_FORCE_SEND_BY_FORM_EXEC";
+    public static final String PARAM_WORKGROUP_EDIT_MODE = "PARAM_DENIED_BY_CHECKIN";
 
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
@@ -118,6 +119,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private Integer mNavStepCode;
     private Integer mNavTicketSeq;
     private Integer mNavTicketSeqTmp;
+    //LUCHE - 03/12/2020 - IMPLEMENTAÇÃO EDIÇÁO DE WORKGROUP
+    private boolean isInWgEditMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -411,6 +414,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mNavStepCode = requestingBundle.getInt(TK_Ticket_CtrlDao.STEP_CODE, -1);
             mNavTicketSeq = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ, -1);
             mNavTicketSeqTmp = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, -1);
+            isInWgEditMode =  requestingBundle.getBoolean(PARAM_WORKGROUP_EDIT_MODE, false);
             //
         } else {
             requestingAct = ConstantBaseApp.ACT069;
@@ -421,6 +425,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mNavStepCode = -1;
             mNavTicketSeq = -1;
             mNavTicketSeqTmp = -1;
+            isInWgEditMode = false;
         }
     }
 
@@ -567,7 +572,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 public void onChecklistClick(int checklistPosition) {
                     lastPositionClicked = checklistPosition;
                     StepForm stepForm = (StepForm) sources.get(checklistPosition);
-                    mPresenter.defineFormFlow(mTicket,stepForm);
+                    mPresenter.defineFormFlow(mTicket, stepForm);
 //                    if(ConstantBaseApp.SYS_STATUS_PENDING.equals(stepForm.getProcessStatus())){
 //                        showAlert(
 //                            hmAux_Trans.get("alert_start_form_process_ttl"),
@@ -609,7 +614,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     final StepNone stepNone = (StepNone) sources.get(nonePosition);
                     mPresenter.defineNoneFlow(mTicket, stepNone);
                 }
-            });
+            }, new Act070_Steps_Adapter.OnWorkgroupSpinnerClickListener() {
+            @Override
+            public ArrayList<HMAux> onWorkgroupSpinnerClick() {
+                return mPresenter.getWorkgroupChangeList();
+            }
+        },
+        isInWgEditMode);
         //
         initRecycle();
     }

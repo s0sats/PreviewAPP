@@ -120,5 +120,7 @@ public interface Act070_Main_Contract {
         void defineWsToCall(TK_Ticket mTicket, boolean formAllowOfflineSave, boolean ticketSaveAllowOffline);
 
         boolean getSyncStatusParam(TK_Ticket mTicket);
+
+        ArrayList<HMAux> getWorkgroupChangeList();
     }
 }

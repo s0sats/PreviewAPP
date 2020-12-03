@@ -50,11 +50,19 @@ public class TK_Ticket_Step implements Serializable {
     @Nullable
     private String group_desc;
     @Nullable
+    private Integer zone_site_group_code;
+    @Nullable
+    private String zone_site_group_desc;
+    @Nullable
     private String pc_level_target;
     @Nullable
     private Integer ap_group_code;
     @Nullable
     private String ap_group_desc;
+    @Nullable
+    private Integer ap_zone_site_group_code;
+    @Nullable
+    private String ap_zone_site_group_desc;
     @Nullable
     private String ap_pc_level_target;
     private int update_required;
@@ -292,6 +300,24 @@ public class TK_Ticket_Step implements Serializable {
     }
 
     @Nullable
+    public Integer getZone_site_group_code() {
+        return zone_site_group_code;
+    }
+
+    public void setZone_site_group_code(@Nullable Integer zone_site_group_code) {
+        this.zone_site_group_code = zone_site_group_code;
+    }
+
+    @Nullable
+    public String getZone_site_group_desc() {
+        return zone_site_group_desc;
+    }
+
+    public void setZone_site_group_desc(@Nullable String zone_site_group_desc) {
+        this.zone_site_group_desc = zone_site_group_desc;
+    }
+
+    @Nullable
     public String getPc_level_target() {
         return pc_level_target;
     }
@@ -316,6 +342,24 @@ public class TK_Ticket_Step implements Serializable {
 
     public void setAp_group_desc(@Nullable String ap_group_desc) {
         this.ap_group_desc = ap_group_desc;
+    }
+
+    @Nullable
+    public Integer getAp_zone_site_group_code() {
+        return ap_zone_site_group_code;
+    }
+
+    public void setAp_zone_site_group_code(@Nullable Integer ap_zone_site_group_code) {
+        this.ap_zone_site_group_code = ap_zone_site_group_code;
+    }
+
+    @Nullable
+    public String getAp_zone_site_group_desc() {
+        return ap_zone_site_group_desc;
+    }
+
+    public void setAp_zone_site_group_desc(@Nullable String ap_zone_site_group_desc) {
+        this.ap_zone_site_group_desc = ap_zone_site_group_desc;
     }
 
     @Nullable
