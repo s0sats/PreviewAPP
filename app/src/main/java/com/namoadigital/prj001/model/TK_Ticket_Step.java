@@ -45,6 +45,18 @@ public class TK_Ticket_Step implements Serializable {
     private String step_end_user_nick;
     private String step_status;
     private int user_focus;
+    @Nullable
+    private Integer group_code;
+    @Nullable
+    private String group_desc;
+    @Nullable
+    private String pc_level_target;
+    @Nullable
+    private Integer ap_group_code;
+    @Nullable
+    private String ap_group_desc;
+    @Nullable
+    private String ap_pc_level_target;
     private int update_required;
     @Expose
     private ArrayList<TK_Ticket_Ctrl> ctrl = new ArrayList<>();
@@ -259,6 +271,60 @@ public class TK_Ticket_Step implements Serializable {
 
     public void setUser_focus(int user_focus) {
         this.user_focus = user_focus;
+    }
+
+    @Nullable
+    public Integer getGroup_code() {
+        return group_code;
+    }
+
+    public void setGroup_code(@Nullable Integer group_code) {
+        this.group_code = group_code;
+    }
+
+    @Nullable
+    public String getGroup_desc() {
+        return group_desc;
+    }
+
+    public void setGroup_desc(@Nullable String group_desc) {
+        this.group_desc = group_desc;
+    }
+
+    @Nullable
+    public String getPc_level_target() {
+        return pc_level_target;
+    }
+
+    public void setPc_level_target(@Nullable String pc_level_target) {
+        this.pc_level_target = pc_level_target;
+    }
+
+    @Nullable
+    public Integer getAp_group_code() {
+        return ap_group_code;
+    }
+
+    public void setAp_group_code(@Nullable Integer ap_group_code) {
+        this.ap_group_code = ap_group_code;
+    }
+
+    @Nullable
+    public String getAp_group_desc() {
+        return ap_group_desc;
+    }
+
+    public void setAp_group_desc(@Nullable String ap_group_desc) {
+        this.ap_group_desc = ap_group_desc;
+    }
+
+    @Nullable
+    public String getAp_pc_level_target() {
+        return ap_pc_level_target;
+    }
+
+    public void setAp_pc_level_target(@Nullable String ap_pc_level_target) {
+        this.ap_pc_level_target = ap_pc_level_target;
     }
 
     public ArrayList<TK_Ticket_Ctrl> getCtrl() {

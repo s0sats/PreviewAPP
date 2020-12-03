@@ -71,6 +71,8 @@ public class TK_Ticket implements Cloneable, Serializable {
     private Integer main_user;
     @Nullable
     private String main_user_nick;
+    @Nullable
+    private String main_user_name;
     private Integer pipeline_code;
     @Nullable
     private String pipeline_id;
@@ -130,6 +132,8 @@ public class TK_Ticket implements Cloneable, Serializable {
     private String contract_id;
     @Nullable
     private String contract_desc;
+    //LUCHE - 03/12/2020 - Propriedade que grava o SCN recebido via FCM
+    private int fcm_scn;
     @Expose
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
     @Expose
@@ -500,6 +504,15 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.main_user_nick = main_user_nick;
     }
 
+    @Nullable
+    public String getMain_user_name() {
+        return main_user_name;
+    }
+
+    public void setMain_user_name(@Nullable String main_user_name) {
+        this.main_user_name = main_user_name;
+    }
+
     public Integer getPipeline_code() {
         return pipeline_code;
     }
@@ -789,6 +802,14 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setContract_desc(@Nullable String contract_desc) {
         this.contract_desc = contract_desc;
+    }
+
+    public int getFcm_scn() {
+        return fcm_scn;
+    }
+
+    public void setFcm_scn(int fcm_scn) {
+        this.fcm_scn = fcm_scn;
     }
 
     public ArrayList<TK_Ticket_Step> getStep() {

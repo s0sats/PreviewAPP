@@ -70,6 +70,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String PC_DESC = "pc_desc";
     public static final String MAIN_USER = "main_user";
     public static final String MAIN_USER_NICK = "main_user_nick";
+    public static final String MAIN_USER_NAME = "main_user_name";
     public static final String PIPELINE_CODE = "pipeline_code";
     public static final String PIPELINE_ID = "pipeline_id";
     public static final String PIPELINE_DESC = "pipeline_desc";
@@ -104,6 +105,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String CONTRACT_CODE = "contract_code";
     public static final String CONTRACT_ID = "contract_id";
     public static final String CONTRACT_DESC = "contract_desc";
+    public static final String FCM_SCN = "fcm_scn";
 
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -846,6 +848,11 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             } else {
                 tk_ticket.setMain_user_nick(cursor.getString(cursor.getColumnIndex(MAIN_USER_NICK)));
             }
+            if (cursor.isNull(cursor.getColumnIndex(MAIN_USER_NAME))) {
+                tk_ticket.setMain_user_name(null);
+            } else {
+                tk_ticket.setMain_user_name(cursor.getString(cursor.getColumnIndex(MAIN_USER_NAME)));
+            }
             if (cursor.isNull(cursor.getColumnIndex(PIPELINE_CODE))) {
                 tk_ticket.setPipeline_code(null);
             } else {
@@ -977,7 +984,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             } else {
                 tk_ticket.setContract_desc(cursor.getString(cursor.getColumnIndex(CONTRACT_DESC)));
             }
-            //
+            tk_ticket.setFcm_scn(cursor.getInt(cursor.getColumnIndex(FCM_SCN)));
             return tk_ticket;
         }
     }
@@ -1078,6 +1085,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             contentValues.put(PC_DESC,tk_ticket.getPc_desc());
             contentValues.put(MAIN_USER, tk_ticket.getMain_user());
             contentValues.put(MAIN_USER_NICK,tk_ticket.getMain_user_nick());
+            contentValues.put(MAIN_USER_NAME,tk_ticket.getMain_user_name());
             contentValues.put(PIPELINE_CODE, tk_ticket.getPipeline_code());
             contentValues.put(PIPELINE_ID, tk_ticket.getPipeline_id());
             contentValues.put(PIPELINE_DESC, tk_ticket.getPipeline_desc());
@@ -1138,6 +1146,10 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             contentValues.put(CONTRACT_CODE, tk_ticket.getContract_code());
             contentValues.put(CONTRACT_ID, tk_ticket.getContract_id());
             contentValues.put(CONTRACT_DESC, tk_ticket.getContract_desc());
+            //
+            if (tk_ticket.getFcm_scn() > -1) {
+                contentValues.put(FCM_SCN, tk_ticket.getFcm_scn());
+            }
             //
             return contentValues;
         }
