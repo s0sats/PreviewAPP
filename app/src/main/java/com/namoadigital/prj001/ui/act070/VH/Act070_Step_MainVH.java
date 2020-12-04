@@ -42,10 +42,10 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
     private boolean childShown = false;
     private boolean currentStep = false;
     private final Act070_Steps_Adapter.OnMainClickListener onClickListener;
-    private final Act070_Steps_Adapter.OnWorkgroupSpinnerClickListener onWorkgroupSpinnerClickListener;
+    private final Act070_Steps_Adapter.OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener;
     private boolean isInWgEditMode = false;
 
-    public Act070_Step_MainVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnMainClickListener onClickListener, Act070_Steps_Adapter.OnWorkgroupSpinnerClickListener onWorkgroupSpinnerClickListener,boolean isInWgEditMode) {
+    public Act070_Step_MainVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnMainClickListener onClickListener, Act070_Steps_Adapter.OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener, boolean isInWgEditMode) {
         super(itemView);
         this.context = context;
         this.onClickListener = onClickListener;
@@ -73,6 +73,8 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
         tvPcLevelTarget = this.itemView.findViewById(R.id.step_main_tv_pc_level_target);
         vBottomDivider = this.itemView.findViewById(R.id.step_main_v_divider);
         //
+        configSSWorkgroup();
+        //
         this.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,6 +89,22 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
                 setToggleIcon();
             }
         });
+    }
+
+    private void configSSWorkgroup() {
+         ssWorkgroup.setmShowBarcode(false);
+         ssWorkgroup.setmShowLabel(false);
+         ssWorkgroup.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+             @Override
+             public void onItemPreSelected(HMAux hmAux) {
+
+             }
+
+             @Override
+             public void onItemPostSelected(HMAux hmAux) {
+                onWorkgroupSpinnerClickListener.notifySpinnerItemSelected(getAdapterPosition(), hmAux, ssWorkgroup.hasChangedBD());
+             }
+         });
     }
 
     public boolean isChildShown() {
@@ -126,14 +144,36 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
             );
         }
         if(isInWgEditMode
-            && (ToolBox_Inf.hasConsistentValueString(stepMain.getWorkgroup_code()) || ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code()))
+            && (
+                ToolBox_Inf.hasConsistentValueString(stepMain.getWorkgroup_code())
+                || ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())
+                || stepMain.isGroupChanged()
+                )
         ){
             //SE HOUVER DADOS AP_* ELES É QUE DEVEM SER EXIBIDOS.
-            if(ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())){
-                ssWorkgroup.setmValue(generateWorkGroupValue(stepMain.getAp_workgroup_code() , stepMain.getAp_workgroup_desc()));
-            }else{
-                ssWorkgroup.setmValue(generateWorkGroupValue(stepMain.getWorkgroup_code(), stepMain.getWorkgroup_desc()));
+            HMAux mValue = new HMAux();
+            HMAux mDbValue = new HMAux();
+            if(stepMain.isGroupChanged()){
+                mValue = generateWorkGroupValue(stepMain.getSelected_group_code(), stepMain.getSelected_group_desc());
+                //TODO rever por possivel bug
+                //POSSIVEL BUG AQUI , CASO NÃO TENHA A VAR PREENCHIDA...TALVEZ TEREI QUE ENVIAR PRO
+                // STEPMAIN SE SEU PRIMEIRO FILHO É UMA APROVAÇÃO E NÃO CONFIAR SOMENTE EM QUAL ESTA PREENCHIDA.
+                if(ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())){
+                    mDbValue = generateWorkGroupValue(stepMain.getAp_workgroup_code(), stepMain.getAp_workgroup_desc());
+                }else{
+                    mDbValue = generateWorkGroupValue(stepMain.getWorkgroup_code(), stepMain.getWorkgroup_desc());
+                }
+            } else {
+                if(ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())){
+                    mValue  = mDbValue = generateWorkGroupValue(stepMain.getAp_workgroup_code(), stepMain.getAp_workgroup_desc());
+                }else{
+                    mValue  = mDbValue = generateWorkGroupValue(stepMain.getWorkgroup_code(), stepMain.getWorkgroup_desc());
+                }
             }
+            //
+            ssWorkgroup.setmValue(mValue);
+            ssWorkgroup.setmValueBD(mDbValue);
+            //
             ssWorkgroup.setOnSpinnerClickListner(new SearchableSpinner.OnSpinnerClickListner() {
                 @Override
                 public void onSpinnerClickListner(boolean b) {

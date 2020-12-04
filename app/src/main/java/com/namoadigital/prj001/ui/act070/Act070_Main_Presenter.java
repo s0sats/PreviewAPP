@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
@@ -34,16 +35,19 @@ import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
+import com.namoadigital.prj001.model.T_TK_Get_Workgroup_List_Rec;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.receiver.WBR_TK_Get_Workgroup_List;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
+import com.namoadigital.prj001.service.WS_TK_Get_Workgroup_List;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
@@ -90,6 +94,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     private TK_Ticket_CtrlDao ticketCtrlDao;
     private GE_Custom_FormDao geCustomFormDao;
     private GE_Custom_Form_DataDao formDataDao;
+    private ArrayList<HMAux> workgroupOptionList;
 
     public Act070_Main_Presenter(Context context, Act070_Main_Contract.I_View mView, HMAux hmAux_Trans) {
         this.context = context;
@@ -155,9 +160,168 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketStatus);
     }
 
+    /**
+     * LUCHE - 03/12/2020
+     * Metodo que retorna a lista de opções dos spinner
+     * Verifica todas as possiveis opções e retorna a que for a lista
+     * Opções
+     *  - Propriedade
+     *  - Arquivo Json
+     *  - Ws que resgata retorna a lista
+     * @return
+     * @param mTicket
+     */
     @Override
-    public ArrayList<HMAux> getWorkgroupChangeList() {
+    public ArrayList<HMAux> getWorkgroupChangeList(TK_Ticket mTicket) {
+        if(workgroupOptionList != null){
+            return workgroupOptionList;
+        }
+        //Tenta carregar lista do json, já atualiza a propertie
+        workgroupOptionList = loadWorkgroupListFromJson();
+        //Novamente teste o null e retorna lista caso esteja preenchida.
+        if(workgroupOptionList != null){
+            return workgroupOptionList;
+        }else {
+            //Se não existe lista em memoria e nem no json, tenta busca.
+            callGetWorkgroupChangeList(mTicket);
+            return null;
+        }
+    }
+
+    /**
+     * LUCHE - 04/12/2020
+     * Metodo que carrega arquivo json e retorna lista de HMAux
+     * @return Null se o arquvio não existir ou lista vazi.
+     */
+    @Nullable
+    private ArrayList<HMAux> loadWorkgroupListFromJson() {
+        File file = getWorkgroupJsonFile();
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        try{
+            if (file.exists()) {
+                ArrayList<T_TK_Get_Workgroup_List_Rec .Data> workgroupObjList = gson.fromJson(
+                    ToolBox_Inf.getContents(file),
+                    new TypeToken<ArrayList<T_TK_Get_Workgroup_List_Rec.Data>>() {
+                    }.getType()
+                );
+                //
+                if(workgroupObjList != null){
+                   return generateHmAuxWorkgroupList(workgroupObjList);
+                }
+            }
+        }catch (Exception e ){
+            e.printStackTrace();
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        //
         return null;
+    }
+
+    /**
+     * LUCHE - 04/12/2020
+     * Metodo que retorna o File par ao arquivo de workgroup
+     * @return
+     */
+    @Override
+    public File getWorkgroupJsonFile(){
+        return new File(Constant.TICKET_JSON_PATH, ConstantBaseApp.TICKET_WORKGROUP_LIST_JSON_FILE);
+    }
+
+    /**
+     * LUCHE - 04/12/2020
+     * Metodo que transforma o obj json para hmAux, que é usado no SS
+     * @param workgroupObjList
+     * @return
+     */
+    private ArrayList<HMAux> generateHmAuxWorkgroupList(ArrayList<T_TK_Get_Workgroup_List_Rec.Data> workgroupObjList) {
+        ArrayList<HMAux> auxList = new ArrayList<>();
+        for (T_TK_Get_Workgroup_List_Rec.Data data : workgroupObjList) {
+            HMAux hmAux = new HMAux();
+            hmAux.put(SearchableSpinner.CODE, String.valueOf(data.getGroup_code()));
+            hmAux.put(SearchableSpinner.DESCRIPTION,data.getGroup_desc());
+            auxList.add(hmAux);
+        }
+        //
+        return auxList;
+    }
+
+    /**
+     * LUCHE - 04/12/2020
+     * Metodo que chama Serviço que retorna lista de workgroup
+     * @param mTicket
+     */
+    private void callGetWorkgroupChangeList(TK_Ticket mTicket) {
+        if(ToolBox_Con.isOnline(context)){
+            mView.setWsProcess(WS_TK_Get_Workgroup_List.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("dialog_download_ticket_ttl"),
+                hmAux_Trans.get("dialog_download_ticket_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_TK_Get_Workgroup_List.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket.getTicket_prefix());
+            bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket.getTicket_code() );
+            bundle.putInt(TK_TicketDao.SCN, mTicket.getScn() );
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public void processWsTkGetWorkgroup() {
+        ArrayList<HMAux> hmAuxes = loadWorkgroupListFromJson();
+        if(hmAuxes != null && hmAuxes.size() > 0 ){
+            workgroupOptionList = hmAuxes;
+            mView.showAlert(
+                hmAux_Trans.get("alert_workgroup_list_successfully_loaded_ttl"),
+                hmAux_Trans.get("alert_workgroup_list_successfully_loaded_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mView.toogleIntoEditMode();
+                    }
+                },
+                false
+            );
+        }
+    }
+
+    /**
+     * LUCHE - 04/12/2020
+     * Metodo que retorno se é possivel ativar ou nao o modo edição de workgroup
+     * @param mTicket
+     * @return
+     */
+    @Override
+    public boolean allowEditModeOn(TK_Ticket mTicket) {
+        return  ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP)
+                && !checkUpdateRequired(mTicket)
+                && !ToolBox_Inf.hasOffHandFormInProcess(context,mTicket.getTicket_prefix(),mTicket.getTicket_code())
+                && !hasSyncRequiredByFcmScn(mTicket.getTicket_prefix(),mTicket.getTicket_code());
+    }
+
+    /**
+     * LUCHE - 04/12/2020
+     * Metodo que verifica se o sync_required é por causa do SCN que foi alterado.
+     * Como o sync_required tb é acionado caso um PDF seja gerado, foi necessario criar essa separação.
+     * Para identificar que o Sync foi originado por uma mudança de SCN, foi criado o campo de FCM_SCN
+     * que salva o ultimo SCN enviado pelo FCM. Caso esse seja maior que o SCN , então o sync_required
+     * é por causa de uma mudança d SCN
+     * @param ticket_prefix
+     * @param ticket_code
+     * @return
+     */
+    private boolean hasSyncRequiredByFcmScn(int ticket_prefix, int ticket_code) {
+        TK_Ticket dbTicket = getTicketObj(ticket_prefix,ticket_code);
+        if(dbTicket != null && dbTicket.getSync_required() == 1 && dbTicket.getFcm_scn() > dbTicket.getScn()){
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -1866,14 +2030,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 ticketStep.getAllow_new_obj()== 1,
                 ticketStep.getMove_next_step()== 1,
                 ticketStep.getUser_focus() == 1,
-                String.valueOf(ticketStep.getGroup_code()),
+                ticketStep.getGroup_code() != null ? String.valueOf(ticketStep.getGroup_code()) : null,
                 ticketStep.getGroup_desc(),
-                String.valueOf(ticketStep.getZone_site_group_code()),
+                ticketStep.getZone_site_group_code() != null ? String.valueOf(ticketStep.getZone_site_group_code()) : null,
                 ticketStep.getZone_site_group_desc(),
                 getPcLevelTranslate(ticketStep.getPc_level_target()),
-                String.valueOf(ticketStep.getAp_group_code()),
+                ticketStep.getAp_group_code() != null ? String.valueOf(ticketStep.getAp_group_code()) : null,
                 ticketStep.getAp_group_desc(),
-                String.valueOf(ticketStep.getAp_zone_site_group_code()),
+                ticketStep.getAp_zone_site_group_code() != null ? String.valueOf(ticketStep.getAp_zone_site_group_code()): null,
                 ticketStep.getAp_zone_site_group_desc(),
                 getPcLevelTranslate(ticketStep.getAp_pc_level_target())
             );
@@ -1903,6 +2067,21 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return pc_level_target != null
                 ? hmAux_Trans.get(pc_level_target)
                 : null;
+    }
+
+    @Override
+    public void updateWorkgroupChangeIntoItem(ArrayList<BaseStep> sources, int stepMainPosition, HMAux hmAux, boolean dbValueChanges) {
+        StepMain stepMain = (StepMain) sources.get(stepMainPosition);
+        if(hmAux != null && hmAux.size() > 0){
+            stepMain.setSelected_group_code(hmAux.get(SearchableSpinner.CODE));
+            stepMain.setSelected_group_desc(hmAux.get(SearchableSpinner.DESCRIPTION));
+        }else{
+            stepMain.setSelected_group_code(null);
+            stepMain.setSelected_group_desc(null);
+        }
+        stepMain.setGroupChanged(dbValueChanges);
+        //
+        //mView.informAdapterItemUpdate(stepMainPosition);
     }
 
     /**

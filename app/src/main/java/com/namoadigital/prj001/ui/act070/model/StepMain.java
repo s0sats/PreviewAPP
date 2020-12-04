@@ -20,6 +20,9 @@ public class StepMain extends BaseStep{
     private String ap_zone_site_group_code;
     private String ap_zone_site_group_desc;
     private String ap_pc_level_target;
+    private String selected_group_code;
+    private String selected_group_desc;
+    private boolean groupChanged;
     private boolean currentStep;
     private boolean stepOpen;
     private boolean scan_serial;
@@ -239,6 +242,30 @@ public class StepMain extends BaseStep{
 
     public void setAp_pc_level_target(String ap_pc_level_target) {
         this.ap_pc_level_target = ap_pc_level_target;
+    }
+
+    public String getSelected_group_code() {
+        return selected_group_code;
+    }
+
+    public void setSelected_group_code(String selected_group_code) {
+        this.selected_group_code = selected_group_code;
+    }
+
+    public String getSelected_group_desc() {
+        return selected_group_desc;
+    }
+
+    public void setSelected_group_desc(String selected_group_desc) {
+        this.selected_group_desc = selected_group_desc;
+    }
+
+    public boolean isGroupChanged() {
+        return groupChanged;
+    }
+
+    public void setGroupChanged(boolean groupChanged) {
+        this.groupChanged = groupChanged;
     }
 
     public static boolean usesStatusColorInStep(String stepStatus){

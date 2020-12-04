@@ -229,6 +229,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String CHAT_PATH;
     public static String CACHE_CHAT_PATH;
     public static String UNSENT_IMG_PATH;
+    public static String TICKET_JSON_PATH;
 
     public static String ZIP_NAME;
     public static String ZIP_NAME_FULL;
@@ -661,6 +662,8 @@ public class ConstantBaseApp extends ConstantBase {
     //BROADCAST DE PARA
     public static final String BR_TICKET_SAVE = "BR_TICKET_SAVE";
     public static final String TK_TICKET_INTENT_FILTER_ACTION_CTRL_UPDATE = "ACTION_CTRL_UPDATE";
+    //Arquivos json
+    public static final String TICKET_WORKGROUP_LIST_JSON_FILE = "tk_workgroup_list.json";
     /*
      * Constantes Pipeline
      */
