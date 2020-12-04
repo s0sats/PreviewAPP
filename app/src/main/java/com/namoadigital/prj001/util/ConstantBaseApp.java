@@ -678,6 +678,15 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_TICKET_IS_FORM_OFF_HAND = "TK_TICKET_FORM_OFF_HAND";
 
     /*
+     * Constantes FAB menu item
+     */
+    public static final String FAB_TO_PRODUCT_LBL = "to_product_lbl";
+    public static final String FAB_TO_HEADER_EDIT_LBL = "fab_to_header_edit_lbl";
+    public static final String FAB_TO_WORK_GROUP_EDIT_LBL = "fab_to_work_group_edit_lbl";
+    public static final String FAB_TO_ORIGIN_LBL = "fab_to_origin_lbl";
+    public static final String FAB_TO_STEP_LBL = "fab_to_step_lbl";
+
+    /*
      * Constantes agendamento
      */
     public static final String MD_SCHEDULE_TYPE_FORM = "FORM";

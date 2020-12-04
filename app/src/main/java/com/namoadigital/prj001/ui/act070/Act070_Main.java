@@ -26,7 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
-import com.namoa_digital.namoa_library.ctls.FabMenuItem;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
@@ -62,6 +61,7 @@ import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
 import com.namoadigital.prj001.ui.act076.Act076_Main;
 import com.namoadigital.prj001.ui.act081.Act081_Main;
+import com.namoadigital.prj001.ui.act082.Act082_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -106,10 +106,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private Act070_Steps_Adapter mAdapter;
     private ArrayList<BaseStep> sources = new ArrayList<>();
     private FabMenu fabMenu;
-    private FabMenuItem fabStep;
-    private FabMenuItem fabProduct;
-    private FabMenuItem fabOrigin;
-    private ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
     private boolean hasFABActive=false;
     private String save_return = "";
     private int lastPositionClicked =-1;
@@ -195,6 +191,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("to_product_lbl");
         transList.add("to_step_lbl");
         transList.add("to_origin_lbl");
+        transList.add("to_work_group_edit_lbl");
+        transList.add("to_header_edit_lbl");
         //
         transList.add("alert_checkout_confirm_ttl");
         transList.add("alert_checkout_confirm_msg");
@@ -283,7 +281,34 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         recoverIntentsInfo();
         //
-        initFabMenuItens();
+        ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
+                new FabMenu.IFabMenu() {
+                    @Override
+                    public void onFabClick(View view) {
+                        String tag = (String) view.getTag();
+                        //
+                        switch (tag){
+                            case ConstantBaseApp.FAB_TO_ORIGIN_LBL:
+                                callOrigin();
+                                break;
+                            case ConstantBaseApp.FAB_TO_PRODUCT_LBL:
+                                callAct075(PRODUCT_VIEW_ID);
+                                break;
+                            case ConstantBaseApp.FAB_TO_STEP_LBL:
+                                break;
+                            case ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL:
+                                callAct082();
+                                break;
+                        }
+                        //
+                    }
+
+                    @Override
+                    public void onFabStatusChanged(boolean b) {
+                        hasFABActive = b;
+                    }
+                }
+        );
         //
         if (mPresenter.validateBundleParams(mTkPrefix, mTkCode)) {
             updateTicketData();
@@ -292,53 +317,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }
     }
 
-    private void initFabMenuItens() {
-        int lblBgColor = getResources().getColor(R.color.namoa_pipeline_background_icon);
-        int lblColor = getResources().getColor(R.color.padrao_WHITE);
-        int btnBgColor = getResources().getColor(R.color.namoa_sync_pipeline_background_btn);
-        int iconColor = getResources().getColor(R.color.colorPrimary);
-        //atalaho para origin.
-        fabOrigin = new FabMenuItem(context);
-        fabOrigin.setTag("to_origin_lbl");
-        fabOrigin.setmLabel(hmAux_Trans.get("to_origin_lbl"));
-        fabOrigin.setmLabel_Back_Color(lblBgColor);
-        fabOrigin.setmLabel_Text_Color(lblColor);
-        fabOrigin.setmButton_Back_Color(btnBgColor);
-        fabOrigin.setmButton_Resource_Color(iconColor);
-        fabOrigin.setmButton_Resource(R.drawable.ic_baseline_error_outline_24dp_black);
-        fabMenuItems.add(fabOrigin);
-        //atalho para step
-        fabStep = new FabMenuItem(context);
-        fabStep.setTag("to_step_lbl");
-        fabStep.setmLabel(hmAux_Trans.get("to_step_lbl"));
-        fabStep.setmLabel_Back_Color(lblBgColor);
-        fabStep.setmLabel_Text_Color(lblColor);
-        fabStep.setmButton_Back_Color(btnBgColor);
-        fabStep.setmButton_Resource_Color(iconColor);
-        fabStep.setmButton_Resource(R.drawable.ic_baseline_assignment_24);
-        fabMenuItems.add(fabStep);
-        //atalaho para produto.
-        fabProduct = new FabMenuItem(context);
-        fabProduct.setTag("to_product_lbl");
-        fabProduct.setmLabel(hmAux_Trans.get("to_product_lbl"));
-        fabProduct.setmLabel_Back_Color(lblBgColor);
-        fabProduct.setmLabel_Text_Color(lblColor);
-        fabProduct.setmButton_Back_Color(btnBgColor);
-        fabProduct.setmButton_Resource_Color(iconColor);
-        fabProduct.setmButton_Resource(R.drawable.ic_baseline_build_24);
-        fabMenuItems.add(fabProduct);
-//        fabMenu.setFabMenuItens(fabMenuItems);
-        //Seta tradução e itens no FabMenu
-        for (FabMenuItem item : fabMenuItems) {
-            if (item != null && hmAux_Trans.get((String) item.getTag()) != null) {
-                item.setmLabel(hmAux_Trans.get((String) item.getTag()));
-            } else {
-                item.setmLabel(ToolBox.setNoTrans(mModule_Code, mResource_Code, (String) item.getTag()));
-            }
-        }
+    private void callAct082() {
+        Intent intent = new Intent(context, Act082_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
-        fabMenu.setFabMenuItens(fabMenuItems);
-        fabMenu.setmIcons_Enabled(true);
+        intent.putExtras(requestingBundle);
+        //
+        startActivity(intent);
+        finish();
     }
 
     private void iniHeaderFrag() {
@@ -956,25 +942,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     private void initAction() {
-        fabMenu.setOnFabClickListener(new FabMenu.IFabMenu() {
-            @Override
-            public void onFabClick(View view) {
-                int id = view.getId();
 
-                if ((id == fabProduct.getId())) {
-                    callAct075(PRODUCT_VIEW_ID);
-                }else if (id == fabStep.getId()){
-
-                }else if (id == fabOrigin.getId()){
-                    callOrigin();
-                }
-            }
-
-            @Override
-            public void onFabStatusChanged(boolean b) {
-                hasFABActive = b;
-            }
-        });
     }
 
     @Override
