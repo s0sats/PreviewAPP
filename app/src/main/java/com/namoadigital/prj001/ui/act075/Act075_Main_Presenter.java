@@ -159,24 +159,6 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     }
 
     @Override
-    public void saveproduct(int scn, ArrayList<TK_Ticket_Product> tk_ticket_products) {
-        mView.setWsProcess(WS_TK_Ticket_Product_Save.class.getName());
-        //
-        mView.showPD(
-                hmAux_Trans.get("dialog_product_save_ticket_ttl"),
-                hmAux_Trans.get("dialog_product_save_ticket_start")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_TK_Ticket_Product_Save.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(TK_TicketDao.SCN, scn);
-        bundle.putSerializable(TK_Ticket_ProductDao.TABLE, tk_ticket_products);
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-    }
-
-    @Override
     public boolean getWithdrawStatus(TK_Ticket ticket) {
         List<TK_Ticket_Approval> approvals = getTicketApprovals(ticket);
 

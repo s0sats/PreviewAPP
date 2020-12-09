@@ -40,8 +40,6 @@ public interface Act075_Main_Contract {
         //
         TK_Ticket_Product getTicketProduct(long customer_code, int ticket_prefix, int ticket_code, int product_code);
         //
-        void saveproduct(int scn, ArrayList<TK_Ticket_Product> tk_ticket_products);
-        //
         boolean getWithdrawStatus(TK_Ticket ticket);
         //
         boolean getAppliedStatus(TK_Ticket ticket);
