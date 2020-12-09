@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:context="com.namoadigital.prj001.ui.act082.Act082_Main">
 
     <android.support.design.widget.AppBarLayout

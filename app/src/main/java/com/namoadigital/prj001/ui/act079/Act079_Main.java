@@ -26,6 +26,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
+import com.namoadigital.prj001.ui.act082.Act082_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -53,6 +54,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     TextView tv_form_nc_count;
     ImageView iv_form_download_pdf;
     TextView tv_form_download_pdf;
+    private boolean is_from_edit_header;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,6 +218,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         if (requestingBundle != null) {
             mTkPrefix = requestingBundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
             mTkCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
+            is_from_edit_header = requestingBundle.getBoolean(Act082_Main.FROM_EDIT_HEADER, false);
         }
     }
 
@@ -224,8 +227,19 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         if (hasFABActive) {
             fabMenu.animateFAB();
         } else {
-            callAct070();
+            if(is_from_edit_header){
+                callAct082();
+            }else {
+                callAct070();
+            }
         }
+    }
+
+    private void callAct082() {
+        Intent intent = new Intent(context, Act082_Main.class);
+        intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
     }
 
     private void initActions() {

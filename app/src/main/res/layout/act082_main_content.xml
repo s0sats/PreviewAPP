@@ -4,7 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <FrameLayout
         android:id="@+id/act082_frg_pipeline_header"
@@ -17,13 +21,15 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:fillViewport="true"
         >
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/text_black">
 
             <LinearLayout
                 android:id="@+id/act082_ll_header_infos"
@@ -44,25 +50,40 @@
                     style="@android:style/TextAppearance.Material"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:layout_marginLeft="8dp"
                     tools:text="Comentarios do Ticket" />
 
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/act082_mket_internal_comments_val"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    />
 
             </LinearLayout>
+
+            <View
+                android:id="@+id/act082_view_divider"
+                android:layout_width="0dp"
+                android:layout_height="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/namoa_color_black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act082_ll_header_infos" />
 
             <LinearLayout
                 android:id="@+id/act082_ll_date_and_forecast_infos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:orientation="vertical"
                 android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/act082_ll_header_infos">
+                app:layout_constraintTop_toBottomOf="@+id/act082_view_divider">
 
                 <TextView
                     android:id="@+id/act082_tv_date_and_forecast_infos_lbl"
@@ -81,7 +102,6 @@
                         style="@android:style/TextAppearance.Material"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
                         tools:text="Inicio do Atendimento" />
 
                     <include
@@ -91,13 +111,29 @@
                         android:layout_height="wrap_content"
                         android:visibility="gone" />
 
+                    <TextView
+                        android:id="@+id/act082_tv_start_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:textColor="@color/namoa_light_blue"
+                        tools:text="07/12/2020" />
+
                     <RadioButton
                         android:id="@+id/act082_rb_end_date"
                         style="@android:style/TextAppearance.Material"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
                         tools:text="Final do Atendimento" />
+
+                    <TextView
+                        android:id="@+id/act082_tv_end_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="07/12/2020"
+                        android:textColor="@color/namoa_light_blue"
+                        android:layout_marginLeft="32dp"
+                        />
 
                     <include
                         android:id="@+id/act082_end_date_form"
@@ -111,15 +147,23 @@
                         style="@android:style/TextAppearance.Material"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textStyle="bold"
                         tools:text="Tempo do Atendimento" />
+
+                    <TextView
+                        android:id="@+id/act082_tv_service_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        tools:text="1 10:10"
+                        android:layout_marginLeft="32dp"
+                        />
 
                     <android.support.constraint.ConstraintLayout
                         android:id="@+id/act082_cl_service_time_form"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingVertical="8dp"
-                        android:visibility="visible">
+                        android:visibility="gone">
 
                         <TextView
                             android:id="@+id/act082_tv_service_time_day_lbl"
@@ -199,58 +243,57 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            tools:text="Deslocar Data de Inicio"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="@+id/act082_edt_service_time_day_val"
 
-                            app:layout_constraintBottom_toBottomOf="parent"/>
+                            tools:text="Deslocar Data de Inicio" />
                     </android.support.constraint.ConstraintLayout>
                 </RadioGroup>
 
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/act082_btn_cancel_header_form"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginVertical="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/namoa_cell_12_states"
-                android:textAllCaps="true"
-                android:textColor="@color/colorFooterWhite"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/act082_btn_save_header_form"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/act082_ll_date_and_forecast_infos"
-                app:layout_constraintVertical_bias="1.0"
-                tools:text="Cancel" />
 
-            <Button
-                android:id="@+id/act082_btn_save_header_form"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginVertical="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/namoa_cell_12_states"
-                android:textAllCaps="true"
-                android:textColor="@color/colorFooterWhite"
-                app:layout_constraintBottom_toBottomOf="@+id/act082_btn_cancel_header_form"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/act082_btn_cancel_header_form"
-                app:layout_constraintTop_toTopOf="@+id/act082_btn_cancel_header_form"
-                tools:text="SALVAR" />
 
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 
+    <LinearLayout
+        android:id="@+id/act082_ll_edit_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/act082_btn_cancel_header_form"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/namoa_cell_12_states"
+            android:textAllCaps="true"
+            android:textColor="@color/colorFooterWhite"
+            tools:text="Cancel" />
+
+        <Button
+            android:id="@+id/act082_btn_save_header_form"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/namoa_cell_12_states"
+            android:textAllCaps="true"
+            android:textColor="@color/colorFooterWhite"
+            tools:text="SALVAR" />
+
+    </LinearLayout>
     <include
         layout="@layout/footer_base"/>
 </LinearLayout>

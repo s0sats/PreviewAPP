@@ -51,8 +51,10 @@ public class TK_Ticket implements Cloneable, Serializable {
     private String open_product_desc;
     private int open_serial_code;
     private String open_serial_id;
+    private String start_date;
     @Nullable
     private String forecast_date;
+    private String forecast_time;
     private String ticket_status;
     @Nullable
     private String close_date;
@@ -404,6 +406,14 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.open_serial_id = open_serial_id;
     }
 
+    public String getStart_date() {
+        return start_date;
+    }
+
+    public void setStart_date(String start_date) {
+        this.start_date = start_date;
+    }
+
     @Nullable
     public String getForecast_date() {
         return forecast_date;
@@ -411,6 +421,14 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setForecast_date(@Nullable String forecast_date) {
         this.forecast_date = forecast_date;
+    }
+
+    public String getForecast_time() {
+        return forecast_time;
+    }
+
+    public void setForecast_time(String forecast_time) {
+        this.forecast_time = forecast_time;
     }
 
     public String getTicket_status() {
