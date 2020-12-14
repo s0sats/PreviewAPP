@@ -20,8 +20,8 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.model.T_TK_Header_N_Group_Save_WG_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Header_Group_Env;
-import com.namoadigital.prj001.model.T_TK_Ticket_Product_Save_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Product_Save_Return_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Product_Return_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec;
@@ -55,6 +55,7 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
     public static final String MOVE_OTHER_DATE = "MOVE_OTHER_DATE";
     public static final String MOVE_STEPS = "MOVE_STEPS";
     public static final String IS_HEADER_DATETIME_CHANGES = "IS_HEADER_DATETIME_CHANGES";
+    public static final String WORKGROUP_JSON_PARAM = "WORKGROUP_JSON_PARAM";
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = ConstantBaseApp.APP_MODULE;
     private String mResource_Code = "0";
@@ -85,6 +86,8 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
     private String forecast_date;
     private String internalComments;
     private List<TK_Ticket> ticketToSend = new ArrayList<>();
+    private T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Ticket wgTicket;
+
     public final static String PRODUCT_SAVE_RETURN_KEY = "PRODUCT_SAVE_RETURN_KEY";
 
 
@@ -117,6 +120,7 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
             move_other_date = bundle.getInt(MOVE_OTHER_DATE, 0);
             move_steps = bundle.getInt(MOVE_STEPS, 0);
             is_header_datetime_changes = bundle.getBoolean(IS_HEADER_DATETIME_CHANGES);
+            wgTicket = (T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Ticket) bundle.getSerializable(WORKGROUP_JSON_PARAM);
             //
             processTicketSave();
             //
@@ -142,38 +146,48 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_preparing_items_data"), "", "0");
         //
         String token = ToolBox_Inf.getToken(getApplicationContext());
-        //
-        TK_Ticket ticket = getTicketDB(ticketPrefix, ticketCode);
         /*
             Metodo que configura campos de envio oriundos da tela de cabeçalho.
          */
         if(is_header_datetime_changes) {
+            TK_Ticket ticket = getTicketDB(ticketPrefix, ticketCode);
+            //
             setHeaderChanges(ticket);
+            //
+            ticketToSend.add(
+                ticket
+            );
+            //Se lista vazia, dispara msg de erro.
+            if (ticketToSend == null || ticketToSend.size() == 0) {
+                String json = actReturnList != null ? gsonRec.toJson(actReturnList) : gsonRec.toJson(new ArrayList<>());
+                //
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), json, "0");
+                return;
+            }
+            //
+            T_TK_Ticket_Header_Group_Env env = new T_TK_Ticket_Header_Group_Env();
+            //
+            env.setApp_code(ConstantBaseApp.PRJ001_CODE);
+            env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
+            env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
+            env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
+            env.setTicket(ticketToSend);
+            env.setToken(token);
+            //
+            callWsTicketSave(gsonEnv.toJson(env));
         }else{
             //todo tratar workgroup.
-        }
-        //
-        ticketToSend.add(
-                ticket
-        );
-        //Se lista vazia, dispara msg de erro.
-        if (ticketToSend == null || ticketToSend.size() == 0) {
-            String json = actReturnList != null ? gsonRec.toJson(actReturnList) : gsonRec.toJson(new ArrayList<>());
+            T_TK_Header_N_Group_Save_WG_Env env = new T_TK_Header_N_Group_Save_WG_Env(
+                Constant.PRJ001_CODE,
+                Constant.PRJ001_VERSION,
+                Constant.PKG_APP_TYPE_DEFAULT,
+                ToolBox_Con.getPreference_Session_App(getApplicationContext()),
+                token,
+                wgTicket
+            );
             //
-            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), json, "0");
-            return;
+            callWsTicketSave(gsonRec.toJson(env));
         }
-        //
-        T_TK_Ticket_Header_Group_Env env = new T_TK_Ticket_Header_Group_Env();
-        //
-        env.setApp_code(ConstantBaseApp.PRJ001_CODE);
-        env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
-        env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
-        env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
-        env.setTicket(ticketToSend);
-        env.setToken(token);
-        //
-        callWsTicketSave(env);
     }
 
     private void setHeaderChanges(TK_Ticket ticket) {
@@ -367,36 +381,35 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
         return ticket;
     }
 
-    private void callWsTicketSave(T_TK_Ticket_Header_Group_Env env) throws Exception {
+    private void callWsTicketSave(String jsonEnv) throws Exception {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //
-        String jsonEnv = gsonEnv.toJson(env);
         String resultado = ToolBox_Con.connWebService(
-                Constant.WS_TICKET_SAVE,
-                jsonEnv
+            Constant.WS_TICKET_SAVE,
+            jsonEnv
         );
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
         //
         T_TK_Ticket_Save_Rec rec = gsonRec.fromJson(
-                resultado,
-                T_TK_Ticket_Save_Rec.class
+            resultado,
+            T_TK_Ticket_Save_Rec.class
         );
         //
         if (
-                !ToolBox_Inf.processWSCheckValidation(
-                        getApplicationContext(),
-                        rec.getValidation(),
-                        rec.getError_msg(),
-                        rec.getLink_url(),
-                        1,
-                        1)
-                        ||
-                        !ToolBox_Inf.processoOthersError(
-                                getApplicationContext(),
-                                getResources().getString(R.string.generic_error_lbl),
-                                rec.getError_msg())
+            !ToolBox_Inf.processWSCheckValidation(
+                getApplicationContext(),
+                rec.getValidation(),
+                rec.getError_msg(),
+                rec.getLink_url(),
+                1,
+                1)
+                ||
+                !ToolBox_Inf.processoOthersError(
+                    getApplicationContext(),
+                    getResources().getString(R.string.generic_error_lbl),
+                    rec.getError_msg())
         ) {
             return;
         }
@@ -405,6 +418,45 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
         //
         processTicketSaveReturn(rec);
     }
+
+//    private void callWsTicketSave(T_TK_Ticket_Header_Group_Env env) throws Exception {
+//        //
+//        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
+//        //
+//        String jsonEnv = gsonEnv.toJson(env);
+//        String resultado = ToolBox_Con.connWebService(
+//                Constant.WS_TICKET_SAVE,
+//                jsonEnv
+//        );
+//        //
+//        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
+//        //
+//        T_TK_Ticket_Save_Rec rec = gsonRec.fromJson(
+//                resultado,
+//                T_TK_Ticket_Save_Rec.class
+//        );
+//        //
+//        if (
+//                !ToolBox_Inf.processWSCheckValidation(
+//                        getApplicationContext(),
+//                        rec.getValidation(),
+//                        rec.getError_msg(),
+//                        rec.getLink_url(),
+//                        1,
+//                        1)
+//                        ||
+//                        !ToolBox_Inf.processoOthersError(
+//                                getApplicationContext(),
+//                                getResources().getString(R.string.generic_error_lbl),
+//                                rec.getError_msg())
+//        ) {
+//            return;
+//        }
+//        //
+//        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_processing_data"), "", "0");
+//        //
+//        processTicketSaveReturn(rec);
+//    }
 
     private void processTicketSaveReturn(T_TK_Ticket_Save_Rec rec) throws Exception {
         if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(rec.getSave())

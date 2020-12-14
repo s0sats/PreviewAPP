@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -44,12 +43,14 @@ import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Get_Workgroup_List;
+import com.namoadigital.prj001.receiver.WBR_TK_Header_N_Group_Save;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Get_Workgroup_List;
+import com.namoadigital.prj001.service.WS_TK_Header_N_Group_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
@@ -299,19 +300,23 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     }
 
     private void callWsWgSave(T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Ticket wgTicket) {
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        T_TK_Header_N_Group_Save_WG_Env groupSaveWgEnv =
-            new T_TK_Header_N_Group_Save_WG_Env(
-                Constant.PRJ001_CODE,
-                Constant.PRJ001_VERSION,
-                Constant.PKG_APP_TYPE_DEFAULT,
-                ToolBox_Con.getPreference_Session_App(context),
-                ToolBox_Inf.getToken(context),
-                wgTicket
+        if(ToolBox_Con.isOnline(context)){
+            mView.setWsProcess(WS_TK_Header_N_Group_Save.class.getName());
+            //
+            mView.showPD(
+                hmAux_Trans.get("dialog_save_workgroup_changes_ttl"),
+                hmAux_Trans.get("dialog_save_workgroup_changes_msg")
             );
-
-        String json = gson.toJson(groupSaveWgEnv);
-        Log.d("WG_JSON",json);
+            //
+            Intent mIntent = new Intent(context, WBR_TK_Header_N_Group_Save.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(WS_TK_Header_N_Group_Save.WORKGROUP_JSON_PARAM,wgTicket);
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -32,7 +33,7 @@ public class T_TK_Header_N_Group_Save_WG_Env extends Main_Header_Env {
         this.token = token;
     }
 
-    public static class T_TK_Header_N_Group_Save_WG_Ticket{
+    public static class T_TK_Header_N_Group_Save_WG_Ticket implements Serializable {
         private long customer_code;
         private int ticket_prefix;
         private int ticket_code;
@@ -91,7 +92,7 @@ public class T_TK_Header_N_Group_Save_WG_Env extends Main_Header_Env {
         }
     }
 
-    public static class T_TK_Header_N_Group_Save_WG_Step{
+    public static class T_TK_Header_N_Group_Save_WG_Step implements Serializable{
         private int step_code;
         private int step_group_code;
 

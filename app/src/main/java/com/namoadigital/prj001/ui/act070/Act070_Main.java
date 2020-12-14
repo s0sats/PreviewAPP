@@ -42,6 +42,7 @@ import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Get_Workgroup_List;
+import com.namoadigital.prj001.service.WS_TK_Header_N_Group_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
@@ -273,6 +274,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("btn_save_edit");
         transList.add("alert_cancel_edit_mode_ttl");
         transList.add("alert_unsaved_group_changes_will_be_lost_msg");
+        transList.add("dialog_save_workgroup_changes_ttl");
+        transList.add("dialog_save_workgroup_changes_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -1293,6 +1296,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             wsProcess = "";
             progressDialog.dismiss();
             mPresenter.processWsTkGetWorkgroup();
+        }else if(wsProcess.equals(WS_TK_Header_N_Group_Save.class.getName())) {
+            wsProcess = "";
+            progressDialog.dismiss();
+            Toast.makeText(context,  hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
+            refreshUi();
         }else{
             wsProcess = "";
             progressDialog.dismiss();
