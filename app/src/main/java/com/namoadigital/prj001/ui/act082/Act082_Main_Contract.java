@@ -6,10 +6,8 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TK_Ticket;
-import com.namoadigital.prj001.model.T_TK_Main_User_Rec;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public interface Act082_Main_Contract {
     interface I_View {
@@ -45,5 +43,11 @@ public interface Act082_Main_Contract {
         void callMainUserService(TK_Ticket ticket);
 
         void setMainUserList(String mLink);
+
+        String getDateFromForm(String date, String time);
+
+        String getTimeFromForm(String day, String hour, String minutes);
+
+        void callEditHeaderService(int ticket_prefix, int ticket_code, int scn, Integer main_user_code, String main_user_name, String main_user_nick, String forecast_time, String start_date, String forecast_date, String timeAction, String internalComments, int move_other_date, int move_steps);
     }
 }

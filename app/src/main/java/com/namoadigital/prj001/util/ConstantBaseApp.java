@@ -659,6 +659,14 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_TICKET_ORIGIN_TYPE_FORM_SCORE = "FORM_SCORE";
     public static final String TK_TICKET_ORIGIN_TYPE_FORM_NC = "FORM_NC";
     public static final String TK_TICKET_ORIGIN_TYPE_TRANSFER = "TRANSFER";
+    //Ticket Header
+    public static final String TK_TICKET_START_DATE_AND_HEADER = "START_DATE_AND_HEADER";
+    public static final String TK_TICKET_START_DATE = "START_DATE";
+    public static final String TK_TICKET_FORECAST_DATE_AND_HEADER = "FORECAST_DATE_AND_HEADER";
+    public static final String TK_TICKET_FORECAST_DATE =  "FORECAST_DATE";
+    public static final String TK_TICKET_FORECAST_TIME_AND_HEADER ="FORECAST_TIME_AND_HEADER";
+    public static final String TK_TICKET_FORECAST_TIME = "FORECAST_TIME";
+    public static final String TK_TICKET_EDIT_HEADER = "EDIT_HEADER";
     //BROADCAST DE PARA
     public static final String BR_TICKET_SAVE = "BR_TICKET_SAVE";
     public static final String TK_TICKET_INTENT_FILTER_ACTION_CTRL_UPDATE = "ACTION_CTRL_UPDATE";

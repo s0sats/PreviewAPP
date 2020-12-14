@@ -39,6 +39,7 @@ public class TK_Ticket implements Cloneable, Serializable {
     private String open_date;
     private int open_user;
     private String open_user_name;
+    @Expose
     private String internal_comments;
     private int open_site_code;
     private String open_site_id;
@@ -51,9 +52,13 @@ public class TK_Ticket implements Cloneable, Serializable {
     private String open_product_desc;
     private int open_serial_code;
     private String open_serial_id;
+    @Expose
+    private String change_date;
     private String start_date;
     @Nullable
+    @Expose
     private String forecast_date;
+    @Expose
     private String forecast_time;
     private String ticket_status;
     @Nullable
@@ -70,10 +75,13 @@ public class TK_Ticket implements Cloneable, Serializable {
     @Nullable
     private String pc_desc;
     @Nullable
+    @Expose
     private Integer main_user;
     @Nullable
+    @Expose
     private String main_user_nick;
     @Nullable
+    @Expose
     private String main_user_name;
     private Integer pipeline_code;
     @Nullable
@@ -136,6 +144,10 @@ public class TK_Ticket implements Cloneable, Serializable {
     private String contract_desc;
     //LUCHE - 03/12/2020 - Propriedade que grava o SCN recebido via FCM
     private int fcm_scn;
+    @Expose
+    String time_action;
+    @Expose
+    String apply_perc_steps;
     @Expose
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
     @Expose
@@ -404,6 +416,14 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setOpen_serial_id(String open_serial_id) {
         this.open_serial_id = open_serial_id;
+    }
+
+    public String getChange_date() {
+        return change_date;
+    }
+
+    public void setChange_date(String change_date) {
+        this.change_date = change_date;
     }
 
     public String getStart_date() {
@@ -828,6 +848,23 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setFcm_scn(int fcm_scn) {
         this.fcm_scn = fcm_scn;
+    }
+
+
+    public String getTime_action() {
+        return time_action;
+    }
+
+    public void setTime_action(String time_action) {
+        this.time_action = time_action;
+    }
+
+    public String getApply_perc_steps() {
+        return apply_perc_steps;
+    }
+
+    public void setApply_perc_steps(String apply_perc_steps) {
+        this.apply_perc_steps = apply_perc_steps;
     }
 
     public ArrayList<TK_Ticket_Step> getStep() {
