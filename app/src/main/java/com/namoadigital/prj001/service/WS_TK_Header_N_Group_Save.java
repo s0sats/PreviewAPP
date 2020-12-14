@@ -14,28 +14,25 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
-import com.namoadigital.prj001.dao.TK_Ticket_ProductDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
-import com.namoadigital.prj001.model.T_TK_Ticket_Product_Save_Env;
-import com.namoadigital.prj001.model.T_TK_Ticket_Product_Save_Obj_Env;
-import com.namoadigital.prj001.model.T_TK_Ticket_Product_Save_Obj_Product_Env;
+import com.namoadigital.prj001.model.T_TK_Ticket_Header_Group_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Product_Save_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Product_Save_Return_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Product_Return_Rec;
+import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_From_To;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Ctrl_Obj;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Obj;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Product_Obj;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Step_Obj;
-import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Product_Save;
+import com.namoadigital.prj001.receiver.WBR_TK_Header_N_Group_Save;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
-import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_001;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_003;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_004;
@@ -49,20 +46,19 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.view.dialog.ServiceRegisterDialog.DECIMAL_PRICE_PATTERN;
+public class WS_TK_Header_N_Group_Save extends IntentService {
 
-public class WS_TK_Ticket_Product_Save extends IntentService {
-
-    public static final String PRODUCT_ADD = "PRODUCT_ADD";
-    public static final String TICKET_FULL = "TICKET_FULL";
+    public static final String TIME_ACTION = "TIME_ACTION";
+    public static final String MOVE_OTHER_DATE = "MOVE_OTHER_DATE";
+    public static final String MOVE_STEPS = "MOVE_STEPS";
+    public static final String IS_HEADER_DATETIME_CHANGES = "IS_HEADER_DATETIME_CHANGES";
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = ConstantBaseApp.APP_MODULE;
     private String mResource_Code = "0";
-    private String mResource_Name = "ws_tk_ticket_product_save";
+    private String mResource_Name = "ws_tk_header_n_group_save";
     //private String token;
     private String file_to_del = "";
     private boolean reSend = false;
@@ -75,13 +71,25 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
     private TK_Ticket_CtrlDao ticketCtrlDao;
     private MD_Schedule_ExecDao scheduleExecDao;
     private int scn;
-    List<TK_Ticket_Product> ticket_products;
-    private List<T_TK_Ticket_Product_Save_Obj_Product_Env> ticketToSend = new ArrayList<>();
+    private int ticketPrefix;
+    private int ticketCode;
+    private int mainUser;
+    private int move_other_date;
+    private int move_steps;
+    private boolean is_header_datetime_changes;
+    private String mainUserName;
+    private String mainUserNick;
+    private String timeAction;
+    private String forecast_time;
+    private String start_date;
+    private String forecast_date;
+    private String internalComments;
+    private List<TK_Ticket> ticketToSend = new ArrayList<>();
     public final static String PRODUCT_SAVE_RETURN_KEY = "PRODUCT_SAVE_RETURN_KEY";
 
 
-    public WS_TK_Ticket_Product_Save() {
-        super("WS_TK_Ticket_Product_Save");
+    public WS_TK_Header_N_Group_Save() {
+        super("WS_TK_Header_N_Group_Save");
     }
 
     @Override
@@ -96,9 +104,22 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
             ticketCtrlDao = new TK_Ticket_CtrlDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             scheduleExecDao = new MD_Schedule_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             scn = bundle.getInt(TK_TicketDao.SCN, -1);
-            ticket_products = (List<TK_Ticket_Product>) bundle.getSerializable(TK_Ticket_ProductDao.TABLE);
-            processTicketSave(ticket_products);
-
+            ticketPrefix = bundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
+            ticketCode = bundle.getInt(TK_TicketDao.TICKET_CODE, -1);
+            mainUser = bundle.getInt(TK_TicketDao.MAIN_USER, -1);
+            mainUserName = bundle.getString(TK_TicketDao.MAIN_USER_NAME);
+            mainUserNick = bundle.getString(TK_TicketDao.MAIN_USER_NICK);
+            forecast_time = bundle.getString(TK_TicketDao.FORECAST_TIME);
+            start_date = bundle.getString(TK_TicketDao.START_DATE);
+            forecast_date = bundle.getString(TK_TicketDao.FORECAST_DATE);
+            timeAction = bundle.getString(TIME_ACTION, "");
+            internalComments = bundle.getString(TK_TicketDao.INTERNAL_COMMENTS);
+            move_other_date = bundle.getInt(MOVE_OTHER_DATE, 0);
+            move_steps = bundle.getInt(MOVE_STEPS, 0);
+            is_header_datetime_changes = bundle.getBoolean(IS_HEADER_DATETIME_CHANGES);
+            //
+            processTicketSave();
+            //
         } catch (Exception e) {
 
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(), e);
@@ -109,12 +130,12 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
 
         } finally {
             ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
-            WBR_TK_Ticket_Product_Save.completeWakefulIntent(intent);
+            WBR_TK_Header_N_Group_Save.completeWakefulIntent(intent);
         }
 
     }
 
-    private void processTicketSave(List<TK_Ticket_Product> mTicket) throws Exception {
+    private void processTicketSave() throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
@@ -122,15 +143,19 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
         //
         String token = ToolBox_Inf.getToken(getApplicationContext());
         //
-        for (TK_Ticket_Product tk_ticket_product : mTicket) {
-            ticketToSend.add(
-                    new T_TK_Ticket_Product_Save_Obj_Product_Env(
-                            tk_ticket_product.getProduct_code(),
-                            (new DecimalFormat(DECIMAL_PRICE_PATTERN).format(tk_ticket_product.getQty())).replace(".", ","),
-                            (new DecimalFormat(DECIMAL_PRICE_PATTERN).format(tk_ticket_product.getQty_used())).replace(".", ",")
-                    )
-            );
+        TK_Ticket ticket = getTicketDB(ticketPrefix, ticketCode);
+        /*
+            Metodo que configura campos de envio oriundos da tela de cabeçalho.
+         */
+        if(is_header_datetime_changes) {
+            setHeaderChanges(ticket);
+        }else{
+            //todo tratar workgroup.
         }
+        //
+        ticketToSend.add(
+                ticket
+        );
         //Se lista vazia, dispara msg de erro.
         if (ticketToSend == null || ticketToSend.size() == 0) {
             String json = actReturnList != null ? gsonRec.toJson(actReturnList) : gsonRec.toJson(new ArrayList<>());
@@ -139,36 +164,89 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
             return;
         }
         //
-        List<T_TK_Ticket_Product_Save_Obj_Env> ticket_product_save_obj = new ArrayList<T_TK_Ticket_Product_Save_Obj_Env>();
-        TK_Ticket_Product tk_ticket_product = mTicket.get(0);
-        ticket_product_save_obj.add(new T_TK_Ticket_Product_Save_Obj_Env(
-                tk_ticket_product.getCustomer_code(),
-                tk_ticket_product.getTicket_prefix(),
-                tk_ticket_product.getTicket_code(),
-                scn,
-                ticketToSend
-        ));
-        //
-        T_TK_Ticket_Product_Save_Env env = new T_TK_Ticket_Product_Save_Env();
+        T_TK_Ticket_Header_Group_Env env = new T_TK_Ticket_Header_Group_Env();
         //
         env.setApp_code(ConstantBaseApp.PRJ001_CODE);
         env.setApp_version(ConstantBaseApp.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setApp_type(ConstantBaseApp.PKG_APP_TYPE_DEFAULT);
-        env.setTicket(ticket_product_save_obj);
+        env.setTicket(ticketToSend);
         env.setToken(token);
         //
         callWsTicketSave(env);
     }
 
-//    private ArrayList<WS_TK_Ticket_Obj> getTicketsToSend() {
-//        ArrayList<TK_Ticket> rawTickets = getTicketsDB();
-//        return getTicketSendFormat(rawTickets);
-//        //
-//    }
+    private void setHeaderChanges(TK_Ticket ticket) {
+        String formatted_apply_perc_steps = null;
 
-    private ArrayList<TK_Ticket> getTicketsToSend() {
-        return keepOnlyUpdateRequiredData(getTicketsDB());
+        if (!"".equals(timeAction)) {
+            //
+            ticket.setTime_action(timeAction);
+            switch(timeAction) {
+                case ConstantBaseApp.TK_TICKET_START_DATE_AND_HEADER:
+                case ConstantBaseApp.TK_TICKET_FORECAST_DATE_AND_HEADER:
+                case ConstantBaseApp.TK_TICKET_FORECAST_TIME_AND_HEADER:
+                case ConstantBaseApp.TK_TICKET_EDIT_HEADER:
+                    //
+                    if(internalComments != null) {
+                        ticket.setInternal_comments(internalComments);
+                    }
+                    //
+                    if (mainUser != -1) {
+                        ticket.setMain_user(mainUser);
+                        ticket.setMain_user_name(mainUserName);
+                        ticket.setMain_user_nick(mainUserNick);
+                    }
+            }
+            //
+            switch(timeAction) {
+                case ConstantBaseApp.TK_TICKET_START_DATE_AND_HEADER:
+                case ConstantBaseApp.TK_TICKET_START_DATE:
+                    ticket.setChange_date(start_date);
+                    break;
+                case ConstantBaseApp.TK_TICKET_FORECAST_DATE_AND_HEADER:
+                case ConstantBaseApp.TK_TICKET_FORECAST_DATE:
+                    ticket.setChange_date(forecast_date);
+                    break;
+                case ConstantBaseApp.TK_TICKET_FORECAST_TIME_AND_HEADER:
+                case ConstantBaseApp.TK_TICKET_FORECAST_TIME:
+                    float calculatted_forecast_time_edit=0;
+                    //
+                    if(forecast_time != null
+                            && !forecast_time.isEmpty()) {
+                        calculatted_forecast_time_edit = formatForecastTime(forecast_time);
+                        if (move_steps == 1) {
+                            float calculatted_forecast_time_old = formatForecastTime(ticket.getForecast_time());
+                            formatted_apply_perc_steps = String.valueOf(calculatted_forecast_time_edit / calculatted_forecast_time_old).replaceAll(".", ",");
+                        }
+                        ticket.setForecast_time(String.valueOf(calculatted_forecast_time_edit));
+                    }
+                    break;
+            }
+            //
+            ticket.setApply_perc_steps(formatted_apply_perc_steps);
+        }
+    }
+
+    /**
+     * BARRRIONUEVO 09-12-2020
+     * Metodo que calcula o forecast_time
+     * O atributo vem como D HH:MM porem, deve ser enviado como minutos.
+     * Estranho como a vida deve ser.
+     *
+     * @param forecast_time
+     * @return
+     */
+    private float formatForecastTime(String forecast_time) {
+        String[] dayTimeSplit = forecast_time.split(" ");
+        float timeSplit = 0;
+
+        timeSplit = dayTimeSplit.length > 1 ? 24 * 60 * Integer.valueOf(dayTimeSplit[0]) : 0;
+        int firstIdx = dayTimeSplit.length > 1 ? 1 : 0;
+        String[] aux = dayTimeSplit[firstIdx].split(":");
+        timeSplit += Integer.parseInt(aux[0]) * 60;
+        timeSplit += Integer.parseInt(aux[1]);
+        return timeSplit;
     }
 
     private ArrayList<TK_Ticket> keepOnlyUpdateRequiredData(ArrayList<TK_Ticket> ticketList) {
@@ -274,15 +352,22 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
         return ticketsToSend;
     }
 
-    private ArrayList<TK_Ticket> getTicketsDB() {
-        return (ArrayList<TK_Ticket>) ticketDao.query(
-                new Sql_WS_TK_Ticket_Save_001(
-                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+    private TK_Ticket getTicketDB(int ticketPrefix, int ticketCode) {
+        TK_Ticket ticket;
+
+        ticket = ticketDao.getByString(
+                new TK_Ticket_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
+                        ticketPrefix,
+                        ticketCode
                 ).toSqlQuery()
         );
+        ticket.setStep(new ArrayList<TK_Ticket_Step>());
+
+        return ticket;
     }
 
-    private void callWsTicketSave(T_TK_Ticket_Product_Save_Env env) throws Exception {
+    private void callWsTicketSave(T_TK_Ticket_Header_Group_Env env) throws Exception {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //
@@ -294,9 +379,9 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
         //
-        T_TK_Ticket_Product_Save_Rec rec = gsonRec.fromJson(
+        T_TK_Ticket_Save_Rec rec = gsonRec.fromJson(
                 resultado,
-                T_TK_Ticket_Product_Save_Rec.class
+                T_TK_Ticket_Save_Rec.class
         );
         //
         if (
@@ -321,21 +406,15 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
         processTicketSaveReturn(rec);
     }
 
-    private void processTicketSaveReturn(T_TK_Ticket_Product_Save_Rec rec) throws Exception {
+    private void processTicketSaveReturn(T_TK_Ticket_Save_Rec rec) throws Exception {
         if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(rec.getSave())
                 || ConstantBaseApp.MAIN_RESULT_OK_DUP.equalsIgnoreCase(rec.getSave())) {
             //
-            String returnType = PRODUCT_ADD;
-            processProductList(rec.getTicket_return());
-            //
             if (rec.getTicket() != null && rec.getTicket().size() > 0) {
-                returnType = TICKET_FULL;
                 processTicketFull(rec.getTicket());
             }
             //
-            HMAux returnAux = new HMAux();
-            returnAux.put(PRODUCT_SAVE_RETURN_KEY, returnType);
-            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), returnAux, "", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), "", "0");
             return;
         } else {
             //COMO TRATAR, SERÁ QUE EXISTE ESSE OUTRO STATUS
@@ -354,7 +433,6 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
         for (T_TK_Ticket_Product_Save_Return_Rec product_response : ticket_return) {
             for (T_TK_Ticket_Save_Product_Return_Rec products : product_response.getProduct()) {
                 if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(products.getRet_status())) {
-                    updateTicketProducts();
                     updateTicketScn(product_response);
                 } else {
                     //
@@ -372,17 +450,6 @@ public class WS_TK_Ticket_Product_Save extends IntentService {
                         product_response.getScn()
                 ).toSqlQuery()
         );
-    }
-
-    private void updateTicketProducts() {
-        TK_Ticket_ProductDao ticketProductDao = new TK_Ticket_ProductDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                Constant.DB_VERSION_CUSTOM
-        );
-        for (TK_Ticket_Product ticket_product : ticket_products) {
-            ticketProductDao.addUpdate(ticket_product);
-        }
     }
 
     private void processTicketFull(ArrayList<TK_Ticket> tickets) {

@@ -33,12 +33,10 @@ import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
-import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
-import com.namoadigital.prj001.service.WS_TK_Ticket_Product_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act075_001;
@@ -156,24 +154,6 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
                         product_code
                 ).toSqlQuery()
         );
-    }
-
-    @Override
-    public void saveproduct(int scn, ArrayList<TK_Ticket_Product> tk_ticket_products) {
-        mView.setWsProcess(WS_TK_Ticket_Product_Save.class.getName());
-        //
-        mView.showPD(
-                hmAux_Trans.get("dialog_product_save_ticket_ttl"),
-                hmAux_Trans.get("dialog_product_save_ticket_start")
-        );
-        //
-        Intent mIntent = new Intent(context, WBR_TK_Ticket_Product_Save.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt(TK_TicketDao.SCN, scn);
-        bundle.putSerializable(TK_Ticket_ProductDao.TABLE, tk_ticket_products);
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
     }
 
     @Override

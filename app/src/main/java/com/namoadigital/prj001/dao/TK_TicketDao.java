@@ -58,7 +58,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String OPEN_PRODUCT_DESC = "open_product_desc";
     public static final String OPEN_SERIAL_CODE = "open_serial_code";
     public static final String OPEN_SERIAL_ID = "open_serial_id";
+    public static final String START_DATE = "start_date";
     public static final String FORECAST_DATE = "forecast_date";
+    public static final String FORECAST_TIME = "forecast_time";
     public static final String TICKET_STATUS = "ticket_status";
     public static final String CLOSE_DATE = "close_date";
     public static final String CLOSE_USER = "close_user";
@@ -792,11 +794,15 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             tk_ticket.setOpen_product_desc(cursor.getString(cursor.getColumnIndex(OPEN_PRODUCT_DESC)));
             tk_ticket.setOpen_serial_code(cursor.getInt(cursor.getColumnIndex(OPEN_SERIAL_CODE)));
             tk_ticket.setOpen_serial_id(cursor.getString(cursor.getColumnIndex(OPEN_SERIAL_ID)));
+            tk_ticket.setStart_date(cursor.getString(cursor.getColumnIndex(START_DATE)));
+
             if (cursor.isNull(cursor.getColumnIndex(FORECAST_DATE))) {
                 tk_ticket.setForecast_date(null);
             } else {
                 tk_ticket.setForecast_date(cursor.getString(cursor.getColumnIndex(FORECAST_DATE)));
             }
+
+            tk_ticket.setForecast_time(cursor.getString(cursor.getColumnIndex(FORECAST_TIME)));
             tk_ticket.setTicket_status(cursor.getString(cursor.getColumnIndex(TICKET_STATUS)));
             if (cursor.isNull(cursor.getColumnIndex(CLOSE_DATE))) {
                 tk_ticket.setClose_date(null);
@@ -1070,10 +1076,18 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (tk_ticket.getOpen_serial_id() != null) {
                 contentValues.put(OPEN_SERIAL_ID, tk_ticket.getOpen_serial_id());
             }
+            if (tk_ticket.getStart_date() != null) {
+                contentValues.put(START_DATE, tk_ticket.getStart_date());
+            }
             contentValues.put(FORECAST_DATE, tk_ticket.getForecast_date());
+
+            if (tk_ticket.getForecast_time() != null) {
+                contentValues.put(FORECAST_TIME, tk_ticket.getForecast_time());
+            }
             if (tk_ticket.getTicket_status() != null) {
                 contentValues.put(TICKET_STATUS, tk_ticket.getTicket_status());
             }
+
             contentValues.put(CLOSE_DATE, tk_ticket.getClose_date());
             contentValues.put(CLOSE_USER, tk_ticket.getClose_user());
             contentValues.put(CLOSE_USER_NAME, tk_ticket.getClose_user_name());

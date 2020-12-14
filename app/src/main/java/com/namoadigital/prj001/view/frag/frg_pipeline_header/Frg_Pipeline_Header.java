@@ -24,6 +24,7 @@ public class Frg_Pipeline_Header extends Fragment {
     public static final String PIPELINE = "PIPELINE";
     public static final String PRODUCT = "PRODUCT";
     public static final String ORIGIN = "ORIGIN";
+    public static final String HEADER_EDIT = "HEADER_EDIT";
     public static final String APPROVAL = "APPROVAL";
     public static final String SCHEDULE = "SCHEDULE";
 
@@ -112,6 +113,7 @@ public class Frg_Pipeline_Header extends Fragment {
     private ImageView iv_origin_end_user;
     private View pipeline_origin_header;
     private TK_Ticket mTicket;
+    private ImageView iv_offline;
 
     public Frg_Pipeline_Header() {
         // Required empty public constructor
@@ -209,6 +211,22 @@ public class Frg_Pipeline_Header extends Fragment {
         return fragment;
     }
 
+    public static Frg_Pipeline_Header newInstanceForHeaderEdit(TK_Ticket mTicket, String ticket_id, String ticket_date, int site_code, String site_desc, String serial_id, String prod_desc, String desc_origin_param) {
+        Frg_Pipeline_Header fragment = new Frg_Pipeline_Header();
+        Bundle args = new Bundle();
+        args.putString(HEADER_PROFILE_PARAM, HEADER_EDIT);
+        args.putString(TICKET_ID_PARAM, ticket_id);
+        args.putString(TICKET_DATE_PARAM, ticket_date);
+        args.putString(PROD_DESC_PARAM, prod_desc);
+        args.putInt(SITE_CODE_PARAM, site_code);
+        args.putString(SITE_DESC_PARAM, site_desc);
+        args.putString(SERIAL_ID_PARAM, serial_id);
+        args.putString(DESC_ORIGIN_PARAM, desc_origin_param);
+        args.putSerializable(TICKET_OBJ_PARAM, mTicket );
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -249,6 +267,7 @@ public class Frg_Pipeline_Header extends Fragment {
         cv_btn_sync = pipeline_header_view.findViewById(R.id.cv_btn_sync);
         tv_ticket_id = pipeline_header_view.findViewById(R.id.frg_ticket_tv_ticket_id);
         tv_status = pipeline_header_view.findViewById(R.id.frg_ticket_tv_status);
+        iv_offline = pipeline_header_view.findViewById(R.id.frg_ticket_iv_offline);
         tv_prod_desc = pipeline_header_view.findViewById(R.id.frg_ticket_tv_prod_desc);
         tv_ticket_date = pipeline_header_view.findViewById(R.id.frg_ticket_tv_ticket_date);
         tv_site_desc = pipeline_header_view.findViewById(R.id.frg_ticket_tv_site_desc);
@@ -322,6 +341,16 @@ public class Frg_Pipeline_Header extends Fragment {
                 setOriginListener();
                 //
                 break;
+            case HEADER_EDIT:
+                tv_prod_desc.setVisibility(View.VISIBLE);
+                tv_desc_origin.setVisibility(View.VISIBLE);
+                iv_action_shortcut.setVisibility(View.VISIBLE);
+                gp_ticket.setVisibility(View.VISIBLE);
+                setmAction();
+                gp_step.setVisibility(View.GONE);
+                gp_schedule.setVisibility(View.GONE);
+                setOriginListener();
+                break;
             case PRODUCT:
                 tv_prod_desc.setVisibility(View.VISIBLE);
                 gp_ticket.setVisibility(View.VISIBLE);
@@ -383,7 +412,7 @@ public class Frg_Pipeline_Header extends Fragment {
     }
 
     private void setOriginListener() {
-        if (getContext() instanceof OnPipelineFragmentInteractionListener) {
+        if (getContext() instanceof OnPipelineFragmentOriginListener) {
             mOriginListener = (OnPipelineFragmentOriginListener) getContext();
         }
     }
@@ -527,5 +556,15 @@ public class Frg_Pipeline_Header extends Fragment {
     private void setBtnSyncVisibility() {
         //ll_btn_sync.setVisibility(btn_sync_status_param ? View.VISIBLE : View.GONE);
         defineTicketIdLayout();
+    }
+
+    public void setIv_offlineVisibility(boolean isOffline) {
+        if (isOffline) {
+            iv_offline.setVisibility(View.VISIBLE);
+            tv_status.setVisibility(View.GONE);
+        }else{
+            iv_offline.setVisibility(View.GONE);
+        }
+
     }
 }
