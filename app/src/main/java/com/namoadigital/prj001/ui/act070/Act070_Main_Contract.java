@@ -12,6 +12,7 @@ import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public interface Act070_Main_Contract {
@@ -63,6 +64,12 @@ public interface Act070_Main_Contract {
         void callAct011(Bundle act011Bundle);
 
         void callAct081(Bundle act081Bundle);
+
+        void toogleIntoEditMode();
+
+        void informAdapterItemUpdate(int stepMainPosition);
+
+        void setBtnSaveEditState(boolean enableBtn);
     }
 
     interface I_Presenter{
@@ -121,6 +128,20 @@ public interface Act070_Main_Contract {
 
         boolean getSyncStatusParam(TK_Ticket mTicket);
 
-        ArrayList<HMAux> getWorkgroupChangeList();
+        ArrayList<HMAux> getWorkgroupChangeList(TK_Ticket mTicket);
+
+        boolean allowEditModeOn(TK_Ticket mTicket);
+
+        void processWsTkGetWorkgroup();
+
+        File getWorkgroupJsonFile();
+
+        void updateWorkgroupChangeIntoItem(ArrayList<BaseStep> sources, int stepMainPosition, HMAux hmAux, boolean dbValueChanges);
+
+        void generateJsonWGSave(TK_Ticket mTicket, ArrayList<BaseStep> sources);
+
+        void checkBtnSaveEditState(ArrayList<BaseStep> sources);
+
+        boolean hasWorkgroupChanges(ArrayList<BaseStep> sources);
     }
 }

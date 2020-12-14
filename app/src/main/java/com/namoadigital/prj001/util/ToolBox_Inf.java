@@ -253,8 +253,6 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
-import static com.namoadigital.prj001.util.ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
@@ -390,8 +388,11 @@ public class ToolBox_Inf {
         if (!dirUnsetImg.exists()) {
             dirUnsetImg.mkdir();
         }
-
-
+        //LUCHE - 04/12/2020 - Dir com os arquivos json de edição do ticket
+        File dirTicketJsonFile = new File(Constant.TICKET_JSON_PATH);
+        if (!dirTicketJsonFile.exists()) {
+            dirTicketJsonFile.mkdir();
+        }
     }
 
     public static String md5(String s) {
@@ -7612,7 +7613,7 @@ public class ToolBox_Inf {
             fabEditWorkGroup.setmLabel_Text_Color(lblColor);
             fabEditWorkGroup.setmButton_Back_Color(btnBgColor);
             fabEditWorkGroup.setmButton_Resource_Color(iconColor);
-            fabEditWorkGroup.setmButton_Resource(R.drawable.ic_baseline_pipeline_header_24);
+            fabEditWorkGroup.setmButton_Resource(R.drawable.ic_account_switch_24dp_black);
             fabMenuItems.add(fabEditWorkGroup);
         }
         //atalaho para origin.

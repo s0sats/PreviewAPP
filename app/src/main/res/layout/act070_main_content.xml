@@ -29,8 +29,48 @@
         app:layout_constraintTop_toBottomOf="@id/act070_frg_pipeline_header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/act070_cl_edit_mode"
+        app:layout_constraintVertical_bias="0"
+        android:layout_marginBottom="5dp"
+        />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/act070_cl_edit_mode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@id/include"
-        app:layout_constraintVertical_bias="0" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="visible"
+        android:layout_marginBottom="5dp"
+        >
+
+        <Button
+            android:id="@+id/act070_btn_cancel"
+            android:layout_width="0dp"
+            app:layout_constraintWidth_percent="0.47"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/btn_namoa_main_states"
+            android:textColor="@color/padrao_WHITE"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Cancelar" />
+
+        <Button
+            android:id="@+id/act070_btn_save"
+            android:layout_width="0dp"
+            app:layout_constraintWidth_percent="0.47"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/btn_namoa_main_states"
+            android:textColor="@color/padrao_WHITE"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Salvar" />
+
+    </android.support.constraint.ConstraintLayout>
 
     <com.namoa_digital.namoa_library.ctls.FabMenu
         android:id="@+id/act070_fabMenu_anchor"

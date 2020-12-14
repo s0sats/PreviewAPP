@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
@@ -40,6 +41,7 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
+import com.namoadigital.prj001.service.WS_TK_Get_Workgroup_List;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
@@ -68,6 +70,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,6 +120,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private Integer mNavTicketSeqTmp;
     //LUCHE - 03/12/2020 - IMPLEMENTAÇÃO EDIÇÁO DE WORKGROUP
     private boolean isInWgEditMode = false;
+    private ConstraintLayout clEditMode;
+    private Button btnCancelEdit;
+    private Button btnSaveEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -259,6 +265,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_offline_save_by_open_form_ttl");
         transList.add("alert_offline_save_by_open_form_msg");
         //
+        transList.add("alert_update_ticket_to_edit_ttl");
+        transList.add("alert_update_ticket_to_edit_msg");
+        transList.add("alert_workgroup_list_successfully_loaded_ttl");
+        transList.add("alert_workgroup_list_successfully_loaded_msg");
+        transList.add("btn_cancel_edit");
+        transList.add("btn_save_edit");
+        transList.add("alert_cancel_edit_mode_ttl");
+        transList.add("alert_unsaved_group_changes_will_be_lost_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -281,6 +296,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         recoverIntentsInfo();
         //
+        deleteWorkgroupFileIfNeeds();
+        //
         ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
                 new FabMenu.IFabMenu() {
                     @Override
@@ -299,6 +316,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                             case ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL:
                                 callAct082();
                                 break;
+                            case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
+                                checkEditFlow();
+                                break;
                         }
                         //
                     }
@@ -315,6 +335,43 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         } else {
             paramErrorFlow();
         }
+    }
+
+    /**
+     * LUCHE - 04/12/2020
+     * Metodo que deleta o arquivo json de workgroup caso no carregameno da tela, ela não esteja
+     * configura para o modo edição
+     */
+    private void deleteWorkgroupFileIfNeeds() {
+        if(!isInWgEditMode){
+            File workgroupJsonFile = mPresenter.getWorkgroupJsonFile();
+            if(workgroupJsonFile.exists()){
+                workgroupJsonFile.delete();
+            }
+        }
+    }
+
+    private void checkEditFlow() {
+        if(mPresenter.getWorkgroupChangeList(mTicket) != null) {
+            if (!isInWgEditMode) {
+                if (mPresenter.allowEditModeOn(mTicket)) {
+                    toogleIntoEditMode();
+                } else {
+                    showAlert(
+                        hmAux_Trans.get("alert_update_ticket_to_edit_ttl"),
+                        hmAux_Trans.get("alert_update_ticket_to_edit_msg")
+                    );
+                }
+            } else {
+                toogleIntoEditMode();
+            }
+        }
+    }
+
+    @Override
+    public void toogleIntoEditMode() {
+        isInWgEditMode = !isInWgEditMode;
+        updateTicketData();
     }
 
     private void callAct082() {
@@ -418,6 +475,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void bindViews() {
         rvTicketPipeline = findViewById(R.id.act070_rv_pipeline);
         fabMenu = findViewById(R.id.act070_fabMenu_anchor);
+        clEditMode = findViewById(R.id.act070_cl_edit_mode);
+        btnCancelEdit = findViewById(R.id.act070_btn_cancel);
+        btnSaveEdit = findViewById(R.id.act070_btn_save);
         //
         setTranslation();
     }
@@ -600,11 +660,17 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     final StepNone stepNone = (StepNone) sources.get(nonePosition);
                     mPresenter.defineNoneFlow(mTicket, stepNone);
                 }
-            }, new Act070_Steps_Adapter.OnWorkgroupSpinnerClickListener() {
+            }, new Act070_Steps_Adapter.OnWorkgroupSpinnerListeners() {
             @Override
             public ArrayList<HMAux> onWorkgroupSpinnerClick() {
-                return mPresenter.getWorkgroupChangeList();
+                return mPresenter.getWorkgroupChangeList(mTicket);
             }
+
+            @Override
+            public void notifySpinnerItemSelected(int stepMainPosition, HMAux hmAux, boolean dbValueChanges) {
+                mPresenter.updateWorkgroupChangeIntoItem(sources,stepMainPosition,hmAux,dbValueChanges);
+            }
+
         },
         isInWgEditMode);
         //
@@ -631,6 +697,20 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mAdapter.notifyItemRangeRemoved(mainPosition, rangeLength);
         }
     }
+
+    @Override
+    //TODO REVER SE PRECISA MANTER, CRIEI , MAS NÃO É NECESSARIO....
+    public void informAdapterItemUpdate(int stepMainPosition) {
+        if(mAdapter != null){
+            mAdapter.notifyItemChanged(stepMainPosition);
+        }
+    }
+
+    @Override
+    public void setBtnSaveEditState(boolean enableBtn) {
+        btnSaveEdit.setEnabled(enableBtn);
+    }
+
     //endregion
 
     @Override
@@ -655,6 +735,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
 
     private void setTranslation() {
+        btnCancelEdit.setText(hmAux_Trans.get("btn_cancel_edit"));
+        btnSaveEdit.setText(hmAux_Trans.get("btn_save_edit"));
     }
 
     private void updateTicketData() {
@@ -667,6 +749,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 setReadOnly();
                 initFCMReceiver();
                 checkSyncNeeds();
+                applyEditUI();
             }else{
                 ToolBox.alertMSG(
                         context,
@@ -684,6 +767,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         } else {
             paramErrorFlow();
         }
+    }
+
+    private void applyEditUI() {
+        clEditMode.setVisibility(isInWgEditMode ? View.VISIBLE : View.GONE);
+        fabMenu.setVisibility(isInWgEditMode ? View.GONE : View.VISIBLE);
+        mPresenter.checkBtnSaveEditState(sources);
     }
 
     @Override
@@ -942,7 +1031,33 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     private void initAction() {
-
+        btnCancelEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mPresenter.hasWorkgroupChanges(sources)) {
+                    showAlert(
+                        hmAux_Trans.get("alert_cancel_edit_mode_ttl"),
+                        hmAux_Trans.get("alert_unsaved_group_changes_will_be_lost_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                toogleIntoEditMode();
+                            }
+                        },
+                        true
+                    );
+                }else{
+                    toogleIntoEditMode();
+                }
+            }
+        });
+        //
+        btnSaveEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.generateJsonWGSave(mTicket, sources);
+            }
+        });
     }
 
     @Override
@@ -1174,6 +1289,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }else{
                 mPresenter.prepareSyncProcess(mTicket,false);
             }
+        } else if(wsProcess.equals(WS_TK_Get_Workgroup_List.class.getName())){
+            wsProcess = "";
+            progressDialog.dismiss();
+            mPresenter.processWsTkGetWorkgroup();
         }else{
             wsProcess = "";
             progressDialog.dismiss();
@@ -1197,6 +1316,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             if(!wsResult.isEmpty()) {
                 showResult(false);
             }
+        }else if (wsProcess.equalsIgnoreCase(WS_TK_Get_Workgroup_List.class.getName())) {
+            //reseta var de modo edição.
+            isInWgEditMode = false;
         }else{
             wsResult.clear();
         }
@@ -1224,6 +1346,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             if(!wsResult.isEmpty()) {
                 showResult(false);
             }
+        }else if (wsProcess.equalsIgnoreCase(WS_TK_Get_Workgroup_List.class.getName())) {
+            //reseta var de modo edição.
+            isInWgEditMode = false;
         }else{
             wsResult.clear();
         }

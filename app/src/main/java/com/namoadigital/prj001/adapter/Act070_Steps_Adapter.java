@@ -52,7 +52,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
     private OnApprovalClickListener onApprovalClickListener;
     private OnProcessBtnClickListener onProcessBtnClickListener;
     private OnNoneClickListener onNoneClickListener;
-    private OnWorkgroupSpinnerClickListener onWorkgroupSpinnerClickListener;
+    private OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener;
     private boolean isInWgEditMode;
 
     public interface OnMainClickListener {
@@ -76,15 +76,16 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         void onNoneClick(int nonePosition);
     }
 
-    public interface OnWorkgroupSpinnerClickListener{
+    public interface OnWorkgroupSpinnerListeners {
         ArrayList<HMAux> onWorkgroupSpinnerClick();
+        void notifySpinnerItemSelected(int StepMainPosition, HMAux hmAux, boolean dbValueChanges);
     }
 
     public void setOnMainClickListener(OnMainClickListener onMainClickListener) {
         this.onMainClickListener = onMainClickListener;
     }
 
-    public Act070_Steps_Adapter(Context context, ArrayList<BaseStep> source, OnMainClickListener onMainClickListener, OnActionClickListener onActionClickListener, OnChecklistClickListener onChecklistClickListener, OnApprovalClickListener onApprovalClickListener, OnProcessBtnClickListener onProcessBtnClickListener, OnNoneClickListener onNoneClickListener, OnWorkgroupSpinnerClickListener onWorkgroupSpinnerClickListener, boolean isInWgEditMode) {
+    public Act070_Steps_Adapter(Context context, ArrayList<BaseStep> source, OnMainClickListener onMainClickListener, OnActionClickListener onActionClickListener, OnChecklistClickListener onChecklistClickListener, OnApprovalClickListener onApprovalClickListener, OnProcessBtnClickListener onProcessBtnClickListener, OnNoneClickListener onNoneClickListener, OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener, boolean isInWgEditMode) {
         this.context = context;
         this.source = source;
         this.onMainClickListener = onMainClickListener;
