@@ -68,6 +68,8 @@ public interface Act070_Main_Contract {
         void toogleIntoEditMode();
 
         void informAdapterItemUpdate(int stepMainPosition);
+
+        void setBtnSaveEditState(boolean enableBtn);
     }
 
     interface I_Presenter{
@@ -137,5 +139,9 @@ public interface Act070_Main_Contract {
         void updateWorkgroupChangeIntoItem(ArrayList<BaseStep> sources, int stepMainPosition, HMAux hmAux, boolean dbValueChanges);
 
         void generateJsonWGSave(TK_Ticket mTicket, ArrayList<BaseStep> sources);
+
+        void checkBtnSaveEditState(ArrayList<BaseStep> sources);
+
+        boolean hasWorkgroupChanges(ArrayList<BaseStep> sources);
     }
 }

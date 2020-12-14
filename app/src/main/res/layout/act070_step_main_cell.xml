@@ -90,6 +90,28 @@
         app:layout_constraintTop_toBottomOf="@+id/step_main_tv_forecast_date"
         tools:text="20/05/2020 17:00" />
 
+    <ImageView
+        android:id="@+id/step_main_iv_main_user"
+        android:layout_width="@dimen/pipeline_step_icon_width"
+        android:layout_height="@dimen/pipeline_step_icon_width"
+        app:layout_constraintBottom_toBottomOf="@+id/step_main_tv_main_user"
+        app:layout_constraintStart_toStartOf="@+id/gl_start"
+        app:layout_constraintTop_toTopOf="@+id/step_main_tv_main_user"
+        app:srcCompat="@drawable/ic_person_black_24dp"
+        android:tint="@color/namoa_color_gray_4"
+        />
+
+    <TextView
+        android:id="@+id/step_main_tv_main_user"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/step_main_tv_desc"
+        app:layout_constraintStart_toEndOf="@+id/step_main_iv_main_user"
+        app:layout_constraintTop_toBottomOf="@+id/step_main_tv_end_date"
+        tools:text="Luche" />
+
 
     <ImageView
         android:id="@+id/step_main_iv_end_date"
@@ -161,7 +183,7 @@
         android:layout_marginStart="8dp"
         app:layout_constraintEnd_toStartOf="@+id/step_main_iv_toggle_icon"
         app:layout_constraintStart_toEndOf="@id/step_main_iv_workgroup"
-        app:layout_constraintTop_toBottomOf="@+id/step_main_tv_end_date"
+        app:layout_constraintTop_toBottomOf="@+id/step_main_tv_main_user"
         app:layout_constraintHorizontal_bias="0.0"
         />
 

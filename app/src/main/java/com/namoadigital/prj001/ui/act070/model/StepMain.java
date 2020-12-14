@@ -29,11 +29,13 @@ public class StepMain extends BaseStep{
     private boolean allow_new_obj;
     private boolean move_next_step;
     private boolean user_focus;
+    private String ap_type;
+    private String main_user;
 
     public StepMain() {
     }
 
-    public StepMain(int stepCode, String stepTtl, String stepNum, String forecastStartDate, String forecastEndDate, String checkInDate, String checkOutDate, String stepType, String stepStatus, boolean currentStep, boolean scan_serial, boolean allow_new_obj, boolean move_next_step, boolean user_focus,String workgroup_code,String workgroup_desc,String zone_site_group_code,String zone_site_group_desc,String pc_level_target,String ap_workgroup_code,String ap_workgroup_desc,String ap_zone_site_group_code,String ap_zone_site_group_desc,String ap_pc_level_target) {
+    public StepMain(int stepCode, String stepTtl, String stepNum, String forecastStartDate, String forecastEndDate, String checkInDate, String checkOutDate, String stepType, String stepStatus, boolean currentStep, boolean scan_serial, boolean allow_new_obj, boolean move_next_step, boolean user_focus,String workgroup_code,String workgroup_desc,String zone_site_group_code,String zone_site_group_desc,String pc_level_target,String ap_workgroup_code,String ap_workgroup_desc,String ap_zone_site_group_code,String ap_zone_site_group_desc,String ap_pc_level_target, String ap_type, String main_user) {
         this.ap_workgroup_code = ap_workgroup_code;
         this.ap_workgroup_desc = ap_workgroup_desc;
         this.ap_zone_site_group_code = ap_zone_site_group_code;
@@ -59,6 +61,8 @@ public class StepMain extends BaseStep{
         this.zone_site_group_code = zone_site_group_code;
         this.zone_site_group_desc = zone_site_group_desc;
         this.pc_level_target = pc_level_target;
+        this.ap_type = ap_type;
+        this.main_user = main_user;
     }
 
     public String getStepNum() {
@@ -266,6 +270,22 @@ public class StepMain extends BaseStep{
 
     public void setGroupChanged(boolean groupChanged) {
         this.groupChanged = groupChanged;
+    }
+
+    public String getAp_type() {
+        return ap_type;
+    }
+
+    public void setAp_type(String ap_type) {
+        this.ap_type = ap_type;
+    }
+
+    public String getMain_user() {
+        return main_user;
+    }
+
+    public void setMain_user(String main_user) {
+        this.main_user = main_user;
     }
 
     public static boolean usesStatusColorInStep(String stepStatus){

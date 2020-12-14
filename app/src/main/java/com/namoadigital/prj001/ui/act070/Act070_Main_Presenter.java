@@ -2108,7 +2108,9 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 ticketStep.getAp_group_desc(),
                 ticketStep.getAp_zone_site_group_code() != null ? String.valueOf(ticketStep.getAp_zone_site_group_code()): null,
                 ticketStep.getAp_zone_site_group_desc(),
-                getPcLevelTranslate(ticketStep.getAp_pc_level_target())
+                getPcLevelTranslate(ticketStep.getAp_pc_level_target()),
+                getPlannedApprovalTypeOrNull(ticketStep.getCtrl()),
+                mTicket.getMain_user_nick()
             );
             //
             baseSteps.add(stepMain);
@@ -2132,6 +2134,36 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return baseSteps;
     }
 
+    /**
+     * LUCHE - 14/12/2020
+     * Metodo que retorno o tipo de obj planejado ou null caso naõ seja um agendamento.
+     * @param ctrl
+     * @return
+     */
+    @Nullable
+    private String getPlannedApprovalTypeOrNull(ArrayList<TK_Ticket_Ctrl> ctrl) {
+        if(ctrl != null && ctrl.size() > 0){
+            for (TK_Ticket_Ctrl ticketCtrl : ctrl) {
+                if( ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL.equals(ticketCtrl.getCtrl_type())
+                    && ticketCtrl.getObj_planned() == 1)
+                {
+                    //Essa verificação deveria ser desnecessaria, MAS VAI SABER
+                    if(ticketCtrl.getApproval() != null){
+                        return ticketCtrl.getApproval().getApproval_type();
+                    }else{
+                        ToolBox_Inf.registerException(
+                            getClass().getName(),
+                            new Exception("Ctrl tipo Approval mas sem obj approval o.O")
+                        );
+                    }
+
+                }
+            }
+        }
+        //
+        return null;
+    }
+
     private String getPcLevelTranslate(String pc_level_target) {
         return pc_level_target != null
                 ? hmAux_Trans.get(pc_level_target)
@@ -2151,6 +2183,39 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepMain.setGroupChanged(dbValueChanges);
         //
         //mView.informAdapterItemUpdate(stepMainPosition);
+        checkBtnSaveEditState(sources);
+    }
+
+    /**
+     * LUCHE - 14/12/2020
+     * Verifica se o estado do BOTÃO deve ser alterado
+     * @param sources
+     */
+    @Override
+    public void checkBtnSaveEditState(ArrayList<BaseStep> sources) {
+        mView.setBtnSaveEditState(hasWorkgroupChanges(sources));
+    }
+
+
+    /**
+     * LUCHE - 14/12/2020
+     * Verifica se algum item teve o workgroup alterado.
+     * @param sources
+     * @return
+     */
+    @Override
+    public boolean hasWorkgroupChanges(ArrayList<BaseStep> sources) {
+        boolean enableBtn = false;
+        for (BaseStep source : sources) {
+            if(source instanceof StepMain){
+                StepMain stepMain = (StepMain) source;
+                if(stepMain.isGroupChanged()){
+                    enableBtn = true;
+                    break;
+                }
+            }
+        }
+        return enableBtn;
     }
 
     /**

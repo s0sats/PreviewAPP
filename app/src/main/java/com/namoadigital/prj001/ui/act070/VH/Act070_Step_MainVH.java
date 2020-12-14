@@ -38,12 +38,15 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
     private TextView tvZoneSiteGroup;
     private ImageView ivPcLevelTarget;
     private TextView tvPcLevelTarget;
+    private ImageView ivMainUser;
+    private TextView tvMainUser;
     private View vBottomDivider;
     private boolean childShown = false;
     private boolean currentStep = false;
     private final Act070_Steps_Adapter.OnMainClickListener onClickListener;
     private final Act070_Steps_Adapter.OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener;
     private boolean isInWgEditMode = false;
+    private String approvalType;
 
     public Act070_Step_MainVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnMainClickListener onClickListener, Act070_Steps_Adapter.OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener, boolean isInWgEditMode) {
         super(itemView);
@@ -71,6 +74,8 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
         tvZoneSiteGroup = this.itemView.findViewById(R.id.step_main_tv_zone_site_group);
         ivPcLevelTarget = this.itemView.findViewById(R.id.step_main_iv_pc_level_target);
         tvPcLevelTarget = this.itemView.findViewById(R.id.step_main_tv_pc_level_target);
+        ivMainUser = this.itemView.findViewById(R.id.step_main_iv_main_user);
+        tvMainUser = this.itemView.findViewById(R.id.step_main_tv_main_user);
         vBottomDivider = this.itemView.findViewById(R.id.step_main_v_divider);
         //
         configSSWorkgroup();
@@ -118,6 +123,7 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
     public void bindData(StepMain stepMain){
         childShown = stepMain.isStepOpen();
         currentStep = stepMain.isCurrentStep();
+        approvalType = stepMain.getAp_type();
         //
         resetVisibility();
         if(ToolBox_Inf.hasConsistentValueString(stepMain.getStepNum())){
@@ -143,6 +149,11 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
                 ToolBox_Inf.getStepStartEndDateFormated(context,stepMain.getCheckInDate(),stepMain.getCheckOutDate())
             );
         }
+
+        if(isInWgEditMode && (ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL.equals(stepMain.getAp_type()))){
+            tvMainUser.setText(stepMain.getMain_user());
+        }
+        //
         if(isInWgEditMode
             && (
                 ToolBox_Inf.hasConsistentValueString(stepMain.getWorkgroup_code())
@@ -251,13 +262,28 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
         tvCheckInAndOutDate.setVisibility(childShown && !tvCheckInAndOutDate.getText().toString().isEmpty() ? View.VISIBLE : View.GONE);
         //
         if(isInWgEditMode){
-            //TODO VERIFICA POIS O SS PODE SER NULL ENTÃO NESSE CASO DEVERIA SER EXIBIDO MESMO QUE SEM VALOR...
-            ivWorkgroup.setVisibility(childShown && ssWorkgroup.getmValue().size() > 0 ? View.VISIBLE : View.GONE);
-            ssWorkgroup.setVisibility(childShown && ssWorkgroup.getmValue().size() > 0  ? View.VISIBLE : View.GONE);
-            ivZoneSiteGroup.setVisibility(childShown && !tvZoneSiteGroup.getText().toString().isEmpty()? View.VISIBLE : View.GONE);
-            tvZoneSiteGroup.setVisibility(childShown && !tvZoneSiteGroup.getText().toString().isEmpty() ? View.VISIBLE : View.GONE);
-            ivPcLevelTarget.setVisibility(childShown && !tvPcLevelTarget.getText().toString().isEmpty()? View.VISIBLE : View.GONE);
-            tvPcLevelTarget.setVisibility(childShown && !tvPcLevelTarget.getText().toString().isEmpty() ? View.VISIBLE : View.GONE);
+            if(ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL.equals(approvalType)){
+                ivMainUser.setVisibility(childShown ? View.VISIBLE : View.GONE);
+                tvMainUser.setVisibility(childShown ? View.VISIBLE : View.GONE);
+                //
+                ivWorkgroup.setVisibility(View.GONE);
+                ssWorkgroup.setVisibility(View.GONE);
+                ivZoneSiteGroup.setVisibility(View.GONE);
+                tvZoneSiteGroup.setVisibility(View.GONE);
+                ivPcLevelTarget.setVisibility(View.GONE);
+                tvPcLevelTarget.setVisibility(View.GONE);
+            }else {
+                //TODO VERIFICA POIS O SS PODE SER NULL ENTÃO NESSE CASO DEVERIA SER EXIBIDO MESMO QUE SEM VALOR...
+                ivWorkgroup.setVisibility(childShown ? View.VISIBLE : View.GONE);
+                ssWorkgroup.setVisibility(childShown ? View.VISIBLE : View.GONE);
+                ivZoneSiteGroup.setVisibility(childShown && !tvZoneSiteGroup.getText().toString().isEmpty() ? View.VISIBLE : View.GONE);
+                tvZoneSiteGroup.setVisibility(childShown && !tvZoneSiteGroup.getText().toString().isEmpty() ? View.VISIBLE : View.GONE);
+                ivPcLevelTarget.setVisibility(childShown && !tvPcLevelTarget.getText().toString().isEmpty() ? View.VISIBLE : View.GONE);
+                tvPcLevelTarget.setVisibility(childShown && !tvPcLevelTarget.getText().toString().isEmpty() ? View.VISIBLE : View.GONE);
+                //
+                ivMainUser.setVisibility(View.GONE);
+                tvMainUser.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -274,6 +300,7 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
         ivCheckInAndOutDate.setVisibility(View.GONE);
         tvCheckInAndOutDate.setVisibility(View.GONE);
         tvCheckInAndOutDate.setText("");
+        vBottomDivider.setVisibility(View.GONE);
         //
         ivWorkgroup.setVisibility(View.GONE);
         ssWorkgroup.setVisibility(View.GONE);
@@ -284,6 +311,8 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
         ivPcLevelTarget.setVisibility(View.GONE);
         tvPcLevelTarget.setVisibility(View.GONE);
         tvPcLevelTarget.setText("");
-        vBottomDivider.setVisibility(View.GONE);
+        ivMainUser.setVisibility(View.GONE);
+        tvMainUser.setVisibility(View.GONE);
+        tvMainUser.setText("");
     }
 }

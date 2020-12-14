@@ -706,6 +706,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }
     }
 
+    @Override
+    public void setBtnSaveEditState(boolean enableBtn) {
+        btnSaveEdit.setEnabled(enableBtn);
+    }
+
     //endregion
 
     @Override
@@ -767,6 +772,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private void applyEditUI() {
         clEditMode.setVisibility(isInWgEditMode ? View.VISIBLE : View.GONE);
         fabMenu.setVisibility(isInWgEditMode ? View.GONE : View.VISIBLE);
+        mPresenter.checkBtnSaveEditState(sources);
     }
 
     @Override
@@ -1028,17 +1034,21 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         btnCancelEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAlert(
-                    hmAux_Trans.get("alert_cancel_edit_mode_ttl"),
-                    hmAux_Trans.get("alert_unsaved_group_changes_will_be_lost_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            toogleIntoEditMode();
-                        }
-                    },
-                    true
-                );
+                if(mPresenter.hasWorkgroupChanges(sources)) {
+                    showAlert(
+                        hmAux_Trans.get("alert_cancel_edit_mode_ttl"),
+                        hmAux_Trans.get("alert_unsaved_group_changes_will_be_lost_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                toogleIntoEditMode();
+                            }
+                        },
+                        true
+                    );
+                }else{
+                    toogleIntoEditMode();
+                }
             }
         });
         //
