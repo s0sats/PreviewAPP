@@ -135,5 +135,7 @@ public interface Act070_Main_Contract {
         File getWorkgroupJsonFile();
 
         void updateWorkgroupChangeIntoItem(ArrayList<BaseStep> sources, int stepMainPosition, HMAux hmAux, boolean dbValueChanges);
+
+        void generateJsonWGSave(TK_Ticket mTicket, ArrayList<BaseStep> sources);
     }
 }

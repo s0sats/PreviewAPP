@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -36,6 +37,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.T_TK_Get_Workgroup_List_Rec;
+import com.namoadigital.prj001.model.T_TK_Header_N_Group_Save_WG_Env;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Save;
@@ -243,6 +245,73 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
         //
         return auxList;
+    }
+
+    @Override
+    public void generateJsonWGSave(TK_Ticket mTicket, ArrayList<BaseStep> sources) {
+        //T_TK_Header_N_Group_Save_WG_Env groupSaveWgEnv = new T_TK_Header_N_Group_Save_WG_Env();
+        T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Ticket wgTicket = null;
+        ArrayList<T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step> wgStepList = new ArrayList<>();
+        try {
+            for (BaseStep baseStep : sources) {
+                if(baseStep instanceof StepMain){
+                    StepMain stepMain = ((StepMain) baseStep);
+                    if(stepMain.isGroupChanged()){
+                        T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step wgStep =
+                            new T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step(
+                                stepMain.getStepCode(),
+                                ToolBox_Inf.convertStringToInt(stepMain.getSelected_group_code())
+                            );
+                        wgStepList.add(wgStep);
+                    }
+                }
+            }
+            //
+            if(wgStepList != null && wgStepList.size() > 0) {
+                wgTicket =
+                    new T_TK_Header_N_Group_Save_WG_Env
+                        .T_TK_Header_N_Group_Save_WG_Ticket(
+                        mTicket.getCustomer_code(),
+                        mTicket.getTicket_prefix(),
+                        mTicket.getTicket_code(),
+                        mTicket.getScn(),
+                        wgStepList
+                    );
+                //
+                callWsWgSave(wgTicket);
+            }else{
+                mView.showAlert(
+                    hmAux_Trans.get("alert_none_data_changed_ttl"),
+                    hmAux_Trans.get("alert_none_data_changed_msg")
+                );
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            //
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            //
+            mView.showAlert(
+                hmAux_Trans.get("alert_step_wg_change_process_error_ttl"),
+                hmAux_Trans.get("alert_step_wg_change_process_error_msg")
+            );
+        }
+    }
+
+    private void callWsWgSave(T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Ticket wgTicket) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        T_TK_Header_N_Group_Save_WG_Env groupSaveWgEnv =
+            new T_TK_Header_N_Group_Save_WG_Env(
+                Constant.PRJ001_CODE,
+                Constant.PRJ001_VERSION,
+                Constant.PKG_APP_TYPE_DEFAULT,
+                ToolBox_Con.getPreference_Session_App(context),
+                ToolBox_Inf.getToken(context),
+                wgTicket
+            );
+
+        String json = gson.toJson(groupSaveWgEnv);
+        Log.d("WG_JSON",json);
     }
 
     /**

@@ -1041,6 +1041,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 );
             }
         });
+        //
+        btnSaveEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.generateJsonWGSave(mTicket, sources);
+            }
+        });
     }
 
     @Override
