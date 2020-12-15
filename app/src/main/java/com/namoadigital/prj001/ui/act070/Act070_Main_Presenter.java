@@ -2128,7 +2128,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 ticketStep.getAp_zone_site_group_desc(),
                 getPcLevelTranslate(ticketStep.getAp_pc_level_target()),
                 getPlannedApprovalTypeOrNull(ticketStep.getCtrl()),
-                mTicket.getMain_user_nick()
+                ToolBox_Inf.getFullNick(mTicket.getMain_user_nick(),mTicket.getMain_user())
             );
             //
             baseSteps.add(stepMain);
