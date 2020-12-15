@@ -329,8 +329,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             mView.setWsProcess(WS_TK_Get_Workgroup_List.class.getName());
             //
             mView.showPD(
-                hmAux_Trans.get("dialog_download_ticket_ttl"),
-                hmAux_Trans.get("dialog_download_ticket_start")
+                hmAux_Trans.get("dialog_workgroup_list_ttl"),
+                hmAux_Trans.get("dialog_workgroup_list_start")
             );
             //
             Intent mIntent = new Intent(context, WBR_TK_Get_Workgroup_List.class);

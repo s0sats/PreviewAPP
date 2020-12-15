@@ -276,6 +276,18 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_unsaved_group_changes_will_be_lost_msg");
         transList.add("dialog_save_workgroup_changes_ttl");
         transList.add("dialog_save_workgroup_changes_msg");
+        transList.add("dialog_workgroup_list_ttl");
+        transList.add("dialog_workgroup_list_start");
+        transList.add("alert_update_stepper_error_ttl");
+        transList.add("alert_no_items_to_add_msg");
+        transList.add("alert_error_on_remove_items_msg");
+        transList.add("alert_no_items_to_remove_msg");
+        transList.add("alert_no_process_found_ttl");
+        transList.add("alert_no_process_found_msg");
+        transList.add("alert_none_data_changed_ttl");
+        transList.add("alert_none_data_changed_msg");
+        transList.add("alert_step_wg_change_process_error_ttl");
+        transList.add("alert_step_wg_change_process_error_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
