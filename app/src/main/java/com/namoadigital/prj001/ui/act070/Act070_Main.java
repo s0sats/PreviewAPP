@@ -1299,8 +1299,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }else if(wsProcess.equals(WS_TK_Header_N_Group_Save.class.getName())) {
             wsProcess = "";
             progressDialog.dismiss();
-            Toast.makeText(context,  hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
-            refreshUi();
+            mPresenter.processWorkGroupSaveReturn(mTicket.getTicket_prefix(), mTicket.getTicket_code(), mLink);
         }else{
             wsProcess = "";
             progressDialog.dismiss();

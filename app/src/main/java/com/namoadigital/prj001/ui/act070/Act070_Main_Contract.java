@@ -143,5 +143,7 @@ public interface Act070_Main_Contract {
         void checkBtnSaveEditState(ArrayList<BaseStep> sources);
 
         boolean hasWorkgroupChanges(ArrayList<BaseStep> sources);
+
+        void processWorkGroupSaveReturn(int ticket_prefix, int ticket_code, String mLink);
     }
 }

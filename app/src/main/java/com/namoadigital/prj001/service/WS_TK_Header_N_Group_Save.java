@@ -15,29 +15,20 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.T_TK_Header_N_Group_Save_WG_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Header_Group_Env;
-import com.namoadigital.prj001.model.T_TK_Ticket_Product_Save_Return_Rec;
-import com.namoadigital.prj001.model.T_TK_Ticket_Save_Product_Return_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec;
-import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_From_To;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result;
+import com.namoadigital.prj001.model.T_TK_Ticket_Save_Rec_Result_Step;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Ctrl_Obj;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Obj;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Product_Obj;
 import com.namoadigital.prj001.model.WS_TK_Ticket_Step_Obj;
 import com.namoadigital.prj001.receiver.WBR_TK_Header_N_Group_Save;
-import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
-import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_002;
-import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_003;
-import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_004;
-import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_007;
-import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_009;
 import com.namoadigital.prj001.util.Constant;
@@ -45,7 +36,6 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -460,13 +450,15 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
 
     private void processTicketSaveReturn(T_TK_Ticket_Save_Rec rec) throws Exception {
         if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(rec.getSave())
-                || ConstantBaseApp.MAIN_RESULT_OK_DUP.equalsIgnoreCase(rec.getSave())) {
+                || ConstantBaseApp.MAIN_RESULT_OK_DUP.equalsIgnoreCase(rec.getSave())
+        ) {
+            if (rec.getTicket_return() != null && rec.getTicket_return().size() > 0) {
+                processActFeedback(rec);
+            }
             //
             if (rec.getTicket() != null && rec.getTicket().size() > 0) {
                 processTicketFull(rec.getTicket());
             }
-            //
-            ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), "", "0");
             return;
         } else {
             //COMO TRATAR, SERÁ QUE EXISTE ESSE OUTRO STATUS
@@ -478,34 +470,71 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
                     "",
                     "0");
         }
-
     }
 
-    private void processProductList(ArrayList<T_TK_Ticket_Product_Save_Return_Rec> ticket_return) {
-        for (T_TK_Ticket_Product_Save_Return_Rec product_response : ticket_return) {
-            for (T_TK_Ticket_Save_Product_Return_Rec products : product_response.getProduct()) {
-                if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(products.getRet_status())) {
-                    updateTicketScn(product_response);
-                } else {
-                    //
+    private void processActFeedback(T_TK_Ticket_Save_Rec rec) throws Exception {
+        for (T_TK_Ticket_Save_Rec_Result recResult : rec.getTicket_return()) {
+            WS_TK_Ticket_Save.TicketSaveActReturn actReturn = getActReturn(recResult);
+            if (recResult.getStep() != null && recResult.getStep().size() > 0) {
+                for (T_TK_Ticket_Save_Rec_Result_Step resultStep : recResult.getStep()) {
+                    //if(ConstantBaseApp.MAIN_RESULT_OK.equals(resultStep.getRet_status())) {
+                        actReturn.setRetMsg(
+                            getFormattedRetMsg(actReturn, resultStep)
+                        );
+                    //}
                 }
             }
+            //
+            actReturnList.add(actReturn);
         }
     }
 
-    private void updateTicketScn(T_TK_Ticket_Product_Save_Return_Rec product_response) {
-        ticketDao.addUpdate(
-                new Sql_WS_TK_Ticket_Save_007(
-                        product_response.getCustomer_code(),
-                        product_response.getTicket_prefix(),
-                        product_response.getTicket_code(),
-                        product_response.getScn()
-                ).toSqlQuery()
+    @NonNull
+    private String getFormattedRetMsg(WS_TK_Ticket_Save.TicketSaveActReturn actReturn, T_TK_Ticket_Save_Rec_Result_Step resultStep) {
+        String stepErroMsg = "";
+        //
+        boolean hasError = resultStep.getRet_msg() != null && !resultStep.getRet_msg().isEmpty();
+        //
+        if(hasError){
+            if(!actReturn.isProcessError()) {
+                actReturn.setProcessError(hasError);
+            }
+            if (resultStep.getStep_desc() != null) {
+                stepErroMsg = "- " + resultStep.getStep_desc() + " : ";
+                stepErroMsg += resultStep.getRet_msg() != null && !resultStep.getRet_msg().isEmpty() ? "\n" + resultStep.getRet_msg() : resultStep.getRet_status();
+            }else{
+                if (actReturn.getRetMsg() == null || actReturn.getRetMsg().isEmpty()) {
+                    stepErroMsg += resultStep.getRet_msg() != null && !resultStep.getRet_msg().isEmpty() ? resultStep.getRet_msg() : resultStep.getRet_status();
+                }else{
+                    stepErroMsg += "- " + (resultStep.getRet_msg() != null && !resultStep.getRet_msg().isEmpty() ? resultStep.getRet_msg() : resultStep.getRet_status());
+                }
+            }
+        }
+        //
+        if (actReturn.getRetMsg() == null || actReturn.getRetMsg().isEmpty()) {
+            return stepErroMsg + "\n";
+        } else {
+            return actReturn.getRetMsg() + stepErroMsg + "\n";
+        }
+    }
+    private WS_TK_Ticket_Save.TicketSaveActReturn getActReturn(T_TK_Ticket_Save_Rec_Result retResult) {
+        WS_TK_Ticket_Save.TicketSaveActReturn actReturn = null;
+        //
+        actReturn = new WS_TK_Ticket_Save.TicketSaveActReturn(
+            retResult.getCustomer_code(),
+            retResult.getTicket_prefix(),
+            retResult.getTicket_code(),
+            retResult.getScn(),
+            retResult.getRet_status(),
+            retResult.getRet_msg(),
+            reSend
         );
+        actReturn.setProcessError(retResult.getRet_msg() != null && !retResult.getRet_msg().isEmpty());
+        //
+        return actReturn;
     }
 
     private void processTicketFull(ArrayList<TK_Ticket> tickets) {
-
         for (TK_Ticket tk_ticket : tickets) {
             //Seta pk nos filhos
             tk_ticket.setPK();
@@ -522,270 +551,24 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
             //Tenta o insert do ticket
             DaoObjReturn daoObjReturn = ticketDao.addUpdate(tk_ticket);
             //Se não houve erro , chama metodo define proximo passo.
-        }
-
-    }
-
-    private void processFromTo(ArrayList<T_TK_Ticket_Save_Rec_From_To> from_to, ArrayList<T_TK_Ticket_Save_Rec_Result> recTicketResult) {
-        for (T_TK_Ticket_Save_Rec_From_To recFromTo : from_to) {
-            T_TK_Ticket_Save_Rec_Result ticketProcessResult = getTicketProcessResult(recTicketResult, recFromTo.getCustomer_code(), recFromTo.getTicket_prefix(), recFromTo.getTicket_code());
-            //
-            if (ticketProcessResult != null && ConstantBaseApp.MAIN_RESULT_OK.equals(ticketProcessResult.getRet_status())) {
-                TK_Ticket_Ctrl ticketCtrl = getDbTicketCtrl(recFromTo);
-                ticketCtrl.setTicket_seq(recFromTo.getTicket_seq());
-                ticketCtrl.setPKIntoProcess();
-            } else {
-                TK_Ticket ticketSent = getTicketFromSentList(recFromTo.getCustomer_code(), recFromTo.getTicket_prefix(), recFromTo.getTicket_code());
-                //ATUALIZAR TICKET PARA UPDATE REQUIRED
-                ticketDao.addUpdate(
-                        new Sql_WS_TK_Ticket_Save_002(
-                                ticketSent.getCustomer_code(),
-                                ticketSent.getTicket_prefix(),
-                                ticketSent.getTicket_code(),
-                                ticketSent.getUpdate_required(),
-                                ticketSent.getUpdate_required_product() //Como retorno sempre full, reseta o sync_required
-                        ).toSqlQuery()
-                );
-                //TK_Ticket_Step
-                ticketDao.addUpdate(
-                        new Sql_WS_TK_Ticket_Save_003(
-                                ticketSent.getCustomer_code(),
-                                ticketSent.getTicket_prefix(),
-                                ticketSent.getTicket_code()
-                        ).toSqlQuery()
-                );
-                //TK_Ticket_Ctrl
-                ticketDao.addUpdate(
-                        new Sql_WS_TK_Ticket_Save_004(
-                                ticketSent.getCustomer_code(),
-                                ticketSent.getTicket_prefix(),
-                                ticketSent.getTicket_code()
-                        ).toSqlQuery()
-                );
+            if(!daoObjReturn.hasError()){
+                callFinishProcessing(gsonRec.toJson(actReturnList));
+            }else{
+                ToolBox.sendBCStatus(
+                    getApplicationContext(),
+                    "ERROR_1",
+                    hmAux_Trans.get("msg_error_on_ticket_update"),
+                    new HMAux(),
+                    "",
+                    "0");
             }
         }
+
     }
 
-    private TK_Ticket getTicketFromSentList(int customer_code, int ticket_prefix, int ticket_code) {
-        return null;
-    }
-
-    private T_TK_Ticket_Save_Rec_Result getTicketProcessResult(ArrayList<T_TK_Ticket_Save_Rec_Result> recTicketResult, int customer_code, int ticket_prefix, int ticket_code) {
-        for (T_TK_Ticket_Save_Rec_Result recResult : recTicketResult) {
-            if (
-                    recResult.getCustomer_code() == customer_code
-                            && recResult.getTicket_prefix() == ticket_prefix
-                            && recResult.getTicket_code() == ticket_code
-            ) {
-                return recResult;
-            }
-        }
-        return null;
-    }
-
-    private TK_Ticket_Ctrl getDbTicketCtrl(T_TK_Ticket_Save_Rec_From_To recFromTo) {
-        return ticketCtrlDao.getByString(
-                new TK_Ticket_Ctrl_Sql_004(
-                        recFromTo.getCustomer_code(),
-                        recFromTo.getTicket_prefix(),
-                        recFromTo.getTicket_code(),
-                        recFromTo.getTicket_seq_tmp()
-                ).toSqlQuery()
-        );
-    }
 
     private void callFinishProcessing(String jsonActReturn) {
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), jsonActReturn, "0");
-    }
-
-//    private void processTicketRet(T_TK_Ticket_Save_Rec_Result retResult, TicketSaveActReturn actReturn) throws Exception {
-//        boolean createdBySchedule = isTicketCreatedBySchedule(retResult);
-//        TK_Ticket retTicket = retResult.getTicket();
-//        DaoObjReturn daoObjReturn = new DaoObjReturn();
-//        if(retTicket != null){
-//            //Só atualizará o obj ticket se não for processamento de token
-//            //ou for processamento de token, mas o ticket nõ posusi mais dados a serem enviados
-//            TK_Ticket dbTicket = getDbTicket(retTicket,createdBySchedule);
-//            //
-//            if(!reSend || noMoreUpdate(dbTicket)) {
-//                //Seta PKs nos objs filhos
-//                retTicket.setPK();
-//                //Se agendamento, seta dados do ag no obj de retorno e renomeia foto
-//                if(createdBySchedule){
-//                    actReturn.setSchedulePrefix(retTicket.getSchedule_prefix());
-//                    actReturn.setScheduleCode(retTicket.getSchedule_code());
-//                    actReturn.setScheduleExec(retTicket.getSchedule_exec());
-//                    //
-//                    updateActionsFileNames(retResult);
-//                }
-//                //REGION VERIFICAR TODO REVE SE MOVER PARA O STEP
-//                //Verifica a necessidade de resetar a foto das action
-////                TK_Ticket.checkActionPhotoResetNeeds(dbTicket,retTicket);
-////                //Verifica se imagens já foram baixadas e atualiza campo com o local_path
-////                retTicket.updateLocalImagesPathIfExists();
-//                //ENDREGION
-//                //Salva obj
-//                if(createdBySchedule){
-//                    MD_Schedule_Exec schedule = getSchedule(
-//                        retTicket.getSchedule_prefix(),
-//                        retTicket.getSchedule_code(),
-//                        retTicket.getSchedule_exec()
-//                    );
-//                    //
-//                    schedule.setStatus(retTicket.getTicket_status());
-//                    schedule.setFcm_new_status(null);
-//                    schedule.setFcm_user_nick(null);
-//                    schedule.setSchedule_erro_msg(null);
-//                    schedule.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-//                    //
-//                    daoObjReturn = updateTicketAndScheduleReg(retTicket,schedule);
-//                }else {
-//                    daoObjReturn = ticketDao.addUpdate(retTicket);
-//                }
-//                if (daoObjReturn.hasError()) {
-//                    throw new Exception(daoObjReturn.getErrorMsg());
-//                }//
-//            }else{
-//                //Remove dados do processamento da lista, pois haverá um segundo processamento pro mesmo item
-//                actReturnList.remove(actReturn);
-//            }
-//        }else{
-//            if(createdBySchedule){
-//                //Resgata ticket origim
-//                TK_Ticket dbTicket = execGetDbTicketQuery(
-//                    new TK_Ticket_Sql_001(
-//                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-//                        retResult.getOld_ticket_prefix(),
-//                        retResult.getOld_ticket_code()
-//                    ).toSqlQuery()
-//                );
-//                //Se exisir, o que deve sempre acontecer
-//                if(dbTicket != null){
-//                    //Atualiza no obj retornado a tela a pk do agendamento
-//                    actReturn.setSchedulePrefix(dbTicket.getSchedule_prefix());
-//                    actReturn.setScheduleCode(dbTicket.getSchedule_code());
-//                    actReturn.setScheduleExec(dbTicket.getSchedule_exec());
-//                    //Seta status rejeitado no ticket, ctrls e ações
-//                    dbTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_IGNORED);
-//                    dbTicket.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-//                    //TODO REVE SE MOVER PARA O STEP
-////                    if(dbTicket.getCtrl() != null && dbTicket.getCtrl().size() > 0) {
-////                        for (TK_Ticket_Ctrl ticketCtrl : dbTicket.getCtrl()) {
-////                            ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_IGNORED);
-////                            if(ticketCtrl.getAction() != null){
-////                                ticketCtrl.getAction().setAction_status(ConstantBaseApp.SYS_STATUS_IGNORED);
-////                            }
-////                        }
-////                    }
-//                    MD_Schedule_Exec schedule = getSchedule(
-//                        dbTicket.getSchedule_prefix(),
-//                        dbTicket.getSchedule_code(),
-//                        dbTicket.getSchedule_exec()
-//                    );
-//                    //
-//                    schedule.setStatus(dbTicket.getTicket_status());
-//                    schedule.setFcm_new_status(null);
-//                    schedule.setFcm_user_nick(null);
-//                    schedule.setSchedule_erro_msg(actReturn.getRetMsg());
-//                    schedule.setClose_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-//                    //
-//                    //Atualiza ticket e agendamento
-//                    daoObjReturn =  updateTicketAndScheduleReg(dbTicket,schedule);
-//                    if (daoObjReturn.hasError()) {
-//                        throw new Exception(daoObjReturn.getErrorMsg());
-//                    }//
-//                }else{
-//                    throw new Exception("Original ticket not found !!!");
-//                }
-//            }
-//        }
-//    }
-
-    @NonNull
-    private DaoObjReturn updateTicketAndScheduleReg(TK_Ticket ticket, MD_Schedule_Exec scheduleExec) {
-        DaoObjReturn daoObjReturn;
-        daoObjReturn = ticketDao.addUpdateBySchedulePk(ticket, null);
-        if (!daoObjReturn.hasError()) {
-            updateSchedule(scheduleExec);
-        }
-        //
-        return daoObjReturn;
-    }
-
-
-    /**
-     * LUCHE - 14/02/2020
-     * <p>
-     * Atualiza status da tabela de agendamentos.
-     *
-     * @param scheduleExec - Agendamento com dados a serem atualizados.
-     * @return - Verdadeiro se sucesso
-     */
-    private boolean updateSchedule(MD_Schedule_Exec scheduleExec) {
-        DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
-        //Retorna verdadeiro se não teve erro.
-        return !daoObjReturn.hasError();
-    }
-
-    private MD_Schedule_Exec getSchedule(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
-        return scheduleExecDao.getByString(
-                new MD_Schedule_Exec_Sql_001(
-                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                        schedule_prefix,
-                        schedule_code,
-                        schedule_exec
-                ).toSqlQuery()
-        );
-    }
-
-//    private void updateActionsFileNames(T_TK_Ticket_Save_Rec_Result retResult) throws Exception {
-//        TK_Ticket tkTicket = retResult.getTicket();
-//        //TODO REVE SE MOVER PARA O STEP
-//        if(tkTicket.getCtrl() != null) {
-//            for (TK_Ticket_Ctrl ticketCtrl : tkTicket.getCtrl()) {
-//                if(ticketCtrl.getAction() != null){
-//                    if(ticketCtrl.getAction().getAction_photo_name() != null) {
-//                        String oldName = ToolBox_Inf.buildTicketActionImgPath(ticketCtrl.getCustomer_code(), retResult.getOld_ticket_prefix(), retResult.getOld_ticket_code(), ticketCtrl.getTicket_seq());
-//                        if (oldName != null) {
-//                            renameFile(oldName, ticketCtrl.getAction().getAction_photo_name());
-//                        } else {
-//                            //Ok Fazer.... Lançar exception
-//                            throw new Exception("Error on update tickt photos name !!!");
-//                        }
-//                    }//Senão tem foto, não tem que fazer de para de foto
-//                }else{
-//                    //Ok Fazer.... Lançar exception
-//                    throw new Exception("Ticket action not found !!!");
-//                }
-//            }
-//        }else{
-//            //Ok Fazer.... Lançar exception
-//            throw new Exception("Ticket controls not found !!!");
-//        }
-    //}
-
-    private void renameFile(String oldName, String action_photo_name) {
-        File from = new File(Constant.CACHE_PATH_PHOTO + "/", oldName);
-        File to = new File(Constant.CACHE_PATH_PHOTO + "/", action_photo_name);
-        from.renameTo(to);
-    }
-
-//    private boolean isTicketCreatedBySchedule(T_TK_Ticket_Save_Rec_Result retResult) {
-//        return  retResult.getOld_ticket_prefix() != null && retResult.getOld_ticket_prefix() == 0
-//                && retResult.getOld_ticket_code() != null && retResult.getOld_ticket_code() > 0 ;
-//    }
-
-    private boolean noMoreUpdate(TK_Ticket dbTicket) {
-       /* TK_Ticket dbTicket = ticketDao.getByString(
-            new TK_Ticket_Sql_001(
-                retTicket.getCustomer_code(),
-                retTicket.getTicket_prefix(),
-                retTicket.getTicket_code()
-            ).toSqlQuery()
-        );*/
-
-        //
-        return dbTicket != null && dbTicket.getUpdate_required() == 0;
     }
 
     private TK_Ticket getDbTicket(TK_Ticket retTicket, boolean createdBySchedule) {
@@ -813,22 +596,6 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
         return ticketDao.getByString(selectionQuery);
     }
 
-//    private TicketSaveActReturn getActReturn(T_TK_Ticket_Save_Rec_Result retResult) {
-//        TicketSaveActReturn actReturn = new TicketSaveActReturn(
-//            retResult.getCustomer_code(),
-//            retResult.getTicket_prefix(),
-//            retResult.getTicket_code(),
-//            retResult.getScn(),
-//            retResult.getRet_status(),
-//            retResult.getRet_msg(),
-//            reSend,
-//            retResult.getOld_ticket_prefix() != null ? retResult.getOld_ticket_prefix() : -1,
-//            retResult.getOld_ticket_code() != null ? retResult.getOld_ticket_code() : -1
-//        );
-//        //
-//        return actReturn;
-//    }
-
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();
         //
@@ -840,8 +607,8 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
         translist.add("generic_processing_data");
         translist.add("generic_re_processing_data");
         translist.add("msg_preparing_items_data");
-        translist.add("msg_no_data_returned_error");
         translist.add("msg_data_returned_error");
+        translist.add("msg_error_on_ticket_update");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 getApplicationContext(),

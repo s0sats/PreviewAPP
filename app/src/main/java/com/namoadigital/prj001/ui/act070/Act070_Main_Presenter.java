@@ -768,6 +768,19 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         }
     }
 
+    /**
+     * LUCHE - 15/12/2020
+     * Metodo que trata o retorno do save das alterações do workgroup.
+     * Atualmente chama o mesmo metodo que trata o retorno do save do ticket.
+     * @param ticket_prefix
+     * @param ticket_code
+     * @param mLink
+     */
+    @Override
+    public void processWorkGroupSaveReturn(int ticket_prefix, int ticket_code, String mLink) {
+        processSaveReturn(ticket_prefix,ticket_code,mLink);
+    }
+
     @Override
     public void processCheckinReturn(int mPrefix, int mCode, String jsonRet) {
         Gson gson = new GsonBuilder().serializeNulls().create();
