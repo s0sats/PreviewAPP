@@ -71,7 +71,6 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,7 +85,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public static final String PARAM_ACTION_CREATION = "PARAM_ACTION_CREATION";
     public static final String IS_OPERATIONAL_PROCESS = "IS_OPERATIONAL_PROCESS";
     public static final String PARAM_FORCE_SEND_BY_FORM_EXEC = "PARAM_FORCE_SEND_BY_FORM_EXEC";
-    public static final String PARAM_WORKGROUP_EDIT_MODE = "PARAM_DENIED_BY_CHECKIN";
+    public static final String PARAM_WORKGROUP_EDIT_MODE = "PARAM_WORKGROUP_EDIT_MODE";
 
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
@@ -288,6 +287,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_none_data_changed_msg");
         transList.add("alert_step_wg_change_process_error_ttl");
         transList.add("alert_step_wg_change_process_error_msg");
+        transList.add("alert_error_on_create_wg_changes_file_ttl");
+        transList.add("alert_error_on_create_wg_changes_file_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -310,8 +311,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         );
         //
         recoverIntentsInfo();
-        //
-        deleteWorkgroupFileIfNeeds();
+        //LUCHE - 15/12/2020 - Verifica necessidade de deletar arquivos de lista de workgroup e workgroup
+        //alterados
+        mPresenter.deleteWorkgroupFileIfNeeds();
+        mPresenter.deleteWorkgroupEditionFileIfNeeds();
         //
         ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
                 new FabMenu.IFabMenu() {
@@ -352,20 +355,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }
     }
 
-    /**
-     * LUCHE - 04/12/2020
-     * Metodo que deleta o arquivo json de workgroup caso no carregameno da tela, ela não esteja
-     * configura para o modo edição
-     */
-    private void deleteWorkgroupFileIfNeeds() {
-        if(!isInWgEditMode){
-            File workgroupJsonFile = mPresenter.getWorkgroupJsonFile();
-            if(workgroupJsonFile.exists()){
-                workgroupJsonFile.delete();
-            }
-        }
-    }
-
     private void checkEditFlow() {
         if(mPresenter.getWorkgroupChangeList(mTicket) != null) {
             if (!isInWgEditMode) {
@@ -386,6 +375,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     @Override
     public void toogleIntoEditMode() {
         isInWgEditMode = !isInWgEditMode;
+        mPresenter.deleteWorkgroupEditionFileIfNeeds();
         updateTicketData();
     }
 
@@ -726,6 +716,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         btnSaveEdit.setEnabled(enableBtn);
     }
 
+    @Override
+    public boolean isInWgEditMode() {
+        return isInWgEditMode;
+    }
+
     //endregion
 
     @Override
@@ -972,11 +967,14 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, requestingBundle.getString(ConstantBaseApp.ACT_SELECTED_DATE, null));
             }
         }
+        bundle.putBoolean(PARAM_WORKGROUP_EDIT_MODE,isInWgEditMode);
         //
         intent.putExtras(bundle);
         //
-        startActivity(intent);
-        finish();
+        if(mPresenter.checkWorkgroupEditJsonFileCreation(isInWgEditMode,sources)) {
+            startActivity(intent);
+            finish();
+        }//SEM ELSE pois se for false, msg de erro será exibida
     }
 
     @Override
@@ -1049,21 +1047,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         btnCancelEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(mPresenter.hasWorkgroupChanges(sources)) {
-                    showAlert(
-                        hmAux_Trans.get("alert_cancel_edit_mode_ttl"),
-                        hmAux_Trans.get("alert_unsaved_group_changes_will_be_lost_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                toogleIntoEditMode();
-                            }
-                        },
-                        true
-                    );
-                }else{
-                    toogleIntoEditMode();
-                }
+                confirmEditModeExit();
             }
         });
         //
@@ -1073,6 +1057,24 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 mPresenter.generateJsonWGSave(mTicket, sources);
             }
         });
+    }
+
+    private void confirmEditModeExit() {
+        if(mPresenter.hasWorkgroupChanges(sources)) {
+            showAlert(
+                hmAux_Trans.get("alert_cancel_edit_mode_ttl"),
+                hmAux_Trans.get("alert_unsaved_group_changes_will_be_lost_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        toogleIntoEditMode();
+                    }
+                },
+                true
+            );
+        }else{
+            toogleIntoEditMode();
+        }
     }
 
     @Override
@@ -1202,12 +1204,16 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public void callOrigin() {
         Intent intent = ToolBox_Inf.getOriginIntent(context, mTicket.getOrigin_type());
         if(intent != null) {
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            requestingBundle.putInt(TK_TicketDao.TICKET_PREFIX, mTkPrefix);
-            requestingBundle.putInt(TK_TicketDao.TICKET_CODE, mTkCode);
-            intent.putExtras(requestingBundle);
-            startActivity(intent);
-            finish();
+            if(!isInWgEditMode || mPresenter.checkWorkgroupEditJsonFileCreation(isInWgEditMode,sources)){
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                requestingBundle.putInt(TK_TicketDao.TICKET_PREFIX, mTkPrefix);
+                requestingBundle.putInt(TK_TicketDao.TICKET_CODE, mTkCode);
+                requestingBundle.putBoolean(PARAM_WORKGROUP_EDIT_MODE,isInWgEditMode);
+                intent.putExtras(requestingBundle);
+                    startActivity(intent);
+                    finish();
+            }
+            //Não tem else pois se for false, será disparado msg dentro do metodo checkWorkgroupEditJsonFileCreation
         }
     }
 
@@ -1407,7 +1413,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         if(hasFABActive){
             fabMenu.animateFAB();
         }else {
-            mPresenter.onBackPressedClicked(requestingAct);
+            if(!isInWgEditMode) {
+                mPresenter.onBackPressedClicked(requestingAct);
+            }else{
+                confirmEditModeExit();
+            }
         }
     }
 

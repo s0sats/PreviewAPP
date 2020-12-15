@@ -673,6 +673,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TK_TICKET_INTENT_FILTER_ACTION_CTRL_UPDATE = "ACTION_CTRL_UPDATE";
     //Arquivos json
     public static final String TICKET_WORKGROUP_LIST_JSON_FILE = "tk_workgroup_list.json";
+    public static final String TICKET_WORKGROUP_EDITION_JSON_FILE = "tk_workgroup_edition.json";
     /*
      * Constantes Pipeline
      */

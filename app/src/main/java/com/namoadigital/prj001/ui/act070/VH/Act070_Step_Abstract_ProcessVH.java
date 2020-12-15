@@ -84,13 +84,12 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         }
         //TODO VALIDAR ESSE IF, POIS FOI ADICIONANDO O isInWgEditMode
         if(
-            (!ConstantBaseApp.SYS_STATUS_CANCELLED.equals(processStatus)
-            && !ConstantBaseApp.SYS_STATUS_REJECTED.equals(processStatus)
-            && !isInWgEditMode)
-
-            || (ConstantBaseApp.SYS_STATUS_DONE.equals(processStatus)
-            || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(processStatus)
-            || isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn)
+             !ConstantBaseApp.SYS_STATUS_CANCELLED.equals(processStatus)
+              && !ConstantBaseApp.SYS_STATUS_REJECTED.equals(processStatus)
+              && !isInWgEditMode
+              &&( ConstantBaseApp.SYS_STATUS_DONE.equals(processStatus)
+                  || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(processStatus)
+                  || isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn)
             )
         ) {
             ivProcessAction.setImageDrawable(drawable);
@@ -124,7 +123,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
            && !ConstantBaseApp.SYS_STATUS_CANCELLED.equals(stepStatus)
            && !ConstantBaseApp.SYS_STATUS_REJECTED.equals(stepStatus)
         ) {
-            if(isCurrentStep) {
+            if(isCurrentStep && !isInWgEditMode) {
                 //Se start_end, se tiver checkin, fica amarelo , se não fica cinza indicando que falta q
                 //não é possivel mexer.
                 if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(StepType)) {

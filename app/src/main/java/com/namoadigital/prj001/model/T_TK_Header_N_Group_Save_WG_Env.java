@@ -95,13 +95,15 @@ public class T_TK_Header_N_Group_Save_WG_Env extends Main_Header_Env {
     public static class T_TK_Header_N_Group_Save_WG_Step implements Serializable{
         private int step_code;
         private int step_group_code;
+        private String step_group_desc;
 
         public T_TK_Header_N_Group_Save_WG_Step() {
         }
 
-        public T_TK_Header_N_Group_Save_WG_Step(int step_code, int step_group_code) {
+        public T_TK_Header_N_Group_Save_WG_Step(int step_code, int step_group_code, String step_group_desc) {
             this.step_code = step_code;
             this.step_group_code = step_group_code;
+            this.step_group_desc = step_group_desc;
         }
 
         public int getStep_code() {
@@ -118,6 +120,14 @@ public class T_TK_Header_N_Group_Save_WG_Env extends Main_Header_Env {
 
         public void setStep_group_code(int step_group_code) {
             this.step_group_code = step_group_code;
+        }
+
+        public String getStep_group_desc() {
+            return step_group_desc;
+        }
+
+        public void setStep_group_desc(String step_group_desc) {
+            this.step_group_desc = step_group_desc;
         }
     }
 

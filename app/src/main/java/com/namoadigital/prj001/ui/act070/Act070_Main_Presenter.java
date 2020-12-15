@@ -84,6 +84,7 @@ import com.namoadigital.prj001.view.dialog.PipelineNewProcessDialog;
 import com.namoadigital.prj001.view.dialog.PipelineRejectionListDialog;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -250,23 +251,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     @Override
     public void generateJsonWGSave(TK_Ticket mTicket, ArrayList<BaseStep> sources) {
-        //T_TK_Header_N_Group_Save_WG_Env groupSaveWgEnv = new T_TK_Header_N_Group_Save_WG_Env();
         T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Ticket wgTicket = null;
-        ArrayList<T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step> wgStepList = new ArrayList<>();
+         new ArrayList<>();
         try {
-            for (BaseStep baseStep : sources) {
-                if(baseStep instanceof StepMain){
-                    StepMain stepMain = ((StepMain) baseStep);
-                    if(stepMain.isGroupChanged()){
-                        T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step wgStep =
-                            new T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step(
-                                stepMain.getStepCode(),
-                                ToolBox_Inf.convertStringToInt(stepMain.getSelected_group_code())
-                            );
-                        wgStepList.add(wgStep);
-                    }
-                }
-            }
+            ArrayList<T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step> wgStepList = generateWgStepList(sources);
             //
             if(wgStepList != null && wgStepList.size() > 0) {
                 wgTicket =
@@ -296,6 +284,97 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 hmAux_Trans.get("alert_step_wg_change_process_error_ttl"),
                 hmAux_Trans.get("alert_step_wg_change_process_error_msg")
             );
+        }
+    }
+
+    private ArrayList<T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step> generateWgStepList(ArrayList<BaseStep> sources) {
+        ArrayList<T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step> wgStepList = new ArrayList<>();
+        for (BaseStep baseStep : sources) {
+            if(baseStep instanceof StepMain){
+                StepMain stepMain = ((StepMain) baseStep);
+                if(stepMain.isGroupChanged()){
+                    T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step wgStep =
+                        new T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step(
+                            stepMain.getStepCode(),
+                            ToolBox_Inf.convertStringToInt(stepMain.getSelected_group_code()),
+                            stepMain.getSelected_group_desc()
+                        );
+                    wgStepList.add(wgStep);
+                }
+            }
+        }
+        return wgStepList;
+    }
+
+    @Override
+    public boolean checkWorkgroupEditJsonFileCreation(boolean isInWgEditMode, ArrayList<BaseStep> sources) {
+        if(isInWgEditMode && hasWorkgroupChanges(sources)) {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            ArrayList<T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step> wgStepList = generateWgStepList(sources);
+            String jsonContent = gson.toJson(wgStepList);
+            try {
+                createWorkgroupEditJsonFile(jsonContent);
+                return true;
+            } catch (IOException e) {
+                ToolBox_Inf.registerException(getClass().getName(),e);
+                mView.showAlert(
+                    hmAux_Trans.get("alert_error_on_create_wg_changes_file_ttl"),
+                    hmAux_Trans.get("alert_error_on_create_wg_changes_file_msg")
+                );
+                return false;
+            }
+        }else{
+            return true;
+        }
+    }
+
+    private File createWorkgroupEditJsonFile(String workGroupEditionContent) throws IOException {
+        File json_file = getWorkgroupEditionFile();
+        if(json_file.exists()){
+            json_file.delete();
+        }
+        ToolBox_Inf.writeIn(workGroupEditionContent, json_file);
+        return json_file;
+    }
+
+    private File getWorkgroupEditionFile() {
+        return new File(ConstantBaseApp.TICKET_JSON_PATH, ConstantBaseApp.TICKET_WORKGROUP_EDITION_JSON_FILE);
+    }
+
+    /**
+     * LUCHE - 04/12/2020
+     * Metodo que deleta o arquivo json de workgroup caso no carregameno da tela, ela não esteja
+     * configura para o modo edição
+     */
+    @Override
+    public void deleteWorkgroupFileIfNeeds() {
+        if(!mView.isInWgEditMode()){
+            File workgroupJsonFile = getWorkgroupJsonFile();
+            if(workgroupJsonFile.exists()){
+                workgroupJsonFile.delete();
+            }
+        }
+    }
+    /**
+     * LUCHE - 15/12/2020
+     * Metodo que deleta o arquivo json com as alterações de workgroup feita pelo user caso ele não esteja
+     * no modo edição
+     */
+    @Override
+    public void deleteWorkgroupEditionFileIfNeeds() {
+        if(!mView.isInWgEditMode()){
+            deleteWorkgroupEditionFile();
+        }
+    }
+
+    /**
+     * LUCHE - 15/12/2020
+     * Apaga arquivo de edição de workgroup
+     */
+    private void deleteWorkgroupEditionFile() {
+        File workGroupEditionFile = getWorkgroupEditionFile();
+        if(workGroupEditionFile.exists()){
+            workGroupEditionFile.delete();
         }
     }
 
@@ -2083,6 +2162,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             ArrayList<BaseStep> baseSteps = generateStepperSource(mTicket,ticketsStep);
             if(baseSteps != null){
                 mView.setStepperSource(baseSteps);
+                deleteWorkgroupEditionFile();
             }
         }else{
             mView.showAlert(
@@ -2101,6 +2181,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     private ArrayList<BaseStep> generateStepperSource(TK_Ticket mTicket, List<TK_Ticket_Step> ticketStepList) {
         ArrayList<BaseStep> baseSteps = new ArrayList<>();
+        File fileWorkgroupEditionFile = getWorkgroupEditionFile();
+        //
         for (TK_Ticket_Step ticketStep : ticketStepList) {
             StepMain stepMain = new StepMain(
                 ticketStep.getStep_code(),
@@ -2128,8 +2210,12 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 ticketStep.getAp_zone_site_group_desc(),
                 getPcLevelTranslate(ticketStep.getAp_pc_level_target()),
                 getPlannedApprovalTypeOrNull(ticketStep.getCtrl()),
-                ToolBox_Inf.getFullNick(mTicket.getMain_user_nick(),mTicket.getMain_user())
+                mTicket.getMain_user() != null ? ToolBox_Inf.getFullNick(mTicket.getMain_user_nick(),mTicket.getMain_user()) : mTicket.getMain_user_nick()
             );
+            //
+            if(mView.isInWgEditMode()) {
+                loadSelectedWorkgroupFromEditionFile(fileWorkgroupEditionFile, stepMain);
+            }
             //
             baseSteps.add(stepMain);
             //Seta indice onde adapter precisa ser posicionado.
@@ -2150,6 +2236,33 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             );
         }
         return baseSteps;
+    }
+
+    private void loadSelectedWorkgroupFromEditionFile(File fileWorkgroupEditionFile, StepMain stepMain) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        try{
+            if (fileWorkgroupEditionFile.exists()) {
+                ArrayList<T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step> workgroupEditionObjs = gson.fromJson(
+                    ToolBox_Inf.getContents(fileWorkgroupEditionFile),
+                    new TypeToken<ArrayList<T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step>>() {
+                    }.getType()
+                );
+                //
+                if(workgroupEditionObjs != null && workgroupEditionObjs.size() > 0 ){
+                    for (T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step wgStep : workgroupEditionObjs) {
+                        if(wgStep.getStep_code() == stepMain.getStepCode()){
+                            stepMain.setSelected_group_code(String.valueOf(wgStep.getStep_group_code()));
+                            stepMain.setSelected_group_desc(String.valueOf(wgStep.getStep_group_desc()));
+                            stepMain.setGroupChanged(true);
+                            break;
+                        }
+                    }
+                }
+            }
+        }catch (Exception e ){
+            e.printStackTrace();
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
     }
 
     /**

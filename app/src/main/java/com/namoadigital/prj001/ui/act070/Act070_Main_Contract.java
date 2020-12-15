@@ -70,6 +70,8 @@ public interface Act070_Main_Contract {
         void informAdapterItemUpdate(int stepMainPosition);
 
         void setBtnSaveEditState(boolean enableBtn);
+
+        boolean isInWgEditMode();
     }
 
     interface I_Presenter{
@@ -145,5 +147,11 @@ public interface Act070_Main_Contract {
         boolean hasWorkgroupChanges(ArrayList<BaseStep> sources);
 
         void processWorkGroupSaveReturn(int ticket_prefix, int ticket_code, String mLink);
+
+        boolean checkWorkgroupEditJsonFileCreation(boolean isInWgEditMode, ArrayList<BaseStep> sources);
+
+        void deleteWorkgroupFileIfNeeds();
+
+        void  deleteWorkgroupEditionFileIfNeeds();
     }
 }

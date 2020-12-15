@@ -47,6 +47,7 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
     private final Act070_Steps_Adapter.OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener;
     private boolean isInWgEditMode = false;
     private String approvalType;
+    private boolean statusAllowEdition = false;
 
     public Act070_Step_MainVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnMainClickListener onClickListener, Act070_Steps_Adapter.OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener, boolean isInWgEditMode) {
         super(itemView);
@@ -124,6 +125,8 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
         childShown = stepMain.isStepOpen();
         currentStep = stepMain.isCurrentStep();
         approvalType = stepMain.getAp_type();
+        statusAllowEdition = ConstantBaseApp.SYS_STATUS_PENDING.equals(stepMain.getStepStatus())
+                            || ConstantBaseApp.SYS_STATUS_PROCESS.equals(stepMain.getStepStatus());
         //
         resetVisibility();
         if(ToolBox_Inf.hasConsistentValueString(stepMain.getStepNum())){
@@ -149,72 +152,76 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
                 ToolBox_Inf.getStepStartEndDateFormated(context,stepMain.getCheckInDate(),stepMain.getCheckOutDate())
             );
         }
-
-        if(isInWgEditMode && (ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL.equals(stepMain.getAp_type()))){
-            tvMainUser.setText(stepMain.getMain_user());
-        }
         //
-        if(isInWgEditMode
-            && (
-                ToolBox_Inf.hasConsistentValueString(stepMain.getWorkgroup_code())
-                || ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())
-                || stepMain.isGroupChanged()
-                )
-        ){
-            //SE HOUVER DADOS AP_* ELES É QUE DEVEM SER EXIBIDOS.
-            HMAux mValue = new HMAux();
-            HMAux mDbValue = new HMAux();
-            if(stepMain.isGroupChanged()){
-                mValue = generateWorkGroupValue(stepMain.getSelected_group_code(), stepMain.getSelected_group_desc());
-                //TODO rever por possivel bug
-                //POSSIVEL BUG AQUI , CASO NÃO TENHA A VAR PREENCHIDA...TALVEZ TEREI QUE ENVIAR PRO
-                // STEPMAIN SE SEU PRIMEIRO FILHO É UMA APROVAÇÃO E NÃO CONFIAR SOMENTE EM QUAL ESTA PREENCHIDA.
-                if(ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())){
-                    mDbValue = generateWorkGroupValue(stepMain.getAp_workgroup_code(), stepMain.getAp_workgroup_desc());
-                }else{
-                    mDbValue = generateWorkGroupValue(stepMain.getWorkgroup_code(), stepMain.getWorkgroup_desc());
-                }
-            } else {
-                if(ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())){
-                    mValue  = mDbValue = generateWorkGroupValue(stepMain.getAp_workgroup_code(), stepMain.getAp_workgroup_desc());
-                }else{
-                    mValue  = mDbValue = generateWorkGroupValue(stepMain.getWorkgroup_code(), stepMain.getWorkgroup_desc());
-                }
-            }
-            //
-            ssWorkgroup.setmValue(mValue);
-            ssWorkgroup.setmValueBD(mDbValue);
-            //
-            ssWorkgroup.setOnSpinnerClickListner(new SearchableSpinner.OnSpinnerClickListner() {
-                @Override
-                public void onSpinnerClickListner(boolean b) {
-                    ArrayList<HMAux> workgroupList = onWorkgroupSpinnerClickListener.onWorkgroupSpinnerClick();
-                    ssWorkgroup.setmOption(workgroupList);
-                }
-            });
-        }
-        if(isInWgEditMode
-            && (ToolBox_Inf.hasConsistentValueString(stepMain.getZone_site_group_desc()) || ToolBox_Inf.hasConsistentValueString(stepMain.getAp_zone_site_group_desc()))
-        ){
-            //SE HOUVER DADOS AP_* ELES É QUE DEVEM SER EXIBIDOS.
-            tvZoneSiteGroup.setText(
-                ToolBox_Inf.hasConsistentValueString(stepMain.getAp_zone_site_group_desc())
-                    ? stepMain.getAp_zone_site_group_desc()
-                    : stepMain.getZone_site_group_desc()
-            );
-        }
-        //
-        if(isInWgEditMode
-            && (ToolBox_Inf.hasConsistentValueString(stepMain.getPc_level_target()) || ToolBox_Inf.hasConsistentValueString(stepMain.getAp_pc_level_target()))
-        ){
-            tvPcLevelTarget.setText(
-                ToolBox_Inf.hasConsistentValueString(stepMain.getAp_pc_level_target())
-                    ? stepMain.getAp_pc_level_target()
-                    : stepMain.getPc_level_target()
-            );
-        }
+        applyInEditUIChanges(stepMain);
         setToggleIcon();
         setStatusColorChanges(stepMain);
+    }
+
+    private void applyInEditUIChanges(StepMain stepMain) {
+        if (statusAllowEdition) {
+            if (isInWgEditMode && (ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL.equals(stepMain.getAp_type()))) {
+                tvMainUser.setText(stepMain.getMain_user());
+            }
+            //
+            if (isInWgEditMode
+                && (ToolBox_Inf.hasConsistentValueString(stepMain.getWorkgroup_code())
+                    || ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())
+                    || stepMain.isGroupChanged())
+            ) {
+                //SE HOUVER DADOS AP_* ELES É QUE DEVEM SER EXIBIDOS.
+                HMAux mValue = new HMAux();
+                HMAux mDbValue = new HMAux();
+                if (stepMain.isGroupChanged()) {
+                    mValue = generateWorkGroupValue(stepMain.getSelected_group_code(), stepMain.getSelected_group_desc());
+                    //TODO rever por possivel bug
+                    //POSSIVEL BUG AQUI , CASO NÃO TENHA A VAR PREENCHIDA...TALVEZ TEREI QUE ENVIAR PRO
+                    // STEPMAIN SE SEU PRIMEIRO FILHO É UMA APROVAÇÃO E NÃO CONFIAR SOMENTE EM QUAL ESTA PREENCHIDA.
+                    if (ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())) {
+                        mDbValue = generateWorkGroupValue(stepMain.getAp_workgroup_code(), stepMain.getAp_workgroup_desc());
+                    } else {
+                        mDbValue = generateWorkGroupValue(stepMain.getWorkgroup_code(), stepMain.getWorkgroup_desc());
+                    }
+                } else {
+                    if (ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())) {
+                        mValue = mDbValue = generateWorkGroupValue(stepMain.getAp_workgroup_code(), stepMain.getAp_workgroup_desc());
+                    } else {
+                        mValue = mDbValue = generateWorkGroupValue(stepMain.getWorkgroup_code(), stepMain.getWorkgroup_desc());
+                    }
+                }
+                //
+                ssWorkgroup.setmValue(mValue);
+                ssWorkgroup.setmValueBD(mDbValue);
+                //
+                ssWorkgroup.setOnSpinnerClickListner(new SearchableSpinner.OnSpinnerClickListner() {
+                    @Override
+                    public void onSpinnerClickListner(boolean b) {
+                        ArrayList<HMAux> workgroupList = onWorkgroupSpinnerClickListener.onWorkgroupSpinnerClick();
+                        ssWorkgroup.setmOption(workgroupList);
+                    }
+                });
+            }
+            if (isInWgEditMode
+                && (ToolBox_Inf.hasConsistentValueString(stepMain.getZone_site_group_desc()) || ToolBox_Inf.hasConsistentValueString(stepMain.getAp_zone_site_group_desc()))
+            ) {
+                //SE HOUVER DADOS AP_* ELES É QUE DEVEM SER EXIBIDOS.
+                tvZoneSiteGroup.setText(
+                    ToolBox_Inf.hasConsistentValueString(stepMain.getAp_zone_site_group_desc())
+                        ? stepMain.getAp_zone_site_group_desc()
+                        : stepMain.getZone_site_group_desc()
+                );
+            }
+            //
+            if (isInWgEditMode
+                && (ToolBox_Inf.hasConsistentValueString(stepMain.getPc_level_target()) || ToolBox_Inf.hasConsistentValueString(stepMain.getAp_pc_level_target()))
+            ) {
+                tvPcLevelTarget.setText(
+                    ToolBox_Inf.hasConsistentValueString(stepMain.getAp_pc_level_target())
+                        ? stepMain.getAp_pc_level_target()
+                        : stepMain.getPc_level_target()
+                );
+            }
+        }
     }
 
     private HMAux generateWorkGroupValue(String workgroup_code, String workgroup_desc) {
@@ -261,7 +268,7 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
         ivCheckInAndOutDate.setVisibility(childShown && !tvCheckInAndOutDate.getText().toString().isEmpty() ? View.VISIBLE : View.GONE);
         tvCheckInAndOutDate.setVisibility(childShown && !tvCheckInAndOutDate.getText().toString().isEmpty() ? View.VISIBLE : View.GONE);
         //
-        if(isInWgEditMode){
+        if(statusAllowEdition && isInWgEditMode){
             if(ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL.equals(approvalType)){
                 ivMainUser.setVisibility(childShown ? View.VISIBLE : View.GONE);
                 tvMainUser.setVisibility(childShown ? View.VISIBLE : View.GONE);
