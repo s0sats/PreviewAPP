@@ -176,6 +176,7 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
             bundle.putString(WS_TK_Header_N_Group_Save.TIME_ACTION, timeAction);
             bundle.putInt(WS_TK_Header_N_Group_Save.MOVE_OTHER_DATE, move_other_date);
             bundle.putInt(WS_TK_Header_N_Group_Save.MOVE_STEPS,  move_steps);
+            bundle.putBoolean(WS_TK_Header_N_Group_Save.IS_HEADER_DATETIME_CHANGES, true);
             //
             mIntent.putExtras(bundle);
             //

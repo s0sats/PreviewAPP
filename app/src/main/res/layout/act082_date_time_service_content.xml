@@ -23,7 +23,7 @@
         style="@style/MyTicketRadioButtton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        tools:text="TextView"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/tv_date_lbl"
         app:layout_constraintEnd_toStartOf="@+id/guideline6"
