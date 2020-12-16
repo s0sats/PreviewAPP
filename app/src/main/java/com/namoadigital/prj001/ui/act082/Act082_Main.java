@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act082;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -30,6 +32,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_TK_Header_N_Group_Save;
 import com.namoadigital.prj001.service.WS_TK_Main_User_List;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -85,6 +88,11 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     TextView tv_start_date;
     TextView tv_end_date;
     TextView tv_service_time;
+
+    TextView tv_elapsed_time_lbl;
+    TextView tv_elapsed_time_val;
+    TextView tv_remaining_time_lbl;
+    TextView tv_remaining_time_val;
 
     private Button btn_cancel_header_form;
     private Button btn_save_header_form;
@@ -159,6 +167,11 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         edt_service_time_hour_val = v_time_form.findViewById(R.id.act082_edt_service_time_hour_val);
         edt_service_time_minutes_val = v_time_form.findViewById(R.id.act082_edt_service_time_minute_val);
         chk_shift_step_service_time = v_time_form.findViewById(R.id.act082_chk_shift_service_time_refresh_step_duration);
+        //
+        tv_elapsed_time_lbl = findViewById(R.id.act082_tv_elapsed_time_lbl);
+        tv_elapsed_time_val = findViewById(R.id.act082_tv_elapsed_time_val);
+        tv_remaining_time_lbl = findViewById(R.id.act082_tv_remaining_time_lbl);
+        tv_remaining_time_val = findViewById(R.id.act082_tv_remaining_time_val);
     }
 
 
@@ -169,47 +182,12 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         //
         setLabels();
         //
-        mTk_ticket = mPresenter.getTicketData(mTkPrefix, mTkCode);
-        //
-        setHeaderFragment(mTk_ticket);
+        refreshUI();
         //
         mket_internal_comments.setmBARCODE(false);
-        if(mTk_ticket.getInternal_comments() == null){
-            mket_internal_comments.setText("");
-            mket_internal_comments.setTag("");
-        }else{
-            mket_internal_comments.setText(mTk_ticket.getInternal_comments());
-            mket_internal_comments.setTag(mTk_ticket.getInternal_comments());
-        }
-
-        tv_start_date.setText(ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(mTk_ticket.getStart_date()),
-                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-        ));
-        //
-        if(mTk_ticket.getForecast_date() !=null) {
-            tv_end_date.setText(ToolBox_Inf.millisecondsToString(
-                    ToolBox_Inf.dateToMilliseconds(mTk_ticket.getForecast_date()),
-                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-            ));
-        }
-        //
-        tv_service_time.setText(mTk_ticket.getForecast_time());
-        //
-        setVisibilityByProfile();
-        //
-        if (mTk_ticket.getMain_user() != null && mTk_ticket.getMain_user() > 0) {
-            HMAux hmAuxMainUser = new HMAux();
-            //
-            hmAuxMainUser.put(SearchableSpinner.CODE, String.valueOf(mTk_ticket.getMain_user()));
-            hmAuxMainUser.put(SearchableSpinner.ID, mTk_ticket.getMain_user_nick());
-            hmAuxMainUser.put(SearchableSpinner.DESCRIPTION, mTk_ticket.getMain_user_name());
-            ss_main_user.setmValue(hmAuxMainUser, true);
-        }
         //
         mPresenter.callMainUserService(mTk_ticket);
-
-        btn_save_header_form.setEnabled(false);
+        //
     }
 
     @Override
@@ -297,7 +275,10 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         mkdt_start_date_val.setmCanClean(false);
         mkdt_end_date_val.setmLabel("");
         mkdt_end_date_val.setmCanClean(false);
-
+        //
+        tv_elapsed_time_lbl.setText(  hmAux_Trans.get("elapsed_time_lbl"));
+        tv_remaining_time_lbl.setText(hmAux_Trans.get("remaining_time_lbl"));
+        //
     }
 
     private void recoverIntentBundle() {
@@ -454,6 +435,9 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         transList.add("exit_without_save_ttl");
         transList.add("exit_without_save_msg");
         //
+        transList.add("elapsed_time_lbl");
+        transList.add("remaining_time_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -526,6 +510,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                 //
                 if(hasFieldValueChange(forecast_time, start_date, forecast_date)
                 ) {
+                    retrieveKeyboard();
                     mPresenter.callEditHeaderService(
                             mTk_ticket.getTicket_prefix(),
                             mTk_ticket.getTicket_code(),
@@ -561,6 +546,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         rb_start_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                retrieveKeyboard();
                 if (rb_start_date_is_checked) {
                     rb_start_date_is_checked = false;
                     rg_date_and_forecast_infos.clearCheck();
@@ -592,6 +578,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         rb_end_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                retrieveKeyboard();
                 if (rb_end_date_is_checked) {
                     rb_end_date_is_checked = false;
                     rg_date_and_forecast_infos.clearCheck();
@@ -622,6 +609,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         rb_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                retrieveKeyboard();
                 if (rb_time_is_checked) {
                     rb_time_is_checked = false;
                     rg_date_and_forecast_infos.clearCheck();
@@ -735,9 +723,75 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         //
         if (wsProcess.equals(WS_TK_Main_User_List.class.getName())) {
             mPresenter.setMainUserList(mLink);
+        }else if (wsProcess.equals(WS_TK_Header_N_Group_Save.class.getName())) {
+            refreshUI();
         }
         //
         progressDialog.dismiss();
+    }
+
+    private void refreshUI() {
+        mTk_ticket = mPresenter.getTicketData(mTkPrefix, mTkCode);
+        //
+        setHeaderFragment(mTk_ticket);
+        //
+        if(mTk_ticket.getInternal_comments() == null){
+            mket_internal_comments.setText("");
+            mket_internal_comments.setTag("");
+        }else{
+            mket_internal_comments.setText(mTk_ticket.getInternal_comments());
+            mket_internal_comments.setTag(mTk_ticket.getInternal_comments());
+        }
+
+
+        tv_start_date.setText(ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(mTk_ticket.getStart_date()),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+        ));
+        //
+        if(mTk_ticket.getForecast_date() !=null) {
+            tv_end_date.setText(ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(mTk_ticket.getForecast_date()),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            ));
+        }
+        //
+        tv_service_time.setText(mTk_ticket.getForecast_time());
+
+        if (mTk_ticket.getMain_user() != null && mTk_ticket.getMain_user() > 0) {
+            HMAux hmAuxMainUser = new HMAux();
+            //
+            hmAuxMainUser.put(SearchableSpinner.CODE, String.valueOf(mTk_ticket.getMain_user()));
+            hmAuxMainUser.put(SearchableSpinner.ID, mTk_ticket.getMain_user_nick());
+            hmAuxMainUser.put(SearchableSpinner.DESCRIPTION, mTk_ticket.getMain_user_name());
+            ss_main_user.setmValue(hmAuxMainUser, true);
+        }
+        //
+        setVisibilityByProfile();
+        //
+        btn_save_header_form.setEnabled(false);
+        rb_start_date.setChecked(false);
+        rb_end_date.setChecked(false);
+        rb_time.setChecked(false);
+        //
+        v_start_date_form.setVisibility(View.GONE);
+        tv_start_date.setVisibility(View.VISIBLE);
+        v_end_date_form.setVisibility(View.GONE);
+        tv_end_date.setVisibility(View.VISIBLE);
+        v_time_form.setVisibility(View.GONE);
+        tv_service_time.setVisibility(View.VISIBLE);
+
+        tv_elapsed_time_val.setText(mPresenter.getElapsedTime(mTk_ticket));
+        Long remainingTime = mPresenter.getRemainingTime(mTk_ticket);
+        if(mPresenter.getRemainingTime(mTk_ticket) != null) {
+            tv_remaining_time_val.setText(ToolBox_Inf.millisecondsToString(remainingTime,ToolBox_Inf.nlsDateFormat(context) + " HH:mm" ));
+//            if(remainingTime)
+        }else{
+            tv_remaining_time_lbl.setVisibility(View.GONE);
+            tv_remaining_time_val.setVisibility(View.GONE);
+        }
+        //
+        retrieveKeyboard();
     }
 
 
@@ -850,5 +904,10 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         }
     }
     //endregion
+
+    void retrieveKeyboard(){
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(ss_main_user.getWindowToken(), 0);
+    }
 
 }

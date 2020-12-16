@@ -252,7 +252,39 @@
 
                             tools:text="Deslocar Data de Inicio" />
                     </android.support.constraint.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/act082_tv_elapsed_time_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        tools:text="Tempo decorrido" />
+
+                    <TextView
+                        android:id="@+id/act082_tv_elapsed_time_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        android:layout_marginLeft="32dp"
+                        tools:text="Au AU " />
+
+                    <TextView
+                        android:id="@+id/act082_tv_remaining_time_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        tools:text="Tempo restante" />
+
+                    <TextView
+                        android:id="@+id/act082_tv_remaining_time_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        android:layout_marginLeft="32dp"
+                        tools:text="Au au" />
                 </RadioGroup>
+
+
 
 
             </LinearLayout>

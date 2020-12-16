@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.T_TK_Main_User_Rec;
@@ -188,5 +189,30 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
                     hmAux_trans.get("dialog_main_user_search_start")
             );
         }
+    }
+
+    @Override
+    public String getElapsedTime(TK_Ticket mTk_ticket) {
+        long start_date = ToolBox_Inf.dateToMilliseconds(mTk_ticket.getStart_date());
+        long current_date = ToolBox_Inf.dateToMilliseconds(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        long elapsed_time = current_date - start_date;
+        String day;
+        String hour;
+        String minute;
+        day = String.valueOf( (int) elapsed_time/86400000);
+        return day;
+    }
+
+    @Override
+    public Long getRemainingTime(TK_Ticket mTk_ticket) {
+        long forecast_date =0;
+        if(mTk_ticket.getForecast_date() != null) {
+            forecast_date = ToolBox_Inf.dateToMilliseconds(mTk_ticket.getForecast_date());
+        }else{
+            return null;
+        }
+        long current_date = ToolBox_Inf.dateToMilliseconds(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        long remaining_time =  forecast_date - current_date;
+        return remaining_time;
     }
 }
