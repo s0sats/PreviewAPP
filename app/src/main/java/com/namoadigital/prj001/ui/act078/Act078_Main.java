@@ -96,6 +96,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
     private TextView tv_client_address_zipcode_lbl;
     private TextView tv_client_address_zipcode_val;
     private boolean is_from_edit_header;
+    private boolean is_from_edit_workgroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,18 +180,23 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                     0
             );
         }else {
-            //
-            ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
+            //LUCHE - 16/12/2020
+            //Quando em edição, o fab não deve ser exibido
+            if(!isInEditionMode()) {
+                ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
                     new FabMenu.IFabMenu() {
                         @Override
                         public void onFabClick(View view) {
                             String tag = (String) view.getTag();
-                            switch (tag){
+                            switch (tag) {
                                 case ConstantBaseApp.FAB_TO_PRODUCT_LBL:
                                     callAct075();
                                     break;
                                 case ConstantBaseApp.FAB_TO_STEP_LBL:
-                                    callAct070();
+                                    callAct070(false);
+                                    break;
+                                case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
+                                    callAct070(true);
                                     break;
                             }
                         }
@@ -199,12 +205,23 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                         public void onFabStatusChanged(boolean b) {
                             hasFABActive = b;
                         }
-                    }
-                    );
+                    });
+            }else{
+                fabMenu.setVisibility(View.GONE);
+            }
             //
             mPresenter.getStepOrigin(mTkPrefix, mTkCode);
             //
         }
+    }
+
+    /**
+     * LUCHE - 16/12/2020
+     * Metodo que retorna se esta em algum modo de edição.
+     * @return Verdadeiro se ao menos um flag de edição ativa.
+     */
+    private boolean isInEditionMode() {
+        return is_from_edit_header || is_from_edit_workgroup;
     }
 
     private void setLabels() {
@@ -271,6 +288,12 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
             mTkPrefix = requestingBundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
             mTkCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
             is_from_edit_header = requestingBundle.getBoolean(Act082_Main.FROM_EDIT_HEADER, false);
+            is_from_edit_workgroup = requestingBundle.getBoolean(Act070_Main.PARAM_WORKGROUP_EDIT_MODE,false);
+        }else{
+            mTkPrefix = -1;
+            mTkCode = -1;
+            is_from_edit_header = false;
+            is_from_edit_workgroup = false;
         }
     }
 
@@ -282,7 +305,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
             if(is_from_edit_header){
                 callAct082();
             }else {
-                callAct070();
+                callAct070(false);
             }
         }
     }
@@ -537,8 +560,11 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         finish();
     }
 
-    private void callAct070() {
+    private void callAct070(boolean forceEditMode) {
         Intent intent = new Intent(context, Act070_Main.class);
+        if(forceEditMode){
+            requestingBundle.putBoolean(Act070_Main.PARAM_FORCE_WORKGROUP_EDIT_MODE,true);
+        }
         intent.putExtras(requestingBundle);
         startActivity(intent);
         finish();

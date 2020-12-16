@@ -55,6 +55,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     ImageView iv_form_download_pdf;
     TextView tv_form_download_pdf;
     private boolean is_from_edit_header;
+    private boolean is_from_edit_workgroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,12 +150,13 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             //
             tv_form_download_pdf.setText(hmAux_Trans.get("download_form_pdf_lbl"));
             //
-            ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
+            if(!isInEditionMode()) {
+                ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
                     new FabMenu.IFabMenu() {
                         @Override
                         public void onFabClick(View view) {
                             String tag = (String) view.getTag();
-                            switch (tag){
+                            switch (tag) {
                                 case ConstantBaseApp.FAB_TO_PRODUCT_LBL:
                                     callAct075();
                                     break;
@@ -170,9 +172,22 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                         }
                     }
                 );
+            }else{
+                fabMenu.setVisibility(View.GONE);
+            }
             mPresenter.getStepOrigin(mTkPrefix, mTkCode);
         }
     }
+
+    /**
+     * LUCHE - 16/12/2020
+     * Metodo que retorna se esta em algum modo de edição.
+     * @return Verdadeiro se ao menos um flag de edição ativa.
+     */
+    private boolean isInEditionMode() {
+        return is_from_edit_header || is_from_edit_workgroup;
+    }
+
 
 
     private void setHeaderFragment(TK_Ticket tkTicket, String custom_form_type_desc, String custom_form_desc, String step_date, String step_end_user_nick) {
@@ -219,6 +234,12 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             mTkPrefix = requestingBundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
             mTkCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
             is_from_edit_header = requestingBundle.getBoolean(Act082_Main.FROM_EDIT_HEADER, false);
+            is_from_edit_workgroup = requestingBundle.getBoolean(Act070_Main.PARAM_WORKGROUP_EDIT_MODE,false);
+        }else{
+            mTkPrefix = -1;
+            mTkCode = -1;
+            is_from_edit_header = false;
+            is_from_edit_workgroup = false;
         }
     }
 

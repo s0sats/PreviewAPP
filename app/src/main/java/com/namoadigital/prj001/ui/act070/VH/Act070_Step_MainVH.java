@@ -160,7 +160,10 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
 
     private void applyInEditUIChanges(StepMain stepMain) {
         if (statusAllowEdition) {
-            if (isInWgEditMode && (ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL.equals(stepMain.getAp_type()))) {
+            if (isInWgEditMode
+                && ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL.equals(stepMain.getAp_type())
+                && stepMain.getMain_user() != null && !stepMain.getMain_user().isEmpty()
+            ) {
                 tvMainUser.setText(stepMain.getMain_user());
             }
             //
@@ -270,8 +273,8 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
         //
         if(statusAllowEdition && isInWgEditMode){
             if(ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL.equals(approvalType)){
-                ivMainUser.setVisibility(childShown ? View.VISIBLE : View.GONE);
-                tvMainUser.setVisibility(childShown ? View.VISIBLE : View.GONE);
+                ivMainUser.setVisibility(childShown && !tvMainUser.getText().toString().isEmpty() ? View.VISIBLE : View.GONE);
+                tvMainUser.setVisibility(childShown && !tvMainUser.getText().toString().isEmpty() ? View.VISIBLE : View.GONE);
                 //
                 ivWorkgroup.setVisibility(View.GONE);
                 ssWorkgroup.setVisibility(View.GONE);

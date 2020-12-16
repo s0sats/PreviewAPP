@@ -86,6 +86,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public static final String IS_OPERATIONAL_PROCESS = "IS_OPERATIONAL_PROCESS";
     public static final String PARAM_FORCE_SEND_BY_FORM_EXEC = "PARAM_FORCE_SEND_BY_FORM_EXEC";
     public static final String PARAM_WORKGROUP_EDIT_MODE = "PARAM_WORKGROUP_EDIT_MODE";
+    public static final String PARAM_FORCE_WORKGROUP_EDIT_MODE = "PARAM_FORCE_WORKGROUP_EDIT_MODE";
 
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
@@ -123,6 +124,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private ConstraintLayout clEditMode;
     private Button btnCancelEdit;
     private Button btnSaveEdit;
+    private boolean forceWgEditMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -356,20 +358,31 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     private void checkEditFlow() {
-        if(mPresenter.getWorkgroupChangeList(mTicket) != null) {
-            if (!isInWgEditMode) {
-                if (mPresenter.allowEditModeOn(mTicket)) {
-                    toogleIntoEditMode();
-                } else {
-                    showAlert(
-                        hmAux_Trans.get("alert_update_ticket_to_edit_ttl"),
-                        hmAux_Trans.get("alert_update_ticket_to_edit_msg")
-                    );
-                }
-            } else {
+        if (mPresenter.allowEditModeOn(mTicket)) {
+            if(mPresenter.getWorkgroupChangeList(mTicket) != null) {
                 toogleIntoEditMode();
             }
+        } else {
+            showAlert(
+                hmAux_Trans.get("alert_update_ticket_to_edit_ttl"),
+                hmAux_Trans.get("alert_update_ticket_to_edit_msg")
+            );
         }
+
+//        if(mPresenter.getWorkgroupChangeList(mTicket) != null) {
+//            if (!isInWgEditMode) {
+//                if (mPresenter.allowEditModeOn(mTicket)) {
+//                    toogleIntoEditMode();
+//                } else {
+//                    showAlert(
+//                        hmAux_Trans.get("alert_update_ticket_to_edit_ttl"),
+//                        hmAux_Trans.get("alert_update_ticket_to_edit_msg")
+//                    );
+//                }
+//            } else {
+//                toogleIntoEditMode();
+//            }
+//        }
     }
 
     @Override
@@ -463,6 +476,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mNavTicketSeq = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ, -1);
             mNavTicketSeqTmp = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, -1);
             isInWgEditMode =  requestingBundle.getBoolean(PARAM_WORKGROUP_EDIT_MODE, false);
+            forceWgEditMode =  requestingBundle.getBoolean(PARAM_FORCE_WORKGROUP_EDIT_MODE, false);
             //
         } else {
             requestingAct = ConstantBaseApp.ACT069;
@@ -474,6 +488,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mNavTicketSeq = -1;
             mNavTicketSeqTmp = -1;
             isInWgEditMode = false;
+            forceWgEditMode = false;
         }
     }
 
@@ -760,6 +775,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 initFCMReceiver();
                 checkSyncNeeds();
                 applyEditUI();
+                //
+                forceEditModeIfNeeds();
             }else{
                 ToolBox.alertMSG(
                         context,
@@ -777,6 +794,24 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         } else {
             paramErrorFlow();
         }
+    }
+
+    /**
+     * LUCHE - 16/12/2020
+     * Força o modo edição se recebeu param via bundle.*
+     * Na primeira passagem, se tive pendencia de sincronismo, não será acionado o modo edição.
+     * Após a atualização do syncRequired, na segunda chamada, ai sim, forçará o modo edição.
+     */
+    private void forceEditModeIfNeeds() {
+        if(forceWgEditMode && !mPresenter.checkOnlySyncNeeds(mTicket)){
+            resetForceEditMode();
+            checkEditFlow();
+        }
+    }
+
+    private void resetForceEditMode() {
+        forceWgEditMode = false;
+        requestingBundle.remove(PARAM_FORCE_WORKGROUP_EDIT_MODE);
     }
 
     private void applyEditUI() {

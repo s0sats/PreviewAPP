@@ -55,6 +55,7 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
     ImageView iv_form_download_pdf;
     TextView tv_form_download_pdf;
     private boolean is_from_edit_header=false;
+    private boolean is_from_edit_workgroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +103,7 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
             //
             tv_form_download_pdf.setText(hmAux_Trans.get("download_form_pdf_lbl"));
             //
-            if(!is_from_edit_header) {
+            if(!isInEditionMode()) {
                 fabMenu.setVisibility(View.VISIBLE);
                 ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
                         new FabMenu.IFabMenu() {
@@ -126,7 +127,7 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
                         }
                 );
             }else{
-                fabMenu.setVisibility(View.VISIBLE);
+                fabMenu.setVisibility(View.GONE);
             }
             //
             mPresenter.getStepOrigin(mTkPrefix, mTkCode);
@@ -171,6 +172,12 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
             mTkPrefix = requestingBundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
             mTkCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
             is_from_edit_header = requestingBundle.getBoolean(Act082_Main.FROM_EDIT_HEADER, false);
+            is_from_edit_workgroup = requestingBundle.getBoolean(Act070_Main.PARAM_WORKGROUP_EDIT_MODE,false);
+        }else{
+            mTkPrefix = -1;
+            mTkCode = -1;
+            is_from_edit_header = false;
+            is_from_edit_workgroup = false;
         }
     }
 
@@ -288,6 +295,15 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
 
         setFormInfos(tkTicket);
 
+    }
+
+    /**
+     * LUCHE - 16/12/2020
+     * Metodo que retorna se esta em algum modo de edição.
+     * @return Verdadeiro se ao menos um flag de edição ativa.
+     */
+    private boolean isInEditionMode() {
+        return is_from_edit_header || is_from_edit_workgroup;
     }
 
     private void setFormInfos(TK_Ticket tkTicket) {

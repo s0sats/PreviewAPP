@@ -64,6 +64,7 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
     private TextView tv_action_comment_val;
     private String actionPhotoLocalPath;
     private boolean is_from_edit_header=false;
+    private boolean is_from_edit_workgroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +148,7 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
             );
         }else {
             //
-            if (!is_from_edit_header) {
+            if (!isInEditionMode()) {
                 fabMenu.setVisibility(View.VISIBLE);
                 ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
                         new FabMenu.IFabMenu() {
@@ -183,6 +184,15 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
         tv_action_photo_lbl.setText(hmAux_Trans.get("action_photo_lbl"));
         tv_action_comment_lbl.setText(hmAux_Trans.get("action_comment_lbl"));
 
+    }
+
+    /**
+     * LUCHE - 16/12/2020
+     * Metodo que retorna se esta em algum modo de edição.
+     * @return Verdadeiro se ao menos um flag de edição ativa.
+     */
+    private boolean isInEditionMode() {
+        return is_from_edit_header || is_from_edit_workgroup;
     }
 
     private void iniSetup() {
@@ -242,6 +252,12 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
             mTkPrefix = requestingBundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
             mTkCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
             is_from_edit_header = requestingBundle.getBoolean(Act082_Main.FROM_EDIT_HEADER, false);
+            is_from_edit_workgroup = requestingBundle.getBoolean(Act070_Main.PARAM_WORKGROUP_EDIT_MODE,false);
+        }else{
+            mTkPrefix = -1;
+            mTkCode = -1;
+            is_from_edit_header = false;
+            is_from_edit_workgroup = false;
         }
     }
 
