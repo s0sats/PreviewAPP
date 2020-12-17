@@ -50,7 +50,9 @@ public interface Act082_Main_Contract {
 
         void callEditHeaderService(int ticket_prefix, int ticket_code, int scn, Integer main_user_code, String main_user_name, String main_user_nick, String forecast_time, String start_date, String forecast_date, String timeAction, String internalComments, int move_other_date, int move_steps);
 
-        String getElapsedTime(TK_Ticket mTk_ticket);
+        Long getElapsedTime(TK_Ticket mTk_ticket);
+
+        String getFormattedDate(long time);
 
         Long getRemainingTime(TK_Ticket mTk_ticket);
     }

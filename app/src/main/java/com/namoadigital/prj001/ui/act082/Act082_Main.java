@@ -488,12 +488,16 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                         timeAction = ConstantBaseApp.TK_TICKET_START_DATE;
                     }
                     start_date = mkdt_start_date_val.getmValue();
+                    move_other_date = chk_shift_ticket_start_date.isChecked() ? 1 : 0;
+                    move_steps = chk_shift_step_start_date.isChecked() ? 1 : 0;
                 } else if (rb_end_date.isChecked()) {
                     if(header_data_has_changed){
                         timeAction = ConstantBaseApp.TK_TICKET_FORECAST_DATE_AND_HEADER;
                     }else{
                         timeAction = ConstantBaseApp.TK_TICKET_FORECAST_DATE;
                     }
+                    move_other_date = chk_shift_ticket_end_date.isChecked() ? 1 : 0;
+                    move_steps = chk_shift_step_end_date.isChecked() ? 1 : 0;
                     forecast_date = mkdt_end_date_val.getmValue();
                 } else if (rb_time.isChecked()) {
                     if(header_data_has_changed){
@@ -501,6 +505,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                     }else{
                         timeAction = ConstantBaseApp.TK_TICKET_FORECAST_TIME;
                     }
+                    move_steps = chk_shift_step_service_time.isChecked() ? 1 : 0;
                     forecast_time = mPresenter.getTimeFromForm(edt_service_time_day_val.getText().toString(), edt_service_time_hour_val.getText().toString(), edt_service_time_minutes_val.getText().toString());
                 }else{
                     if(header_data_has_changed){
@@ -508,8 +513,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                     }
                 }
                 //
-                if(hasFieldValueChange(forecast_time, start_date, forecast_date)
-                ) {
+                if(hasFieldValueChange(forecast_time, start_date, forecast_date)) {
                     retrieveKeyboard();
                     mPresenter.callEditHeaderService(
                             mTk_ticket.getTicket_prefix(),
@@ -621,19 +625,25 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                 }
                 //
                 if (rb_time_is_checked) {
-                    String service_time = tv_service_time.getText().toString();
-                    String[] dayTimeSplit = service_time.split(" ");
-                    String[] timeSplit = new String[3];
+                    if(mTk_ticket.getForecast_time() != null){
+                        String service_time = tv_service_time.getText().toString();
+                        String[] dayTimeSplit = service_time.split(" ");
+                        String[] timeSplit = new String[3];
 
-                    timeSplit[0] = dayTimeSplit.length > 1 ? dayTimeSplit[0] : "0";
-                    int firstIdx = dayTimeSplit.length > 1 ? 1 : 0;
-                    String[] aux = dayTimeSplit[firstIdx].split(":");
-                    timeSplit[1] = aux[0];
-                    timeSplit[2] = aux[1];
+                        timeSplit[0] = dayTimeSplit.length > 1 ? dayTimeSplit[0] : "0";
+                        int firstIdx = dayTimeSplit.length > 1 ? 1 : 0;
+                        String[] aux = dayTimeSplit[firstIdx].split(":");
+                        timeSplit[1] = aux[0];
+                        timeSplit[2] = aux[1];
 
-                    edt_service_time_day_val.setText(timeSplit[0]);
-                    edt_service_time_hour_val.setText(timeSplit[1]);
-                    edt_service_time_minutes_val.setText(timeSplit[2]);
+                        edt_service_time_day_val.setText(timeSplit[0]);
+                        edt_service_time_hour_val.setText(timeSplit[1]);
+                        edt_service_time_minutes_val.setText(timeSplit[2]);
+                    }else{
+                        edt_service_time_day_val.setText("");
+                        edt_service_time_hour_val.setText("");
+                        edt_service_time_minutes_val.setText("");
+                    }
                     v_time_form.setVisibility(View.VISIBLE);
                     v_start_date_form.setVisibility(View.GONE);
                     v_end_date_form.setVisibility(View.GONE);
@@ -754,9 +764,15 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                     ToolBox_Inf.dateToMilliseconds(mTk_ticket.getForecast_date()),
                     ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             ));
+        }else{
+            tv_end_date.setText(" - ");
         }
         //
-        tv_service_time.setText(mTk_ticket.getForecast_time());
+        if(mTk_ticket.getForecast_time() == null){
+            tv_service_time.setText(" - ");
+        }else{
+            tv_service_time.setText(mTk_ticket.getForecast_time());
+        }
 
         if (mTk_ticket.getMain_user() != null && mTk_ticket.getMain_user() > 0) {
             HMAux hmAuxMainUser = new HMAux();
@@ -780,12 +796,17 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         tv_end_date.setVisibility(View.VISIBLE);
         v_time_form.setVisibility(View.GONE);
         tv_service_time.setVisibility(View.VISIBLE);
-
-        tv_elapsed_time_val.setText(mPresenter.getElapsedTime(mTk_ticket));
+        Long elapsedTime = mPresenter.getElapsedTime(mTk_ticket);
+        if(elapsedTime < 0 ){
+            tv_elapsed_time_val.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+        }
+        tv_elapsed_time_val.setText(mPresenter.getFormattedDate(elapsedTime));
         Long remainingTime = mPresenter.getRemainingTime(mTk_ticket);
-        if(mPresenter.getRemainingTime(mTk_ticket) != null) {
-            tv_remaining_time_val.setText(ToolBox_Inf.millisecondsToString(remainingTime,ToolBox_Inf.nlsDateFormat(context) + " HH:mm" ));
-//            if(remainingTime)
+        if(remainingTime != null) {
+            if(remainingTime < 0 ){
+                tv_remaining_time_val.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+            }
+            tv_remaining_time_val.setText(mPresenter.getFormattedDate(remainingTime));
         }else{
             tv_remaining_time_lbl.setVisibility(View.GONE);
             tv_remaining_time_val.setVisibility(View.GONE);

@@ -228,6 +228,9 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
                     break;
             }
             //
+            ticket.setMove_steps(move_steps);
+            ticket.setMove_other_date(move_other_date);
+            //
             ticket.setApply_perc_steps(formatted_apply_perc_steps);
         }
     }

@@ -257,6 +257,7 @@
                         android:id="@+id/act082_tv_elapsed_time_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:textStyle="bold"
                         tools:text="Tempo decorrido" />
 
@@ -272,6 +273,7 @@
                         android:id="@+id/act082_tv_remaining_time_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:textStyle="bold"
                         tools:text="Tempo restante" />
 

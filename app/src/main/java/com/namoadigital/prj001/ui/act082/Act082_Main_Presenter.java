@@ -192,15 +192,34 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
     }
 
     @Override
-    public String getElapsedTime(TK_Ticket mTk_ticket) {
+    public Long getElapsedTime(TK_Ticket mTk_ticket) {
         long start_date = ToolBox_Inf.dateToMilliseconds(mTk_ticket.getStart_date());
         long current_date = ToolBox_Inf.dateToMilliseconds(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         long elapsed_time = current_date - start_date;
-        String day;
-        String hour;
-        String minute;
-        day = String.valueOf( (int) elapsed_time/86400000);
-        return day;
+        return elapsed_time;
+    }
+
+    @Override
+    public String getFormattedDate(long time) {
+        boolean negativeTime = false;
+        String formattedDate;
+
+        if(time < 0){
+            time = time * -1;
+            negativeTime = true;
+        }
+
+        long seconds = time / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+
+        String sign = "";
+        if(negativeTime){
+            sign = "-";
+        }
+        formattedDate = sign + days + ":" + (hours % 24 > 9 ? hours % 24 : "0" + hours % 24 ) + ":" + (minutes % 60 > 9 ? minutes % 60 : "0" +  minutes % 60 ) ;
+        return formattedDate;
     }
 
     @Override
