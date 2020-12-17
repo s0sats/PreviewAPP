@@ -16,10 +16,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
@@ -120,7 +122,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private Integer mNavTicketSeq;
     private Integer mNavTicketSeqTmp;
     //LUCHE - 03/12/2020 - IMPLEMENTAÇÃO EDIÇÁO DE WORKGROUP
-    private boolean isInWgEditMode = false;
+    private boolean inWgEditMode = false;
     private ConstraintLayout clEditMode;
     private Button btnCancelEdit;
     private Button btnSaveEdit;
@@ -292,6 +294,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_error_on_create_wg_changes_file_ttl");
         transList.add("alert_error_on_create_wg_changes_file_msg");
         //
+        transList.add("alert_wg_edit_need_connection_ttl");
+        transList.add("alert_wg_edit_need_connection_msg");
+        transList.add("alert_discard_wg_changes_and_sync_ttl");
+        transList.add("alert_discard_wg_changes_and_sync_msg");
+        transList.add("alert_wg_edit_mode_cancel_by_sync_needs_ttl");
+        transList.add("alert_wg_edit_mode_cancel_by_sync_needs_msg");
+        transList.add("alert_wg_changes_ll_be_lost_by_sync_needs_ttl");
+        transList.add("alert_wg_changes_ll_be_lost_by_sync_needs_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -387,7 +398,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void toogleIntoEditMode() {
-        isInWgEditMode = !isInWgEditMode;
+        inWgEditMode = !inWgEditMode;
         mPresenter.deleteWorkgroupEditionFileIfNeeds();
         updateTicketData();
     }
@@ -429,13 +440,40 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public void syncPipeline() {
+        if(!inWgEditMode || !mPresenter.hasWorkgroupChanges(sources)){
+            syncPipelineFlow(false);
+        }else{
+            showAlert(
+                hmAux_Trans.get("alert_discard_wg_changes_and_sync_ttl"),
+                hmAux_Trans.get("alert_discard_wg_changes_and_sync_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        syncPipelineFlow(true);
+                    }
+                },
+                true
+            );
+        }
+    }
+
+    /**
+     * LUCHE - 17/12/2020
+     * Metodo que verifica o fluxo após o clique
+     * @param skipSyncConfirm - Var que indica se deve fazer a confirmação do sync
+     * Atualmente valor só verdaderio se veio do fluxo de sync durante edição de wg com dados alterados
+     */
+    private void syncPipelineFlow(boolean skipSyncConfirm) {
         if (ToolBox_Inf.hasOffHandFormInProcess(context, mTkPrefix, mTkCode)) {
             showAlert(
                     hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_ttl"),
                     hmAux_Trans.get("alert_ticket_has_off_hand_form_in_process_msg")
             );
         }else {
-            showAlert(
+            if(skipSyncConfirm) {
+                mPresenter.prepareSyncProcess(mTicket, false);
+            }else{
+                showAlert(
                     hmAux_Trans.get("alert_ticket_sync_confirm_ttl"),
                     hmAux_Trans.get("alert_ticket_sync_confirm_msg"),
                     new DialogInterface.OnClickListener() {
@@ -445,7 +483,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                         }
                     },
                     true
-            );
+                );
+            }
         }
     }
 
@@ -475,7 +514,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mNavStepCode = requestingBundle.getInt(TK_Ticket_CtrlDao.STEP_CODE, -1);
             mNavTicketSeq = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ, -1);
             mNavTicketSeqTmp = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, -1);
-            isInWgEditMode =  requestingBundle.getBoolean(PARAM_WORKGROUP_EDIT_MODE, false);
+            inWgEditMode =  requestingBundle.getBoolean(PARAM_WORKGROUP_EDIT_MODE, false);
             forceWgEditMode =  requestingBundle.getBoolean(PARAM_FORCE_WORKGROUP_EDIT_MODE, false);
             //
         } else {
@@ -487,7 +526,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mNavStepCode = -1;
             mNavTicketSeq = -1;
             mNavTicketSeqTmp = -1;
-            isInWgEditMode = false;
+            inWgEditMode = false;
             forceWgEditMode = false;
         }
     }
@@ -692,7 +731,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }
 
         },
-        isInWgEditMode);
+            inWgEditMode);
         //
         initRecycle();
     }
@@ -733,7 +772,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
     @Override
     public boolean isInWgEditMode() {
-        return isInWgEditMode;
+        return inWgEditMode;
     }
 
     //endregion
@@ -773,7 +812,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 mPresenter.getStepsList(mTicket);
                 setReadOnly();
                 initFCMReceiver();
-                checkSyncNeeds();
+                if(!isInWgEditMode()) {
+                    checkSyncNeeds();
+                }
                 applyEditUI();
                 //
                 forceEditModeIfNeeds();
@@ -797,6 +838,25 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     /**
+     * METODO PARA TESTE DE TOAST CUSTOMIZADO, FOI UMA IDEIA QUE NÃO FOI PRA FRENTE , MAS FICA AQUI
+     * COMO EXEMPLO.
+     */
+    private void callToastTest() {
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.custom_warning_toast,
+            (ViewGroup) findViewById(R.id.custom_warning_toast_cl_container));
+
+        TextView text = (TextView) layout.findViewById(R.id.custom_warning_toast_tv_msg);
+        text.setText("Sincronize o ticket.");
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
+    }
+
+    /**
      * LUCHE - 16/12/2020
      * Força o modo edição se recebeu param via bundle.*
      * Na primeira passagem, se tive pendencia de sincronismo, não será acionado o modo edição.
@@ -814,10 +874,41 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         requestingBundle.remove(PARAM_FORCE_WORKGROUP_EDIT_MODE);
     }
 
+    /**
+     * LUCHE- 17/12/2020
+     * Modificado metodo applyEditUI para que caso o modo de edição esteja ativo e o metodo allowEditModeOn retorne falso, exiba msg de atualização do ticket. A msg varia se o usuario fez ou não alteração de WG. Essa situação acontece quando o usuario iniciou o modo edição, depois navegou para alguma tela e ao voltar, havia um sinc required.
+     */
     private void applyEditUI() {
-        clEditMode.setVisibility(isInWgEditMode ? View.VISIBLE : View.GONE);
-        fabMenu.setVisibility(isInWgEditMode ? View.GONE : View.VISIBLE);
+        clEditMode.setVisibility(inWgEditMode ? View.VISIBLE : View.GONE);
+        fabMenu.setVisibility(inWgEditMode ? View.GONE : View.VISIBLE);
         mPresenter.checkBtnSaveEditState(sources);
+        if(inWgEditMode && !mPresenter.allowEditModeOn(mTicket)){
+            if(mPresenter.hasWorkgroupChanges(sources)){
+                   showAlert(
+                       hmAux_Trans.get("alert_wg_changes_ll_be_lost_by_sync_needs_ttl"),
+                       hmAux_Trans.get("alert_wg_changes_ll_be_lost_by_sync_needs_msg"),
+                       new DialogInterface.OnClickListener() {
+                           @Override
+                           public void onClick(DialogInterface dialogInterface, int i) {
+                               syncPipelineFlow(false);
+                           }
+                       },
+                       true
+                   );
+            }else{
+                showAlert(
+                    hmAux_Trans.get("alert_wg_edit_mode_cancel_by_sync_needs_ttl"),
+                    hmAux_Trans.get("alert_wg_edit_mode_cancel_by_sync_needs_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            syncPipelineFlow(true);
+                        }
+                    },
+                    false
+                );
+            }
+        }
     }
 
     @Override
@@ -1002,11 +1093,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, requestingBundle.getString(ConstantBaseApp.ACT_SELECTED_DATE, null));
             }
         }
-        bundle.putBoolean(PARAM_WORKGROUP_EDIT_MODE,isInWgEditMode);
+        bundle.putBoolean(PARAM_WORKGROUP_EDIT_MODE, inWgEditMode);
         //
         intent.putExtras(bundle);
         //
-        if(mPresenter.checkWorkgroupEditJsonFileCreation(isInWgEditMode,sources)) {
+        if(mPresenter.checkWorkgroupEditJsonFileCreation(inWgEditMode,sources)) {
             startActivity(intent);
             finish();
         }//SEM ELSE pois se for false, msg de erro será exibida
@@ -1089,7 +1180,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         btnSaveEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPresenter.generateJsonWGSave(mTicket, sources);
+                if(mPresenter.allowEditModeOn(mTicket)){
+                    mPresenter.generateJsonWGSave(mTicket, sources);
+                }else{
+                    showAlert(
+                        hmAux_Trans.get("alert_update_ticket_to_edit_ttl"),
+                        hmAux_Trans.get("alert_update_ticket_to_edit_msg")
+                    );
+                }
+
             }
         });
     }
@@ -1239,11 +1338,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public void callOrigin() {
         Intent intent = ToolBox_Inf.getOriginIntent(context, mTicket.getOrigin_type());
         if(intent != null) {
-            if(!isInWgEditMode || mPresenter.checkWorkgroupEditJsonFileCreation(isInWgEditMode,sources)){
+            if(!inWgEditMode || mPresenter.checkWorkgroupEditJsonFileCreation(inWgEditMode,sources)){
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 requestingBundle.putInt(TK_TicketDao.TICKET_PREFIX, mTkPrefix);
                 requestingBundle.putInt(TK_TicketDao.TICKET_CODE, mTkCode);
-                requestingBundle.putBoolean(PARAM_WORKGROUP_EDIT_MODE,isInWgEditMode);
+                requestingBundle.putBoolean(PARAM_WORKGROUP_EDIT_MODE, inWgEditMode);
                 intent.putExtras(requestingBundle);
                     startActivity(intent);
                     finish();
@@ -1378,7 +1477,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }
         }else if (wsProcess.equalsIgnoreCase(WS_TK_Get_Workgroup_List.class.getName())) {
             //reseta var de modo edição.
-            isInWgEditMode = false;
+            inWgEditMode = false;
         }else{
             wsResult.clear();
         }
@@ -1408,7 +1507,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }
         }else if (wsProcess.equalsIgnoreCase(WS_TK_Get_Workgroup_List.class.getName())) {
             //reseta var de modo edição.
-            isInWgEditMode = false;
+            inWgEditMode = false;
         }else{
             wsResult.clear();
         }
@@ -1448,7 +1547,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         if(hasFABActive){
             fabMenu.animateFAB();
         }else {
-            if(!isInWgEditMode) {
+            if(!inWgEditMode) {
                 mPresenter.onBackPressedClicked(requestingAct);
             }else{
                 confirmEditModeExit();

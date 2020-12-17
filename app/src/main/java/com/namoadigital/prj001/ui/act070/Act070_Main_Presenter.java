@@ -421,7 +421,10 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             //
             context.sendBroadcast(mIntent);
         }else{
-            ToolBox_Inf.showNoConnectionDialog(context);
+            mView.showAlert(
+                hmAux_Trans.get("alert_wg_edit_need_connection_ttl"),
+                hmAux_Trans.get("alert_wg_edit_need_connection_msg")
+            );
         }
     }
 

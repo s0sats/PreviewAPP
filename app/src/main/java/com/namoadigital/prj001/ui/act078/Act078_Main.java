@@ -196,7 +196,17 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                                     callAct070(false);
                                     break;
                                 case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
-                                    callAct070(true);
+                                    if(ToolBox_Con.isOnline(context)) {
+                                        callAct070(true);
+                                    }else{
+                                        ToolBox.alertMSG(
+                                            context,
+                                            hmAux_Trans.get("alert_wg_edit_need_connection_ttl"),
+                                            hmAux_Trans.get("alert_wg_edit_need_connection_msg"),
+                                            null,
+                                            0
+                                        );
+                                    }
                                     break;
                             }
                         }
@@ -398,6 +408,9 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         transList.add("client_address_zipcode_lbl");
         transList.add("alert_no_navegation_app_found_ttl");
         transList.add("alert_no_navegation_app_found_msg");
+        //
+        transList.add("alert_wg_edit_need_connection_ttl");
+        transList.add("alert_wg_edit_need_connection_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
