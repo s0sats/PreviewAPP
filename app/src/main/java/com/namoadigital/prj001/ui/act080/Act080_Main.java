@@ -161,7 +161,20 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
                                         callAct075();
                                         break;
                                     case ConstantBaseApp.FAB_TO_STEP_LBL:
-                                        callAct070();
+                                        callAct070(false);
+                                        break;
+                                    case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
+                                        if(ToolBox_Con.isOnline(context)) {
+                                            callAct070(true);
+                                        }else{
+                                            ToolBox.alertMSG(
+                                                context,
+                                                hmAux_Trans.get("alert_wg_edit_need_connection_ttl"),
+                                                hmAux_Trans.get("alert_wg_edit_need_connection_msg"),
+                                                null,
+                                                0
+                                            );
+                                        }
                                         break;
                                 }
                             }
@@ -275,6 +288,9 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
         transList.add("action_photo_lbl");
         transList.add("action_comment_lbl");
         //
+        transList.add("alert_wg_edit_need_connection_ttl");
+        transList.add("alert_wg_edit_need_connection_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -375,13 +391,16 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
             if(is_from_edit_header){
                 callAct082();
             }else {
-                callAct070();
+                callAct070(false);
             }
         }
     }
     //
-    private void callAct070() {
+    private void callAct070(boolean forceEditMode) {
         Intent intent = new Intent(context, Act070_Main.class);
+        if(forceEditMode){
+            requestingBundle.putBoolean(Act070_Main.PARAM_FORCE_WORKGROUP_EDIT_MODE,true);
+        }
         intent.putExtras(requestingBundle);
         startActivity(intent);
         finish();
