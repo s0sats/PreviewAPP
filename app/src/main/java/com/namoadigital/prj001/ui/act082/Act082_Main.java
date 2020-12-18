@@ -187,18 +187,45 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         //
         mket_internal_comments.setmBARCODE(false);
         //
+        if(mPresenter.getDateEditionProfile() || mPresenter.getStepEditTimeProfile()) {
+            if(mPresenter.hasAnyOnlinePendency(context, mTk_ticket)) {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_ticket_has_pendency_ttl"),
+                        hmAux_Trans.get("alert_ticket_has_pendency_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                handleReadOnly(true);
+                            }
+                        },
+                        0
+                );
+            }else {
+                //TODO metodo que recupera lista valida.
+            }
+        }else{
+            handleReadOnly(false);
+        }
+        //
     }
 
     @Override
-    public void handleReadOnly(boolean offlineMode) {
-        if (!mPresenter.getDateEditionProfile() || offlineMode) {
+    public void handleReadOnly(boolean forceReadOnly) {
+        if(forceReadOnly){
             setDateReadOnly();
-        } else {
-            enableHeaderEdit();
-        }
-        //
-        if (!mPresenter.getHeaderEditionProfile() || offlineMode) {
             setHeaderReadOnly();
+            ll_edit_buttons.setVisibility(View.GONE);
+        }else{
+            if (!mPresenter.getDateEditionProfile()){
+                setDateReadOnly();
+            }
+            if (!mPresenter.getHeaderEditionProfile()){
+                setHeaderReadOnly();
+            }
+            if(!mPresenter.getHeaderEditionProfile() && !mPresenter.getDateEditionProfile()){
+                ll_edit_buttons.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -231,14 +258,18 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         ll_date_and_forecast_infos.setVisibility(View.VISIBLE);
         ll_header_infos.setVisibility(View.VISIBLE);
         //
-        if (mPresenter.getDateEditionProfile()) {
-            if (mPresenter.getStepEditTimeProfile()) {
-                chk_shift_step_start_date.setVisibility(View.VISIBLE);
-                chk_shift_step_end_date.setVisibility(View.VISIBLE);
-            } else {
-                chk_shift_step_start_date.setVisibility(View.GONE);
-                chk_shift_step_end_date.setVisibility(View.GONE);
+        if(mPresenter.getDateEditionProfile() || mPresenter.getStepEditTimeProfile()) {
+            if (mPresenter.getDateEditionProfile()) {
+                if (mPresenter.getStepEditTimeProfile()) {
+                    chk_shift_step_start_date.setVisibility(View.VISIBLE);
+                    chk_shift_step_end_date.setVisibility(View.VISIBLE);
+                } else {
+                    chk_shift_step_start_date.setVisibility(View.GONE);
+                    chk_shift_step_end_date.setVisibility(View.GONE);
+                }
             }
+        }else{
+            ll_edit_buttons.setVisibility(View.GONE);
         }
         //
     }
@@ -410,7 +441,6 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         transList.add("change_end_date_opt");
         transList.add("change_step_deadline_opt");
         transList.add("change_start_date_opt");
-        transList.add("change_step_deadline_opt");
         transList.add("days_lbl");
         transList.add("hour_lbl");
         transList.add("start_date_lbl");
@@ -422,12 +452,17 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         transList.add("btn_save_lbl");
         //
         transList.add("dialog_main_user_search_ttl");
-        transList.add("dialog_main_user_search_msg");
+        transList.add("dialog_main_user_search_start");
+        transList.add("dialog_edit_header_date_ttl");
+        transList.add("dialog_edit_header_date_start");
         transList.add("alert_invalid_scn_ttl");
         transList.add("alert_invalid_scn_msg");
         //
         transList.add("alert_no_fields_changes_ttl");
         transList.add("alert_no_fields_changes_msg");
+        //
+        transList.add("alert_ticket_has_pendency_ttl");
+        transList.add("alert_ticket_has_pendency_msg");
         //
         transList.add("exit_without_save_ttl");
         transList.add("exit_without_save_msg");
@@ -485,12 +520,16 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                         timeAction = ConstantBaseApp.TK_TICKET_START_DATE;
                     }
                     start_date = mkdt_start_date_val.getmValue();
+                    move_other_date = chk_shift_ticket_start_date.isChecked() ? 1 : 0;
+                    move_steps = chk_shift_step_start_date.isChecked() ? 1 : 0;
                 } else if (rb_end_date.isChecked()) {
                     if(header_data_has_changed){
                         timeAction = ConstantBaseApp.TK_TICKET_FORECAST_DATE_AND_HEADER;
                     }else{
                         timeAction = ConstantBaseApp.TK_TICKET_FORECAST_DATE;
                     }
+                    move_other_date = chk_shift_ticket_end_date.isChecked() ? 1 : 0;
+                    move_steps = chk_shift_step_end_date.isChecked() ? 1 : 0;
                     forecast_date = mkdt_end_date_val.getmValue();
                 } else if (rb_time.isChecked()) {
                     if(header_data_has_changed){
@@ -498,16 +537,36 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                     }else{
                         timeAction = ConstantBaseApp.TK_TICKET_FORECAST_TIME;
                     }
-                    forecast_time = mPresenter.getTimeFromForm(edt_service_time_day_val.getText().toString(), edt_service_time_hour_val.getText().toString(), edt_service_time_minutes_val.getText().toString());
+                    move_steps = chk_shift_step_service_time.isChecked() ? 1 : 0;
+                    //
+                    String forecast_day =  edt_service_time_day_val.getText().toString();
+                    if(forecast_day == null || forecast_day.isEmpty()){
+                        forecast_day = "00";
+                        edt_service_time_hour_val.setText(forecast_day);
+                    };
+                    //
+                    String forecast_hour =  edt_service_time_hour_val.getText().toString();
+                    if(forecast_hour == null || forecast_hour.isEmpty()){
+                        forecast_hour = "00";
+                        edt_service_time_hour_val.setText(forecast_hour);
+                    };
+                    //
+                    String forecast_minutes = edt_service_time_minutes_val.getText().toString();
+                    if ( forecast_minutes == null || forecast_minutes.isEmpty()) {
+                        forecast_minutes = "00";
+                        edt_service_time_hour_val.setText(forecast_minutes);
+                    }
+                    //
+                    forecast_time = mPresenter.getTimeFromForm(forecast_day, forecast_hour, forecast_minutes);
                 }else{
                     if(header_data_has_changed){
                         timeAction = ConstantBaseApp.TK_TICKET_EDIT_HEADER;
                     }
                 }
                 //
-                if(hasFieldValueChange(forecast_time, start_date, forecast_date)
-                ) {
+                if(hasFieldValueChange(forecast_time, start_date, forecast_date)) {
                     retrieveKeyboard();
+                    restoreRadioBtnAfterSave();
                     mPresenter.callEditHeaderService(
                             mTk_ticket.getTicket_prefix(),
                             mTk_ticket.getTicket_code(),
@@ -524,7 +583,6 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                             move_steps
                     );
                 }else{
-                    btn_save_header_form.setEnabled(false);
                     showMsg(
                             hmAux_Trans.get("alert_no_fields_changes_ttl"),
                             hmAux_Trans.get("alert_no_fields_changes_msg")
@@ -618,19 +676,25 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                 }
                 //
                 if (rb_time_is_checked) {
-                    String service_time = tv_service_time.getText().toString();
-                    String[] dayTimeSplit = service_time.split(" ");
-                    String[] timeSplit = new String[3];
+                    if(mTk_ticket.getForecast_time() != null){
+                        String service_time = tv_service_time.getText().toString();
+                        String[] dayTimeSplit = service_time.split(" ");
+                        String[] timeSplit = new String[3];
 
-                    timeSplit[0] = dayTimeSplit.length > 1 ? dayTimeSplit[0] : "0";
-                    int firstIdx = dayTimeSplit.length > 1 ? 1 : 0;
-                    String[] aux = dayTimeSplit[firstIdx].split(":");
-                    timeSplit[1] = aux[0];
-                    timeSplit[2] = aux[1];
+                        timeSplit[0] = dayTimeSplit.length > 1 ? dayTimeSplit[0] : "0";
+                        int firstIdx = dayTimeSplit.length > 1 ? 1 : 0;
+                        String[] aux = dayTimeSplit[firstIdx].split(":");
+                        timeSplit[1] = aux[0];
+                        timeSplit[2] = aux[1];
 
-                    edt_service_time_day_val.setText(timeSplit[0]);
-                    edt_service_time_hour_val.setText(timeSplit[1]);
-                    edt_service_time_minutes_val.setText(timeSplit[2]);
+                        edt_service_time_day_val.setText(timeSplit[0]);
+                        edt_service_time_hour_val.setText(timeSplit[1]);
+                        edt_service_time_minutes_val.setText(timeSplit[2]);
+                    }else{
+                        edt_service_time_day_val.setText("");
+                        edt_service_time_hour_val.setText("");
+                        edt_service_time_minutes_val.setText("");
+                    }
                     v_time_form.setVisibility(View.VISIBLE);
                     v_start_date_form.setVisibility(View.GONE);
                     v_end_date_form.setVisibility(View.GONE);
@@ -700,11 +764,30 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         });
     }
 
+    /**
+     * BARRIONUEVO   18-12-2020
+     * Metodo que restaura os radio buttons pos save
+     */
+    private void restoreRadioBtnAfterSave() {
+        if (rb_start_date.isChecked()) {
+            rb_start_date.performClick();
+        }
+        //
+        if (rb_end_date.isChecked()) {
+            rb_end_date.performClick();
+        }
+        //
+        if (rb_time.isChecked()) {
+            rb_time.performClick();
+        }
+        //
+    }
+
     private boolean hasFieldValueChange(String forecast_time, String start_date, String forecast_date) {
         return header_data_has_changed
-        || (rb_start_date.isChecked() && start_date != null && !start_date.isEmpty())
-        || (rb_end_date.isChecked() && forecast_date != null && !forecast_date.isEmpty())
-        || (rb_time.isChecked() && forecast_time != null && !forecast_time.isEmpty());
+        || (rb_start_date.isChecked() && start_date != null && !start_date.isEmpty() && mkdt_start_date_val.hasChanged())
+        || (rb_end_date.isChecked() && forecast_date != null && !forecast_date.isEmpty() && mkdt_end_date_val.hasChanged())
+        || (rb_time.isChecked() && forecast_time != null && !forecast_time.isEmpty() && !forecast_time.equals(mTk_ticket.getForecast_time()));
     }
 
     //region network methods
@@ -721,6 +804,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         if (wsProcess.equals(WS_TK_Main_User_List.class.getName())) {
             mPresenter.processMainUserList();
         }else if (wsProcess.equals(WS_TK_Header_N_Group_Save.class.getName())) {
+            header_data_has_changed = false;
+
             refreshUI();
         }
         //
@@ -751,9 +836,16 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                     ToolBox_Inf.dateToMilliseconds(mTk_ticket.getForecast_date()),
                     ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             ));
+        }else{
+            tv_end_date.setText(" - ");
         }
         //
-        tv_service_time.setText(mTk_ticket.getForecast_time());
+        if(mTk_ticket.getForecast_time() == null){
+            tv_service_time.setText(" - ");
+        }else{
+            tv_service_time.setText(mTk_ticket.getForecast_time());
+        }
+        //
         ss_main_user.setmOption(mPresenter.getSSMainUserList(mTk_ticket));
         if (mTk_ticket.getMain_user() != null && mTk_ticket.getMain_user() > 0) {
             HMAux hmAuxMainUser = new HMAux();
@@ -777,12 +869,21 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         tv_end_date.setVisibility(View.VISIBLE);
         v_time_form.setVisibility(View.GONE);
         tv_service_time.setVisibility(View.VISIBLE);
-
-        tv_elapsed_time_val.setText(mPresenter.getElapsedTime(mTk_ticket));
+        Long elapsedTime = mPresenter.getElapsedTime(mTk_ticket);
+        if(elapsedTime < 0 ){
+            tv_elapsed_time_val.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+        }else{
+            tv_elapsed_time_val.setTextColor(context.getResources().getColor(R.color.namoa_light_blue));
+        }
+        tv_elapsed_time_val.setText(mPresenter.getFormattedDate(elapsedTime));
         Long remainingTime = mPresenter.getRemainingTime(mTk_ticket);
-        if(mPresenter.getRemainingTime(mTk_ticket) != null) {
-            tv_remaining_time_val.setText(ToolBox_Inf.millisecondsToString(remainingTime,ToolBox_Inf.nlsDateFormat(context) + " HH:mm" ));
-//            if(remainingTime)
+        if(remainingTime != null) {
+            if(remainingTime < 0 ){
+                tv_remaining_time_val.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+            }else{
+                tv_remaining_time_val.setTextColor(context.getResources().getColor(R.color.namoa_light_blue));
+            }
+            tv_remaining_time_val.setText(mPresenter.getFormattedDate(remainingTime));
         }else{
             tv_remaining_time_lbl.setVisibility(View.GONE);
             tv_remaining_time_val.setVisibility(View.GONE);

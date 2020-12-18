@@ -56,7 +56,6 @@ public class TK_Ticket implements Cloneable, Serializable {
     private String change_date;
     private String start_date;
     @Nullable
-    @Expose
     private String forecast_date;
     @Expose
     private String forecast_time;
@@ -146,6 +145,10 @@ public class TK_Ticket implements Cloneable, Serializable {
     private int fcm_scn;
     @Expose
     String time_action;
+    @Expose
+    Integer move_other_date;
+    @Expose
+    Integer move_steps;
     @Expose
     String apply_perc_steps;
     @Expose
@@ -857,6 +860,22 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setTime_action(String time_action) {
         this.time_action = time_action;
+    }
+
+    public Integer getMove_other_date() {
+        return move_other_date;
+    }
+
+    public void setMove_other_date(Integer move_other_date) {
+        this.move_other_date = move_other_date;
+    }
+
+    public Integer getMove_steps() {
+        return move_steps;
+    }
+
+    public void setMove_steps(Integer move_steps) {
+        this.move_steps = move_steps;
     }
 
     public String getApply_perc_steps() {
