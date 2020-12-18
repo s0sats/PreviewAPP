@@ -57,7 +57,7 @@ public interface Act082_Main_Contract {
 
         Long getRemainingTime(TK_Ticket mTk_ticket);
 
-        boolean checkForHeaderEditFileCreation(boolean hasAnyFieldValueChange, HMAux mainUserAux, String internalComment, boolean rb_start_dateStatus, boolean rb_end_dateStatus, boolean rb_timeStatus, String mkStartDate, String mkEndDate, String forecasttimeFromForm, boolean checked, boolean chk_shift_step_start_dateChecked, boolean chk_shift_ticket_end_dateChecked, boolean chk_shift_step_end_dateChecked);
+        boolean checkForHeaderEditFileCreation(boolean hasAnyFieldValueChange, HMAux mainUserAux, String internalComment, boolean rb_start_dateStatus, boolean rb_end_dateStatus, boolean rb_timeStatus, String mkStartDate, String mkEndDate, String forecasttimeFromForm, boolean checked, boolean chk_shift_step_start_dateChecked, boolean chk_shift_ticket_end_dateChecked, boolean chk_shift_step_end_dateChecked, boolean chk_shift_step_service_timeChecked);
 
         void processMainUserList();
 
@@ -66,5 +66,9 @@ public interface Act082_Main_Contract {
         Act082_Form_Data getFormDataJsonInfo(TK_Ticket mTk_ticket);
 
         boolean hasAnyOnlinePendency(Context context, TK_Ticket tkTicket);
+
+        void deleteHeaderEditionFile();
+
+        void deleteMainUserListFile();
     }
 }

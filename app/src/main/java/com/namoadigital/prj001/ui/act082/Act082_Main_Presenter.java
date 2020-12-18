@@ -248,16 +248,16 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
     }
 
     @Override
-    public boolean checkForHeaderEditFileCreation(boolean hasAnyFieldValueChange, HMAux mainUserAux, String internalComment, boolean rb_start_dateStatus, boolean rb_end_dateStatus, boolean rb_timeStatus, String mkStartDate, String mkEndDate, String forecasttimeFromForm, boolean chk_shift_ticket_start_dateChecked, boolean chk_shift_step_start_dateChecked, boolean chk_shift_ticket_end_dateChecked, boolean chk_shift_step_end_dateChecked) {
+    public boolean checkForHeaderEditFileCreation(boolean hasAnyFieldValueChange, HMAux mainUserAux, String internalComment, boolean rb_start_dateStatus, boolean rb_end_dateStatus, boolean rb_timeStatus, String mkStartDate, String mkEndDate, String forecasttimeFromForm, boolean chk_shift_ticket_start_dateChecked, boolean chk_shift_step_start_dateChecked, boolean chk_shift_ticket_end_dateChecked, boolean chk_shift_step_end_dateChecked, boolean chk_shift_step_service_timeChecked) {
         //Stunks, mas se não teve alteração, não precisa salvar o arquivo e o retorn é true.
         if(!hasAnyFieldValueChange){
             return true;
         }
         //
         Act082_Form_Data formData = new Act082_Form_Data(
-            mainUserAux.hasConsistentValue(SearchableSpinner.CODE) ?  mainUserAux.get(SearchableSpinner.CODE) : "",
-            mainUserAux.hasConsistentValue(SearchableSpinner.ID) ?  mainUserAux.get(SearchableSpinner.ID) : "",
-            mainUserAux.hasConsistentValue(SearchableSpinner.DESCRIPTION) ?  mainUserAux.get(SearchableSpinner.DESCRIPTION) : "",
+            mainUserAux.hasConsistentValue(SearchableSpinner.CODE) ?  mainUserAux.get(SearchableSpinner.CODE) : null,
+            mainUserAux.hasConsistentValue(SearchableSpinner.ID) ?  mainUserAux.get(SearchableSpinner.ID) : null,
+            mainUserAux.hasConsistentValue(SearchableSpinner.DESCRIPTION) ?  mainUserAux.get(SearchableSpinner.DESCRIPTION) : null,
             internalComment,
             getCurrentRdChoice(rb_start_dateStatus,rb_end_dateStatus,rb_timeStatus),
             mkStartDate,
@@ -266,7 +266,8 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
             chk_shift_ticket_start_dateChecked,
             chk_shift_step_start_dateChecked,
             chk_shift_ticket_end_dateChecked,
-            chk_shift_step_end_dateChecked
+            chk_shift_step_end_dateChecked,
+            chk_shift_step_service_timeChecked
         );
         Gson gson = new GsonBuilder().serializeNulls().create();
         String jsonContent = gson.toJson(formData);
@@ -373,19 +374,30 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
     }
 
     @Override
-    public Act082_Form_Data getFormDataJsonInfo(TK_Ticket mTk_ticket) {
+    public Act082_Form_Data getFormDataJsonInfo(TK_Ticket tkTicket) {
         File headerEditionFile = getHeaderEditionFile();
         Act082_Form_Data formData = null;
         if(headerEditionFile.exists()){
             formData = recoverFormDataFromFile(headerEditionFile);
         }
-        //TODO CONTINUAR IMPLEMETAÇÃO DAQUI
-//        if(formData == null){
-//            formData = new Act082_Form_Data(
-//                String.valueOf(mTk_ticket.getMain_user()),
-//
-//            )
-//        }
+        //
+        if(formData == null){
+            formData = new Act082_Form_Data(
+                String.valueOf(tkTicket.getMain_user()),
+                tkTicket.getMain_user_nick(),
+                tkTicket.getMain_user_name(),
+                tkTicket.getInternal_comments(),
+                null,
+                tkTicket.getStart_date(),
+                tkTicket.getForecast_date(),
+                tkTicket.getForecast_time(),
+                false,
+                false,
+                false,
+                false,
+                false
+            );
+        }
         return formData;
     }
 
@@ -401,5 +413,21 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
             ToolBox_Inf.registerException(getClass().getName(),e);
         }
         return formData;
+    }
+
+    @Override
+    public void deleteHeaderEditionFile() {
+        File headerEditionFile = getHeaderEditionFile();
+        if(headerEditionFile.exists()){
+            headerEditionFile.delete();
+        }
+    }
+
+    @Override
+    public void deleteMainUserListFile() {
+        File mainUserListFile = getMainUserListFile();
+        if(mainUserListFile.exists()){
+            mainUserListFile.delete();
+        }
     }
 }

@@ -13,11 +13,12 @@ public class Act082_Form_Data {
     private boolean chk_shift_step_start_date;
     private boolean chk_shift_ticket_end_date;
     private boolean chk_shift_step_end_date;
+    private boolean chk_shift_step_service_time;
 
     public Act082_Form_Data() {
     }
 
-    public Act082_Form_Data(String main_user_code, String main_user_id, String main_user_desc, String internal_comments, String rb_value, String start_date, String end_date, String forecast_time, boolean chk_shift_ticket_start_date, boolean chk_shift_step_start_date, boolean chk_shift_ticket_end_date, boolean chk_shift_step_end_date) {
+    public Act082_Form_Data(String main_user_code, String main_user_id, String main_user_desc, String internal_comments, String rb_value, String start_date, String end_date, String forecast_time, boolean chk_shift_ticket_start_date, boolean chk_shift_step_start_date, boolean chk_shift_ticket_end_date, boolean chk_shift_step_end_date, boolean chk_shift_step_service_time) {
         this.main_user_code = main_user_code;
         this.main_user_id = main_user_id;
         this.main_user_desc = main_user_desc;
@@ -30,6 +31,7 @@ public class Act082_Form_Data {
         this.chk_shift_step_start_date = chk_shift_step_start_date;
         this.chk_shift_ticket_end_date = chk_shift_ticket_end_date;
         this.chk_shift_step_end_date = chk_shift_step_end_date;
+        this.chk_shift_step_service_time = chk_shift_step_service_time;
     }
 
     public String getMain_user_code() {
@@ -126,5 +128,13 @@ public class Act082_Form_Data {
 
     public void setChk_shift_step_end_date(boolean chk_shift_step_end_date) {
         this.chk_shift_step_end_date = chk_shift_step_end_date;
+    }
+
+    public boolean isChk_shift_step_service_time() {
+        return chk_shift_step_service_time;
+    }
+
+    public void setChk_shift_step_service_time(boolean chk_shift_step_service_time) {
+        this.chk_shift_step_service_time = chk_shift_step_service_time;
     }
 }
