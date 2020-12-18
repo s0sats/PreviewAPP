@@ -55,5 +55,7 @@ public interface Act082_Main_Contract {
         String getFormattedDate(long time);
 
         Long getRemainingTime(TK_Ticket mTk_ticket);
+
+        boolean hasAnyOnlinePendency(Context context, TK_Ticket tkTicket);
     }
 }

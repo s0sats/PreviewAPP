@@ -101,6 +101,7 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
             context.sendBroadcast(mIntent);
             //
         } else {
+            ToolBox_Inf.showNoConnectionDialog(context);
             mView.handleReadOnly(true);
         }
     }
@@ -184,10 +185,7 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
             context.sendBroadcast(mIntent);
             //
         } else {
-            mView.showMsg(
-                    hmAux_trans.get("dialog_main_user_search_ttl"),
-                    hmAux_trans.get("dialog_main_user_search_start")
-            );
+            ToolBox_Inf.showNoConnectionDialog(context);
         }
     }
 
@@ -233,5 +231,15 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
         long current_date = ToolBox_Inf.dateToMilliseconds(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         long remaining_time =  forecast_date - current_date;
         return remaining_time;
+    }
+
+    @Override
+    public boolean hasAnyOnlinePendency(Context context, TK_Ticket tkTicket) {
+        return ToolBox_Inf.hasOffHandFormInProcess(context,tkTicket.getTicket_prefix(),tkTicket.getTicket_code())
+                || ToolBox_Inf.hasFormWaitingSyncWithinTicket(context, tkTicket.getTicket_prefix(),tkTicket.getTicket_code())
+                || ToolBox_Inf.hasFormGpsPendencyWithinTicket(context, tkTicket.getTicket_prefix(),tkTicket.getTicket_code())
+                || tkTicket.getUpdate_required() == 1
+                || tkTicket.getSync_required() == 1
+                || tkTicket.getUpdate_required_product() == 1;
     }
 }

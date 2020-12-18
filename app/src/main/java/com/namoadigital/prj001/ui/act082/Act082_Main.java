@@ -186,21 +186,48 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         //
         mket_internal_comments.setmBARCODE(false);
         //
-        mPresenter.callMainUserService(mTk_ticket);
+        if(mPresenter.getDateEditionProfile() || mPresenter.getStepEditTimeProfile()) {
+            if(mPresenter.hasAnyOnlinePendency(context, mTk_ticket)) {
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_ticket_has_pendency_ttl"),
+                        hmAux_Trans.get("alert_ticket_has_pendency_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                handleReadOnly(true);
+                            }
+                        },
+                        0
+                );
+            }else {
+                mPresenter.callMainUserService(mTk_ticket);
+            }
+        }else{
+            handleReadOnly(false);
+        }
         //
     }
 
+
     @Override
-    public void handleReadOnly(boolean offlineMode) {
-        if (!mPresenter.getDateEditionProfile() || offlineMode) {
+    public void handleReadOnly(boolean forceReadOnly) {
+        if(forceReadOnly){
             setDateReadOnly();
-        } else {
-            enableHeaderEdit();
-        }
-        //
-        if (!mPresenter.getHeaderEditionProfile() || offlineMode) {
             setHeaderReadOnly();
+            ll_edit_buttons.setVisibility(View.GONE);
+        }else{
+            if (!mPresenter.getDateEditionProfile()){
+                setDateReadOnly();
+            }
+            if (!mPresenter.getHeaderEditionProfile()){
+                setHeaderReadOnly();
+            }
+            if(!mPresenter.getHeaderEditionProfile() && !mPresenter.getDateEditionProfile()){
+                ll_edit_buttons.setVisibility(View.GONE);
+            }
         }
+
     }
 
     @Override
@@ -234,14 +261,18 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         ll_date_and_forecast_infos.setVisibility(View.VISIBLE);
         ll_header_infos.setVisibility(View.VISIBLE);
         //
-        if (mPresenter.getDateEditionProfile()) {
-            if (mPresenter.getStepEditTimeProfile()) {
-                chk_shift_step_start_date.setVisibility(View.VISIBLE);
-                chk_shift_step_end_date.setVisibility(View.VISIBLE);
-            } else {
-                chk_shift_step_start_date.setVisibility(View.GONE);
-                chk_shift_step_end_date.setVisibility(View.GONE);
+        if(mPresenter.getDateEditionProfile() || mPresenter.getStepEditTimeProfile()) {
+            if (mPresenter.getDateEditionProfile()) {
+                if (mPresenter.getStepEditTimeProfile()) {
+                    chk_shift_step_start_date.setVisibility(View.VISIBLE);
+                    chk_shift_step_end_date.setVisibility(View.VISIBLE);
+                } else {
+                    chk_shift_step_start_date.setVisibility(View.GONE);
+                    chk_shift_step_end_date.setVisibility(View.GONE);
+                }
             }
+        }else{
+            ll_edit_buttons.setVisibility(View.GONE);
         }
         //
     }
@@ -413,7 +444,6 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         transList.add("change_end_date_opt");
         transList.add("change_step_deadline_opt");
         transList.add("change_start_date_opt");
-        transList.add("change_step_deadline_opt");
         transList.add("days_lbl");
         transList.add("hour_lbl");
         transList.add("start_date_lbl");
@@ -425,12 +455,17 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         transList.add("btn_save_lbl");
         //
         transList.add("dialog_main_user_search_ttl");
-        transList.add("dialog_main_user_search_msg");
+        transList.add("dialog_main_user_search_start");
+        transList.add("dialog_edit_header_date_ttl");
+        transList.add("dialog_edit_header_date_start");
         transList.add("alert_invalid_scn_ttl");
         transList.add("alert_invalid_scn_msg");
         //
         transList.add("alert_no_fields_changes_ttl");
         transList.add("alert_no_fields_changes_msg");
+        //
+        transList.add("alert_ticket_has_pendency_ttl");
+        transList.add("alert_ticket_has_pendency_msg");
         //
         transList.add("exit_without_save_ttl");
         transList.add("exit_without_save_msg");
@@ -515,6 +550,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                 //
                 if(hasFieldValueChange(forecast_time, start_date, forecast_date)) {
                     retrieveKeyboard();
+                    restoreRadioBtnAfterSave();
                     mPresenter.callEditHeaderService(
                             mTk_ticket.getTicket_prefix(),
                             mTk_ticket.getTicket_code(),
@@ -531,7 +567,6 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                             move_steps
                     );
                 }else{
-                    btn_save_header_form.setEnabled(false);
                     showMsg(
                             hmAux_Trans.get("alert_no_fields_changes_ttl"),
                             hmAux_Trans.get("alert_no_fields_changes_msg")
@@ -655,6 +690,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                     v_time_form.setVisibility(View.GONE);
                 }
             }
+
         });
         //
         mkdt_start_date_val.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -713,11 +749,30 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         });
     }
 
+    /**
+     * BARRIONUEVO   18-12-2020
+     * Metodo que restaura os radio buttons pos save
+     */
+    private void restoreRadioBtnAfterSave() {
+        if (rb_start_date.isChecked()) {
+            rb_start_date.performClick();
+        }
+        //
+        if (rb_end_date.isChecked()) {
+            rb_end_date.performClick();
+        }
+        //
+        if (rb_time.isChecked()) {
+            rb_time.performClick();
+        }
+        //
+    }
+
     private boolean hasFieldValueChange(String forecast_time, String start_date, String forecast_date) {
         return header_data_has_changed
-        || (rb_start_date.isChecked() && start_date != null && !start_date.isEmpty())
-        || (rb_end_date.isChecked() && forecast_date != null && !forecast_date.isEmpty())
-        || (rb_time.isChecked() && forecast_time != null && !forecast_time.isEmpty());
+        || (rb_start_date.isChecked() && start_date != null && !start_date.isEmpty() && mkdt_start_date_val.hasChanged())
+        || (rb_end_date.isChecked() && forecast_date != null && !forecast_date.isEmpty() && mkdt_end_date_val.hasChanged())
+        || (rb_time.isChecked() && forecast_time != null && !forecast_time.isEmpty() && !forecast_time.equals(mTk_ticket.getForecast_time()));
     }
 
     //region network methods
@@ -734,6 +789,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         if (wsProcess.equals(WS_TK_Main_User_List.class.getName())) {
             mPresenter.setMainUserList(mLink);
         }else if (wsProcess.equals(WS_TK_Header_N_Group_Save.class.getName())) {
+            header_data_has_changed = false;
+
             refreshUI();
         }
         //
@@ -786,6 +843,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         setVisibilityByProfile();
         //
         btn_save_header_form.setEnabled(false);
+        //
         rb_start_date.setChecked(false);
         rb_end_date.setChecked(false);
         rb_time.setChecked(false);
@@ -799,12 +857,16 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         Long elapsedTime = mPresenter.getElapsedTime(mTk_ticket);
         if(elapsedTime < 0 ){
             tv_elapsed_time_val.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+        }else{
+            tv_elapsed_time_val.setTextColor(context.getResources().getColor(R.color.namoa_light_blue));
         }
         tv_elapsed_time_val.setText(mPresenter.getFormattedDate(elapsedTime));
         Long remainingTime = mPresenter.getRemainingTime(mTk_ticket);
         if(remainingTime != null) {
             if(remainingTime < 0 ){
                 tv_remaining_time_val.setTextColor(context.getResources().getColor(R.color.namoa_color_red));
+            }else{
+                tv_remaining_time_val.setTextColor(context.getResources().getColor(R.color.namoa_light_blue));
             }
             tv_remaining_time_val.setText(mPresenter.getFormattedDate(remainingTime));
         }else{

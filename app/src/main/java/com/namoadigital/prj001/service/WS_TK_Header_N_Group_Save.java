@@ -245,15 +245,18 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
      * @return
      */
     private float formatForecastTime(String forecast_time) {
-        String[] dayTimeSplit = forecast_time.split(" ");
-        float timeSplit = 0;
+        if(forecast_time != null) {
+            String[] dayTimeSplit = forecast_time.split(" ");
+            float timeSplit = 0;
 
-        timeSplit = dayTimeSplit.length > 1 ? 24 * 60 * Integer.valueOf(dayTimeSplit[0]) : 0;
-        int firstIdx = dayTimeSplit.length > 1 ? 1 : 0;
-        String[] aux = dayTimeSplit[firstIdx].split(":");
-        timeSplit += Integer.parseInt(aux[0]) * 60;
-        timeSplit += Integer.parseInt(aux[1]);
-        return timeSplit;
+            timeSplit = dayTimeSplit.length > 1 ? 24 * 60 * Integer.valueOf(dayTimeSplit[0]) : 0;
+            int firstIdx = dayTimeSplit.length > 1 ? 1 : 0;
+            String[] aux = dayTimeSplit[firstIdx].split(":");
+            timeSplit += Integer.parseInt(aux[0]) * 60;
+            timeSplit += Integer.parseInt(aux[1]);
+            return timeSplit;
+        }
+        return 1;
     }
 
     private ArrayList<TK_Ticket> keepOnlyUpdateRequiredData(ArrayList<TK_Ticket> ticketList) {
