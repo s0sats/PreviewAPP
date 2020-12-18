@@ -56,7 +56,6 @@ public class TK_Ticket implements Cloneable, Serializable {
     private String change_date;
     private String start_date;
     @Nullable
-    @Expose
     private String forecast_date;
     @Expose
     private String forecast_time;

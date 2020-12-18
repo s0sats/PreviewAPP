@@ -541,7 +541,26 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                         timeAction = ConstantBaseApp.TK_TICKET_FORECAST_TIME;
                     }
                     move_steps = chk_shift_step_service_time.isChecked() ? 1 : 0;
-                    forecast_time = mPresenter.getTimeFromForm(edt_service_time_day_val.getText().toString(), edt_service_time_hour_val.getText().toString(), edt_service_time_minutes_val.getText().toString());
+                    //
+                    String forecast_day =  edt_service_time_day_val.getText().toString();
+                    if(forecast_day == null || forecast_day.isEmpty()){
+                        forecast_day = "00";
+                        edt_service_time_hour_val.setText(forecast_day);
+                    };
+                    //
+                    String forecast_hour =  edt_service_time_hour_val.getText().toString();
+                    if(forecast_hour == null || forecast_hour.isEmpty()){
+                        forecast_hour = "00";
+                        edt_service_time_hour_val.setText(forecast_hour);
+                    };
+                    //
+                    String forecast_minutes = edt_service_time_minutes_val.getText().toString();
+                    if ( forecast_minutes == null || forecast_minutes.isEmpty()) {
+                        forecast_minutes = "00";
+                        edt_service_time_hour_val.setText(forecast_minutes);
+                    }
+                    //
+                    forecast_time = mPresenter.getTimeFromForm(forecast_day, forecast_hour, forecast_minutes);
                 }else{
                     if(header_data_has_changed){
                         timeAction = ConstantBaseApp.TK_TICKET_EDIT_HEADER;
