@@ -674,6 +674,8 @@ public class ConstantBaseApp extends ConstantBase {
     //Arquivos json
     public static final String TICKET_WORKGROUP_LIST_JSON_FILE = "tk_workgroup_list.json";
     public static final String TICKET_WORKGROUP_EDITION_JSON_FILE = "tk_workgroup_edition.json";
+    public static final String TICKET_MAIN_USER_LIST_JSON_FILE = "tk_main_user_list.json";
+    public static final String TICKET_HEADER_EDITION_JSON_FILE = "tk_header_edition.json";
     /*
      * Constantes Pipeline
      */

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.Act082_Form_Data;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TK_Ticket;
 
@@ -53,5 +54,13 @@ public interface Act082_Main_Contract {
         String getElapsedTime(TK_Ticket mTk_ticket);
 
         Long getRemainingTime(TK_Ticket mTk_ticket);
+
+        boolean checkForHeaderEditFileCreation(boolean hasAnyFieldValueChange, HMAux mainUserAux, String internalComment, boolean rb_start_dateStatus, boolean rb_end_dateStatus, boolean rb_timeStatus, String mkStartDate, String mkEndDate, String forecasttimeFromForm, boolean checked, boolean chk_shift_step_start_dateChecked, boolean chk_shift_ticket_end_dateChecked, boolean chk_shift_step_end_dateChecked);
+
+        void processMainUserList();
+
+        ArrayList<HMAux> getSSMainUserList(TK_Ticket mTk_ticket);
+
+        Act082_Form_Data getFormDataJsonInfo(TK_Ticket mTk_ticket);
     }
 }

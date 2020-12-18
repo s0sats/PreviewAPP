@@ -20,6 +20,8 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,12 +121,20 @@ public class WS_TK_Main_User_List extends IntentService {
         //
     }
 
-    private void checkMainUserListReturn(int scn_valid, List<T_TK_Main_User_Rec> data) {
+    private void checkMainUserListReturn(int scn_valid, List<T_TK_Main_User_Rec> data) throws IOException {
         if(scn_valid == 0){
-            ToolBox_Inf.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR",  hmAux_Trans.get("alert_invalid_scn_msg"), "INVALID_SCN", "0");
+            ToolBox.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR",  hmAux_Trans.get("alert_invalid_scn_msg"), "INVALID_SCN", "0");
         }else{
+            createMainUserListJsonFile(ConstantBaseApp.TICKET_MAIN_USER_LIST_JSON_FILE, gson.toJson(data));
+            //
             ToolBox.sendBCStatus(getApplicationContext(),"CLOSE_ACT", hmAux_Trans.get("msg_process_finalized"), new HMAux(), gson.toJson(data),"0");
         }
+    }
+
+    private File createMainUserListJsonFile(String fileName, String workGroupList) throws IOException {
+        File json_file = new File(ConstantBaseApp.TICKET_JSON_PATH, fileName);
+        ToolBox_Inf.writeIn(workGroupList, json_file);
+        return json_file;
     }
 
 

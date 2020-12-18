@@ -29,6 +29,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.model.Act082_Form_Data;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -68,31 +69,31 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     private View v_end_date_form;
     private View v_time_form;
 
-    TextView tv_start_date_lbl;
-    TextView tv_start_time_lbl;
-    MkDateTime mkdt_start_date_val;
-    CheckBox chk_shift_ticket_start_date;
-    CheckBox chk_shift_step_start_date;
-    TextView tv_end_date_lbl;
-    TextView tv_end_time_lbl;
-    MkDateTime mkdt_end_date_val;
-    CheckBox chk_shift_ticket_end_date;
-    CheckBox chk_shift_step_end_date;
-    TextView tv_service_time_day_lbl;
-    TextView tv_service_time_hour_lbl;
-    TextView tv_service_time_minutes_lbl;
-    EditText edt_service_time_day_val;
-    EditText edt_service_time_hour_val;
-    EditText edt_service_time_minutes_val;
-    CheckBox chk_shift_step_service_time;
-    TextView tv_start_date;
-    TextView tv_end_date;
-    TextView tv_service_time;
+    private TextView tv_start_date_lbl;
+    private TextView tv_start_time_lbl;
+    private MkDateTime mkdt_start_date_val;
+    private CheckBox chk_shift_ticket_start_date;
+    private CheckBox chk_shift_step_start_date;
+    private TextView tv_end_date_lbl;
+    private TextView tv_end_time_lbl;
+    private MkDateTime mkdt_end_date_val;
+    private CheckBox chk_shift_ticket_end_date;
+    private CheckBox chk_shift_step_end_date;
+    private TextView tv_service_time_day_lbl;
+    private TextView tv_service_time_hour_lbl;
+    private TextView tv_service_time_minutes_lbl;
+    private EditText edt_service_time_day_val;
+    private EditText edt_service_time_hour_val;
+    private EditText edt_service_time_minutes_val;
+    private CheckBox chk_shift_step_service_time;
+    private TextView tv_start_date;
+    private TextView tv_end_date;
+    private TextView tv_service_time;
 
-    TextView tv_elapsed_time_lbl;
-    TextView tv_elapsed_time_val;
-    TextView tv_remaining_time_lbl;
-    TextView tv_remaining_time_val;
+    private TextView tv_elapsed_time_lbl;
+    private TextView tv_elapsed_time_val;
+    private TextView tv_remaining_time_lbl;
+    private TextView tv_remaining_time_val;
 
     private Button btn_cancel_header_form;
     private Button btn_save_header_form;
@@ -186,8 +187,6 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         //
         mket_internal_comments.setmBARCODE(false);
         //
-        mPresenter.callMainUserService(mTk_ticket);
-        //
     }
 
     @Override
@@ -205,9 +204,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
 
     @Override
     public void setMainUserSSList(ArrayList<HMAux> hmAuxMainUser) {
-        //
         ss_main_user.setmOption(hmAuxMainUser);
-        //
     }
 
     private void setHeaderReadOnly() {
@@ -282,14 +279,14 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     }
 
     private void recoverIntentBundle() {
-
         requestingBundle = getIntent().getExtras();
-
+        //
         if (requestingBundle != null) {
             mTkPrefix = requestingBundle.getInt(TK_TicketDao.TICKET_PREFIX, -1);
             mTkCode = requestingBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
         } else {
-
+            mTkPrefix = -1;
+            mTkCode = -1;
         }
     }
 
@@ -722,7 +719,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         super.processCloseACT(mLink, mRequired, hmAux);
         //
         if (wsProcess.equals(WS_TK_Main_User_List.class.getName())) {
-            mPresenter.setMainUserList(mLink);
+            mPresenter.processMainUserList();
         }else if (wsProcess.equals(WS_TK_Header_N_Group_Save.class.getName())) {
             refreshUI();
         }
@@ -732,6 +729,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
 
     private void refreshUI() {
         mTk_ticket = mPresenter.getTicketData(mTkPrefix, mTkCode);
+        Act082_Form_Data formData = mPresenter.getFormDataJsonInfo(mTk_ticket);
         //
         setHeaderFragment(mTk_ticket);
         //
@@ -742,8 +740,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
             mket_internal_comments.setText(mTk_ticket.getInternal_comments());
             mket_internal_comments.setTag(mTk_ticket.getInternal_comments());
         }
-
-
+        //
         tv_start_date.setText(ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(mTk_ticket.getStart_date()),
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
@@ -757,7 +754,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         }
         //
         tv_service_time.setText(mTk_ticket.getForecast_time());
-
+        ss_main_user.setmOption(mPresenter.getSSMainUserList(mTk_ticket));
         if (mTk_ticket.getMain_user() != null && mTk_ticket.getMain_user() > 0) {
             HMAux hmAuxMainUser = new HMAux();
             //
@@ -894,13 +891,36 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     public void callOrigin() {
         Intent intent = ToolBox_Inf.getOriginIntent(context, mTk_ticket.getOrigin_type());
         if (intent != null) {
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            requestingBundle.putInt(TK_TicketDao.TICKET_PREFIX, mTkPrefix);
-            requestingBundle.putInt(TK_TicketDao.TICKET_CODE, mTkCode);
-            requestingBundle.putBoolean(Act082_Main.FROM_EDIT_HEADER, true);
-            intent.putExtras(requestingBundle);
-            startActivity(intent);
-            finish();
+            boolean isFileCreated = mPresenter.checkForHeaderEditFileCreation(
+                hasAnyFieldValueChange(),
+                ss_main_user.getmValue(),
+                mket_internal_comments.getText().toString(),
+                rb_start_date.isChecked(),
+                rb_end_date.isChecked(),
+                rb_time.isChecked(),
+                mkdt_start_date_val.getmValue(),
+                mkdt_end_date_val.getmValue(),
+                mPresenter.getTimeFromForm(edt_service_time_day_val.getText().toString(), edt_service_time_hour_val.getText().toString(), edt_service_time_minutes_val.getText().toString()),
+                chk_shift_ticket_start_date.isChecked(),
+                chk_shift_step_start_date.isChecked(),
+                chk_shift_ticket_end_date.isChecked(),
+                chk_shift_step_end_date.isChecked()
+            );
+            //
+            if(hasAnyFieldValueChange() && !isFileCreated){
+                showMsg(
+                    hmAux_Trans.get("alert_error_on_create_wg_changes_file_ttl"),
+                    hmAux_Trans.get("alert_error_on_create_wg_changes_file_msg")
+                );
+            }else {
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                requestingBundle.putInt(TK_TicketDao.TICKET_PREFIX, mTkPrefix);
+                requestingBundle.putInt(TK_TicketDao.TICKET_CODE, mTkCode);
+                requestingBundle.putBoolean(Act082_Main.FROM_EDIT_HEADER, true);
+                intent.putExtras(requestingBundle);
+                startActivity(intent);
+                finish();
+            }
         }
     }
     //endregion

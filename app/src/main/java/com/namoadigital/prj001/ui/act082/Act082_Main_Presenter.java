@@ -11,6 +11,7 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.model.Act082_Form_Data;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.T_TK_Main_User_Rec;
 import com.namoadigital.prj001.receiver.WBR_TK_Header_N_Group_Save;
@@ -23,6 +24,8 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +34,7 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
     Act082_Main_Contract.I_View mView;
     HMAux hmAux_trans;
     private TK_TicketDao ticketDao;
+    private ArrayList<HMAux> mainUserOptionList;
 
     public Act082_Main_Presenter(Context context, Act082_Main_Contract.I_View mView, HMAux hmAux_trans) {
         this.context = context;
@@ -214,5 +218,161 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
         long current_date = ToolBox_Inf.dateToMilliseconds(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
         long remaining_time =  forecast_date - current_date;
         return remaining_time;
+    }
+
+    @Override
+    public boolean checkForHeaderEditFileCreation(boolean hasAnyFieldValueChange, HMAux mainUserAux, String internalComment, boolean rb_start_dateStatus, boolean rb_end_dateStatus, boolean rb_timeStatus, String mkStartDate, String mkEndDate, String forecasttimeFromForm, boolean chk_shift_ticket_start_dateChecked, boolean chk_shift_step_start_dateChecked, boolean chk_shift_ticket_end_dateChecked, boolean chk_shift_step_end_dateChecked) {
+        //Stunks, mas se não teve alteração, não precisa salvar o arquivo e o retorn é true.
+        if(!hasAnyFieldValueChange){
+            return true;
+        }
+        //
+        Act082_Form_Data formData = new Act082_Form_Data(
+            mainUserAux.hasConsistentValue(SearchableSpinner.CODE) ?  mainUserAux.get(SearchableSpinner.CODE) : "",
+            mainUserAux.hasConsistentValue(SearchableSpinner.ID) ?  mainUserAux.get(SearchableSpinner.ID) : "",
+            mainUserAux.hasConsistentValue(SearchableSpinner.DESCRIPTION) ?  mainUserAux.get(SearchableSpinner.DESCRIPTION) : "",
+            internalComment,
+            getCurrentRdChoice(rb_start_dateStatus,rb_end_dateStatus,rb_timeStatus),
+            mkStartDate,
+            mkEndDate,
+            forecasttimeFromForm,
+            chk_shift_ticket_start_dateChecked,
+            chk_shift_step_start_dateChecked,
+            chk_shift_ticket_end_dateChecked,
+            chk_shift_step_end_dateChecked
+        );
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        String jsonContent = gson.toJson(formData);
+        try {
+            createHeaderFormEditJsonFile(jsonContent);
+            return true;
+        } catch (IOException e) {
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return false;
+        }
+    }
+
+    private String getCurrentRdChoice(boolean rb_start_dateStatus, boolean rb_end_dateStatus, boolean rb_timeStatus) {
+        if(rb_start_dateStatus){
+            return ConstantBaseApp.TK_TICKET_START_DATE;
+        }else if(rb_end_dateStatus){
+            return ConstantBaseApp.TK_TICKET_FORECAST_DATE;
+        } else if(rb_timeStatus){
+            return ConstantBaseApp.TK_TICKET_FORECAST_TIME;
+        }
+        //NUNCA DEVE ACONTECER MAS VAI SABER KKK
+        return null;
+    }
+
+    private File createHeaderFormEditJsonFile(String workGroupEditionContent) throws IOException {
+        File json_file = getHeaderEditionFile();
+        if(json_file.exists()){
+            json_file.delete();
+        }
+        ToolBox_Inf.writeIn(workGroupEditionContent, json_file);
+        return json_file;
+    }
+
+    private File getHeaderEditionFile() {
+        return new File(ConstantBaseApp.TICKET_JSON_PATH, ConstantBaseApp.TICKET_HEADER_EDITION_JSON_FILE);
+    }
+
+    private File getMainUserListFile() {
+        return new File(ConstantBaseApp.TICKET_JSON_PATH, ConstantBaseApp.TICKET_MAIN_USER_LIST_JSON_FILE);
+    }
+
+    public ArrayList<HMAux> getSSMainUserList(TK_Ticket mTicket) {
+        if(mainUserOptionList != null){
+            return mainUserOptionList;
+        }
+        //Tenta carregar lista do json, já atualiza a propertie
+        mainUserOptionList = loadMainUSerListFromJson();
+        //Novamente teste o null e retorna lista caso esteja preenchida.
+        if(mainUserOptionList != null){
+            return mainUserOptionList;
+        }else {
+            //Se não existe lista em memoria e nem no json, tenta busca.
+            callMainUserService(mTicket);
+            return null;
+        }
+    }
+
+    private ArrayList<HMAux> loadMainUSerListFromJson() {
+        File file = getMainUserListFile();
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //
+        try {
+            if (file.exists()) {
+                ArrayList<T_TK_Main_User_Rec> mainUserObjList = gson.fromJson(
+                    ToolBox_Inf.getContents(file),
+                    new TypeToken<ArrayList<T_TK_Main_User_Rec>>() {
+                    }.getType()
+                );
+                //
+                if (mainUserObjList != null) {
+                    return generateHmAuxWorkgroupList(mainUserObjList);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        return null;
+    }
+
+    private ArrayList<HMAux> generateHmAuxWorkgroupList(ArrayList<T_TK_Main_User_Rec> mainUserObjList) {
+        ArrayList<HMAux> hmAuxMainUse = new ArrayList<>();
+        //
+        for(T_TK_Main_User_Rec item: mainUserObjList){
+            HMAux hmAux = new HMAux();
+            //
+            hmAux.put(SearchableSpinner.CODE, String.valueOf(item.getUser_code()));
+            hmAux.put(SearchableSpinner.ID, item.getUser_nick());
+            hmAux.put(SearchableSpinner.DESCRIPTION, item.getUser_name());
+            //
+            hmAuxMainUse.add(hmAux);
+        }
+        //
+        return hmAuxMainUse;
+    }
+
+    @Override
+    public void processMainUserList() {
+        ArrayList<HMAux> hmAuxes = loadMainUSerListFromJson();
+        if(hmAuxes != null && hmAuxes.size() > 0 ){
+            mainUserOptionList = hmAuxes;
+            mView.setMainUserSSList(mainUserOptionList);
+        }//msg de erro?
+    }
+
+    @Override
+    public Act082_Form_Data getFormDataJsonInfo(TK_Ticket mTk_ticket) {
+        File headerEditionFile = getHeaderEditionFile();
+        Act082_Form_Data formData = null;
+        if(headerEditionFile.exists()){
+            formData = recoverFormDataFromFile(headerEditionFile);
+        }
+        //TODO CONTINUAR IMPLEMETAÇÃO DAQUI
+//        if(formData == null){
+//            formData = new Act082_Form_Data(
+//                String.valueOf(mTk_ticket.getMain_user()),
+//
+//            )
+//        }
+        return formData;
+    }
+
+    private Act082_Form_Data recoverFormDataFromFile(File headerEditionFile) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        Act082_Form_Data formData = null;
+        try {
+            formData = gson.fromJson(
+                ToolBox_Inf.getContents(headerEditionFile),
+                Act082_Form_Data.class
+            );
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        return formData;
     }
 }
