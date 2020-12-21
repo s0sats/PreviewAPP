@@ -9,8 +9,9 @@
     <TextView
         android:id="@+id/tv_date_lbl"
         style="@style/MyTicketRadioButtton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintWidth_default="wrap"
         android:layout_marginTop="8dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/tv_date_val"
@@ -21,8 +22,10 @@
     <TextView
         android:id="@+id/tv_time_lbl"
         style="@style/MyTicketRadioButtton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        app:layout_constraintWidth_default="wrap"
+        app:layout_constraintHeight_default="wrap"
         tools:text="TextView"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/tv_date_lbl"

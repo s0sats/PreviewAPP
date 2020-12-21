@@ -88,7 +88,7 @@ public class WS_TK_Main_User_List extends IntentService {
         env.setEdit_header(edit_header);
 
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
-        ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("msg_checking_serial"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_TICKET_SERVER_MAIN_USER,
@@ -127,7 +127,7 @@ public class WS_TK_Main_User_List extends IntentService {
         }else{
             createMainUserListJsonFile(ConstantBaseApp.TICKET_MAIN_USER_LIST_JSON_FILE, gson.toJson(data));
             //
-            ToolBox.sendBCStatus(getApplicationContext(),"CLOSE_ACT", hmAux_Trans.get("msg_process_finalized"), new HMAux(), gson.toJson(data),"0");
+            ToolBox.sendBCStatus(getApplicationContext(),"CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), gson.toJson(data),"0");
         }
     }
 
@@ -145,8 +145,6 @@ public class WS_TK_Main_User_List extends IntentService {
         translist.add("generic_receiving_data_msg");
         translist.add("generic_processing_data");
         translist.add("generic_process_finalized_msg");
-        translist.add("msg_error_on_insert_ticket");
-        translist.add("msg_no_data_returned");
         translist.add("alert_invalid_scn_msg");
         //
         mResource_Code = ToolBox_Inf.getResourceCode(
