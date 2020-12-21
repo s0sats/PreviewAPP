@@ -214,16 +214,17 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
                     break;
                 case ConstantBaseApp.TK_TICKET_FORECAST_TIME_AND_HEADER:
                 case ConstantBaseApp.TK_TICKET_FORECAST_TIME:
-                    float calculatted_forecast_time_edit=0;
+                    long calculatted_forecast_time_edit=0;
                     //
                     if(forecast_time != null
                             && !forecast_time.isEmpty()) {
+
                         calculatted_forecast_time_edit = formatForecastTime(forecast_time);
+                        long calculatted_forecast_time_old = formatForecastTime(ticket.getForecast_time());
                         if (move_steps == 1) {
-                            float calculatted_forecast_time_old = formatForecastTime(ticket.getForecast_time());
-                            formatted_apply_perc_steps = String.valueOf(calculatted_forecast_time_edit / calculatted_forecast_time_old).replaceAll(".", ",");
+                            formatted_apply_perc_steps = String.valueOf(calculatted_forecast_time_edit / calculatted_forecast_time_old).replace(".", ",");
                         }
-                        ticket.setForecast_time(String.valueOf(calculatted_forecast_time_edit));
+                        ticket.setForecast_time(String.valueOf(calculatted_forecast_time_edit - calculatted_forecast_time_old));
                     }
                     break;
             }
@@ -244,10 +245,10 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
      * @param forecast_time
      * @return
      */
-    private float formatForecastTime(String forecast_time) {
+    private long formatForecastTime(String forecast_time) {
         if(forecast_time != null) {
             String[] dayTimeSplit = forecast_time.split(" ");
-            float timeSplit = 0;
+            long timeSplit = 0;
 
             timeSplit = dayTimeSplit.length > 1 ? 24 * 60 * Integer.valueOf(dayTimeSplit[0]) : 0;
             int firstIdx = dayTimeSplit.length > 1 ? 1 : 0;

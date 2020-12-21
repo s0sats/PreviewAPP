@@ -341,11 +341,42 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     }
 
     private boolean hasAnyFieldValueChange() {
-        return mkdt_end_date_val.hasChanged()
-                || mkdt_start_date_val.hasChanged()
-                || ss_main_user.hasChangedBD()
-                || mket_internal_comments.getText().equals(mket_internal_comments.getTag());
+        boolean startDateHasChanged = mkdt_start_date_val.hasChanged() && rb_start_date.isChecked();
+        boolean endDateHasChanged = mkdt_end_date_val.hasChanged()  && rb_end_date.isChecked();
+        boolean forecastTimeHasChanged = hasForecastTimeChanged();
+        boolean mainUserHasChanged = ss_main_user.hasChangedBD();
+        boolean internalCommentsHasChanged = !mket_internal_comments.getText().toString().equals(mket_internal_comments.getTag());
+
+        return endDateHasChanged
+                || startDateHasChanged
+                || forecastTimeHasChanged
+                || mainUserHasChanged
+                || internalCommentsHasChanged;
     }
+
+    private boolean hasForecastTimeChanged() {
+        String forecast_day =  edt_service_time_day_val.getText().toString();
+        String forecast_hour =  edt_service_time_hour_val.getText().toString();
+        String forecast_minutes = edt_service_time_minutes_val.getText().toString();
+        //
+        if(forecast_day == null || forecast_day.isEmpty()|| "0".equals(forecast_day)){
+            forecast_day = "";
+        }else{
+            forecast_day = forecast_day + " ";
+        }
+        //
+        if(forecast_hour == null || forecast_hour.isEmpty()){
+            forecast_hour = "00";
+        };
+        //
+        if(forecast_minutes == null || forecast_minutes.isEmpty()){
+            forecast_minutes = "00";
+        };
+        String mForecastTime = forecast_day + forecast_hour +":"+ forecast_minutes;
+
+        return !mForecastTime.equals(mTk_ticket.getForecast_time()) && rb_time.isChecked();
+    }
+
 
     public void callAct070() {
         Intent intent = new Intent(context, Act070_Main.class);
@@ -470,6 +501,9 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         transList.add("elapsed_time_lbl");
         transList.add("remaining_time_lbl");
         //
+        transList.add("alert_invalid_forecast_time_ttl");
+        transList.add("alert_invalid_forecast_time_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -498,9 +532,6 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                 if(!mInternalComments.equals(tkInternalComments)){
                     header_data_has_changed = true;
                     internalComments = mInternalComments;
-                    if (!mket_internal_comments.isValid()) {
-                        hasError = true;
-                    }
                 }
                 Integer mainUserValue = null;
                 if(ss_main_user.hasChanged()) {
@@ -540,21 +571,34 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                     move_steps = chk_shift_step_service_time.isChecked() ? 1 : 0;
                     //
                     String forecast_day =  edt_service_time_day_val.getText().toString();
+                    String forecast_hour =  edt_service_time_hour_val.getText().toString();
+                    String forecast_minutes = edt_service_time_minutes_val.getText().toString();
+
                     if(forecast_day == null || forecast_day.isEmpty()){
                         forecast_day = "00";
                         edt_service_time_hour_val.setText(forecast_day);
                     };
                     //
-                    String forecast_hour =  edt_service_time_hour_val.getText().toString();
                     if(forecast_hour == null || forecast_hour.isEmpty()){
                         forecast_hour = "00";
                         edt_service_time_hour_val.setText(forecast_hour);
-                    };
+                    }else{
+                        int hour = Integer.valueOf(forecast_hour);
+                        if(hour > 23){
+                            hasError = true;
+                            forecast_hour = "00";
+                        }
+                    }
                     //
-                    String forecast_minutes = edt_service_time_minutes_val.getText().toString();
                     if ( forecast_minutes == null || forecast_minutes.isEmpty()) {
                         forecast_minutes = "00";
-                        edt_service_time_hour_val.setText(forecast_minutes);
+                        edt_service_time_minutes_val.setText(forecast_minutes);
+                    }else{
+                        int minutes = Integer.valueOf(forecast_minutes);
+                        if(minutes > 59){
+                            hasError = true;
+                            forecast_hour = "00";
+                        }
                     }
                     //
                     forecast_time = mPresenter.getTimeFromForm(forecast_day, forecast_hour, forecast_minutes);
@@ -564,28 +608,35 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                     }
                 }
                 //
-                if(hasFieldValueChange(forecast_time, start_date, forecast_date)) {
-                    retrieveKeyboard();
-                    restoreRadioBtnAfterSave();
-                    mPresenter.callEditHeaderService(
-                            mTk_ticket.getTicket_prefix(),
-                            mTk_ticket.getTicket_code(),
-                            mTk_ticket.getScn(),
-                            mainUserValue,
-                            ss_main_user.getmValue().get(SearchableSpinner.DESCRIPTION),
-                            ss_main_user.getmValue().get(SearchableSpinner.ID),
-                            forecast_time,
-                            start_date,
-                            forecast_date,
-                            timeAction,
-                            internalComments,
-                            move_other_date,
-                            move_steps
-                    );
+                if(!hasError) {
+                    if (hasFieldValueChange(forecast_time, start_date, forecast_date)) {
+                        retrieveKeyboard();
+                        restoreRadioBtnAfterSave();
+                        mPresenter.callEditHeaderService(
+                                mTk_ticket.getTicket_prefix(),
+                                mTk_ticket.getTicket_code(),
+                                mTk_ticket.getScn(),
+                                mainUserValue,
+                                ss_main_user.getmValue().get(SearchableSpinner.DESCRIPTION),
+                                ss_main_user.getmValue().get(SearchableSpinner.ID),
+                                forecast_time,
+                                start_date,
+                                forecast_date,
+                                timeAction,
+                                internalComments,
+                                move_other_date,
+                                move_steps
+                        );
+                    } else {
+                        showMsg(
+                                hmAux_Trans.get("alert_no_fields_changes_ttl"),
+                                hmAux_Trans.get("alert_no_fields_changes_msg")
+                        );
+                    }
                 }else{
                     showMsg(
-                            hmAux_Trans.get("alert_no_fields_changes_ttl"),
-                            hmAux_Trans.get("alert_no_fields_changes_msg")
+                            hmAux_Trans.get("alert_invalid_forecast_time_ttl"),
+                            hmAux_Trans.get("alert_invalid_forecast_time_msg")
                     );
                 }
             }
