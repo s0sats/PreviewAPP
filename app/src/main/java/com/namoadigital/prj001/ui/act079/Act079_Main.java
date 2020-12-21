@@ -166,6 +166,9 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                                 case ConstantBaseApp.FAB_TO_STEP_LBL:
                                     callAct070(false);
                                     break;
+                                case ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL:
+                                    callAct082();
+                                    break;
                                 case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
                                     if(ToolBox_Con.isOnline(context)) {
                                         callAct070(true);

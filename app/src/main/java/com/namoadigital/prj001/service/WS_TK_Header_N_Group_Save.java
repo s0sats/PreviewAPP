@@ -222,7 +222,11 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
                         calculatted_forecast_time_edit = formatForecastTime(forecast_time);
                         long calculatted_forecast_time_old = formatForecastTime(ticket.getForecast_time());
                         if (move_steps == 1) {
-                            formatted_apply_perc_steps = String.valueOf(calculatted_forecast_time_edit / calculatted_forecast_time_old).replace(".", ",");
+                            if(calculatted_forecast_time_old != 0){
+                                formatted_apply_perc_steps = String.valueOf(calculatted_forecast_time_edit / calculatted_forecast_time_old).replace(".", ",");
+                            }else{
+                                formatted_apply_perc_steps = "0";
+                            }
                         }
                         ticket.setForecast_time(String.valueOf(calculatted_forecast_time_edit - calculatted_forecast_time_old));
                     }
@@ -257,7 +261,7 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
             timeSplit += Integer.parseInt(aux[1]);
             return timeSplit;
         }
-        return 1;
+        return 0;
     }
 
     private ArrayList<TK_Ticket> keepOnlyUpdateRequiredData(ArrayList<TK_Ticket> ticketList) {

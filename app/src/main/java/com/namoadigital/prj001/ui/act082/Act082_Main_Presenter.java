@@ -220,7 +220,7 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
         if(negativeTime){
             sign = "-";
         }
-        formattedDate = sign + days + ":" + (hours % 24 > 9 ? hours % 24 : "0" + hours % 24 ) + ":" + (minutes % 60 > 9 ? minutes % 60 : "0" +  minutes % 60 ) ;
+        formattedDate = sign + days + " " + (hours % 24 > 9 ? hours % 24 : "0" + hours % 24 ) + ":" + (minutes % 60 > 9 ? minutes % 60 : "0" +  minutes % 60 ) ;
         return formattedDate;
     }
 
