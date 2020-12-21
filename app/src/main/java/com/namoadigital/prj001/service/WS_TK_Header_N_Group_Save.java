@@ -374,7 +374,7 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
                 ).toSqlQuery()
         );
         ticket.setStep(new ArrayList<TK_Ticket_Step>());
-
+        ticket.setProduct(new ArrayList<TK_Ticket_Product>());
         return ticket;
     }
 

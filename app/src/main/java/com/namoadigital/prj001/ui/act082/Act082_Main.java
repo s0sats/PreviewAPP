@@ -486,8 +486,6 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         transList.add("dialog_main_user_search_start");
         transList.add("dialog_edit_header_date_ttl");
         transList.add("dialog_edit_header_date_start");
-        transList.add("alert_invalid_scn_ttl");
-        transList.add("alert_invalid_scn_msg");
         //
         transList.add("alert_no_fields_changes_ttl");
         transList.add("alert_no_fields_changes_msg");
@@ -962,7 +960,6 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         }
         //
         disableProgressDialog();
-
     }
 
     //TRATA MSG SESSION NOT FOUND
