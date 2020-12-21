@@ -320,7 +320,9 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
             return mainUserOptionList;
         }else {
             //Se não existe lista em memoria e nem no json, tenta busca.
-            callMainUserService(mTicket);
+            if(!hasAnyOnlinePendency(context, mTicket)) {
+                callMainUserService(mTicket);
+            }
             return null;
         }
     }
@@ -377,7 +379,7 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
     public Act082_Form_Data getFormDataJsonInfo(TK_Ticket tkTicket) {
         File headerEditionFile = getHeaderEditionFile();
         Act082_Form_Data formData = null;
-        if(headerEditionFile.exists()){
+        if(headerEditionFile.exists() && !hasAnyOnlinePendency(context, tkTicket)){
             formData = recoverFormDataFromFile(headerEditionFile);
         }
         //
