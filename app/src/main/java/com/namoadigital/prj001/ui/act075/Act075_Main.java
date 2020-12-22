@@ -46,6 +46,7 @@ import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
+import com.namoadigital.prj001.ui.act082.Act082_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -198,15 +199,63 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                             case ConstantBaseApp.FAB_TO_ORIGIN_LBL:
                                 verifyChangesBeforeExit(true);
                                 break;
+                            case ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL:
+                                if(hasUpdated) {
+                                    ToolBox.alertMSG_YES_NO(
+                                            context,
+                                            hmAux_Trans.get("exit_without_save_ttl"),
+                                            hmAux_Trans.get("exit_without_save_msg"),
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    callAct082();
+                                                }
+                                            },
+                                            1
+                                    );
+                                    break;
+                                }else{
+                                    callAct082();
+                                }
+                            case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
+                                if(ToolBox_Con.isOnline(context)) {
+                                    ToolBox.alertMSG_YES_NO(
+                                            context,
+                                            hmAux_Trans.get("exit_without_save_ttl"),
+                                            hmAux_Trans.get("exit_without_save_msg"),
+                                            new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    callAct070(true);
+                                                }
+                                            },
+                                            1
+                                    );
+                                }else{
+                                    ToolBox.alertMSG(
+                                            context,
+                                            hmAux_Trans.get("alert_wg_edit_need_connection_ttl"),
+                                            hmAux_Trans.get("alert_wg_edit_need_connection_msg"),
+                                            null,
+                                            0
+                                    );
+                                }
+                                break;
                         }
                     }
-
                     @Override
                     public void onFabStatusChanged(boolean b) {
                         hasFABActive = b;
                     }
                 }
             );
+    }
+
+    private void callAct082() {
+        Intent intent = new Intent(context, Act082_Main.class);
+        intent.putExtras(requestingBundle);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -671,7 +720,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                             if(goToOrigin) {
                                 callOrigin();
                             }else{
-                                callAct070();
+                                callAct070(false);
                             }
                         }
                     },
@@ -681,7 +730,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             if(goToOrigin) {
                 callOrigin();
             }else{
-                callAct070();
+                callAct070(false);
             }
         }
     }
@@ -784,8 +833,11 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         }
     }
 
-    private void callAct070() {
+    private void callAct070(boolean forceEditMode) {
         Intent intent = new Intent(context, Act070_Main.class);
+        if(forceEditMode){
+            requestingBundle.putBoolean(Act070_Main.PARAM_FORCE_WORKGROUP_EDIT_MODE,true);
+        }
         intent.putExtras(requestingBundle);
         startActivity(intent);
         finish();
