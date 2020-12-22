@@ -934,6 +934,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
             hmAuxMainUser.put(SearchableSpinner.ID, mTk_ticket.getMain_user_nick());
             hmAuxMainUser.put(SearchableSpinner.DESCRIPTION, mTk_ticket.getMain_user_name());
             ss_main_user.setmValueBD(hmAuxMainUser);
+        }else{
+            ss_main_user.setmValueBD(new HMAux());
         }
         //
         if (headerEditDataObj.getMain_user_code() != null && ToolBox_Inf.convertStringToInt(headerEditDataObj.getMain_user_code()) > 0) {

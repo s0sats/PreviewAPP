@@ -197,9 +197,15 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
                     }
                     //
                     if (mainUser != -1) {
-                        ticket.setMain_user(mainUser);
-                        ticket.setMain_user_name(mainUserName);
-                        ticket.setMain_user_nick(mainUserNick);
+                        if(mainUser==0){
+                            ticket.setMain_user(null);
+                            ticket.setMain_user_name(null);
+                            ticket.setMain_user_nick(null);
+                        }else{
+                            ticket.setMain_user(mainUser);
+                            ticket.setMain_user_name(mainUserName);
+                            ticket.setMain_user_nick(mainUserNick);
+                        }
                     }
             }
             //
