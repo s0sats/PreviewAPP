@@ -2254,8 +2254,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 if(workgroupEditionObjs != null && workgroupEditionObjs.size() > 0 ){
                     for (T_TK_Header_N_Group_Save_WG_Env.T_TK_Header_N_Group_Save_WG_Step wgStep : workgroupEditionObjs) {
                         if(wgStep.getStep_code() == stepMain.getStepCode()){
-                            stepMain.setSelected_group_code(String.valueOf(wgStep.getStep_group_code()));
-                            stepMain.setSelected_group_desc(String.valueOf(wgStep.getStep_group_desc()));
+                            stepMain.setSelected_group_code(wgStep.getStep_group_code() == null ? null : String.valueOf(wgStep.getStep_group_code()));
+                            stepMain.setSelected_group_desc(wgStep.getStep_group_code() == null ? null : String.valueOf(wgStep.getStep_group_desc()));
                             stepMain.setGroupChanged(true);
                             break;
                         }

@@ -426,45 +426,6 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
         processTicketSaveReturn(rec);
     }
 
-//    private void callWsTicketSave(T_TK_Ticket_Header_Group_Env env) throws Exception {
-//        //
-//        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
-//        //
-//        String jsonEnv = gsonEnv.toJson(env);
-//        String resultado = ToolBox_Con.connWebService(
-//                Constant.WS_TICKET_SAVE,
-//                jsonEnv
-//        );
-//        //
-//        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
-//        //
-//        T_TK_Ticket_Save_Rec rec = gsonRec.fromJson(
-//                resultado,
-//                T_TK_Ticket_Save_Rec.class
-//        );
-//        //
-//        if (
-//                !ToolBox_Inf.processWSCheckValidation(
-//                        getApplicationContext(),
-//                        rec.getValidation(),
-//                        rec.getError_msg(),
-//                        rec.getLink_url(),
-//                        1,
-//                        1)
-//                        ||
-//                        !ToolBox_Inf.processoOthersError(
-//                                getApplicationContext(),
-//                                getResources().getString(R.string.generic_error_lbl),
-//                                rec.getError_msg())
-//        ) {
-//            return;
-//        }
-//        //
-//        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_processing_data"), "", "0");
-//        //
-//        processTicketSaveReturn(rec);
-//    }
-
     private void processTicketSaveReturn(T_TK_Ticket_Save_Rec rec) throws Exception {
         if (ConstantBaseApp.MAIN_RESULT_OK.equalsIgnoreCase(rec.getSave())
                 || ConstantBaseApp.MAIN_RESULT_OK_DUP.equalsIgnoreCase(rec.getSave())
@@ -619,10 +580,7 @@ public class WS_TK_Header_N_Group_Save extends IntentService {
         translist.add("generic_sending_data_msg");
         translist.add("generic_receiving_data_msg");
         translist.add("generic_process_finalized_msg");
-        translist.add("generic_loading_data_from_token");
-        translist.add("generic_token_file_creation_error");
         translist.add("generic_processing_data");
-        translist.add("generic_re_processing_data");
         translist.add("msg_preparing_items_data");
         translist.add("msg_data_returned_error");
         translist.add("msg_error_on_ticket_update");

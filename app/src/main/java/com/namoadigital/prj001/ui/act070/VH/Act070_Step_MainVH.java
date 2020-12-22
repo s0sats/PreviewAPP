@@ -167,29 +167,31 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
                 tvMainUser.setText(stepMain.getMain_user());
             }
             //
-            if (isInWgEditMode
-                && (ToolBox_Inf.hasConsistentValueString(stepMain.getWorkgroup_code())
-                    || ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())
-                    || stepMain.isGroupChanged())
-            ) {
-                //SE HOUVER DADOS AP_* ELES É QUE DEVEM SER EXIBIDOS.
+            if (isInWgEditMode) {
                 HMAux mValue = new HMAux();
                 HMAux mDbValue = new HMAux();
-                if (stepMain.isGroupChanged()) {
-                    mValue = generateWorkGroupValue(stepMain.getSelected_group_code(), stepMain.getSelected_group_desc());
-                    //TODO rever por possivel bug
-                    //POSSIVEL BUG AQUI , CASO NÃO TENHA A VAR PREENCHIDA...TALVEZ TEREI QUE ENVIAR PRO
-                    // STEPMAIN SE SEU PRIMEIRO FILHO É UMA APROVAÇÃO E NÃO CONFIAR SOMENTE EM QUAL ESTA PREENCHIDA.
-                    if (ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())) {
-                        mDbValue = generateWorkGroupValue(stepMain.getAp_workgroup_code(), stepMain.getAp_workgroup_desc());
+                if((ToolBox_Inf.hasConsistentValueString(stepMain.getWorkgroup_code())
+                    || ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())
+                    || stepMain.isGroupChanged())
+                ){
+                    //SE HOUVER DADOS AP_* ELES É QUE DEVEM SER EXIBIDOS.
+
+                    if (stepMain.isGroupChanged()) {
+                        mValue = generateWorkGroupValue(stepMain.getSelected_group_code(), stepMain.getSelected_group_desc());
+                        //TODO rever por possivel bug
+                        //POSSIVEL BUG AQUI , CASO NÃO TENHA A VAR PREENCHIDA...TALVEZ TEREI QUE ENVIAR PRO
+                        // STEPMAIN SE SEU PRIMEIRO FILHO É UMA APROVAÇÃO E NÃO CONFIAR SOMENTE EM QUAL ESTA PREENCHIDA.
+                        if (ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())) {
+                            mDbValue = generateWorkGroupValue(stepMain.getAp_workgroup_code(), stepMain.getAp_workgroup_desc());
+                        } else {
+                            mDbValue = generateWorkGroupValue(stepMain.getWorkgroup_code(), stepMain.getWorkgroup_desc());
+                        }
                     } else {
-                        mDbValue = generateWorkGroupValue(stepMain.getWorkgroup_code(), stepMain.getWorkgroup_desc());
-                    }
-                } else {
-                    if (ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())) {
-                        mValue = mDbValue = generateWorkGroupValue(stepMain.getAp_workgroup_code(), stepMain.getAp_workgroup_desc());
-                    } else {
-                        mValue = mDbValue = generateWorkGroupValue(stepMain.getWorkgroup_code(), stepMain.getWorkgroup_desc());
+                        if (ToolBox_Inf.hasConsistentValueString(stepMain.getAp_workgroup_code())) {
+                            mValue = mDbValue = generateWorkGroupValue(stepMain.getAp_workgroup_code(), stepMain.getAp_workgroup_desc());
+                        } else {
+                            mValue = mDbValue = generateWorkGroupValue(stepMain.getWorkgroup_code(), stepMain.getWorkgroup_desc());
+                        }
                     }
                 }
                 //
@@ -204,6 +206,7 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
                     }
                 });
             }
+            //
             if (isInWgEditMode
                 && (ToolBox_Inf.hasConsistentValueString(stepMain.getZone_site_group_desc()) || ToolBox_Inf.hasConsistentValueString(stepMain.getAp_zone_site_group_desc()))
             ) {
@@ -229,8 +232,10 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
 
     private HMAux generateWorkGroupValue(String workgroup_code, String workgroup_desc) {
         HMAux hmAux = new HMAux();
-        hmAux.put(SearchableSpinner.CODE,workgroup_code);
-        hmAux.put(SearchableSpinner.DESCRIPTION,workgroup_desc);
+        if(workgroup_code != null && !workgroup_code.isEmpty() && !"0".equals(workgroup_code)) {
+            hmAux.put(SearchableSpinner.CODE, workgroup_code);
+            hmAux.put(SearchableSpinner.DESCRIPTION, workgroup_desc);
+        }
         return hmAux;
     }
 
