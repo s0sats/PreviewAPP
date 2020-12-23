@@ -328,6 +328,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //alterados
         mPresenter.deleteWorkgroupFileIfNeeds();
         mPresenter.deleteWorkgroupEditionFileIfNeeds();
+        mPresenter.deleteHeaderEditionFiles();
         //
         ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
                 new FabMenu.IFabMenu() {

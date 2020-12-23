@@ -223,16 +223,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     /**
      * LUCHE - 04/12/2020
-     * Metodo que retorna o File par ao arquivo de workgroup
-     * @return
-     */
-    @Override
-    public File getWorkgroupJsonFile(){
-        return new File(Constant.TICKET_JSON_PATH, ConstantBaseApp.TICKET_WORKGROUP_LIST_JSON_FILE);
-    }
-
-    /**
-     * LUCHE - 04/12/2020
      * Metodo que transforma o obj json para hmAux, que é usado no SS
      * @param workgroupObjList
      * @return
@@ -337,8 +327,26 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return json_file;
     }
 
+    /**
+     * LUCHE - 04/12/2020
+     * Metodo que retorna o File par ao arquivo de workgroup
+     * @return
+     */
+    @Override
+    public File getWorkgroupJsonFile(){
+        return new File(Constant.TICKET_JSON_PATH, ConstantBaseApp.TICKET_WORKGROUP_LIST_JSON_FILE);
+    }
+
     private File getWorkgroupEditionFile() {
         return new File(ConstantBaseApp.TICKET_JSON_PATH, ConstantBaseApp.TICKET_WORKGROUP_EDITION_JSON_FILE);
+    }
+
+    private File getHeaderEditionFile() {
+        return new File(ConstantBaseApp.TICKET_JSON_PATH, ConstantBaseApp.TICKET_HEADER_EDITION_JSON_FILE);
+    }
+
+    private File getMainUserListFile() {
+        return new File(ConstantBaseApp.TICKET_JSON_PATH, ConstantBaseApp.TICKET_MAIN_USER_LIST_JSON_FILE);
     }
 
     /**
@@ -375,6 +383,25 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         File workGroupEditionFile = getWorkgroupEditionFile();
         if(workGroupEditionFile.exists()){
             workGroupEditionFile.delete();
+        }
+    }
+
+    /**
+     * HO HO HO - 23/12/2020
+     * Metodo que apaga os arquivos de edição de cabeçalho.
+     * Se eles existirem nesse momento, significa que o usr saiu da tela de edição matando o app
+     */
+    @Override
+    public void deleteHeaderEditionFiles(){
+        File headerEditionFile = getHeaderEditionFile();
+        File mainUserListFile = getMainUserListFile();
+        //
+        if(headerEditionFile.exists()){
+            headerEditionFile.delete();
+        }
+        //
+        if(mainUserListFile.exists()){
+            mainUserListFile.delete();
         }
     }
 

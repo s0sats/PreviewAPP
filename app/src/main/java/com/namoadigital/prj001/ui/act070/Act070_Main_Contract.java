@@ -152,6 +152,8 @@ public interface Act070_Main_Contract {
 
         void deleteWorkgroupFileIfNeeds();
 
-        void  deleteWorkgroupEditionFileIfNeeds();
+        void deleteWorkgroupEditionFileIfNeeds();
+
+        void deleteHeaderEditionFiles();
     }
 }
