@@ -197,10 +197,6 @@ public class Act027_Services extends BaseFragment {
         tv_header_add_info_2 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_2);
         tv_header_add_info_3 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_3);
         v_divider = cvlistHeaderProductSerial.findViewById(R.id.act027_v_divider);
-        v_divider.setVisibility(View.GONE);
-        handleAddInfoLayout("1", mSm_so.getAdd_inf1(), tv_header_add_info_1);
-        handleAddInfoLayout("2", mSm_so.getAdd_inf2(), tv_header_add_info_2);
-        handleAddInfoLayout("3", mSm_so.getAdd_inf3(), tv_header_add_info_3);
 
         iv_product_serial_id =  listHeader.findViewById(R.id.iv_product_serial_id);
         tv_product_serial_id = listHeader.findViewById(R.id.tv_product_serial_id);
@@ -253,11 +249,18 @@ public class Act027_Services extends BaseFragment {
         }
     }
 
+    private void setAddInfo() {
+        v_divider.setVisibility(View.GONE);
+        handleAddInfoLayout("1", mSm_so.getAdd_inf1(), tv_header_add_info_1);
+        handleAddInfoLayout("2", mSm_so.getAdd_inf2(), tv_header_add_info_2);
+        handleAddInfoLayout("3", mSm_so.getAdd_inf3(), tv_header_add_info_3);
+    }
+
     private void handleAddInfoLayout(String prefix, String add_info, TextView tv_add_info) {
-        if(add_info!= null && !add_info.isEmpty()) {
+        if(add_info!= null && !add_info.trim().isEmpty()) {
             tv_add_info.setVisibility(View.VISIBLE);
             v_divider.setVisibility(View.VISIBLE);
-            tv_add_info.setText(prefix + ": " + add_info);
+            tv_add_info.setText(prefix + ": " + add_info.trim());
         }else{
             tv_add_info.setVisibility(View.GONE);
         }
@@ -328,6 +331,7 @@ public class Act027_Services extends BaseFragment {
                 //
                 setServiceAdapter(sw_filter.isChecked());
                 setSerialInfo();
+                setAddInfo();
             } else {
                 recoveryDelegate.callAct005();
             }
