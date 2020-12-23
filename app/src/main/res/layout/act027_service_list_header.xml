@@ -16,8 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/font_normal"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginHorizontal="16dp" />
 
     <TextView
         android:id="@+id/act027_tv_header_add_info_1"
