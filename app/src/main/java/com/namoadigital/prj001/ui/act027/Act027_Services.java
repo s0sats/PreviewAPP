@@ -86,8 +86,13 @@ public class Act027_Services extends BaseFragment {
     private ImageView iv_product_serial_id;
     private TextView tv_product_serial_id;
     private TextView tv_product_serial_infos;
+    private TextView tv_header_add_info_1;
+    private TextView tv_header_add_info_2;
+    private TextView tv_header_add_info_3;
+    private View v_divider;
     private ImageView iv_editable_serial;
     private View listHeader;
+    private View cvlistHeaderProductSerial;
     private Button btn_quality_approval;
     private Button btn_product_event_shortcut;
 
@@ -183,8 +188,20 @@ public class Act027_Services extends BaseFragment {
         );
         //
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        listHeader = inflater.inflate(R.layout.cv_product_serial_with_icon, null);
+
+        cvlistHeaderProductSerial = inflater.inflate(R.layout.act027_service_list_header, null);
         tv_filter_lbl = view.findViewById(R.id.act027_services_content_tv_filter_lbl);
+
+        listHeader = cvlistHeaderProductSerial.findViewById(R.id.cv_product_serial_card);
+        tv_header_add_info_1 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_1);
+        tv_header_add_info_2 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_2);
+        tv_header_add_info_3 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_3);
+        v_divider = cvlistHeaderProductSerial.findViewById(R.id.act027_v_divider);
+        v_divider.setVisibility(View.GONE);
+        handleAddInfoLayout("1", mSm_so.getAdd_inf1(), tv_header_add_info_1);
+        handleAddInfoLayout("2", mSm_so.getAdd_inf2(), tv_header_add_info_2);
+        handleAddInfoLayout("3", mSm_so.getAdd_inf3(), tv_header_add_info_3);
+
         iv_product_serial_id =  listHeader.findViewById(R.id.iv_product_serial_id);
         tv_product_serial_id = listHeader.findViewById(R.id.tv_product_serial_id);
         tv_product_serial_infos = listHeader.findViewById(R.id.tv_product_serial_infos);
@@ -194,10 +211,12 @@ public class Act027_Services extends BaseFragment {
         btn_quality_approval = view.findViewById(R.id.act027_services_content_btn_quality_approval);
         btn_product_event_shortcut = view.findViewById(R.id.act027_services_content_btn_product_event_shortcut);
 
+
+
         btn_quality_approval.setText(hmAux_Trans.get("quality_approval_shortcut"));
         iv_editable_serial.setVisibility(View.VISIBLE);
         iv_editable_serial.setImageResource(R.drawable.ic_edit_black_24dp);
-        lv_services.addHeaderView(listHeader);
+        lv_services.addHeaderView(cvlistHeaderProductSerial);
         listHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -231,6 +250,16 @@ public class Act027_Services extends BaseFragment {
             }else{
                 btn_product_event_shortcut.setVisibility(View.GONE);
             }
+        }
+    }
+
+    private void handleAddInfoLayout(String prefix, String add_info, TextView tv_add_info) {
+        if(add_info!= null && !add_info.isEmpty()) {
+            tv_add_info.setVisibility(View.VISIBLE);
+            v_divider.setVisibility(View.VISIBLE);
+            tv_add_info.setText(prefix + ": " + add_info);
+        }else{
+            tv_add_info.setVisibility(View.GONE);
         }
     }
 
