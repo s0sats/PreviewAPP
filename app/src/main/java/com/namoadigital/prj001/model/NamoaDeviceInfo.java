@@ -444,6 +444,9 @@ public class NamoaDeviceInfo {
             txt += Settings.Secure.getInt(context.getContentResolver(),
                 Settings.Global.DEVELOPMENT_SETTINGS_ENABLED , 0) == 1 ? "Sim" : "Não";
 
+            txt += "\nOpção Não manter atividades ativa: \n\t\t";
+            txt += Settings.System.getInt(context.getContentResolver(),
+                Settings.Global.ALWAYS_FINISH_ACTIVITIES, 0) == 1 ? "Sim" : "Não";
         } catch (Exception e) {
             e.printStackTrace();
             txt += "Exception , Impossivel verificar";
