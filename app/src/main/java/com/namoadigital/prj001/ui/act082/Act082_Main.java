@@ -198,7 +198,9 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         //
         mket_internal_comments.setmBARCODE(false);
         //
-        if (mPresenter.getDateEditionProfile() || mPresenter.getStepEditTimeProfile()) {
+        handleReadOnly(false);
+        //
+        if (mPresenter.getDateEditionProfile() || mPresenter.getHeaderEditionProfile()) {
             if (mPresenter.hasAnyOnlinePendency(context, mTk_ticket)) {
                 ToolBox.alertMSG(
                         context,
@@ -212,11 +214,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                         },
                         0
                 );
-            } else {
-                //TODO metodo que recupera lista valida.
             }
-        } else {
-            handleReadOnly(false);
         }
         //
     }
@@ -269,7 +267,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         ll_date_and_forecast_infos.setVisibility(View.VISIBLE);
         ll_header_infos.setVisibility(View.VISIBLE);
         //
-        if (mPresenter.getDateEditionProfile() || mPresenter.getStepEditTimeProfile()) {
+        if (mPresenter.getDateEditionProfile() || mPresenter.getHeaderEditionProfile()) {
             if (mPresenter.getDateEditionProfile()) {
                 if (mPresenter.getStepEditTimeProfile()) {
                     chk_shift_step_start_date.setVisibility(View.VISIBLE);
