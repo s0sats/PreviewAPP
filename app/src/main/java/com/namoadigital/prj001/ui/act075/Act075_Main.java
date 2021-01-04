@@ -213,24 +213,28 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                                             },
                                             1
                                     );
-                                    break;
                                 }else{
                                     callAct082();
                                 }
+                                break;
                             case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
                                 if(ToolBox_Con.isOnline(context)) {
-                                    ToolBox.alertMSG_YES_NO(
-                                            context,
-                                            hmAux_Trans.get("exit_without_save_ttl"),
-                                            hmAux_Trans.get("exit_without_save_msg"),
-                                            new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    callAct070(true);
-                                                }
-                                            },
-                                            1
-                                    );
+                                    if(hasUpdated) {
+                                        ToolBox.alertMSG_YES_NO(
+                                                context,
+                                                hmAux_Trans.get("exit_without_save_ttl"),
+                                                hmAux_Trans.get("exit_without_save_msg"),
+                                                new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        callAct070(true);
+                                                    }
+                                                },
+                                                1
+                                        );
+                                    }else{
+                                        callAct070(true);
+                                    }
                                 }else{
                                     ToolBox.alertMSG(
                                             context,
