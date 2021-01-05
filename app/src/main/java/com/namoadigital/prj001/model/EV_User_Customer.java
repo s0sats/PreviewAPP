@@ -19,6 +19,7 @@ public class EV_User_Customer {
     private String logo_url;
     private int tracking;
     private String timezone;
+    private String license_control_type;
 
     public long getUser_code() {
         return user_code;
@@ -130,5 +131,13 @@ public class EV_User_Customer {
 
     public void setTimezone(String timezone) {
         this.timezone = timezone;
+    }
+
+    public String getLicense_control_type() {
+        return license_control_type;
+    }
+
+    public void setLicense_control_type(String license_control_type) {
+        this.license_control_type = license_control_type;
     }
 }

@@ -38,8 +38,9 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     public static final String LOGO_URL = "logo_url";
     public static final String TRACKING = "tracking";
     public static final String TIMEZONE = "timezone";
+    public static final String LICENSE_CONTROL_TYPE = "license_control_type";
 
-    public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER, BLOCKED, SESSION_APP, PENDING, LOGO_URL, TRACKING,TIMEZONE};
+    public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER, BLOCKED, SESSION_APP, PENDING, LOGO_URL, TRACKING,TIMEZONE, LICENSE_CONTROL_TYPE};
 
     public EV_User_CustomerDao(Context context) {
         super(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE, Constant.DB_MODE_SINGLE);
@@ -282,6 +283,9 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             if (ev_user_customer.getTimezone() != null) {
                 contentValues.put(TIMEZONE, ev_user_customer.getTimezone());
             }
+            if (ev_user_customer.getLicense_control_type() != null) {
+                contentValues.put(LICENSE_CONTROL_TYPE, ev_user_customer.getLicense_control_type());
+            }
 
             return contentValues;
         }
@@ -306,6 +310,7 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             ev_user_customer.setLogo_url(cursor.getString(cursor.getColumnIndex(LOGO_URL)));
             ev_user_customer.setTracking(cursor.getInt(cursor.getColumnIndex(TRACKING)));
             ev_user_customer.setTimezone(cursor.getString(cursor.getColumnIndex(TIMEZONE)));
+            ev_user_customer.setLicense_control_type(cursor.getString(cursor.getColumnIndex(LICENSE_CONTROL_TYPE)));
 
             return ev_user_customer;
         }
