@@ -196,6 +196,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         //
         refreshUI();
         //
+        ss_main_user.setmOption(mPresenter.getSSMainUserList(mTk_ticket));
         mket_internal_comments.setmBARCODE(false);
         //
         handleReadOnly(false);
@@ -390,6 +391,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     public void callAct070() {
         Intent intent = new Intent(context, Act070_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        requestingBundle.putBoolean(Act082_Main.FROM_EDIT_HEADER, false);
         intent.putExtras(requestingBundle);
         mPresenter.deleteMainUserListFile();
         //
@@ -546,7 +548,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                     internalComments = mInternalComments;
                 }
                 Integer mainUserValue = -1;
-                if (ss_main_user.hasChanged()) {
+                if (ss_main_user.hasChangedBD()) {
                     header_data_has_changed = true;
                     if (ss_main_user.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
                         mainUserValue = Integer.valueOf(ss_main_user.getmValue().get(SearchableSpinner.CODE));
@@ -554,7 +556,6 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                         mainUserValue = 0;
                     }
                 }
-                //
                 //
                 if (rb_start_date.isChecked()) {
                     if (header_data_has_changed) {
@@ -924,7 +925,6 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
             tv_service_time.setText(mTk_ticket.getForecast_time());
         }
         //
-        ss_main_user.setmOption(mPresenter.getSSMainUserList(mTk_ticket));
         if (mTk_ticket.getMain_user() != null && mTk_ticket.getMain_user() > 0) {
             HMAux hmAuxMainUser = new HMAux();
             //
