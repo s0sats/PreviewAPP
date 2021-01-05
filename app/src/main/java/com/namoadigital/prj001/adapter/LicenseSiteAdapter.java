@@ -9,26 +9,32 @@ import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.SiteLicense;
 
 import java.util.ArrayList;
 
-public class LicenseSiteAdapter extends RecyclerView.Adapter<LicenseSiteAdapter.LicenseSiteVh> {
+public class LicenseSiteAdapter extends RecyclerView.Adapter<LicenseSiteAdapter.LicenseSiteVh> implements Filterable {
     private Context context;
     private ArrayList<SiteLicense> source = new ArrayList<>();
-    private OnSiteClickListner onSiteClickListner;
+    private ArrayList<SiteLicense> mFilteredSource = new ArrayList<>();
+    private OnSiteClickListener onSiteClickListener;
+    private LicenseSiteFilter valueFilter;
 
-    interface OnSiteClickListner{
+    public interface OnSiteClickListener {
         void onSiteClick(SiteLicense siteLicense);
     }
 
-    public LicenseSiteAdapter(Context context, ArrayList<SiteLicense> source, OnSiteClickListner onSiteClickListner) {
+    public LicenseSiteAdapter(Context context, ArrayList<SiteLicense> source, OnSiteClickListener onSiteClickListener) {
         this.context = context;
         this.source = source;
-        this.onSiteClickListner = onSiteClickListner;
+        this.mFilteredSource = source;
+        this.onSiteClickListener = onSiteClickListener;
     }
 
     @NonNull
@@ -40,12 +46,12 @@ public class LicenseSiteAdapter extends RecyclerView.Adapter<LicenseSiteAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull LicenseSiteVh licenseSiteVh, int position) {
-        licenseSiteVh.bindData(source.get(position));
+        licenseSiteVh.bindData(mFilteredSource.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return source.size();
+        return mFilteredSource.size();
     }
 
     public class LicenseSiteVh extends RecyclerView.ViewHolder{
@@ -59,8 +65,8 @@ public class LicenseSiteAdapter extends RecyclerView.Adapter<LicenseSiteAdapter.
             this.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(onSiteClickListner != null){
-                        onSiteClickListner.onSiteClick(source.get(getAdapterPosition()));
+                    if(onSiteClickListener != null){
+                        onSiteClickListener.onSiteClick(mFilteredSource.get(getAdapterPosition()));
                     }
                 }
             });
@@ -89,6 +95,47 @@ public class LicenseSiteAdapter extends RecyclerView.Adapter<LicenseSiteAdapter.
             return spannableString;
         }
     }
+    //region Filtro
+    @Override
+    public Filter getFilter() {
+        if (valueFilter == null) {
+            valueFilter = new LicenseSiteFilter();
+        }
+        return valueFilter;
+    }
+
+    class LicenseSiteFilter extends Filter{
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            ArrayList<SiteLicense> temp = new ArrayList<>();
+            String charString = ToolBox.AccentMapper(constraint.toString().toLowerCase());
+            if (charString.isEmpty()) {
+                temp = source;
+            } else {
+                ArrayList<SiteLicense> filteredList = new ArrayList<>();
+                for (SiteLicense row : source) {
+                    //Resgata todos os campos concatenado e com remoção de acentuacao
+                    String rowFields = ToolBox.AccentMapper(row.getSite_desc().toLowerCase());
+                    if (rowFields.contains(charString)) {
+                        filteredList.add(row);
+                    }
+                }
+                temp = filteredList;
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.count = temp.size();
+            filterResults.values = temp;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            mFilteredSource = (ArrayList<SiteLicense>) filterResults.values;
+            notifyDataSetChanged();
+        }
+    }
+    //endregion
 }
 
 

@@ -20,6 +20,6 @@ public interface Act002_Main_View {
 
     void callAct001();
 
-
+    void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od);
 
 }

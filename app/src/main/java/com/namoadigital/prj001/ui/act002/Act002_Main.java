@@ -38,8 +38,6 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     private final String PROCESS_WS_GET_CUSTOMER = "get_customer";
     private final String PROCESS_WS_SYNC = "ws_sync";
     private final String PROCESS_WS_LOGOUT = "ws_logout";
-
-    private Context context;
     private ListView lv_customers;
     private Act002_Main_Presenter mPresenter;
     private EV_User_Customer_Adapter mAdapter;
@@ -61,7 +59,6 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     }
 
     private void initVars() {
-        context = getBaseContext();
         //
         mPresenter = new Act002_Main_Presenter_Impl(context, this);
         //
@@ -103,8 +100,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
-
-                prepareExecSessionProcess(item, 0, 1, 0);
+                mPresenter.defineClickFlow(item);
+                //
 
             }
         });
@@ -152,8 +149,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         );
 
     }
-
-    private void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od) {
+    @Override
+    public void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od) {
         if (ToolBox_Con.isOnline(context, true) || item.get(EV_User_CustomerDao.SESSION_APP).trim().length() != 0) {
             ToolBox_Con.setPreference_Customer_Code_TMP(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
             ToolBox_Con.setPreference_Translate_Code_TMP(context, item.get(EV_User_CustomerDao.TRANSLATE_CODE));
