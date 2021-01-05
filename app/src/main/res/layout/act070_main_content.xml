@@ -77,6 +77,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:elevation="5dp"
         app:layout_constraintBottom_toBottomOf="@+id/act070_rv_pipeline"
         app:layout_constraintEnd_toEndOf="parent"
         app:mButton_Back_Color="@color/namoa_sync_pipeline_background_btn"
