@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -22,10 +25,12 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_003;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_009;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.dialog.LicenseSiteDialog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -39,9 +44,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     private Context context;
     private Act002_Main_View mView;
     private EV_User_CustomerDao ev_user_customerDao;
-    private HMAux HMCustomer;
     private GE_Custom_Form_LocalDao customFormLocalDao;
-
 
     public Act002_Main_Presenter_Impl(Context context, Act002_Main_View mView) {
         this.context = context;
@@ -204,12 +207,82 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
     @Override
     public void defineClickFlow(HMAux item) {
-        if (1 == 1) {
-            showLicenseDialog(
-                generateFakeList()
-            );
+        if (item.hasConsistentValue(EV_User_CustomerDao.LICENSE_CONTROL_TYPE)
+            && EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE.equals(item.get(EV_User_CustomerDao.LICENSE_CONTROL_TYPE))
+        ) {
+            mView.setSelectedCustomerInfo(item);
+            prepareExecCustomerSiteLicenses(item.get(EV_User_CustomerDao.CUSTOMER_CODE));
         }else {
             mView.prepareExecSessionProcess(item, 0, 1, 0);
+        }
+    }
+    //region SiteLicense
+    private void prepareExecCustomerSiteLicenses(String customer_code) {
+        mView.setWsProcess(Act002_Main.PROCESS_WS_GET_CUSTOMER_SITE);
+        mView.showPD(
+            "Licenças por Site",
+            "Carregando lista de licenças",
+            context.getString(R.string.generic_msg_cancel),
+            context.getString(R.string.generic_msg_ok)
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(EV_User_CustomerDao.CUSTOMER_CODE, customer_code);
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+
+    }
+
+    @Override
+    public void processCustomerSiteLicenseListReturn() {
+        ArrayList<SiteLicense> siteLicenses = new ArrayList<>();
+        File licenseSiteFile = getCustomerSiteLicenseListFile();
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        try{
+            if (licenseSiteFile.exists()) {
+                ArrayList<SiteLicense> siteLicenseList = gson.fromJson(
+                    ToolBox_Inf.getContents(licenseSiteFile),
+                    new TypeToken<ArrayList<SiteLicense>>() {
+                    }.getType()
+                );
+                //
+                if(siteLicenseList != null){
+                   checkSiteLicenseFlow(siteLicenseList);
+                }else{
+                    showSiteLicenseListNotFoundMsg();
+                }
+            }else{
+                showSiteLicenseListNotFoundMsg();
+            }
+        }catch (Exception e ){
+            e.printStackTrace();
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            showSiteLicenseListNotFoundMsg();
+        }
+    }
+
+    private void showSiteLicenseListNotFoundMsg() {
+        ToolBox.alertMSG(
+            context,
+            "Lista de Licenças",
+            "Erro ao caregar lista de licenças por site!\nNenhuma lista de licenças encontradas.\nTente novamente.",
+            null,
+            0
+        );
+    }
+
+    private void checkSiteLicenseFlow(ArrayList<SiteLicense> siteLicenseList) {
+        if(siteLicenseList.size() == 1 && siteLicenseList.get(0).getUser_level_changed() == 0){
+            mView.prepareExecSessionProcess(
+                mView.getSelectedCustomerInfo(),
+                0,
+                1,
+                0
+            );
+        }else{
+            showLicenseDialog(siteLicenseList);
         }
     }
 
@@ -224,12 +297,11 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
                 }
             }
         ).show();
-//        LicenseSiteDialog.Builder builder = new  LicenseSiteDialog.Builder(context);
-//        builder.setNegativeButton(
-//            "Fechar",
-//            null
-//        );
-//        builder.create().show();
+    }
+
+
+    private File getCustomerSiteLicenseListFile(){
+        return new File(Constant.TICKET_JSON_PATH, ConstantBaseApp.TICKET_WORKGROUP_LIST_JSON_FILE);
     }
 
     private ArrayList<SiteLicense> generateFakeList() {
@@ -287,7 +359,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
         return siteLicenseList;
     }
-
+    //endregion
     @Override
     public void onBackPressedClicked() {
         mView.callAct001();

@@ -38,11 +38,13 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     private final String PROCESS_WS_GET_CUSTOMER = "get_customer";
     private final String PROCESS_WS_SYNC = "ws_sync";
     private final String PROCESS_WS_LOGOUT = "ws_logout";
+    public static final String PROCESS_WS_GET_CUSTOMER_SITE = "get_customer_site";
     private ListView lv_customers;
     private Act002_Main_Presenter mPresenter;
     private EV_User_Customer_Adapter mAdapter;
     private String wsProcess;
     private Bundle mBundle;
+    private HMAux selectedCustomerInfo;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,8 +103,6 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
                 mPresenter.defineClickFlow(item);
-                //
-
             }
         });
 
@@ -260,6 +260,21 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     }
 
     @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public void setSelectedCustomerInfo(HMAux selectedCustomerInfo) {
+        this.selectedCustomerInfo = selectedCustomerInfo;
+    }
+
+    @Override
+    public HMAux getSelectedCustomerInfo() {
+        return selectedCustomerInfo;
+    }
+
+    @Override
     protected void processOtherDevice() {
         super.processOtherDevice();
         HMAux item = new HMAux();
@@ -343,6 +358,11 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         }
         if (wsProcess.equals(PROCESS_WS_LOGOUT)) {
             processLogin();
+            wsProcess = "";
+        }
+        //
+        if(wsProcess.equals(PROCESS_WS_GET_CUSTOMER_SITE)){
+            mPresenter.processCustomerSiteLicenseListReturn();
             wsProcess = "";
         }
     }

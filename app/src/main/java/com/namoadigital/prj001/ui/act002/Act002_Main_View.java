@@ -22,4 +22,9 @@ public interface Act002_Main_View {
 
     void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od);
 
+    void setWsProcess(String wsProcess);
+
+    void setSelectedCustomerInfo(HMAux item);
+
+    HMAux getSelectedCustomerInfo();
 }

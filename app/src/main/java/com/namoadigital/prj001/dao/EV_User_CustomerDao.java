@@ -39,6 +39,9 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     public static final String TRACKING = "tracking";
     public static final String TIMEZONE = "timezone";
     public static final String LICENSE_CONTROL_TYPE = "license_control_type";
+    //Constantes do campo LICENSE_CONTROL_TYPE
+    public static final String LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL = "CONCURRENT_GLOBAL";
+    public static final String LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE = "CONCURRENT_BY_SITE";
 
     public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER, BLOCKED, SESSION_APP, PENDING, LOGO_URL, TRACKING,TIMEZONE, LICENSE_CONTROL_TYPE};
 
