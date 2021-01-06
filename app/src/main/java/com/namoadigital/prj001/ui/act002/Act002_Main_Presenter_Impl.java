@@ -99,7 +99,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     }
 
     @Override
-    public void executeSessionProcess(String email, String password, String nfc, HMAux customer, int forced_login, int jump_validation, int jump_od) {
+    public void executeSessionProcess(String email, String password, String nfc, HMAux customer, int forced_login, int jump_validation, int jump_od, Integer site_code, Integer user_level_code) {
         Intent mIntent = new Intent(context, WBR_Session.class);
         Bundle bundle = new Bundle();
 
@@ -111,6 +111,12 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         bundle.putInt(Constant.FORCED_LOGIN, forced_login);
         bundle.putInt(Constant.GC_STATUS_JUMP, jump_validation);
         bundle.putInt(Constant.GC_STATUS, jump_od);
+        if(site_code != null) {
+            bundle.putInt(SiteLicense.SITE_CODE, site_code);
+        }
+        if(user_level_code != null) {
+            bundle.putInt(SiteLicense.USER_LEVEL_CODE, user_level_code);
+        }
         //
         mIntent.putExtras(bundle);
         //
@@ -208,7 +214,8 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
     @Override
     public void defineClickFlow(HMAux item) {
-        if (item.hasConsistentValue(EV_User_CustomerDao.LICENSE_CONTROL_TYPE)
+        if (item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0
+            && item.hasConsistentValue(EV_User_CustomerDao.LICENSE_CONTROL_TYPE)
             && EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE.equals(item.get(EV_User_CustomerDao.LICENSE_CONTROL_TYPE))
         ) {
             mView.setSelectedCustomerInfo(item);
@@ -276,12 +283,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
     private void checkSiteLicenseFlow(ArrayList<SiteLicense> siteLicenseList) {
         if(siteLicenseList.size() == 1 && siteLicenseList.get(0).getUser_level_changed() == 0){
-            mView.prepareExecSessionProcess(
-                mView.getSelectedCustomerInfo(),
-                0,
-                1,
-                0
-            );
+            siteLicenseSeletedFlow(siteLicenseList.get(0));
         }else{
             showLicenseDialog(siteLicenseList);
             deleteEnvSiteLicenseFile();
@@ -289,19 +291,33 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     }
 
     private void showLicenseDialog(ArrayList<SiteLicense> siteLicenseArrayList) {
-        new LicenseSiteDialog(
+         final LicenseSiteDialog siteDialog = new LicenseSiteDialog(
             context,
-            siteLicenseArrayList,
-            new LicenseSiteAdapter.OnSiteClickListener() {
-                @Override
-                public void onSiteClick(SiteLicense siteLicense) {
-                    ToolBox.toastMSG(context,siteLicense.getSite_desc());
-                }
+            siteLicenseArrayList
+        );
+        //
+        siteDialog.setOnSiteClickListener(new LicenseSiteAdapter.OnSiteClickListener() {
+            @Override
+            public void onSiteClick(SiteLicense siteLicense) {
+                siteLicenseSeletedFlow(siteLicense);
+                siteDialog.dismiss();
             }
-        ).show();
+        });
+        //
+        siteDialog.show();
     }
-
-
+    //
+    private void siteLicenseSeletedFlow(SiteLicense siteLicense) {
+        mView.prepareExecSessionProcess(
+            mView.getSelectedCustomerInfo(),
+            0,
+            1,
+            0,
+            siteLicense.getSite_code(),
+            siteLicense.getUser_level_code()
+        );
+    }
+    //
     private File getCustomerSiteLicenseListFile(){
         return new File(ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH, ConstantBaseApp.ENV_SITE_LICENSE_JSON_FILE);
     }

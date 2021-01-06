@@ -10,7 +10,7 @@ public interface Act002_Main_Presenter {
 
     void getAllCustomers(boolean offline_update);
 
-    void executeSessionProcess(String email, String password, String nfc, HMAux customer,int forced_login, int jump_validation, int jump_od);
+    void executeSessionProcess(String email, String password, String nfc, HMAux customer, int forced_login, int jump_validation, int jump_od, Integer site_code, Integer user_level_code);
 
     void executeSyncProcess();
 

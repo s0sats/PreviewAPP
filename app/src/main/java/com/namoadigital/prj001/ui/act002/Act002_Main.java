@@ -151,8 +151,14 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         );
 
     }
+
     @Override
     public void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od) {
+        prepareExecSessionProcess(item, forced_login, jump_validation, jump_od, null, null);
+    }
+
+    @Override
+    public void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od, Integer site_code, Integer user_level_code) {
         if (ToolBox_Con.isOnline(context, true) || item.get(EV_User_CustomerDao.SESSION_APP).trim().length() != 0) {
             ToolBox_Con.setPreference_Customer_Code_TMP(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
             ToolBox_Con.setPreference_Translate_Code_TMP(context, item.get(EV_User_CustomerDao.TRANSLATE_CODE));
@@ -160,20 +166,21 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             if (item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0) {
 
                 showPD(
-                        getString(R.string.alert_title_get_session),
-                        getString(R.string.generic_start_processing_msg),
-                        getString(R.string.generic_msg_cancel),
-                        getString(R.string.generic_msg_ok));
+                    getString(R.string.alert_title_get_session),
+                    getString(R.string.generic_start_processing_msg),
+                    getString(R.string.generic_msg_cancel),
+                    getString(R.string.generic_msg_ok));
 
                 mPresenter.executeSessionProcess(
-                        ToolBox_Con.getPreference_User_Code_Nick(context),
-                        ToolBox_Con.getPreference_User_Pwd(context),
-                        ToolBox_Con.getPreference_User_NFC(context),
-                        item,
-                        forced_login, //Forced Login
-                        jump_validation, //Valida Update Required. 1 = não !!
-                        jump_od  //Valida User_others_device. 1 = não, 0 = sim
-                );
+                    ToolBox_Con.getPreference_User_Code_Nick(context),
+                    ToolBox_Con.getPreference_User_Pwd(context),
+                    ToolBox_Con.getPreference_User_NFC(context),
+                    item,
+                    forced_login, //Forced Login
+                    jump_validation, //Valida Update Required. 1 = não !!
+                    jump_od,  //Valida User_others_device. 1 = não, 0 = sim
+                    site_code,
+                    user_level_code);
             } else {
                 //Seta preferecia de customer
                 ToolBox_Con.setPreference_Customer_Code(getApplicationContext(), Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
@@ -189,7 +196,6 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         } else {
             ToolBox_Inf.showNoConnectionDialog(Act002_Main.this);
         }
-
     }
 
     public void prepareLogoutProcess() {
@@ -291,8 +297,9 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                 item,
                 1, //Forced Login
                 1, //Valida Update Required. 1 = não !!
-                1  //Valida User_others_device. 1 = não, 0 = sim
-        );
+                1,  //Valida User_others_device. 1 = não, 0 = sim
+            null,
+            null);
 
     }
 

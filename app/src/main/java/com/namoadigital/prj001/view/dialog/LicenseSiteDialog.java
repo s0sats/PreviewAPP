@@ -26,12 +26,11 @@ public class LicenseSiteDialog extends AlertDialog {
     private RecyclerView rvSites;
     private LicenseSiteAdapter mAdapter;
     private ArrayList<SiteLicense> siteList = new ArrayList<>();
-    private final LicenseSiteAdapter.OnSiteClickListener onSiteClickListener;
+    private LicenseSiteAdapter.OnSiteClickListener onSiteClickListener;
 
-    public LicenseSiteDialog(@NonNull Context context, ArrayList<SiteLicense> siteList,LicenseSiteAdapter.OnSiteClickListener onSiteClickListener) {
+    public LicenseSiteDialog(@NonNull Context context, ArrayList<SiteLicense> siteList) {
         super(context);
         this.siteList = siteList;
-        this.onSiteClickListener = onSiteClickListener;
     }
 
     @Override
@@ -49,6 +48,10 @@ public class LicenseSiteDialog extends AlertDialog {
         //Sem essas flags não abre o teclado no campo Mket
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
             | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+    }
+
+    public void setOnSiteClickListener(LicenseSiteAdapter.OnSiteClickListener onSiteClickListener) {
+        this.onSiteClickListener = onSiteClickListener;
     }
 
     private void bindViews() {

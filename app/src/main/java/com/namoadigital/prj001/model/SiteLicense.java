@@ -3,6 +3,9 @@ package com.namoadigital.prj001.model;
 import com.google.gson.annotations.SerializedName;
 
 public class SiteLicense {
+    public static final String SITE_CODE = "site_code";
+    public static final String USER_LEVEL_CODE = "user_level_code";
+
     @SerializedName("CUSTOMER_CODE")
     private int customer_code;
     @SerializedName("SITE_CODE")
