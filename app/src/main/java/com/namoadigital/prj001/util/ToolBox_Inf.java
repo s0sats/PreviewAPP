@@ -393,6 +393,11 @@ public class ToolBox_Inf {
         if (!dirTicketJsonFile.exists()) {
             dirTicketJsonFile.mkdir();
         }
+        //BARRIONUEVO - 06/01/2020 - Dir com os arquivos json de lista de site licença do customer
+        File dirCustomerSiteLicenseJsonFile = new File(Constant.CUSTOMER_SITE_LICENSE_JSON_PATH);
+        if (!dirCustomerSiteLicenseJsonFile.exists()) {
+            dirCustomerSiteLicenseJsonFile.mkdir();
+        }
     }
 
     public static String md5(String s) {
