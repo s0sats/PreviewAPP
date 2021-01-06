@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.adapter.LicenseSiteAdapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User_Customer;
+import com.namoadigital.prj001.model.SiteLicense;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Session;
@@ -21,9 +24,11 @@ import com.namoadigital.prj001.sql.EV_User_Customer_Sql_009;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.dialog.LicenseSiteDialog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by neomatrix on 13/01/17.
@@ -195,6 +200,92 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
+    }
+
+    @Override
+    public void defineClickFlow(HMAux item) {
+        if (1 == 1) {
+            showLicenseDialog(
+                generateFakeList()
+            );
+        }else {
+            mView.prepareExecSessionProcess(item, 0, 1, 0);
+        }
+    }
+
+    private void showLicenseDialog(ArrayList<SiteLicense> siteLicenseArrayList) {
+        new LicenseSiteDialog(
+            context,
+            siteLicenseArrayList,
+            new LicenseSiteAdapter.OnSiteClickListener() {
+                @Override
+                public void onSiteClick(SiteLicense siteLicense) {
+                    ToolBox.toastMSG(context,siteLicense.getSite_desc());
+                }
+            }
+        ).show();
+//        LicenseSiteDialog.Builder builder = new  LicenseSiteDialog.Builder(context);
+//        builder.setNegativeButton(
+//            "Fechar",
+//            null
+//        );
+//        builder.create().show();
+    }
+
+    private ArrayList<SiteLicense> generateFakeList() {
+        ArrayList<SiteLicense> siteLicenseList = new ArrayList();
+        SiteLicense siteLicense = new SiteLicense();
+
+        siteLicense.setCustomer_code(121);
+        siteLicense.setSite_code(3);
+        siteLicense.setSite_desc("Terceiro site");
+        siteLicense.setUser_level_code(3);
+        siteLicense.setUser_level_id("III");
+        siteLicense.setUser_level_value(3500);
+        siteLicense.setLicense_available(8);
+        siteLicense.setDistinct_level(2);
+        siteLicense.setUser_level_changed(1);
+        siteLicenseList.add(siteLicense);
+
+        SiteLicense siteLicense2 = new SiteLicense();
+        siteLicense2.setCustomer_code(121);
+        siteLicense2.setSite_code(2);
+        siteLicense2.setSite_desc("Segundo site");
+        siteLicense2.setUser_level_code(3);
+        siteLicense2.setUser_level_id("III");
+        siteLicense2.setUser_level_value(3500);
+        siteLicense2.setLicense_available(2);
+        siteLicense2.setDistinct_level(2);
+        siteLicense2.setUser_level_changed(1);
+        siteLicenseList.add(siteLicense2);
+
+        SiteLicense siteLicense3 = new SiteLicense();
+        siteLicense3.setCustomer_code(121);
+        siteLicense3.setSite_code(1);
+        siteLicense3.setSite_desc("Primeiro site com licença");
+        siteLicense3.setUser_level_code(2);
+        siteLicense3.setUser_level_id("II");
+        siteLicense3.setUser_level_value(2500);
+        siteLicense3.setLicense_available(2);
+        siteLicense3.setDistinct_level(2);
+        siteLicense3.setUser_level_changed(1);
+        siteLicenseList.add(siteLicense3);
+
+        for (int i = 4; i < 3004; i++) {
+            SiteLicense siteLicense4 = new SiteLicense();
+            siteLicense4.setCustomer_code(121);
+            siteLicense4.setSite_code(1);
+            siteLicense4.setSite_desc("Site N: "+i+" com licença");
+            siteLicense4.setUser_level_code(2);
+            siteLicense4.setUser_level_id("II");
+            siteLicense4.setUser_level_value(2500);
+            siteLicense4.setLicense_available(2);
+            siteLicense4.setDistinct_level(2);
+            siteLicense4.setUser_level_changed(new Random().nextInt(2));
+            siteLicenseList.add(siteLicense4);
+        }
+
+        return siteLicenseList;
     }
 
     @Override

@@ -27,4 +27,5 @@ public interface Act002_Main_Presenter {
 
     void onBackPressedClicked();
 
+    void defineClickFlow(HMAux item);
 }
