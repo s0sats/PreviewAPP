@@ -28,6 +28,7 @@ import com.namoadigital.prj001.view.dialog.LicenseSiteDialog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by neomatrix on 13/01/17.
@@ -223,6 +224,12 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
                 }
             }
         ).show();
+//        LicenseSiteDialog.Builder builder = new  LicenseSiteDialog.Builder(context);
+//        builder.setNegativeButton(
+//            "Fechar",
+//            null
+//        );
+//        builder.create().show();
     }
 
     private ArrayList<SiteLicense> generateFakeList() {
@@ -263,6 +270,21 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         siteLicense3.setDistinct_level(2);
         siteLicense3.setUser_level_changed(1);
         siteLicenseList.add(siteLicense3);
+
+        for (int i = 4; i < 3004; i++) {
+            SiteLicense siteLicense4 = new SiteLicense();
+            siteLicense4.setCustomer_code(121);
+            siteLicense4.setSite_code(1);
+            siteLicense4.setSite_desc("Site N: "+i+" com licença");
+            siteLicense4.setUser_level_code(2);
+            siteLicense4.setUser_level_id("II");
+            siteLicense4.setUser_level_value(2500);
+            siteLicense4.setLicense_available(2);
+            siteLicense4.setDistinct_level(2);
+            siteLicense4.setUser_level_changed(new Random().nextInt(2));
+            siteLicenseList.add(siteLicense4);
+        }
+
         return siteLicenseList;
     }
 

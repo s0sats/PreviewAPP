@@ -5,7 +5,6 @@
     android:id="@+id/license_site_dialog_cl_main"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
     >
 
     <android.support.design.widget.TextInputLayout
@@ -17,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textColorHint="@color/namoa_dark_blue"
         app:boxStrokeColor="@color/namoa_dark_blue"
+        android:layout_margin="8dp"
         >
         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
             android:id="@+id/license_site_dialog_et_filter"
@@ -35,12 +35,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintHeight_default="wrap"
-        android:layout_marginTop="8dp"
+        android:layout_margin="8dp"
         app:layout_constraintBottom_toTopOf="@id/license_site_dialog_tv_close"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/license_site_dialog_til_filter"
-        tools:itemCount="50"
+        tools:itemCount="2"
         tools:listitem="@layout/license_site_dialog_row"
         />
 
