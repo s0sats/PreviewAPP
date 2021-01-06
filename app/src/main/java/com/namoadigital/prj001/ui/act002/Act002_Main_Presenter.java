@@ -30,4 +30,6 @@ public interface Act002_Main_Presenter {
     void defineClickFlow(HMAux item);
 
     void processCustomerSiteLicenseListReturn();
+
+    void deleteEnvSiteLicenseFile();
 }

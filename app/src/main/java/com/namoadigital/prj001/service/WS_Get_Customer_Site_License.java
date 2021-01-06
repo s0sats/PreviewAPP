@@ -15,7 +15,6 @@ import com.namoadigital.prj001.model.SiteLicense;
 import com.namoadigital.prj001.model.T_EV_Get_Customer_Site_License_Env;
 import com.namoadigital.prj001.model.T_EV_Get_Customer_Site_License_Rec;
 import com.namoadigital.prj001.receiver.WBR_Get_Customer_Site_License;
-import com.namoadigital.prj001.receiver.WBR_IO_Inbound_Search;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -47,10 +46,8 @@ public class WS_Get_Customer_Site_License  extends IntentService {
 
         try {
             String customer_code = bundle.getString(EV_User_CustomerDao.CUSTOMER_CODE,"-1");
-            String password = bundle.getString(Constant.GC_PWD);
-            String nfc = bundle.getString(Constant.GC_NFC);
             //
-            processGetCustomerSiteLicense(customer_code, password, nfc);
+            processGetCustomerSiteLicense(customer_code);
 
         } catch (Exception e) {
 
@@ -66,7 +63,7 @@ public class WS_Get_Customer_Site_License  extends IntentService {
         }
     }
 
-    private void processGetCustomerSiteLicense(String customer_code, String password, String nfc) throws Exception {
+    private void processGetCustomerSiteLicense(String customer_code) throws Exception {
         //Seleciona traduções
         loadTranslation();
         //
@@ -81,8 +78,9 @@ public class WS_Get_Customer_Site_License  extends IntentService {
         //
         env.setCustomer_code(customer_code);
         env.setEmail_p(ToolBox_Con.getPreference_User_Code_Nick(getApplicationContext()));
-        env.setPassword(password);
-        env.setNfc_code(nfc);
+        env.setDevice_code(ToolBox_Inf.uniqueID(getApplicationContext()));
+        env.setPassword(ToolBox_Con.getPreference_User_Pwd(getApplicationContext()));
+        env.setNfc_code(ToolBox_Con.getPreference_User_NFC(getApplicationContext()));
         //Default pois foi usado uma copia do servico Get_Customer
         env.setStatus_jump("1");
         env.setCurrent_time(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
@@ -116,11 +114,11 @@ public class WS_Get_Customer_Site_License  extends IntentService {
             return;
         }
         //
-        checkSiteLicenseListReturn(rec.getData());
+        checkSiteLicenseListReturn(rec.getSite_license());
         //
     }
 
-    private void checkSiteLicenseListReturn(List<SiteLicense> data) throws IOException {
+    private void checkSiteLicenseListReturn(ArrayList<SiteLicense> data) throws IOException {
         createLicenseSiteListJsonFile(ConstantBaseApp.ENV_SITE_LICENSE_JSON_FILE, gson.toJson(data));
         //
         ToolBox.sendBCStatus(getApplicationContext(),"CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), gson.toJson(data),"0");

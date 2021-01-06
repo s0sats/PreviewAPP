@@ -1,14 +1,25 @@
 package com.namoadigital.prj001.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class SiteLicense {
+    @SerializedName("CUSTOMER_CODE")
     private int customer_code;
+    @SerializedName("SITE_CODE")
     private int site_code;
+    @SerializedName("SITE_DESC")
     private String site_desc;
+    @SerializedName("USER_LEVEL_CODE")
     private int user_level_code;
+    @SerializedName("USER_LEVEL_ID")
     private String user_level_id;
+    @SerializedName("USER_LEVEL_VALUE")
     private int user_level_value;
+    @SerializedName("LICENSE_AVAILABLE")
     private int license_available;
+    @SerializedName("DISTINCT_LEVEL")
     private int distinct_level;
+    @SerializedName("USER_LEVEL_CHANGED")
     private int user_level_changed;
 
     public int getCustomer_code() {

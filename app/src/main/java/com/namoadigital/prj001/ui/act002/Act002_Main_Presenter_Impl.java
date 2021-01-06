@@ -284,6 +284,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
             );
         }else{
             showLicenseDialog(siteLicenseList);
+            deleteEnvSiteLicenseFile();
         }
     }
 
@@ -303,6 +304,15 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
     private File getCustomerSiteLicenseListFile(){
         return new File(ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH, ConstantBaseApp.ENV_SITE_LICENSE_JSON_FILE);
+    }
+
+    @Override
+    public void deleteEnvSiteLicenseFile() {
+        File siteLicenseListFile = getCustomerSiteLicenseListFile();
+        //
+        if(siteLicenseListFile.exists()){
+            siteLicenseListFile.delete();
+        }
     }
 
     private ArrayList<SiteLicense> generateFakeList() {

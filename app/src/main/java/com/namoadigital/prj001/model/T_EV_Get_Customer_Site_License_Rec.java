@@ -1,8 +1,9 @@
 package com.namoadigital.prj001.model;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class T_EV_Get_Customer_Site_License_Rec {
+
     private String app;
     private String validation;
     private String link_url;
@@ -11,7 +12,7 @@ public class T_EV_Get_Customer_Site_License_Rec {
     private int valid_time;
     private int tolerance_time;
     private String version;
-    private List<SiteLicense> data;
+    private ArrayList<SiteLicense> site_license = new ArrayList<>();
 
     public String getApp() {
         return app;
@@ -77,11 +78,11 @@ public class T_EV_Get_Customer_Site_License_Rec {
         this.version = version;
     }
 
-    public List<SiteLicense> getData() {
-        return data;
+    public ArrayList<SiteLicense> getSite_license() {
+        return site_license;
     }
 
-    public void setData(List<SiteLicense> data) {
-        this.data = data;
+    public void setSite_license(ArrayList<SiteLicense> site_license) {
+        this.site_license = site_license;
     }
 }

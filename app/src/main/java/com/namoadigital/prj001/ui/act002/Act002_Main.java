@@ -63,9 +63,10 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     private void initVars() {
         //
         mPresenter = new Act002_Main_Presenter_Impl(context, this);
+        //LUCHE - 06/01/2020
+        mPresenter.deleteEnvSiteLicenseFile();
         //
         lv_customers = (ListView) findViewById(R.id.act002_lv_customers);
-
         //Tenta pegar bundle - Enviado pela Act001 ou Act005
         mBundle = getIntent().getExtras();
         //Se for != null, verifica se precisa chamar o WS de customer ou não
@@ -74,6 +75,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                 if (ToolBox_Con.isOnline(context, true)) {
                     //Seta variavel que define ação do metodo processCloseACT
                     wsProcess = PROCESS_WS_GET_CUSTOMER;
+                    //
                     showPD(
                             context.getString(R.string.get_customer_alert_title),
                             context.getString(R.string.generic_start_processing_msg),
@@ -81,7 +83,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                             context.getString(R.string.generic_msg_ok)
 
                     );
-
+                    //
                     mPresenter.executeGetCustomerProcess();
                 } else {
                     mPresenter.getAllCustomers(true);
@@ -337,6 +339,13 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
+        //
+        processCloseACT(mLink,mRequired,new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
         //
         progressDialog.dismiss();
         //Existem dois processo que chama esse metodo
