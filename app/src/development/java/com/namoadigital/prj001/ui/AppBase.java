@@ -43,6 +43,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.UNSENT_IMG_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TICKET_JSON_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH;
 
 
 /**
@@ -82,6 +83,7 @@ public class AppBase extends Application {
         CHAT_PATH = DB_PATH + "/chat";
         UNSENT_IMG_PATH = IMG_PATH + "/unsentImgs";
         TICKET_JSON_PATH = DB_PATH + "/ticket";
+        CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + "/customerSiteLicense";
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;

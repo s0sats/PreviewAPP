@@ -13,6 +13,7 @@ public class Constant extends ConstantBaseApp {
      * Produção
      */
     public static final String WS_GETCUSTOMERS = "https://portal.namoadigital.com/ws/prj001/server_get_customer.ws";
+    public static final String WS_GET_CUSTOMERS_SITE_LICENSE = "https://portal.namoadigital.com/ws/prj001/server_get_customer_site.ws";
     public static final String WS_GETSESSION = "https://portal.namoadigital.com/ws/prj001/server_get_session.ws";
     public static final String WS_GOOGLE = "https://portal.namoadigital.com/ws/prj001/server_gcm_set.ws";
 

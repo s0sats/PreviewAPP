@@ -231,6 +231,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static String CACHE_CHAT_PATH;
     public static String UNSENT_IMG_PATH;
     public static String TICKET_JSON_PATH;
+    public static String CUSTOMER_SITE_LICENSE_JSON_PATH;
 
     public static String ZIP_NAME;
     public static String ZIP_NAME_FULL;
@@ -676,6 +677,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TICKET_WORKGROUP_EDITION_JSON_FILE = "tk_workgroup_edition.json";
     public static final String TICKET_MAIN_USER_LIST_JSON_FILE = "tk_main_user_list.json";
     public static final String TICKET_HEADER_EDITION_JSON_FILE = "tk_header_edition.json";
+    public static final String ENV_SITE_LICENSE_JSON_FILE = "env_site_license.json";
     /*
      * Constantes Pipeline
      */
