@@ -17,6 +17,7 @@ import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.SiteLicense;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
+import com.namoadigital.prj001.receiver.WBR_Get_Customer_Site_License;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.receiver.WBR_Sync;
@@ -226,7 +227,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
             context.getString(R.string.generic_msg_ok)
         );
         //
-        Intent mIntent = new Intent(context, WBR_Logout.class);
+        Intent mIntent = new Intent(context, WBR_Get_Customer_Site_License.class);
         Bundle bundle = new Bundle();
         bundle.putString(EV_User_CustomerDao.CUSTOMER_CODE, customer_code);
         mIntent.putExtras(bundle);
@@ -301,7 +302,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
 
     private File getCustomerSiteLicenseListFile(){
-        return new File(Constant.TICKET_JSON_PATH, ConstantBaseApp.TICKET_WORKGROUP_LIST_JSON_FILE);
+        return new File(ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH, ConstantBaseApp.ENV_SITE_LICENSE_JSON_FILE);
     }
 
     private ArrayList<SiteLicense> generateFakeList() {
