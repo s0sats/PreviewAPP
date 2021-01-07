@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
@@ -513,6 +514,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         transList.add("alert_invalid_date_range_ttl");
         transList.add("alert_invalid_date_range_msg");
         //
+        transList.add("alert_ticket_results_ok");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -880,8 +883,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
             mPresenter.processMainUserList();
         } else if (wsProcess.equals(WS_TK_Header_N_Group_Save.class.getName())) {
             header_data_has_changed = false;
-
             refreshUI();
+            Toast.makeText(context, hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
         }
         //
         progressDialog.dismiss();
