@@ -23,15 +23,8 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class WS_Get_Customer_Site_License  extends IntentService {
-    public static final String KEY_CODE_ID = "KEY_CODE_ID";
-
-    private HMAux hmAux_Trans = new HMAux();
-    private String mModule_Code = Constant.APP_MODULE;
-    private String mResource_Code = "0";
-    private String mResource_Name = "ws_get_customer_site_license";
     private Gson gson = new GsonBuilder().serializeNulls().create();
 
     public WS_Get_Customer_Site_License() {
@@ -64,8 +57,6 @@ public class WS_Get_Customer_Site_License  extends IntentService {
     }
 
     private void processGetCustomerSiteLicense(String customer_code) throws Exception {
-        //Seleciona traduções
-        loadTranslation();
         //
         Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -85,12 +76,22 @@ public class WS_Get_Customer_Site_License  extends IntentService {
         env.setStatus_jump("1");
         env.setCurrent_time(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
 
-        ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_receiving_data_msg"), "", "0");
+        ToolBox.sendBCStatus(getApplicationContext(),
+            ConstantBaseApp.PD_TYPE_STATUS,
+            getString(R.string.generic_sending_data_msg),
+            "",
+            "0");
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_GET_CUSTOMERS_SITE_LICENSE,
                 gson.toJson(env)
         );
+
+        ToolBox.sendBCStatus(getApplicationContext(),
+            ConstantBaseApp.PD_TYPE_STATUS,
+            getApplication().getResources().getString(R.string.generic_receiving_data_msg),
+            "",
+            "0");
 
         T_EV_Get_Customer_Site_License_Rec rec = gson.fromJson(
                 resultado,
@@ -121,37 +122,19 @@ public class WS_Get_Customer_Site_License  extends IntentService {
     private void checkSiteLicenseListReturn(ArrayList<SiteLicense> data) throws IOException {
         createLicenseSiteListJsonFile(ConstantBaseApp.ENV_SITE_LICENSE_JSON_FILE, gson.toJson(data));
         //
-        ToolBox.sendBCStatus(getApplicationContext(),"CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux(), gson.toJson(data),"0");
+        ToolBox.sendBCStatus(
+            getApplicationContext(),
+            ConstantBaseApp.PD_TYPE_CLOSE_ACT,
+            getString(R.string.msg_finishing_processsing),
+            new HMAux(),
+            gson.toJson(data),
+            "0"
+        );
     }
 
     private File createLicenseSiteListJsonFile(String fileName, String workGroupList) throws IOException {
         File json_file = new File(ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH, fileName);
         ToolBox_Inf.writeIn(workGroupList, json_file);
         return json_file;
-    }
-
-
-    //
-    private void loadTranslation() {
-        List<String> translist = new ArrayList<>();
-        //
-        translist.add("generic_sending_data_msg");
-        translist.add("generic_receiving_data_msg");
-        translist.add("generic_processing_data");
-        translist.add("generic_process_finalized_msg");
-        translist.add("alert_invalid_scn_msg");
-        //
-        mResource_Code = ToolBox_Inf.getResourceCode(
-                getApplicationContext(),
-                mModule_Code,
-                mResource_Name
-        );
-        //
-        hmAux_Trans = ToolBox_Inf.setLanguage(
-                getApplicationContext(),
-                mModule_Code,
-                mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(getApplicationContext()),
-                translist);
     }
 }

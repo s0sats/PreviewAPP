@@ -137,10 +137,17 @@ public class WS_Session extends IntentService {
         //Seta propriedade do customer que serão atualizadas
         userCustomer.setBlocked(0);
         userCustomer.setSession_app(rec.getSession_app());
-
+        //LUCHE - 07/01/2020 - Seta preferencias da licença escolhida quando
+        if(siteLicense != null) {
+            userCustomer.setLicense_site_code(siteLicense.getSite_code());
+            userCustomer.setLicense_site_desc(siteLicense.getSite_desc());
+            userCustomer.setLicense_user_level_code(siteLicense.getUser_level_code());
+            userCustomer.setLicense_user_level_id(siteLicense.getUser_level_id());
+            userCustomer.setLicense_user_level_value(siteLicense.getUser_level_value());
+            userCustomer.setLicense_user_level_changed(siteLicense.getUser_level_changed());
+        }
         //Chama metodo para atualizar dados
         ev_user_customerDao.addUpdate(userCustomer);
-
         //Seta preferecia de customer
         ToolBox_Con.setPreference_Customer_Code(getApplicationContext(), userCustomer.getCustomer_code());
         ToolBox_Con.setPreference_Customer_Code_Name(getApplicationContext(), userCustomer.getCustomer_name());
@@ -150,19 +157,7 @@ public class WS_Session extends IntentService {
         ToolBox_Con.setPreference_Status_Login(getApplicationContext(),Constant.LOGIN_STATUS_OK);
         ToolBox_Con.setPreference_Customer_Uses_Tracking(getApplicationContext(), userCustomer.getTracking());
         ToolBox_Con.setPreference_Customer_TMZ(getApplicationContext(), userCustomer.getTimezone());
-        //LUCHE - 07/01/2020 - Seta preferencias da licença escolhida quando
-        if(siteLicense != null) {
-            ToolBox_Con.setPreference_Site_License_Site_code(getApplicationContext(), siteLicense.getSite_code());
-            ToolBox_Con.setPreference_Site_License_Site_desc(getApplicationContext(), siteLicense.getSite_desc());
-            ToolBox_Con.setPreference_Site_License_User_level_code(getApplicationContext(), siteLicense.getUser_level_code());
-            ToolBox_Con.setPreference_Site_License_User_level_id(getApplicationContext(), siteLicense.getUser_level_id());
-            ToolBox_Con.setPreference_Site_License_User_level_value(getApplicationContext(), siteLicense.getUser_level_value());
-            ToolBox_Con.setPreference_Site_License_User_level_changed(getApplicationContext(), siteLicense.getUser_level_changed());
-        }
-
+        //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS_GO", getString(R.string.msg_getting_master_data), "", "0");
     }
-
-
-
 }

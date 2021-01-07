@@ -1105,128 +1105,6 @@ public class ToolBox_Con {
 
     //endregion
 
-    //region SITE_LICENCE_PREFERENCES
-    public static void setPreference_Site_License_Site_code(Context context, int site_code) {
-        SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-
-        sharedPreferences.edit().putInt(
-            ConstantBaseApp.SITE_LICENSE_SITE_CODE,
-            site_code
-        ).apply();
-    }
-
-    public static int getPreference_Site_License_Site_code(Context context) {
-        SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-
-        return sharedPreferences.getInt(
-            ConstantBaseApp.SITE_LICENSE_SITE_CODE,
-            -1
-        );
-    }
-
-    public static void setPreference_Site_License_Site_desc(Context context, String site_desc) {
-        SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-
-        sharedPreferences.edit().putString(
-            ConstantBaseApp.SITE_LICENSE_SITE_DESC,
-            site_desc
-        ).apply();
-    }
-
-    public static String getPreference_Site_License_Site_desc(Context context) {
-        SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-
-        return sharedPreferences.getString(
-            ConstantBaseApp.SITE_LICENSE_SITE_DESC,
-            ""
-        );
-    }
-
-    public static void setPreference_Site_License_User_level_code(Context context, int user_level_code) {
-        SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-
-        sharedPreferences.edit().putInt(
-            ConstantBaseApp.SITE_LICENSE_USER_LEVEL_CODE,
-            user_level_code
-        ).apply();
-    }
-
-    public static int getPreference_Site_License_User_level_code(Context context) {
-        SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-
-        return sharedPreferences.getInt(
-            ConstantBaseApp.SITE_LICENSE_USER_LEVEL_CODE,
-            -1
-        );
-    }
-
-    public static void setPreference_Site_License_User_level_id(Context context, String user_level_id) {
-        SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-
-        sharedPreferences.edit().putString(
-            ConstantBaseApp.SITE_LICENSE_USER_LEVEL_ID,
-            user_level_id
-        ).apply();
-    }
-
-    public static String getPreference_Site_License_User_level_id(Context context) {
-        SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-
-        return sharedPreferences.getString(
-            ConstantBaseApp.SITE_LICENSE_USER_LEVEL_ID,
-            ""
-        );
-    }
-
-    public static void setPreference_Site_License_User_level_value(Context context, int user_level_value) {
-        SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-
-        sharedPreferences.edit().putInt(
-            ConstantBaseApp.SITE_LICENSE_USER_LEVEL_VALUE,
-            user_level_value
-        ).apply();
-    }
-
-    public static int getPreference_Site_License_User_level_value(Context context) {
-        SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-
-        return sharedPreferences.getInt(
-            ConstantBaseApp.SITE_LICENSE_USER_LEVEL_VALUE,
-            -1
-        );
-    }
-
-    public static void setPreference_Site_License_User_level_changed(Context context, int user_level_changed) {
-        SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-
-        sharedPreferences.edit().putInt(
-            ConstantBaseApp.SITE_LICENSE_USER_LEVEL_CHANGED,
-            user_level_changed
-        ).apply();
-    }
-
-    public static int getPreference_Site_License_User_level_changed(Context context) {
-        SharedPreferences sharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(context);
-
-        return sharedPreferences.getInt(
-            ConstantBaseApp.SITE_LICENSE_USER_LEVEL_CHANGED,
-            -1
-        );
-    }
-    //endregion
-
     //region Approval Type
     public static void setApproval_Type(Context context, String approval_type) {
         SharedPreferences sharedPreferences =
@@ -1366,8 +1244,6 @@ public class ToolBox_Con {
                 "SERVICE",
                 "NO_SERVICE"
         ).apply();
-        //
-        resetSiteLicensePreferences(context);
     }
 
     public static void resetCustomerSiteOperationPreferences(Context context) {
@@ -1378,18 +1254,8 @@ public class ToolBox_Con {
         ToolBox_Con.setPreference_Operation_Code(context, -1);
         ToolBox_Con.setPreference_Status_Login(context, "");
         ToolBox_Con.setPreference_HideSerialInfo(context,false);
-        //
-        resetSiteLicensePreferences(context);
     }
 
-    public static void resetSiteLicensePreferences(Context context){
-        ToolBox_Con.setPreference_Site_License_Site_code(context, -1);
-        ToolBox_Con.setPreference_Site_License_Site_desc(context, "");
-        ToolBox_Con.setPreference_Site_License_User_level_code(context, -1);
-        ToolBox_Con.setPreference_Site_License_User_level_id(context, "");
-        ToolBox_Con.setPreference_Site_License_User_level_value(context, -1);
-        ToolBox_Con.setPreference_Site_License_User_level_changed(context, -1);
-    }
 
     public static String customDBPath(long customer_code) {
         return (Constant.DB_PATH + "/C_" + customer_code + "_" + Constant.DB_VERSION_CUSTOM + ".db3");

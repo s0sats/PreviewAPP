@@ -434,14 +434,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String DATETIME_IS_VALID = "DATETIME_IS_VALID";
     public static final String DATETIME_LAST_VALID_TIME = "DATETIME_LAST_VALID_TIME";
     public static final String DATETIME_TOLERANCE= "DATETIME_TOLERANCE";
-    //Preferencias Licença por site
-    public static final String SITE_LICENSE_SITE_CODE = "SITE_LICENSE_SITE_CODE";
-    public static final String SITE_LICENSE_SITE_DESC = "SITE_LICENSE_SITE_DESC";
-    public static final String SITE_LICENSE_USER_LEVEL_CHANGED = "SITE_LICENSE_USER_LEVEL_CHANGED";
-    public static final String SITE_LICENSE_USER_LEVEL_CODE = "SITE_LICENSE_USER_LEVEL_CODE";
-    public static final String SITE_LICENSE_USER_LEVEL_ID = "SITE_LICENSE_USER_LEVEL_ID";
-    public static final String SITE_LICENSE_USER_LEVEL_VALUE = "SITE_LICENSE_USER_LEVEL_VALUE";
-
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";
     public static final String LOGIN_CUSTOMER_CODE_TMP = "login_customer_code_tmp";

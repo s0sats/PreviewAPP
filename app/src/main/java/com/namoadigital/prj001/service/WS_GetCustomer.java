@@ -19,6 +19,7 @@ import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.TGC_Env;
 import com.namoadigital.prj001.model.TGC_Rec;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_Truncate;
 import com.namoadigital.prj001.sql.EV_User_Sql_Truncate;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_Truncate;
@@ -231,13 +232,20 @@ public class WS_GetCustomer extends IntentService {
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_ev_user_customer), "", "0");
 
+        //LUCHE - 07/01/2020
+        ArrayList<EV_User_Customer> evUserCustomerDb =
+            (ArrayList<EV_User_Customer>) ev_user_customerDao.query(
+                new EV_User_Customer_Sql_001(
+                    String.valueOf(userInfo.getUser_code())
+                ).toSqlQuery()
+            );
+
         //Apaga dados da tabela
         ev_user_customerDao.remove(new EV_User_Customer_Sql_Truncate().toSqlQuery());
 
         File[] files_Customers = ToolBox_Inf.getListOfFiles_v2("ev_user_customer-");
 
         for (File _file : files_Customers) {
-
             ArrayList<EV_User_Customer> customers = gson.fromJson(
                     ToolBox.jsonFromOracle(
                             ToolBox_Inf.getContents(_file)
@@ -264,6 +272,18 @@ public class WS_GetCustomer extends IntentService {
                         ) ? 1 : 0;
                     //
                     customer.setPending(pendencies);
+                    //
+                    if(customer.getSession_app() != null) {
+                        EV_User_Customer customerDb = getEvUsrCustomerDb(evUserCustomerDb, customer.getUser_code(), customer.getCustomer_code());
+                        if (customerDb != null && customerDb.getLicense_site_code() != null && customerDb.getLicense_site_code() > 0) {
+                            customer.setLicense_site_code(customerDb.getLicense_site_code());
+                            customer.setLicense_site_desc(customerDb.getLicense_site_desc());
+                            customer.setLicense_user_level_code(customerDb.getLicense_user_level_code());
+                            customer.setLicense_user_level_id(customerDb.getLicense_user_level_id());
+                            customer.setLicense_user_level_value(customerDb.getLicense_user_level_value());
+                            customer.setLicense_user_level_changed(customerDb.getLicense_user_level_changed());
+                        }
+                    }
                 }
             }
             //
@@ -302,6 +322,17 @@ public class WS_GetCustomer extends IntentService {
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
 
+    }
+
+    private EV_User_Customer getEvUsrCustomerDb(ArrayList<EV_User_Customer> evUserCustomerDbList, long user_code, long customer_code) {
+        for (EV_User_Customer customerDb : evUserCustomerDbList) {
+            if( customerDb.getUser_code() == user_code
+                && customerDb.getCustomer_code() == customer_code
+            ){
+                return customerDb;
+            }
+        }
+        return null;
     }
 
     private boolean isInvalidCurrentTime(int valid_time) {

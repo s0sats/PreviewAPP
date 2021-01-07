@@ -157,6 +157,7 @@ import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_002;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_008;
@@ -2167,12 +2168,23 @@ public class ToolBox_Inf {
 //        tv_customer_lbl.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER_LBL));
         tv_customer_value.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER));
         //LUCHE - 07/01/2021 - Add informação de licença por site quando customer usar essa configuração
-        int licenseSiteCode = ToolBox_Con.getPreference_Site_License_Site_code(context);
+        EV_User_Customer evUsrCustomer =
+                new EV_User_CustomerDao(
+                    context,
+                    Constant.DB_FULL_BASE,
+                    Constant.DB_VERSION_BASE
+                ).getByString(
+                    new EV_User_Customer_Sql_002(
+                        ToolBox_Con.getPreference_User_Code(context),
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                    ).toSqlQuery()
+                );
+        //
         ll_site_license.setVisibility(View.GONE);
-        if(licenseSiteCode > 0){
+        if(evUsrCustomer != null && evUsrCustomer.getLicense_site_code() != null && evUsrCustomer.getLicense_site_code() > 0){
             ll_site_license.setVisibility(View.VISIBLE);
             tv_site_license_desc.setText(
-                getSiteLicenseDescFormmated(context)
+                getSiteLicenseDescFormmated(context,evUsrCustomer.getLicense_site_desc(),evUsrCustomer.getLicense_user_level_id(),evUsrCustomer.getLicense_user_level_changed())
             );
         }
         //
@@ -2227,17 +2239,14 @@ public class ToolBox_Inf {
 
     }
 
-    private static SpannableString getSiteLicenseDescFormmated(Context context) {
-        String siteDesc = ToolBox_Con.getPreference_Site_License_Site_desc(context);
-        String userLvlId = ToolBox_Con.getPreference_Site_License_User_level_id(context);
-
-        String siteDescInfo = siteDesc + " / " + userLvlId;
+    private static SpannableString getSiteLicenseDescFormmated(Context context, String license_site_desc, String license_user_level_id, Integer license_user_level_changed) {
+        String siteDescInfo = license_site_desc + " / " + license_user_level_id;
         SpannableString spannableString = new SpannableString(siteDescInfo);
         //
-        if(ToolBox_Con.getPreference_Site_License_User_level_changed(context) == 1){
+        if(license_user_level_changed != null && license_user_level_changed == 1){
             spannableString.setSpan(
                 new ForegroundColorSpan(context.getResources().getColor(R.color.namoa_color_danger_red)),
-                siteDescInfo.indexOf(userLvlId),
+                siteDescInfo.indexOf(license_user_level_id),
                 siteDescInfo.length(),
                 Spanned.SPAN_INCLUSIVE_INCLUSIVE
             );

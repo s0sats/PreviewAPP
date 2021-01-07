@@ -8,7 +8,8 @@ import com.namoadigital.prj001.database.Specification;
 
 /**
  *  Query que zera a sessão da lista de cusomer na tabela de customer local
- *
+ * LUCHE - 07/01/2021
+ * Modificado query para resetar tb os dados de licença do site selecionado.
  */
 
 public class EV_User_Customer_Sql_005 implements Specification {
@@ -27,7 +28,13 @@ public class EV_User_Customer_Sql_005 implements Specification {
 
         return sb
                 .append(" update ev_user_customers \n" +
-                        "      set session_app = '' " +
+                        "      set session_app = '', \n" +
+                        "          license_site_code = null, \n" +
+                        "          license_site_desc = null, \n" +
+                        "          license_user_level_code = null, \n" +
+                        "          license_user_level_id = null, \n" +
+                        "          license_user_level_value = null, \n" +
+                        "          license_user_level_changed= null \n " +
                        // " , pending = 0\n" +
                         " where\n " +
                         "    user_code = '"+user_code+"'\n " +
