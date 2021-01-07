@@ -35,6 +35,7 @@ import android.telephony.TelephonyManager;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -2022,6 +2023,9 @@ public class ToolBox_Inf {
         LinearLayout ll_customer = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_customer);
 //        TextView tv_customer_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_lbl);
         TextView tv_customer_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_value);
+        //LUCHE - 07/01/2021
+        LinearLayout ll_site_license = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_site_license);
+        TextView tv_site_license_desc = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_license_desc);
         //
         LinearLayout ll_site = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_site);
         TextView tv_site_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_lbl);
@@ -2162,7 +2166,16 @@ public class ToolBox_Inf {
 
 //        tv_customer_lbl.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER_LBL));
         tv_customer_value.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER));
-
+        //LUCHE - 07/01/2021 - Add informação de licença por site quando customer usar essa configuração
+        int licenseSiteCode = ToolBox_Con.getPreference_Site_License_Site_code(context);
+        ll_site_license.setVisibility(View.GONE);
+        if(licenseSiteCode > 0){
+            ll_site_license.setVisibility(View.VISIBLE);
+            tv_site_license_desc.setText(
+                getSiteLicenseDescFormmated(context)
+            );
+        }
+        //
         if(editMode){
             setEnableUserInfo(context, hmDialogInfo, ss_site, ss_zone, ss_operation);
         }else {
@@ -2212,6 +2225,25 @@ public class ToolBox_Inf {
 //            }
 //        });
 
+    }
+
+    private static SpannableString getSiteLicenseDescFormmated(Context context) {
+        String siteDesc = ToolBox_Con.getPreference_Site_License_Site_desc(context);
+        String userLvlId = ToolBox_Con.getPreference_Site_License_User_level_id(context);
+
+        String siteDescInfo = siteDesc + " / " + userLvlId;
+        SpannableString spannableString = new SpannableString(siteDescInfo);
+        //
+        if(ToolBox_Con.getPreference_Site_License_User_level_changed(context) == 1){
+            spannableString.setSpan(
+                new ForegroundColorSpan(context.getResources().getColor(R.color.namoa_color_danger_red)),
+                siteDescInfo.indexOf(userLvlId),
+                siteDescInfo.length(),
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            );
+        }
+        //
+        return spannableString;
     }
 
     private static boolean checkForChange(boolean has_changes, String original_code, SearchableSpinner searchableSpinner) {

@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -51,10 +52,10 @@ public class WS_Session extends IntentService {
             int jump_validation = bundle.getInt(Constant.GC_STATUS_JUMP);
             int jump_od = bundle.getInt(Constant.GC_STATUS);
             //LUCHE - 06/01/2020 - Somente quando licença for por site
-            Integer site_code = bundle.getInt(SiteLicense.SITE_CODE);
-            Integer user_level_code = bundle.getInt(SiteLicense.USER_LEVEL_CODE);
+            @Nullable
+            SiteLicense siteLicense = (SiteLicense) bundle.getSerializable(SiteLicense.class.getName());
             //
-            processWS_Session(user, password, nfc, customer_code, translate_code,forced_login,jump_validation,jump_od,site_code,user_level_code);
+            processWS_Session(user, password, nfc, customer_code, translate_code,forced_login,jump_validation,jump_od,siteLicense);
 
         } catch (Exception e) {
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
@@ -69,7 +70,7 @@ public class WS_Session extends IntentService {
 
     }
 
-    private void processWS_Session(String user, String password, String nfc, String customer_code, String translate_code, int forced_login, int jump_validation, int jump_od, Integer site_code, Integer user_level_code) throws Exception {
+    private void processWS_Session(String user, String password, String nfc, String customer_code, String translate_code, int forced_login, int jump_validation, int jump_od,@Nullable SiteLicense siteLicense) throws Exception {
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         //
         Gson gson = new GsonBuilder().serializeNulls().create();
@@ -92,8 +93,8 @@ public class WS_Session extends IntentService {
         env.setTranslate_code(Integer.parseInt(translate_code));
         env.setGcm_id(ToolBox_Con.getPreference_Google_ID(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
-        env.setSite_code(site_code);
-        env.setUser_level_code(user_level_code);
+        env.setSite_code(siteLicense != null ? siteLicense.getSite_code() : null);
+        env.setUser_level_code(siteLicense != null ? siteLicense.getUser_level_code() : null);
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_sending_data_msg), "", "0");
 
@@ -149,6 +150,15 @@ public class WS_Session extends IntentService {
         ToolBox_Con.setPreference_Status_Login(getApplicationContext(),Constant.LOGIN_STATUS_OK);
         ToolBox_Con.setPreference_Customer_Uses_Tracking(getApplicationContext(), userCustomer.getTracking());
         ToolBox_Con.setPreference_Customer_TMZ(getApplicationContext(), userCustomer.getTimezone());
+        //LUCHE - 07/01/2020 - Seta preferencias da licença escolhida quando
+        if(siteLicense != null) {
+            ToolBox_Con.setPreference_Site_License_Site_code(getApplicationContext(), siteLicense.getSite_code());
+            ToolBox_Con.setPreference_Site_License_Site_desc(getApplicationContext(), siteLicense.getSite_desc());
+            ToolBox_Con.setPreference_Site_License_User_level_code(getApplicationContext(), siteLicense.getUser_level_code());
+            ToolBox_Con.setPreference_Site_License_User_level_id(getApplicationContext(), siteLicense.getUser_level_id());
+            ToolBox_Con.setPreference_Site_License_User_level_value(getApplicationContext(), siteLicense.getUser_level_value());
+            ToolBox_Con.setPreference_Site_License_User_level_changed(getApplicationContext(), siteLicense.getUser_level_changed());
+        }
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS_GO", getString(R.string.msg_getting_master_data), "", "0");
     }

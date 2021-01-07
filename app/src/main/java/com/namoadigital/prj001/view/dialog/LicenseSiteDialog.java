@@ -20,6 +20,7 @@ import com.namoadigital.prj001.model.SiteLicense;
 import java.util.ArrayList;
 
 public class LicenseSiteDialog extends AlertDialog {
+    private TextView tvTtl;
     private TextInputLayout tilFilter;
     private MKEditTextNM mketFilter;
     private TextView tvClose;
@@ -55,6 +56,7 @@ public class LicenseSiteDialog extends AlertDialog {
     }
 
     private void bindViews() {
+        tvTtl = findViewById(R.id.license_site_dialog_tv_ttl);
         tilFilter = findViewById(R.id.license_site_dialog_til_filter);
         mketFilter = findViewById(R.id.license_site_dialog_et_filter);
         rvSites = findViewById(R.id.license_site_dialog_rv_sites);
@@ -62,9 +64,9 @@ public class LicenseSiteDialog extends AlertDialog {
     }
 
     private void setLabels() {
-        tilFilter.setHint("Digite um site");
+        tvTtl.setText("Seleção de Licença");
+        tilFilter.setHint("Filtro por Site");
     }
-
 
     private void setConfig() {
         mAdapter = new LicenseSiteAdapter(

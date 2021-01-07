@@ -85,6 +85,22 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/footer_dialog_app_ll_site_license"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/footer_dialog_app_tv_site_license_desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:text="Site Com Licensa - trad"
+                    android:textColor="@color/namoa_color_light_blue_lib"
+                    android:textSize="@dimen/font_size_item_md_lib" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/footer_dialog_app_ll_site"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

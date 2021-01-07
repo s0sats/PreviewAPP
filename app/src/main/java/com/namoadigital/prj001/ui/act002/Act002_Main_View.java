@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act002;
 import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.SiteLicense;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public interface Act002_Main_View {
 
     void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od);
 
-    void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od, Integer site_code, Integer user_level_code);
+    void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od, SiteLicense selectedSiteLicense);
 
     void setWsProcess(String wsProcess);
 

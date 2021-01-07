@@ -99,7 +99,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     }
 
     @Override
-    public void executeSessionProcess(String email, String password, String nfc, HMAux customer, int forced_login, int jump_validation, int jump_od, Integer site_code, Integer user_level_code) {
+    public void executeSessionProcess(String email, String password, String nfc, HMAux customer, int forced_login, int jump_validation, int jump_od, SiteLicense selectedSiteLicense) {
         Intent mIntent = new Intent(context, WBR_Session.class);
         Bundle bundle = new Bundle();
 
@@ -111,12 +111,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         bundle.putInt(Constant.FORCED_LOGIN, forced_login);
         bundle.putInt(Constant.GC_STATUS_JUMP, jump_validation);
         bundle.putInt(Constant.GC_STATUS, jump_od);
-        if(site_code != null) {
-            bundle.putInt(SiteLicense.SITE_CODE, site_code);
-        }
-        if(user_level_code != null) {
-            bundle.putInt(SiteLicense.USER_LEVEL_CODE, user_level_code);
-        }
+        bundle.putSerializable(SiteLicense.class.getName(), selectedSiteLicense);
         //
         mIntent.putExtras(bundle);
         //
@@ -256,10 +251,14 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
                     }.getType()
                 );
                 //
-                if(siteLicenseList != null){
+                if(siteLicenseList != null && siteLicenseList.size() > 0){
                    checkSiteLicenseFlow(siteLicenseList);
                 }else{
-                    showSiteLicenseListNotFoundMsg();
+                    if(siteLicenseList == null) {
+                        showSiteLicenseListNotFoundMsg();
+                    }else{
+                        showSiteLicenseListNotReturnedMsg();
+                    }
                 }
             }else{
                 showSiteLicenseListNotFoundMsg();
@@ -269,6 +268,16 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
             ToolBox_Inf.registerException(getClass().getName(),e);
             showSiteLicenseListNotFoundMsg();
         }
+    }
+
+    private void showSiteLicenseListNotReturnedMsg() {
+        ToolBox.alertMSG(
+            context,
+            "Lista de Licenças",
+            "Nenhuma licença de site disponível para o usuário.",
+            null,
+            0
+        );
     }
 
     private void showSiteLicenseListNotFoundMsg() {
@@ -313,8 +322,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
             0,
             1,
             0,
-            siteLicense.getSite_code(),
-            siteLicense.getUser_level_code()
+            siteLicense
         );
     }
     //
