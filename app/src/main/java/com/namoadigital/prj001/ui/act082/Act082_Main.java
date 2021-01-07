@@ -201,20 +201,22 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         //
         handleReadOnly(false);
         //
-        if (mPresenter.getDateEditionProfile() || mPresenter.getHeaderEditionProfile()) {
-            if (mPresenter.hasAnyOnlinePendency(context, mTk_ticket)) {
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_ticket_has_pendency_ttl"),
-                        hmAux_Trans.get("alert_ticket_has_pendency_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                handleReadOnly(true);
-                            }
-                        },
-                        0
-                );
+        if(!ToolBox_Inf.isReadOnlyStatus(mTk_ticket.getTicket_status())) {
+            if (mPresenter.getDateEditionProfile() || mPresenter.getHeaderEditionProfile()) {
+                if (mPresenter.hasAnyOnlinePendency(context, mTk_ticket)) {
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_ticket_has_pendency_ttl"),
+                            hmAux_Trans.get("alert_ticket_has_pendency_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    handleReadOnly(true);
+                                }
+                            },
+                            0
+                    );
+                }
             }
         }
         //
@@ -222,7 +224,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
 
     @Override
     public void handleReadOnly(boolean forceReadOnly) {
-        if (forceReadOnly) {
+        if (forceReadOnly
+        || ToolBox_Inf.isReadOnlyStatus(mTk_ticket.getTicket_status())) {
             setDateReadOnly();
             setHeaderReadOnly();
             ll_edit_buttons.setVisibility(View.GONE);
@@ -249,13 +252,6 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         ss_main_user.setmEnabled(false);
         ss_main_user.setmCanClean(false);
     }
-
-    private void enableHeaderEdit() {
-        mket_internal_comments.setEnabled(true);
-        ss_main_user.setmEnabled(true);
-        ss_main_user.setmCanClean(true);
-    }
-
     private void setDateReadOnly() {
         rb_start_date.setEnabled(false);
         rb_end_date.setEnabled(false);

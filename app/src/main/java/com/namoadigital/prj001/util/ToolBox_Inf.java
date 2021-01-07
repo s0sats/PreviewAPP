@@ -3859,6 +3859,11 @@ public class ToolBox_Inf {
         return query != null && query.size() > 0 ;
     }
 
+    public static boolean isReadOnlyStatus(String ticketStatus) {
+        return !ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticketStatus)
+                && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketStatus);
+    }
+
 
     private static class GenericExtFilter implements FilenameFilter {
         private String[] exts;
@@ -7571,17 +7576,19 @@ public class ToolBox_Inf {
      * @param context
      * @param fabMenu
      * @param hmAux_Trans
+     * @param ticketStatus
      * @param listener
      */
-    public static void setPipelineFabMenu(Context context, FabMenu fabMenu, HMAux hmAux_Trans, FabMenu.IFabMenu listener) {
-        ArrayList<FabMenuItem> fabMenuItems  = initFabMenuItens(context, hmAux_Trans);
+    public static void setPipelineFabMenu(Context context, FabMenu fabMenu, HMAux hmAux_Trans, String ticketStatus, FabMenu.IFabMenu listener) {
+        ArrayList<FabMenuItem> fabMenuItems  = initFabMenuItens(context, hmAux_Trans, ticketStatus);
         //
         fabMenu.setFabMenuItens(fabMenuItems);
         fabMenu.setmIcons_Enabled(true);
         fabMenu.setOnFabClickListener(listener);
+        fabMenu.refreshDrawableState();
     }
 
-    private static ArrayList<FabMenuItem> initFabMenuItens(Context context, HMAux hmAux_Trans) {
+    private static ArrayList<FabMenuItem> initFabMenuItens(Context context, HMAux hmAux_Trans, String ticketStatus) {
         FabMenuItem fabStep;
         FabMenuItem fabProduct;
         FabMenuItem fabOrigin;
@@ -7592,7 +7599,7 @@ public class ToolBox_Inf {
         int lblColor = context.getResources().getColor(R.color.padrao_WHITE);
         int btnBgColor = context.getResources().getColor(R.color.namoa_sync_pipeline_background_btn);
         int iconColor = context.getResources().getColor(R.color.colorPrimary);
-
+        fabMenuItems.clear();
         //atalho para edicao de cabecalho.
         fabEditHeader = new FabMenuItem(context);
         fabEditHeader.setTag(ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL);
@@ -7604,7 +7611,8 @@ public class ToolBox_Inf {
         fabEditHeader.setmButton_Resource(R.drawable.ic_baseline_pipeline_header_24);
         fabMenuItems.add(fabEditHeader);
         //atalho para edicao de grupo de trabalho.
-        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP)) {
+        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP)
+        && !ToolBox_Inf.isReadOnlyStatus(ticketStatus)) {
             FabMenuItem fabEditWorkGroup;
             fabEditWorkGroup = new FabMenuItem(context);
             fabEditWorkGroup.setTag(ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL);

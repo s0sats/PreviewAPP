@@ -320,7 +320,8 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
             return mainUserOptionList;
         }else {
             //Se não existe lista em memoria e nem no json, tenta busca.
-            if(!hasAnyOnlinePendency(context, mTicket)) {
+            if(!hasAnyOnlinePendency(context, mTicket)
+            && !ToolBox_Inf.isReadOnlyStatus(mTicket.getTicket_status())) {
                 callMainUserService(mTicket);
             }
             return null;
