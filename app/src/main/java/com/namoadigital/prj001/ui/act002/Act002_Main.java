@@ -158,6 +158,17 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         prepareExecSessionProcess(item, forced_login, jump_validation, jump_od, null);
     }
 
+    /**
+     * LUCHE - 07/01/2021
+     * Criado segunda assinatura do metodo para ser usadao no processo de licença por site.
+     * Executa o mesm processo do metodo anterior, só passando os novos param para a chama do WS de
+     * session
+     * @param item
+     * @param forced_login
+     * @param jump_validation
+     * @param jump_od
+     * @param selectedSiteLicense
+     */
     @Override
     public void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od, SiteLicense selectedSiteLicense) {
         if (ToolBox_Con.isOnline(context, true) || item.get(EV_User_CustomerDao.SESSION_APP).trim().length() != 0) {

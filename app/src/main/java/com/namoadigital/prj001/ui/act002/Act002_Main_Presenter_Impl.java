@@ -207,12 +207,22 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         context.sendBroadcast(mIntent);
     }
 
+    /**
+     * LUCHE - 07/01/2021
+     * Metodo que verifica se deve seguir o fluxo padrão ou, caso o customer use licenças por site,
+     * inicia busca da lista de licenças.
+     * Caso o customer ja possua sessão, apenas segue o fluxo.
+     * @param item
+     */
+
     @Override
     public void defineClickFlow(HMAux item) {
         if (item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0
             && item.hasConsistentValue(EV_User_CustomerDao.LICENSE_CONTROL_TYPE)
             && EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE.equals(item.get(EV_User_CustomerDao.LICENSE_CONTROL_TYPE))
         ) {
+            //Se o fluxo é o de licenças por site, "salva" o item clicado em memoria para ser usado
+            //mais a frente
             mView.setSelectedCustomerInfo(item);
             prepareExecCustomerSiteLicenses(item.get(EV_User_CustomerDao.CUSTOMER_CODE));
         }else {
@@ -220,11 +230,17 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         }
     }
     //region SiteLicense
+
+    /**
+     * LUCHE - 07/01/2021
+     * Metodo que executa a chamada do servço que devolve a lista de licenças disponiveis.
+     * @param customer_code
+     */
     private void prepareExecCustomerSiteLicenses(String customer_code) {
         mView.setWsProcess(Act002_Main.PROCESS_WS_GET_CUSTOMER_SITE);
         mView.showPD(
-            "Licenças por Site",
-            "Carregando lista de licenças",
+            context.getString(R.string.act002_ws_site_license_ttl),
+            context.getString(R.string.act002_ws_site_license_msg), 
             context.getString(R.string.generic_msg_cancel),
             context.getString(R.string.generic_msg_ok)
         );
@@ -238,9 +254,18 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
 
     }
 
+    /**
+     * LUCHE - 07/01/2021
+     * Metodo chamado após retorno positivo do serviço que lista licenças.
+     * Este metodo busca o arquivo json gerado, transforma em lista de obj.
+     * Se lista diferente de vazia aciona dialog com a lista.
+     * Dispara msg de erro caso:
+     *  - Arquivo não seja encontrado
+     *  - Lista gerada seja null
+     *  - Lista gerada não tenham itens
+     */
     @Override
     public void processCustomerSiteLicenseListReturn() {
-        ArrayList<SiteLicense> siteLicenses = new ArrayList<>();
         File licenseSiteFile = getCustomerSiteLicenseListFile();
         Gson gson = new GsonBuilder().serializeNulls().create();
         try{
@@ -267,38 +292,61 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
             e.printStackTrace();
             ToolBox_Inf.registerException(getClass().getName(),e);
             showSiteLicenseListNotFoundMsg();
+        }finally {
+            //Deleta arquivo com lista de licenças
+            deleteEnvSiteLicenseFile();
         }
     }
 
+    /**
+     * LUCHE - 07/01/2021
+     * Exibe msg de lista vazia ou seja, o servidor retorno um array , as sem posições
+     */
     private void showSiteLicenseListNotReturnedMsg() {
         ToolBox.alertMSG(
             context,
-            "Lista de Licenças",
-            "Nenhuma licença de site disponível para o usuário.",
+            context.getString(R.string.act002_alt_no_licenses_returned_ttl),
+            context.getString(R.string.act002_alt_no_licenses_returned_msg),
             null,
             0
         );
     }
-
+    /**
+     * LUCHE - 07/01/2021
+     * Exibe msg de erro para quando a lista seja null ou de exception ao carregar lista.
+     */
+    //TODO TIRAR PRINT E SOLICITAR TRADUÇÕES NOS 3 IDIOMAS
     private void showSiteLicenseListNotFoundMsg() {
         ToolBox.alertMSG(
             context,
-            "Lista de Licenças",
-            "Erro ao caregar lista de licenças por site!\nNenhuma lista de licenças encontradas.\nTente novamente.",
+            context.getString(R.string.act002_alt_license_list_not_found_ttl),
+            context.getString(R.string.act002_alt_license_list_not_found_msg),
             null,
             0
         );
     }
 
+    /**
+     * LUCHE - 07/01/2021
+     * Metodo que define o fluxo após carregar a lista de licenças.
+     * O metodo auto selecionara uma licença apenas caso:
+     *  - Exista apenas uma licença retornada e essa seja o mesmo level do usr.
+     * Em todos os outros caso, será exibido o dialog, mesmo que só com uma opção.
+     * @param siteLicenseList
+     */
     private void checkSiteLicenseFlow(ArrayList<SiteLicense> siteLicenseList) {
         if(siteLicenseList.size() == 1 && siteLicenseList.get(0).getUser_level_changed() == 0){
             siteLicenseSeletedFlow(siteLicenseList.get(0));
         }else{
             showLicenseDialog(siteLicenseList);
-            deleteEnvSiteLicenseFile();
         }
     }
 
+    /**
+     * LUCHE - 07/01/2021
+     * Metodo que exibe o dialog com a lista de licenças
+     * @param siteLicenseArrayList
+     */
     private void showLicenseDialog(ArrayList<SiteLicense> siteLicenseArrayList) {
          final LicenseSiteDialog siteDialog = new LicenseSiteDialog(
             context,
@@ -315,7 +363,12 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         //
         siteDialog.show();
     }
-    //
+
+    /**
+     * LUCHE - 07/01/2021
+     * Metodo que chama a preparação apra chamada do serviço de sessão
+     * @param siteLicense
+     */
     private void siteLicenseSeletedFlow(SiteLicense siteLicense) {
         mView.prepareExecSessionProcess(
             mView.getSelectedCustomerInfo(),
@@ -325,11 +378,20 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
             siteLicense
         );
     }
-    //
+
+    /**
+     * LUCHE - 07/01/2021
+     * MEtodo que resgata o arquivo json com a lista de licenças retornadas;
+     * @return
+     */
     private File getCustomerSiteLicenseListFile(){
         return new File(ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH, ConstantBaseApp.ENV_SITE_LICENSE_JSON_FILE);
     }
 
+    /**
+     * LUCHE - 07/01/2021
+     * Metodo que apagar o arquivo json com a lista de licenças retornadas.
+     */
     @Override
     public void deleteEnvSiteLicenseFile() {
         File siteLicenseListFile = getCustomerSiteLicenseListFile();
@@ -339,6 +401,11 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         }
     }
 
+    /**
+     * Metodo usado para teste mocado e de "stress" com o tamano da lista.
+     * Pode ser apagado
+     * @return
+     */
     private ArrayList<SiteLicense> generateFakeList() {
         ArrayList<SiteLicense> siteLicenseList = new ArrayList();
         SiteLicense siteLicense = new SiteLicense();

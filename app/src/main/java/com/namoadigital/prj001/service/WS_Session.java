@@ -137,7 +137,7 @@ public class WS_Session extends IntentService {
         //Seta propriedade do customer que serão atualizadas
         userCustomer.setBlocked(0);
         userCustomer.setSession_app(rec.getSession_app());
-        //LUCHE - 07/01/2020 - Seta preferencias da licença escolhida quando
+        //LUCHE - 07/01/2020 - Seta preferencias da licença escolhida
         if(siteLicense != null) {
             userCustomer.setLicense_site_code(siteLicense.getSite_code());
             userCustomer.setLicense_site_desc(siteLicense.getSite_desc());

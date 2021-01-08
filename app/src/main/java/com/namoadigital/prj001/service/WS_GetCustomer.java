@@ -232,7 +232,13 @@ public class WS_GetCustomer extends IntentService {
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_ev_user_customer), "", "0");
 
-        //LUCHE - 07/01/2020
+        //LUCHE - 07/01/2021 - Licença por Site
+        //Implementado conciliação dos dados de licença de site ao carregar a lista de custormer.
+        //Os dados da licença de site seleconada, ficam armazenados na tabela ev_user_customer e ao
+        //chamar o refresh da lista, é necessario persistir esses dados que não vem do servidor sendo assim
+        //Antes de apagar toda a tabela,agora é gerada uma lista com os dados dos customers.
+        //No processamento individual de cada customer retornado pelo server e caso o customer possua
+        //ja possua sessão, resgate as infos de licença e seta no obj a ser salvo no banco.
         ArrayList<EV_User_Customer> evUserCustomerDb =
             (ArrayList<EV_User_Customer>) ev_user_customerDao.query(
                 new EV_User_Customer_Sql_001(
@@ -272,7 +278,8 @@ public class WS_GetCustomer extends IntentService {
                         ) ? 1 : 0;
                     //
                     customer.setPending(pendencies);
-                    //
+                    //LUCHE - 07/01/2021
+                    //Caso o customer recebido possua sessão, tenta resgatar as infos de licença por site
                     if(customer.getSession_app() != null) {
                         EV_User_Customer customerDb = getEvUsrCustomerDb(evUserCustomerDb, customer.getUser_code(), customer.getCustomer_code());
                         if (customerDb != null && customerDb.getLicense_site_code() != null && customerDb.getLicense_site_code() > 0) {
@@ -324,6 +331,14 @@ public class WS_GetCustomer extends IntentService {
 
     }
 
+    /**
+     * LUCHE - 07/01/2021
+     * Metodo que busca registro que estava no banco e o retorna caso seja encontrado pela pk
+     * @param evUserCustomerDbList
+     * @param user_code
+     * @param customer_code
+     * @return
+     */
     private EV_User_Customer getEvUsrCustomerDb(ArrayList<EV_User_Customer> evUserCustomerDbList, long user_code, long customer_code) {
         for (EV_User_Customer customerDb : evUserCustomerDbList) {
             if( customerDb.getUser_code() == user_code

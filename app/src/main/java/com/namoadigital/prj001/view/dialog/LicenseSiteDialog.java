@@ -64,8 +64,9 @@ public class LicenseSiteDialog extends AlertDialog {
     }
 
     private void setLabels() {
-        tvTtl.setText("Seleção de Licença");
-        tilFilter.setHint("Filtro por Site");
+        tvTtl.setText(R.string.license_site_dialog_ttl);
+        tilFilter.setHint(getContext().getString(R.string.license_site_dialog_filter_hint));
+        tvClose.setText(R.string.license_site_dialog_close);
     }
 
     private void setConfig() {

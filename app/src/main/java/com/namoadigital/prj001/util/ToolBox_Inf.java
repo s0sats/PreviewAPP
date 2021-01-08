@@ -2007,6 +2007,12 @@ public class ToolBox_Inf {
         buildFooterDialog(context, false);
     }
 
+    /**
+     * LUCHE - 07/01/2021
+     * Modificado metodo para adicionar info de site_licença selecionado
+     * @param context
+     * @param editMode
+     */
     public static void buildFooterDialog(final Context context, boolean editMode) {
 
         HMAux hmDialogInfo = loadFooterDialogInfo(context);
@@ -2167,6 +2173,7 @@ public class ToolBox_Inf {
 
 //        tv_customer_lbl.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER_LBL));
         tv_customer_value.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER));
+        //region Licença por Site
         //LUCHE - 07/01/2021 - Add informação de licença por site quando customer usar essa configuração
         EV_User_Customer evUsrCustomer =
                 new EV_User_CustomerDao(
@@ -2187,6 +2194,7 @@ public class ToolBox_Inf {
                 getSiteLicenseDescFormmated(context,evUsrCustomer.getLicense_site_desc(),evUsrCustomer.getLicense_user_level_id(),evUsrCustomer.getLicense_user_level_changed())
             );
         }
+        //endregion
         //
         if(editMode){
             setEnableUserInfo(context, hmDialogInfo, ss_site, ss_zone, ss_operation);

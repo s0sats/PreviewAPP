@@ -109,5 +109,14 @@
     <string name="msg_customer_pendencies_list">Customer :\n</string>
     <string name="msg_update_required_warning">New version available!\nTo update, please submit pending data.</string>
     <string name="msg_login_invalid_current_time">The date / time of your device is incompatible with the Namoa server. \n Set the date / time of your device and try again.</string>
+    <string name="act002_ws_site_license_ttl">Licenças por Site</string>
+    <string name="act002_ws_site_license_msg">Carregando lista de licenças</string>
+    <string name="license_site_dialog_ttl">Seleção de Licença</string>
+    <string name="license_site_dialog_filter_hint">Filtro por Site</string>
+    <string name="license_site_dialog_close">FECHAR</string>
+    <string name="act002_alt_no_licenses_returned_ttl">Lista de Licenças</string>
+    <string name="act002_alt_no_licenses_returned_msg">Nenhuma licença de site disponível para o usuário.</string>
+    <string name="act002_alt_license_list_not_found_ttl">Lista de Licenças</string>
+    <string name="act002_alt_license_list_not_found_msg">Erro ao caregar lista de licenças por site!\nArquivo ou lista de licenças não encontradas.\nTente novamente.</string>
 
 </resources>
