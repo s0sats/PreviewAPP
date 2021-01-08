@@ -109,6 +109,7 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
         bundle.putBoolean(ConstantBase.PENABLED, false);
         bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
         bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false);
+        bundle.putString(ConstantBase.FILE_AUTHORITIES, ConstantBase.AUTHORITIES_FOR_PROVIDER);
         //
         Intent mIntent = new Intent(context, Camera_Activity.class);
         mIntent.putExtras(bundle);

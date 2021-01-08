@@ -2,4 +2,20 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
 <!--    Configura dir para o file provider-->
     <external-path name="apk_download" path="."/>
+
+<!--    <external-path-->
+<!--        name="external"-->
+<!--        path="." />-->
+    <external-files-path
+        name="external_files"
+        path="." />
+    <cache-path
+        name="cache"
+        path="." />
+    <external-cache-path
+        name="external_cache"
+        path="." />
+    <files-path
+        name="files"
+        path="." />
 </paths>
