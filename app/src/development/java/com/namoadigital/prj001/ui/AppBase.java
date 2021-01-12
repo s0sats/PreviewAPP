@@ -1,12 +1,12 @@
 package com.namoadigital.prj001.ui;
 
 import android.app.Application;
-import android.os.Environment;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -52,6 +52,16 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.CUSTOMER_SITE_LICENSE
 
 public class AppBase extends Application {
 
+    public static final String NAMOA_DIR = "/namoa";
+    public static final String ZIPS_DIR = "/zips";
+    public static final String IMGS_DIR = "/imgs";
+    public static final String THUMBNAIL_DIR = "/thumbnail";
+    public static final String SUPPORT_DIR = "/support";
+    public static final String TOKEN_DIR = "/token";
+    public static final String CHAT_DIR = "/chat";
+    public static final String UNSENT_IMGS_DIR = "/unsentImgs";
+    public static final String TICKET_DIR = "/ticket";
+    public static final String CUSTOMER_SITE_LICENSE_JSON_DIR = "/customerSiteLicense";
     private static Thread.UncaughtExceptionHandler mDefaultUncaughtExceptionHandler;
 
     @Override
@@ -73,17 +83,16 @@ public class AppBase extends Application {
         });
         //
         // Infra PATH
-        DB_PATH = Environment
-                .getExternalStorageDirectory().getPath() + "/namoa";
-        ZIP_PATH = DB_PATH + "/zips";
-        IMG_PATH = DB_PATH + "/imgs";
-        THU_PATH = DB_PATH + "/thumbnail";
-        SUPPORT_PATH = DB_PATH + "/support";
-        TOKEN_PATH = DB_PATH + "/token";
-        CHAT_PATH = DB_PATH + "/chat";
-        UNSENT_IMG_PATH = IMG_PATH + "/unsentImgs";
-        TICKET_JSON_PATH = DB_PATH + "/ticket";
-        CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + "/customerSiteLicense";
+        DB_PATH = getApplicationContext().getExternalFilesDir(null) + NAMOA_DIR;
+        ZIP_PATH = DB_PATH + ZIPS_DIR;
+        IMG_PATH = DB_PATH + IMGS_DIR;
+        THU_PATH = DB_PATH + THUMBNAIL_DIR;
+        SUPPORT_PATH = DB_PATH + SUPPORT_DIR;
+        TOKEN_PATH = DB_PATH + TOKEN_DIR;
+        CHAT_PATH = DB_PATH + CHAT_DIR;
+        UNSENT_IMG_PATH = IMG_PATH + UNSENT_IMGS_DIR;
+        TICKET_JSON_PATH = DB_PATH + TICKET_DIR;
+        CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + CUSTOMER_SITE_LICENSE_JSON_DIR;
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
@@ -102,10 +111,12 @@ public class AppBase extends Application {
         CHAT_PREFIX = "chat_";
         CHAT_NAME_FULL = CHAT_PATH + "/" + CHAT_PREFIX;
 
-        CACHE_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE";
-        CACHE_PATH_PHOTO = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PHOTO";
-        CACHE_CHAT_PATH = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_CHAT";
-        CACHE_PDF = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PDF";
+        CACHE_PATH = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE";
+        CACHE_PATH_PHOTO = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE_PHOTO";
+        CACHE_CHAT_PATH = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE_CHAT";
+        CACHE_PDF = getApplicationContext().getExternalFilesDir(null) + "/CC_CACHE_PDF";
+        ConstantBaseApp.APK_PATH = getApplicationContext().getExternalFilesDir(null) + "/namoa_apk";
+        ConstantBaseApp.CAM_TEST_PATH = getApplicationContext().getExternalFilesDir(null) + "/camtest";
 
         DB_NAME_BASE = "namoa_sms.db3";
         DB_VERSION_BASE = 11;
@@ -156,5 +167,9 @@ public class AppBase extends Application {
         Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
         Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
         Constant.HM_ICON_NAMOA_SERVICES = R.drawable.ic_n_service2_24x24;
+        /**
+         * Migração target28+
+         */
+        ConstantBase.AUTHORITIES_FOR_PROVIDER = BuildConfig.APPLICATION_ID + ".fileprovider";
     }
 }

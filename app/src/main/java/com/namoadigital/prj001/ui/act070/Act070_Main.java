@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
+import com.namoa_digital.namoa_library.ctls.FabMenuItem;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
@@ -330,7 +331,23 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         mPresenter.deleteWorkgroupEditionFileIfNeeds();
         mPresenter.deleteHeaderEditionFiles();
         //
-        ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
+        if (mPresenter.validateBundleParams(mTkPrefix, mTkCode)) {
+            updateTicketData();
+            //o metodo estah aqui pois o metodo updateTicketData() recupera o valor do ticket.
+            if(mTicket != null) {
+                setFabMenu();
+            }
+        } else {
+            paramErrorFlow();
+        }
+    }
+
+    /**
+     *  BARRIONUEVO - 07-01-2020
+     *  Foi necessário encapsular o set do FabMenu devido o status do ticket.
+     */
+    private void setFabMenu() {
+        ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans, mTicket.getTicket_status(),
                 new FabMenu.IFabMenu() {
                     @Override
                     public void onFabClick(View view) {
@@ -361,12 +378,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     }
                 }
         );
-        //
-        if (mPresenter.validateBundleParams(mTkPrefix, mTkCode)) {
-            updateTicketData();
-        } else {
-            paramErrorFlow();
-        }
     }
 
     private void checkEditFlow() {
@@ -809,6 +820,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         if (mTicket != null) {
             if(mTicket.getValid_structure_step() == 1) {
+                handleFabMenuOnTicketStatusChanged();
                 iniHeaderFrag();
                 mPresenter.getStepsList(mTicket);
                 setReadOnly();
@@ -835,6 +847,20 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }
         } else {
             paramErrorFlow();
+        }
+    }
+
+    private void handleFabMenuOnTicketStatusChanged() {
+        if(ToolBox_Inf.isReadOnlyStatus(mTicket.getTicket_status())){
+            ArrayList<FabMenuItem> fabMenuItems = fabMenu.getmButtons();
+            if (!fabMenuItems.isEmpty()) {
+                for (FabMenuItem fabMenuItem : fabMenuItems) {
+                    if(ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL.equals(fabMenuItem.getTag())) {
+                        fabMenu.removeFabMenuItens(fabMenuItem);
+                        break;
+                    }
+                }
+            }
         }
     }
 

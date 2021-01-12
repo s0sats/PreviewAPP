@@ -109,6 +109,7 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
         bundle.putBoolean(ConstantBase.PENABLED, false);
         bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
         bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false);
+        bundle.putString(ConstantBase.FILE_AUTHORITIES, ConstantBase.AUTHORITIES_FOR_PROVIDER);
         //
         Intent mIntent = new Intent(context, Camera_Activity.class);
         mIntent.putExtras(bundle);
@@ -147,50 +148,6 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
                     0
             );
         }else {
-            //
-            if (!isInEditionMode()) {
-                fabMenu.setVisibility(View.VISIBLE);
-                ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
-                        new FabMenu.IFabMenu() {
-                            @Override
-                            public void onFabClick(View view) {
-
-                                String tag = (String) view.getTag();
-                                switch (tag){
-                                    case ConstantBaseApp.FAB_TO_PRODUCT_LBL:
-                                        callAct075();
-                                        break;
-                                    case ConstantBaseApp.FAB_TO_STEP_LBL:
-                                        callAct070(false);
-                                        break;
-                                    case ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL:
-                                        callAct082();
-                                        break;
-                                    case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
-                                        if(ToolBox_Con.isOnline(context)) {
-                                            callAct070(true);
-                                        }else{
-                                            ToolBox.alertMSG(
-                                                context,
-                                                hmAux_Trans.get("alert_wg_edit_need_connection_ttl"),
-                                                hmAux_Trans.get("alert_wg_edit_need_connection_msg"),
-                                                null,
-                                                0
-                                            );
-                                        }
-                                        break;
-                                }
-                            }
-
-                            @Override
-                            public void onFabStatusChanged(boolean b) {
-                                hasFABActive = b;
-                            }
-                        }
-                );
-            }else{
-                fabMenu.setVisibility(View.GONE);
-            }
             //
             mPresenter.getStepOrigin(mTkPrefix, mTkCode);
         }
@@ -338,9 +295,57 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
 
     @Override
     public void loadTicketOrigin(TK_Ticket ticket) {
+        setFabMenu(ticket);
+
         setHeaderFragment(ticket);
 
         setOpenFields(ticket);
+    }
+
+    private void setFabMenu(TK_Ticket mTicket) {
+        if (!isInEditionMode()) {
+            fabMenu.setVisibility(View.VISIBLE);
+            ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
+                    mTicket.getTicket_status(), new FabMenu.IFabMenu() {
+                        @Override
+                        public void onFabClick(View view) {
+
+                            String tag = (String) view.getTag();
+                            switch (tag){
+                                case ConstantBaseApp.FAB_TO_PRODUCT_LBL:
+                                    callAct075();
+                                    break;
+                                case ConstantBaseApp.FAB_TO_STEP_LBL:
+                                    callAct070(false);
+                                    break;
+                                case ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL:
+                                    callAct082();
+                                    break;
+                                case ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL:
+                                    if(ToolBox_Con.isOnline(context)) {
+                                        callAct070(true);
+                                    }else{
+                                        ToolBox.alertMSG(
+                                                context,
+                                                hmAux_Trans.get("alert_wg_edit_need_connection_ttl"),
+                                                hmAux_Trans.get("alert_wg_edit_need_connection_msg"),
+                                                null,
+                                                0
+                                        );
+                                    }
+                                    break;
+                            }
+                        }
+
+                        @Override
+                        public void onFabStatusChanged(boolean b) {
+                            hasFABActive = b;
+                        }
+                    }
+            );
+        }else{
+            fabMenu.setVisibility(View.GONE);
+        }
     }
 
     private void setOpenFields(TK_Ticket ticket) {

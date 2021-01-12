@@ -1260,6 +1260,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         mIntent.putExtra(ConstantBase.PPATH, mFName);
         mIntent.putExtra(ConstantBase.PEDIT, mEdit);
         mIntent.putExtra(ConstantBase.PENABLED, mEnabled);
+        mIntent.putExtra(ConstantBase.FILE_AUTHORITIES, ConstantBase.AUTHORITIES_FOR_PROVIDER);
         //
         startActivity(mIntent);
     }

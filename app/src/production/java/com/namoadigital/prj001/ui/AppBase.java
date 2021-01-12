@@ -6,6 +6,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -49,7 +50,15 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.CUSTOMER_SITE_LICENSE
  */
 
 public class AppBase extends Application {
-
+    public static final String NAMOA_DIR = "/namoa";
+    public static final String ZIPS_DIR = "/zips";
+    public static final String IMGS_DIR = "/imgs";
+    public static final String THUMBNAIL_DIR = "/thumbnail";
+    public static final String SUPPORT_DIR = "/support";
+    public static final String TOKEN_DIR = "/token";
+    public static final String CHAT_DIR = "/chat";
+    public static final String UNSENT_IMGS_DIR = "/unsentImgs";
+    public static final String TICKET_DIR = "/ticket";
     private static Thread.UncaughtExceptionHandler mDefaultUncaughtExceptionHandler;
 
     @Override
@@ -103,7 +112,9 @@ public class AppBase extends Application {
         CACHE_PATH = DB_PATH + "/CC_CACHE";
         CACHE_CHAT_PATH = DB_PATH + "/CC_CACHE_CHAT";
         CACHE_PATH_PHOTO = DB_PATH + "/CC_CACHE_PHOTO";
-        CACHE_PDF = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PDF";
+        CACHE_PDF = DB_PATH + "/CC_CACHE_PDF";
+        ConstantBaseApp.APK_PATH = getApplicationContext().getExternalFilesDir(null) + "/namoa_apk";
+        ConstantBaseApp.CAM_TEST_PATH = getApplicationContext().getExternalFilesDir(null) + "/camtest";
 
         DB_NAME_BASE = "namoa_sms.db3";
         DB_VERSION_BASE = 10;
@@ -158,6 +169,6 @@ public class AppBase extends Application {
 
         Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
         Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
-
+        ConstantBase.AUTHORITIES_FOR_PROVIDER = BuildConfig.APPLICATION_ID + ".fileprovider";
     }
 }

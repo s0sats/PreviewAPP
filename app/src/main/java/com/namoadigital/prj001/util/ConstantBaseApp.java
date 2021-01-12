@@ -258,9 +258,9 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PREFIX_LOG_FILE_SERIAL = "log_serial_";
     public static final String PREFIX_SO_ADD_SERVICE = "so_add_service_";
 
-    public static String APK_PATH = System.getenv("EXTERNAL_STORAGE") + "/namoa_apk";
+    public static String APK_PATH;
     public static String APK_FILE_NAME = "namoa_installer.apk";
-
+    public static String CAM_TEST_PATH;
     /**
      * SM_SO_Service Login Parameter
      */

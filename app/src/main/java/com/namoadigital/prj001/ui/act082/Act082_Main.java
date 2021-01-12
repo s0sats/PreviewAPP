@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
@@ -201,20 +202,22 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         //
         handleReadOnly(false);
         //
-        if (mPresenter.getDateEditionProfile() || mPresenter.getHeaderEditionProfile()) {
-            if (mPresenter.hasAnyOnlinePendency(context, mTk_ticket)) {
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_ticket_has_pendency_ttl"),
-                        hmAux_Trans.get("alert_ticket_has_pendency_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                handleReadOnly(true);
-                            }
-                        },
-                        0
-                );
+        if(!ToolBox_Inf.isReadOnlyStatus(mTk_ticket.getTicket_status())) {
+            if (mPresenter.getDateEditionProfile() || mPresenter.getHeaderEditionProfile()) {
+                if (mPresenter.hasAnyOnlinePendency(context, mTk_ticket)) {
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_ticket_has_pendency_ttl"),
+                            hmAux_Trans.get("alert_ticket_has_pendency_msg"),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    handleReadOnly(true);
+                                }
+                            },
+                            0
+                    );
+                }
             }
         }
         //
@@ -222,7 +225,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
 
     @Override
     public void handleReadOnly(boolean forceReadOnly) {
-        if (forceReadOnly) {
+        if (forceReadOnly
+        || ToolBox_Inf.isReadOnlyStatus(mTk_ticket.getTicket_status())) {
             setDateReadOnly();
             setHeaderReadOnly();
             ll_edit_buttons.setVisibility(View.GONE);
@@ -249,13 +253,6 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         ss_main_user.setmEnabled(false);
         ss_main_user.setmCanClean(false);
     }
-
-    private void enableHeaderEdit() {
-        mket_internal_comments.setEnabled(true);
-        ss_main_user.setmEnabled(true);
-        ss_main_user.setmCanClean(true);
-    }
-
     private void setDateReadOnly() {
         rb_start_date.setEnabled(false);
         rb_end_date.setEnabled(false);
@@ -516,6 +513,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         //
         transList.add("alert_invalid_date_range_ttl");
         transList.add("alert_invalid_date_range_msg");
+        //
+        transList.add("alert_ticket_results_ok");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -884,8 +883,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
             mPresenter.processMainUserList();
         } else if (wsProcess.equals(WS_TK_Header_N_Group_Save.class.getName())) {
             header_data_has_changed = false;
-
             refreshUI();
+            Toast.makeText(context, hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
         }
         //
         progressDialog.dismiss();
