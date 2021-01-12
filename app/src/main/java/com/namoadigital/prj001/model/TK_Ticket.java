@@ -24,6 +24,7 @@ public class TK_Ticket implements Cloneable, Serializable {
     private int ticket_code;//pk
     @Expose
     private int scn;
+    private int user_level_min;
     private String ticket_id;
     private int type_code;
     private String type_id;
@@ -195,6 +196,14 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setScn(int scn) {
         this.scn = scn;
+    }
+
+    public int getUser_level_min() {
+        return user_level_min;
+    }
+
+    public void setUser_level_min(int user_level_min) {
+        this.user_level_min = user_level_min;
     }
 
     public String getTicket_id() {

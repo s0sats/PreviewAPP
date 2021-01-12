@@ -2176,11 +2176,7 @@ public class ToolBox_Inf {
         //region Licença por Site
         //LUCHE - 07/01/2021 - Add informação de licença por site quando customer usar essa configuração
         EV_User_Customer evUsrCustomer =
-                new EV_User_CustomerDao(
-                    context,
-                    Constant.DB_FULL_BASE,
-                    Constant.DB_VERSION_BASE
-                ).getByString(
+                getEv_user_customerDao(context).getByString(
                     new EV_User_Customer_Sql_002(
                         ToolBox_Con.getPreference_User_Code(context),
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
@@ -2245,6 +2241,14 @@ public class ToolBox_Inf {
 //            }
 //        });
 
+    }
+
+    private static EV_User_CustomerDao getEv_user_customerDao(Context context) {
+        return new EV_User_CustomerDao(
+                context,
+                Constant.DB_FULL_BASE,
+                Constant.DB_VERSION_BASE
+        );
     }
 
     private static SpannableString getSiteLicenseDescFormmated(Context context, String license_site_desc, String license_user_level_id, Integer license_user_level_changed) {
@@ -2818,11 +2822,7 @@ public class ToolBox_Inf {
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
-        EV_User_CustomerDao ev_user_customerDao = new EV_User_CustomerDao(
-                context,
-                Constant.DB_FULL_BASE,
-                Constant.DB_VERSION_BASE
-        );
+        EV_User_CustomerDao ev_user_customerDao = getEv_user_customerDao(context);
         //Seleciona lista de customers com sessão.
         ArrayList<HMAux> customers =  (ArrayList<HMAux>) ev_user_customerDao.query_HM(new EV_User_Customer_Sql_006().toSqlQuery());
         //Loop na lista de customer para exibir msg de agendamentos para cada um.
@@ -6259,11 +6259,7 @@ public class ToolBox_Inf {
             if( customer_code != null && customer_code != -1){
                 //
                 if(hasPendingData(context,customer_code)){
-                     EV_User_CustomerDao customerDao = new EV_User_CustomerDao(
-                         context,
-                         Constant.DB_FULL_BASE,
-                         Constant.DB_VERSION_BASE
-                     );
+                     EV_User_CustomerDao customerDao = getEv_user_customerDao(context);
                     //
                     EV_User_Customer evUserCustomer = customerDao.getByString(
                         new EV_User_Customer_Sql_011(

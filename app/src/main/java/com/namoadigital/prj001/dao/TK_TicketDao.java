@@ -31,6 +31,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String TICKET_PREFIX = "ticket_prefix";
     public static final String TICKET_CODE = "ticket_code";
     public static final String SCN = "scn";
+    public static final String USER_LEVEL_MIN = "user_level_min";
     public static final String TICKET_ID = "ticket_id";
     public static final String TYPE_CODE = "type_code";
     public static final String TYPE_ID = "type_id";
@@ -735,6 +736,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             tk_ticket.setTicket_prefix(cursor.getInt(cursor.getColumnIndex(TICKET_PREFIX)));
             tk_ticket.setTicket_code(cursor.getInt(cursor.getColumnIndex(TICKET_CODE)));
             tk_ticket.setScn(cursor.getInt(cursor.getColumnIndex(SCN)));
+            tk_ticket.setUser_level_min(cursor.getInt(cursor.getColumnIndex(USER_LEVEL_MIN)));
             tk_ticket.setTicket_id(cursor.getString(cursor.getColumnIndex(TICKET_ID)));
             tk_ticket.setType_code(cursor.getInt(cursor.getColumnIndex(TYPE_CODE)));
             tk_ticket.setType_id(cursor.getString(cursor.getColumnIndex(TYPE_ID)));
@@ -1010,6 +1012,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             }
             if (tk_ticket.getScn() > -1) {
                 contentValues.put(SCN, tk_ticket.getScn());
+            }
+            if (tk_ticket.getUser_level_min() > -1) {
+                contentValues.put(USER_LEVEL_MIN, tk_ticket.getUser_level_min());
             }
             if (tk_ticket.getTicket_id() != null) {
                 contentValues.put(TICKET_ID, tk_ticket.getTicket_id());

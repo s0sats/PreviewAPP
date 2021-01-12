@@ -160,6 +160,17 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     @Override
     public boolean isReadOnlyStatus(String ticketStatus) {
+        /*todo add
+            EV_User_CustomerDao customerDao = getEv_user_customerDao(context);
+                    //
+                    EV_User_Customer evUserCustomer = customerDao.getByString(
+                        new EV_User_Customer_Sql_002(
+                            user_code,
+                            customer_code
+                        ).toSqlQuery()
+                    );
+         */
+
         return !ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticketStatus)
             && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketStatus);
     }
