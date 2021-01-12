@@ -6,6 +6,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -41,7 +42,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.UNSENT_IMG_PATH;
-
+import static com.namoadigital.prj001.util.ConstantBaseApp.TICKET_JSON_PATH;
 
 /**
  * Created by neomatrix on 09/01/17.
