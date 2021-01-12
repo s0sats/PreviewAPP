@@ -51,7 +51,9 @@ public class WS_Session extends IntentService {
             int forced_login = bundle.getInt(Constant.FORCED_LOGIN);
             int jump_validation = bundle.getInt(Constant.GC_STATUS_JUMP);
             int jump_od = bundle.getInt(Constant.GC_STATUS);
-            //LUCHE - 06/01/2020 - Somente quando licença for por site
+            //LUCHE - 06/01/2021 - Somente quando licença for por site
+            //LUCHE - 12/01/2021 - Como tudo sempre muda, esse obj serializado perdeu seu sentido,
+            //mas foi mantido pois o tempo de refatoração não valeria a pena
             @Nullable
             SiteLicense siteLicense = (SiteLicense) bundle.getSerializable(SiteLicense.class.getName());
             //
@@ -138,13 +140,16 @@ public class WS_Session extends IntentService {
         userCustomer.setBlocked(0);
         userCustomer.setSession_app(rec.getSession_app());
         //LUCHE - 07/01/2020 - Seta preferencias da licença escolhida
-        if(siteLicense != null) {
-            userCustomer.setLicense_site_code(siteLicense.getSite_code());
-            userCustomer.setLicense_site_desc(siteLicense.getSite_desc());
-            userCustomer.setLicense_user_level_code(siteLicense.getUser_level_code());
-            userCustomer.setLicense_user_level_id(siteLicense.getUser_level_id());
-            userCustomer.setLicense_user_level_value(siteLicense.getUser_level_value());
-            userCustomer.setLicense_user_level_changed(siteLicense.getUser_level_changed());
+        //if(siteLicense != null) {
+        //LUCHE
+        if(rec.getSession_options() != null) {
+            TSession_Rec.Session_Options session_options = rec.getSession_options();
+            userCustomer.setLicense_site_code(session_options.getSite_code());
+            userCustomer.setLicense_site_desc(session_options.getSite_desc());
+            userCustomer.setLicense_user_level_code(session_options.getUser_level_code());
+            userCustomer.setLicense_user_level_id(session_options.getUser_level_id());
+            userCustomer.setLicense_user_level_value(session_options.getUser_level_value());
+            userCustomer.setLicense_user_level_changed(session_options.getUser_level_changed());
         }
         //Chama metodo para atualizar dados
         ev_user_customerDao.addUpdate(userCustomer);
