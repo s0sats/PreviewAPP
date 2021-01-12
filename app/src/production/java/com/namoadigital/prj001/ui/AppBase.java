@@ -34,16 +34,16 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TICKET_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.UNSENT_IMG_PATH;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TICKET_JSON_PATH;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH;
 
 /**
  * Created by neomatrix on 09/01/17.
