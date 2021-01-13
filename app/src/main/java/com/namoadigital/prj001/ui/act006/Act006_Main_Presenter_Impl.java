@@ -337,6 +337,17 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     }
 
     @Override
+    //TODO COMENTAR O CODIGO
+    public void checkExecutionAvaible() {
+        if( ToolBox_Inf.isConcurrentBySiteLicense(context)
+            && ToolBox_Inf.isSiteLicenseDisabled(context)
+            && !ToolBox_Inf.hasFreeExecutionAvailable(context)
+        ){
+            mView.applyExecutionBlock();
+        }
+    }
+
+    @Override
     public void onBackPressedClicked() {
         mView.callAct005(context);
     }

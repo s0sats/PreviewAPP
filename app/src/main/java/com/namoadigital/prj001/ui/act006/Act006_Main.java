@@ -250,6 +250,15 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         if(hasNFormSelected()){
             vNFormSelected.setVisibility(View.VISIBLE);
         }
+        //
+        mPresenter.checkExecutionAvaible();
+    }
+
+    @Override
+    //TODO COMENTAR O CODIGO E ADD MSG DE BLOQUEIO
+    public void applyExecutionBlock() {
+        mFrgSerialSearch.setBtn_Option_01_Visibility(View.GONE);
+        mFrgSerialSearch.setSupportNFC(false);
     }
 
     private void recoverIntentsInfo() {
