@@ -4,7 +4,9 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -1233,6 +1235,35 @@ public class TK_Ticket implements Cloneable, Serializable {
             }
         }
         return pendingSteps;
+    }
+
+    public boolean isReadOnlyStatus() {
+        return !ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticket_status)
+                && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticket_status);
+    }
+
+    public static boolean isReadOnlyStatus(String ticketStatus) {
+        return !ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticketStatus)
+                && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketStatus);
+    }
+
+
+    public boolean isReadOnlyUserLevel(Context context) {
+        EV_User_CustomerDao customerDao = ToolBox_Inf.getEv_user_customerDao(context);
+        //
+        EV_User_Customer evUserCustomer = customerDao.getByString(
+                new EV_User_Customer_Sql_002(
+                        ToolBox_Con.getPreference_User_Code(context),
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
+        );
+        //
+        return evUserCustomer.getLicense_user_level_value() < user_level_min;
+    }
+
+    public boolean isReadOnly(Context context) {
+        return isReadOnlyUserLevel(context)
+                || isReadOnlyStatus();
     }
 
 

@@ -2243,7 +2243,7 @@ public class ToolBox_Inf {
 
     }
 
-    private static EV_User_CustomerDao getEv_user_customerDao(Context context) {
+    public static EV_User_CustomerDao getEv_user_customerDao(Context context) {
         return new EV_User_CustomerDao(
                 context,
                 Constant.DB_FULL_BASE,
@@ -3911,11 +3911,6 @@ public class ToolBox_Inf {
                 ticket_code
         ).toSqlQuery());
         return query != null && query.size() > 0 ;
-    }
-
-    public static boolean isReadOnlyStatus(String ticketStatus) {
-        return !ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticketStatus)
-                && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketStatus);
     }
 
 
@@ -7662,7 +7657,7 @@ public class ToolBox_Inf {
         fabMenuItems.add(fabEditHeader);
         //atalho para edicao de grupo de trabalho.
         if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP)
-        && !ToolBox_Inf.isReadOnlyStatus(ticketStatus)) {
+        && !TK_Ticket.isReadOnlyStatus(ticketStatus)) {
             FabMenuItem fabEditWorkGroup;
             fabEditWorkGroup = new FabMenuItem(context);
             fabEditWorkGroup.setTag(ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL);

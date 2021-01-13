@@ -851,7 +851,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     private void handleFabMenuOnTicketStatusChanged() {
-        if(ToolBox_Inf.isReadOnlyStatus(mTicket.getTicket_status())){
+        if(mPresenter.getReadOnlyDefinition(mTicket)){
             ArrayList<FabMenuItem> fabMenuItems = fabMenu.getmButtons();
             if (!fabMenuItems.isEmpty()) {
                 for (FabMenuItem fabMenuItem : fabMenuItems) {

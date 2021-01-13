@@ -15,6 +15,7 @@ import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
@@ -27,6 +28,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.MD_Product;
@@ -54,6 +56,7 @@ import com.namoadigital.prj001.service.WS_TK_Header_N_Group_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Checkin;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act070_001;
@@ -155,24 +158,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
 
     @Override
     public boolean getReadOnlyDefinition(TK_Ticket mTicket) {
-        return isReadOnlyStatus(mTicket.getTicket_status());
-    }
-
-    @Override
-    public boolean isReadOnlyStatus(String ticketStatus) {
-        /*todo add
-            EV_User_CustomerDao customerDao = getEv_user_customerDao(context);
-                    //
-                    EV_User_Customer evUserCustomer = customerDao.getByString(
-                        new EV_User_Customer_Sql_002(
-                            user_code,
-                            customer_code
-                        ).toSqlQuery()
-                    );
-         */
-
-        return !ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticketStatus)
-            && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketStatus);
+        return mTicket.isReadOnly(context);
     }
 
     /**

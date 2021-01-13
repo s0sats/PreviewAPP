@@ -202,7 +202,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         //
         handleReadOnly(false);
         //
-        if(!ToolBox_Inf.isReadOnlyStatus(mTk_ticket.getTicket_status())) {
+        if(!mTk_ticket.isReadOnly(context)) {
             if (mPresenter.getDateEditionProfile() || mPresenter.getHeaderEditionProfile()) {
                 if (mPresenter.hasAnyOnlinePendency(context, mTk_ticket)) {
                     ToolBox.alertMSG(
@@ -226,7 +226,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     @Override
     public void handleReadOnly(boolean forceReadOnly) {
         if (forceReadOnly
-        || ToolBox_Inf.isReadOnlyStatus(mTk_ticket.getTicket_status())) {
+        || mTk_ticket.isReadOnly(context)) {
             setDateReadOnly();
             setHeaderReadOnly();
             ll_edit_buttons.setVisibility(View.GONE);
