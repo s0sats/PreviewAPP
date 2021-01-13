@@ -40,12 +40,11 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
     public static final String OUT_ZONE_CODE_PICKING = "out_zone_code_picking";
     public static final String OUT_LOCAL_CODE_PICKING = "out_local_code_picking";
     public static final String OUT_DONE_AUTOMATIC = "out_done_automatic";
-
-    private String[] columns = {
-            CUSTOMER_CODE, SITE_CODE, SITE_ID, SITE_DESC,IO_CONTROL,REASON_CODE,INBOUND_AUTO_CREATE,
-            IN_ALLOW_NEW_ITEM,IN_PUT_AWAY_PROCESS,IN_ZONE_CODE_CONF,IN_LOCAL_CODE_CONF, IN_DONE_AUTOMATIC,
-            OUT_ALLOW_NEW_ITEM, OUT_PICKING_PROCESS, OUT_ZONE_CODE_PICKING, OUT_LOCAL_CODE_PICKING, OUT_DONE_AUTOMATIC
-    };
+    public static final String LICENSE_ENABLED = "license_enabled";
+    public static final String FREE_EXECUTIONS_MAX = "free_executions_max";
+    public static final String FREE_EXECUTIONS_COUNT = "free_executions_count";
+    public static final String APP_EXECUTIONS_COUNT = "app_executions_count";
+    public static final String LICENSE_BLOCKED = "license_blocked";
 
     public MD_SiteDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -282,7 +281,24 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
                 md_site.setOut_local_code_picking(cursor.getInt(cursor.getColumnIndex(OUT_LOCAL_CODE_PICKING)));
             }
             md_site.setOut_done_automatic(cursor.getInt(cursor.getColumnIndex(OUT_DONE_AUTOMATIC)));
-
+            //
+            if(cursor.isNull(cursor.getColumnIndex(LICENSE_ENABLED))){
+                md_site.setLicense_enabled(null);
+            }else{
+                md_site.setLicense_enabled(cursor.getInt(cursor.getColumnIndex(LICENSE_ENABLED)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(FREE_EXECUTIONS_MAX))){
+                md_site.setFree_executions_max(null);
+            }else{
+                md_site.setFree_executions_max(cursor.getInt(cursor.getColumnIndex(FREE_EXECUTIONS_MAX)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(FREE_EXECUTIONS_COUNT))){
+                md_site.setFree_executions_count(null);
+            }else{
+                md_site.setFree_executions_count(cursor.getInt(cursor.getColumnIndex(FREE_EXECUTIONS_COUNT)));
+            }
+            md_site.setApp_executions_count(cursor.getInt(cursor.getColumnIndex(APP_EXECUTIONS_COUNT)));
+            md_site.setLicense_blocked(cursor.getInt(cursor.getColumnIndex(LICENSE_BLOCKED)));
             return md_site;
         }
 
@@ -335,6 +351,15 @@ public class MD_SiteDao extends BaseDao implements Dao<MD_Site> {
             contentValues.put(OUT_LOCAL_CODE_PICKING,md_site.getOut_local_code_picking());
             if(md_site.getOut_done_automatic() > -1){
                 contentValues.put(OUT_DONE_AUTOMATIC,md_site.getOut_done_automatic());
+            }
+            contentValues.put(LICENSE_ENABLED,md_site.getLicense_enabled());
+            contentValues.put(FREE_EXECUTIONS_MAX,md_site.getFree_executions_max());
+            contentValues.put(FREE_EXECUTIONS_COUNT,md_site.getFree_executions_count());
+            if(md_site.getApp_executions_count() > -1){
+                contentValues.put(APP_EXECUTIONS_COUNT,md_site.getApp_executions_count());
+            }
+            if(md_site.getLicense_blocked() > -1){
+                contentValues.put(LICENSE_BLOCKED,md_site.getLicense_blocked());
             }
 
             return contentValues;

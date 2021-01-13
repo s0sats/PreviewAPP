@@ -25,6 +25,12 @@ public class MD_Site {
     private Integer out_zone_code_picking;
     private Integer out_local_code_picking;
     private int out_done_automatic;
+    //LUCHE - 13/01/2021 - Controle de licença
+    private Integer license_enabled;
+    private Integer free_executions_max;
+    private Integer free_executions_count;
+    private int app_executions_count;
+    private int license_blocked;
 
     public long getCustomer_code() {
         return customer_code;
@@ -160,6 +166,52 @@ public class MD_Site {
 
     public void setOut_done_automatic(int out_done_automatic) {
         this.out_done_automatic = out_done_automatic;
+    }
+
+    public Integer getLicense_enabled() {
+        return license_enabled;
+    }
+
+    public void setLicense_enabled(Integer license_enabled) {
+        this.license_enabled = license_enabled;
+    }
+
+    public Integer getFree_executions_max() {
+        return free_executions_max;
+    }
+
+    public void setFree_executions_max(Integer free_executions_max) {
+        this.free_executions_max = free_executions_max;
+    }
+
+    public Integer getFree_executions_count() {
+        return free_executions_count;
+    }
+
+    public void setFree_executions_count(Integer free_executions_count) {
+        this.free_executions_count = free_executions_count;
+    }
+
+    public int getApp_executions_count() {
+        return app_executions_count;
+    }
+
+    public void setApp_executions_count(int app_executions_count) {
+        this.app_executions_count = app_executions_count;
+    }
+
+    public int getLicense_blocked() {
+        return license_blocked;
+    }
+
+    public void setLicense_blocked(int license_blocked) {
+        this.license_blocked = license_blocked;
+    }
+
+    public void updateLicenseBlocked() {
+        if(this.license_enabled != null && this.license_enabled == 1 && this.license_blocked == 0) {
+            setLicense_blocked(this.free_executions_max - this.free_executions_count <= 0 ? 1 : 0);
+        }
     }
 
     public static boolean isValid(MD_Site mdSite){

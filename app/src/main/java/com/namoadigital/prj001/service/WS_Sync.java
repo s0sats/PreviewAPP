@@ -631,7 +631,14 @@ public class WS_Sync extends IntentService {
                         }
                     }
                 }
-
+                //LUCHE - 13/01/2021
+                //TODO  criar algoritmo de conciliação de dados do contator.
+                for (MD_Site site : sites) {
+                    if(site.getLicense_enabled() != null && site.getLicense_enabled() == 0){
+                        site.updateLicenseBlocked();
+                    }
+                }
+                //
                 siteDao.addUpdate(sites, false);
             }
 
