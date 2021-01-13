@@ -1258,6 +1258,9 @@ public class TK_Ticket implements Cloneable, Serializable {
                 ).toSqlQuery()
         );
         //
+        if(evUserCustomer.getLicense_user_level_value() == null){
+            return 0 < user_level_min;
+        }
         return evUserCustomer.getLicense_user_level_value() < user_level_min;
     }
 
@@ -1265,6 +1268,4 @@ public class TK_Ticket implements Cloneable, Serializable {
         return isReadOnlyUserLevel(context)
                 || isReadOnlyStatus();
     }
-
-
 }
