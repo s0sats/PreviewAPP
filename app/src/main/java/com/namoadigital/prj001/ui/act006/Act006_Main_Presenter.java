@@ -31,5 +31,5 @@ public interface Act006_Main_Presenter {
 
     MD_Product searchProduct(String product_id);
 
-    void checkExecutionAvaible();
+    boolean verifyLimitExecutionReached();
 }

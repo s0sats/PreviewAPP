@@ -337,14 +337,14 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     }
 
     @Override
-    //TODO COMENTAR O CODIGO
-    public void checkExecutionAvaible() {
-        if( ToolBox_Inf.isConcurrentBySiteLicense(context)
+    /**
+     * LUCHE -13/01/2021
+     * Metodo que verifica se deve aplicar o bloqueio por não ter mais execuções disponiveis.
+     */
+    public boolean verifyLimitExecutionReached() {
+        return ToolBox_Inf.isConcurrentBySiteLicense(context)
             && ToolBox_Inf.isSiteLicenseDisabled(context)
-            && !ToolBox_Inf.hasFreeExecutionAvailable(context)
-        ){
-            mView.applyExecutionBlock();
-        }
+            && !ToolBox_Inf.hasFreeExecutionAvailable(context);
     }
 
     @Override

@@ -27,5 +27,5 @@ public interface Act006_Main_View {
 
     void showPD(String title, String msg);
 
-    void applyExecutionBlock();
+    void showExecutionBlockMsg();
 }
