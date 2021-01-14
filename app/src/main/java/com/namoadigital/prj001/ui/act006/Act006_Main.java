@@ -266,6 +266,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         //
         if(blockedByExecutionLimitReach){
             showExecutionBlockMsg();
+            mFrgSerialSearch.setSupportNFC(false);
         }
     }
 
