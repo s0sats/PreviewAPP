@@ -53,6 +53,7 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
     public static final String EMPTY_SERIAL_SEARCH = "empty_serial_search" ;
     public static final String SERIAL_CREATION_DENIED = "serial_creation_denied" ;
     public static final String FORM_STATUS_PREVENT_TO_OPEN = "form_status_prevent_to_open" ;
+    public static final String FREE_EXECUTION_BLOCKED = "free_execution_blocked" ;
 
     private Act013_Main_Presenter mPresenter;
     private Local_Data_List_Adapter mAdapter;
@@ -145,6 +146,9 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
         translateList.add("alert_form_site_restriction_ttl");
         translateList.add("alert_form_site_restriction_no_access_msg");
         translateList.add("alert_form_site_restriction_confirm");
+        //
+        translateList.add("alert_free_execution_blocked_ttl");
+        translateList.add("alert_free_execution_blocked_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -445,6 +449,12 @@ public class Act013_Main extends Base_Activity implements Act013_Main_View {
                 msg = hmAux_Trans.get("alert_form_status_prevents_to_open_msg");
                 btnNegative = 0;
                 break;
+            case FREE_EXECUTION_BLOCKED:
+                title = hmAux_Trans.get("alert_free_execution_blocked_ttl");
+                msg = hmAux_Trans.get("alert_free_execution_blocked_msg");
+                btnNegative = 0;
+                break;
+
         }
 
         if(btnNegative != null) {

@@ -7698,6 +7698,12 @@ public class ToolBox_Inf {
         return fabMenuItems;
     }
 
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que retorna o obj Ev_user_customer do customer logado.
+     * @param context
+     * @return
+     */
     private static EV_User_Customer getCurrentEvUsrCustomerInfo(Context context) {
         return new EV_User_CustomerDao(
             context,
@@ -7711,7 +7717,12 @@ public class ToolBox_Inf {
         );
     }
 
-    //TODO COMENTAR ESSES METODO NOVOS
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que retorna o obj site do site logado
+     * @param context
+     * @return
+     */
     private static MD_Site getCurrentSiteObjInfo(Context context) {
         return new MD_SiteDao(
             context,
@@ -7725,16 +7736,37 @@ public class ToolBox_Inf {
         );
     }
 
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que verifica se o tipo de licença do customer logado é o tipo de licença por site.
+     * @param context
+     * @return Verdadeiro se o tipo de licença for LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE
+     */
     public static boolean isConcurrentBySiteLicense(Context context){
         EV_User_Customer userCustomer = getCurrentEvUsrCustomerInfo(context);
         return userCustomer != null && EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE.equals(userCustomer.getLicense_control_type());
     }
 
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que verifica se o site logado possui licença habilitada.
+     * @param context
+     * @return
+     */
     public static boolean isSiteLicenseDisabled(Context context){
         MD_Site mdSite = getCurrentSiteObjInfo(context);
         return mdSite != null && mdSite.getLicense_enabled() != null && mdSite.getLicense_enabled() == 0;
     }
 
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que calcula se o limite de execuções gratuitas foi atingida
+     * Os campos Free_executions_max e Free_executions_count são enviados pelo servidor, ja o campo
+     * getApp_executions_count é contabilizado pelo app e para calcular o numero de execuções disponiveis,
+     * é necessario somar os 2 campos.
+     * @param context
+     * @return
+     */
     public static boolean hasFreeExecutionAvailable(Context context){
         MD_Site mdSite = getCurrentSiteObjInfo(context);
         if(mdSite != null){
@@ -7759,5 +7791,36 @@ public class ToolBox_Inf {
             }
         }
         return false;
+    }
+
+    /**
+     * LUCHE - 14/01/2021
+     * Metodo que verifica se o site logado esta bloquado analizando a proprieade License_blocked
+     * @param context
+     * @return
+     */
+    public static boolean isCurrentSiteBlockedByExecution(Context context){
+        MD_Site mdSite = getCurrentSiteObjInfo(context);
+        if(mdSite != null){
+            return mdSite.getLicense_blocked() == 1;
+        }
+        //
+        return true;
+    }
+
+    /**
+     * LUCHE - 14/01/2021
+     * Metodo que verifica se site esta bloquado, verificando tando a propriedade License_blocked
+     * quando o calculo de execuções disponiveis
+     * @param context
+     * @return
+     */
+    public static boolean isSiteBlockedOrLimitExecutionReached(Context context) {
+        return
+            ToolBox_Inf.isCurrentSiteBlockedByExecution(context)
+                ||( ToolBox_Inf.isConcurrentBySiteLicense(context)
+                && ToolBox_Inf.isSiteLicenseDisabled(context)
+                && !ToolBox_Inf.hasFreeExecutionAvailable(context)
+            );
     }
 }
