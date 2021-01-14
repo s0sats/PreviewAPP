@@ -337,6 +337,17 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     }
 
     @Override
+    /**
+     * LUCHE -13/01/2021
+     * Metodo que verifica se deve aplicar o bloqueio por não ter mais execuções disponiveis.
+     */
+    public boolean verifyLimitExecutionReached() {
+        return ToolBox_Inf.isConcurrentBySiteLicense(context)
+            && ToolBox_Inf.isSiteLicenseDisabled(context)
+            && !ToolBox_Inf.hasFreeExecutionAvailable(context);
+    }
+
+    @Override
     public void onBackPressedClicked() {
         mView.callAct005(context);
     }

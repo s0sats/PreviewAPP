@@ -181,6 +181,7 @@ import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_015;
 import com.namoadigital.prj001.sql.MD_Product_Serial_x_TK_Ticket_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
 import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
@@ -2175,13 +2176,7 @@ public class ToolBox_Inf {
         tv_customer_value.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER));
         //region Licença por Site
         //LUCHE - 07/01/2021 - Add informação de licença por site quando customer usar essa configuração
-        EV_User_Customer evUsrCustomer =
-                getEv_user_customerDao(context).getByString(
-                    new EV_User_Customer_Sql_002(
-                        ToolBox_Con.getPreference_User_Code(context),
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                    ).toSqlQuery()
-                );
+        EV_User_Customer evUsrCustomer = getCurrentEvUsrCustomerInfo(context);
         //
         ll_site_license.setVisibility(View.GONE);
         if(evUsrCustomer != null && evUsrCustomer.getLicense_site_code() != null && evUsrCustomer.getLicense_site_code() > 0){
@@ -7703,4 +7698,66 @@ public class ToolBox_Inf {
         return fabMenuItems;
     }
 
+    private static EV_User_Customer getCurrentEvUsrCustomerInfo(Context context) {
+        return new EV_User_CustomerDao(
+            context,
+            Constant.DB_FULL_BASE,
+            Constant.DB_VERSION_BASE
+        ).getByString(
+            new EV_User_Customer_Sql_002(
+                ToolBox_Con.getPreference_User_Code(context),
+                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+            ).toSqlQuery()
+        );
+    }
+
+    //TODO COMENTAR ESSES METODO NOVOS
+    private static MD_Site getCurrentSiteObjInfo(Context context) {
+        return new MD_SiteDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        ).getByString(
+            new MD_Site_Sql_003(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ToolBox_Con.getPreference_Site_Code(context)
+            ).toSqlQuery()
+        );
+    }
+
+    public static boolean isConcurrentBySiteLicense(Context context){
+        EV_User_Customer userCustomer = getCurrentEvUsrCustomerInfo(context);
+        return userCustomer != null && EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE.equals(userCustomer.getLicense_control_type());
+    }
+
+    public static boolean isSiteLicenseDisabled(Context context){
+        MD_Site mdSite = getCurrentSiteObjInfo(context);
+        return mdSite != null && mdSite.getLicense_enabled() != null && mdSite.getLicense_enabled() == 0;
+    }
+
+    public static boolean hasFreeExecutionAvailable(Context context){
+        MD_Site mdSite = getCurrentSiteObjInfo(context);
+        if(mdSite != null){
+            //Em teste se site tem licença ativa não deveria ser usado esse metodo, uma vez que com
+            // licença ativa, NÃO HÁ LIMITE DE EXECUÇÃO, mas fica a tratativa
+            if(mdSite.getLicense_enabled() == 1){
+                return true;
+            }else{
+                //Se um dos itens de calculo for null, ja deu algum b.o, retorna falso
+                if( mdSite.getFree_executions_max() == null
+                    || mdSite.getFree_executions_count() == null
+                ){
+                    return false;
+                }else{
+                    /*
+                        Se todos campos preenchidos, faz o calculo
+                        QtdMax - (QtdExecDoServer + QtdExecDoApp)
+                        Se valor maior que zero, tem execução para fazer.
+                     */
+                    return (mdSite.getFree_executions_max() - (mdSite.getFree_executions_count() + mdSite.getApp_executions_count())) > 0;
+                }
+            }
+        }
+        return false;
+    }
 }
