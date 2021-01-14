@@ -74,6 +74,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     private String customFormCode;
     private String customFormVersion;
     private String customFormCodeDesc;
+    private boolean blockedByExecutionLimitReach;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,6 +147,9 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         transList.add("alert_turn_offline_mode_on_ttl");
         transList.add("alert_turn_offline_mode_on_msg");
         //
+        transList.add("alert_free_execution_limit_reached_ttl");
+        transList.add("alert_free_execution_limit_reached_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -178,13 +182,20 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         mFrgSerialSearch.setOnSearchClickListener(new Frg_Serial_Search.I_Frg_Serial_Search() {
             @Override
             public void onSearchClick(String btn_Action, HMAux optionsInfo) {
-
                 switch (btn_Action) {
                     case Frg_Serial_Search.BTN_OPTION_01:
-                        processSerialSearch(optionsInfo);
+                        if(blockedByExecutionLimitReach) {
+                            showExecutionBlockMsg();
+                        }else{
+                            processSerialSearch(optionsInfo);
+                        }
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:
-                        processPendencies(optionsInfo);
+                        if(blockedByExecutionLimitReach) {
+                            showExecutionBlockMsg();
+                        }else {
+                            processPendencies(optionsInfo);
+                        }
                         break;
                     case Frg_Serial_Search.BTN_OPTION_03:
                         break;
@@ -250,6 +261,24 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         if(hasNFormSelected()){
             vNFormSelected.setVisibility(View.VISIBLE);
         }
+        //
+        blockedByExecutionLimitReach = mPresenter.verifyLimitExecutionReached();
+        //
+        if(blockedByExecutionLimitReach){
+            showExecutionBlockMsg();
+        }
+    }
+
+    @Override
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que aplica as alterações na interface para impedir que o usuario crie uma nova execução.
+     */
+    public void showExecutionBlockMsg() {
+        showMsg(
+            hmAux_Trans.get("alert_free_execution_limit_reached_ttl"),
+            hmAux_Trans.get("alert_free_execution_limit_reached_msg")
+        );
     }
 
     private void recoverIntentsInfo() {

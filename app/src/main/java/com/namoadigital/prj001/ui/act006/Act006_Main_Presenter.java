@@ -30,4 +30,6 @@ public interface Act006_Main_Presenter {
     //String searchProductInfo(String product_code, String product_id);
 
     MD_Product searchProduct(String product_id);
+
+    boolean verifyLimitExecutionReached();
 }
