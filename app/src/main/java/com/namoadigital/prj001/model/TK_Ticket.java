@@ -1247,16 +1247,8 @@ public class TK_Ticket implements Cloneable, Serializable {
                 && !ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(ticketStatus);
     }
 
-
     public boolean isReadOnlyUserLevel(Context context) {
-        EV_User_CustomerDao customerDao = ToolBox_Inf.getEv_user_customerDao(context);
-        //
-        EV_User_Customer evUserCustomer = customerDao.getByString(
-                new EV_User_Customer_Sql_002(
-                        ToolBox_Con.getPreference_User_Code(context),
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                ).toSqlQuery()
-        );
+        EV_User_Customer evUserCustomer = ToolBox_Inf.getCurrentEvUsrCustomerInfo(context);
         //
         if(evUserCustomer.getLicense_user_level_value() == null){
             return 0 < user_level_min;

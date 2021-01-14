@@ -7698,7 +7698,7 @@ public class ToolBox_Inf {
         return fabMenuItems;
     }
 
-    private static EV_User_Customer getCurrentEvUsrCustomerInfo(Context context) {
+    public static EV_User_Customer getCurrentEvUsrCustomerInfo(Context context) {
         return new EV_User_CustomerDao(
             context,
             Constant.DB_FULL_BASE,
