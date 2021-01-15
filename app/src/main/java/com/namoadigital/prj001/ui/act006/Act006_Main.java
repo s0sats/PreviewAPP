@@ -147,8 +147,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         transList.add("alert_turn_offline_mode_on_ttl");
         transList.add("alert_turn_offline_mode_on_msg");
         //
-        transList.add("alert_free_execution_limit_reached_ttl");
-        transList.add("alert_free_execution_limit_reached_msg");
+        transList.add("alert_free_execution_blocked_ttl");
+        transList.add("alert_free_execution_blocked_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -191,11 +191,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                         }
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:
-                        if(blockedByExecutionLimitReach) {
-                            showExecutionBlockMsg();
-                        }else {
                             processPendencies(optionsInfo);
-                        }
                         break;
                     case Frg_Serial_Search.BTN_OPTION_03:
                         break;
@@ -262,8 +258,16 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             vNFormSelected.setVisibility(View.VISIBLE);
         }
         //
-        blockedByExecutionLimitReach = mPresenter.verifyLimitExecutionReached();
+        blockedByExecutionLimitReach = ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context);
         //
+        applyBlockExecutionAction();
+    }
+
+    /**
+     * LUCHE - 14/01/2021
+     * Metodo que exibe msg de  bloqueio e some com btn NFC em caso de bloqueio.
+     */
+    private void applyBlockExecutionAction() {
         if(blockedByExecutionLimitReach){
             showExecutionBlockMsg();
             mFrgSerialSearch.setSupportNFC(false);
@@ -277,8 +281,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
      */
     public void showExecutionBlockMsg() {
         showMsg(
-            hmAux_Trans.get("alert_free_execution_limit_reached_ttl"),
-            hmAux_Trans.get("alert_free_execution_limit_reached_msg")
+            hmAux_Trans.get("alert_free_execution_blocked_ttl"),
+            hmAux_Trans.get("alert_free_execution_blocked_msg")
         );
     }
 

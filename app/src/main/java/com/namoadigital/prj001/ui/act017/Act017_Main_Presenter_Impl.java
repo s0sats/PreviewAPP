@@ -307,7 +307,14 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             } else if (isAnyFormInProcessing(item)) {
                 mView.showMsg(Act017_Main.MODULE_CHECKLIST_FORM_IN_PROCESSING, item);
             } else {
-                mView.showMsg(Act017_Main.MODULE_CHECKLIST_START_FORM, item);
+                //LUCHE - 14/01/2021
+                //Verifica se deve bloquear a execução e em caso posito, exibe msg informando do
+                // bloqueio
+                if(ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)) {
+                    mView.showMsg(Act017_Main.FREE_EXECUTION_BLOCKED, item);
+                }else{
+                    mView.showMsg(Act017_Main.MODULE_CHECKLIST_START_FORM, item);
+                }
             }
         } else {
             if(isStatusPossibleToOpen(item)) {
@@ -399,10 +406,17 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             if(isScheduleSiteDifferentThanLogged(item)){
                 startSiteChangeFlow(item);
             }else{
-                mView.showMsg(
-                    Act017_Main.MODULE_TICKET_EXEC_CONFIRM,
-                    item
-                );
+                //LUCHE - 14/01/2021
+                //Verifica se deve bloquear a execução e em caso posito, exibe msg informando do
+                // bloqueio
+                if(ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)) {
+                    mView.showMsg(Act017_Main.FREE_EXECUTION_BLOCKED, item);
+                }else {
+                    mView.showMsg(
+                        Act017_Main.MODULE_TICKET_EXEC_CONFIRM,
+                        item
+                    );
+                }
             }
         }
     }
