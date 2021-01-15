@@ -22,6 +22,7 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
@@ -34,6 +35,7 @@ import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
@@ -56,6 +58,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_008;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
@@ -112,8 +115,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private boolean isTicketProcess = false;
     private TK_Ticket_StepDao ticketStepDao;
     private Integer mTicketSeqTmp;
+    private MD_SiteDao siteDao;
 
-    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans, MD_Schedule_ExecDao scheduleExecDao, TK_Ticket_StepDao ticketStepDao) {
+    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans, MD_Schedule_ExecDao scheduleExecDao, TK_Ticket_StepDao ticketStepDao,MD_SiteDao siteDao) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
@@ -130,6 +134,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         this.hmAux_Trans = hmAux_Trans;
         this.scheduleExecDao = scheduleExecDao;
         this.ticketStepDao = ticketStepDao;
+        this.siteDao = siteDao;
     }
 
     @Override
@@ -1017,9 +1022,59 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setToken("");
             form_data.setSo_prefix(so_prefix);
             form_data.setSo_code(so_code);
+            //
+            if(isFreeExecutionControlSituation(so_prefix, so_code, form_data)){
+                updateAppExecutionCounter(form_data,true);
+            }
         }
-
+        //
         return form_data;
+    }
+
+    @Override
+    public void checkFreeExecutionUpdateNeeds(Integer mSo_prefix, Integer mSo_code, GE_Custom_Form_Data formData) {
+        if(isFreeExecutionControlSituation(mSo_prefix, mSo_code, formData)){
+            updateAppExecutionCounter(formData,false);
+        }
+    }
+
+    private boolean isFreeExecutionControlSituation(Integer so_prefix, Integer so_code, GE_Custom_Form_Data form_data) {
+        return ToolBox_Inf.isConcurrentBySiteLicense(context)
+                && hasFormDataSiteLicenseDisabled(form_data)
+                && !isTicketProcess
+                && so_prefix == null && so_code == null;
+    }
+
+    //TODO TRATAR O DECREMENTE DO APP_EXECUTION TB NO ABORT DA ACT011
+    private void updateAppExecutionCounter(GE_Custom_Form_Data form_data, boolean increment) {
+        MD_Site mdSite = getMdSiteObj(form_data);
+        if (mdSite != null) {
+            int app_executions_count = mdSite.getApp_executions_count();
+            if(increment){
+                mdSite.setApp_executions_count(app_executions_count + 1);
+            }else{
+                mdSite.setApp_executions_count(app_executions_count - 1);
+            }
+            siteDao.addUpdate(mdSite);
+        }
+    }
+
+    private boolean hasFormDataSiteLicenseDisabled(GE_Custom_Form_Data form_data) {
+        MD_Site mdSite = getMdSiteObj(form_data);
+        //
+        if(mdSite != null){
+            return mdSite.getLicense_enabled() == 0;
+        }
+        return false;
+    }
+
+    private MD_Site getMdSiteObj(GE_Custom_Form_Data form_data) {
+        return siteDao.getByString(
+            new MD_Site_Sql_003(
+                form_data.getCustomer_code(),
+                form_data.getSite_code()
+            ).toSqlQuery()
+        );
     }
 
     /*private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data, Long custom_form_data_serv, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, String serial_id) {

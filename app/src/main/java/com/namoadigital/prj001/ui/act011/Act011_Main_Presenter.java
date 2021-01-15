@@ -55,4 +55,6 @@ public interface Act011_Main_Presenter {
     Integer getSeqTmpForFormOffHand(Context context, Integer mTicket_prefix, Integer mTicket_code, Integer mStep_code);
 
     String getDialogTicketInfo(Integer ticket_prefix, Integer ticket_code, Integer step_code);
+
+    void checkFreeExecutionUpdateNeeds(Integer mSo_prefix, Integer mSo_code, GE_Custom_Form_Data formData);
 }

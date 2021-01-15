@@ -130,7 +130,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                 //
                 callAct001();
             } else {
-                prepareExecSessionProcess(customers.get(0), 0, 1, 0);
+                //prepareExecSessionProcess(customers.get(0), 0, 1, 0);
+                mPresenter.defineClickFlow(customers.get(0));
             }
         }
     }
