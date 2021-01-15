@@ -343,6 +343,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
             @Override
             public void onSaveNoChangesClick(MD_Product_Serial md_product_serial, boolean serial_id_changes) {
+                //todo applicar regra de limitacao de uso por qtde de licença
                 //Atualiza obj da tela com o do frag.
                 mdProductSerial = md_product_serial;
                 //Salva os dados do serial no banco local.
@@ -353,6 +354,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
             @Override
             public void onSaveWithChangesClick(MD_Product_Serial mdProductSerialFrag, boolean serial_id_changes) {
+                //todo applicar regra de limitacao de uso por qtde de licença
                 mPresenter.updateSerialData(mdProductSerialFrag);
                 //
                 mdProductSerial = mdProductSerialFrag;
