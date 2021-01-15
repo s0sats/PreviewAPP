@@ -35,6 +35,8 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
     public static final String CFG_ID_DESC_DESC2 = "ID_DESC1_DESC2";
     public static final String CFG_DESC = "DESC";
     public static final String CFG_DESC_QTY = "DESC_QTY";
+    public static final String IMV_002 = "IMV_002";
+
 
     private Context context;
     private ValueFilter valueFilter;
@@ -45,6 +47,7 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
     private String key_code;
     private String key_id;
     private String key_desc;
+    private String key_icon;
     private String trans_lbl_code = "";
     private String trans_lbl_id = "";
     private String trans_lbl_desc = "";
@@ -52,6 +55,7 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
     private String mModule_Code = Constant.APP_MODULE;
     private String mResource_Name = "lib_custom_cell_adapter";
     private HMAux hmAux_Trans;
+    private String iconType;
 
     public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> data, String config, String key_code, String key_id, String key_desc) {
         this.context = context;
@@ -66,6 +70,25 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
         this.key_id = key_id;
         this.key_desc = key_desc;
 
+        loadTranslation();
+
+        getFilter();
+    }
+
+    public Lib_Custom_Cell_Adapter(Context context, int resource, List<HMAux> data, String config, String key_code, String key_id, String key_desc, String key_icon) {
+        this.context = context;
+        this.resource = resource;
+        //
+        this.data = data;
+        this.data_filtered = new ArrayList<>();
+        this.data_filtered.addAll(data);
+        //
+        this.config = config;
+        this.key_code = key_code;
+        this.key_id = key_id;
+        this.key_desc = key_desc;
+        this.key_icon = key_icon;
+        //
         loadTranslation();
 
         getFilter();
@@ -128,6 +151,8 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
         //
         ImageView iv_001 = (ImageView) convertView.findViewById(R.id.lib_custom_cell_iv_001);
 
+        ImageView iv_002 = (ImageView) convertView.findViewById(R.id.lib_custom_cell_iv_002);
+
         //Inicia configuraçõa dos elementos
         Drawable llDrawable = context.getResources().getDrawable(R.drawable.lib_custom_cell_bg_base);
         llBackground.setBackground(llDrawable);
@@ -170,7 +195,29 @@ public class Lib_Custom_Cell_Adapter extends BaseAdapter implements Filterable {
                     descText = "";
                 }
                 //
-
+                try {
+                    if (item.get(key_icon).trim().length() > 0) {
+                        iconType = item.get(key_icon);
+                    }
+                } catch (Exception e) {
+                    iconType = "";
+                }
+                //
+                Drawable drawable = null;
+                try {
+                    int drawableId = Integer.valueOf(iconType);
+                    drawable = context.getResources().getDrawable(drawableId);
+                }catch (Exception e ){
+                    e.printStackTrace();
+                    drawable = null;
+                }
+                if(drawable != null){
+                    iv_002.setBackground(drawable);
+                    iv_002.setVisibility(View.VISIBLE);
+                }else{
+                    iv_002.setVisibility(View.GONE);
+                }
+                //
                 tv_code.setText(codeText);
                 tv_id.setText(idText);
                 tv_desc.setText(descText);

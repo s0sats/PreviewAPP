@@ -183,7 +183,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_015;
 import com.namoadigital.prj001.sql.MD_Product_Serial_x_TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
-import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Site_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
@@ -2276,11 +2276,16 @@ public class ToolBox_Inf {
         //
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         ArrayList<HMAux> ssSiteOption = (ArrayList<HMAux>) siteDao.query_HM(
-                new MD_Site_Sql_SS(
+                new MD_Site_Sql_SS_002(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                 ).toSqlQuery()
         );
         HMAux ssSiteValue = getCurrentmValue(hmDialogInfo.get(Constant.FOOTER_SITE), ssSiteOption);
+
+        if(isConcurrentBySiteLicense(context)) {
+            ssSiteOption = (ArrayList<HMAux>) getSiteLicenseAvailability(ssSiteOption, SearchableSpinner.RIGHT_ICON);
+        }
+
         setSSs(ss_site, hmDialogInfo.get(Constant.FOOTER_SITE_LBL), ssSiteValue, ssSiteOption);
         //
         ss_site.setVisibility(hmDialogInfo.get(Constant.FOOTER_SITE) == null || hmDialogInfo.get(Constant.FOOTER_SITE).length() <= 0 ? View.GONE : View.VISIBLE);
@@ -2316,6 +2321,44 @@ public class ToolBox_Inf {
         setSSs(ss_operation, hmDialogInfo.get(Constant.FOOTER_OPERATION_LBL), ssOperationValue, ssOperationOption);
         ss_operation.setVisibility(hmDialogInfo.get(Constant.FOOTER_OPERATION) == null || hmDialogInfo.get(Constant.FOOTER_OPERATION).length() <= 0 ? View.GONE : View.VISIBLE);
         //
+    }
+
+    public static List<HMAux> getSiteLicenseAvailability(List<HMAux> ssSiteOption, String iconKey) {
+
+        for (HMAux hmAux : ssSiteOption) {
+            if(hmAux.hasConsistentValue(MD_SiteDao.LICENSE_ENABLED)){
+                if (hmAux.get(MD_SiteDao.LICENSE_ENABLED).equals("0")) {
+                    if (hmAux.hasConsistentValue(MD_SiteDao.LICENSE_BLOCKED)) {
+                        if ("1".equals(hmAux.get(MD_SiteDao.LICENSE_BLOCKED))){
+                            hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_disable_unavailable));
+                        }else{
+                            int free_executions_max, free_executions_count, app_executions_count;
+                            //
+                            free_executions_max = getIntFromHmAux(hmAux, MD_SiteDao.FREE_EXECUTIONS_MAX);
+                            free_executions_count = getIntFromHmAux(hmAux, MD_SiteDao.FREE_EXECUTIONS_COUNT);
+                            app_executions_count = getIntFromHmAux(hmAux, MD_SiteDao.APP_EXECUTIONS_COUNT);
+                            //
+                            int totalExecution = free_executions_count + app_executions_count;
+                            if(totalExecution < free_executions_max){
+                                hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_disable_available));
+                            }else {
+                                hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_disable_unavailable));
+                            }
+                        }
+                    }
+                }else{
+                    hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_enable));
+                }
+            }
+        }
+        return ssSiteOption;
+    }
+
+    private static int getIntFromHmAux(HMAux hmAux, String hmAuxKey){
+        if(hmAux.hasConsistentValue(hmAuxKey)){
+            return Integer.parseInt(hmAux.get(hmAuxKey));
+        }
+        return 0;
     }
 
     private static void setDisableUserInfo(HMAux hmDialogInfo, LinearLayout ll_site, TextView tv_site_lbl, TextView tv_site_value, LinearLayout ll_zone, TextView tv_zone_lbl, TextView tv_zone_value, LinearLayout ll_operation, TextView tv_operation_lbl, TextView tv_operation_value) {

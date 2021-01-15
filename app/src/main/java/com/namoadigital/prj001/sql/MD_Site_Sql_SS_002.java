@@ -25,23 +25,18 @@ public class MD_Site_Sql_SS_002 implements Specification {
                 .append(
                         " SELECT " +
                         "   site_code " + SearchableSpinner.CODE + ", \n" +
-                        "   site_id " + SearchableSpinner.ID + ", \n" +
+                        "   site_id "+ SearchableSpinner.ID + ", \n" +
                         "   site_desc " + SearchableSpinner.DESCRIPTION + ", \n" +
-                        "   io_control,\n " +
-                        "   inbound_auto_create \n " +
+                        MD_SiteDao.LICENSE_ENABLED + ", \n" +
+                        MD_SiteDao.FREE_EXECUTIONS_MAX + ", \n" +
+                        MD_SiteDao.FREE_EXECUTIONS_COUNT + ", \n" +
+                        MD_SiteDao.APP_EXECUTIONS_COUNT + ", \n" +
+                        MD_SiteDao.LICENSE_BLOCKED + " \n" +
                         " FROM \n" +
                         MD_SiteDao.TABLE +"\n"+
                         " WHERE \n" +
                         MD_SiteDao.CUSTOMER_CODE + " = '" + s_customer_code + "' \n" +
-                        "   AND (io_control = 0 OR (io_control = 1 and inbound_auto_create = 1)) " +
                         " ORDER BY \n" +
-                        "      site_id,site_desc;")
-//                .append(SearchableSpinner.ID + "#" +
-//                        MD_SiteDao.SITE_ID + "#" +
-//                        SearchableSpinner.DESCRIPTION + "#" +
-//                        MD_SiteDao.IO_CONTROL + "#" +
-//                        MD_SiteDao.INBOUND_AUTO_CREATE
-//                )
-                .toString();
+                        "      site_id,site_desc;").toString();
     }
 }
