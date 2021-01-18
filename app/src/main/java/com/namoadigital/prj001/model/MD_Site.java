@@ -209,8 +209,8 @@ public class MD_Site {
     }
 
     public void updateLicenseBlocked() {
-        if(this.license_enabled != null && this.license_enabled == 1 && this.license_blocked == 0) {
-            setLicense_blocked(this.free_executions_max - this.free_executions_count <= 0 ? 1 : 0);
+        if(this.license_enabled != null && this.license_enabled == 0) {
+            setLicense_blocked(this.free_executions_max - (this.free_executions_count + this.app_executions_count) <= 0 ? 1 : 0);
         }
     }
 

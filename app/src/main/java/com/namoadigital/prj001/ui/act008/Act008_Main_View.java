@@ -58,4 +58,6 @@ public interface Act008_Main_View {
     void callAct071(Context context, Bundle bundle);
 
     boolean isHas_tk_ticket_is_form_off_hand();
+
+    String getmdProductSerialSiteCode();
 }

@@ -183,7 +183,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_015;
 import com.namoadigital.prj001.sql.MD_Product_Serial_x_TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
-import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Site_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
@@ -2276,11 +2276,16 @@ public class ToolBox_Inf {
         //
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         ArrayList<HMAux> ssSiteOption = (ArrayList<HMAux>) siteDao.query_HM(
-                new MD_Site_Sql_SS(
+                new MD_Site_Sql_SS_002(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                 ).toSqlQuery()
         );
         HMAux ssSiteValue = getCurrentmValue(hmDialogInfo.get(Constant.FOOTER_SITE), ssSiteOption);
+
+        if(isConcurrentBySiteLicense(context)) {
+            ssSiteOption = (ArrayList<HMAux>) getSiteLicenseAvailability(ssSiteOption, SearchableSpinner.RIGHT_ICON);
+        }
+
         setSSs(ss_site, hmDialogInfo.get(Constant.FOOTER_SITE_LBL), ssSiteValue, ssSiteOption);
         //
         ss_site.setVisibility(hmDialogInfo.get(Constant.FOOTER_SITE) == null || hmDialogInfo.get(Constant.FOOTER_SITE).length() <= 0 ? View.GONE : View.VISIBLE);
@@ -2316,6 +2321,44 @@ public class ToolBox_Inf {
         setSSs(ss_operation, hmDialogInfo.get(Constant.FOOTER_OPERATION_LBL), ssOperationValue, ssOperationOption);
         ss_operation.setVisibility(hmDialogInfo.get(Constant.FOOTER_OPERATION) == null || hmDialogInfo.get(Constant.FOOTER_OPERATION).length() <= 0 ? View.GONE : View.VISIBLE);
         //
+    }
+
+    public static List<HMAux> getSiteLicenseAvailability(List<HMAux> ssSiteOption, String iconKey) {
+
+        for (HMAux hmAux : ssSiteOption) {
+            if(hmAux.hasConsistentValue(MD_SiteDao.LICENSE_ENABLED)){
+                if (hmAux.get(MD_SiteDao.LICENSE_ENABLED).equals("0")) {
+                    if (hmAux.hasConsistentValue(MD_SiteDao.LICENSE_BLOCKED)) {
+                        if ("1".equals(hmAux.get(MD_SiteDao.LICENSE_BLOCKED))){
+                            hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_disable_unavailable));
+                        }else{
+                            int free_executions_max, free_executions_count, app_executions_count;
+                            //
+                            free_executions_max = getIntFromHmAux(hmAux, MD_SiteDao.FREE_EXECUTIONS_MAX);
+                            free_executions_count = getIntFromHmAux(hmAux, MD_SiteDao.FREE_EXECUTIONS_COUNT);
+                            app_executions_count = getIntFromHmAux(hmAux, MD_SiteDao.APP_EXECUTIONS_COUNT);
+                            //
+                            int totalExecution = free_executions_count + app_executions_count;
+                            if(totalExecution < free_executions_max){
+                                hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_disable_available));
+                            }else {
+                                hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_disable_unavailable));
+                            }
+                        }
+                    }
+                }else{
+                    hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_enable));
+                }
+            }
+        }
+        return ssSiteOption;
+    }
+
+    private static int getIntFromHmAux(HMAux hmAux, String hmAuxKey){
+        if(hmAux.hasConsistentValue(hmAuxKey)){
+            return Integer.parseInt(hmAux.get(hmAuxKey));
+        }
+        return 0;
     }
 
     private static void setDisableUserInfo(HMAux hmDialogInfo, LinearLayout ll_site, TextView tv_site_lbl, TextView tv_site_value, LinearLayout ll_zone, TextView tv_zone_lbl, TextView tv_zone_value, LinearLayout ll_operation, TextView tv_operation_lbl, TextView tv_operation_value) {
@@ -7704,7 +7747,7 @@ public class ToolBox_Inf {
      * @param context
      * @return
      */
-    private static EV_User_Customer getCurrentEvUsrCustomerInfo(Context context) {
+    public static EV_User_Customer getCurrentEvUsrCustomerInfo(Context context) {
         return new EV_User_CustomerDao(
             context,
             Constant.DB_FULL_BASE,
@@ -7738,6 +7781,25 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 13/01/2021
+     * Metodo que retorna o obj site do site logado
+     * @param context
+     * @return
+     */
+    private static MD_Site getSiteObjInfo(Context context, String site_code) {
+        return new MD_SiteDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        ).getByString(
+            new MD_Site_Sql_003(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                    site_code
+            ).toSqlQuery()
+        );
+    }
+
+    /**
+     * LUCHE - 13/01/2021
      * Metodo que verifica se o tipo de licença do customer logado é o tipo de licença por site.
      * @param context
      * @return Verdadeiro se o tipo de licença for LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE
@@ -7754,9 +7816,20 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean isSiteLicenseDisabled(Context context){
-        MD_Site mdSite = getCurrentSiteObjInfo(context);
+        return isSiteLicenseDisabled(context,ToolBox_Con.getPreference_Site_Code(context));
+    }
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que verifica se o site logado possui licença habilitada.
+     * @param context
+     * @return
+     */
+    public static boolean isSiteLicenseDisabled(Context context, String site_code){
+        MD_Site mdSite = getSiteObjInfo(context, site_code);
         return mdSite != null && mdSite.getLicense_enabled() != null && mdSite.getLicense_enabled() == 0;
     }
+
+
 
     /**
      * LUCHE - 13/01/2021
@@ -7768,7 +7841,11 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean hasFreeExecutionAvailable(Context context){
-        MD_Site mdSite = getCurrentSiteObjInfo(context);
+        return hasFreeExecutionAvailable(context, ToolBox_Con.getPreference_Site_Code(context));
+    }
+
+    private static boolean hasFreeExecutionAvailable(Context context, String site_code) {
+        MD_Site mdSite = getSiteObjInfo(context, site_code);
         if(mdSite != null){
             //Em teste se site tem licença ativa não deveria ser usado esse metodo, uma vez que com
             // licença ativa, NÃO HÁ LIMITE DE EXECUÇÃO, mas fica a tratativa
@@ -7777,7 +7854,7 @@ public class ToolBox_Inf {
             }else{
                 //Se um dos itens de calculo for null, ja deu algum b.o, retorna falso
                 if( mdSite.getFree_executions_max() == null
-                    || mdSite.getFree_executions_count() == null
+                        || mdSite.getFree_executions_count() == null
                 ){
                     return false;
                 }else{
@@ -7800,7 +7877,11 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean isCurrentSiteBlockedByExecution(Context context){
-        MD_Site mdSite = getCurrentSiteObjInfo(context);
+        return isCurrentSiteBlockedByExecution(context, ToolBox_Con.getPreference_Site_Code(context));
+    }
+
+    private static boolean isCurrentSiteBlockedByExecution(Context context, String site_code) {
+        MD_Site mdSite = getSiteObjInfo(context, site_code);
         if(mdSite != null){
             return mdSite.getLicense_blocked() == 1;
         }
@@ -7816,11 +7897,23 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean isSiteBlockedOrLimitExecutionReached(Context context) {
+
+        return isSiteBlockedOrLimitExecutionReached(context, ToolBox_Con.getPreference_Site_Code(context));
+    }
+
+    /**
+     * LUCHE - 14/01/2021
+     * Metodo que verifica se site esta bloquado, verificando tando a propriedade License_blocked
+     * quando o calculo de execuções disponiveis
+     * @param context
+     * @return
+     */
+    public static boolean isSiteBlockedOrLimitExecutionReached(Context context, String site_code) {
         return
-            ToolBox_Inf.isCurrentSiteBlockedByExecution(context)
-                ||( ToolBox_Inf.isConcurrentBySiteLicense(context)
-                && ToolBox_Inf.isSiteLicenseDisabled(context)
-                && !ToolBox_Inf.hasFreeExecutionAvailable(context)
-            );
+                ToolBox_Inf.isCurrentSiteBlockedByExecution(context, site_code)
+                        ||( ToolBox_Inf.isConcurrentBySiteLicense(context)
+                        && ToolBox_Inf.isSiteLicenseDisabled(context, site_code)
+                        && !ToolBox_Inf.hasFreeExecutionAvailable(context, site_code)
+                );
     }
 }

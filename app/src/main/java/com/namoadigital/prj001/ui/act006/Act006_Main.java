@@ -258,6 +258,10 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             vNFormSelected.setVisibility(View.VISIBLE);
         }
         //
+        checkSiteAvailablity();
+    }
+
+    private void checkSiteAvailablity() {
         blockedByExecutionLimitReach = ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context);
         //
         applyBlockExecutionAction();
@@ -271,6 +275,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         if(blockedByExecutionLimitReach){
             showExecutionBlockMsg();
             mFrgSerialSearch.setSupportNFC(false);
+        }else{
+            mFrgSerialSearch.setSupportNFC(true);
         }
     }
 
@@ -678,5 +684,6 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     protected void processRefreshMessage(String mType, String mValue, String mActivity) {
         super.processRefreshMessage(mType, mValue, mActivity);
         iniUIFooter();
+        checkSiteAvailablity();
     }
 }

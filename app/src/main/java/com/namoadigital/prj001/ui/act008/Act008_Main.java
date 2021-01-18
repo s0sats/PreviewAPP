@@ -199,6 +199,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("alert_form_site_not_found_tll");
         transList.add("alert_form_site_not_found_msg");
 
+        transList.add("alert_serial_site_out_of_license_tll");
+        transList.add("alert_serial_site_out_of_license_msg");
+
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -343,32 +346,34 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
             @Override
             public void onSaveNoChangesClick(MD_Product_Serial md_product_serial, boolean serial_id_changes) {
-                //Atualiza obj da tela com o do frag.
-                mdProductSerial = md_product_serial;
-                //Salva os dados do serial no banco local.
-                mPresenter.updateSerialData(mdProductSerial);
-                //
-                mPresenter.checkFlow();
-            }
+                    //Atualiza obj da tela com o do frag.
+                    mdProductSerial = md_product_serial;
+                    //Salva os dados do serial no banco local.
+                    mPresenter.updateSerialData(mdProductSerial);
+                    //
+                    mPresenter.checkFlow();
+                }
 
             @Override
             public void onSaveWithChangesClick(MD_Product_Serial mdProductSerialFrag, boolean serial_id_changes) {
-                mPresenter.updateSerialData(mdProductSerialFrag);
-                //
-                mdProductSerial = mdProductSerialFrag;
-                //
-                if (ToolBox_Con.isOnline(context)) {
-                    mPresenter.executeSerialSave();
-                } else {
-                    //ToolBox_Inf.showNoConnectionDialog(context);
+
+
+                    mPresenter.updateSerialData(mdProductSerialFrag);
+                    //
+                    mdProductSerial = mdProductSerialFrag;
+                    //
+                    if (ToolBox_Con.isOnline(context)) {
+                        mPresenter.executeSerialSave();
+                    } else {
+                        //ToolBox_Inf.showNoConnectionDialog(context);
                     /*mPresenter.validateSerial(
                             mdProductSerial.getSerial_id(),
                             mdProduct.getRequire_serial(),
                             mdProduct.getAllow_new_serial_cl()
                     );*/
-                    mPresenter.checkFlow();
+                        mPresenter.checkFlow();
+                    }
                 }
-            }
 
             @Override
             public void onTrackingSearchClick(long product_code, long serial_code, String tracking, String site_code) {
@@ -1152,6 +1157,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     @Override
     public boolean isHas_tk_ticket_is_form_off_hand() {
         return has_tk_ticket_is_form_off_hand;
+    }
+
+    @Override
+    public String getmdProductSerialSiteCode() {
+        if(mdProductSerial != null) {
+            return mdProductSerial.getSite_reason_code();
+        }
+        return "-1";
     }
 
 }
