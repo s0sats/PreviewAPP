@@ -56,5 +56,5 @@ public interface Act011_Main_Presenter {
 
     String getDialogTicketInfo(Integer ticket_prefix, Integer ticket_code, Integer step_code);
 
-    void checkFreeExecutionUpdateNeeds(Integer mSo_prefix, Integer mSo_code, GE_Custom_Form_Data formData);
+    void checkAppExecutionDecrementUpdateNeeds(Integer mSo_prefix, Integer mSo_code, GE_Custom_Form_Data formData);
 }

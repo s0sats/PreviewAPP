@@ -15,6 +15,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ApprovalDao;
@@ -23,6 +24,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
@@ -83,6 +85,7 @@ public class WS_TK_Ticket_Save extends IntentService {
     private TK_Ticket_ApprovalDao ticketApprovalDao;
     private MD_Schedule_ExecDao scheduleExecDao;
     private GE_FileDao geFileDao;
+    private MD_SiteDao siteDao;
 
     public WS_TK_Ticket_Save() {
         super("WS_TK_Ticket_Save");
@@ -103,6 +106,7 @@ public class WS_TK_Ticket_Save extends IntentService {
             ticketApprovalDao = new TK_Ticket_ApprovalDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             scheduleExecDao = new MD_Schedule_ExecDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             geFileDao = new GE_FileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
+            siteDao = new MD_SiteDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ConstantBaseApp.DB_VERSION_CUSTOM);
             menuSendProcess = bundle.getBoolean(ConstantBaseApp.PROCESS_MENU_SEND, false);
             processTicketSave();
 
@@ -490,6 +494,8 @@ public class WS_TK_Ticket_Save extends IntentService {
                             ticketDao.addUpdate(ticketBackup);
                             throw new Exception(daoObjReturn.getErrorMsg());
                         }
+                        //LUCHE - 18/01/2021
+                        checkAppExecutionCountUpdate(scheduleExec.getSite_code(),true);
                         //
                         actReturn.setRetMsg(
                                 getFormattedScheduleRetMsg(actReturn, recResult)
@@ -521,7 +527,9 @@ public class WS_TK_Ticket_Save extends IntentService {
                                         scheduleExec.getSchedule_code(),
                                         scheduleExec.getSchedule_exec()
                                 ).toSqlQuery());
-
+                                //LUCHE - 18/01/2021 - Remove exec do contador do app
+                                checkAppExecutionCountUpdate(scheduleExec.getSite_code(),false);
+                                //
                                 String stepErroMsg = recResult.getSchedule_prefix() + "." +
                                         recResult.getSchedule_code() + "." +
                                         recResult.getSchedule_exec() + ": ";
@@ -595,6 +603,35 @@ public class WS_TK_Ticket_Save extends IntentService {
             }
             //
             actReturnList.add(actReturn);
+        }
+    }
+
+    /**
+     * LUCHE - 18/01/2021
+     * Metodo que verifica se deve atualizar os contadores de execução do site.
+     * Só atualiza se o customer possuir licença por site e se o site em questão não possuir licença.
+     * Baseado na flag transferAppExecutionToServerExecution, sabe se deve transferir a execução para o
+     * contador o servidor ou apenas decremente do contador do app.
+     *
+     * No caso se um envio com sucesso, deve ser transferido o 1 do contador do app para o contador do server.
+     * Já no caso de um erro sem nova chance de execução, o contador do app deve ser decrementado.
+     *
+     * @param site_code
+     * @param transferAppExecutionToServerExecution
+     */
+    private void checkAppExecutionCountUpdate(int site_code, boolean transferAppExecutionToServerExecution) {
+        if( ToolBox_Inf.isConcurrentBySiteLicense(getApplicationContext())
+            && ToolBox_Inf.isSiteLicenseDisabled(getApplicationContext(), String.valueOf(site_code))
+        ){
+            MD_Site mdSiteObj = ToolBox_Inf.getSiteObjInfo(getApplicationContext(), String.valueOf(site_code));
+            if(mdSiteObj != null) {
+                if (transferAppExecutionToServerExecution) {
+                    mdSiteObj.transferAppExecutionToServerCount();
+                }else{
+                    mdSiteObj.decreaseAppExecution();
+                }
+                siteDao.addUpdate(mdSiteObj);
+            }
         }
     }
 

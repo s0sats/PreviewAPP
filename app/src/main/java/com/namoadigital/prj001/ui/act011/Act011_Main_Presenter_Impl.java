@@ -58,7 +58,6 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
-import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_008;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
@@ -897,6 +896,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         if(customFormData != null && !rollback) {
             customFormData.setCustom_form_status(ConstantBaseApp.SYS_STATUS_CANCELLED);
             custom_form_dataDao.addUpdate(customFormData);
+            //LUCHE - 18/01/2021 - Se cancelamento de form via  FCM, decrementa contador de execuções
+            //do app.
+            checkAppExecutionDecrementUpdateNeeds(customFormData.getSo_prefix(),customFormData.getSo_code(),customFormData);
         }
         //Segura na mão de deus e vai
         if(rollback){
@@ -1031,23 +1033,43 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         return form_data;
     }
 
+    /**
+     * LUCHE - 18/01/2021
+     * Metodo que verifica se deve decrementar o contador de exe do app no site.
+     * @param mSo_prefix
+     * @param mSo_code
+     * @param formData
+     */
     @Override
-    public void checkFreeExecutionUpdateNeeds(Integer mSo_prefix, Integer mSo_code, GE_Custom_Form_Data formData) {
+    public void checkAppExecutionDecrementUpdateNeeds(Integer mSo_prefix, Integer mSo_code, GE_Custom_Form_Data formData) {
         if(isFreeExecutionControlSituation(mSo_prefix, mSo_code, formData)){
             updateAppExecutionCounter(formData,false);
         }
     }
 
+    /**
+     * LUCHE - 18/01/2021
+     * Metodo que validade se deve contralar a execução no site.
+     * @param so_prefix
+     * @param so_code
+     * @param form_data
+     * @return
+     */
     private boolean isFreeExecutionControlSituation(Integer so_prefix, Integer so_code, GE_Custom_Form_Data form_data) {
         return ToolBox_Inf.isConcurrentBySiteLicense(context)
-                && hasFormDataSiteLicenseDisabled(form_data)
+                && ToolBox_Inf.isSiteLicenseDisabled(context,form_data.getSite_code())
                 && !isTicketProcess
                 && so_prefix == null && so_code == null;
     }
 
-    //TODO TRATAR O DECREMENTE DO APP_EXECUTION TB NO ABORT DA ACT011
+    /**
+     * LUCHE - 18/01/2021
+     * Metodo que atualiza o contador de exec do app incrementando ou decrementado.
+     * @param form_data
+     * @param increment
+     */
     private void updateAppExecutionCounter(GE_Custom_Form_Data form_data, boolean increment) {
-        MD_Site mdSite = getMdSiteObj(form_data);
+        MD_Site mdSite = ToolBox_Inf.getSiteObjInfo(context, form_data.getSite_code());
         if (mdSite != null) {
             int app_executions_count = mdSite.getApp_executions_count();
             if(increment){
@@ -1057,24 +1079,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             }
             siteDao.addUpdate(mdSite);
         }
-    }
-
-    private boolean hasFormDataSiteLicenseDisabled(GE_Custom_Form_Data form_data) {
-        MD_Site mdSite = getMdSiteObj(form_data);
-        //
-        if(mdSite != null){
-            return mdSite.getLicense_enabled() == 0;
-        }
-        return false;
-    }
-
-    private MD_Site getMdSiteObj(GE_Custom_Form_Data form_data) {
-        return siteDao.getByString(
-            new MD_Site_Sql_003(
-                form_data.getCustomer_code(),
-                form_data.getSite_code()
-            ).toSqlQuery()
-        );
     }
 
     /*private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data, Long custom_form_data_serv, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, String serial_id) {

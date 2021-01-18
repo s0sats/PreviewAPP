@@ -214,6 +214,24 @@ public class MD_Site {
         }
     }
 
+    public void transferAppExecutionToServerCount(){
+        transferAppExecutionToServerCount(1);
+    }
+
+    public void transferAppExecutionToServerCount(int qtyExecToTransfer){
+        int newAppVal = this.app_executions_count - qtyExecToTransfer;
+        this.free_executions_count += qtyExecToTransfer;
+        this.app_executions_count =  newAppVal >= 0 ? newAppVal : 0 ;
+    }
+
+    public void decreaseAppExecution(){
+        decreaseAppExecution(1);
+    }
+    public void decreaseAppExecution(int qtyToDecrease){
+        int newAppVal = this.app_executions_count - qtyToDecrease;
+        this.app_executions_count =  newAppVal >= 0 ? newAppVal : 0 ;
+    }
+
     public static boolean isValid(MD_Site mdSite){
         return  mdSite != null
                 && mdSite.getCustomer_code() > 0

@@ -1115,7 +1115,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         mPresenter.resetTicketCtrlFormDataIfNeeds(formLocal);
         //
-        mPresenter.checkFreeExecutionUpdateNeeds(mSo_Prefix,mSo_Code, formData);
+        mPresenter.checkAppExecutionDecrementUpdateNeeds(mSo_Prefix,mSo_Code, formData);
         //
         if(mPresenter.isaTicketFlowForm()){
             callAct070();

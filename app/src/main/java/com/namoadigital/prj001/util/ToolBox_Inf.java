@@ -7785,7 +7785,7 @@ public class ToolBox_Inf {
      * @param context
      * @return
      */
-    private static MD_Site getSiteObjInfo(Context context, String site_code) {
+    public static MD_Site getSiteObjInfo(Context context, String site_code) {
         return new MD_SiteDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),

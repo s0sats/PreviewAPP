@@ -29,7 +29,6 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
-import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -458,23 +457,36 @@ public class WS_Save extends IntentService {
 
     }
 
+    /**
+     * Luche - 18/01/2021
+     * Metodo que verifica se há necessidade de atualiza as execuções do site.
+     * @param siteExecution
+     * @param form_data
+     */
+
     private void handleSiteExecutionUpdate(List<MD_Site> siteExecution, GE_Custom_Form_Data form_data) {
         if(ToolBox_Inf.isConcurrentBySiteLicense(getApplicationContext())) {
             MD_Site mdSite = getMdSite(siteExecution, form_data.getCustomer_code(), form_data.getSite_code());
             if (mdSite != null && mdSite.getLicense_enabled() == 0) {
                 if(ConstantBaseApp.SYS_STATUS_DONE.equals(form_data.getCustom_form_status())){
-                    mdSite.setFree_executions_count(mdSite.getFree_executions_count() + 1);
+                    mdSite.transferAppExecutionToServerCount();
+                }else{
+                    mdSite.decreaseAppExecution();
                 }
-                //
-                mdSite.setApp_executions_count(
-                    mdSite.getApp_executions_count() > 0
-                        ? mdSite.getApp_executions_count() - 1
-                        : 0
-                );
             }
         }
     }
 
+    /**
+     * LUCHE - 18/01/2021
+     * Metodo que resgata o site do form.
+     * A busca é feito primeramente no array passado com para, caso não seja encontrado, busca no banco
+     * e add no array.
+     * @param siteExecution
+     * @param customerCode
+     * @param siteCode
+     * @return
+     */
     private MD_Site getMdSite(List<MD_Site> siteExecution, long customerCode, String siteCode){
         for (MD_Site md_site : siteExecution) {
             if( md_site.getCustomer_code() == customerCode
@@ -484,12 +496,7 @@ public class WS_Save extends IntentService {
             }
         }
         //Se não acho o site na lista, busca do banco de dados
-        MD_Site dbSite = siteDao.getByString(
-            new MD_Site_Sql_003(
-                customerCode,
-                siteCode
-            ).toSqlQuery()
-        );
+        MD_Site dbSite = ToolBox_Inf.getSiteObjInfo(getApplicationContext(), siteCode);
         //
         siteExecution.add(dbSite);
         //

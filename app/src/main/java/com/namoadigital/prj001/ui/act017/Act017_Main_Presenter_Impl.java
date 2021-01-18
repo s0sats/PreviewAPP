@@ -472,6 +472,14 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                         //EM 13/03/2020, a aexecução do ticket agendado sempre gerar um ticket finalizado, sendo assim, como essa será a unica ação,
                         //é possivel chumbar o valor de ticket_seq como 1, pois sempre será a primeira e unica ação deste ticket.
                         item.put(TK_Ticket_CtrlDao.TICKET_SEQ, "1");
+                        //LUCHE - 18/01/2021 - Implementação de licença por site.
+                        //Caso o customer user licença por site, mas o site logado não controla licença,
+                        // o numero de execução deve ser controlado.
+                        if(ToolBox_Inf.isConcurrentBySiteLicense(context) && ToolBox_Inf.isSiteLicenseDisabled(context)
+                        ){
+                            incrementAppExecutionCount(md_site);
+                        }
+                        //
                         return true;
                     }else{
                         updateScheduleStatus(tkTicket.getSchedule_prefix(),tkTicket.getSchedule_code(),tkTicket.getSchedule_exec(), ConstantBaseApp.SYS_STATUS_SCHEDULE);
@@ -481,6 +489,16 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         }
         //
         return false;
+    }
+
+    /**
+     * LUCHE - 18/01/2021
+     * Metodo que incrementa 1 no contador de execuções do app no registro do site.
+     * @param md_site
+     */
+    private void incrementAppExecutionCount(MD_Site md_site) {
+        md_site.setApp_executions_count(md_site.getApp_executions_count() + 1);
+        siteDao.addUpdate(md_site);
     }
 
     private TK_Ticket createTicket(HMAux item, int nextTicketCode, MD_Site md_site, MD_Operation mdOperation) {
@@ -709,8 +727,6 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, true);
             bundle.putBoolean(Act070_Main.PARAM_ACTION_CREATION, true);
         }
-
-
         //
         return bundle;
     }

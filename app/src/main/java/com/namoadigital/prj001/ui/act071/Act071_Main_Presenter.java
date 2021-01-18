@@ -23,6 +23,7 @@ import com.namoadigital.prj001.dao.MD_PartnerDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
@@ -32,6 +33,7 @@ import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Partner;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
@@ -795,6 +797,9 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
             if(!daoObjReturn.hasError()){
                 daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
+                //LUCHE - 18/01/2021 - Remove contador do app.
+                checkAppExecutionDecrementUpdateNeeds(String.valueOf(scheduleExec.getSite_code()));
+                //
                 if(daoObjReturn.hasError()){
                     erroMsg = hmAux_Trans.get("alert_error_on_cancel_schedule_msg");
                 }
@@ -816,6 +821,27 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             );
         }else{
             onBackPressedClicked(mView.getRequestingAct());
+        }
+    }
+
+    /**
+     * LUCHE - 18/01/2021
+     * Metodo que verifica se customer tem licença por site e se site não tem licença ativa  para entrão
+     * atualizar o contador interno, removendo 1 do contador d app;
+     * @param site_code
+     */
+    private void checkAppExecutionDecrementUpdateNeeds(String site_code) {
+        if( ToolBox_Inf.isConcurrentBySiteLicense(context)
+            && ToolBox_Inf.isSiteLicenseDisabled(context,site_code)
+        ) {
+            MD_SiteDao siteDao = new MD_SiteDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+            );
+            MD_Site mdSite = ToolBox_Inf.getSiteObjInfo(context, site_code);
+            mdSite.decreaseAppExecution();
+            siteDao.addUpdate(mdSite);
         }
     }
 
