@@ -7781,6 +7781,25 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 13/01/2021
+     * Metodo que retorna o obj site do site logado
+     * @param context
+     * @return
+     */
+    private static MD_Site getSiteObjInfo(Context context, String site_code) {
+        return new MD_SiteDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        ).getByString(
+            new MD_Site_Sql_003(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                    site_code
+            ).toSqlQuery()
+        );
+    }
+
+    /**
+     * LUCHE - 13/01/2021
      * Metodo que verifica se o tipo de licença do customer logado é o tipo de licença por site.
      * @param context
      * @return Verdadeiro se o tipo de licença for LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE
@@ -7797,9 +7816,20 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean isSiteLicenseDisabled(Context context){
-        MD_Site mdSite = getCurrentSiteObjInfo(context);
+        return isSiteLicenseDisabled(context,ToolBox_Con.getPreference_Site_Code(context));
+    }
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que verifica se o site logado possui licença habilitada.
+     * @param context
+     * @return
+     */
+    public static boolean isSiteLicenseDisabled(Context context, String site_code){
+        MD_Site mdSite = getSiteObjInfo(context, site_code);
         return mdSite != null && mdSite.getLicense_enabled() != null && mdSite.getLicense_enabled() == 0;
     }
+
+
 
     /**
      * LUCHE - 13/01/2021
@@ -7811,7 +7841,11 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean hasFreeExecutionAvailable(Context context){
-        MD_Site mdSite = getCurrentSiteObjInfo(context);
+        return hasFreeExecutionAvailable(context, ToolBox_Con.getPreference_Site_Code(context));
+    }
+
+    private static boolean hasFreeExecutionAvailable(Context context, String site_code) {
+        MD_Site mdSite = getSiteObjInfo(context, site_code);
         if(mdSite != null){
             //Em teste se site tem licença ativa não deveria ser usado esse metodo, uma vez que com
             // licença ativa, NÃO HÁ LIMITE DE EXECUÇÃO, mas fica a tratativa
@@ -7820,7 +7854,7 @@ public class ToolBox_Inf {
             }else{
                 //Se um dos itens de calculo for null, ja deu algum b.o, retorna falso
                 if( mdSite.getFree_executions_max() == null
-                    || mdSite.getFree_executions_count() == null
+                        || mdSite.getFree_executions_count() == null
                 ){
                     return false;
                 }else{
@@ -7843,7 +7877,11 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean isCurrentSiteBlockedByExecution(Context context){
-        MD_Site mdSite = getCurrentSiteObjInfo(context);
+        return isCurrentSiteBlockedByExecution(context, ToolBox_Con.getPreference_Site_Code(context));
+    }
+
+    private static boolean isCurrentSiteBlockedByExecution(Context context, String site_code) {
+        MD_Site mdSite = getSiteObjInfo(context, site_code);
         if(mdSite != null){
             return mdSite.getLicense_blocked() == 1;
         }
@@ -7859,11 +7897,23 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean isSiteBlockedOrLimitExecutionReached(Context context) {
+
+        return isSiteBlockedOrLimitExecutionReached(context, ToolBox_Con.getPreference_Site_Code(context));
+    }
+
+    /**
+     * LUCHE - 14/01/2021
+     * Metodo que verifica se site esta bloquado, verificando tando a propriedade License_blocked
+     * quando o calculo de execuções disponiveis
+     * @param context
+     * @return
+     */
+    public static boolean isSiteBlockedOrLimitExecutionReached(Context context, String site_code) {
         return
-            ToolBox_Inf.isCurrentSiteBlockedByExecution(context)
-                ||( ToolBox_Inf.isConcurrentBySiteLicense(context)
-                && ToolBox_Inf.isSiteLicenseDisabled(context)
-                && !ToolBox_Inf.hasFreeExecutionAvailable(context)
-            );
+                ToolBox_Inf.isCurrentSiteBlockedByExecution(context, site_code)
+                        ||( ToolBox_Inf.isConcurrentBySiteLicense(context)
+                        && ToolBox_Inf.isSiteLicenseDisabled(context, site_code)
+                        && !ToolBox_Inf.hasFreeExecutionAvailable(context, site_code)
+                );
     }
 }

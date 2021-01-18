@@ -1,12 +1,14 @@
 package com.namoadigital.prj001.ui.act008;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
@@ -712,17 +714,35 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     @Override
     public void defineFlow() {
-        if (isSchedule || isFinishPlusNew) {
-            mView.callAct011(context);
-        } else {
-            if(mView.isHas_tk_ticket_is_form_off_hand()) {
-                if (mView.isOffHandForm()) {
+        if((ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)
+                || ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context, mView.getmdProductSerialSiteCode()))
+                && !mView.isHas_tk_ticket_is_form_off_hand()){
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_serial_site_out_of_license_tll"),
+                    hmAux_Trans.get("alert_serial_site_out_of_license_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            onBackPressedClicked();
+                        }
+                    },
+                    0
+
+            );
+        }else {
+            if (isSchedule || isFinishPlusNew) {
+                mView.callAct011(context);
+            } else {
+                if (mView.isHas_tk_ticket_is_form_off_hand()) {
+                    if (mView.isOffHandForm()) {
+                        mView.callAct009(context);
+                    } else {
+                        mView.callAct071(context, getAct071Bundle());
+                    }
+                } else {
                     mView.callAct009(context);
-                }else{
-                    mView.callAct071(context,getAct071Bundle());
                 }
-            }else {
-                mView.callAct009(context);
             }
         }
     }
