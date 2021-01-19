@@ -906,6 +906,11 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
         }
     }
 
+    @Override
+    public boolean isEditable(TK_Ticket tkTicket) {
+        return !tkTicket.isReadOnly(context);
+    }
+
     private String getFormatedProductInfo(MD_Product mdProduct) {
         if (mdProduct != null) {
             return mdProduct.getProduct_id() + " - " + mdProduct.getProduct_desc();

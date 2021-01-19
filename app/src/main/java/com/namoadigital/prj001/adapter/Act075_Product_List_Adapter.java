@@ -62,13 +62,14 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     private boolean isEditable;
     private boolean hasWithdrawApproved;
     private boolean hasAppliedApproved;
+    private String ticketStatus;
     private OnProductInteract mProductListener;
     private TK_Ticket_Approval tkTicketApproval;
     private OnApproveInteract mApproveListener;
     private ApprovalViewHolder approvalVH;
     private boolean hasUpdatePendency;
 
-    public Act075_Product_List_Adapter(Context context, HMAux hmAux_Trans, List<TK_Ticket_Product> mValues, int act_profile, int inventory_control, boolean isEditable, Integer mainUser, boolean hasWithdrawApproved, boolean hasAppliedApproved, boolean hasUpdatePendency, OnProductInteract mProductListener) {
+    public Act075_Product_List_Adapter(Context context, HMAux hmAux_Trans, List<TK_Ticket_Product> mValues, int act_profile, int inventory_control, boolean isEditable, Integer mainUser, boolean hasWithdrawApproved, boolean hasAppliedApproved, boolean hasUpdatePendency, String ticketStatus, OnProductInteract mProductListener) {
         this.mValues.addAll(mValues);
         this.act_profile = act_profile;
         this.inventory_control = inventory_control;
@@ -79,6 +80,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         this.hasWithdrawApproved = hasWithdrawApproved;
         this.hasAppliedApproved = hasAppliedApproved;
         this.hasUpdatePendency = hasUpdatePendency;
+        this.ticketStatus = ticketStatus;
         this.mProductListener = mProductListener;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -89,7 +91,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         loadTranslation();
     }
 
-    public Act075_Product_List_Adapter(Context context, HMAux hmAux_Trans, List<TK_Ticket_Product> mValues, TK_Ticket_Approval tkTicketApproval, int act_profile, int inventory_control, boolean isEditable, Integer mainUser, boolean hasWithdrawApproved, boolean hasAppliedApproved, OnApproveInteract mApproveListener) {
+    public Act075_Product_List_Adapter(Context context, HMAux hmAux_Trans, List<TK_Ticket_Product> mValues, TK_Ticket_Approval tkTicketApproval, int act_profile, int inventory_control, boolean isEditable, Integer mainUser, boolean hasWithdrawApproved, boolean hasAppliedApproved, String ticketStatus, OnApproveInteract mApproveListener) {
         this.mValues.addAll(mValues);
         this.tkTicketApproval = tkTicketApproval;
         this.act_profile = act_profile;
@@ -100,6 +102,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         this.mainUser = mainUser;
         this.hasWithdrawApproved = hasWithdrawApproved;
         this.hasAppliedApproved = hasAppliedApproved;
+        this.ticketStatus = ticketStatus;
         this.mApproveListener = mApproveListener;
         this.mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
@@ -324,7 +327,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                                 enableWithdrawLayout(position, tk_ticket_product);
                             }
                         }else{
-                            disableWithdrawLayout();
+                            disableProductEdition(true);
                         }
                     }else if(!hasAppliedApproved){
                         cl_withdrawn.setVisibility(View.VISIBLE);
@@ -340,7 +343,11 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                                 disableProductEdition(false);
                             }
                         }else{
-                            disableAppliedLayout();
+                            if(hasAppliedApproved){
+                                disableAppliedLayout();
+                            }else {
+                                disableProductEdition(false);
+                            }
                         }
                         calculateProductBalance(tk_ticket_product);
                     }else{
@@ -412,7 +419,11 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             if(isEditable){
                 enableAppliedLayout(position, tk_ticket_product);
             }else{
-                disableAppliedLayout();
+                if(ticketStatus.equals(ConstantBaseApp.SYS_STATUS_DONE)){
+                    disableAppliedLayout();
+                }else {
+                    disableProductEdition(false);
+                }
             }
         }
 
