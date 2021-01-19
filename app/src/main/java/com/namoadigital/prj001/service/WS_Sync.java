@@ -539,7 +539,11 @@ public class WS_Sync extends IntentService {
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
-            siteDao.remove(new MD_Site_Sql_Truncate().toSqlQuery());
+            /**
+             * BARRIONUEVO - 18-01-2021
+             * Remoção trucate da tabela de sites, sera substituito pelo addUpdate com true após a conciliação.
+             */
+//            siteDao.remove(new MD_Site_Sql_Truncate().toSqlQuery());
             productDao.remove(new MD_Product_Sql_Truncate().toSqlQuery());
             productGroupDao.remove(new MD_Product_Group_Sql_Truncate().toSqlQuery());
             productGroupProductDao.remove(new MD_Product_Group_Product_Sql_Truncate().toSqlQuery());
@@ -636,15 +640,9 @@ public class WS_Sync extends IntentService {
                 //Conciliação de dados do site. Projeto de licenças por site.
                 for (MD_Site site : sites) {
                     //
-                    MD_SiteDao mdSiteDao = new MD_SiteDao(
-                            getApplicationContext(),
-                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
-                            Constant.DB_VERSION_CUSTOM
-                    );
-                    //
                     if(ToolBox_Inf.isConcurrentBySiteLicense(getApplicationContext())) {
 
-                        MD_Site md_site = mdSiteDao.getByString(
+                        MD_Site md_site = siteDao.getByString(
                                 new MD_Site_Sql_003(
                                         ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
                                         site.getSite_code()
@@ -660,7 +658,7 @@ public class WS_Sync extends IntentService {
                     }
                 }
                 //
-                siteDao.addUpdate(sites, false);
+                siteDao.addUpdate(sites, true);
             }
 
             //

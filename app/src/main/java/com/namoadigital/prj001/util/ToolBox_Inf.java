@@ -7909,6 +7909,9 @@ public class ToolBox_Inf {
      * @return
      */
     public static boolean isSiteBlockedOrLimitExecutionReached(Context context, String site_code) {
+        if(site_code == null){
+            return false;
+        }
         return
                 ToolBox_Inf.isCurrentSiteBlockedByExecution(context, site_code)
                         ||( ToolBox_Inf.isConcurrentBySiteLicense(context)
