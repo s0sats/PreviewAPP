@@ -222,6 +222,7 @@ public class MD_Site {
         int newAppVal = this.app_executions_count - qtyExecToTransfer;
         this.free_executions_count += qtyExecToTransfer;
         this.app_executions_count =  newAppVal >= 0 ? newAppVal : 0 ;
+        updateLicenseBlocked();
     }
 
     public void decreaseAppExecution(){

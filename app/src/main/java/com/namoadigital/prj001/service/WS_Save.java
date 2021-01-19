@@ -497,10 +497,12 @@ public class WS_Save extends IntentService {
         }
         //Se não acho o site na lista, busca do banco de dados
         MD_Site dbSite = ToolBox_Inf.getSiteObjInfo(getApplicationContext(), siteCode);
-        //
-        siteExecution.add(dbSite);
-        //
-        return dbSite;
+        if(dbSite != null && dbSite.getLicense_enabled() == 0) {
+            siteExecution.add(dbSite);
+            return dbSite;
+        }else{
+            return null;
+        }
     }
 
     private TK_Ticket_Step processTicketStepSaveReturn(long customer_code, Integer ticket_prefix, Integer ticket_code, Integer ticket_seq, Integer ticket_seq_tmp, Integer step_code) {
