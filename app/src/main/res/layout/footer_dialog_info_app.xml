@@ -112,8 +112,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:text="Lvl: MMXXI- trad"
-                    android:textColor="@color/namoa_color_light_blue_lib"
-                    android:textSize="@dimen/font_size_item_md_lib" />
+                    android:textColor="@color/namoa_color_dark_blue_lib"
+                    android:textSize="@dimen/font_size_item_md_lib"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout

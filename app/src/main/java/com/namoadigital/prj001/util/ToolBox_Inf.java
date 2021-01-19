@@ -2197,13 +2197,21 @@ public class ToolBox_Inf {
             //region  Global por nivel
             if (evUsrCustomer.getLicense_control_type() != null && evUsrCustomer.getLicense_control_type().equals(LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL)) {
                 ll_global_level.setVisibility(View.VISIBLE);
+                int textColor;
+                if(evUsrCustomer.getLicense_user_level_changed() != null && evUsrCustomer.getLicense_user_level_changed() == 1){
+                    textColor = R.color.namoa_color_danger_red;
+                }else{
+                    textColor = R.color.namoa_color_light_blue_lib;
+                }
+
                 tv_user_global_level.setText(getLabelValueColorFormmated(
                         context,
                         hmDialogInfo.get(FOOTER_USER_LEVEL_LBL),
                         evUsrCustomer.getLicense_user_level_id(),
                         ": ",
-                        evUsrCustomer.getLicense_user_level_changed() != null && evUsrCustomer.getLicense_user_level_changed() == 1,
-                        R.color.namoa_color_danger_red)
+                        true,
+                        textColor
+                        )
                 );
             }
             //endregion
