@@ -1159,12 +1159,17 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         return has_tk_ticket_is_form_off_hand;
     }
 
+    /**
+     * BARRIONUEVO - 19-01-2021
+     *     Meotodo que recupera site do serial para validação de licenças.
+     * @return
+     */
     @Override
     public String getmdProductSerialSiteCode() {
         if(mdProductSerial != null) {
-            return mdProductSerial.getSite_reason_code();
+            return mdProductSerial.getSite_code() == null ? null : String.valueOf(mdProductSerial.getSite_code());
         }
-        return "-1";
+        return null;
     }
 
 }

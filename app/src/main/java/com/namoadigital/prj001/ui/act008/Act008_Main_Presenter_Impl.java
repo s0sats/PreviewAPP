@@ -714,22 +714,16 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     @Override
     public void defineFlow() {
-        if((ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)
-                || ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context, mView.getmdProductSerialSiteCode()))
+        if(ToolBox_Inf.isConcurrentBySiteLicense(context)
+                && isOutOfLicense()
                 && !mView.isHas_tk_ticket_is_form_off_hand()){
-            ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_serial_site_out_of_license_tll"),
-                    hmAux_Trans.get("alert_serial_site_out_of_license_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            onBackPressedClicked();
-                        }
-                    },
-                    0
-
-            );
+                ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_serial_site_out_of_license_tll"),
+                        hmAux_Trans.get("alert_serial_site_out_of_license_msg"),
+                        null,
+                        0
+                );
         }else {
             if (isSchedule || isFinishPlusNew) {
                 mView.callAct011(context);
@@ -744,6 +738,19 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                     mView.callAct009(context);
                 }
             }
+        }
+    }
+    /**
+     * BARRIONUEVO - 19-01-2021
+     *     Meotodo que verifica a condição das licenças para o site do serial.
+    */
+    private boolean isOutOfLicense() {
+        String serial_site_code = mView.getmdProductSerialSiteCode();
+        if(serial_site_code != null
+        && serial_site_code.equals(ToolBox_Con.getPreference_Site_Code(context)) ){
+            return false;
+        }else{
+            return ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context, serial_site_code);
         }
     }
 
