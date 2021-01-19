@@ -256,9 +256,11 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.namoadigital.prj001.dao.EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_USER_LEVEL_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM;
@@ -2035,6 +2037,10 @@ public class ToolBox_Inf {
         LinearLayout ll_site_license = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_site_license);
         TextView tv_site_license_desc = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_license_desc);
         //
+        //BARRIONUEVO - 19/01/2021
+        LinearLayout ll_global_level = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_global_level);
+        TextView tv_user_global_level = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_user_global_level);
+        //
         LinearLayout ll_site = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_site);
         TextView tv_site_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_lbl);
         TextView tv_site_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_value);
@@ -2179,14 +2185,38 @@ public class ToolBox_Inf {
         EV_User_Customer evUsrCustomer = getCurrentEvUsrCustomerInfo(context);
         //
         ll_site_license.setVisibility(View.GONE);
-        if(evUsrCustomer != null && evUsrCustomer.getLicense_site_code() != null && evUsrCustomer.getLicense_site_code() > 0){
-            ll_site_license.setVisibility(View.VISIBLE);
-            tv_site_license_desc.setText(
-                getSiteLicenseDescFormmated(context,evUsrCustomer.getLicense_site_desc(),evUsrCustomer.getLicense_user_level_id(),evUsrCustomer.getLicense_user_level_changed())
-            );
-        }
+        ll_global_level.setVisibility(View.GONE);
+        if(evUsrCustomer != null){
+          if (evUsrCustomer.getLicense_site_code() != null && evUsrCustomer.getLicense_site_code() > 0){
+                ll_site_license.setVisibility(View.VISIBLE);
+                tv_site_license_desc.setText(
+                        getSiteLicenseDescFormmated(context,evUsrCustomer.getLicense_site_desc(),evUsrCustomer.getLicense_user_level_id(),evUsrCustomer.getLicense_user_level_changed())
+                );
+          }
         //endregion
-        //
+            //region  Global por nivel
+            if (evUsrCustomer.getLicense_control_type() != null && evUsrCustomer.getLicense_control_type().equals(LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL)) {
+                ll_global_level.setVisibility(View.VISIBLE);
+                int textColor;
+                if(evUsrCustomer.getLicense_user_level_changed() != null && evUsrCustomer.getLicense_user_level_changed() == 1){
+                    textColor = R.color.namoa_color_danger_red;
+                }else{
+                    textColor = R.color.namoa_color_light_blue_lib;
+                }
+
+                tv_user_global_level.setText(getLabelValueColorFormmated(
+                        context,
+                        hmDialogInfo.get(FOOTER_USER_LEVEL_LBL),
+                        evUsrCustomer.getLicense_user_level_id(),
+                        ": ",
+                        true,
+                        textColor
+                        )
+                );
+            }
+            //endregion
+        }
+
         if(editMode){
             setEnableUserInfo(context, hmDialogInfo, ss_site, ss_zone, ss_operation);
         }else {
@@ -2261,6 +2291,23 @@ public class ToolBox_Inf {
         //
         return spannableString;
     }
+
+    private static SpannableString getLabelValueColorFormmated(Context context, String label, String value, String separator, boolean applyColor, int color) {
+        String siteDescInfo = label + separator + value;
+        SpannableString spannableString = new SpannableString(siteDescInfo);
+        //
+        if(applyColor){
+            spannableString.setSpan(
+                    new ForegroundColorSpan(context.getResources().getColor(color)),
+                    siteDescInfo.indexOf(value),
+                    siteDescInfo.length(),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            );
+        }
+        //
+        return spannableString;
+    }
+
 
     private static boolean checkForChange(boolean has_changes, String original_code, SearchableSpinner searchableSpinner) {
         String original_code_split[] = original_code.split(" - ");
@@ -2453,6 +2500,7 @@ public class ToolBox_Inf {
         transList.add("footer_dialog_btn_ok");
         transList.add("footer_dialog_btn_ok");
         transList.add("footer_dialog_imei");
+        transList.add("footer_dialog_user_level");
         transList.add("sys_not_found_lbl");
         transList.add("sys_site_or_operation_not_found_error");
         //
@@ -2532,6 +2580,7 @@ public class ToolBox_Inf {
         hmAux.put(Constant.FOOTER_BTN_OK, HmTrans.get("footer_dialog_btn_ok"));
         hmAux.put(Constant.FOOTER_VERSION_LBL, HmTrans.get("footer_version_lbl"));
         hmAux.put(Constant.FOOTER_IMEI_LBL, HmTrans.get("footer_dialog_imei"));
+        hmAux.put(FOOTER_USER_LEVEL_LBL, HmTrans.get("footer_dialog_user_level"));
         hmAux.put(FOOTER_IMEI, ToolBox_Inf.uniqueID(context));
         hmAux.put(FOOTER_OK, HmTrans.get("sys_alert_btn_ok"));
         hmAux.put(FOOTER_CANCEL, HmTrans.get("sys_alert_btn_cancel"));
