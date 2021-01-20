@@ -7708,11 +7708,11 @@ public class ToolBox_Inf {
      * @param context
      * @param fabMenu
      * @param hmAux_Trans
-     * @param ticketStatus
+     * @param ticket
      * @param listener
      */
-    public static void setPipelineFabMenu(Context context, FabMenu fabMenu, HMAux hmAux_Trans, String ticketStatus, FabMenu.IFabMenu listener) {
-        ArrayList<FabMenuItem> fabMenuItems  = initFabMenuItens(context, hmAux_Trans, ticketStatus);
+    public static void setPipelineFabMenu(Context context, FabMenu fabMenu, HMAux hmAux_Trans, TK_Ticket ticket, FabMenu.IFabMenu listener) {
+        ArrayList<FabMenuItem> fabMenuItems  = initFabMenuItens(context, hmAux_Trans, ticket);
         //
         fabMenu.setFabMenuItens(fabMenuItems);
         fabMenu.setmIcons_Enabled(true);
@@ -7720,7 +7720,7 @@ public class ToolBox_Inf {
         fabMenu.refreshDrawableState();
     }
 
-    private static ArrayList<FabMenuItem> initFabMenuItens(Context context, HMAux hmAux_Trans, String ticketStatus) {
+    private static ArrayList<FabMenuItem> initFabMenuItens(Context context, HMAux hmAux_Trans, TK_Ticket ticket) {
         FabMenuItem fabStep;
         FabMenuItem fabProduct;
         FabMenuItem fabOrigin;
@@ -7744,7 +7744,7 @@ public class ToolBox_Inf {
         fabMenuItems.add(fabEditHeader);
         //atalho para edicao de grupo de trabalho.
         if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP)
-        && !TK_Ticket.isReadOnlyStatus(ticketStatus)) {
+        && !ticket.isReadOnly(context)) {
             FabMenuItem fabEditWorkGroup;
             fabEditWorkGroup = new FabMenuItem(context);
             fabEditWorkGroup.setTag(ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL);

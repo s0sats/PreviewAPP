@@ -279,7 +279,7 @@ public class Act077_Main extends Base_Activity_Frag implements Act077_Main_Contr
         if(!isInEditionMode()) {
             fabMenu.setVisibility(View.VISIBLE);
             ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
-                    tkTicket.getTicket_status(), new FabMenu.IFabMenu() {
+                    tkTicket, new FabMenu.IFabMenu() {
                         @Override
                         public void onFabClick(View view) {
                             String tag = (String) view.getTag();

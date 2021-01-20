@@ -347,7 +347,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
      *  Foi necessário encapsular o set do FabMenu devido o status do ticket.
      */
     private void setFabMenu() {
-        ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans, mTicket.getTicket_status(),
+        ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans, mTicket,
                 new FabMenu.IFabMenu() {
                     @Override
                     public void onFabClick(View view) {
@@ -753,6 +753,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     //region NOVO_TICKET
     @Override
     public void setStepperSource(ArrayList<BaseStep> baseSteps) {
+        setReadOnly();
         sources = baseSteps;
         iniAdapter();
     }
@@ -825,7 +826,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 handleFabMenuOnTicketStatusChanged();
                 iniHeaderFrag();
                 mPresenter.getStepsList(mTicket);
-                setReadOnly();
                 initFCMReceiver();
                 if(!isInWgEditMode()) {
                     checkSyncNeeds();

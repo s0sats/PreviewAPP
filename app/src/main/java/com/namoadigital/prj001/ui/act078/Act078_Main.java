@@ -191,7 +191,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         //Quando em edição, o fab não deve ser exibido
         if(!isInEditionMode()) {
             ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
-                    mTicket.getTicket_status(), new FabMenu.IFabMenu() {
+                    mTicket, new FabMenu.IFabMenu() {
                     @Override
                     public void onFabClick(View view) {
                         String tag = (String) view.getTag();

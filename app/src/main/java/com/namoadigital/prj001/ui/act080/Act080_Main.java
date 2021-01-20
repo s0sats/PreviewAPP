@@ -306,7 +306,7 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
         if (!isInEditionMode()) {
             fabMenu.setVisibility(View.VISIBLE);
             ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
-                    mTicket.getTicket_status(), new FabMenu.IFabMenu() {
+                    mTicket, new FabMenu.IFabMenu() {
                         @Override
                         public void onFabClick(View view) {
 

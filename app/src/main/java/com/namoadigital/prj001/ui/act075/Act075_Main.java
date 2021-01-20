@@ -188,7 +188,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
         //
 
         ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
-                tkTicket.getTicket_status(), new FabMenu.IFabMenu() {
+                tkTicket, new FabMenu.IFabMenu() {
                     @Override
                     public void onFabClick(View view) {
                         String tag = (String) view.getTag();
