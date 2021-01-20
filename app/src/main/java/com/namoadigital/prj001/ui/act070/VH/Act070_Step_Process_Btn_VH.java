@@ -24,12 +24,14 @@ public class Act070_Step_Process_Btn_VH extends RecyclerView.ViewHolder{
     private TextView tvBtnLbl;
     private Act070_Steps_Adapter.OnProcessBtnClickListener onProcessBtnClickListener;
     private boolean isInWgEditMode = false;
+    protected boolean inReadOnlyMode = false;
 
-    public Act070_Step_Process_Btn_VH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnProcessBtnClickListener onProcessBtnClickListener,boolean isInWgEditMode) {
+    public Act070_Step_Process_Btn_VH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnProcessBtnClickListener onProcessBtnClickListener, boolean isInWgEditMode, boolean inReadOnlyMode) {
         super(itemView);
         this.context = context;
         this.onProcessBtnClickListener = onProcessBtnClickListener;
         this.isInWgEditMode = isInWgEditMode;
+        this.inReadOnlyMode = inReadOnlyMode;
         bindViews();
     }
 
@@ -67,7 +69,7 @@ public class Act070_Step_Process_Btn_VH extends RecyclerView.ViewHolder{
      * Se modo edição, oculta botões de processo
      */
     private void applyEditVisivilityIfNeeds() {
-        if(isInWgEditMode){
+        if(isInWgEditMode || inReadOnlyMode){
             clBackground.setVisibility(View.GONE);
         }
     }

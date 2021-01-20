@@ -54,6 +54,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
     private OnNoneClickListener onNoneClickListener;
     private OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener;
     private boolean isInWgEditMode;
+    private boolean inReadOnlyMode;
 
     public interface OnMainClickListener {
         void onMainClick(boolean isShown, int mainPosition);
@@ -85,7 +86,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         this.onMainClickListener = onMainClickListener;
     }
 
-    public Act070_Steps_Adapter(Context context, ArrayList<BaseStep> source, OnMainClickListener onMainClickListener, OnActionClickListener onActionClickListener, OnChecklistClickListener onChecklistClickListener, OnApprovalClickListener onApprovalClickListener, OnProcessBtnClickListener onProcessBtnClickListener, OnNoneClickListener onNoneClickListener, OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener, boolean isInWgEditMode) {
+    public Act070_Steps_Adapter(Context context, ArrayList<BaseStep> source, OnMainClickListener onMainClickListener, OnActionClickListener onActionClickListener, OnChecklistClickListener onChecklistClickListener, OnApprovalClickListener onApprovalClickListener, OnProcessBtnClickListener onProcessBtnClickListener, OnNoneClickListener onNoneClickListener, OnWorkgroupSpinnerListeners onWorkgroupSpinnerClickListener, boolean isInWgEditMode,boolean inReadOnlyMode) {
         this.context = context;
         this.source = source;
         this.onMainClickListener = onMainClickListener;
@@ -101,6 +102,7 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
         );
         this.onWorkgroupSpinnerClickListener = onWorkgroupSpinnerClickListener;
         this.isInWgEditMode = isInWgEditMode;
+        this.inReadOnlyMode = inReadOnlyMode;
         //
         loadTranslation();
     }
@@ -134,7 +136,8 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                     view,
                     onMainClickListener,
                     onWorkgroupSpinnerClickListener,
-                    isInWgEditMode
+                    isInWgEditMode,
+                    inReadOnlyMode
                     );
             case VIEW_TYPE_STEP_ACTION:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_action_cell, viewGroup, false);
@@ -146,8 +149,8 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                     hmAux_Trans.get("review_process_btn"),
                     hmAux_Trans.get("continue_process_btn"),
                     hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC),
-                    isInWgEditMode
-
+                    isInWgEditMode,
+                    inReadOnlyMode
                 );
             case VIEW_TYPE_STEP_CHECKLIST:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_checklist_cell, viewGroup, false);
@@ -159,7 +162,8 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                     hmAux_Trans.get("review_process_btn"),
                     hmAux_Trans.get("continue_process_btn"),
                     hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC),
-                    isInWgEditMode
+                    isInWgEditMode,
+                    inReadOnlyMode
                 );
             case VIEW_TYPE_STEP_APPROVAL:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_approval_cell, viewGroup, false);
@@ -173,7 +177,8 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                     hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC),
                     hmAux_Trans.get("review_rejection_btn"),
                     hmAux_Trans.get("approved_lbl"),
-                    isInWgEditMode
+                    isInWgEditMode,
+                    inReadOnlyMode
                 );
             case VIEW_TYPE_STEP_NONE:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_none_cell, viewGroup, false);
@@ -186,11 +191,12 @@ public class Act070_Steps_Adapter extends RecyclerView.Adapter<RecyclerView.View
                     hmAux_Trans.get("review_process_btn"),
                     hmAux_Trans.get("continue_process_btn"),
                     hmAux_Trans.get(ConstantBaseApp.SYS_STATUS_WAITING_SYNC),
-                    isInWgEditMode
+                    isInWgEditMode,
+                    inReadOnlyMode
                 );
             case VIEW_TYPE_STEP_PROCESS_BTN:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_process_btn_cell, viewGroup, false);
-                return new Act070_Step_Process_Btn_VH(context,view, onProcessBtnClickListener,isInWgEditMode);
+                return new Act070_Step_Process_Btn_VH(context,view, onProcessBtnClickListener,isInWgEditMode,inReadOnlyMode);
             case VIEW_TYPE_STEP_FOOTER:
                 view = LayoutInflater.from(context).inflate(R.layout.act070_step_footer_cell, viewGroup, false);
                 return new Act070_Step_FooterVH(context,view);

@@ -38,8 +38,8 @@ public class Act070_Step_ApprovalVH extends Act070_Step_Abstract_ProcessVH {
     private Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick;
 
 
-    public Act070_Step_ApprovalVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick, String transStartProcess, String transReviewProcess, String transContinueProcess, String transWaitingSync, String transReviewRejection, String transApprovedStatus,boolean isInWgEditMode) {
-        super(context,itemView,transStartProcess,transReviewProcess,transContinueProcess,transWaitingSync,isInWgEditMode);
+    public Act070_Step_ApprovalVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnApprovalClickListener onApprovalClick, String transStartProcess, String transReviewProcess, String transContinueProcess, String transWaitingSync, String transReviewRejection, String transApprovedStatus, boolean isInWgEditMode, boolean inReadOnlyMode) {
+        super(context,itemView,transStartProcess,transReviewProcess,transContinueProcess,transWaitingSync,isInWgEditMode,inReadOnlyMode);
         this.onApprovalClick = onApprovalClick;
         this.transReviewRejection = transReviewRejection;
         this.transApprovedStatus = transApprovedStatus;

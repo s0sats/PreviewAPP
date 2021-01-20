@@ -32,8 +32,8 @@ public class Act070_Step_FormVH extends Act070_Step_Abstract_ProcessVH {
     private TextView tvProcessAction;
     private Act070_Steps_Adapter.OnChecklistClickListener onChecklistClickListener;
 
-    public Act070_Step_FormVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnChecklistClickListener onChecklistClickListener, String transStartProcess, String transReviewProcess, String transContinueProcess,String transWaitingSync, boolean isInWgEditMode) {
-        super(context,itemView,transStartProcess,transReviewProcess,transContinueProcess,transWaitingSync,isInWgEditMode);
+    public Act070_Step_FormVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnChecklistClickListener onChecklistClickListener, String transStartProcess, String transReviewProcess, String transContinueProcess, String transWaitingSync, boolean isInWgEditMode, boolean inReadOnlyMode) {
+        super(context,itemView,transStartProcess,transReviewProcess,transContinueProcess,transWaitingSync,isInWgEditMode,inReadOnlyMode);
         this.onChecklistClickListener = onChecklistClickListener;
         bindViews();
     }

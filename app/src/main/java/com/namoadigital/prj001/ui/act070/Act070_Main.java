@@ -743,7 +743,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             }
 
         },
-            inWgEditMode);
+        inWgEditMode,
+        bReadOnly
+        );
         //
         initRecycle();
     }

@@ -24,8 +24,9 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
     protected String transWaitingSync;
     protected String transContinue;
     protected boolean isInWgEditMode;
+    protected boolean inReadOnlyMode = false;
 
-    public Act070_Step_Abstract_ProcessVH(Context context, @NonNull View itemView, String transStartProcess, String transReviewProcess, String transContinueProcess, String transWaitingSync, boolean isInWgEditMode) {
+    public Act070_Step_Abstract_ProcessVH(Context context, @NonNull View itemView, String transStartProcess, String transReviewProcess, String transContinueProcess, String transWaitingSync, boolean isInWgEditMode,boolean inReadOnlyMode) {
         super(itemView);
         this.context = context;
         this.transStartProcess = transStartProcess;
@@ -33,6 +34,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         this.transContinue = transContinueProcess;
         this.transWaitingSync = transWaitingSync;
         this.isInWgEditMode = isInWgEditMode;
+        this.inReadOnlyMode = inReadOnlyMode;
     }
 
     protected void setProductAndSerialVisibility(TextView tvProduct, TextView tvSerial, boolean isProductDifferentThanTicket, boolean isSerialDifferentThanTicket){
@@ -88,7 +90,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
               && !ConstantBaseApp.SYS_STATUS_REJECTED.equals(processStatus)
               &&( ConstantBaseApp.SYS_STATUS_DONE.equals(processStatus)
                   || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(processStatus)
-                  || (isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn) && !isInWgEditMode)
+                  || (isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn) && (!isInWgEditMode && !inReadOnlyMode))
             )
         ) {
             ivProcessAction.setImageDrawable(drawable);
@@ -122,7 +124,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
            && !ConstantBaseApp.SYS_STATUS_CANCELLED.equals(stepStatus)
            && !ConstantBaseApp.SYS_STATUS_REJECTED.equals(stepStatus)
         ) {
-            if(isCurrentStep && !isInWgEditMode) {
+            if(isCurrentStep && (!isInWgEditMode && !inReadOnlyMode)) {
                 //Se start_end, se tiver checkin, fica amarelo , se não fica cinza indicando que falta q
                 //não é possivel mexer.
                 if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(StepType)) {
