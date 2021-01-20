@@ -304,6 +304,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         transList.add("alert_wg_changes_ll_be_lost_by_sync_needs_ttl");
         transList.add("alert_wg_changes_ll_be_lost_by_sync_needs_msg");
         //
+        transList.add("alert_readonly_by_low_user_level_ttl");
+        transList.add("alert_readonly_by_low_user_level_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
             mModule_Code,
@@ -337,8 +340,22 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             if(mTicket != null) {
                 setFabMenu();
             }
+            informReadonlyByUserLevel();
         } else {
             paramErrorFlow();
+        }
+    }
+
+    private void informReadonlyByUserLevel() {
+        if(bReadOnly
+            && mTicket != null
+            && !mTicket.isReadOnlyStatus()
+            && mTicket.isReadOnlyUserLevel(context)
+        ){
+            showAlert(
+                hmAux_Trans.get("alert_readonly_by_low_user_level_ttl"),
+                hmAux_Trans.get("alert_readonly_by_low_user_level_msg")
+            );
         }
     }
 
