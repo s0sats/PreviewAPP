@@ -677,6 +677,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         mNavTicketSeqTmp = -1;
     }
 
+    /**
+     * LUCAS - 21/01/2021
+     * Metodo chamado quando a act ainda esta aberta e recebe uma nova intent.
+     * Essa situação acontece quando a tela do ticket estava aberta, o usuario acessou o chat via
+     * notificação e depois navegou novamente para a tela fo ticket via botão no chat.
+     * @param intent
+     */
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
