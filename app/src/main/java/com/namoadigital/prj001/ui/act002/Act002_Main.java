@@ -45,7 +45,10 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     private EV_User_Customer_Adapter mAdapter;
     private String wsProcess;
     private Bundle mBundle;
+    //Tmp que guarda o hmAux com dados do customer clicado.
     private HMAux selectedCustomerInfo;
+    //Tmp que guarda a licença de site selecionado, usado somente no fluxo do otherDevice.
+    private SiteLicense siteLicenseTmp = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -175,7 +178,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         if (ToolBox_Con.isOnline(context, true) || item.get(EV_User_CustomerDao.SESSION_APP).trim().length() != 0) {
             ToolBox_Con.setPreference_Customer_Code_TMP(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
             ToolBox_Con.setPreference_Translate_Code_TMP(context, item.get(EV_User_CustomerDao.TRANSLATE_CODE));
-
+            siteLicenseTmp = selectedSiteLicense;
+            //
             if (item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0) {
 
                 showPD(
@@ -310,7 +314,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                 1, //Forced Login
                 1, //Valida Update Required. 1 = não !!
                 1,  //Valida User_others_device. 1 = não, 0 = sim
-            null);
+            siteLicenseTmp);
 
     }
 
