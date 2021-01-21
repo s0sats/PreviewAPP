@@ -651,9 +651,9 @@ public class WS_Sync extends IntentService {
                         if(md_site != null) {
                             site.setApp_executions_count(md_site.getApp_executions_count());
 
-                            if (site.getLicense_enabled() != null && site.getLicense_enabled() == 0) {
-                                site.updateLicenseBlocked();
-                            }
+//                            if (site.getLicense_enabled() != null && site.getLicense_enabled() == 0) {
+//                                site.updateLicenseBlocked();
+//                            }
                         }
                     }
                 }
