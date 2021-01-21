@@ -327,6 +327,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             hmAux_Trans
         );
         //
+        setActivityData();
+    }
+
+    /**
+     * BARRIONUEVO - 21-01-2021
+     * Metodo criado para concentrar o carregamento da tela, foi necessario devido a instancia criada
+     * pela notificacao do chat.
+     */
+    private void setActivityData() {
         recoverIntentsInfo();
         //LUCHE - 15/12/2020 - Verifica necessidade de deletar arquivos de lista de workgroup e workgroup
         //alterados
@@ -338,7 +347,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             updateTicketData();
             //o metodo estah aqui pois o metodo updateTicketData() recupera o valor do ticket.
             if(mTicket != null) {
-                setFabMenu();
+                if (fabMenu != null
+                && (fabMenu.getmButtons()== null || fabMenu.getmButtons().size() <= 0)) {
+                    setFabMenu();
+                }
             }
             informReadonlyByUserLevel();
         } else {
@@ -663,6 +675,13 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         mNavStepCode = -1;
         mNavTicketSeq = -1;
         mNavTicketSeqTmp = -1;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        setActivityData();
     }
 
     @Override
@@ -1425,7 +1444,6 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         startStopFCMReceiver(false);
         //
         super.onDestroy();
-
     }
 
     //region WS Callbacks
