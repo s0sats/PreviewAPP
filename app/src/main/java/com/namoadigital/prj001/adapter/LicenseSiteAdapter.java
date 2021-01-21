@@ -86,7 +86,7 @@ public class LicenseSiteAdapter extends RecyclerView.Adapter<LicenseSiteAdapter.
             if(siteLicense.getUser_level_changed() == 1){
                 spannableString.setSpan(
                     new ForegroundColorSpan(context.getResources().getColor(R.color.namoa_color_danger_red)),
-                    siteDescInfo.indexOf(siteLicense.getUser_level_id()),
+                    (siteDescInfo.indexOf(" ("+siteLicense.getUser_level_id()) + 2),
                     siteDescInfo.indexOf(separator),
                     Spanned.SPAN_INCLUSIVE_INCLUSIVE
                 );

@@ -2283,7 +2283,7 @@ public class ToolBox_Inf {
         if(license_user_level_changed != null && license_user_level_changed == 1){
             spannableString.setSpan(
                 new ForegroundColorSpan(context.getResources().getColor(R.color.namoa_color_danger_red)),
-                siteDescInfo.indexOf(license_user_level_id),
+                (siteDescInfo.indexOf(" / " + license_user_level_id) + 2),
                 siteDescInfo.length(),
                 Spanned.SPAN_INCLUSIVE_INCLUSIVE
             );
@@ -2299,7 +2299,7 @@ public class ToolBox_Inf {
         if(applyColor){
             spannableString.setSpan(
                     new ForegroundColorSpan(context.getResources().getColor(color)),
-                    siteDescInfo.indexOf(value),
+                (siteDescInfo.indexOf(separator + value) + separator.length()),
                     siteDescInfo.length(),
                     Spanned.SPAN_INCLUSIVE_INCLUSIVE
             );
