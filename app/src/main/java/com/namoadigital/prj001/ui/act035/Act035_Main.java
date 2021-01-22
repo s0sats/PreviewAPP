@@ -1338,6 +1338,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         bundle.putString(GE_Custom_Form_ApDao.AP_CODE, hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
         bundle.putString(CH_RoomDao.ROOM_CODE, mRoom_code);
         //
+        mRoom_code = "";
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -2959,6 +2960,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             bundle.putString(CH_RoomDao.ROOM_CODE, mRoom_code);
         }
         mIntent.putExtras(bundle);
+        mRoom_code = "";
         startActivity(mIntent);
         finish();
     }
@@ -2975,6 +2977,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT035);
         }
         mIntent.putExtras(bundle);
+        mRoom_code = "";
         startActivity(mIntent);
         finish();
     }
