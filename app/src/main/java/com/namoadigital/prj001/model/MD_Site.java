@@ -208,6 +208,11 @@ public class MD_Site {
         this.license_blocked = license_blocked;
     }
 
+    /**
+     * BARRIONUEVO - 21-01-2021
+     * Metodo suprimido, nao sera usado para definir a flag de license count.
+     */
+    @Deprecated
     public void updateLicenseBlocked() {
         if(this.license_enabled != null && this.license_enabled == 0) {
             setLicense_blocked(this.free_executions_max - (this.free_executions_count + this.app_executions_count) <= 0 ? 1 : 0);
@@ -222,7 +227,7 @@ public class MD_Site {
         int newAppVal = this.app_executions_count - qtyExecToTransfer;
         this.free_executions_count += qtyExecToTransfer;
         this.app_executions_count =  newAppVal >= 0 ? newAppVal : 0 ;
-        updateLicenseBlocked();
+//        updateLicenseBlocked();
     }
 
     public void decreaseAppExecution(){
