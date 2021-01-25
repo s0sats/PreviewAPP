@@ -324,7 +324,9 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
             && !mTicket.isReadOnly(context)) {
                 callMainUserService(mTicket);
             }
-            return null;
+            mainUserOptionList = new ArrayList<>();
+            mainUserOptionList.add(new HMAux());
+            return mainUserOptionList;
         }
     }
 

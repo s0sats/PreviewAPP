@@ -1011,6 +1011,8 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
+        handleReadOnly(true);
+        //
         disableProgressDialog();
     }
 
