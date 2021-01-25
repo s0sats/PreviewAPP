@@ -80,7 +80,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
-import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
@@ -1879,7 +1879,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     private boolean isSiteLoggedIoControl() {
         MD_Site mdSite = siteDao.getByString(
-                new MD_Site_Sql_001(
+                new MD_Site_Sql_003(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         ToolBox_Con.getPreference_Site_Code(context)
                 ).toSqlQuery()

@@ -5,8 +5,13 @@ import com.namoadigital.prj001.database.Specification;
 
 /**
  * Created by neomatrix on 23/01/17.
+ *
+ * LUCHE - 25/01/2021
+ * Essa query não foi atualizada com os novos campos do site e quando usada para carregar um obj MD_SITE
+ * estava gerando obj null.
+ * Sua utilização foi substituida pela MD_Site_Sql_003 que faz um select *
  */
-
+@Deprecated
 public class MD_Site_Sql_001 implements Specification {
 
     private long s_customer_code;

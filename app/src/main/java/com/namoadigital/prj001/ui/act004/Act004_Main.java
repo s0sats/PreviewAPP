@@ -25,7 +25,7 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
@@ -149,7 +149,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ).getByString(
-                        new MD_Site_Sql_001(
+                        new MD_Site_Sql_003(
                                 ToolBox_Con.getPreference_Customer_Code(context),
                                 ToolBox_Con.getPreference_Site_Code(context)
                         ).toSqlQuery()
@@ -158,7 +158,7 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
         String siteDesc = hmAux_Trans.get("lbl_external_site");
 
         if(site != null){
-            siteDesc = site.getSite_desc();
+            siteDesc = site.getSite_id() + " - "  + site.getSite_desc()  ;
         }
         //
         tv_site_val.setText(siteDesc);
