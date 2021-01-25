@@ -8,12 +8,9 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 
@@ -121,22 +118,10 @@ public class Act024_Main_Presenter_Impl implements Act024_Main_Presenter {
 
 
     @Override
-    public void startDownloadServices() {
-
-        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
-        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-        Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
-
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
-        mIntentPDF.putExtras(bundle);
-        mIntentPIC.putExtras(bundle);
-        bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
-        mIntentLogo.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntentPDF);
-        context.sendBroadcast(mIntentPIC);
-        context.sendBroadcast(mIntentLogo);
+    public void startDownloadWorkers() {
+        //LUCHE - 30/06/2020
+        //Substituido a chamada dosantigo serviço pelos Workers
+        ToolBox_Inf.scheduleAllDownloadWorkers(context);
     }
 
     @Override

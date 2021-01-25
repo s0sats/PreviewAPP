@@ -14,8 +14,6 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.TSO_Search_Env;
 import com.namoadigital.prj001.model.TSO_Search_Rec;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -153,19 +151,17 @@ public class WS_SO_Search extends IntentService {
     private void callFinishProcessing(HMAux hmAux) {
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_end_so_download"), hmAux, "", "0");
         //
-        startDownloadServices();
+        startDownloadWorkers();
     }
 
-    private void startDownloadServices() {
-        Intent mIntentPDF = new Intent(getApplicationContext(), WBR_DownLoad_PDF.class);
-        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
-        mIntentPIC.putExtras(bundle);
-        mIntentPDF.putExtras(bundle);
-        //
-        getApplicationContext().sendBroadcast(mIntentPDF);
-        getApplicationContext().sendBroadcast(mIntentPIC);
+    /**
+     * LUCHE - 30/06/2020
+     * Alterado metodo que chamada serviços de download de img e pdf, para chamar os respectivos
+     * Workers
+     */
+    private void startDownloadWorkers() {
+        ToolBox_Inf.scheduleDownloadPdfWork(getApplicationContext());
+        ToolBox_Inf.scheduleDownloadPictureWork(getApplicationContext());
     }
 
     private void loadTranslation() {

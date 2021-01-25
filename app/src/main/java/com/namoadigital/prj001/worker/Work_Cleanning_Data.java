@@ -1,7 +1,11 @@
-package com.namoadigital.prj001.service;
+package com.namoadigital.prj001.worker;
 
-import android.app.IntentService;
-import android.content.Intent;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.FCMMessageDao;
@@ -48,32 +52,28 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 
-/**
- * Created by neomatrix on 28/10/16.
- */
-
-public class WS_Cleanning extends IntentService {
+public class Work_Cleanning_Data extends Worker {
+    public static final String WORKER_TAG = "Work_Cleanning_Data";
 
     private String sFormat_String = "yyyy-MM-dd HH:mm:ss Z";
     private int qtyDaysToSub = 10;
-
     private long customer_code = -1L;
 
-    public WS_Cleanning() {
-        super("WS_Cleanning");
+    public Work_Cleanning_Data(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+        super(context, workerParams);
     }
 
+    @NonNull
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public Result doWork() {
+        Log.d("workerTsts", WORKER_TAG+" :doWork");
         try {
-
             customer_code = ToolBox_Con.getPreference_Customer_Code(getApplicationContext());
-
             //Se parametro de customer na preferencias estiver igual a -1 não realizar a limpeza.
             if (customer_code == -1L) {
-                return;
+                return Result.success();
             }
-
+            //
             deleteFormLocal();
             deleteSO();
             deleteSOExpress();
@@ -81,13 +81,15 @@ public class WS_Cleanning extends IntentService {
             deleteFormAP();
             deleteTickets();
             deleteSchedules();
-
+            //
+            return Result.success();
         } catch (Exception e) {
-            String results = e.toString();
             ToolBox_Inf.registerException(getClass().getName(), e);
-        } finally {
+            Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
+            return Result.retry();
         }
     }
+
 
     private void deleteSchedules() {
         MD_Schedule_ExecDao scheduleExecDao = new MD_Schedule_ExecDao(
@@ -100,7 +102,7 @@ public class WS_Cleanning extends IntentService {
             (ArrayList<MD_Schedule_Exec>) scheduleExecDao.query(
                 new WS_Cleaning_Sql_010(
                     customer_code,
-                    sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
+                    sDTFormat_Sub_Days(sFormat_String, qtyDaysToSub)
                 ).toSqlQuery()
             );
         //
@@ -115,25 +117,25 @@ public class WS_Cleanning extends IntentService {
         );
         //
         ArrayList<TK_Ticket> tickets = (ArrayList<TK_Ticket>) ticketDao.query(
-                new WS_Cleaning_Sql_009(
-                    customer_code,
-                    sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
-                ).toSqlQuery()
+            new WS_Cleaning_Sql_009(
+                customer_code,
+                sDTFormat_Sub_Days(sFormat_String, qtyDaysToSub)
+            ).toSqlQuery()
         );
         //
-        if(tickets != null && tickets.size() > 0){
+        if (tickets != null && tickets.size() > 0) {
             ArrayList<File> filesToDeleteList = new ArrayList<>();
             for (TK_Ticket ticket : tickets) {
                 //
                 DaoObjReturn daoObjReturn = ticketDao.removeFull(ticket);
                 //
-                if(!daoObjReturn.hasError()){
-                    if(ticket.getOpen_photo_local()!= null && !ticket.getOpen_photo_local().isEmpty()   ){
-                        filesToDeleteList.add(new File(Constant.CACHE_PATH_PHOTO + "/" +ticket.getOpen_photo_local()));
+                if (!daoObjReturn.hasError()) {
+                    if (ticket.getOpen_photo_local() != null && !ticket.getOpen_photo_local().isEmpty()) {
+                        filesToDeleteList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + ticket.getOpen_photo_local()));
                     }
                     //
                     for (TK_Ticket_Ctrl ctrl : ticket.getCtrl()) {
-                        if(ctrl.getAction().getAction_photo_local() != null && !ctrl.getAction().getAction_photo_local() .isEmpty()){
+                        if (ctrl.getAction().getAction_photo_local() != null && !ctrl.getAction().getAction_photo_local().isEmpty()) {
                             filesToDeleteList.add(new File(Constant.CACHE_PATH_PHOTO + "/" + ctrl.getAction().getAction_photo_local()));
                         }
                     }
@@ -152,7 +154,7 @@ public class WS_Cleanning extends IntentService {
             formApDao.query(
                 new WS_Cleaning_Sql_006(
                     customer_code,
-                    sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
+                    sDTFormat_Sub_Days(sFormat_String, qtyDaysToSub)
                 ).toSqlQuery()
             );
         //
@@ -206,7 +208,7 @@ public class WS_Cleanning extends IntentService {
         // Remove TODOS OS ARQUIVOS vinculados a S.O
         ArrayList<SM_SO> sm_sos = (ArrayList<SM_SO>) sm_soDao.query(
             new WS_Cleaning_Sql_003(
-                sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
+                sDTFormat_Sub_Days(sFormat_String, qtyDaysToSub)
             ).toSqlQuery()
         );
 
@@ -244,7 +246,7 @@ public class WS_Cleanning extends IntentService {
         // Remove TODAS AS S.O. Express
         soPackExpressLocalDao.remove(
             new WS_Cleaning_Sql_008(
-                sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
+                sDTFormat_Sub_Days(sFormat_String, qtyDaysToSub)
             ).toSqlQuery()
         );
     }
@@ -282,7 +284,7 @@ public class WS_Cleanning extends IntentService {
 
         ArrayList<HMAux> hmAuxs = (ArrayList<HMAux>) formDataDao.query_HM(
             new WS_Cleaning_Sql_001(
-                sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
+                sDTFormat_Sub_Days(sFormat_String, qtyDaysToSub)
             ).toSqlQuery()
         );
 
@@ -295,7 +297,7 @@ public class WS_Cleanning extends IntentService {
 
         ArrayList<HMAux> hmAuxFiles = (ArrayList<HMAux>) ge_fileDao.query_HM(
             new WS_Cleaning_Sql_002(
-                sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
+                sDTFormat_Sub_Days(sFormat_String, qtyDaysToSub)
             ).toSqlQuery()
         );
 
@@ -379,7 +381,7 @@ public class WS_Cleanning extends IntentService {
 
         fcmMessageDao.remove(
             new FCMMessage_Sql_006(
-                sDTFormat_Sub_Days("yyyy-MM-dd HH:mm:ss Z", qtyDaysToSub)
+                sDTFormat_Sub_Days(sFormat_String, qtyDaysToSub)
             ).toSqlQuery()
         );
     }
@@ -389,104 +391,6 @@ public class WS_Cleanning extends IntentService {
         Calendar ca1 = Calendar.getInstance();
         ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - (days_to_sub + 1));
         //
-        SimpleDateFormat sdf = new SimpleDateFormat(sDTFormatS) {
-            public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition pos) {
-                StringBuffer toFix = super.format(date, toAppendTo, pos);
-                return toFix.insert(toFix.length() - 2, ':');
-            }
-        };
-
-        try {
-            sResults = sdf.format(ca1.getTime());
-        } catch (Exception var5) {
-            sResults = "1900-01-01 00:00:00";
-        }
-
-        return sResults;
-    }
-
-    public String sDTFormat_10_Days(String sDTFormatS) {
-        String sResults = "";
-        Calendar ca1 = Calendar.getInstance();
-        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - 11);
-
-        SimpleDateFormat sdf = new SimpleDateFormat(sDTFormatS) {
-            public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition pos) {
-                StringBuffer toFix = super.format(date, toAppendTo, pos);
-                return toFix.insert(toFix.length() - 2, ':');
-            }
-        };
-
-        try {
-            sResults = sdf.format(ca1.getTime());
-        } catch (Exception var5) {
-            sResults = "1900-01-01 00:00:00";
-        }
-
-        return sResults;
-    }
-
-    public String sDTFormat_5_Days(String sDTFormatS) {
-        String sResults = "";
-        Calendar ca1 = Calendar.getInstance();
-        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - 6);
-        //Teste
-        //ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) + 6);
-
-        SimpleDateFormat sdf = new SimpleDateFormat(sDTFormatS) {
-            public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition pos) {
-                StringBuffer toFix = super.format(date, toAppendTo, pos);
-                return toFix.insert(toFix.length() - 2, ':');
-            }
-        };
-
-        try {
-            sResults = sdf.format(ca1.getTime());
-        } catch (Exception var5) {
-            sResults = "1900-01-01 00:00:00";
-        }
-
-        return sResults;
-    }
-
-    public String sDTFormat_21_Days() {
-        String sResults = "";
-        Calendar ca1 = Calendar.getInstance();
-        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - 22);
-
-        return String.valueOf(ca1.getTimeInMillis());
-    }
-
-    public String sDTFormat_30_Days(String sDTFormatS) {
-        String sResults = "";
-        Calendar ca1 = Calendar.getInstance();
-        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - 31);
-        //Teste
-        //ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) + 6);
-
-        SimpleDateFormat sdf = new SimpleDateFormat(sDTFormatS) {
-            public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition pos) {
-                StringBuffer toFix = super.format(date, toAppendTo, pos);
-                return toFix.insert(toFix.length() - 2, ':');
-            }
-        };
-
-        try {
-            sResults = sdf.format(ca1.getTime());
-        } catch (Exception var5) {
-            sResults = "1900-01-01 00:00:00";
-        }
-
-        return sResults;
-    }
-
-    public String sDTFormat_35_Days(String sDTFormatS) {
-        String sResults = "";
-        Calendar ca1 = Calendar.getInstance();
-        ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) - 36);
-        //Teste
-        //ca1.set(Calendar.DAY_OF_MONTH, ca1.get(Calendar.DAY_OF_MONTH) + 6);
-
         SimpleDateFormat sdf = new SimpleDateFormat(sDTFormatS) {
             public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition pos) {
                 StringBuffer toFix = super.format(date, toAppendTo, pos);

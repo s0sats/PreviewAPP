@@ -293,7 +293,7 @@ public class Act024_Main extends Base_Activity implements Act024_Main_View {
 
         if (hmAux.containsKey(WS_SO_Search.SO_LIST_QTY)) {
             //Dispara serviço de downloads
-            mPresenter.startDownloadServices();
+            mPresenter.startDownloadWorkers();
             //
 //            if (hmAux.get(WS_SO_Search.SO_LIST_QTY).equals("1")) {
 //                String so[] = hmAux.get(WS_SO_Search.SO_LIST).replace(".", "#").split("#");

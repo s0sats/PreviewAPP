@@ -3,7 +3,7 @@
     package="com.namoadigital.prj001">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<!--    <uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -578,15 +578,8 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.WBR_AL_Full" />
 
-        <service android:name=".service.WS_AL_Full" />
-
-        <receiver android:name=".receiver.WBR_AL_Quarter" />
-
-        <service android:name=".service.WS_AL_Quarter" />
-        <service android:name=".service.SV_LocationTracker"/>
-
+        <service android:name=".service.SV_LocationTracker" />
         <service android:name=".fcm.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

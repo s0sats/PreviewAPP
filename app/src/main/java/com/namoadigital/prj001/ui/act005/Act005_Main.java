@@ -51,11 +51,8 @@ import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MenuMainNamoa;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_AP_Save;
@@ -216,8 +213,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act005_main);
-        //
-        ToolBox_Inf.reprogramAlarms_Full_Quarter(Act005_Main.this);
+        //TODO APAGAR APÓS SUBSTITUIR PELOS WORKERS
+        //ToolBox_Inf.reprogramAlarms_Full_Quarter(Act005_Main.this);
+        //LUCHE - 24/06/2020 Worker de agendamento
+        ToolBox_Inf.scheduleQuarterScheduleNotification();
+        ToolBox_Inf.schedule4HoursScheduleNotification();
+        ToolBox_Inf.scheduleCleanningWork();
         //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -230,11 +231,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
         startService(mIntent);
         //
-        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntentPIC.putExtras(bundle);
-        context.sendBroadcast(mIntentPIC);
+        ToolBox_Inf.scheduleDownloadPictureWork(context);
         //
         if (ToolBox_Inf.isUsrAppLogged(context) && !ScreenStatusService.isRunning) {
             Intent mScreenStatusService = new Intent(context, ScreenStatusService.class);
@@ -1408,14 +1405,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
-                        activateUpload(context);
+                        ToolBox_Inf.scheduleUploadImgWork(context);
                     }
                 },
                 2,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        activateUpload(context);
+                        ToolBox_Inf.scheduleUploadImgWork(context);
                         //
                         ToolBox_Con.getPreference_MessageClear(getApplicationContext()).equalsIgnoreCase("");
                         //
@@ -1437,22 +1434,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                         if (ToolBox_Con.isOnline(context)) {
                             mDrawerLayout.closeDrawer(GravityCompat.START);
                             mPresenter.accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);
-                            activateUpload(context);
+                            ToolBox_Inf.scheduleUploadImgWork(context);
                         }
                     }
                 },
                 -1,
                 null
         );
-    }
-
-    private void activateUpload(Context context) {
-        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
     }
 
     //TRATA UPDATE_REQUIRED - CANCEL
@@ -1463,7 +1451,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         if(ToolBox_Con.getPreference_BkpUnsentImg(context)){
             ToolBox_Con.setPreference_BkpUnsentImg(context,false);
             //
-            activateUpload(context);
+            ToolBox_Inf.scheduleUploadImgWork(context);
         }
 
         mPresenter.executeSyncProcess(1);
@@ -2219,8 +2207,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             case Act005_Main.WS_PROCESS_SYNC:
                 alertTitle = hmAux_Trans.get("alert_sync_finish_ttl");
                 alertMsg = hmAux_Trans.get("alert_sync_finish_msg");
-                //
-                startDownloadServices();
+                //LUCHE - 30/06/2020
+                //Substituido o metodo antigo pelo metodo que agenda todos os workers.
+                ToolBox_Inf.scheduleAllDownloadWorkers(context);
                 //
                 break;
             case Act005_Main.WS_PROCESS_ENABLE_NFC:
@@ -2467,24 +2456,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //abre uma noticação do app e é enviado para act019
         //Rever isso no momento propicio
         mPresenter.getMenuItensV2(hmAux_Trans);
-    }
-
-    public void startDownloadServices() {
-
-        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
-        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-        Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
-        mIntentPDF.putExtras(bundle);
-        mIntentPIC.putExtras(bundle);
-        //
-        bundle.putString(Constant.LOGIN_USER_CODE, ToolBox_Con.getPreference_User_Code(context));
-        mIntentLogo.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntentPDF);
-        context.sendBroadcast(mIntentPIC);
-        context.sendBroadcast(mIntentLogo);
     }
 
     @Override

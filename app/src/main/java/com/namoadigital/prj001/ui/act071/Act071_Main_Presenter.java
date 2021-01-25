@@ -27,7 +27,6 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Partner_Sql_002;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
@@ -484,18 +483,10 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             geFile.setFile_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             //
             geFileDao.addUpdate(geFile);
-            //
-            startUploadImg();
+            //LUCHE - 26/06/2020
+            //Substituido chamada do conjunto WBR e WS_Upload_img, pelo Worker_Upload_img
+            ToolBox_Inf.scheduleUploadImgWork(context);
         }
-    }
-
-    private void startUploadImg() {
-        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
     }
 
     @Override

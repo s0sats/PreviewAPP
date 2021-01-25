@@ -18,8 +18,6 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.EV_User_Customer_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -341,7 +339,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             //Se customer permite agendados, tenta fazer download de possiveis
             //blobs recebidos.
             if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_SCHEDULE_CHECKLIST)) {
-                startDownloadServices();
+                startDownloadWorkers();
             }
         }
         if (wsProcess.equals(PROCESS_WS_LOGOUT)) {
@@ -357,19 +355,14 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         progressDialog.dismiss();
     }
 
-    public void startDownloadServices() {
-
-        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
-        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-        Bundle bundle = new Bundle();
-        //
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        //
-        mIntentPDF.putExtras(bundle);
-        mIntentPIC.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntentPDF);
-        context.sendBroadcast(mIntentPIC);
+    /**
+     * LUCHE - 30/06/2020
+     * Alterado metodo que chamava serviços de download de img e pdf, para chamar os respectivos
+     * Workers
+     */
+    public void startDownloadWorkers() {
+        ToolBox_Inf.scheduleDownloadPdfWork(context);
+        ToolBox_Inf.scheduleDownloadPictureWork(context);
     }
 
     @Override

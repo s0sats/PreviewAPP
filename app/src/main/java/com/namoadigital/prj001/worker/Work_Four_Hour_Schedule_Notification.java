@@ -1,28 +1,29 @@
-package com.namoadigital.prj001.service;
+package com.namoadigital.prj001.worker;
 
-import android.app.IntentService;
-import android.content.Intent;
+import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
+
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-/**
- * Created by neomatrix on 28/10/16.
- */
+public class Work_Four_Hour_Schedule_Notification extends Worker {
+    public static final String WORKER_TAG = "Work_Four_Hour_Schedule_Notification";
 
-public class WS_AL_Full extends IntentService {
-
-    long customer_code =-1L;
-
-    public WS_AL_Full() {
-        super("WS_AL_Full");
+    public Work_Four_Hour_Schedule_Notification(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+        super(context, workerParams);
     }
 
+    @NonNull
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public Result doWork() {
+        Log.d("workerTsts", WORKER_TAG+" :doWork");
         try {
+            long customer_code = -1L;
             customer_code = ToolBox_Con.getPreference_Customer_Code(getApplicationContext());
             /*
                 BARRIONUEVO - 05/12/2019
@@ -30,21 +31,16 @@ public class WS_AL_Full extends IntentService {
              */
             //Se parametro de customer na preferencias estiver igual a -1 não gera notification.
             if (customer_code == -1L) {
-                return;
+                return Result.success();
             }
             ToolBox_Inf.generateNotification(getApplicationContext(),
-                //100
                 ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL
             );
-
+            return Result.success();
         } catch (Exception e) {
-            String results = e.toString();
+            Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
             ToolBox_Inf.registerException(getClass().getName(),e);
-        } finally {
+            return Result.retry();
         }
-
-        Log.d("ALARM", String.valueOf("FULL"));
     }
-
-
 }

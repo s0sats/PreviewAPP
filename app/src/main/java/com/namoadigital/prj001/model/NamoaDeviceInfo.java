@@ -253,7 +253,7 @@ public class NamoaDeviceInfo {
         build_manufacturer = Build.MANUFACTURER;
         build_model = Build.MODEL;
         build_product = Build.PRODUCT;
-        build_serial = Build.SERIAL;
+        //build_serial = Build.SERIAL;
         build_supported_32_bit_abis = Build.SUPPORTED_32_BIT_ABIS;
         build_supported_64_bit_abis = Build.SUPPORTED_64_BIT_ABIS;
         build_supported_abis = Build.SUPPORTED_ABIS;

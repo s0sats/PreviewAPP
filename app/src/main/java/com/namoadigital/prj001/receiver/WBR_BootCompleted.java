@@ -20,6 +20,11 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 public class WBR_BootCompleted extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        //TODO APAGAR APÓS SUBSTITUIR PELOS WORKERS
+        //ToolBox_Inf.reprogramAlarms(context);
+        //TODO APAGAR APÓS SUBSTITUIR PELOS WORKERS
+        //ToolBox_Inf.reprogramAlarms_Full_Quarter(context);
+
 
 //        ToolBox_Inf.reprogramAlarms(context);
 //        ToolBox_Inf.reprogramAlarms_Full_Quarter(context);

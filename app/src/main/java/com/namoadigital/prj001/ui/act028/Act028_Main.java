@@ -49,16 +49,12 @@ import com.namoadigital.prj001.model.SM_SO_Service_Exec_Task;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSO_Get_Service_Edit_Rec;
 import com.namoadigital.prj001.model.TSO_Service_Search_Obj;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Get_Service_For_Edit;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_SO_Set_Service_For_Edit;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.service.WS_SO_Get_Service_For_Edit;
 import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_SO_Set_Service_For_Edit;
@@ -828,23 +824,15 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             mIntent.putExtras(bundle);
 
             context.sendBroadcast(mIntent);
-
-            activateUpload(context);
+            //LUCHE - 26/06/2020
+            //Substituido chamada do conjunto WBR e WS_Upload_img, pelo Worker_Upload_img
+            ToolBox_Inf.scheduleUploadImgWork(context);
         } else {
             if (mTaskCall) {
                 mTaskCall = false;
                 offLineProcess();
             }
         }
-    }
-
-    private void activateUpload(Context context) {
-        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
     }
 
     @Override
@@ -1158,7 +1146,7 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
             so_status = mSoAux.get(SM_SODao.STATUS);
         }
         //
-        startDownloadServices();
+        startDownloadWorkers();
     }
 
 
@@ -1956,25 +1944,16 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
 
         syncChecklistDao.addUpdate(syncChecklist);
         //
-        startDownloadServices();
+        startDownloadWorkers();
     }
+    /**
+     * LUCHE - 30/06/2020
+     * Alterado metodo que chamava serviços de download para chamar os respectivos Workers
+     */
 
-    private void startDownloadServices() {
-        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
-        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-        Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntentPDF.putExtras(bundle);
-        mIntentPIC.putExtras(bundle);
-        bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
-        mIntentLogo.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntentPDF);
-        context.sendBroadcast(mIntentPIC);
-        context.sendBroadcast(mIntentLogo);
+    private void startDownloadWorkers() {
+        ToolBox_Inf.scheduleAllDownloadWorkers(context);
     }
-
 
     private void callAct009() {
         Intent mIntent = new Intent(context, Act009_Main.class);

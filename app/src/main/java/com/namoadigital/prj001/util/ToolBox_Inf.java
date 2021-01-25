@@ -2,7 +2,6 @@ package com.namoadigital.prj001.util;
 
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -30,7 +29,6 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -48,6 +46,16 @@ import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.work.BackoffPolicy;
+import androidx.work.Constraints;
+import androidx.work.Data;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -121,12 +129,6 @@ import com.namoadigital.prj001.model.T_IO_Inbound_Item_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
 import com.namoadigital.prj001.receiver.NotificationReceiver;
-import com.namoadigital.prj001.receiver.WBR_AL_Full;
-import com.namoadigital.prj001.receiver.WBR_AL_Quarter;
-import com.namoadigital.prj001.receiver.WBR_Cleanning;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_Upload_Other_User_Img;
@@ -194,6 +196,15 @@ import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
+import com.namoadigital.prj001.worker.Work_Cleanning_Data;
+import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
+import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
+import com.namoadigital.prj001.worker.Work_DownLoad_Picture;
+import com.namoadigital.prj001.worker.Work_Four_Hour_Schedule_Notification;
+import com.namoadigital.prj001.worker.Work_Quarter_Schedule_Notification;
+import com.namoadigital.prj001.worker.Work_Upload_Img;
+import com.namoadigital.prj001.worker.Work_Upload_Img_Chat;
+import com.namoadigital.prj001.worker.Work_Upload_Other_User_Img;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -233,6 +244,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -404,15 +416,16 @@ public class ToolBox_Inf {
     @Nullable
     private static String CarrierInfo(Context context) {
         //todo permission check READ_PHONE_STATE
-        try {
-            TelephonyManager tm = (TelephonyManager) context
-                .getSystemService(Context.TELEPHONY_SERVICE);
-            //
-            return tm.getDeviceId();
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
+//        try {
+//            TelephonyManager tm = (TelephonyManager) context
+//                .getSystemService(Context.TELEPHONY_SERVICE);
+//            //
+//            return tm.getDeviceId();
+//        }catch (Exception e){
+//            e.printStackTrace();
+//            return null;
+//        }
+        return null;
     }
 
     /**
@@ -2636,132 +2649,6 @@ public class ToolBox_Inf {
 
     }
 
-    public static void reprogramAlarms(Context context) {
-
-        AlarmManager am = (AlarmManager)
-                context.getSystemService(Context.ALARM_SERVICE);
-
-        Intent mIntent = new Intent(context,
-                WBR_Cleanning.class
-        );
-        //
-        PendingIntent pi = PendingIntent.getBroadcast(
-                context,
-                0,
-                mIntent,
-                0
-        );
-        //
-        am.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + (5 * 60 * 1000),
-                (43200000),
-                pi
-        );
-    }
-
-    public static void reprogramAlarms_Full_Quarter(Context context) {
-        AlarmManager am = (AlarmManager)
-                context.getSystemService(Context.ALARM_SERVICE);
-
-        Calendar calendarAux = Calendar.getInstance();
-        //
-        calendarAux.set(
-                Calendar.HOUR,
-                calendarAux.get(Calendar.HOUR) + 1
-        );
-        //
-        calendarAux.set(
-                Calendar.MINUTE,
-                0
-        );
-        //
-        calendarAux.set(
-                Calendar.SECOND,
-                0
-        );
-        //Para Debug
-//        calendarAux.set(
-//                Calendar.SECOND,
-//                calendarAux.get(Calendar.SECOND) + 10
-//        );
-
-        /**
-         * Alarme a cada 4 horas
-         */
-        Intent mIntent_Full = new Intent(context,
-                WBR_AL_Full.class
-        );
-        //
-        boolean isWorking = (PendingIntent.getBroadcast(
-                context,
-                //100,
-                ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
-                mIntent_Full,
-                PendingIntent.FLAG_NO_CREATE) != null
-        );
-
-        Log.d("ALARM", String.valueOf(isWorking));
-
-        if (!isWorking) {
-            PendingIntent pi_full = PendingIntent.getBroadcast(
-                    context,
-                    //100,
-                    ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
-                    mIntent_Full,
-                    0
-            );
-            //
-            am.setInexactRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    calendarAux.getTimeInMillis(),
-                    (1000 * 60 * 60 * 4),
-                    pi_full
-            );
-        }
-
-        calendarAux = Calendar.getInstance();
-
-        calendarAux.set(
-                Calendar.SECOND,
-                calendarAux.get(Calendar.SECOND) + 15
-        );
-
-        /**
-         * Alarme a cada 15 minutos
-         */
-        Intent mIntent_Quarter = new Intent(context,
-                WBR_AL_Quarter.class
-        );
-        //
-        isWorking = (PendingIntent.getBroadcast(
-                            context,
-                        //200,
-                        ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
-                        mIntent_Quarter,
-                        PendingIntent.FLAG_NO_CREATE) != null
-                    );
-
-        Log.d("ALARM", String.valueOf(isWorking));
-
-        if (!isWorking) {
-            PendingIntent pi_Quarter = PendingIntent.getBroadcast(
-                    context,
-                    //200,
-                    ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
-                    mIntent_Quarter,
-                    0
-            );
-            //
-            am.setInexactRepeating(
-                    AlarmManager.RTC_WAKEUP,
-                    calendarAux.getTimeInMillis(),
-                    (1000 * 60 * 15),
-                    pi_Quarter
-            );
-        }
-    }
-
     /**
      * Modificado em 19/03/2020 - LUCHE
      * <p></p>
@@ -3079,18 +2966,19 @@ public class ToolBox_Inf {
     }
 
     public static boolean isDownloadRunning() {
-        if (WBR_DownLoad_Customer_Logo.IS_RUNNING
-                || WBR_DownLoad_PDF.IS_RUNNING
-                || WBR_DownLoad_Picture.IS_RUNNING
+        if (   Work_DownLoad_Customer_Logo.IS_RUNNING
+                || Work_DownLoad_PDF.IS_RUNNING
+                || Work_DownLoad_Picture.IS_RUNNING
                 || WBR_UpdateSoftware.IS_RUNNING
-                ) {
+        ) {
             return true;
         }
         return false;
     }
 
     public static boolean isUploadRunning() {
-        if (WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING || WBR_Upload_Img_Chat.IS_RUNNING || WBR_Upload_Other_User_Img.IS_RUNNING) {
+      //  if (WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING || WBR_Upload_Img_Chat.IS_RUNNING || WBR_Upload_Other_User_Img.IS_RUNNING) {
+        if (Work_Upload_Img.IS_RUNNING || WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING || WBR_Upload_Img_Chat.IS_RUNNING || WBR_Upload_Other_User_Img.IS_RUNNING) {
             return true;
         }
         return false;
@@ -7140,4 +7028,276 @@ public class ToolBox_Inf {
         }
         return formmattedTicketSeqExec;
     }
+
+    public static void scheduleUploadImgWork(Context context){
+        Data inputData =
+            new Data.Builder().putLong(
+                Constant.LOGIN_CUSTOMER_CODE,
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).build();
+        //
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workUploadImgRequest =
+                new OneTimeWorkRequest.Builder(Work_Upload_Img.class)
+                    .setInputData(inputData)
+                    .setBackoffCriteria(
+                        BackoffPolicy.LINEAR,
+                        10,
+                        TimeUnit.SECONDS
+                    )
+                    .setConstraints(constraints)
+                    .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_Upload_Img.WORKER_TAG,
+                ExistingWorkPolicy.REPLACE,
+                workUploadImgRequest
+            );
+    }
+
+    public static void scheduleUploadOtherUserImgWork(){
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workUploadOtherUsrImgRequest =
+            new OneTimeWorkRequest.Builder(Work_Upload_Other_User_Img.class)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    60,
+                    TimeUnit.SECONDS
+                )
+                .setConstraints(constraints)
+                .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_Upload_Other_User_Img.WORKER_TAG,
+                ExistingWorkPolicy.REPLACE,
+                workUploadOtherUsrImgRequest
+            );
+    }
+
+    public static void scheduleUploadImgChat(){
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workUploadImgChatRequest =
+            new OneTimeWorkRequest.Builder(Work_Upload_Img_Chat.class)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    60,
+                    TimeUnit.SECONDS
+                )
+                .setConstraints(constraints)
+                .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_Upload_Img_Chat.WORKER_TAG,
+                ExistingWorkPolicy.REPLACE,
+                workUploadImgChatRequest
+            );
+    }
+
+
+
+
+    public static void scheduleQuarterScheduleNotification(){
+        //Periodicidade
+        //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
+        PeriodicWorkRequest  workQuarterScheduleNotification =
+             new PeriodicWorkRequest.Builder(
+                 Work_Quarter_Schedule_Notification.class,
+                 15 , TimeUnit.MINUTES //Periodicidade
+                 //,5,  TimeUnit.MINUTES //Flexibilidade
+             )
+             .setBackoffCriteria(
+                 BackoffPolicy.LINEAR,
+                 PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                 TimeUnit.MILLISECONDS)
+             .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniquePeriodicWork(
+                Work_Quarter_Schedule_Notification.WORKER_TAG,
+                ExistingPeriodicWorkPolicy.KEEP,
+                workQuarterScheduleNotification
+            );
+    }
+
+    public static void schedule4HoursScheduleNotification(){
+        //Periodicidade
+        //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
+        PeriodicWorkRequest  work4HoursScheduleNotification =
+            new PeriodicWorkRequest.Builder(
+                Work_Four_Hour_Schedule_Notification.class,
+                4 , TimeUnit.HOURS //Periodicidade
+                ,1,  TimeUnit.HOURS //Flexibilidade
+            )
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                    TimeUnit.MILLISECONDS)
+                .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniquePeriodicWork(
+                Work_Four_Hour_Schedule_Notification.WORKER_TAG,
+                ExistingPeriodicWorkPolicy.KEEP,
+                work4HoursScheduleNotification
+            );
+    }
+
+    public static void scheduleCleanningWork(){
+        //Periodicidade
+        //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
+        PeriodicWorkRequest  workCleanningRequest =
+            new PeriodicWorkRequest.Builder(
+                Work_Cleanning_Data.class,
+                12 , TimeUnit.HOURS //Periodicidade
+                ,1,  TimeUnit.HOURS //Flexibilidade
+            )
+            .setBackoffCriteria(
+                BackoffPolicy.LINEAR,
+                1,
+                TimeUnit.HOURS
+            )
+            .build();
+        //
+        WorkManager.getInstance()
+            .enqueueUniquePeriodicWork(
+                Work_Cleanning_Data.WORKER_TAG,
+                ExistingPeriodicWorkPolicy.KEEP,
+                workCleanningRequest
+            );
+    }
+
+    public static void scheduleDownloadCustomerLogoWork(Context context){
+        Data inputData =
+            new Data.Builder()
+                .putLong(
+                    Constant.LOGIN_CUSTOMER_CODE,
+                    ToolBox_Con.getPreference_Customer_Code(context)
+                )
+                .putString(
+                    Constant.LOGIN_USER_CODE,
+                    ToolBox_Con.getPreference_User_Code(context)
+                )
+                .build();
+        //
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workDownloadCustomerLogoRequest =
+            new OneTimeWorkRequest.Builder(Work_DownLoad_Customer_Logo.class)
+                .setInputData(inputData)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    10,
+                    TimeUnit.SECONDS
+                )
+                .setConstraints(constraints)
+                .build();
+        //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
+        //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
+        //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
+        //isStopped(), foi adicionado nos loop
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_DownLoad_Customer_Logo.WORKER_TAG,
+                ExistingWorkPolicy.KEEP,
+                workDownloadCustomerLogoRequest
+            );
+    }
+
+    public static void scheduleDownloadPdfWork(Context context){
+        Data inputData =
+            new Data.Builder()
+                .putLong(
+                    Constant.LOGIN_CUSTOMER_CODE,
+                    ToolBox_Con.getPreference_Customer_Code(context)
+                )
+                .build();
+        //
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workDownloadPdfRequest =
+            new OneTimeWorkRequest.Builder(Work_DownLoad_PDF.class)
+                .setInputData(inputData)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    10,
+                    TimeUnit.SECONDS
+                )
+                .setConstraints(constraints)
+                .build();
+        //
+        //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
+        //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
+        //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
+        //isStopped(), foi adicionado nos loop
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_DownLoad_PDF.WORKER_TAG,
+                ExistingWorkPolicy.KEEP,
+                workDownloadPdfRequest
+            );
+    }
+
+    public static void scheduleDownloadPictureWork(Context context){
+        Data inputData =
+            new Data.Builder()
+                .putLong(
+                    Constant.LOGIN_CUSTOMER_CODE,
+                    ToolBox_Con.getPreference_Customer_Code(context)
+                )
+                .build();
+        //
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workDownloadPictureRequest =
+            new OneTimeWorkRequest.Builder(Work_DownLoad_Picture.class)
+                .setInputData(inputData)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    10,
+                    TimeUnit.SECONDS
+                )
+                .setConstraints(constraints)
+                .build();
+        //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
+        //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
+        //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
+        //isStopped(), foi adicionado nos loop
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_DownLoad_Picture.WORKER_TAG,
+                ExistingWorkPolicy.KEEP,
+                workDownloadPictureRequest
+            );
+    }
+    //TODO Comentar os metodos que chamam os Workers
+    public static void scheduleAllDownloadWorkers(Context context) {
+        ToolBox_Inf.scheduleDownloadPdfWork(context);
+        ToolBox_Inf.scheduleDownloadPictureWork(context);
+        ToolBox_Inf.scheduleDownloadCustomerLogoWork(context);
+    }
+
 }

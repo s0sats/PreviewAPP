@@ -60,9 +60,6 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.Sync_Checklist;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.receiver.WBR_SO_Create_Room;
@@ -71,7 +68,6 @@ import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.receiver.WBR_UserAuthor;
 import com.namoadigital.prj001.service.WS_SO_Create_Room;
 import com.namoadigital.prj001.service.WS_SO_Save;
@@ -100,6 +96,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit;
+import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -1182,8 +1179,13 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         return executionProfile;
     }
 
+    /**
+     * LUCHE - 30/06/2020
+     * <p></p>
+     * Modificado para usar a constante IS_RUNNING do Work_DownLoad_PDF e não mais a do WBR_DownLoad_PDF
+     */
     private void checkSOAttachExists() {
-        if (!WBR_DownLoad_PDF.IS_RUNNING) {
+        if (!Work_DownLoad_PDF.IS_RUNNING) {
             SM_SO_FileDao soFileDao =
                     new SM_SO_FileDao(
                             getApplicationContext(),
@@ -1252,7 +1254,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             //Se veio preenchido é retorno de uma execução via atalho.
             //Nessa caso inicia serviço de download.
             if (lastServiceReturned.trim().length() > 0) {
-                startDownloadServices();
+                startDownloadWorkers();
             }
             //Ajuste para clique no drawer da act043
             request_set_frag = bundle.getString(REQUEST_SET_FRAG, "");
@@ -1644,7 +1646,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
             setFrag(act027_product_list_, SELECTION_PRODUCT_LIST);
         }
         //
-        startDownloadServices();
+        startDownloadWorkers();
     }
 
     //region Ciclo Normal
@@ -2825,17 +2827,9 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         geFiles.add(geFile);
 
         geFileDao.addUpdate(geFiles, false);
-
-        activateUpload(context);
-    }
-
-    private void activateUpload(Context context) {
-        Intent mIntent = new Intent(context, WBR_Upload_Img.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
+        //LUCHE - 26/06/2020
+        //Substituido chamada do conjunto WBR e WS_Upload_img, pelo Worker_Upload_img
+        ToolBox_Inf.scheduleUploadImgWork(context);
     }
 
     private class DownloadSignature extends AsyncTask<String, Void, Void> {
@@ -3173,23 +3167,15 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
 
         syncChecklistDao.addUpdate(syncChecklist);
         //
-        startDownloadServices();
+        startDownloadWorkers();
     }
 
-    private void startDownloadServices() {
-        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
-        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-        Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        mIntentPDF.putExtras(bundle);
-        mIntentPIC.putExtras(bundle);
-        bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
-        mIntentLogo.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntentPDF);
-        context.sendBroadcast(mIntentPIC);
-        context.sendBroadcast(mIntentLogo);
+    /**
+     * LUCHE - 30/06/2020
+     * Alterado metodo que chamava serviços de download para chamar os respectivos Workers
+     */
+    private void startDownloadWorkers() {
+        ToolBox_Inf.scheduleAllDownloadWorkers(context);
     }
 
 

@@ -20,7 +20,6 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
@@ -84,7 +83,9 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
 
     private void initVars() {
         //Inicia Download do logo do customer
-        startLogoDownload();
+        //LUCHE - 29/06/2020
+        //Substituido conjunto WBR + WS pelo Workmanager
+        ToolBox_Inf.scheduleDownloadCustomerLogoWork(context);
 
         mPresenter = new Act003_Main_Presenter_Impl(context, this);
         //Chama start do serviço do Chat.
@@ -113,16 +114,6 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
         } else {
             mPresenter.getSites(hmAux_Trans);
         }
-    }
-
-    private void startLogoDownload() {
-        Intent mIntent = new Intent(getApplicationContext(), WBR_DownLoad_Customer_Logo.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        getApplicationContext().sendBroadcast(mIntent);
     }
 
     @Override

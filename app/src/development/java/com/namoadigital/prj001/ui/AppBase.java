@@ -3,10 +3,13 @@ package com.namoadigital.prj001.ui;
 import android.app.Application;
 import android.app.NotificationManager;
 import android.util.Log;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.receiver.WBR_Connections_Change;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -68,9 +71,6 @@ public class AppBase extends Application {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable ex) {
-                Log.d("ERRORZACO", ex.toString());
-                Log.d("ERRORZACO", ex.getMessage());
-                Log.d("ERRORZACO", ex.getStackTrace().toString());
                 ToolBox_Inf.registerException(ex);
                 //
                 mDefaultUncaughtExceptionHandler.uncaughtException(thread, ex);
@@ -168,5 +168,13 @@ public class AppBase extends Application {
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
         ToolBox_Inf.createChannelNotification(getApplicationContext(), notificationManager, NAMOA_PEND_INFO, NotificationManager.IMPORTANCE_LOW, ConstantBaseApp.PENDENCY_CHANNEL_ID);
         ToolBox_Inf.createChannelNotification(getApplicationContext(), notificationManager, NAMOA_NOTIF_INFO, NotificationManager.IMPORTANCE_DEFAULT, GENERIC_CHANNEL_ID);
+        registerConnectionsChanges();
     }
+
+    private void registerConnectionsChanges() {
+        WBR_Connections_Change connectionsChange = new WBR_Connections_Change();
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(connectionsChange,intentFilter);
+    }
+
 }

@@ -15,7 +15,6 @@ import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SO_Save_Return;
 import com.namoadigital.prj001.model.TSO_Approval_Env;
 import com.namoadigital.prj001.model.TSO_Approval_Rec;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_SO_Approval;
 import com.namoadigital.prj001.sql.SM_SO_Sql_009;
 import com.namoadigital.prj001.sql.SM_SO_Sql_013;
@@ -220,16 +219,9 @@ public class WS_SO_Approval extends IntentService {
     private void callFinishProcessing(HMAux hmAuxRet) {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("msg_save_ok"), hmAuxRet, "", "0");
-        //
-        startDownloadServices();
-    }
-
-    private void startDownloadServices() {
-        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
-        mIntentPIC.putExtras(bundle);
-        getApplicationContext().sendBroadcast(mIntentPIC);
+        //LUCHE - 30/06/2020
+        //Substituido o antigo serviço pelo Worker de Download de Img
+        ToolBox_Inf.scheduleDownloadPictureWork(getApplicationContext());
     }
 
     private void loadTranslation() {

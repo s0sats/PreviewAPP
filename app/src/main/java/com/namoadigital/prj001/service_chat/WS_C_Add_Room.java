@@ -17,7 +17,6 @@ import com.namoadigital.prj001.model.Chat_C_Room;
 import com.namoadigital.prj001.model.Chat_Room_Obj_Form_AP;
 import com.namoadigital.prj001.model.Chat_Room_Obj_SO;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Process_Form_Ap;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Add_Room;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -139,7 +138,9 @@ public class WS_C_Add_Room extends IntentService {
         //
         roomDao.addUpdate(chRooms, false);
         //
-        startDownloadService();
+        //LUCHE - 30/06/2020
+        //Substituido o antigo serviço pelo Worker de Download de Img
+        ToolBox_Inf.scheduleDownloadPictureWork(getApplicationContext());
         //
         if(startFormApService){
             startFormApService();
@@ -250,12 +251,4 @@ public class WS_C_Add_Room extends IntentService {
         }
     }
 
-    private void startDownloadService() {
-        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
-        mIntentPIC.putExtras(bundle);
-        //
-        getApplicationContext().sendBroadcast(mIntentPIC);
-    }
 }

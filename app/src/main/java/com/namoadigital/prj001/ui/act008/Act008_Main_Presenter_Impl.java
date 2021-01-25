@@ -22,9 +22,6 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
@@ -492,7 +489,7 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
         syncChecklistDao.addUpdate(syncChecklist);
         //
-        startDownloadServices();
+        startDownloadWorkers();
     }
 
     @Override
@@ -521,23 +518,14 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
         );
     }
 
+    /**
+     * LUCHE - 30/06/2020
+     * Alterado metodo que chamava serviços de download para chamar os respectivos Workers
+     */
     @Override
-    public void startDownloadServices() {
-
+    public void startDownloadWorkers() {
         if (!downloadStarted) {
-            Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
-            Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-            Intent mIntentLogo = new Intent(context, WBR_DownLoad_Customer_Logo.class);
-            Bundle bundle = new Bundle();
-            bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-            mIntentPDF.putExtras(bundle);
-            mIntentPIC.putExtras(bundle);
-            bundle.putString(Constant.LOGIN_USER_CODE,ToolBox_Con.getPreference_User_Code(context));
-            mIntentLogo.putExtras(bundle);
-            //
-            context.sendBroadcast(mIntentPDF);
-            context.sendBroadcast(mIntentPIC);
-            context.sendBroadcast(mIntentLogo);
+            ToolBox_Inf.scheduleAllDownloadWorkers(context);
             //Atualiza var e impede que os serviços sejam chamados 2 vezes seguidas
             downloadStarted = true;
         }

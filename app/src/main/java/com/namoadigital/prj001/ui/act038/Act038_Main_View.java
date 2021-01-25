@@ -13,8 +13,6 @@ import java.util.ArrayList;
 
 public interface Act038_Main_View {
 
-    void startReceivers(boolean start_stop);
-
     void loadAP(GE_Custom_Form_Ap ap);
 
     void loadSSStatus(ArrayList<HMAux> statusList);
