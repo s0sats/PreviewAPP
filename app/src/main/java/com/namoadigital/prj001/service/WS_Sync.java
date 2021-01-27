@@ -134,7 +134,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_010;
 import com.namoadigital.prj001.sql.MD_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_004;
 import com.namoadigital.prj001.sql.MD_Segment_Sql_Truncate;
-import com.namoadigital.prj001.sql.MD_Site_Sql_003;
+import com.namoadigital.prj001.sql.MD_Site_Sql_004;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_Truncate;
@@ -539,11 +539,7 @@ public class WS_Sync extends IntentService {
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
-            /**
-             * BARRIONUEVO - 18-01-2021
-             * Remoção trucate da tabela de sites, sera substituito pelo addUpdate com true após a conciliação.
-             */
-//            siteDao.remove(new MD_Site_Sql_Truncate().toSqlQuery());
+
             productDao.remove(new MD_Product_Sql_Truncate().toSqlQuery());
             productGroupDao.remove(new MD_Product_Group_Sql_Truncate().toSqlQuery());
             productGroupProductDao.remove(new MD_Product_Group_Product_Sql_Truncate().toSqlQuery());
@@ -607,7 +603,18 @@ public class WS_Sync extends IntentService {
             // Processamento Site
             //
 
-
+            /**
+             * BARRIONUEVO - 27-01-2021
+             * Truncate recolocado, sera criado uma lista de back para a conciliacao.
+             *
+             */
+            List<MD_Site> backupSites = siteDao.query(
+                    new MD_Site_Sql_004(
+                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                    ).toSqlQuery()
+            );
+            //
+            siteDao.remove(new MD_Site_Sql_Truncate().toSqlQuery());
             File[] files_site = ToolBox_Inf.getListOfFiles_v2("md_site-");
 
             for (File _file : files_site) {
@@ -641,24 +648,17 @@ public class WS_Sync extends IntentService {
                 for (MD_Site site : sites) {
                     //
                     if(ToolBox_Inf.isConcurrentBySiteLicense(getApplicationContext())) {
-
-                        MD_Site md_site = siteDao.getByString(
-                                new MD_Site_Sql_003(
-                                        ToolBox_Con.getPreference_Customer_Code(getApplicationContext()),
-                                        site.getSite_code()
-                                ).toSqlQuery()
-                        );
-                        if(md_site != null) {
-                            site.setApp_executions_count(md_site.getApp_executions_count());
-
-//                            if (site.getLicense_enabled() != null && site.getLicense_enabled() == 0) {
-//                                site.updateLicenseBlocked();
-//                            }
+                        for(MD_Site backup: backupSites){
+                            if(backup.getSite_code().equals(site.getSite_code())){
+                                site.setApp_executions_count(backup.getApp_executions_count());
+                                break;
+                            }
                         }
                     }
                 }
                 //
-                siteDao.addUpdate(sites, true);
+                siteDao.addUpdate(sites, false);
+                //
             }
 
             //
