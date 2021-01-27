@@ -19,7 +19,6 @@ import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.model.Chat_C_Message_Tmp;
 import com.namoadigital.prj001.model.Chat_S_Message_Tmp;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message_Tmp;
-import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_003;
 import com.namoadigital.prj001.util.Constant;
@@ -219,12 +218,16 @@ public class WS_C_Message_Tmp extends IntentService {
     //
 
     private void startUpload(Context context) {
-        Intent mIntent = new Intent(context, WBR_Upload_Img_Chat.class);
+       /* Intent mIntent = new Intent(context, WBR_Upload_Img_Chat.class);
         Bundle bundle = new Bundle();
 
         mIntent.putExtras(bundle);
         //
-        context.sendBroadcast(mIntent);
+        context.sendBroadcast(mIntent);*/
+
+        //LUCHE - 27/01/2021
+        //Substituido esquema antigo de service / receiver pelo agendamento do Worker
+        ToolBox_Inf.scheduleUploadImgChat();
     }
 
 }

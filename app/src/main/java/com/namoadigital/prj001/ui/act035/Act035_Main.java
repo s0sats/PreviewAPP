@@ -76,7 +76,6 @@ import com.namoadigital.prj001.receiver_chat.WBR_Add_User_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
-import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.service.WS_AP_Search;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
@@ -233,13 +232,16 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         initActions();
         //
-        Intent mIntent = new Intent(context, WBR_Upload_Img_Chat.class);
+/*        Intent mIntent = new Intent(context, WBR_Upload_Img_Chat.class);
         Bundle bundle = new Bundle();
 
         // Verifica a necessidade de UpLoad.
         mIntent.putExtras(bundle);
         //
-        context.sendBroadcast(mIntent);
+        context.sendBroadcast(mIntent);*/
+        //LUCHE - 27/01/2021
+        //Substituido esquema antigo de service / receiver pelo agendamento do Worker
+        ToolBox_Inf.scheduleUploadImgChat();
     }
 
     private void iniSetup() {

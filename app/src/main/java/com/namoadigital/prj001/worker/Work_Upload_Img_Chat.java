@@ -32,6 +32,7 @@ public class Work_Upload_Img_Chat extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        Log.d("workerTsts", WORKER_TAG + ": doWork");
         try {
             Gson gson = new Gson();
             TUploadImg_Chat_Env env = new TUploadImg_Chat_Env();
@@ -51,6 +52,7 @@ public class Work_Upload_Img_Chat extends Worker {
             );
             //Se lista vazia, não verifica necessidade de notificação de upload
             if(isStopped() || chFiles.size() == 0){
+                Log.d("workerTsts", WORKER_TAG + ": Nothing to send");
                 return Result.success();
             }
             //

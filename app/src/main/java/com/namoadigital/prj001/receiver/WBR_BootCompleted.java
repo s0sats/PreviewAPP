@@ -3,10 +3,7 @@ package com.namoadigital.prj001.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
-import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.util.Constant;
@@ -39,30 +36,33 @@ public class WBR_BootCompleted extends BroadcastReceiver {
                 ToolBox_Inf.call_Location_Tracker_On_Background(context, SV_LocationTracker.LOCATION_BACKGROUND);
             }
         }
-        if(/*ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) && */ToolBox_Inf.isUsrAppLogged(context) && ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_OK)){
-            if(!AppBackgroundService.isRunning) {
-//                try {
-//                    File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
-//                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - BootCompleted Subirá o Serviço\n", log_file);
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                }
-                Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - BootCompleted Subirá o Serviço\n");
-                Intent chatService = new Intent(context, AppBackgroundService.class);
-                chatService.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
-                context.startService(chatService);
-
-            }else{
-//                try {
-//                    File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
-//                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - BootCompleted Serviço rodando, não faz nada\n", log_file);
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                }
-                Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - BootCompleted Serviço rodando, não faz nada ");
-
-            }
-        }
+        //TODO REVER BAIAXO FOI COMENTAOD PARA PARAR DE DAR CRAHS
+        //region comentario teste target9 27012021
+//        if(/*ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) && */ToolBox_Inf.isUsrAppLogged(context) && ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_OK)){
+//            if(!AppBackgroundService.isRunning) {
+////                try {
+////                    File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
+////                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - BootCompleted Subirá o Serviço\n", log_file);
+////                }catch (Exception e){
+////                    e.printStackTrace();
+////                }
+//                Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - BootCompleted Subirá o Serviço\n");
+//                Intent chatService = new Intent(context, AppBackgroundService.class);
+//                chatService.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
+//                context.startService(chatService);
+//
+//            }else{
+////                try {
+////                    File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
+////                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - BootCompleted Serviço rodando, não faz nada\n", log_file);
+////                }catch (Exception e){
+////                    e.printStackTrace();
+////                }
+//                Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - BootCompleted Serviço rodando, não faz nada ");
+//
+//            }
+//        }
+        //endregion
 
         if (/*ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) &&*/ ToolBox_Inf.isUsrAppLogged(context) && ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_OK) && !ScreenStatusService.isRunning) {
             Intent mIntent = new Intent(context, ScreenStatusService.class);
