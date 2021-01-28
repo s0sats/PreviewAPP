@@ -71,7 +71,6 @@ import com.namoadigital.prj001.model.Chat_UserList_Info_Rec;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.receiver.WBR_AP_Search;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver_chat.WBR_Add_User_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_AP;
@@ -947,14 +946,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
     }
 
-    private void activateDownLoadPDF(Context context) {
-        Intent mIntent = new Intent(context, WBR_DownLoad_PDF.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
-        mIntent.putExtras(bundle);
-        //
-        context.sendBroadcast(mIntent);
-    }
+//LUCHE -28/01/2021 - Metodo nãoé mais chamado e a chamada via WBR foi descontinuada.
+//    private void activateDownLoadPDF(Context context) {
+//        Intent mIntent = new Intent(context, WBR_DownLoad_PDF.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context));
+//        mIntent.putExtras(bundle);
+//        //
+//        context.sendBroadcast(mIntent);
+//    }
 
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();

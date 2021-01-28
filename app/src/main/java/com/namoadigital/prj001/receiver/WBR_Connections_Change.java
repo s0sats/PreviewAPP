@@ -31,7 +31,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
                 //workmanager.
                 //LUCHE - 30/06/2020
                 //Substituido o antigo serviço pelo Worker de Download de Img
-                //ToolBox_Inf.scheduleAllDownloadWorkers(context);
+                ToolBox_Inf.scheduleAllDownloadWorkers(context);
                 /**
                  * TESTE UPLOAD VIA WORKER
                  * APENAS TESTES , REMOVER APÓS TESTAR 22/06/2020
@@ -76,8 +76,10 @@ public class WBR_Connections_Change extends BroadcastReceiver {
      * @param context
      */
     private void activateUnsentUpload(Context context) {
-        Intent mIntent = new Intent(context, WBR_Upload_Other_User_Img.class);
-        context.sendBroadcast(mIntent);
+//        Intent mIntent = new Intent(context, WBR_Upload_Other_User_Img.class);
+//        context.sendBroadcast(mIntent);
+
+        ToolBox_Inf.scheduleUploadOtherUserImgWork();
     }
     /**
      * BARRIONUEVO - 30/04/2020

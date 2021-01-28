@@ -130,10 +130,7 @@ import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
 import com.namoadigital.prj001.receiver.NotificationReceiver;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
-import com.namoadigital.prj001.receiver.WBR_Upload_Img;
-import com.namoadigital.prj001.receiver.WBR_Upload_Other_User_Img;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
-import com.namoadigital.prj001.receiver_chat.WBR_Upload_Img_Chat;
 import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.SV_LocationTracker;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -1618,8 +1615,9 @@ public class ToolBox_Inf {
         }
         //Se itens na lista, chama serviço de envio
         if(geFiles.size() > 0){
-            Intent mIntent = new Intent(context,WBR_Upload_Other_User_Img.class);
-            context.sendBroadcast(mIntent);
+//            Intent mIntent = new Intent(context,WBR_Upload_Other_User_Img.class);
+//            context.sendBroadcast(mIntent);
+            scheduleUploadOtherUserImgWork();
         }
         //Se contador de erro 0 , então sucesso.
         return errorCount == 0;
@@ -2989,7 +2987,11 @@ public class ToolBox_Inf {
 
     public static boolean isUploadRunning() {
       //  if (WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING || WBR_Upload_Img_Chat.IS_RUNNING || WBR_Upload_Other_User_Img.IS_RUNNING) {
-        if (Work_Upload_Img.IS_RUNNING || WBR_Upload_Img.IS_RUNNING || WBR_Upload_Support.IS_RUNNING || WBR_Upload_Img_Chat.IS_RUNNING || WBR_Upload_Other_User_Img.IS_RUNNING) {
+        if ( Work_Upload_Img.IS_RUNNING
+            || WBR_Upload_Support.IS_RUNNING
+            || Work_Upload_Img_Chat.IS_RUNNING
+            || Work_Upload_Other_User_Img.IS_RUNNING
+        ) {
             return true;
         }
         return false;
@@ -7040,6 +7042,16 @@ public class ToolBox_Inf {
         return formmattedTicketSeqExec;
     }
 
+    /**
+     * Metodo que faz o agendamento do Work de upload de Imgs
+     * Configuração:
+     *  - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
+     *  - Em caso de falha, faz nova tentativa após 60 segundos.
+     *  - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
+     *  a nova chamada substituirá a anterior. Nesse caso faz sentido a substituição pois, a troca de
+     *  conexão pode fazer o agendamento e não faria sentido esperar pelo tempo de repescagem da
+     *  chamada anterior
+     */
     public static void scheduleUploadImgWork(Context context){
         Data inputData =
             new Data.Builder().putLong(
@@ -7071,6 +7083,16 @@ public class ToolBox_Inf {
             );
     }
 
+    /**
+     * Metodo que faz o agendamento do Work de upload de Imgs do chat
+     * Configuração:
+     *  - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
+     *  - Em caso de falha, faz nova tentativa após 60 segundos.
+     *  - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
+     *  a nova chamada substituirá a anterior. Nesse caso faz sentido a substituição pois, a troca de
+     *  conexão pode fazer o agendamento e não faria sentido esperar pelo tempo de repescagem da
+     *  chamada anterior
+     */
     public static void scheduleUploadOtherUserImgWork(){
         Constraints constraints =
             new Constraints.Builder()
@@ -7121,7 +7143,16 @@ public class ToolBox_Inf {
 
 
 
-
+    /**
+     * Metodo que faz o agendamento do Work verifica os agendamentos a cada 15 min
+     * Configuração:
+     *  - O agendamento deve ser imediato
+     *  - Execução recorrente a cada 15 min sem flexibilidade, pois 15 é o tempo minimo para execução
+     *  recorrente
+     *  - Em caso de erro, tenta executar novamente depois do intervalo minimo de 15s
+     *  - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
+     *  a ultima chamada será ignora e a primeira será mantida.
+     */
     public static void scheduleQuarterScheduleNotification(){
         //Periodicidade
         //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
@@ -7145,6 +7176,16 @@ public class ToolBox_Inf {
             );
     }
 
+    /**
+     * Metodo que faz o agendamento do Work verifica os agendamentos a cada 4 hrs
+     * Configuração:
+     *  - O agendamento deve ser imediato
+     *  - Execução recorrente a cada 4 horas com flexibilidade de 1 horas, ou seja, a partir de
+     *  3 hrs pode ser rodado
+     *  - Em caso de erro, tenta executar novamente depois do intervalo minimo de 15s
+     *  - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
+     *  a ultima chamada será ignora e a primeira será mantida.
+     */
     public static void schedule4HoursScheduleNotification(){
         //Periodicidade
         //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
@@ -7168,6 +7209,17 @@ public class ToolBox_Inf {
             );
     }
 
+    /**
+     * Metodo que faz o agendamento do Work da rotina de limpeza
+     * Configuração:
+     *  - O agendamento deve ser imediato
+     *  - Execução recorrente a cada 12 horas com flexibilidade de 1 horas, ou seja, a partir de
+     *  11 hrs pode ser rodado
+     *  - Em caso de erro, tenta executar novamente depois de 1 hr
+     *  - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
+     *  a ultima chamada será ignora e a primeira será mantida.
+     *
+     */
     public static void scheduleCleanningWork(){
         //Periodicidade
         //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
@@ -7192,6 +7244,15 @@ public class ToolBox_Inf {
             );
     }
 
+    /**
+     * Metodo que faz o agendamento do Work de download de logo do customer
+     * Configuração:
+     *  - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
+     *  - Em caso de falha, faz nova tentativa após 10 segundos.
+     *  - Caso acontece de tentar agendar mais  uma chamada sendo que ja existe uma pendente,
+     *  a ultima chamada será ignora e a primeira será mantida.
+     * @param context
+     */
     public static void scheduleDownloadCustomerLogoWork(Context context){
         Data inputData =
             new Data.Builder()
@@ -7232,6 +7293,16 @@ public class ToolBox_Inf {
             );
     }
 
+    /**
+     * Metodo que faz o agendamento do Work de download de PDF
+     * Configuração:
+     *  - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
+     *  - Em caso de falha, faz nova tentativa após 10 segundos.
+     *  - Caso acontece de tentar agendar mais  uma chamada sendo que ja existe uma pendente,
+     *  a ultima chamada será ignora e a primeira será mantida.
+     * @param context
+     */
+
     public static void scheduleDownloadPdfWork(Context context){
         Data inputData =
             new Data.Builder()
@@ -7240,12 +7311,13 @@ public class ToolBox_Inf {
                     ToolBox_Con.getPreference_Customer_Code(context)
                 )
                 .build();
-        //
+        //Define constraint que precisa estar conectado.
         Constraints constraints =
             new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
-        //
+        //Cria uma tarefa que não se repete, incluindo os dados de customer no inputData
+        //E defindo uma nova tentativa em caso de falha para daqui a 10 segundos.
         OneTimeWorkRequest workDownloadPdfRequest =
             new OneTimeWorkRequest.Builder(Work_DownLoad_PDF.class)
                 .setInputData(inputData)
@@ -7269,6 +7341,15 @@ public class ToolBox_Inf {
             );
     }
 
+    /**
+     * Metodo que faz o agendamento do Work de download de Imgs
+     * Configuração:
+     *  - O agendamento deve ser imediato caso a constraint de CONNECTED seja atendida.
+     *  - Em caso de falha, faz nova tentativa após 10 segundos.
+     *  - Caso acontece de tentar agendar mais  uma chamada sendo que ja existe uma pendente,
+     *  a ultima chamada será ignora e a primeira será mantida.
+     * @param context
+     */
     public static void scheduleDownloadPictureWork(Context context){
         Data inputData =
             new Data.Builder()
@@ -7305,6 +7386,11 @@ public class ToolBox_Inf {
             );
     }
     //TODO Comentar os metodos que chamam os Workers
+
+    /**
+     * Metodo que faz o agendamento de todos os workers de downloa
+     * @param context
+     */
     public static void scheduleAllDownloadWorkers(Context context) {
         ToolBox_Inf.scheduleDownloadPdfWork(context);
         ToolBox_Inf.scheduleDownloadPictureWork(context);
