@@ -11,7 +11,10 @@
     tools:context=".ui.act010.Act010_Main"
     tools:showIn="@layout/act010_main"
     android:baselineAligned="false">
-
+    <include
+        android:id="@+id/act010_process_in_progress"
+        layout="@layout/process_in_progress"
+        android:visibility="gone"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act011;
 
+import android.content.Context;
+
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
@@ -14,11 +16,13 @@ import java.util.ArrayList;
 
 public interface Act011_Main_Presenter {
 
-    void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code);
+    void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code);
 
     void saveData(GE_Custom_Form_Data formData, boolean bMsg);
 
     void checkData(GE_Custom_Form_Data formData, ArrayList<GE_File> geFiles, int require_serial_done, String require_serial_done_ok, int require_location);
+
+    boolean isaTicketFlowForm();
 
     MD_Schedule_Exec getMdScheduleExec(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec);
 
@@ -41,4 +45,16 @@ public interface Act011_Main_Presenter {
     void cancelScheduleAndForm(GE_Custom_Form_Local customFormLocal, MD_Schedule_Exec scheduleExec);
 
     void validateGPSResource(GE_Custom_Form_Local formLocal);
+    //
+    boolean isFormCreateByTicket(GE_Custom_Form_Local customFormLocal);
+
+    void resetTicketCtrlFormDataIfNeeds(GE_Custom_Form_Local formLocal);
+
+    boolean setForceSentByForm(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data);
+
+    Integer getSeqTmpForFormOffHand(Context context, Integer mTicket_prefix, Integer mTicket_code, Integer mStep_code);
+
+    String getDialogTicketInfo(Integer ticket_prefix, Integer ticket_code, Integer step_code);
+
+    void checkAppExecutionDecrementUpdateNeeds(Integer mSo_prefix, Integer mSo_code, GE_Custom_Form_Data formData);
 }

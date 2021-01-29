@@ -9,7 +9,6 @@ public class SO_Favorite_Pipeline implements Serializable {
 
     private static final long serialVersionUID = -3515162720290420035L;
 
-
     @SerializedName("customer_code")
     @Expose
     private Integer customerCode;
@@ -19,6 +18,9 @@ public class SO_Favorite_Pipeline implements Serializable {
     @SerializedName("pipeline_desc")
     @Expose
     private String pipelineDesc;
+    @SerializedName("deadline_automatic")
+    @Expose
+    private int deadline_automatic;
 
     public Integer getCustomerCode() {
         return customerCode;
@@ -42,5 +44,13 @@ public class SO_Favorite_Pipeline implements Serializable {
 
     public void setPipelineDesc(String pipelineDesc) {
         this.pipelineDesc = pipelineDesc;
+    }
+
+    public int getDeadline_automatic() {
+        return deadline_automatic;
+    }
+
+    public void setDeadline_automatic(int deadline_automatic) {
+        this.deadline_automatic = deadline_automatic;
     }
 }

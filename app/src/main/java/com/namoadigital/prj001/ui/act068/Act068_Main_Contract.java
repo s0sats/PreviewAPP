@@ -26,21 +26,28 @@ public interface Act068_Main_Contract {
 
        void callAct005();
 
-       void callAct069(Bundle bundle);
+       void callAct076();
 
-       void showResult(ArrayList<HMAux> resultList);
+       void showResult(boolean ticketResult);
+
+       void setSync(int qty);
+
+       void addResultList(ArrayList<HMAux> resultList);
+
+       void callAct070(Bundle buildAct070Bundle);
+
    }
 
    interface I_Presenter{
+       void getSync();
+
        void getPendencies();
 
        void getMD_Products();
 
        void onBackPressedClicked();
 
-       void checkPendenciesFlow(int pendencies_qty);
-
-       void executeSerialSearch(String product_id, String serial_id, String tracking);
+       void executeSerialSearch(String product_id, String serial_id, String tracking, boolean forceExactSearch);
 
        void extractSearchResult(String result);
 
@@ -51,5 +58,21 @@ public interface Act068_Main_Contract {
        void executeWSTicketSave();
 
        void processSaveReturn(String jsonResult);
+
+       boolean verifyProductForForm();
+
+       void executeWSTicketDownload();
+
+       void defineWsToCall();
+
+       void processWS_SaveReturn(String result);
+
+       void executeTicketSearch(String contract_id, String client_id, String ticket_id);
+
+       void updateTabPreference(String sTag);
+
+       void processSearchByTicketTab(HMAux hmAux);
+
+       void setFragTicketSearchParamsIntoBundle(Bundle bundle, HMAux hmAuxValues);
    }
 }

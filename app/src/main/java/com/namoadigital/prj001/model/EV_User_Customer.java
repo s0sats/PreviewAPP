@@ -19,6 +19,14 @@ public class EV_User_Customer {
     private String logo_url;
     private int tracking;
     private String timezone;
+    private String license_control_type;
+    //LUCHE - 07/01/2021 - Propriedades referente a licença
+    private Integer license_site_code;
+    private String license_site_desc;
+    private Integer license_user_level_code;
+    private String license_user_level_id;
+    private Integer license_user_level_value;
+    private Integer license_user_level_changed;
 
     public long getUser_code() {
         return user_code;
@@ -130,5 +138,61 @@ public class EV_User_Customer {
 
     public void setTimezone(String timezone) {
         this.timezone = timezone;
+    }
+
+    public String getLicense_control_type() {
+        return license_control_type;
+    }
+
+    public void setLicense_control_type(String license_control_type) {
+        this.license_control_type = license_control_type;
+    }
+
+    public Integer getLicense_site_code() {
+        return license_site_code;
+    }
+
+    public void setLicense_site_code(Integer license_site_code) {
+        this.license_site_code = license_site_code;
+    }
+
+    public String getLicense_site_desc() {
+        return license_site_desc;
+    }
+
+    public void setLicense_site_desc(String license_site_desc) {
+        this.license_site_desc = license_site_desc;
+    }
+
+    public Integer getLicense_user_level_code() {
+        return license_user_level_code;
+    }
+
+    public void setLicense_user_level_code(Integer license_user_level_code) {
+        this.license_user_level_code = license_user_level_code;
+    }
+
+    public String getLicense_user_level_id() {
+        return license_user_level_id;
+    }
+
+    public void setLicense_user_level_id(String license_user_level_id) {
+        this.license_user_level_id = license_user_level_id;
+    }
+
+    public Integer getLicense_user_level_value() {
+        return license_user_level_value;
+    }
+
+    public void setLicense_user_level_value(Integer license_user_level_value) {
+        this.license_user_level_value = license_user_level_value;
+    }
+
+    public Integer getLicense_user_level_changed() {
+        return license_user_level_changed;
+    }
+
+    public void setLicense_user_level_changed(Integer license_user_level_changed) {
+        this.license_user_level_changed = license_user_level_changed;
     }
 }

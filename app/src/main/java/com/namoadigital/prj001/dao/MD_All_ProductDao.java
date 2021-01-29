@@ -43,11 +43,12 @@ public class MD_All_ProductDao extends BaseDao implements Dao<MD_All_Product>, D
     public static final String SERIAL_RULE = "serial_rule";
     public static final String SERIAL_MIN_LENGTH = "serial_min_length" ;
     public static final String SERIAL_MAX_LENGTH = "serial_max_length" ;
+    public static final String SPARE_PART = "spare_part" ;
 
     public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC,
             REQUIRE_SERIAL, ALLOW_NEW_SERIAL_CL, UN, SKETCH_CODE, SKETCH_URL, SKETCH_URL_LOCAL,
             SKETCH_LINES, SKETCH_COLUMNS, SKETCH_COLOR, FLAG_OFFLINE, LOCAL_CONTROL, IO_CONTROL,
-            SERIAL_RULE, SERIAL_MIN_LENGTH, SERIAL_MAX_LENGTH
+            SERIAL_RULE, SERIAL_MIN_LENGTH, SERIAL_MAX_LENGTH, SPARE_PART
     };
 
     public MD_All_ProductDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -339,6 +340,7 @@ public class MD_All_ProductDao extends BaseDao implements Dao<MD_All_Product>, D
             }else {
                 md_all_product.setSerial_max_length(cursor.getInt(cursor.getColumnIndex(SERIAL_MAX_LENGTH)));
             }
+            md_all_product.setSpare_part(cursor.getInt(cursor.getColumnIndex(SPARE_PART)));
 
             return md_all_product;
         }
@@ -391,7 +393,9 @@ public class MD_All_ProductDao extends BaseDao implements Dao<MD_All_Product>, D
             contentValues.put(SERIAL_RULE, md_all_product.getSerial_rule());
             contentValues.put(SERIAL_MIN_LENGTH, md_all_product.getSerial_min_length());
             contentValues.put(SERIAL_MAX_LENGTH, md_all_product.getSerial_max_length());
-
+            if (md_all_product.getSpare_part() > -1) {
+                contentValues.put(SPARE_PART, md_all_product.getSpare_part());
+            }
             return contentValues;
 
         }

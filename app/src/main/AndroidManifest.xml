@@ -9,8 +9,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-<!--    Revisar se a permissao REQUEST_INSTALL_PACKAGES é de fato necessaria-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Revisar se a permissao REQUEST_INSTALL_PACKAGES é de fato necessaria -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -32,9 +31,7 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-        </provider>
-
-        <!-- Login -->
+        </provider> <!-- Login -->
         <activity
             android:name=".ui.act001.Act001_Main"
             android:label="@string/app_name"
@@ -464,36 +461,85 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ui.act070.Act070_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ui.act071.Act071_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".ui.act072.Act072_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
-
         <activity
             android:name=".ui.act073.Act073_Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act074.Act074_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act075.Act075_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act076.Act076_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act077.Act077_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act078.Act078_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act079.Act079_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act080.Act080_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act081.Act081_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
+        <activity android:name=".ui.act082.Act082_Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
         <activity
             android:name=".view.act.product_selection.Act_Product_Selection"
             android:label="@string/app_name"
@@ -509,9 +555,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:name=".view.act.test2.Teste2"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!-- Receivers -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- Receivers -->
         <receiver android:name=".receiver.WBR_GetCustomer" />
 
         <service android:name=".service.WS_GetCustomer" />
@@ -718,20 +762,24 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
 
         <service android:name=".service.WS_Serial_Log" />
         <service android:name=".service.WS_SO_Next_Orders" />
-
         <service android:name=".service.WS_SO_Favorite_List" />
+
         <receiver android:name=".receiver.WBR_SO_Favorite_List" />
 
         <service android:name=".service.WS_SO_Client_List" />
+
         <receiver android:name=".receiver.WBR_SO_Client_List" />
 
         <service android:name=".service.WS_SO_Creation_Save" />
+
         <receiver android:name=".receiver.WBR_SO_Creation_Save" />
 
         <service android:name=".service.WS_Generate_NForm_PDF" />
+
         <receiver android:name=".receiver.WBR_Generate_NForm_PDF" />
 
         <service android:name=".service.WS_IO_Serial_Process_Search" />
+
         <receiver android:name=".receiver.WBR_IO_Serial_Process_Search" />
 
         <service android:name=".service.WS_IO_Serial_Process_Download" />
@@ -817,33 +865,49 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WS_SO_Service_Cancel" />
 
         <receiver android:name=".receiver.WBR_SO_Service_Cancel" />
-
-
         <receiver android:name=".receiver.WBR_SO_Get_Service_For_Edit" />
 
         <service android:name=".service.WS_SO_Get_Service_For_Edit" />
 
         <receiver android:name=".receiver.WBR_SO_Set_Service_For_Edit" />
+
         <service android:name=".service.WS_SO_Set_Service_For_Edit" />
 
         <receiver android:name=".receiver.WBR_TK_Ticket_Download" />
+
         <service android:name=".service.WS_TK_Ticket_Download" />
 
         <receiver android:name=".receiver.WBR_TK_Ticket_Checkin" />
+
         <service android:name=".service.WS_TK_Ticket_Checkin" />
-        
+
         <receiver android:name=".receiver.WBR_TK_Ticket_Save" />
+
         <service android:name=".service.WS_TK_Ticket_Save" />
 
         <receiver android:name=".receiver.WBR_TK_Ticket_Search" />
+
         <service android:name=".service.WS_TK_Ticket_Search" />
 
         <receiver android:name=".receiver.WBR_SO_Product_Event_Cancel" />
+
         <service android:name=".service.WS_SO_Product_Event_Cancel" />
 
         <receiver android:name=".receiver.WBR_SO_Create_Room" />
-        <service android:name=".service.WS_SO_Create_Room" />
+        <receiver android:name=".receiver.WBR_TK_Next_Ticket" />
+        <receiver android:name=".receiver.WBR_TK_Header_N_Group_Save" />
+        <receiver android:name=".receiver.WBR_TK_Ticket_Client_Contract_Search" />
+        <receiver android:name=".receiver.WBR_TK_Get_Workgroup_List" />
+        <receiver android:name=".receiver.WBR_TK_Main_User_List" />
+        <receiver android:name=".receiver.WBR_Get_Customer_Site_License" />
 
+        <service android:name=".service.WS_SO_Create_Room" />
+        <service android:name=".service.WS_TK_Next_Ticket" />
+        <service android:name=".service.WS_TK_Header_N_Group_Save" />
+        <service android:name=".service.WS_TK_Ticket_Client_Contract_Search" />
+        <service android:name=".service.WS_TK_Get_Workgroup_List" />
+        <service android:name=".service.WS_TK_Main_User_List" />
+        <service android:name=".service.WS_Get_Customer_Site_License" />
     </application>
 
 </manifest>

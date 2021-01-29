@@ -105,4 +105,14 @@
     <string name="install_app_error_msg"> Fehler bei der Aktualisierung der App!\nBitte erneut über die Synchronisation versuchen.</string>
     <string name="msg_customer_pendencies_list">Account :\n</string>
     <string name="msg_update_required_warning">Neue Version verfügbar!\nSenden Sie bitte die ausstehende Daten, um aktualisieren zu können.</string>
+    <string name="msg_login_invalid_current_time">Ihr Tablet-/Telefondatum ist nicht korrekt!\n Stellen Sie Datum und Uhrzeit bitte ein und versuchen Sie es erneut.</string>
+    <string name="act002_ws_site_license_ttl">Lizenzierte Standorte</string>
+    <string name="act002_ws_site_license_msg">Standorte mit verfügbaren Lizenzen werden geladen.</string>
+    <string name="license_site_dialog_ttl">Lizenzierte Standorte</string>
+    <string name="license_site_dialog_filter_hint">Standort Ihrer Lizenz auswählen</string>
+    <string name="license_site_dialog_close">Abbrechen</string>
+    <string name="act002_alt_no_licenses_returned_ttl">Lizenz nicht verfügbar!</string>
+    <string name="act002_alt_no_licenses_returned_msg">Kein Standort mit verfügbarer Lizenz für diesen Benutzer gefunden.\nVersuchen Sie es bitte später erneut oder kontaktieren Sie Ihr IT-Team, um die Anzahl der verfügbaren Lizenzen zu prüfen.</string>
+    <string name="act002_alt_license_list_not_found_ttl">Fehler: Lizenzierte Standorte</string>
+    <string name="act002_alt_license_list_not_found_msg">Standortliste lässt sich nicht laden.\nVersuchen Sie es bitte erneut.</string>
 </resources>

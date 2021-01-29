@@ -19,9 +19,11 @@ import com.namoadigital.prj001.model.Ev_User_Customer_Parameter;
 import com.namoadigital.prj001.model.TGC_Env;
 import com.namoadigital.prj001.model.TGC_Rec;
 import com.namoadigital.prj001.receiver.WBR_GetCustomer;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_Truncate;
 import com.namoadigital.prj001.sql.EV_User_Sql_Truncate;
 import com.namoadigital.prj001.sql.Ev_User_Customer_Parameter_Sql_Truncate;
+import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -99,6 +101,7 @@ public class WS_GetCustomer extends IntentService {
         env.setPassword(password);
         env.setNfc_code(nfc);
         env.setStatus_jump(statusjump);
+        env.setCurrent_time(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
 
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_GETCUSTOMERS,
@@ -109,6 +112,7 @@ public class WS_GetCustomer extends IntentService {
                 resultado,
                 TGC_Rec.class
         );
+
         /**
          * LUCHE - 06/01/2019
          *
@@ -146,6 +150,21 @@ public class WS_GetCustomer extends IntentService {
                 1,
                 rec.getDb_version()
         )) {
+            return;
+        }
+        //
+        /**
+         * LUCHE - 17/11/2020
+         * Adicionado tratativa caso o usuario esteja em um horario diferente do atual.
+         * Aqui é considerado um tolerancia, que esta definida no servidor.
+         */
+        if(isInvalidCurrentTime(rec.getValid_time())){
+            ToolBox.sendBCStatus(
+                getApplicationContext(),
+                Constant.PD_TYPE_ERROR_1,
+                getString(R.string.msg_login_invalid_current_time),
+                "",
+                "0");
             return;
         }
         //
@@ -198,7 +217,12 @@ public class WS_GetCustomer extends IntentService {
                 Collections.addAll(listToDelete,files_support);
                 //
                 ToolBox_Inf.deleteFileListExceptionSafe(listToDelete);
-                //
+                //LUCHE - 26/10/2020 - Reseta prefencia da tab da act068
+                ToolBox_Con.setStringPreference(
+                    getApplicationContext(),
+                    ConstantBaseApp.ACT068_TAB_SELECTED,
+                    Act068_Main.TAG_FRG_SERIAL_SEARCH
+                );
             }
             //
             ev_userDao.addUpdate(users, true);
@@ -208,13 +232,26 @@ public class WS_GetCustomer extends IntentService {
 
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_ev_user_customer), "", "0");
 
+        //LUCHE - 07/01/2021 - Licença por Site
+        //Implementado conciliação dos dados de licença de site ao carregar a lista de custormer.
+        //Os dados da licença de site seleconada, ficam armazenados na tabela ev_user_customer e ao
+        //chamar o refresh da lista, é necessario persistir esses dados que não vem do servidor sendo assim
+        //Antes de apagar toda a tabela,agora é gerada uma lista com os dados dos customers.
+        //No processamento individual de cada customer retornado pelo server e caso o customer possua
+        //ja possua sessão, resgate as infos de licença e seta no obj a ser salvo no banco.
+        ArrayList<EV_User_Customer> evUserCustomerDb =
+            (ArrayList<EV_User_Customer>) ev_user_customerDao.query(
+                new EV_User_Customer_Sql_001(
+                    String.valueOf(userInfo.getUser_code())
+                ).toSqlQuery()
+            );
+
         //Apaga dados da tabela
         ev_user_customerDao.remove(new EV_User_Customer_Sql_Truncate().toSqlQuery());
 
         File[] files_Customers = ToolBox_Inf.getListOfFiles_v2("ev_user_customer-");
 
         for (File _file : files_Customers) {
-
             ArrayList<EV_User_Customer> customers = gson.fromJson(
                     ToolBox.jsonFromOracle(
                             ToolBox_Inf.getContents(_file)
@@ -241,6 +278,19 @@ public class WS_GetCustomer extends IntentService {
                         ) ? 1 : 0;
                     //
                     customer.setPending(pendencies);
+                    //LUCHE - 07/01/2021
+                    //Caso o customer recebido possua sessão, tenta resgatar as infos de licença por site
+                    if(customer.getSession_app() != null) {
+                        EV_User_Customer customerDb = getEvUsrCustomerDb(evUserCustomerDb, customer.getUser_code(), customer.getCustomer_code());
+                        if (customerDb != null && customerDb.getLicense_site_code() != null && customerDb.getLicense_site_code() > 0) {
+                            customer.setLicense_site_code(customerDb.getLicense_site_code());
+                            customer.setLicense_site_desc(customerDb.getLicense_site_desc());
+                            customer.setLicense_user_level_code(customerDb.getLicense_user_level_code());
+                            customer.setLicense_user_level_id(customerDb.getLicense_user_level_id());
+                            customer.setLicense_user_level_value(customerDb.getLicense_user_level_value());
+                            customer.setLicense_user_level_changed(customerDb.getLicense_user_level_changed());
+                        }
+                    }
                 }
             }
             //
@@ -270,11 +320,38 @@ public class WS_GetCustomer extends IntentService {
         ToolBox_Con.setPreference_User_Pwd(getApplicationContext(), password);
         ToolBox_Con.setPreference_User_NFC(getApplicationContext(), String.valueOf(nfc));
         ToolBox_Con.setPreference_Last_User_Logged(getApplicationContext(), String.valueOf(userInfo.getUser_code()));
-
+        //LUCHE - 18/11/2020 -NOVAS PREFERENCIAS DE VALIDAÇÃO DE DATA
+        ToolBox_Con.setBooleanPreference(getApplicationContext(),ConstantBaseApp.DATETIME_IS_VALID,true);
+        ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_TOLERANCE,rec.getTolerance_time());
+        ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_LAST_VALID_TIME,ToolBox_Inf.dateToMilliseconds(env.getCurrent_time()));
+        //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "CLOSE_ACT", getString(R.string.msg_finishing_processsing), "", "0");
 
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
 
+    }
+
+    /**
+     * LUCHE - 07/01/2021
+     * Metodo que busca registro que estava no banco e o retorna caso seja encontrado pela pk
+     * @param evUserCustomerDbList
+     * @param user_code
+     * @param customer_code
+     * @return
+     */
+    private EV_User_Customer getEvUsrCustomerDb(ArrayList<EV_User_Customer> evUserCustomerDbList, long user_code, long customer_code) {
+        for (EV_User_Customer customerDb : evUserCustomerDbList) {
+            if( customerDb.getUser_code() == user_code
+                && customerDb.getCustomer_code() == customer_code
+            ){
+                return customerDb;
+            }
+        }
+        return null;
+    }
+
+    private boolean isInvalidCurrentTime(int valid_time) {
+        return valid_time != 1;
     }
 
     /**

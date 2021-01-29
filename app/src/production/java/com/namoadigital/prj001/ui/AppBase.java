@@ -6,6 +6,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -33,8 +34,10 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TICKET_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
@@ -42,13 +45,20 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.UNSENT_IMG_PATH;
 
-
 /**
  * Created by neomatrix on 09/01/17.
  */
 
 public class AppBase extends Application {
-
+    public static final String NAMOA_DIR = "/namoa";
+    public static final String ZIPS_DIR = "/zips";
+    public static final String IMGS_DIR = "/imgs";
+    public static final String THUMBNAIL_DIR = "/thumbnail";
+    public static final String SUPPORT_DIR = "/support";
+    public static final String TOKEN_DIR = "/token";
+    public static final String CHAT_DIR = "/chat";
+    public static final String UNSENT_IMGS_DIR = "/unsentImgs";
+    public static final String TICKET_DIR = "/ticket";
     private static Thread.UncaughtExceptionHandler mDefaultUncaughtExceptionHandler;
 
     @Override
@@ -79,6 +89,8 @@ public class AppBase extends Application {
         TOKEN_PATH = DB_PATH + "/token";
         CHAT_PATH = DB_PATH + "/chat";
         UNSENT_IMG_PATH = IMG_PATH + "/unsentImgs";
+        TICKET_JSON_PATH = DB_PATH + "/ticket";
+        CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + "/customerSiteLicense";
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
@@ -100,14 +112,16 @@ public class AppBase extends Application {
         CACHE_PATH = DB_PATH + "/CC_CACHE";
         CACHE_CHAT_PATH = DB_PATH + "/CC_CACHE_CHAT";
         CACHE_PATH_PHOTO = DB_PATH + "/CC_CACHE_PHOTO";
-        CACHE_PDF = System.getenv("EXTERNAL_STORAGE") + "/CC_CACHE_PDF";
+        CACHE_PDF = DB_PATH + "/CC_CACHE_PDF";
+        ConstantBaseApp.APK_PATH = getApplicationContext().getExternalFilesDir(null) + "/namoa_apk";
+        ConstantBaseApp.CAM_TEST_PATH = getApplicationContext().getExternalFilesDir(null) + "/camtest";
 
         DB_NAME_BASE = "namoa_sms.db3";
-        DB_VERSION_BASE = 10;
+        DB_VERSION_BASE = 11;
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
         DB_NAME_CUSTOM = "cc.db3";
-        DB_VERSION_CUSTOM = 46;
+        DB_VERSION_CUSTOM = 57;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";
@@ -155,6 +169,6 @@ public class AppBase extends Application {
 
         Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
         Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
-
+        ConstantBase.AUTHORITIES_FOR_PROVIDER = BuildConfig.APPLICATION_ID + ".fileprovider";
     }
 }

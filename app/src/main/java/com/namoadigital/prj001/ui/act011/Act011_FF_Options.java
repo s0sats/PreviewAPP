@@ -241,7 +241,7 @@ public class Act011_FF_Options extends Fragment {
         this.isSchedule = isSchedule;
     }
 
-    public void enableTab(String status, int nserv) {
+    public void enableTab(String status, int nserv, int nTicket) {
 
         if (nserv == 1) {
             ff_options_ll_nserv.setVisibility(View.VISIBLE);
@@ -251,30 +251,32 @@ public class Act011_FF_Options extends Fragment {
 
         switch (status.toUpperCase()) {
             case Constant.SYS_STATUS_DONE:
-                ff_options_ll_e.setVisibility(View.GONE);
-                ff_options_ll_s.setVisibility(View.GONE);
-                ff_options_ll_f.setVisibility(View.GONE);
-                ff_options_ll_auto.setVisibility(View.GONE);
-
-                break;
             case Constant.SYS_STATUS_DELETED:
+            case Constant.SYS_STATUS_IGNORED:
+            case Constant.SYS_STATUS_CANCELLED:
                 ff_options_ll_e.setVisibility(View.GONE);
                 ff_options_ll_s.setVisibility(View.GONE);
                 ff_options_ll_f.setVisibility(View.GONE);
                 ff_options_ll_auto.setVisibility(View.GONE);
                 break;
             case Constant.SYS_STATUS_WAITING_SYNC:
-                ff_options_ll_e.setVisibility(View.VISIBLE);
+                if(nTicket == 0 && !isSchedule){
+                    ff_options_ll_e.setVisibility(View.VISIBLE);
+                }else {
+                    ff_options_ll_e.setVisibility(View.GONE);
+                }
                 ff_options_ll_s.setVisibility(View.GONE);
                 ff_options_ll_f.setVisibility(View.GONE);
                 ff_options_ll_auto.setVisibility(View.GONE);
-
                 break;
             default:
-                ff_options_ll_e.setVisibility(View.VISIBLE);
                 ff_options_ll_s.setVisibility(View.VISIBLE);
                 ff_options_ll_f.setVisibility(View.VISIBLE);
-
+                if (!isSchedule) {
+                    ff_options_ll_e.setVisibility(View.VISIBLE);
+                } else {
+                    ff_options_ll_e.setVisibility(View.GONE);
+                }
                 if (activateAutoAnswer > 0) {
                     ff_options_ll_auto.setVisibility(View.VISIBLE);
                     ff_options_view_divider.setVisibility(View.GONE);
@@ -291,15 +293,6 @@ public class Act011_FF_Options extends Fragment {
             ff_options_ll_a.setVisibility(View.VISIBLE);
         } else {
             ff_options_ll_a.setVisibility(View.GONE);
-        }
-
-        //if (data_serv == null
-        if (!isSchedule
-            && !status.toUpperCase().equals(Constant.SYS_STATUS_DONE)
-            && !status.toUpperCase().equals(Constant.SYS_STATUS_DELETED)) {
-            ff_options_ll_e.setVisibility(View.VISIBLE);
-        } else {
-            ff_options_ll_e.setVisibility(View.GONE);
         }
 
     }

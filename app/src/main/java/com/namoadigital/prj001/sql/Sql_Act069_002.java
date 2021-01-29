@@ -17,7 +17,7 @@ public class Sql_Act069_002 implements Specification {
         StringBuilder sb = new StringBuilder();
         return sb
             .append(" SELECT\n" +
-                    "       t.customer_code ||'|'|| t.ticket_prefix ||'|'|| t.ticket_code "+TICKET_PK+",\n" +
+                    "       t.customer_code ||'|'|| t.ticket_prefix ||'|'|| t.ticket_code ||'|'|| t.scn "+TICKET_PK+",\n" +
                     "       t.ticket_prefix,\n" +
                     "       t.ticket_code,\n" +
                     "       t.scn\n" +

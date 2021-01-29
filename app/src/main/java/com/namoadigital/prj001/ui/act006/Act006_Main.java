@@ -74,6 +74,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     private String customFormCode;
     private String customFormVersion;
     private String customFormCodeDesc;
+    private boolean blockedByExecutionLimitReach;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,6 +147,9 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         transList.add("alert_turn_offline_mode_on_ttl");
         transList.add("alert_turn_offline_mode_on_msg");
         //
+        transList.add("alert_free_execution_blocked_ttl");
+        transList.add("alert_free_execution_blocked_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -178,13 +182,16 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         mFrgSerialSearch.setOnSearchClickListener(new Frg_Serial_Search.I_Frg_Serial_Search() {
             @Override
             public void onSearchClick(String btn_Action, HMAux optionsInfo) {
-
                 switch (btn_Action) {
                     case Frg_Serial_Search.BTN_OPTION_01:
-                        processSerialSearch(optionsInfo);
+                        if(blockedByExecutionLimitReach) {
+                            showExecutionBlockMsg();
+                        }else{
+                            processSerialSearch(optionsInfo);
+                        }
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:
-                        processPendencies(optionsInfo);
+                            processPendencies(optionsInfo);
                         break;
                     case Frg_Serial_Search.BTN_OPTION_03:
                         break;
@@ -250,6 +257,39 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         if(hasNFormSelected()){
             vNFormSelected.setVisibility(View.VISIBLE);
         }
+        //
+        checkSiteAvailablity();
+    }
+
+    private void checkSiteAvailablity() {
+        blockedByExecutionLimitReach = ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context);
+        //
+        applyBlockExecutionAction();
+    }
+
+    /**
+     * LUCHE - 14/01/2021
+     * Metodo que exibe msg de  bloqueio e some com btn NFC em caso de bloqueio.
+     */
+    private void applyBlockExecutionAction() {
+        if(blockedByExecutionLimitReach){
+            showExecutionBlockMsg();
+            mFrgSerialSearch.setSupportNFC(false);
+        }else{
+            mFrgSerialSearch.setSupportNFC(true);
+        }
+    }
+
+    @Override
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que aplica as alterações na interface para impedir que o usuario crie uma nova execução.
+     */
+    public void showExecutionBlockMsg() {
+        showMsg(
+            hmAux_Trans.get("alert_free_execution_blocked_ttl"),
+            hmAux_Trans.get("alert_free_execution_blocked_msg")
+        );
     }
 
     private void recoverIntentsInfo() {
@@ -297,7 +337,8 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             mPresenter.executeSerialSearch(
                     optionsInfo.get(PRODUCT_ID),
                     optionsInfo.get(Frg_Serial_Search.SERIAL),
-                    optionsInfo.get(Frg_Serial_Search.TRACKING)
+                    optionsInfo.get(Frg_Serial_Search.TRACKING),
+                    mFrgSerialSearch.isForceExactSearch()
             );
         } else {
             ToolBox.alertMSG(
@@ -343,7 +384,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     private void initActions() {
         if(hasNFormSelected()){
             ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
-            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_nform_new_header);
+            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_process_new_header);
             ivClose.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -590,7 +631,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                         mFrgSerialSearch.setProductIdText(product_id);
                         mFrgSerialSearch.setSerialIdText("");
                         mFrgSerialSearch.setTrackingText("");
-                        mPresenter.executeSerialSearch(product_id, "", "");
+                        mPresenter.executeSerialSearch(product_id, "", "", false);
                     } else {
                         ToolBox.alertMSG(
                                 context,
@@ -613,7 +654,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
                         mFrgSerialSearch.setTrackingText("");
                         //
                         HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
-                        mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "");
+                        mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "", true);
                     } else {
                         ToolBox.alertMSG(
                                 context,
@@ -643,5 +684,6 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     protected void processRefreshMessage(String mType, String mValue, String mActivity) {
         super.processRefreshMessage(mType, mValue, mActivity);
         iniUIFooter();
+        checkSiteAvailablity();
     }
 }

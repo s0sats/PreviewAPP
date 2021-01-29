@@ -26,6 +26,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
@@ -35,6 +36,8 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Product_Serial_TrackingDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -46,6 +49,8 @@ import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
+import com.namoadigital.prj001.ui.act071.Act071_Main;
+import com.namoadigital.prj001.ui.act081.Act081_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -100,6 +105,15 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private String customFormCodeDesc;
     private boolean bundle_from_offline_source;
     private boolean scheduled_profile_check;
+    private boolean isOffHandForm;
+    private Bundle act081Bundle = new Bundle();
+    private int mStepCode;
+    private int mTkTicketPrefix;
+    private int mTkTicketCode;
+
+
+
+    private boolean has_tk_ticket_is_form_off_hand;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -185,6 +199,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("alert_form_site_not_found_tll");
         transList.add("alert_form_site_not_found_msg");
 
+        transList.add("alert_serial_site_out_of_license_tll");
+        transList.add("alert_serial_site_out_of_license_msg");
+
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -236,7 +253,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 requesting_process,
                 new MD_Product_SerialDao(context),
                 new MD_Product_Serial_TrackingDao(context),
-                isFinishPlusNew()
+                isFinishPlusNew(),
+                mTkTicketPrefix,
+                mTkTicketCode,
+                mStepCode
         );
         //
         mPresenter.getProductInfo(bundle);
@@ -326,32 +346,34 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
 
             @Override
             public void onSaveNoChangesClick(MD_Product_Serial md_product_serial, boolean serial_id_changes) {
-                //Atualiza obj da tela com o do frag.
-                mdProductSerial = md_product_serial;
-                //Salva os dados do serial no banco local.
-                mPresenter.updateSerialData(mdProductSerial);
-                //
-                mPresenter.checkFlow();
-            }
+                    //Atualiza obj da tela com o do frag.
+                    mdProductSerial = md_product_serial;
+                    //Salva os dados do serial no banco local.
+                    mPresenter.updateSerialData(mdProductSerial);
+                    //
+                    mPresenter.checkFlow();
+                }
 
             @Override
             public void onSaveWithChangesClick(MD_Product_Serial mdProductSerialFrag, boolean serial_id_changes) {
-                mPresenter.updateSerialData(mdProductSerialFrag);
-                //
-                mdProductSerial = mdProductSerialFrag;
-                //
-                if (ToolBox_Con.isOnline(context)) {
-                    mPresenter.executeSerialSave();
-                } else {
-                    //ToolBox_Inf.showNoConnectionDialog(context);
+
+
+                    mPresenter.updateSerialData(mdProductSerialFrag);
+                    //
+                    mdProductSerial = mdProductSerialFrag;
+                    //
+                    if (ToolBox_Con.isOnline(context)) {
+                        mPresenter.executeSerialSave();
+                    } else {
+                        //ToolBox_Inf.showNoConnectionDialog(context);
                     /*mPresenter.validateSerial(
                             mdProductSerial.getSerial_id(),
                             mdProduct.getRequire_serial(),
                             mdProduct.getAllow_new_serial_cl()
                     );*/
-                    mPresenter.checkFlow();
+                        mPresenter.checkFlow();
+                    }
                 }
-            }
 
             @Override
             public void onTrackingSearchClick(long product_code, long serial_code, String tracking, String site_code) {
@@ -515,6 +537,26 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             }else{
                 initalizeBundleForFinishPlusNew();
             }
+            has_tk_ticket_is_form_off_hand = bundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
+            if(has_tk_ticket_is_form_off_hand){
+                isOffHandForm = bundle.getBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND, false);
+                mTkTicketPrefix =  bundle.getInt(TK_TicketDao.TICKET_PREFIX,-1);
+                mTkTicketCode  = bundle.getInt(TK_TicketDao.TICKET_CODE,-1);
+                mStepCode = bundle.getInt(TK_Ticket_StepDao.STEP_CODE, -1);
+
+                act081Bundle.putBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND,isOffHandForm);
+                act081Bundle.putString(CH_RoomDao.ROOM_CODE, bundle.getString(CH_RoomDao.ROOM_CODE));
+                act081Bundle.putInt(TK_TicketDao.TICKET_PREFIX,mTkTicketPrefix);
+                act081Bundle.putInt(TK_TicketDao.TICKET_CODE, mTkTicketCode);
+                act081Bundle.putString(TK_TicketDao.TICKET_ID, bundle.getString(TK_TicketDao.TICKET_ID, ""));
+                act081Bundle.putInt(TK_Ticket_StepDao.STEP_CODE, mStepCode);
+                act081Bundle.putString(TK_Ticket_StepDao.STEP_DESC, bundle.getString(TK_Ticket_StepDao.STEP_DESC, ""));
+
+                act081Bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, ""));
+                act081Bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, ""));
+                act081Bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, ""));
+            }
+
 
         } else {
             bundle_product_code = 0L;
@@ -565,7 +607,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private void initActions() {
         if(hasNFormSelected()){
             ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
-            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_nform_new_header);
+            TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_process_new_header);
             ivClose.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -574,6 +616,14 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 }
             });
             tvNFormSelected.setText(customFormCodeDesc);
+        }else{
+            if(has_tk_ticket_is_form_off_hand) {
+                ImageView ivClose = vNFormSelected.findViewById(R.id.iv_nform_new_header);
+                TextView tvNFormSelected = vNFormSelected.findViewById(R.id.tv_process_new_header);
+                ivClose.setVisibility(View.GONE);
+                tvNFormSelected.setText(mPresenter.getFormattedTicketInfo(act081Bundle));
+                vNFormSelected.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -815,6 +865,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             bundle.putString(MD_SiteDao.SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
             //bundle.putString(Constant.ACT008_SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
             //
+
+            bundle.putAll(act081Bundle);
             mIntent.putExtras(bundle);
             //
             startActivity(mIntent);
@@ -916,6 +968,15 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_SCHEDULE));
         act013Bundle.putBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, bundle.getBoolean(ConstantBaseApp.SYS_STATUS_WAITING_SYNC));
         mIntent.putExtras(act013Bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct081(Context context) {
+        Intent mIntent = new Intent(context, Act081_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(act081Bundle);
         startActivity(mIntent);
         finish();
     }
@@ -1070,4 +1131,45 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     protected void processNotification_close(String mValue, String mActivity) {
         //super.processNotification_close(mValue, mActivity);
     }
+
+    @Override
+    public boolean isOffHandForm() {
+        return isOffHandForm;
+    }
+
+    @Override
+    public void callAct071(Context context, Bundle bundle) {
+        Intent mIntent = new Intent(context, Act071_Main.class);
+        act081Bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, mdProductSerial.getSerial_code());
+        act081Bundle.putLong(MD_Product_SerialDao.SERIAL_TMP, mdProductSerial.getSerial_tmp());
+        act081Bundle.putString(MD_Product_SerialDao.SERIAL_ID, mdProductSerial.getSerial_id());
+        act081Bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(mdProductSerial.getProduct_code()));
+        act081Bundle.putString(MD_ProductDao.PRODUCT_DESC, mdProductSerial.getProduct_desc());
+        act081Bundle.putString(MD_ProductDao.PRODUCT_ID, mdProductSerial.getProduct_id());
+        bundle.putAll(act081Bundle);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, requesting_process);
+        mIntent.putExtras(bundle);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public boolean isHas_tk_ticket_is_form_off_hand() {
+        return has_tk_ticket_is_form_off_hand;
+    }
+
+    /**
+     * BARRIONUEVO - 19-01-2021
+     *     Meotodo que recupera site do serial para validação de licenças.
+     * @return
+     */
+    @Override
+    public String getmdProductSerialSiteCode() {
+        if(mdProductSerial != null) {
+            return mdProductSerial.getSite_code() == null ? null : String.valueOf(mdProductSerial.getSite_code());
+        }
+        return null;
+    }
+
 }

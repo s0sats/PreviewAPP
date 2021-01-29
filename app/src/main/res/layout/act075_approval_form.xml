@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/padrao_WHITE"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/act075_approval_form_tv_empty_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="TextView - trad"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone" />
+
+    <TextView
+        android:id="@+id/act075_approval_form_tv_ask_confirm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="TextView - trad"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/act075_approval_form_tv_empty_list" />
+
+    <RadioGroup
+        android:id="@+id/act075_approval_form_rg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/act075_approval_form_tv_ask_confirm">
+
+        <RadioButton
+            android:id="@+id/act075_approval_form_rg_decline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="20dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="10dp"
+            android:text="Rejeitar"
+            android:textAllCaps="true"
+            android:textColor="@color/namoa_cancel_red"
+            android:textSize="@dimen/font_size_font_16" />
+
+        <!--        <RadioButton-->
+        <!--            android:visibility="invisible"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:paddingStart="20dp"-->
+        <!--            android:paddingTop="10dp"-->
+        <!--            android:paddingEnd="20dp"-->
+        <!--            android:paddingBottom="10dp"-->
+        <!--            android:textSize="@dimen/font_size_font_16" />-->
+
+        <RadioButton
+            android:id="@+id/act075_approval_form_rg_approval"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="20dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="10dp"
+            android:text="Aprovar"
+            android:textAllCaps="true"
+            android:textColor="@color/namoa_product_extract_check"
+            android:textSize="@dimen/font_size_font_16" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/act075_approval_form_tv_comment_lbl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="@+id/act075_approval_form_tv_ask_confirm"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/act075_approval_form_tv_ask_confirm"
+        app:layout_constraintTop_toBottomOf="@+id/act075_approval_form_rg" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/act075_approval_form_til_comment"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:counterEnabled="true"
+        app:counterMaxLength="500"
+        app:layout_constraintEnd_toEndOf="@+id/act075_approval_form_tv_ask_confirm"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/act075_approval_form_tv_comment_lbl"
+        app:layout_constraintTop_toBottomOf="@id/act075_approval_form_tv_comment_lbl">
+
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act075_approval_form_mket_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:inputType="textMultiLine"
+            android:maxLength="500"
+            app:mBARCODE="false"
+            app:mNFC="false"
+            app:mOCR="false"
+            app:mOCRVin="false"
+            tools:text="Comentario aqui" />
+    </android.support.design.widget.TextInputLayout>
+
+
+</android.support.constraint.ConstraintLayout>

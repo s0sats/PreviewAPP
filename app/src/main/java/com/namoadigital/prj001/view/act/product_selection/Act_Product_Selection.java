@@ -14,12 +14,15 @@ import android.widget.ListView;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act_Product_Selectio_Adapter_Groups_Products;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.TK_Ticket_Product;
+import com.namoadigital.prj001.ui.act075.Act075_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -42,8 +45,9 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     private HMAux currentIndex = new HMAux();
     private Bundle bundle;
     private boolean mkUpdate = true;
-
+    private ArrayList<TK_Ticket_Product> tk_ticket_products = new ArrayList<>();
     private boolean returnOnFound;
+    private boolean isProductAddProcess;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,6 +86,8 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         transList.add("mket_hint_msg");
         transList.add("btn_back");
         transList.add("btn_home");
+        transList.add("alert_product_already_choosen_ttl");
+        transList.add("alert_product_already_choosen_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -142,17 +148,28 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         if (bundle != null) {
             returnOnFound = Boolean.parseBoolean(bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_FOUND_JUMP));
             mket_product_search.setText(bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_SEARCH));
+            isProductAddProcess = bundle.getBoolean(Act075_Main.IS_ADD_PRODUCT_LIST, false);
+            tk_ticket_products = (ArrayList<TK_Ticket_Product>) bundle.getSerializable(Act075_Main.PRODUCT_LIST);
+        }else{
+            isProductAddProcess = false;
         }
     }
 
     private void callSetAdapterData(String search) {
-
-        mPresenter.setAdapterData(
-                Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
-                Long.parseLong(currentIndex.get(INDEX_RECURSIVE_CODE)),
-                search
-        );
-
+        if(isProductAddProcess){
+            mPresenter.setAdapterDataForProductInsert(
+                    Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
+                    Long.parseLong(currentIndex.get(INDEX_RECURSIVE_CODE)),
+                    tk_ticket_products,
+                    search
+            );
+        }else {
+            mPresenter.setAdapterData(
+                    Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
+                    Long.parseLong(currentIndex.get(INDEX_RECURSIVE_CODE)),
+                    search
+            );
+        }
     }
 
     private void iniCurrentIndex() {
@@ -237,7 +254,16 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
                 //
                 resetSearch();
                 //
-                mPresenter.onBtnHomeClicked();
+                if(isProductAddProcess) {
+                    mPresenter.setAdapterDataForProductInsert(
+                            Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
+                            Long.parseLong(currentIndex.get(INDEX_RECURSIVE_CODE)),
+                            tk_ticket_products,
+                            ""
+                    );
+                }else {
+                    mPresenter.onBtnHomeClicked();
+                }
             }
         });
         //
@@ -263,17 +289,45 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
                     callSetAdapterData(mket_product_search.getText().toString());
 
                 } else {
-                    MD_Product pAux = mPresenter.getProduct(
-                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                            String.valueOf(item.get("code"))
-                    );
+                    if (isProductAddProcess) {
+                        boolean hasError = false;
+                        if (!tk_ticket_products.isEmpty() && item.hasConsistentValue("code")) {
+                            int code = Integer.valueOf(item.get("code"));
+                            for (TK_Ticket_Product product : tk_ticket_products) {
 
-                    if (pAux != null) {
-                        sendResult(pAux);
+                                if (product.getProduct_code() == code) {
+                                    hasError = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (hasError) {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_product_already_choosen_ttl"),
+                                    hmAux_Trans.get("alert_product_already_choosen_msg"),
+                                    null,
+                                    0);
+                        } else {
+                            setProductForResult(item);
+                        }
+                    }else{
+                        setProductForResult(item);
                     }
                 }
             }
         });
+    }
+
+    private void setProductForResult(HMAux item) {
+        MD_Product pAux = mPresenter.getProduct(
+                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                String.valueOf(item.get("code"))
+        );
+
+        if (pAux != null) {
+            sendResult(pAux);
+        }
     }
 
     @Override

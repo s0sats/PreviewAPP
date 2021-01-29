@@ -213,7 +213,8 @@ public class WS_TK_Ticket_Checkin extends IntentService {
             if (ticketReturn.getTicket() != null) {
                 TK_Ticket tkTicket = ticketReturn.getTicket();
                 tkTicket.setPK();
-                tkTicket.updateLocalImagesPathIfExists();
+                //TODO REVE SE MOVER PARA O STEP
+                //tkTicket.updateLocalImagesPathIfExists();
                 DaoObjReturn daoObjReturn = ticketDao.addUpdate(tkTicket);
                 //oq fazer no erro?
                 if (daoObjReturn.hasError()) {
@@ -237,7 +238,8 @@ public class WS_TK_Ticket_Checkin extends IntentService {
                     TK_Ticket tkTicket = ticketReturn.getTicket();
                     if (ticketReturn.getTicket() != null) {
                         tkTicket.setPK();
-                        tkTicket.updateLocalImagesPathIfExists();
+                        //TODO REVE SE MOVER PARA O STEP
+                        //tkTicket.updateLocalImagesPathIfExists();
                     } else {
                         tkTicket = ticketDao.getByString(
                             new TK_Ticket_Sql_001(
@@ -251,9 +253,6 @@ public class WS_TK_Ticket_Checkin extends IntentService {
                             //Desfaz a ação feita
                             if (actReturn.checkinAction == 1) {
                                 tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PENDING);
-                                tkTicket.setCheckin_user_name(null);
-                                tkTicket.setCheckin_user(null);
-                                tkTicket.setCheckin_date(null);
                             } else {
                                 tkTicket.setTicket_status(ConstantBaseApp.SYS_STATUS_PROCESS);
                             }

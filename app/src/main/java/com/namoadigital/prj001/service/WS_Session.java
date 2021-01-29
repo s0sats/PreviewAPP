@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,6 +13,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.EV_User_Customer;
+import com.namoadigital.prj001.model.SiteLicense;
 import com.namoadigital.prj001.model.TSession_Env;
 import com.namoadigital.prj001.model.TSession_Rec;
 import com.namoadigital.prj001.receiver.WBR_Session;
@@ -49,8 +51,13 @@ public class WS_Session extends IntentService {
             int forced_login = bundle.getInt(Constant.FORCED_LOGIN);
             int jump_validation = bundle.getInt(Constant.GC_STATUS_JUMP);
             int jump_od = bundle.getInt(Constant.GC_STATUS);
-
-           processWS_Session(user, password, nfc, customer_code, translate_code,forced_login,jump_validation,jump_od);
+            //LUCHE - 06/01/2021 - Somente quando licença for por site
+            //LUCHE - 12/01/2021 - Como tudo sempre muda, esse obj serializado perdeu seu sentido,
+            //mas foi mantido pois o tempo de refatoração não valeria a pena
+            @Nullable
+            SiteLicense siteLicense = (SiteLicense) bundle.getSerializable(SiteLicense.class.getName());
+            //
+            processWS_Session(user, password, nfc, customer_code, translate_code,forced_login,jump_validation,jump_od,siteLicense);
 
         } catch (Exception e) {
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(),e);
@@ -65,7 +72,7 @@ public class WS_Session extends IntentService {
 
     }
 
-    private void processWS_Session(String user, String password, String nfc, String customer_code, String translate_code, int forced_login, int jump_validation, int jump_od) throws Exception {
+    private void processWS_Session(String user, String password, String nfc, String customer_code, String translate_code, int forced_login, int jump_validation, int jump_od,@Nullable SiteLicense siteLicense) throws Exception {
         ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
         //
         Gson gson = new GsonBuilder().serializeNulls().create();
@@ -88,7 +95,9 @@ public class WS_Session extends IntentService {
         env.setTranslate_code(Integer.parseInt(translate_code));
         env.setGcm_id(ToolBox_Con.getPreference_Google_ID(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
-
+        env.setSite_code(siteLicense != null ? siteLicense.getSite_code() : null);
+        env.setUser_level_code(siteLicense != null ? siteLicense.getUser_level_code() : null);
+        //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_sending_data_msg), "", "0");
 
         String resultado = ToolBox_Con.connWebService(
@@ -130,10 +139,20 @@ public class WS_Session extends IntentService {
         //Seta propriedade do customer que serão atualizadas
         userCustomer.setBlocked(0);
         userCustomer.setSession_app(rec.getSession_app());
-
+        //LUCHE - 07/01/2020 - Seta preferencias da licença escolhida
+        //if(siteLicense != null) {
+        //LUCHE
+        if(rec.getSession_options() != null) {
+            TSession_Rec.Session_Options session_options = rec.getSession_options();
+            userCustomer.setLicense_site_code(session_options.getSite_code());
+            userCustomer.setLicense_site_desc(session_options.getSite_desc());
+            userCustomer.setLicense_user_level_code(session_options.getUser_level_code());
+            userCustomer.setLicense_user_level_id(session_options.getUser_level_id());
+            userCustomer.setLicense_user_level_value(session_options.getUser_level_value());
+            userCustomer.setLicense_user_level_changed(session_options.getUser_level_changed());
+        }
         //Chama metodo para atualizar dados
         ev_user_customerDao.addUpdate(userCustomer);
-
         //Seta preferecia de customer
         ToolBox_Con.setPreference_Customer_Code(getApplicationContext(), userCustomer.getCustomer_code());
         ToolBox_Con.setPreference_Customer_Code_Name(getApplicationContext(), userCustomer.getCustomer_name());
@@ -143,10 +162,7 @@ public class WS_Session extends IntentService {
         ToolBox_Con.setPreference_Status_Login(getApplicationContext(),Constant.LOGIN_STATUS_OK);
         ToolBox_Con.setPreference_Customer_Uses_Tracking(getApplicationContext(), userCustomer.getTracking());
         ToolBox_Con.setPreference_Customer_TMZ(getApplicationContext(), userCustomer.getTimezone());
-
+        //
         ToolBox_Inf.sendBCStatus(getApplicationContext(), "STATUS_GO", getString(R.string.msg_getting_master_data), "", "0");
     }
-
-
-
 }

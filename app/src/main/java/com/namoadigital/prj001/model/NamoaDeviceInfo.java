@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 
@@ -436,9 +437,27 @@ public class NamoaDeviceInfo {
         return txt;
     }
 
+    public String getDeveloperModeInfo() {
+        String txt = "Modo desenvolvedor ativo: \n\t\t";
+
+        try {
+            txt += Settings.Secure.getInt(context.getContentResolver(),
+                Settings.Global.DEVELOPMENT_SETTINGS_ENABLED , 0) == 1 ? "Sim" : "Não";
+
+            txt += "\nOpção Não manter atividades ativa: \n\t\t";
+            txt += Settings.System.getInt(context.getContentResolver(),
+                Settings.Global.ALWAYS_FINISH_ACTIVITIES, 0) == 1 ? "Sim" : "Não";
+        } catch (Exception e) {
+            e.printStackTrace();
+            txt += "Exception , Impossivel verificar";
+        }
+        return txt;
+    }
+
     public String getFormattedInfo(){
         String data =   getAboutDeviceInfo() +"\n\n" +
                         getHardwareInfo() +"\n\n" +
+                        getDeveloperModeInfo() +"\n\n" +
                         getPermissionsGrant() +"\n\n" +
                         getResourcesInfo();
         return data;

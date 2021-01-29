@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/namoa_color_gray2"/>
+        </shape>
+    </item>
+    <item android:drawable="@drawable/pipeline_step_no_checkin"/>
+</selector>

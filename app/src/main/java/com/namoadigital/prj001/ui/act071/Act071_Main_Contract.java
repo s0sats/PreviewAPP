@@ -1,10 +1,16 @@
 package com.namoadigital.prj001.ui.act071;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
+import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 
 import java.util.ArrayList;
 
@@ -26,7 +32,7 @@ public interface Act071_Main_Contract {
 
         void callAct070();
 
-        void showResult(ArrayList<HMAux> resultList, boolean ticketResult);
+        void showResult(boolean ticketResult);
 
         boolean hasUnsavedData();
 
@@ -47,15 +53,25 @@ public interface Act071_Main_Contract {
         void checkPostTicketSaveFlow();
 
         String getRequestingAct();
+
+        boolean isCreationCtrl();
+
+        void addResultList(ArrayList<HMAux> auxResults);
+
+        boolean has_tk_ticket_is_form_off_hand();
+
+        void callAct081();
     }
 
     interface I_Presenter{
 
         void onBackPressedClicked(String requestingAct);
 
-        boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq, int mSchedulePrefix, int mScheduleCode, int mScheduleExec);
+        //boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq, int mSchedulePrefix, int mScheduleCode, int mScheduleExec, boolean isCreationCtrl);
 
-        TK_Ticket_Ctrl getTicketCtrlObj(int mTkActionPrefix, int mTkActionCode, int mTkActionSeq);
+        boolean validateBundleParams(int mTkActionPrefix, int mTkActionCode, int mTkActionSeqTmp, int mSchedulePrefix, int mScheduleCode, int mScheduleExec, boolean isCreationCtrl);
+
+        TK_Ticket_Ctrl getTicketCtrlObj(int mActionPrefix, int mActionCode, int mActionSeqTmp, int mStepCode);
 
         String getFormattedInfo(String ctrl_end_date, String ctrl_end_user_name);
 
@@ -69,7 +85,7 @@ public interface Act071_Main_Contract {
 
         boolean updateTicketAction(TK_Ticket_Ctrl mTicketCtrl);
 
-        void execTicketSave();
+        void execTicketSave(boolean forceOfflineProcess);
 
         void processSaveReturn(int ticket_prefix, int ticket_code, String mLink);
 
@@ -89,11 +105,47 @@ public interface Act071_Main_Contract {
 
         boolean isClosedStatus(String ctrl_status);
 
+        TK_Ticket_Step getStepInfo(int mTicketPrefix, int mTicketCode, int mStepCode);
+
+        int getStepColor(TK_Ticket_Step ticketStep, boolean mPipelineHeaderIsCurrentStepOrder);
+
+        String getStepNumFormatted(TK_Ticket_Step ticketStep);
+
+        String getStepDesc(TK_Ticket_Step ticketStep);
+
+        void createActionIfNeed(TK_Ticket_Ctrl mTicketCtrl, boolean isCreationAction);
+
+        void setStartInfoIfNeed(TK_Ticket_Ctrl mTicketCtrl);
+
+        TK_Ticket_Ctrl createTicketCtrlObj(int mActionPrefix, int mActionCode, int mStepCode, Bundle act081Bundle);
+
+        MD_Schedule_Exec getScheduleExec(Integer schedule_prefix, Integer schedule_code, Integer schedule_exec);
+
+        boolean verifyProductForForm();
+
+        void callWsSave();
+
+        void processWS_SaveReturn(String mLink);
+
+        void defineFormWaitingSyncFlow(int mActionPrefix, int mActionCode);
+
         /*boolean hasPartnerProfile(Integer partner_code);
 
         boolean hasActionExecProfile();
 
         boolean isReadOnlyStatus(String ticketStatus);*/
+
+        TK_Ticket getTicketbyPk(int ticket_prefix, int ticket_code);
+
+        void defineProductSerialViews(int mActionPrefix, int mActionCode, TK_Ticket_Ctrl mTicketCtrl, TextView tvProduct, TextView tvSerial);
+
+        void defineNextSaveFlow(int mActionPrefix, int mActionCode);
+
+        void processWsSerialSavelReturn(HMAux hmAux);
+
+        void executeSerialSave();
+
+        void proceedOffHandSaveFlow(Context context, int mActionPrefix, int mActionCode);
     }
 
 }

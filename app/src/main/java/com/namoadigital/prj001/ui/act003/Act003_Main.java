@@ -189,6 +189,9 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
                 mPresenter.setSiteCode(sites.get(0));
             }
         } else {
+            if(ToolBox_Inf.isConcurrentBySiteLicense(context)) {
+                sites = ToolBox_Inf.getSiteLicenseAvailability(sites, Lib_Custom_Cell_Adapter.IMV_002);
+            }
             mAdapter = new Lib_Custom_Cell_Adapter(
                     context,
                     R.layout.lib_custom_cell,
@@ -196,7 +199,8 @@ public class Act003_Main extends Base_Activity implements Act003_Main_View {
                     Lib_Custom_Cell_Adapter.CFG_ID_CODE_DESC,
                     MD_SiteDao.SITE_CODE,
                     MD_SiteDao.SITE_ID,
-                    MD_SiteDao.SITE_DESC
+                    MD_SiteDao.SITE_DESC,
+                    Lib_Custom_Cell_Adapter.IMV_002
             );
 
             lv_sites.setAdapter(mAdapter);

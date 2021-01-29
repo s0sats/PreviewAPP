@@ -48,6 +48,8 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.UNSENT_IMG_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TICKET_JSON_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH;
 
 
 /**
@@ -56,6 +58,16 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.UNSENT_IMG_PATH;
 
 public class AppBase extends Application {
 
+    public static final String NAMOA_DIR = "/namoa";
+    public static final String ZIPS_DIR = "/zips";
+    public static final String IMGS_DIR = "/imgs";
+    public static final String THUMBNAIL_DIR = "/thumbnail";
+    public static final String SUPPORT_DIR = "/support";
+    public static final String TOKEN_DIR = "/token";
+    public static final String CHAT_DIR = "/chat";
+    public static final String UNSENT_IMGS_DIR = "/unsentImgs";
+    public static final String TICKET_DIR = "/ticket";
+    public static final String CUSTOMER_SITE_LICENSE_JSON_DIR = "/customerSiteLicense";
     public static final String NAMOA_PEND_INFO = "Namoa Pend. Info.";
     public static final String NAMOA_NOTIF_INFO = "Namoa Notif. Info.";
     private static Thread.UncaughtExceptionHandler mDefaultUncaughtExceptionHandler;
@@ -79,14 +91,16 @@ public class AppBase extends Application {
         });
         //
         // Infra PATH
-        DB_PATH = getApplicationContext().getExternalFilesDir(null) + "/namoa";
-        ZIP_PATH = DB_PATH + "/zips";
-        IMG_PATH = DB_PATH + "/imgs";
-        THU_PATH = DB_PATH + "/thumbnail";
-        SUPPORT_PATH = DB_PATH + "/support";
-        TOKEN_PATH = DB_PATH + "/token";
-        CHAT_PATH = DB_PATH + "/chat";
-        UNSENT_IMG_PATH = IMG_PATH + "/unsentImgs";
+        DB_PATH = getApplicationContext().getExternalFilesDir(null) + NAMOA_DIR;
+        ZIP_PATH = DB_PATH + ZIPS_DIR;
+        IMG_PATH = DB_PATH + IMGS_DIR;
+        THU_PATH = DB_PATH + THUMBNAIL_DIR;
+        SUPPORT_PATH = DB_PATH + SUPPORT_DIR;
+        TOKEN_PATH = DB_PATH + TOKEN_DIR;
+        CHAT_PATH = DB_PATH + CHAT_DIR;
+        UNSENT_IMG_PATH = IMG_PATH + UNSENT_IMGS_DIR;
+        TICKET_JSON_PATH = DB_PATH + TICKET_DIR;
+        CUSTOMER_SITE_LICENSE_JSON_PATH = DB_PATH + CUSTOMER_SITE_LICENSE_JSON_DIR;
 
         ZIP_NAME = "namoa_sms.zip";
         ZIP_NAME_FULL = ZIP_PATH + "/" + ZIP_NAME;
@@ -113,11 +127,11 @@ public class AppBase extends Application {
         ConstantBaseApp.CAM_TEST_PATH = getApplicationContext().getExternalFilesDir(null) + "/camtest";
 
         DB_NAME_BASE = "namoa_sms.db3";
-        DB_VERSION_BASE = 10;
+        DB_VERSION_BASE = 11;
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
         DB_NAME_CUSTOM = "cc.db3";
-        DB_VERSION_CUSTOM = 47;
+        DB_VERSION_CUSTOM = 57;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";

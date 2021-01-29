@@ -10,6 +10,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
+import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_007;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_008;
@@ -19,7 +20,10 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_004;
+import com.namoadigital.prj001.sql.WS_Download_PDF_Sql_001;
+import com.namoadigital.prj001.sql.WS_Download_PDF_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -118,11 +122,32 @@ public class WS_DownLoad_PDF extends IntentService {
                         )
                 );
             }//END S.O
+            /**
+             * LISTA DE PDF DO TICKET
+             */
+            TK_Ticket_FormDao ticketFormDao = null;
+            ArrayList<HMAux> ticket_form_list = new ArrayList<>();
+            if (ToolBox_Inf.profileExists(getApplicationContext(), ConstantBaseApp.PROFILE_MENU_TICKET, null)) {
+                ticketFormDao = new TK_Ticket_FormDao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(customer_code),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //
+                ticket_form_list.addAll(
+                    ticketFormDao.query_HM(
+                        new WS_Download_PDF_Sql_001(
+                            customer_code
+                        ).toSqlQuery()
+                    )
+                );
+            }
             //endregion
             //SE NÃO PDF PARA BAIXAR, SAI DO SERVIÇO
             if (dados_geral.size() == 0
                     && formAplist.size() == 0
                     && so_file_list.size() == 0
+                    && ticket_form_list.size() == 0
                     ) {
                 return;
             }
@@ -303,6 +328,40 @@ public class WS_DownLoad_PDF extends IntentService {
                 }
             }
             //endregion
+            /**
+             * Download de PDF dos Ctrls tipo form do TICKET
+             */
+            if (ToolBox_Inf.profileExists(getApplicationContext(), ConstantBaseApp.PROFILE_MENU_TICKET, null)) {
+                for (HMAux hmAux : ticket_form_list) {
+                    try {
+                        //
+                        if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase() + ".pdf")) {
+                            ToolBox_Inf.deleteDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                            //
+                            ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(TK_Ticket_FormDao.PDF_URL),
+                                Constant.CACHE_PATH + "/" + hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                            );
+                            //
+                            ToolBox_Inf.renameDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase(), ".pdf");
+                        }
+                        //
+                        ticketFormDao.addUpdate(
+                            new WS_Download_PDF_Sql_002(
+                                hmAux.get(TK_Ticket_FormDao.CUSTOMER_CODE),
+                                hmAux.get(TK_Ticket_FormDao.TICKET_PREFIX),
+                                hmAux.get(TK_Ticket_FormDao.TICKET_CODE),
+                                hmAux.get(TK_Ticket_FormDao.TICKET_SEQ),
+                                hmAux.get(TK_Ticket_FormDao.TICKET_SEQ_TMP),
+                                hmAux.get(TK_Ticket_FormDao.STEP_CODE),
+                                hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME)+ ".pdf"
+                            ).toSqlQuery().toLowerCase()
+                        );
+                    } catch (Exception e) {
+                        ToolBox_Inf.registerException(getClass().getName(), e);
+                    }
+                }
+            }
 
         } catch (Exception e) {
             String results = e.toString();

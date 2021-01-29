@@ -115,6 +115,15 @@
             tools:text="123.456" />
 
     </LinearLayout>
+    <!--Dados Ticket-->
+    <TextView
+        android:id="@+id/local_data_list_cell_01_tv_ticket_code_val"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="TICKET: 2020.1234" />
+
     <!--Dados Comentário-->
     <TextView
         android:id="@+id/local_data_list_cell_01_tv_schedule_comment_ttl"

@@ -1256,6 +1256,7 @@ public class ToolBox_Con {
         ToolBox_Con.setPreference_HideSerialInfo(context,false);
     }
 
+
     public static String customDBPath(long customer_code) {
         return (Constant.DB_PATH + "/C_" + customer_code + "_" + Constant.DB_VERSION_CUSTOM + ".db3");
     }

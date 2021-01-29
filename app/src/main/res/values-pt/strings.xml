@@ -108,4 +108,14 @@
     <string name="msg_customer_pendencies_list">Cliente :\n</string>
     <string name="msg_update_required_warning">Nova versão disponível!\nPara atualizar, envie os dados pendentes.</string>
 
+    <string name="msg_login_invalid_current_time">A data/hora do seu aparelho está incompatível com o servidor Namoa.\nAjuste a data/hora do seu aparelho e tente novamente.</string>
+    <string name="act002_ws_site_license_ttl">Sites licenciados</string>
+    <string name="act002_ws_site_license_msg">Carregando lista de Sites com licenças disponíveis.</string>
+    <string name="license_site_dialog_ttl">Sites licenciados</string>
+    <string name="license_site_dialog_filter_hint">Escolha o Site da sua licença</string>
+    <string name="license_site_dialog_close">Cancelar</string>
+    <string name="act002_alt_no_licenses_returned_ttl">Licença indisponível!</string>
+    <string name="act002_alt_no_licenses_returned_msg">Nenhum Site licenciado disponível para o Usuário.\nFavor tentar novamente mais tarde ou entrar em contato com a sua equipe de TI interna para verificar a quantidade de licenças disponíveis.</string>
+    <string name="act002_alt_license_list_not_found_ttl">Falha: Sites licenciados</string>
+    <string name="act002_alt_license_list_not_found_msg">Erro ao caregar lista de sites licenciados!\nArquivo ou lista de licenças não encontradas.\nTente novamente.</string>
 </resources>

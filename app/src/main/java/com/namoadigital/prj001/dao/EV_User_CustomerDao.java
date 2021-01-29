@@ -38,8 +38,19 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     public static final String LOGO_URL = "logo_url";
     public static final String TRACKING = "tracking";
     public static final String TIMEZONE = "timezone";
+    public static final String LICENSE_CONTROL_TYPE = "license_control_type";
+    public static final String LICENSE_SITE_CODE =  "license_site_code";
+    public static final String LICENSE_SITE_DESC =  "license_site_desc";
+    public static final String LICENSE_USER_LEVEL_CODE =  "license_user_level_code";
+    public static final String LICENSE_USER_LEVEL_ID =  "license_user_level_id";
+    public static final String LICENSE_USER_LEVEL_VALUE =  "license_user_level_value";
+    public static final String LICENSE_USER_LEVEL_CHANGED =  "license_user_level_changed";
+    //Constantes do campo LICENSE_CONTROL_TYPE
+    public static final String LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL = "CONCURRENT_GLOBAL";
+    public static final String LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL = "CONCURRENT_GLOBAL_LEVEL";
+    public static final String LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE = "CONCURRENT_BY_SITE";
 
-    public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER, BLOCKED, SESSION_APP, PENDING, LOGO_URL, TRACKING,TIMEZONE};
+    public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER, BLOCKED, SESSION_APP, PENDING, LOGO_URL, TRACKING,TIMEZONE, LICENSE_CONTROL_TYPE};
 
     public EV_User_CustomerDao(Context context) {
         super(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE, Constant.DB_MODE_SINGLE);
@@ -282,7 +293,17 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             if (ev_user_customer.getTimezone() != null) {
                 contentValues.put(TIMEZONE, ev_user_customer.getTimezone());
             }
-
+            if (ev_user_customer.getLicense_control_type() != null) {
+                contentValues.put(LICENSE_CONTROL_TYPE, ev_user_customer.getLicense_control_type());
+            }
+            //
+            contentValues.put(LICENSE_SITE_CODE, ev_user_customer.getLicense_site_code());
+            contentValues.put(LICENSE_SITE_DESC, ev_user_customer.getLicense_site_desc());
+            contentValues.put(LICENSE_USER_LEVEL_CODE, ev_user_customer.getLicense_user_level_code());
+            contentValues.put(LICENSE_USER_LEVEL_ID, ev_user_customer.getLicense_user_level_id());
+            contentValues.put(LICENSE_USER_LEVEL_VALUE, ev_user_customer.getLicense_user_level_value());
+            contentValues.put(LICENSE_USER_LEVEL_CHANGED, ev_user_customer.getLicense_user_level_changed());
+            //
             return contentValues;
         }
     }
@@ -306,7 +327,39 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             ev_user_customer.setLogo_url(cursor.getString(cursor.getColumnIndex(LOGO_URL)));
             ev_user_customer.setTracking(cursor.getInt(cursor.getColumnIndex(TRACKING)));
             ev_user_customer.setTimezone(cursor.getString(cursor.getColumnIndex(TIMEZONE)));
-
+            ev_user_customer.setLicense_control_type(cursor.getString(cursor.getColumnIndex(LICENSE_CONTROL_TYPE)));
+            //
+            if (cursor.isNull(cursor.getColumnIndex(LICENSE_SITE_CODE))) {
+                ev_user_customer.setLicense_site_code(null);
+            }else{
+                ev_user_customer.setLicense_site_code(cursor.getInt(cursor.getColumnIndex(LICENSE_SITE_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(LICENSE_SITE_DESC))) {
+                ev_user_customer.setLicense_site_desc(null);
+            }else{
+                ev_user_customer.setLicense_site_desc(cursor.getString(cursor.getColumnIndex(LICENSE_SITE_DESC)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(LICENSE_USER_LEVEL_CODE))) {
+                ev_user_customer.setLicense_user_level_code(null);
+            }else{
+                ev_user_customer.setLicense_user_level_code(cursor.getInt(cursor.getColumnIndex(LICENSE_USER_LEVEL_CODE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(LICENSE_USER_LEVEL_ID))) {
+                ev_user_customer.setLicense_user_level_id(null);
+            }else{
+                ev_user_customer.setLicense_user_level_id(cursor.getString(cursor.getColumnIndex(LICENSE_USER_LEVEL_ID)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(LICENSE_USER_LEVEL_VALUE))) {
+                ev_user_customer.setLicense_user_level_value(null);
+            }else{
+                ev_user_customer.setLicense_user_level_value(cursor.getInt(cursor.getColumnIndex(LICENSE_USER_LEVEL_VALUE)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(LICENSE_USER_LEVEL_CHANGED))) {
+                ev_user_customer.setLicense_user_level_changed(null);
+            }else{
+                ev_user_customer.setLicense_user_level_changed(cursor.getInt(cursor.getColumnIndex(LICENSE_USER_LEVEL_CHANGED)));
+            }
+            //
             return ev_user_customer;
         }
     }

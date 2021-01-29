@@ -4,7 +4,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,7 +18,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -23,29 +30,44 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.WS_Sync;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Client_Contract_Search;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
-import com.namoadigital.prj001.ui.act069.Act069_Main;
+import com.namoadigital.prj001.ui.act046.Act046_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act072.Act072_Main;
+import com.namoadigital.prj001.ui.act074.Act074_Main;
+import com.namoadigital.prj001.ui.act076.Act076_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
 import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
+import com.namoadigital.prj001.view.frag.frg_ticket_search.Frg_Ticket_Search;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.ui.act074.Act074_Main.ALL_TICKETS_UPDATED;
 import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
 
-public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_Main_Contract.I_View, On_Frg_Serial_Search {
+public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_Main_Contract.I_View, On_Frg_Serial_Search, Frg_Serial_Search.I_Frg_Serial_Search {
+
+    public static final String IS_SYNC_PROCESS = "IS_SYNC_PROCESS";
+    //LUCHE - 26/10/2020 - eSSA CONSTANTES SÃO USADAS COMO VALOR DE UM PREFENCIA !!!
+    public static final String TAG_FRG_SERIAL_SEARCH = "Frg_Serial_Search";
+    public static final String TAG_FRG_TICKET_SEARCH = "Frg_Ticket_Search";
 
     private Act068_Main_Presenter mPresenter;
     private int pendencies_qty;
     private FragmentManager fm;
     private Frg_Serial_Search mFrgSerialSearch;
+    private Frg_Ticket_Search mFrgTicketSearch;
     private HMAux hmAux_Trans_frg_serial_search;
     protected String mResource_CodeSS = "0";
     private String fragProduct_ID;
@@ -53,6 +75,15 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private String fragTracking;
     private boolean fragIsOnlyOne;
     private String wsProcess ="";
+    private String resultFromTicketSave;
+    private int syncs_qty;
+    private boolean nextTicketsFlow=false;
+    private ArrayList<HMAux> wsResult = new ArrayList<>();
+    private RadioGroup tabs;
+    private RadioButton tab_serial_search;
+    private RadioButton tab_ticket_search;
+    private boolean isFragSerialSearch = true;
+    private HMAux hmAuxFragTicketSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +98,16 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         initVars();
         //
         iniUIFooter();
-
+        //
         initAction();
+        //
+        setTabByPreference();
+    }
 
+    private void setTabByPreference() {
+        if(TAG_FRG_TICKET_SEARCH.equals(ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.ACT068_TAB_SELECTED,TAG_FRG_SERIAL_SEARCH))){
+            tab_ticket_search.performClick();
+        }
     }
 
     private void iniSetup() {
@@ -97,8 +135,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         List<String> transList = new ArrayList<>();
         transList.add("act068_title");
         transList.add("btn_pendencies");
+        transList.add("btn_my_tickets");
         transList.add("btn_check_exists");
         transList.add("btn_graphics");
+        transList.add("btn_scheduled_tickets");
+        transList.add("btn_next_tickets");
         transList.add("alert_no_pendencies_ttl");
         transList.add("alert_no_pendencies_msg");
         transList.add("alert_no_value_filled_ttl");
@@ -116,6 +157,43 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         transList.add("alert_local_product_not_found_ttl");
         transList.add("alert_local_product_not_found_msg");
         transList.add("alert_ticket_results_ttl");
+        //
+        transList.add("btn_sync_ticket");
+        transList.add("alert_ticket_syncronized_ttl");
+        transList.add("alert_ticket_syncronized_msg");
+        transList.add("dialog_download_ticket_ttl");
+        transList.add("dialog_download_ticket_start");
+        //
+        transList.add("dialog_ticket_form_save_ttl");
+        transList.add("dialog_ticket_form_save_start");
+        //
+        transList.add("progress_sync_ttl");
+        transList.add("progress_sync_msg");
+        //
+        transList.add("alert_ticket_results_ok");
+        //
+        transList.add("alert_form_location_pendency_ttl");
+        transList.add("alert_form_location_pendency_msg");
+        //
+        transList.add("serial_search_option_tab");
+        transList.add("ticket_search_option_tab");
+        //
+        transList.add("contract_hint");
+        transList.add("client_hint");
+        transList.add("ticket_hint");
+        //
+        transList.add("dialog_ticket_search_ttl");
+        transList.add("dialog_ticket_search_start");
+        //
+        transList.add("alert_no_ticket_found_ttl");
+        transList.add("alert_no_ticket_found_msg");
+        transList.add("alert_ticket_params_not_found_ttl");
+        transList.add("alert_ticket_params_not_found_msg");
+        transList.add("alert_invalid_ticket_return_ttl");
+        transList.add("alert_invalid_ticket_return_msg");
+        //
+        transList.add("alert_serial_pendencies_ttl");
+        transList.add("alert_serial_pendencies_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -139,53 +217,95 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private void initVars() {
         recoverIntentsInfo();
         //
+        tabs = findViewById(R.id.act068_tabs);
+        tab_serial_search = findViewById(R.id.act068_tab_serial_search);
+        tab_ticket_search = findViewById(R.id.act068_tab_ticket_search);
+        //
+        tab_serial_search.setText(hmAux_Trans.get("serial_search_option_tab"));
+        tab_ticket_search.setText(hmAux_Trans.get("ticket_search_option_tab"));
+        //
         fm = getSupportFragmentManager();
-        //
-        mFrgSerialSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.act068_frg_serial_search);
-        mFrgSerialSearch.setHmAux_Trans(hmAux_Trans_frg_serial_search);
-        mFrgSerialSearch.setSupportNFC(supportNFC);
-        controls_sta.addAll(mFrgSerialSearch.getControlsSta());
-        mFrgSerialSearch.setClickListener(actionBTN);
-        mFrgSerialSearch.setOnSearchClickListener(new Frg_Serial_Search.I_Frg_Serial_Search() {
-            @Override
-            public void onSearchClick(String btn_Action, HMAux optionsInfo) {
-                switch (btn_Action) {
-                    case Frg_Serial_Search.BTN_OPTION_01:
-                        checkFlow(optionsInfo);
-                        break;
-                    case Frg_Serial_Search.BTN_OPTION_02:
-                        processPendencies();
-                        break;
-                    case Frg_Serial_Search.BTN_OPTION_03:
-                        processGraphics();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
-        //
-        mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
-        mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
-        mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
-        mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies"));
-        mFrgSerialSearch.setBtn_Option_03_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_graphics"));
-        mFrgSerialSearch.setBtn_Option_03_Visibility(View.GONE);
-        mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
-        mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
         //
         mPresenter = new Act068_Main_Presenter(
             context,this,hmAux_Trans
         );
         //
+        initFragment();
+    }
+
+    private void setupFragSearch() {
+        //
+        applyBundleSearchParams();
         //
         mPresenter.getPendencies();
         mPresenter.getMD_Products();
         //
-        applyBundleSearchParams();
+    }
 
+    private void setFrgSerialSearch() {
+        //        mFrgSerialSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.act068_frg_serial_search);
+
+        mFrgSerialSearch.setHmAux_Trans(hmAux_Trans_frg_serial_search);
+        mFrgSerialSearch.setSupportNFC(supportNFC);
+        controls_sta.clear();
+        controls_sta.addAll(mFrgSerialSearch.getControlsSta());
+        mFrgSerialSearch.setClickListener(actionBTN);
+        mFrgSerialSearch.setOnSearchClickListener(this);
+        //
+        mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
+        mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
+        mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
+        //
+        mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
+        mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
+        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_sync_ticket"));
+        //
+        mFrgSerialSearch.setBtn_Option_03_BackGround(R.drawable.namoa_cell_2_states);
+        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_my_tickets"));
+        mFrgSerialSearch.setBtn_Option_03_Visibility(View.VISIBLE);
+        //
+        mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
+        //
+        mFrgSerialSearch.setBtn_Option_05_BackGround(R.drawable.namoa_cell_2_states);
+        mFrgSerialSearch.setBtn_Option_05_Label(hmAux_Trans.get("btn_scheduled_tickets"));
+        mFrgSerialSearch.setBtn_Option_05_Visibility(View.VISIBLE);
+    }
+
+    private void processScheduledTickets() {
+        Intent mIntent = new Intent(context, Act046_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT068);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    private void processNextTickets() {
+        if(mPresenter.hasItensToSend()){
+            nextTicketsFlow = true;
+            //mPresenter.executeWSTicketSave();
+            mPresenter.defineWsToCall();
+        }else{
+            callAct074();
+        }
+    }
+
+    private void callAct074() {
+        Intent intent = new Intent(context, Act074_Main.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ALL_TICKETS_UPDATED, !mPresenter.hasItensToSend());
+        intent.putExtras(bundle);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct070(Bundle buildAct070Bundle) {
+        Intent intent = new Intent(context, Act070_Main.class);
+        intent.putExtras(buildAct070Bundle);
+        startActivity(intent);
+        finish();
     }
 
     private void applyBundleSearchParams() {
@@ -198,6 +318,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             } else {
                 mFrgSerialSearch.setShowTree(true);
             }
+        }else{
+            mFrgSerialSearch.setShowTree(true);
         }
         //
         if (!fragSerial_ID.isEmpty() || !fragTracking.isEmpty()) {
@@ -213,14 +335,36 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 
     private void checkFlow(HMAux optionsInfo) {
         if(mPresenter.hasItensToSend()){
-            mPresenter.executeWSTicketSave();
+            mPresenter.defineWsToCall();
         }else{
-            processSerialSearch(optionsInfo);
+            if(isFragSerialSearch) {
+                processSerialSearch(optionsInfo);
+            }else{
+                processTicketSearch(optionsInfo);
+            }
         }
     }
 
+    private void processTicketSearch(HMAux optionsInfo) {
 
-    private void processSerialSearch(HMAux optionsInfo) {
+        if ((   optionsInfo.hasConsistentValue(Frg_Ticket_Search.CLIENT_ID) && optionsInfo.get(Frg_Ticket_Search.CLIENT_ID).trim().length() > 0 )
+                || (   optionsInfo.hasConsistentValue(Frg_Ticket_Search.CONTRACT_ID) && optionsInfo.get(Frg_Ticket_Search.CONTRACT_ID).trim().length() > 0)
+                || (   optionsInfo.hasConsistentValue(Frg_Ticket_Search.TICKET_ID) && optionsInfo.get(Frg_Ticket_Search.TICKET_ID).trim().length() > 0)
+        ) {
+            mPresenter.executeTicketSearch(
+                    optionsInfo.get(Frg_Ticket_Search.CONTRACT_ID),
+                    optionsInfo.get(Frg_Ticket_Search.CLIENT_ID),
+                    optionsInfo.get(Frg_Ticket_Search.TICKET_ID)
+            );
+        } else {
+            showMsg(
+                    hmAux_Trans.get("alert_no_value_filled_ttl"),
+                    hmAux_Trans.get("alert_no_value_filled_msg")
+            );
+        }
+    }
+
+    private void processSerialSearch(@NonNull HMAux optionsInfo) {
         if (optionsInfo.get(PRODUCT_ID).trim().length() > 0
             || optionsInfo.get(Frg_Serial_Search.SERIAL).trim().length() > 0
             || optionsInfo.get(Frg_Serial_Search.TRACKING).trim().length() > 0
@@ -228,7 +372,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             mPresenter.executeSerialSearch(
                 optionsInfo.get(PRODUCT_ID),
                 optionsInfo.get(Frg_Serial_Search.SERIAL),
-                optionsInfo.get(Frg_Serial_Search.TRACKING)
+                optionsInfo.get(Frg_Serial_Search.TRACKING),
+                mFrgSerialSearch.isForceExactSearch()
             );
         } else {
           showMsg(
@@ -236,10 +381,6 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                 hmAux_Trans.get("alert_no_value_filled_msg")
             );
         }
-    }
-
-    private void processPendencies() {
-        mPresenter.checkPendenciesFlow(pendencies_qty);
     }
 
     private void processGraphics() {
@@ -263,9 +404,12 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     @Override
     public void setPendenciesQty(int qty) {
         pendencies_qty = qty;
-        String btn_dependency_qty_text = hmAux_Trans.get("btn_pendencies") + " (" + pendencies_qty + ")";
+        String btn_dependency_qty_text= hmAux_Trans.get("btn_my_tickets");
+        if(pendencies_qty > 0){
+            btn_dependency_qty_text += " (" + pendencies_qty + ")";
+        }
         //
-        mFrgSerialSearch.setBtn_Option_02_Label(btn_dependency_qty_text);
+        mFrgSerialSearch.setBtn_Option_03_Label(btn_dependency_qty_text);
     }
 
     @Override
@@ -356,22 +500,107 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     private void initAction() {
-
+        tabs.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                //
+                switch (checkedId) {
+                    case R.id.act068_tab_serial_search:
+                        isFragSerialSearch = true;
+                        setFrag(mFrgSerialSearch, TAG_FRG_SERIAL_SEARCH);
+                        break;
+                    case R.id.act068_tab_ticket_search:
+                        isFragSerialSearch = false;
+                        if(mFrgTicketSearch == null) {
+                            mFrgTicketSearch = Frg_Ticket_Search.newInstance(hmAux_Trans);
+                        }
+                        mFrgTicketSearch.setOnSearchClickListener((Act068_Main)context);
+                        mFrgTicketSearch.setLoad_delegate(new Frg_Serial_Search.I_Frg_Serial_Search_Load() {
+                            @Override
+                            public void onFragIsReady() {
+                                mFrgTicketSearch.setSyncsQty(syncs_qty);
+                                mFrgTicketSearch.setMyTicketsQty(pendencies_qty);
+                            }
+                        });
+                        setFrag(mFrgTicketSearch, TAG_FRG_TICKET_SEARCH);
+                        break;
+                }
+            }
+        });
     }
 
 
     @Override
     public boolean hasHideSerialInfoChk() {
-        return true;
+        return true ;
     }
 
     @Override
-    public void callAct069(Bundle bundle){
-        Intent intent = new Intent(context, Act069_Main.class);
+    public void callAct076(){
+        Intent intent = new Intent(context, Act076_Main.class);
+        Bundle bundle = new Bundle();
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT068);
+        mPresenter.setFragTicketSearchParamsIntoBundle(bundle, mFrgTicketSearch.getHMAuxValues());
         intent.putExtras(bundle);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void  showResult(boolean ticketResult) {
+        if(wsResult != null && wsResult.isEmpty() && ticketResult){
+            Toast.makeText(context,  hmAux_Trans.get("alert_ticket_results_ok"), Toast.LENGTH_SHORT).show();
+            handleWSReturnFlow();
+        }else {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.act028_dialog_results, null);
+
+            TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
+            ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
+            Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
+            //trad
+            tv_title.setText(hmAux_Trans.get("alert_ticket_results_ttl"));
+            btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
+            //
+            lv_results.setAdapter(
+                    new Generic_Results_Adapter(
+                            context,
+                            wsResult,
+                            Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
+                            hmAux_Trans
+                    )
+            );
+            //
+            builder.setView(view);
+            builder.setCancelable(false);
+            //
+            final AlertDialog show = builder.show();
+            //
+            btn_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    show.dismiss();
+                    //
+                    handleWSReturnFlow();
+                }
+            });
+        }
+    }
+
+    private void handleWSReturnFlow() {
+        wsResult.clear();
+        //
+        if (nextTicketsFlow) {
+            callAct074();
+        } else {
+             checkFlow(
+                 isFragSerialSearch
+                     ? mFrgSerialSearch.getHMAuxValues()
+                     : mFrgTicketSearch.getHMAuxValues()
+             );
+        }
     }
 
     @Override
@@ -404,7 +633,53 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             mPresenter.extractSearchResult(result);
         } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
             progressDialog.dismiss();
-            mPresenter.processSaveReturn(result);
+            if(mPresenter.verifyProductForForm()){
+                resultFromTicketSave = result;
+            }else {
+                mPresenter.processSaveReturn(result);
+            }
+        } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())) {
+            progressDialog.dismiss();
+            if(mPresenter.verifyProductForForm()){
+                resultFromTicketSave = IS_SYNC_PROCESS;
+            }else {
+                showMsg(
+                        hmAux_Trans.get("alert_ticket_syncronized_ttl"),
+                        hmAux_Trans.get("alert_ticket_syncronized_msg")
+                );
+                mPresenter.getSync();
+            }
+        } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            progressDialog.dismiss();
+            if(IS_SYNC_PROCESS.equalsIgnoreCase(resultFromTicketSave)){
+                showMsg(
+                        hmAux_Trans.get("alert_ticket_syncronized_ttl"),
+                        hmAux_Trans.get("alert_ticket_syncronized_msg")
+                );
+                mPresenter.getSync();
+            }else {
+                if(hmAuxFragTicketSearch != null && hmAuxFragTicketSearch.size() > 0){
+                    mPresenter.processSearchByTicketTab(hmAuxFragTicketSearch);
+                    hmAuxFragTicketSearch = null;
+                }else {
+                    mPresenter.processSaveReturn(resultFromTicketSave);
+                }
+            }
+        } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
+            wsProcess = "";
+            progressDialog.dismiss();
+            mPresenter.processWS_SaveReturn(result);
+            mPresenter.executeWSTicketSave();
+        }  else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Client_Contract_Search.class.getName())) {
+            wsProcess = "";
+            hmAuxFragTicketSearch = null;
+            progressDialog.dismiss();
+            //
+            if(mPresenter.verifyProductForForm()){
+                hmAuxFragTicketSearch = hmAux;
+            }else{
+                mPresenter.processSearchByTicketTab(hmAux);
+            }
         } else{
             //
             progressDialog.dismiss();
@@ -412,41 +687,24 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     @Override
-    public void showResult(ArrayList<HMAux> resultList) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.act028_dialog_results, null);
-
-        TextView tv_title = view.findViewById(R.id.act028_dialog_tv_title);
-        ListView lv_results = view.findViewById(R.id.act028_dialog_lv_results);
-        Button btn_ok = view.findViewById(R.id.act028_dialog_btn_ok);
-        //trad
-        tv_title.setText(hmAux_Trans.get("alert_ticket_results_ttl"));
-        btn_ok.setText(hmAux_Trans.get("sys_alert_btn_ok"));
-        //
-        lv_results.setAdapter(
-            new Generic_Results_Adapter(
-                context,
-                resultList,
-                Generic_Results_Adapter.CONFIG_MENU_SEND_RET,
-                hmAux_Trans
-            )
-        );
-        //
-        builder.setView(view);
-        builder.setCancelable(false);
-        //
-        final AlertDialog show = builder.show();
-        //
-        btn_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                show.dismiss();
-                //
-                checkFlow(mFrgSerialSearch.getHMAuxValues());
+    public void setSync(int qty) {
+        syncs_qty = qty;
+        if (isFragSerialSearch) {
+            if (syncs_qty > 0) {
+                String btn_text = hmAux_Trans.get("btn_sync_ticket") + " (" + syncs_qty + ")";
+                mFrgSerialSearch.setBtn_Option_02_Label(btn_text);
+                mFrgSerialSearch.setBtn_Option_02_Visibility(View.VISIBLE);
+            } else {
+                mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
             }
-        });
+        }else{
+            mFrgTicketSearch.setSyncsQty(syncs_qty);
+        }
+    }
+
+    @Override
+    public void addResultList(ArrayList<HMAux> resultList) {
+        wsResult.addAll(resultList);
     }
 
     @Override
@@ -458,12 +716,44 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
+        if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            progressDialog.dismiss();
+            mPresenter.processSaveReturn(resultFromTicketSave);
+        }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+            //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
+            if(!wsResult.isEmpty()) {
+                showResult(false);
+            }else {
+                if (nextTicketsFlow) {
+                    callAct074();
+                }
+            }
+        }else{
+            wsResult.clear();
+        }
+
         disableProgressDialog();
     }
 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
+        //
+        if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
+            progressDialog.dismiss();
+            mPresenter.processSaveReturn(resultFromTicketSave);
+        }else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
+            //caso haja algo no extrato referente ao formulario forca a execucao do extrato.
+            if(!wsResult.isEmpty()) {
+                showResult(false);
+            }else {
+                if (nextTicketsFlow) {
+                    callAct074();
+                }
+            }
+        }else{
+            wsResult.clear();
+        }
         //
         disableProgressDialog();
     }
@@ -538,7 +828,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                         mFrgSerialSearch.setProductIdText(product_id);
                         mFrgSerialSearch.setSerialIdText("");
                         mFrgSerialSearch.setTrackingText("");
-                        mPresenter.executeSerialSearch(product_id, "", "");
+                        mPresenter.executeSerialSearch(product_id, "", "", false);
                     } else {
                         ToolBox.alertMSG(
                             context,
@@ -561,7 +851,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
                         mFrgSerialSearch.setTrackingText("");
                         //
                         HMAux hmAux = mFrgSerialSearch.getHMAuxValues();
-                        mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "");
+                        mPresenter.executeSerialSearch(hmAux.get(PRODUCT_ID), value[3], "", true);
                     } else {
                         ToolBox.alertMSG(
                             context,
@@ -596,5 +886,70 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     protected void processRefreshMessage(String mType, String mValue, String mActivity) {
         super.processRefreshMessage(mType, mValue, mActivity);
         iniUIFooter();
+    }
+
+    private void initFragment() {
+        FragmentTransaction transaction = fm.beginTransaction();
+        mFrgSerialSearch = new Frg_Serial_Search();
+        mFrgSerialSearch.setLoad_delegate(new Frg_Serial_Search.I_Frg_Serial_Search_Load() {
+            @Override
+            public void onFragIsReady() {
+                setFrgSerialSearch();
+                setupFragSearch();
+                mPresenter.getSync();
+            }
+        });
+        //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
+        transaction.add(R.id.act068_frg_placeholder, mFrgSerialSearch, "Frg_Serial_Search");
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    private <T extends Fragment> void setFrag(T type, String sTag) {
+//        if (fm.findFragmentByTag(sTag) == null) {
+            //LUCHE - 26/10/2020 - atualzia preferencia de qual tab deve vir carregada.
+            mPresenter.updateTabPreference(sTag);
+            //
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.act068_frg_placeholder, type, sTag);
+            ft.addToBackStack(null);
+            ft.commit();
+//        } else {
+//            //type.loadDataToScreen();
+//        }
+    }
+
+    @Override
+    public void onSearchClick(String btn_Action, HMAux optionsInfo) {
+        switch (btn_Action) {
+            case Frg_Serial_Search.BTN_OPTION_01:
+                checkFlow(optionsInfo);
+                break;
+            case Frg_Serial_Search.BTN_OPTION_02:
+                mPresenter.executeWSTicketDownload();
+                break;
+            case Frg_Serial_Search.BTN_OPTION_03:
+                if(ToolBox_Con.isOnline(context)) {
+                    if(ToolBox_Inf.checkSerialTokenURStatus(context)){
+                        ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_serial_pendencies_ttl"),
+                            hmAux_Trans.get("alert_serial_pendencies_msg"),
+                            null,
+                            0
+                        );
+                    }else{
+                        processNextTickets();
+                    }
+                }else{
+                    callAct074();
+                }
+                break;
+            case Frg_Serial_Search.BTN_OPTION_05:
+                processScheduledTickets();
+                break;
+            default:
+                break;
+        }
     }
 }

@@ -25,4 +25,6 @@ public interface Act010_Main_View {
     void showAlertMsg(String title, String msg);
 
     void alertActiveGPSResource(HMAux item);
+
+    boolean isHas_tk_ticket_is_form_off_hand();
 }

@@ -20,6 +20,9 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
  *  Sem Parceiro: Somente se todos os controles tiver sem parceiro - 100% sem parceiro
  *  Com meu parceiro: Mostrar se ao menos um dos ctrls for de um parceiro.
  *  Sem meu parceiro: Mostrar somente se 100% dos controles não for o meu.
+ *
+ *  LUCHE - 22/07/2020
+ *  Modificado query pois os campos current_ foram renomeados para open_
  */
 
 public class Sql_Act069_001 implements Specification {
@@ -180,13 +183,14 @@ public class Sql_Act069_001 implements Specification {
                 "       t.open_comments,\n" +
                 "       t.open_date,\n" +
                 "       t.forecast_date,\n" +
-                "       CASE WHEN t.current_site_code <> '" + site_logged + "' \n" +
-                "            THEN t.current_site_desc\n" +
+                "       CASE WHEN t.open_site_code <> '" + site_logged + "' \n" +
+                "            THEN t.open_site_desc\n" +
                 "            ELSE null\n" +
-                "       END current_site_desc ,\n" +
-                "       t.current_product_desc,\n" +
-                "       t.current_serial_id,\n" +
+                "       END open_site_desc ,\n" +
+                "       t.open_product_desc,\n" +
+                "       t.open_serial_id,\n" +
                 "       t.sync_required\n," +
+                "       t.close_date\n," +
                 "       CASE WHEN t.schedule_prefix IS NOT NULL AND t.schedule_code IS NOT NULL AND t.schedule_exec IS NOT NULL \n" +
                 "            THEN t.schedule_prefix||'.'||t.schedule_code||'.'||t.schedule_exec \n" +
                 "            ELSE null \n" +
@@ -196,7 +200,12 @@ public class Sql_Act069_001 implements Specification {
                 "       t.schedule_exec\n," +
                 "       s.fcm_new_status\n," +
                 "       s.fcm_user_nick\n," +
-                "       s.schedule_erro_msg\n" +
+                "       s.schedule_erro_msg,\n" +
+                "       1 local_ticket, \n" +
+                "       t.client_code,\n" +
+                "       t.client_name,\n" +
+                "       t.contract_code,\n" +
+                "       t.contract_desc\n" +
                 " FROM\n" +
                 "     " + TK_TicketDao.TABLE + " t \n" +
                 " LEFT JOIN\n" +

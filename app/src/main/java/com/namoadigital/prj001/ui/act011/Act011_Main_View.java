@@ -42,4 +42,10 @@ public interface Act011_Main_View {
     void showFormCancelledMsg(GE_Custom_Form_Local customFormLocal, MD_Schedule_Exec scheduleExec);
 
     void alertActiveGPSResource();
+
+    String getRequestingAct();
+
+    void callAct070();
+
+    boolean isOffHandForm();
 }

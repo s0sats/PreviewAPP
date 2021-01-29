@@ -24,6 +24,8 @@ public interface Act073_Main_Contract {
 
         void callAct069();
 
+        void callAct076();
+
         void callAct070(Bundle buildAct070Bundle);
     }
 
@@ -39,5 +41,7 @@ public interface Act073_Main_Contract {
         void executeTicketDownload(long productCode, long serialCode, String serialId);
 
         void processTicketDownload(HMAux hmAux);
+
+        boolean verifyProductForForm();
     }
 }

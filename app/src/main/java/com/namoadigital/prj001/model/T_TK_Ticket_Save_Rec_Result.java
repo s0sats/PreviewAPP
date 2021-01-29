@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import java.util.ArrayList;
+
 /**
  * Created by d.luche on 09/12/2019.
  */
@@ -11,10 +13,15 @@ public class T_TK_Ticket_Save_Rec_Result {
     private int scn;
     private String ret_status;
     private String ret_msg;
-    private Integer old_ticket_prefix;
-    private Integer old_ticket_code;
-    private TK_Ticket ticket;
-
+    private Integer schedule_prefix;
+    private Integer schedule_code;
+    private Integer schedule_exec;
+    private String schedule_status;
+//    private TK_Ticket ticket;
+    private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> step;
+    private ArrayList<T_TK_Ticket_Save_Rec_Result_Step> product;
+    private int ticket_update;
+//
     public int getCustomer_code() {
         return customer_code;
     }
@@ -63,27 +70,59 @@ public class T_TK_Ticket_Save_Rec_Result {
         this.ret_msg = ret_msg;
     }
 
-    public Integer getOld_ticket_prefix() {
-        return old_ticket_prefix;
+    public Integer getSchedule_prefix() {
+        return schedule_prefix;
     }
 
-    public void setOld_ticket_prefix(Integer old_ticket_prefix) {
-        this.old_ticket_prefix = old_ticket_prefix;
+    public void setSchedule_prefix(Integer schedule_prefix) {
+        this.schedule_prefix = schedule_prefix;
     }
 
-    public Integer getOld_ticket_code() {
-        return old_ticket_code;
+    public Integer getSchedule_code() {
+        return schedule_code;
     }
 
-    public void setOld_ticket_code(Integer old_ticket_code) {
-        this.old_ticket_code = old_ticket_code;
+    public void setSchedule_code(Integer schedule_code) {
+        this.schedule_code = schedule_code;
     }
 
-    public TK_Ticket getTicket() {
-        return ticket;
+    public Integer getSchedule_exec() {
+        return schedule_exec;
     }
 
-    public void setTicket(TK_Ticket ticket) {
-        this.ticket = ticket;
+    public void setSchedule_exec(Integer schedule_exec) {
+        this.schedule_exec = schedule_exec;
+    }
+
+    public String getSchedule_status() {
+        return schedule_status;
+    }
+
+    public void setSchedule_status(String schedule_status) {
+        this.schedule_status = schedule_status;
+    }
+
+    public ArrayList<T_TK_Ticket_Save_Rec_Result_Step> getStep() {
+        return step;
+    }
+
+    public void setStep(ArrayList<T_TK_Ticket_Save_Rec_Result_Step> step) {
+        this.step = step;
+    }
+
+    public ArrayList<T_TK_Ticket_Save_Rec_Result_Step> getProduct() {
+        return product;
+    }
+
+    public void setProduct(ArrayList<T_TK_Ticket_Save_Rec_Result_Step> product) {
+        this.product = product;
+    }
+
+    public int getTicket_update() {
+        return ticket_update;
+    }
+
+    public void setTicket_update(int ticket_update) {
+        this.ticket_update = ticket_update;
     }
 }

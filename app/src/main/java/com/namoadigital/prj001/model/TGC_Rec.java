@@ -3,32 +3,15 @@ package com.namoadigital.prj001.model;
 /**
  * Created by neomatrix on 5/9/16.
  */
-public class TGC_Rec {
+public class TGC_Rec extends Main_Header_Rec {
 
-    private String app;
-    private String error_msg;
     private String version;
-    private String link_url;
     private String login;
     private String zip;
     private Integer db_version;
     private Integer user_code;
-
-    public String getApp() {
-        return app;
-    }
-
-    public void setApp(String app) {
-        this.app = app;
-    }
-
-    public String getError_msg() {
-        return error_msg;
-    }
-
-    public void setError_msg(String error_msg) {
-        this.error_msg = error_msg;
-    }
+    private int valid_time = -1 ;
+    private long tolerance_time = -1;
 
     public String getVersion() {
         return version;
@@ -36,14 +19,6 @@ public class TGC_Rec {
 
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public String getLink_url() {
-        return link_url;
-    }
-
-    public void setLink_url(String link_url) {
-        this.link_url = link_url;
     }
 
     public String getLogin() {
@@ -76,5 +51,21 @@ public class TGC_Rec {
 
     public void setUser_code(Integer user_code) {
         this.user_code = user_code;
+    }
+
+    public int getValid_time() {
+        return valid_time;
+    }
+
+    public void setValid_time(int valid_time) {
+        this.valid_time = valid_time;
+    }
+
+    public long getTolerance_time() {
+        return tolerance_time;
+    }
+
+    public void setTolerance_time(long tolerance_time) {
+        this.tolerance_time = tolerance_time;
     }
 }

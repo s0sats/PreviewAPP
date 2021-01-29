@@ -106,6 +106,8 @@ public class Sql_Act015_001 implements Specification {
                         "  sc.fcm_new_status,\n"+
                         "  sc.fcm_user_nick,\n"+
                         "  sc.schedule_erro_msg,\n" +
+                        "  d.ticket_prefix,\n" +
+                        "  d.ticket_code,\n" +
                         "  IFNULL(SUM(CASE WHEN df.value_extra like '"+CONST_NONCONFORMITY_LIKE_SEARCH+"'\n" +
                         "        THEN 1\n" +
                         "        ELSE 0\n" +

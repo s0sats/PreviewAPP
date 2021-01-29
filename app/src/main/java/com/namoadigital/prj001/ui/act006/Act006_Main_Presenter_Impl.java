@@ -108,7 +108,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
     }
 
     @Override
-    public void executeSerialSearch(String product_id, String serial_id, String tracking) {
+    public void executeSerialSearch(String product_id, String serial_id, String tracking, boolean forceExactSearch) {
         mdProduct = searchProduct(product_id);
         mProduct_id = product_id;
         mSerial_id = serial_id;
@@ -127,7 +127,7 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             //bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
-            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 0);
+            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, forceExactSearch ? 1 : 0);
             //
             mIntent.putExtras(bundle);
             //

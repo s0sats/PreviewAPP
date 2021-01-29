@@ -93,6 +93,22 @@ public class GE_Custom_Form_Data {
     private Integer schedule_exec;
     //Contem msg de retorno após sae do form no servidor.
     private String error_msg;
+    //PK Control usada no Ticket.
+    @Expose
+    private Integer ticket_prefix;
+    @Expose
+    private Integer ticket_code;
+    @Expose
+    private Integer ticket_seq;
+    @Expose
+    private Integer ticket_seq_tmp;
+    @Expose
+    private Integer pipeline_code;
+    @Expose
+    private Integer step_code;
+    @Expose
+    private String ticket_checkin_date;
+
 
     public GE_Custom_Form_Data() {
         this.customer_code = -1L;
@@ -125,6 +141,13 @@ public class GE_Custom_Form_Data {
         this.error_msg = null;
         this.location_pendency = 0;
         this.date_gps="";
+        this.ticket_prefix=null;
+        this.ticket_code=null;
+        this.ticket_seq=null;
+        this.ticket_seq_tmp=null;
+        this.pipeline_code=null;
+        this.step_code=null;
+        this.ticket_checkin_date = null;
     }
 
     public long getCustomer_code() {
@@ -365,5 +388,61 @@ public class GE_Custom_Form_Data {
 
     public void setDate_gps(String date_gps) {
         this.date_gps = date_gps;
+    }
+
+    public Integer getTicket_prefix() {
+        return ticket_prefix;
+    }
+
+    public void setTicket_prefix(Integer ticket_prefix) {
+        this.ticket_prefix = ticket_prefix;
+    }
+
+    public Integer getTicket_code() {
+        return ticket_code;
+    }
+
+    public void setTicket_code(Integer ticket_code) {
+        this.ticket_code = ticket_code;
+    }
+
+    public Integer getTicket_seq() {
+        return ticket_seq;
+    }
+
+    public void setTicket_seq(Integer ticket_seq) {
+        this.ticket_seq = ticket_seq;
+    }
+
+    public Integer getTicket_seq_tmp() {
+        return ticket_seq_tmp;
+    }
+
+    public void setTicket_seq_tmp(Integer ticket_seq_tmp) {
+        this.ticket_seq_tmp = ticket_seq_tmp;
+    }
+
+    public Integer getPipeline_code() {
+        return pipeline_code;
+    }
+
+    public void setPipeline_code(Integer pipeline_code) {
+        this.pipeline_code = pipeline_code;
+    }
+
+    public Integer getStep_code() {
+        return step_code;
+    }
+
+    public void setStep_code(Integer step_code) {
+        this.step_code = step_code;
+    }
+
+    public String getTicket_checkin_date() {
+        return ticket_checkin_date;
+    }
+
+    public void setTicket_checkin_date(String ticket_checkin_date) {
+        this.ticket_checkin_date = ticket_checkin_date;
     }
 }

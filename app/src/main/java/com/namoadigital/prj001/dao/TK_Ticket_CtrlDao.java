@@ -5,14 +5,23 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.support.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TK_Ticket_Action;
+import com.namoadigital.prj001.model.TK_Ticket_Approval;
+import com.namoadigital.prj001.model.TK_Ticket_Approval_Rejection;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
-import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_001;
+import com.namoadigital.prj001.model.TK_Ticket_Form;
+import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_002;
+import com.namoadigital.prj001.sql.TK_Ticket_Approval_Rejection_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Approval_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_003;
+import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Measure_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -32,13 +41,9 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String TICKET_PREFIX  = "ticket_prefix";
     public static final String TICKET_CODE  = "ticket_code";
     public static final String TICKET_SEQ  = "ticket_seq";
+    public static final String TICKET_SEQ_TMP  = "ticket_seq_tmp";
+    public static final String STEP_CODE = "step_code";
     public static final String CTRL_TYPE  = "ctrl_type";
-    public static final String SITE_CODE  = "site_code";
-    public static final String SITE_ID  = "site_id";
-    public static final String SITE_DESC  = "site_desc";
-    public static final String OPERATION_CODE  = "operation_code";
-    public static final String OPERATION_ID  = "operation_id";
-    public static final String OPERATION_DESC  = "operation_desc";
     public static final String PRODUCT_CODE  = "product_code";
     public static final String PRODUCT_ID  = "product_id";
     public static final String PRODUCT_DESC  = "product_desc";
@@ -54,7 +59,10 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String PARTNER_CODE  = "partner_code";
     public static final String PARTNER_ID  = "partner_id";
     public static final String PARTNER_DESC  = "partner_desc";
-
+    public static final String STEP_ORDER = "step_order";
+    public static final String OBJ_PLANNED = "obj_planned";
+    public static final String UPDATE_REQUIRED = "update_required";
+    public static final String FROM_TO_NOTIFY = "from_to_notify";
 
     public TK_Ticket_CtrlDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -95,6 +103,8 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_ctrl.getTicket_code()).append("'");
             sbWhere.append(" and ");
             sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_ctrl.getTicket_seq()).append("'");
+            sbWhere.append(" and ");
+            sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_ctrl.getStep_code()).append("'");
             //Tenta update e armazena retorno
             addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_ctrl), sbWhere.toString(), null);
             //Se nenhuma linha afetada, tenta insert
@@ -102,19 +112,8 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 curAction = DaoObjReturn.INSERT;
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_ctrl));
             }
-            //
-            //Tenta inserir action
-            TK_Ticket_ActionDao ticketActionDao = new TK_Ticket_ActionDao(
-                context,
-                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                Constant.DB_VERSION_CUSTOM
-            );
-            //Chama insertUpdate da action,passando db como param aguardando retorno.
-            daoObjReturn = ticketActionDao.addUpdate(tk_ticket_ctrl.getAction(),db);
-            //Se erro durante insert, dispara exception abortando o processamento.
-            if(daoObjReturn.hasError()){
-                throw new Exception(daoObjReturn.getRawMessage());
-            }
+            //Tenta inserir o "processo" filho
+            insertUpdateByCtrlType(tk_ticket_ctrl,db,daoObjReturn,false);
             //Se db não foi passado, finaliza transaction com sucesso
             if(dbInstance == null) {
                 db.setTransactionSuccessful();
@@ -190,6 +189,8 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_ctrl.getTicket_code()).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_ctrl.getTicket_seq()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_ctrl.getStep_code()).append("'");
                 //Tenta update e armazena retorno
                 addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_ctrl), sbWhere.toString(), null);
                 //Se nenhuma linha afetada, tenta insert
@@ -198,7 +199,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_ctrl));
                 }
                 //Tenta inserir o "processo" filho
-                insertUpdateByCtrlType(tk_ticket_ctrl,db,daoObjReturn);
+                insertUpdateByCtrlType(tk_ticket_ctrl,db,daoObjReturn,false);
             }
             //Se db não foi passado, finaliza transaction com sucesso
             if(dbInstance == null) {
@@ -233,13 +234,139 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
         return daoObjReturn;
     }
 
+    public DaoObjReturn addUpdateTmp(TK_Ticket_Ctrl tk_ticket_ctrl, SQLiteDatabase dbInstance) {
+        ArrayList<TK_Ticket_Ctrl> tk_ticket_ctrls = new ArrayList<>();
+        tk_ticket_ctrls.add(tk_ticket_ctrl);
+        return addUpdateTmp(tk_ticket_ctrls,false,dbInstance);
+    }
+
+    public DaoObjReturn addUpdateTmp(List<TK_Ticket_Ctrl> tk_ticket_ctrls, boolean status, SQLiteDatabase dbInstance) {
+        DaoObjReturn daoObjReturn = new DaoObjReturn();
+        long addUpdateRet = 0;
+        String curAction = DaoObjReturn.INSERT_OR_UPDATE;
+        //
+        if(dbInstance == null) {
+            openDB();
+        }else{
+            this.db = dbInstance;
+        }
+        try{
+            //Se db não foi passado, inicializa transaction
+            if(dbInstance == null) {
+                db.beginTransaction();
+            }
+            if (status) {
+                db.delete(TABLE, null, null);
+            }
+            //
+            for (TK_Ticket_Ctrl tk_ticket_ctrl : tk_ticket_ctrls) {
+                //Chama metodo que devolve o ticket_seq_tmp do ctrl ou ja gera um novo.
+                tk_ticket_ctrl.setTicket_seq_tmp(
+                    getTicketSeqTmp(tk_ticket_ctrl,dbInstance)
+                );
+                //
+                curAction = DaoObjReturn.UPDATE;
+                //Where para update
+                StringBuilder sbWhere = new StringBuilder();
+                sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_ctrl.getCustomer_code()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(TICKET_PREFIX).append(" = '").append(tk_ticket_ctrl.getTicket_prefix()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_ctrl.getTicket_code()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(TICKET_SEQ_TMP).append(" = '").append(tk_ticket_ctrl.getTicket_seq_tmp()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_ctrl.getStep_code()).append("'");
+                //Tenta update e armazena retorno
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(tk_ticket_ctrl), sbWhere.toString(), null);
+                //Se nenhuma linha afetada, tenta insert
+                if (addUpdateRet == 0) {
+                    curAction = DaoObjReturn.INSERT;
+                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(tk_ticket_ctrl));
+                }
+                //Tenta inserir o "processo" filho
+                insertUpdateByCtrlType(tk_ticket_ctrl,db,daoObjReturn,true);
+            }
+            //Se db não foi passado, finaliza transaction com sucesso
+            if(dbInstance == null) {
+                db.setTransactionSuccessful();
+            }
+        }catch (Exception e){
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.getMessage());
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                getClass().getName(),
+                new Exception(
+                    e.getMessage() + "\n" + daoObjReturn.getErrorMsg()
+                )
+            );
+        }finally {
+            //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
+            //ou rowId do ultimo insert.
+            if(dbInstance == null) {
+                db.endTransaction();
+            }
+            daoObjReturn.setAction(curAction);
+            daoObjReturn.setActionReturn(addUpdateRet);
+        }
+        //
+        if(dbInstance == null){
+            closeDB();
+        }
+        //
+        return daoObjReturn;
+    }
+
+    private int getTicketSeqTmp(TK_Ticket_Ctrl tk_ticket_ctrl, SQLiteDatabase dbInstance) throws Exception {
+        if(tk_ticket_ctrl.getTicket_seq_tmp() > 0){
+            return tk_ticket_ctrl.getTicket_seq_tmp();
+        } else if(tk_ticket_ctrl.getTicket_seq() > 0) {
+            TK_Ticket_Ctrl dbTicketCtrl = getByString(
+                new TK_Ticket_Ctrl_Sql_001(
+                    tk_ticket_ctrl.getCustomer_code(),
+                    tk_ticket_ctrl.getTicket_prefix(),
+                    tk_ticket_ctrl.getTicket_code(),
+                    tk_ticket_ctrl.getTicket_seq(),
+                    tk_ticket_ctrl.getStep_code()
+                ).toSqlQuery()
+            );
+            //
+            if (dbTicketCtrl != null && dbTicketCtrl.getTicket_seq() > 0 && dbTicketCtrl.getTicket_seq_tmp() > 0) {
+                return dbTicketCtrl.getTicket_seq_tmp();
+            }
+        }
+        //
+        return getNextCtrlTicketSeqTmp(
+            tk_ticket_ctrl.getCustomer_code(),
+            tk_ticket_ctrl.getTicket_prefix(),
+            tk_ticket_ctrl.getTicket_code(),
+            tk_ticket_ctrl.getStep_code(),
+            dbInstance
+        );
+    }
+
+    public int getNextCtrlTicketSeqTmp(long customer_code, int ticket_prefix, int ticket_code, int step_code,@Nullable SQLiteDatabase dbInstance) throws Exception {
+        HMAux nextTmp = getByStringHM(
+            new TK_Ticket_Ctrl_Sql_003(
+                customer_code, ticket_prefix, ticket_code, step_code
+            ).toSqlQuery(),
+            dbInstance
+        );
+        //
+        if (nextTmp != null && nextTmp.hasConsistentValue(TK_Ticket_Ctrl_Sql_003.NEXT_TICKET_SEQ_TMP)) {
+            return Integer.parseInt(nextTmp.get(TK_Ticket_Ctrl_Sql_003.NEXT_TICKET_SEQ_TMP));
+        } else {
+            throw new Exception("ERROR_ON_GET_NEXT_TICKET_SEQ_TMP");
+        }
+    }
+
     @Override
     public void addUpdate(String sQuery) {
         openDB();
         try {
-
             db.execSQL(sQuery);
-
         } catch (Exception e) {
         } finally {
         }
@@ -250,9 +377,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public void remove(String sQuery) {
         openDB();
         try {
-
             db.execSQL(sQuery);
-
         } catch (Exception e) {
         } finally {
         }
@@ -260,13 +385,14 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
     }
 
     /**
+     * TODO Revisar metodo modificad para compilar e testar......
      * Metodo usado no removeFull do ticket
      *
-     * @param tk_ticket - Obj ticket a ser removido
+     * @param tk_ticket_ctrls - Obj lista de controles
      * @param dbInstance - Instancia compartilhada do banco
      * @return DaoObjReturn com resultados
      */
-    public DaoObjReturn removeFull(TK_Ticket tk_ticket , SQLiteDatabase dbInstance ){
+    public DaoObjReturn removeFull(List<TK_Ticket_Ctrl> tk_ticket_ctrls , SQLiteDatabase dbInstance ){
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         long sqlRet = 0;
         String curAction = DaoObjReturn.DELETE;
@@ -283,7 +409,7 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 db.beginTransaction();
             }
 
-            for (TK_Ticket_Ctrl tk_ticket_ctrl : tk_ticket.getCtrl()) {
+            for (TK_Ticket_Ctrl tk_ticket_ctrl : tk_ticket_ctrls) {
                 StringBuilder sbWhere = new StringBuilder();
                 sbWhere.append(CUSTOMER_CODE).append(" = '").append(tk_ticket_ctrl.getCustomer_code()).append("'");
                 sbWhere.append(" and ");
@@ -292,18 +418,15 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 sbWhere.append(TICKET_CODE).append(" = '").append(tk_ticket_ctrl.getTicket_code()).append("'");
                 sbWhere.append(" and ");
                 sbWhere.append(TICKET_SEQ).append(" = '").append(tk_ticket_ctrl.getTicket_seq()).append("'");
+                sbWhere.append(" and ");
+                sbWhere.append(STEP_CODE).append(" = '").append(tk_ticket_ctrl.getStep_code()).append("'");
                 //Tenta o delete do tipo do controle
-                sqlRet = deleteByCtrlType(tk_ticket_ctrl.getCtrl_type(), sbWhere,db,daoObjReturn);
+                deleteByCtrlType(tk_ticket_ctrl, sbWhere,db,daoObjReturn);
                 //Se delete do processo "filho" OK, segue para o delete do ctrl
-                if(sqlRet != 0){
-                    sqlRet = 0;
-                    daoObjReturn.setTable(TABLE);
-                    sqlRet = db.delete(TABLE,sbWhere.toString(),null);
-                    if(sqlRet == 0){
-                        daoObjReturn.setRawMessage(daoObjReturn.DELETE_ERROR_0_ROWS_AFFECTED);
-                        throw new Exception(daoObjReturn.getErrorMsg());
-                    }
-                }else{
+                sqlRet = 0;
+                daoObjReturn.setTable(TABLE);
+                sqlRet = db.delete(TABLE,sbWhere.toString(),null);
+                if(sqlRet == 0){
                     daoObjReturn.setRawMessage(daoObjReturn.DELETE_ERROR_0_ROWS_AFFECTED);
                     throw new Exception(daoObjReturn.getErrorMsg());
                 }
@@ -351,23 +474,46 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
      * @param daoObjReturn - Obj de retorno do Dao
      * @throws Exception
      */
-    private void insertUpdateByCtrlType(TK_Ticket_Ctrl tk_ticket_ctrl, SQLiteDatabase db, DaoObjReturn daoObjReturn) throws Exception {
+    private void insertUpdateByCtrlType(TK_Ticket_Ctrl tk_ticket_ctrl, SQLiteDatabase db, DaoObjReturn daoObjReturn, boolean useTmpMethod) throws Exception {
         //Tenta inserir action
         switch (tk_ticket_ctrl.getCtrl_type()) {
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
-                TK_Ticket_ActionDao ticketActionDao = new TK_Ticket_ActionDao(
-                    context,
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                    Constant.DB_VERSION_CUSTOM
-                );
-                //Chama insertUpdate da action,passando db como param aguardando retorno.
-                daoObjReturn = ticketActionDao.addUpdate(tk_ticket_ctrl.getAction(), db);
-                //Se erro durante insert, dispara exception abortando o processamento.
-                if (daoObjReturn.hasError()) {
-                    throw new Exception(daoObjReturn.getRawMessage());
+                if(tk_ticket_ctrl.getAction() != null) {
+                    tk_ticket_ctrl.getAction().setPK(tk_ticket_ctrl);
+                    daoObjReturn = tryAddUpdateAction(tk_ticket_ctrl.getAction(), db,useTmpMethod);
+                    //Se erro durante insert, dispara exception abortando o processamento.
+                    if (daoObjReturn.hasError()) {
+                        throw new Exception(daoObjReturn.getRawMessage());
+                    }
                 }
                 break;
-            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                if(tk_ticket_ctrl.getApproval() != null) {
+                    daoObjReturn = tryAddUpdateApproval(tk_ticket_ctrl.getApproval(), db);
+                    //Se erro durante insert, dispara exception abortando o processamento.
+                    if (daoObjReturn.hasError()) {
+                        throw new Exception(daoObjReturn.getRawMessage());
+                    }
+                }
+                if(tk_ticket_ctrl.getRejection() != null && tk_ticket_ctrl.getRejection().size() > 0 ) {
+                    daoObjReturn = tryAddUpdateApprovalRejection(tk_ticket_ctrl.getRejection(), db);
+                    //Se erro durante insert, dispara exception abortando o processamento.
+                    if (daoObjReturn.hasError()) {
+                        throw new Exception(daoObjReturn.getRawMessage());
+                    }
+                }
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
+                if(tk_ticket_ctrl.getForm() != null) {
+                    tk_ticket_ctrl.getForm().setPK(tk_ticket_ctrl);
+                    daoObjReturn = tryAddUpdateForm(tk_ticket_ctrl.getForm(), db,useTmpMethod);
+                    //Se erro durante insert, dispara exception abortando o processamento.
+                    if (daoObjReturn.hasError()) {
+                        throw new Exception(daoObjReturn.getRawMessage());
+                    }
+                }
+                break;
+            /*case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
                 TK_Ticket_MeasureDao ticketMeasureDao = new TK_Ticket_MeasureDao(
                     context,
                     ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -379,36 +525,123 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 if (daoObjReturn.hasError()) {
                     throw new Exception(daoObjReturn.getRawMessage());
                 }
+                break;*/
+            default:
                 break;
+        }
+    }
+
+    private DaoObjReturn tryAddUpdateAction(TK_Ticket_Action tk_ticket_action, SQLiteDatabase db, boolean useTmpMethod) {
+        TK_Ticket_ActionDao ticketActionDao = new TK_Ticket_ActionDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //Chama insertUpdate da action,passando db como param aguardando retorno.
+        //Se for criação, usa metodo TMP
+        if(useTmpMethod){
+            return ticketActionDao.addUpdateTmp(tk_ticket_action, db);
+        }else{
+            return ticketActionDao.addUpdate(tk_ticket_action, db);
+        }
+    }
+
+    private DaoObjReturn tryAddUpdateApproval(TK_Ticket_Approval tk_ticket_approval, SQLiteDatabase db) {
+        TK_Ticket_ApprovalDao ticketApprovalDao = new TK_Ticket_ApprovalDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //Chama insertUpdate da action,passando db como param aguardando retorno.
+        return ticketApprovalDao.addUpdate(tk_ticket_approval, db);
+    }
+
+    private DaoObjReturn tryAddUpdateApprovalRejection(ArrayList<TK_Ticket_Approval_Rejection> ticket_approval_rejections, SQLiteDatabase db) {
+        TK_Ticket_Approval_RejectionDao ticketApprovalRejectionDao = new TK_Ticket_Approval_RejectionDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //Chama insertUpdate da action,passando db como param aguardando retorno.
+        return ticketApprovalRejectionDao.addUpdate(ticket_approval_rejections, false,db);
+    }
+
+    private DaoObjReturn tryAddUpdateForm(TK_Ticket_Form tk_ticket_form, SQLiteDatabase db, boolean useTmpMethod) {
+        TK_Ticket_FormDao ticketFormDao = new TK_Ticket_FormDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //Chama insertUpdate do form,passando db como param aguardando retorno.
+        //Se for criação, usa metodo TMP
+        if(useTmpMethod){
+            return ticketFormDao.addUpdateTmp(tk_ticket_form, db);
+        }else{
+            return ticketFormDao.addUpdate(tk_ticket_form, db);
         }
     }
 
     /**
      * Deleta o processo filho do controle baseado no tipo
-     * @param ctrl_type - Tipo do control
+     * @param tk_ticket_ctrl - Control
      * @param sbWhere - Where para delete
      * @param db - Instancia do db
      * @param daoObjReturn - Obj de retorno do Dao
      * @return - Qtd de registros removidos
      * @throws Exception
      */
-    private long deleteByCtrlType(String ctrl_type, StringBuilder sbWhere, SQLiteDatabase db, DaoObjReturn daoObjReturn) throws Exception {
+    private long deleteByCtrlType(TK_Ticket_Ctrl tk_ticket_ctrl, StringBuilder sbWhere, SQLiteDatabase db, DaoObjReturn daoObjReturn) throws Exception {
         String ctrlTypeTable = "";
         //
-        switch (ctrl_type){
+        switch (tk_ticket_ctrl.getCtrl_type()){
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_MEASURE:
                 ctrlTypeTable = TK_Ticket_MeasureDao.TABLE;
-                break;
+                //Tenta o delete se houver
+                if(tk_ticket_ctrl.getMeasure() != null) {
+                    //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
+                    daoObjReturn.setTable(ctrlTypeTable);
+                    return db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                }
+                return 1;
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
+                //Tenta o delete
+                //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
                 ctrlTypeTable = TK_Ticket_ActionDao.TABLE;
+                if(tk_ticket_ctrl.getAction() != null) {
+                    daoObjReturn.setTable(ctrlTypeTable);
+                    return db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                }
+                return 1;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                int approvalDelete = 1;
+                //LUCHE - 24/07/2020
+                //Aqui ja mudou tudo, não é necessariamente 1 x 1, pode ter só aproval ou só rejeição
+                //e rejeição é uma lista...TOP
+                //Como não é 1 pra 1
+                ctrlTypeTable = TK_Ticket_ApprovalDao.TABLE;
+                if(tk_ticket_ctrl.getApproval() != null) {
+                    daoObjReturn.setTable(ctrlTypeTable);
+                    approvalDelete = db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                }
+                //
+                ctrlTypeTable = TK_Ticket_Approval_RejectionDao.TABLE;
+                if(tk_ticket_ctrl.getRejection() != null && tk_ticket_ctrl.getRejection().size() > 0 ) {
+                    daoObjReturn.setTable(ctrlTypeTable);
+                    approvalDelete += db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                }
+                return approvalDelete;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
+                //Tenta o delete
+                //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
+                ctrlTypeTable = TK_Ticket_FormDao.TABLE;
+                if(tk_ticket_ctrl.getForm() != null) {
+                    daoObjReturn.setTable(ctrlTypeTable);
+                    return db.delete(ctrlTypeTable, sbWhere.toString(), null);
+                }
+                return 1;
             default:
-                break;
+                return 1;
         }
-        //Tenta o delete
-        //Como a pk é a mesma e a relação é 1 para 1 será feito um db.delete diretamente daqui
-        daoObjReturn.setTable(ctrlTypeTable);
-        //
-        return db.delete(ctrlTypeTable,sbWhere.toString(),null);
     }
 
     /**
@@ -435,7 +668,6 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                         ).toSqlQuery()
                     )
                 );
-
                 break;
             case ConstantBaseApp.TK_TICKET_CRTL_TYPE_ACTION:
                 //Busca action do control
@@ -447,15 +679,75 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 //
                 tk_ticket_ctrl.setAction(
                     ticketActionDao.getByString(
-                        new TK_Ticket_Action_Sql_001(
+                        new TK_Ticket_Action_Sql_002(
                             tk_ticket_ctrl.getCustomer_code(),
                             tk_ticket_ctrl.getTicket_prefix(),
                             tk_ticket_ctrl.getTicket_code(),
-                            tk_ticket_ctrl.getTicket_seq()
+                            tk_ticket_ctrl.getTicket_seq_tmp(),
+                            tk_ticket_ctrl.getStep_code()
                         ).toSqlQuery()
 
                     )
                 );
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_APPROVAL:
+                //Busca approval do control
+                TK_Ticket_ApprovalDao ticketApprovalDao = new TK_Ticket_ApprovalDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                TK_Ticket_Approval_RejectionDao approvalRejectionDao = new TK_Ticket_Approval_RejectionDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //
+                tk_ticket_ctrl.setApproval(
+                    ticketApprovalDao.getByString(
+                        new TK_Ticket_Approval_Sql_001(
+                            tk_ticket_ctrl.getCustomer_code(),
+                            tk_ticket_ctrl.getTicket_prefix(),
+                            tk_ticket_ctrl.getTicket_code(),
+                            tk_ticket_ctrl.getTicket_seq(),
+                            tk_ticket_ctrl.getStep_code()
+                            ).toSqlQuery()
+                    )
+                );
+                //
+                tk_ticket_ctrl.setRejection(
+                    (ArrayList<TK_Ticket_Approval_Rejection>) approvalRejectionDao.query(
+                        new TK_Ticket_Approval_Rejection_Sql_001(
+                            tk_ticket_ctrl.getCustomer_code(),
+                            tk_ticket_ctrl.getTicket_prefix(),
+                            tk_ticket_ctrl.getTicket_code(),
+                            tk_ticket_ctrl.getTicket_seq(),
+                            tk_ticket_ctrl.getStep_code()
+                            ).toSqlQuery()
+                    )
+                );
+                break;
+            case ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM:
+                //Busca action do control
+                TK_Ticket_FormDao ticketFormDao = new TK_Ticket_FormDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                );
+                //
+                tk_ticket_ctrl.setForm(
+                    ticketFormDao.getByString(
+                        new TK_Ticket_Form_Sql_002(
+                            tk_ticket_ctrl.getCustomer_code(),
+                            tk_ticket_ctrl.getTicket_prefix(),
+                            tk_ticket_ctrl.getTicket_code(),
+                            tk_ticket_ctrl.getTicket_seq_tmp(),
+                            tk_ticket_ctrl.getStep_code()
+                        ).toSqlQuery()
+
+                    )
+                );
+                break;
             default:
                 break;
         }
@@ -468,10 +760,8 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
         TK_Ticket_Ctrl tk_ticket_ctrl = null;
         //
         openDB();
-
         try {
             Cursor cursor = db.rawQuery(sQuery, null);
-
             while (cursor.moveToNext()) {
                 tk_ticket_ctrl = toTK_Ticket_CtrlMapper.map(cursor);
             }
@@ -479,7 +769,6 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             if(tk_ticket_ctrl != null){
                 getCtrlTypeSon(tk_ticket_ctrl);
             }
-
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
@@ -493,25 +782,31 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
 
     @Override
     public HMAux getByStringHM(String sQuery) {
+        return getByStringHM(sQuery,null);
+    }
+
+    public HMAux getByStringHM(String sQuery, SQLiteDatabase dbInstance) {
         HMAux hmAux = null;
-        openDB();
-
+        if (dbInstance == null) {
+            openDB();
+        } else {
+            this.db = dbInstance;
+        }
+        //
         try {
-
             Cursor cursor = db.rawQuery(sQuery, null);
-
             while (cursor.moveToNext()) {
                 hmAux = CursorToHMAuxMapper.mapN(cursor);
             }
-
             cursor.close();
         } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(),e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
         } finally {
         }
-
-        closeDB();
-
+        //
+        if(dbInstance == null) {
+            closeDB();
+        }
         return hmAux;
     }
 
@@ -519,11 +814,8 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public List<TK_Ticket_Ctrl> query(String sQuery) {
         List<TK_Ticket_Ctrl> tk_ticket_ctrls = new ArrayList<>();
         openDB();
-
         try {
-
             Cursor cursor = db.rawQuery(sQuery, null);
-
             while (cursor.moveToNext()) {
                 TK_Ticket_Ctrl uAux = toTK_Ticket_CtrlMapper.map(cursor);
                 //
@@ -533,15 +825,12 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
                 //
                 tk_ticket_ctrls.add(uAux);
             }
-
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
-
         closeDB();
-
         return tk_ticket_ctrls;
     }
 
@@ -549,21 +838,16 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public List<HMAux> query_HM(String sQuery) {
         List<HMAux> tk_ticket_ctrls = new ArrayList<>();
         openDB();
-
         try {
-
             Cursor cursor = db.rawQuery(sQuery, null);
-
             while (cursor.moveToNext()) {
                 tk_ticket_ctrls.add(CursorToHMAuxMapper.mapN(cursor));
             }
-
             cursor.close();
         } catch (Exception e) {
             ToolBox_Inf.registerException(getClass().getName(),e);
         } finally {
         }
-
         closeDB();
 
         return tk_ticket_ctrls;
@@ -578,21 +862,55 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             tk_ticket_ctrl.setTicket_prefix(cursor.getInt(cursor.getColumnIndex(TICKET_PREFIX)));
             tk_ticket_ctrl.setTicket_code(cursor.getInt(cursor.getColumnIndex(TICKET_CODE)));
             tk_ticket_ctrl.setTicket_seq(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ)));
+            tk_ticket_ctrl.setTicket_seq_tmp(cursor.getInt(cursor.getColumnIndex(TICKET_SEQ_TMP)));
+            tk_ticket_ctrl.setStep_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
+            if(cursor.isNull(cursor.getColumnIndex(STEP_ORDER))){
+                tk_ticket_ctrl.setStep_order(null);
+            }else {
+                tk_ticket_ctrl.setStep_order(cursor.getInt(cursor.getColumnIndex(STEP_ORDER)));
+            }
+            tk_ticket_ctrl.setObj_planned(cursor.getInt(cursor.getColumnIndex(OBJ_PLANNED)));
             tk_ticket_ctrl.setCtrl_type(cursor.getString(cursor.getColumnIndex(CTRL_TYPE)));
-            tk_ticket_ctrl.setSite_code(cursor.getInt(cursor.getColumnIndex(SITE_CODE)));
-            tk_ticket_ctrl.setSite_id(cursor.getString(cursor.getColumnIndex(SITE_ID)));
-            tk_ticket_ctrl.setSite_desc(cursor.getString(cursor.getColumnIndex(SITE_DESC)));
-            tk_ticket_ctrl.setOperation_code(cursor.getInt(cursor.getColumnIndex(OPERATION_CODE)));
-            tk_ticket_ctrl.setOperation_id(cursor.getString(cursor.getColumnIndex(OPERATION_ID)));
-            tk_ticket_ctrl.setOperation_desc(cursor.getString(cursor.getColumnIndex(OPERATION_DESC)));
-            tk_ticket_ctrl.setProduct_code(cursor.getInt(cursor.getColumnIndex(PRODUCT_CODE)));
-            tk_ticket_ctrl.setProduct_id(cursor.getString(cursor.getColumnIndex(PRODUCT_ID)));
-            tk_ticket_ctrl.setProduct_desc(cursor.getString(cursor.getColumnIndex(PRODUCT_DESC)));
-            tk_ticket_ctrl.setSerial_code(cursor.getInt(cursor.getColumnIndex(SERIAL_CODE)));
-            tk_ticket_ctrl.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
-            tk_ticket_ctrl.setCtrl_start_date(cursor.getString(cursor.getColumnIndex(CTRL_START_DATE)));
-            tk_ticket_ctrl.setCtrl_start_user(cursor.getInt(cursor.getColumnIndex(CTRL_START_USER)));
-            tk_ticket_ctrl.setCtrl_start_user_name(cursor.getString(cursor.getColumnIndex(CTRL_START_USER_NAME)));
+            if(cursor.isNull(cursor.getColumnIndex(PRODUCT_CODE))){
+                tk_ticket_ctrl.setProduct_code(null);
+            }else {
+                tk_ticket_ctrl.setProduct_code(cursor.getInt(cursor.getColumnIndex(PRODUCT_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(PRODUCT_ID))){
+                tk_ticket_ctrl.setProduct_id(null);
+            }else{
+                tk_ticket_ctrl.setProduct_id(cursor.getString(cursor.getColumnIndex(PRODUCT_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(PRODUCT_DESC))){
+                tk_ticket_ctrl.setProduct_desc(null);
+            }else{
+                tk_ticket_ctrl.setProduct_desc(cursor.getString(cursor.getColumnIndex(PRODUCT_DESC)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(SERIAL_CODE))){
+                tk_ticket_ctrl.setSerial_code(null);
+            }else {
+                tk_ticket_ctrl.setSerial_code(cursor.getInt(cursor.getColumnIndex(SERIAL_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(SERIAL_ID))){
+                tk_ticket_ctrl.setSerial_id(null);
+            }else{
+                tk_ticket_ctrl.setSerial_id(cursor.getString(cursor.getColumnIndex(SERIAL_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(CTRL_START_DATE))){
+                tk_ticket_ctrl.setCtrl_start_date(null);
+            }else {
+                tk_ticket_ctrl.setCtrl_start_date(cursor.getString(cursor.getColumnIndex(CTRL_START_DATE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(CTRL_START_USER))){
+                tk_ticket_ctrl.setCtrl_start_user(null);
+            }else {
+                tk_ticket_ctrl.setCtrl_start_user(cursor.getInt(cursor.getColumnIndex(CTRL_START_USER)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(CTRL_START_USER_NAME))){
+                tk_ticket_ctrl.setCtrl_start_user_name(null);
+            }else {
+                tk_ticket_ctrl.setCtrl_start_user_name(cursor.getString(cursor.getColumnIndex(CTRL_START_USER_NAME)));
+            }
             if(cursor.isNull(cursor.getColumnIndex(CTRL_END_DATE))){
                 tk_ticket_ctrl.setCtrl_end_date(null);
             }else{
@@ -626,6 +944,8 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             }else{
                 tk_ticket_ctrl.setPartner_desc(cursor.getString(cursor.getColumnIndex(PARTNER_DESC)));
             }
+            tk_ticket_ctrl.setUpdate_required(cursor.getInt(cursor.getColumnIndex(UPDATE_REQUIRED)));
+            tk_ticket_ctrl.setFrom_to_notify(cursor.getInt(cursor.getColumnIndex(FROM_TO_NOTIFY)));
             //
             return tk_ticket_ctrl;
         }
@@ -648,52 +968,29 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             if(tk_ticket_ctrl.getTicket_seq() > -1){
                 contentValues.put(TICKET_SEQ,tk_ticket_ctrl.getTicket_seq());
             }
+            if(tk_ticket_ctrl.getTicket_seq_tmp() > -1){
+                contentValues.put(TICKET_SEQ_TMP,tk_ticket_ctrl.getTicket_seq_tmp());
+            }
+            if(tk_ticket_ctrl.getStep_code() > -1){
+                contentValues.put(STEP_CODE,tk_ticket_ctrl.getStep_code());
+            }
+
+            contentValues.put(STEP_ORDER,tk_ticket_ctrl.getStep_order());
+
+            if(tk_ticket_ctrl.getObj_planned() > -1){
+                contentValues.put(OBJ_PLANNED,tk_ticket_ctrl.getObj_planned());
+            }
             if(tk_ticket_ctrl.getCtrl_type() != null){
                 contentValues.put(CTRL_TYPE,tk_ticket_ctrl.getCtrl_type());
             }
-            if(tk_ticket_ctrl.getSite_code() > -1){
-                contentValues.put(SITE_CODE,tk_ticket_ctrl.getSite_code());
-            }
-            if(tk_ticket_ctrl.getSite_id() != null){
-                contentValues.put(SITE_ID,tk_ticket_ctrl.getSite_id());
-            }
-            if(tk_ticket_ctrl.getSite_desc() != null){
-                contentValues.put(SITE_DESC,tk_ticket_ctrl.getSite_desc());
-            }
-            if(tk_ticket_ctrl.getOperation_code() > -1){
-                contentValues.put(OPERATION_CODE,tk_ticket_ctrl.getOperation_code());
-            }
-            if(tk_ticket_ctrl.getOperation_id() != null){
-                contentValues.put(OPERATION_ID,tk_ticket_ctrl.getOperation_id());
-            }
-            if(tk_ticket_ctrl.getOperation_desc() != null){
-                contentValues.put(OPERATION_DESC,tk_ticket_ctrl.getOperation_desc());
-            }
-            if(tk_ticket_ctrl.getProduct_code() > -1){
-                contentValues.put(PRODUCT_CODE,tk_ticket_ctrl.getProduct_code());
-            }
-            if(tk_ticket_ctrl.getProduct_id() != null){
-                contentValues.put(PRODUCT_ID,tk_ticket_ctrl.getProduct_id());
-            }
-            if(tk_ticket_ctrl.getProduct_desc() != null){
-                contentValues.put(PRODUCT_DESC,tk_ticket_ctrl.getProduct_desc());
-            }
-            if(tk_ticket_ctrl.getSerial_code() > -1){
-                contentValues.put(SERIAL_CODE,tk_ticket_ctrl.getSerial_code());
-            }
-            if(tk_ticket_ctrl.getSerial_id() != null){
-                contentValues.put(SERIAL_ID,tk_ticket_ctrl.getSerial_id());
-            }
-
-            if(tk_ticket_ctrl.getCtrl_start_date() != null){
-                contentValues.put(CTRL_START_DATE,tk_ticket_ctrl.getCtrl_start_date());
-            }
-            if(tk_ticket_ctrl.getCtrl_start_user() > -1){
-                contentValues.put(CTRL_START_USER,tk_ticket_ctrl.getCtrl_start_user());
-            }
-            if(tk_ticket_ctrl.getCtrl_start_user_name() != null){
-                contentValues.put(CTRL_START_USER_NAME,tk_ticket_ctrl.getCtrl_start_user_name());
-            }
+            contentValues.put(PRODUCT_CODE,tk_ticket_ctrl.getProduct_code());
+            contentValues.put(PRODUCT_ID,tk_ticket_ctrl.getProduct_id());
+            contentValues.put(PRODUCT_DESC,tk_ticket_ctrl.getProduct_desc());
+            contentValues.put(SERIAL_CODE,tk_ticket_ctrl.getSerial_code());
+            contentValues.put(SERIAL_ID,tk_ticket_ctrl.getSerial_id());
+            contentValues.put(CTRL_START_DATE,tk_ticket_ctrl.getCtrl_start_date());
+            contentValues.put(CTRL_START_USER,tk_ticket_ctrl.getCtrl_start_user());
+            contentValues.put(CTRL_START_USER_NAME,tk_ticket_ctrl.getCtrl_start_user_name());
             contentValues.put(CTRL_END_DATE,tk_ticket_ctrl.getCtrl_end_date());
             contentValues.put(CTRL_END_USER,tk_ticket_ctrl.getCtrl_end_user());
             contentValues.put(CTRL_END_USER_NAME,tk_ticket_ctrl.getCtrl_end_user_name());
@@ -703,6 +1000,12 @@ public class TK_Ticket_CtrlDao extends BaseDao implements DaoWithReturn<TK_Ticke
             contentValues.put(PARTNER_CODE,tk_ticket_ctrl.getPartner_code());
             contentValues.put(PARTNER_ID,tk_ticket_ctrl.getPartner_id());
             contentValues.put(PARTNER_DESC,tk_ticket_ctrl.getPartner_desc());
+            if(tk_ticket_ctrl.getUpdate_required() > -1){
+                contentValues.put(UPDATE_REQUIRED,tk_ticket_ctrl.getUpdate_required());
+            }
+            if(tk_ticket_ctrl.getFrom_to_notify() > -1){
+                contentValues.put(FROM_TO_NOTIFY,tk_ticket_ctrl.getFrom_to_notify());
+            }
             //
             return contentValues;
         }

@@ -208,7 +208,6 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void setDeadline(SO_Creation_Obj my_so_creation_obj) {
-
         swHasManualDeadline.setChecked(false);
         mkDateTime.setmValue(my_so_creation_obj.getDeadline());
         mkDateTime.setVisibility(View.GONE);
@@ -319,11 +318,13 @@ public class Act050_Frag_SO extends BaseFragment {
                 pipelineFav.put(SearchableSpinner.CODE, String.valueOf(pipeline.getPipelineCode()));
                 pipelineFav.put(SearchableSpinner.ID, String.valueOf(pipeline.getPipelineCode()));
                 pipelineFav.put(SearchableSpinner.DESCRIPTION, pipeline.getPipelineDesc());
+                pipelineFav.put(Act050_Main.PIPELINE_DEADLINE_AUTOMATIC, String.valueOf(pipeline.getDeadline_automatic()));
             }
             HMAux pipelineOption = new HMAux();
             pipelineOption.put(SearchableSpinner.CODE, String.valueOf(pipeline.getPipelineCode()));
             pipelineOption.put(SearchableSpinner.ID, String.valueOf(pipeline.getPipelineCode()));
             pipelineOption.put(SearchableSpinner.DESCRIPTION, pipeline.getPipelineDesc());
+            pipelineOption.put(Act050_Main.PIPELINE_DEADLINE_AUTOMATIC, String.valueOf(pipeline.getDeadline_automatic()));
             mPipelineOptions.add(pipelineOption);
         }
 
@@ -592,6 +593,38 @@ public class Act050_Frag_SO extends BaseFragment {
             }
         });
 
+        //LUCHE - 20/10/2020
+        //Seleção do pipeline afeta a exibição ou não do campo deadline.
+        ssPipelineCode.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            HMAux preSelect ;
+
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+                preSelect = hmAux;
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                if(preSelect != null && preSelect.hasConsistentValue(SearchableSpinner.CODE)
+                    && (hmAux == null || !hmAux.hasConsistentValue(SearchableSpinner.CODE))
+                ){
+                    if(!swHasManualDeadline.isChecked()){
+                        swHasManualDeadline.performClick();
+                    }
+                }else {
+                    //Se pipeline DEADLINE_AUTOMATIC 1, desativa deadline, mas permite usr reativar se quiser.
+                    if (hmAux.hasConsistentValue(SearchableSpinner.CODE)
+                        && hmAux.hasConsistentValue(Act050_Main.PIPELINE_DEADLINE_AUTOMATIC)
+                    ) {
+                        if ((hmAux.get(Act050_Main.PIPELINE_DEADLINE_AUTOMATIC).equals("1") && swHasManualDeadline.isChecked())
+                            || (hmAux.get(Act050_Main.PIPELINE_DEADLINE_AUTOMATIC).equals("0") && !swHasManualDeadline.isChecked())
+                        ) {
+                            swHasManualDeadline.performClick();
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private boolean formFieldsValitaded() {

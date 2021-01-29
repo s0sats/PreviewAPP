@@ -19,10 +19,11 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
 import com.namoadigital.prj001.model.T_TK_Ticket_Search_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Search_Serial_PK_Env;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Search;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
-import com.namoadigital.prj001.sql.TK_Ticket_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -142,6 +143,7 @@ public class WS_TK_Ticket_Search extends IntentService {
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         if(ticketList != null){
             HMAux hmAux = new HMAux();
+            List<TK_Ticket> tickets = new ArrayList<>();
             hmAux.put(RETURNED_TICKET_QTY, String.valueOf(ticketList.size()));
             //Se nenhum Ticket retornado, ja envia close act
             if(ticketList.size() == 0) {
@@ -150,24 +152,35 @@ public class WS_TK_Ticket_Search extends IntentService {
                 //
                 for (TK_Ticket tkTicket : ticketList) {
                     tkTicket.setPK();
-                    TK_Ticket.checkActionPhotoResetNeeds(getDbTicket(tkTicket), tkTicket);
-                    tkTicket.updateLocalImagesPathIfExists();
+                    TK_Ticket dbTicket = getDbTicket(tkTicket);
 
-                    //Reseta sync_required para 0 via query, pois add update via obj não o atualiza.
-                    /**
-                     * TODO TALVEZ O MELHOR FOSSE INSERIR UMA A UMA E VERIFICANDO O RETORNO, CASO SUCESSO, RESETA O SYNC REQUIRED
-                     * DO JEITO QUE ESTA CORRE O RISCO DE RESETAR O SYNC REQUIRED E DAR PAU NO ADD UPDATE
-                     * É UM RISCO MUITO BAIXO MAS.....
-                     *
-                     * */
-                    ticketDao.addUpdate(
-                        new TK_Ticket_Sql_004(
-                            tkTicket.getCustomer_code(),
-                            tkTicket.getTicket_prefix(),
-                            tkTicket.getTicket_code(),
-                            0
-                        ).toSqlQuery()
-                    );
+                    if(dbTicket != null) {
+                    /*
+                        Barrionuevo - 2020-11-13
+                        Tratativa para impedir que ticket com form espontaneo em processo seja atualizado pelo server.
+                     */
+                        if(!ToolBox_Inf.hasOffHandFormInProcess(getApplicationContext(), dbTicket.getTicket_prefix(), dbTicket.getTicket_code())) {
+                            //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
+                            //for alterado, o que significa que mudaram a foto no server...
+                            TK_Ticket.checkActionPhotoResetNeeds(
+                                dbTicket,
+                                tkTicket
+                            );
+                            //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
+                            tkTicket.updateLocalImagesPathIfExists();
+                            //Busca ctrls tipo form em andamento e que seriam resetados.
+                            tkTicket.updateTicketCtrlFormInProcess(getApplicationContext());
+                            //
+                            daoObjReturn = ticketDao.removeFullV2(tkTicket);
+                            tickets.add(tkTicket);
+                            if(daoObjReturn.hasError()) {
+                                break;
+                            }
+                        }
+                    }else{
+                        tickets.add(tkTicket);
+                    }
+                    //
                     if (ticketList.size() == 1) {
                         hmAux.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
                         hmAux.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
@@ -208,7 +221,9 @@ public class WS_TK_Ticket_Search extends IntentService {
                 //Se sucesso, vai para insert do ticket.
                 if(!daoObjReturn.hasError()) {
                     //
-                    daoObjReturn = ticketDao.addUpdate(ticketList, false);
+                    if(tickets != null && !tickets.isEmpty()) {
+                        daoObjReturn = ticketDao.addUpdate(tickets, false);
+                    }
                     if (!daoObjReturn.hasError()) {
                         startDownloadWorkers();
                         //
@@ -278,6 +293,7 @@ public class WS_TK_Ticket_Search extends IntentService {
         //Como será possivel baixar ticket do customer logado, pode ser chamada a rotina de download.
         //Esse as definição mudar, rever, pois seria necessario chamar essa serviço para cada customer code diferente.
         ToolBox_Inf.scheduleDownloadPictureWork(getApplicationContext());
+        ToolBox_Inf.scheduleDownloadPdfWork(getApplicationContext());
     }
 
     private void loadTranslation() {

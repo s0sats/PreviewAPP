@@ -13,7 +13,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
@@ -32,6 +34,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Base64;
 import android.util.DisplayMetrics;
@@ -60,6 +63,8 @@ import androidx.work.WorkManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.namoa_digital.namoa_library.ctls.FabMenu;
+import com.namoa_digital.namoa_library.ctls.FabMenuItem;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -98,6 +103,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.fcm.WS_Notification_Sync;
 import com.namoadigital.prj001.model.CH_Room;
 import com.namoadigital.prj001.model.Chat_Obj;
@@ -119,9 +125,11 @@ import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
+import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.TSerial_Save_Env;
@@ -149,6 +157,7 @@ import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Sql_002;
 import com.namoadigital.prj001.sql.EV_Module_Res_Txt_Trans_Sql_002;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_001;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_002;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_006;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_008;
@@ -171,8 +180,10 @@ import com.namoadigital.prj001.sql.IO_Outbound_Sql_013;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_015;
+import com.namoadigital.prj001.sql.MD_Product_Serial_x_TK_Ticket_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
-import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
+import com.namoadigital.prj001.sql.MD_Site_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
@@ -180,19 +191,27 @@ import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.Sql_Act002_001;
 import com.namoadigital.prj001.sql.Sql_Act005_007;
 import com.namoadigital.prj001.sql.Sql_Act005_008;
-import com.namoadigital.prj001.sql.Sql_Act005_010;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
+import com.namoadigital.prj001.sql.Sql_Act070_005;
+import com.namoadigital.prj001.sql.Sql_Act070_008;
 import com.namoadigital.prj001.sql.Sql_Chat_Notification_001;
 import com.namoadigital.prj001.sql.Sql_Form_x_Operation;
 import com.namoadigital.prj001.sql.Sql_Form_x_Product;
 import com.namoadigital.prj001.sql.Sql_Form_x_Site;
 import com.namoadigital.prj001.sql.Sql_Notification_Schedule_001;
 import com.namoadigital.prj001.sql.Sql_Notification_Schedule_002;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
+import com.namoadigital.prj001.sql.Sync_Checklist_Sql_004;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_007;
 import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
+import com.namoadigital.prj001.ui.act077.Act077_Main;
+import com.namoadigital.prj001.ui.act078.Act078_Main;
+import com.namoadigital.prj001.ui.act079.Act079_Main;
+import com.namoadigital.prj001.ui.act080.Act080_Main;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
@@ -247,13 +266,22 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.namoadigital.prj001.dao.EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL;
 import static com.namoadigital.prj001.ui.AppBase.NAMOA_NOTIF_INFO;
 import static com.namoadigital.prj001.ui.AppBase.NAMOA_PEND_INFO;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_USER_LEVEL_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_SCORE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MEASURE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE;
 import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 
 /**
@@ -263,6 +291,10 @@ import static com.namoadigital.prj001.util.ToolBox_Con.isHostAvailable;
 public class ToolBox_Inf {
 
     private static final String CLASS_NAME = "com.namoadigital.prj001.util.ToolBox_Inf";
+    public static final String RANGE_RED = "RANGE_RED";
+    public static final String RANGE_YELLOW = "RANGE_YELLOW";
+    public static final String RANGE_GREEN = "RANGE_GREEN";
+
 
 //    private static final Map<Character, Character> ACCENT_MAP = initAccentMap();
 //
@@ -374,8 +406,16 @@ public class ToolBox_Inf {
         if (!dirUnsetImg.exists()) {
             dirUnsetImg.mkdir();
         }
-
-
+        //LUCHE - 04/12/2020 - Dir com os arquivos json de edição do ticket
+        File dirTicketJsonFile = new File(Constant.TICKET_JSON_PATH);
+        if (!dirTicketJsonFile.exists()) {
+            dirTicketJsonFile.mkdir();
+        }
+        //BARRIONUEVO - 06/01/2020 - Dir com os arquivos json de lista de site licença do customer
+        File dirCustomerSiteLicenseJsonFile = new File(Constant.CUSTOMER_SITE_LICENSE_JSON_PATH);
+        if (!dirCustomerSiteLicenseJsonFile.exists()) {
+            dirCustomerSiteLicenseJsonFile.mkdir();
+        }
     }
 
     public static String md5(String s) {
@@ -1510,7 +1550,7 @@ public class ToolBox_Inf {
      * Em resumo, sera retornada a lista de banco dos customer que terminam com a versão atual do banco,
      * Constant.DB_VERSION_CUSTOM. Dessa forma, os bancos antigos com pendencia de envio,
      * não serão listados
-     * 
+     *
      *
      * @param context - Contexto
      * @param db_version - Versão do banco de dados enviada pelo server.
@@ -2037,6 +2077,12 @@ public class ToolBox_Inf {
         buildFooterDialog(context, false);
     }
 
+    /**
+     * LUCHE - 07/01/2021
+     * Modificado metodo para adicionar info de site_licença selecionado
+     * @param context
+     * @param editMode
+     */
     public static void buildFooterDialog(final Context context, boolean editMode) {
 
         HMAux hmDialogInfo = loadFooterDialogInfo(context);
@@ -2054,6 +2100,13 @@ public class ToolBox_Inf {
         LinearLayout ll_customer = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_customer);
 //        TextView tv_customer_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_lbl);
         TextView tv_customer_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_customer_value);
+        //LUCHE - 07/01/2021
+        LinearLayout ll_site_license = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_site_license);
+        TextView tv_site_license_desc = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_license_desc);
+        //
+        //BARRIONUEVO - 19/01/2021
+        LinearLayout ll_global_level = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_global_level);
+        TextView tv_user_global_level = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_user_global_level);
         //
         LinearLayout ll_site = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_site);
         TextView tv_site_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_site_lbl);
@@ -2194,6 +2247,42 @@ public class ToolBox_Inf {
 
 //        tv_customer_lbl.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER_LBL));
         tv_customer_value.setText(hmDialogInfo.get(Constant.FOOTER_CUSTOMER));
+        //region Licença por Site
+        //LUCHE - 07/01/2021 - Add informação de licença por site quando customer usar essa configuração
+        EV_User_Customer evUsrCustomer = getCurrentEvUsrCustomerInfo(context);
+        //
+        ll_site_license.setVisibility(View.GONE);
+        ll_global_level.setVisibility(View.GONE);
+        if(evUsrCustomer != null){
+          if (evUsrCustomer.getLicense_site_code() != null && evUsrCustomer.getLicense_site_code() > 0){
+                ll_site_license.setVisibility(View.VISIBLE);
+                tv_site_license_desc.setText(
+                        getSiteLicenseDescFormmated(context,evUsrCustomer.getLicense_site_desc(),evUsrCustomer.getLicense_user_level_id(),evUsrCustomer.getLicense_user_level_changed())
+                );
+          }
+        //endregion
+            //region  Global por nivel
+            if (evUsrCustomer.getLicense_control_type() != null && evUsrCustomer.getLicense_control_type().equals(LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL)) {
+                ll_global_level.setVisibility(View.VISIBLE);
+                int textColor;
+                if(evUsrCustomer.getLicense_user_level_changed() != null && evUsrCustomer.getLicense_user_level_changed() == 1){
+                    textColor = R.color.namoa_color_danger_red;
+                }else{
+                    textColor = R.color.namoa_color_light_blue_lib;
+                }
+
+                tv_user_global_level.setText(getLabelValueColorFormmated(
+                        context,
+                        hmDialogInfo.get(FOOTER_USER_LEVEL_LBL),
+                        evUsrCustomer.getLicense_user_level_id(),
+                        ": ",
+                        true,
+                        textColor
+                        )
+                );
+            }
+            //endregion
+        }
 
         if(editMode){
             setEnableUserInfo(context, hmDialogInfo, ss_site, ss_zone, ss_operation);
@@ -2246,6 +2335,47 @@ public class ToolBox_Inf {
 
     }
 
+    public static EV_User_CustomerDao getEv_user_customerDao(Context context) {
+        return new EV_User_CustomerDao(
+                context,
+                Constant.DB_FULL_BASE,
+                Constant.DB_VERSION_BASE
+        );
+    }
+
+    private static SpannableString getSiteLicenseDescFormmated(Context context, String license_site_desc, String license_user_level_id, Integer license_user_level_changed) {
+        String siteDescInfo = license_site_desc + " / " + license_user_level_id;
+        SpannableString spannableString = new SpannableString(siteDescInfo);
+        //
+        if(license_user_level_changed != null && license_user_level_changed == 1){
+            spannableString.setSpan(
+                new ForegroundColorSpan(context.getResources().getColor(R.color.namoa_color_danger_red)),
+                (siteDescInfo.indexOf(" / " + license_user_level_id) + 2),
+                siteDescInfo.length(),
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            );
+        }
+        //
+        return spannableString;
+    }
+
+    private static SpannableString getLabelValueColorFormmated(Context context, String label, String value, String separator, boolean applyColor, int color) {
+        String siteDescInfo = label + separator + value;
+        SpannableString spannableString = new SpannableString(siteDescInfo);
+        //
+        if(applyColor){
+            spannableString.setSpan(
+                    new ForegroundColorSpan(context.getResources().getColor(color)),
+                (siteDescInfo.indexOf(separator + value) + separator.length()),
+                    siteDescInfo.length(),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            );
+        }
+        //
+        return spannableString;
+    }
+
+
     private static boolean checkForChange(boolean has_changes, String original_code, SearchableSpinner searchableSpinner) {
         String original_code_split[] = original_code.split(" - ");
         if (!searchableSpinner.getmValue().get(SearchableSpinner.CODE).equals(original_code_split[0])) {
@@ -2260,11 +2390,16 @@ public class ToolBox_Inf {
         //
         MD_SiteDao siteDao = new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM);
         ArrayList<HMAux> ssSiteOption = (ArrayList<HMAux>) siteDao.query_HM(
-                new MD_Site_Sql_SS(
+                new MD_Site_Sql_SS_002(
                         String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
                 ).toSqlQuery()
         );
         HMAux ssSiteValue = getCurrentmValue(hmDialogInfo.get(Constant.FOOTER_SITE), ssSiteOption);
+
+        if(isConcurrentBySiteLicense(context)) {
+            ssSiteOption = (ArrayList<HMAux>) getSiteLicenseAvailability(ssSiteOption, SearchableSpinner.RIGHT_ICON);
+        }
+
         setSSs(ss_site, hmDialogInfo.get(Constant.FOOTER_SITE_LBL), ssSiteValue, ssSiteOption);
         //
         ss_site.setVisibility(hmDialogInfo.get(Constant.FOOTER_SITE) == null || hmDialogInfo.get(Constant.FOOTER_SITE).length() <= 0 ? View.GONE : View.VISIBLE);
@@ -2300,6 +2435,44 @@ public class ToolBox_Inf {
         setSSs(ss_operation, hmDialogInfo.get(Constant.FOOTER_OPERATION_LBL), ssOperationValue, ssOperationOption);
         ss_operation.setVisibility(hmDialogInfo.get(Constant.FOOTER_OPERATION) == null || hmDialogInfo.get(Constant.FOOTER_OPERATION).length() <= 0 ? View.GONE : View.VISIBLE);
         //
+    }
+
+    public static List<HMAux> getSiteLicenseAvailability(List<HMAux> ssSiteOption, String iconKey) {
+
+        for (HMAux hmAux : ssSiteOption) {
+            if(hmAux.hasConsistentValue(MD_SiteDao.LICENSE_ENABLED)){
+                if (hmAux.get(MD_SiteDao.LICENSE_ENABLED).equals("0")) {
+                    if (hmAux.hasConsistentValue(MD_SiteDao.LICENSE_BLOCKED)) {
+                        if ("1".equals(hmAux.get(MD_SiteDao.LICENSE_BLOCKED))){
+                            hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_disable_unavailable));
+                        }else{
+                            int free_executions_max, free_executions_count, app_executions_count;
+                            //
+                            free_executions_max = getIntFromHmAux(hmAux, MD_SiteDao.FREE_EXECUTIONS_MAX);
+                            free_executions_count = getIntFromHmAux(hmAux, MD_SiteDao.FREE_EXECUTIONS_COUNT);
+                            app_executions_count = getIntFromHmAux(hmAux, MD_SiteDao.APP_EXECUTIONS_COUNT);
+                            //
+                            int totalExecution = free_executions_count + app_executions_count;
+                            if(totalExecution < free_executions_max){
+                                hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_disable_available));
+                            }else {
+                                hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_disable_unavailable));
+                            }
+                        }
+                    }
+                }else{
+                    hmAux.put(iconKey, String.valueOf(R.drawable.ic_site_license_enable));
+                }
+            }
+        }
+        return ssSiteOption;
+    }
+
+    private static int getIntFromHmAux(HMAux hmAux, String hmAuxKey){
+        if(hmAux.hasConsistentValue(hmAuxKey)){
+            return Integer.parseInt(hmAux.get(hmAuxKey));
+        }
+        return 0;
     }
 
     private static void setDisableUserInfo(HMAux hmDialogInfo, LinearLayout ll_site, TextView tv_site_lbl, TextView tv_site_value, LinearLayout ll_zone, TextView tv_zone_lbl, TextView tv_zone_value, LinearLayout ll_operation, TextView tv_operation_lbl, TextView tv_operation_value) {
@@ -2394,6 +2567,7 @@ public class ToolBox_Inf {
         transList.add("footer_dialog_btn_ok");
         transList.add("footer_dialog_btn_ok");
         transList.add("footer_dialog_imei");
+        transList.add("footer_dialog_user_level");
         transList.add("sys_not_found_lbl");
         transList.add("sys_site_or_operation_not_found_error");
         //
@@ -2473,6 +2647,7 @@ public class ToolBox_Inf {
         hmAux.put(Constant.FOOTER_BTN_OK, HmTrans.get("footer_dialog_btn_ok"));
         hmAux.put(Constant.FOOTER_VERSION_LBL, HmTrans.get("footer_version_lbl"));
         hmAux.put(Constant.FOOTER_IMEI_LBL, HmTrans.get("footer_dialog_imei"));
+        hmAux.put(FOOTER_USER_LEVEL_LBL, HmTrans.get("footer_dialog_user_level"));
         hmAux.put(FOOTER_IMEI, ToolBox_Inf.uniqueID(context));
         hmAux.put(FOOTER_OK, HmTrans.get("sys_alert_btn_ok"));
         hmAux.put(FOOTER_CANCEL, HmTrans.get("sys_alert_btn_cancel"));
@@ -2675,11 +2850,7 @@ public class ToolBox_Inf {
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
-        EV_User_CustomerDao ev_user_customerDao = new EV_User_CustomerDao(
-                context,
-                Constant.DB_FULL_BASE,
-                Constant.DB_VERSION_BASE
-        );
+        EV_User_CustomerDao ev_user_customerDao = getEv_user_customerDao(context);
         //Seleciona lista de customers com sessão.
         ArrayList<HMAux> customers =  (ArrayList<HMAux>) ev_user_customerDao.query_HM(new EV_User_Customer_Sql_006().toSqlQuery());
         //Loop na lista de customer para exibir msg de agendamentos para cada um.
@@ -3094,32 +3265,34 @@ public class ToolBox_Inf {
     }
 
     public static void callPendencyNotification(Context context) {
-        HMAux hmAux_trans = new HMAux();
-        List<String> translateList = new ArrayList<>();
-        translateList.add("sys_notification_pendency_form_lbl");
-        translateList.add("sys_notification_pendency_form_ap_lbl");
-        translateList.add("sys_notification_pendency_serial_lbl");
-        translateList.add("sys_notification_pendency_assets_lbl");
-        translateList.add("sys_notification_pendency_services_lbl");
-        hmAux_trans = ToolBox_Inf.setLanguage(
-                context,
-                Constant.APP_MODULE,
-                ToolBox_Inf.getResourceCode(
-                        context,
-                        Constant.APP_MODULE,
-                        "sys"
-                ),
-                ToolBox_Con.getPreference_Translate_Code(context),
-                translateList
-        );
-        //
-        if (hmAux_trans == null || hmAux_trans.size() == 0) {
-            if(hmAux_trans == null){
-                hmAux_trans = new HMAux();
+        if(ToolBox_Con.getPreference_Customer_Code(context) > 0) {
+            HMAux hmAux_trans = new HMAux();
+            List<String> translateList = new ArrayList<>();
+            translateList.add("sys_notification_pendency_form_lbl");
+            translateList.add("sys_notification_pendency_form_ap_lbl");
+            translateList.add("sys_notification_pendency_serial_lbl");
+            translateList.add("sys_notification_pendency_assets_lbl");
+            translateList.add("sys_notification_pendency_services_lbl");
+            hmAux_trans = ToolBox_Inf.setLanguage(
+                    context,
+                    Constant.APP_MODULE,
+                    ToolBox_Inf.getResourceCode(
+                            context,
+                            Constant.APP_MODULE,
+                            "sys"
+                    ),
+                    ToolBox_Con.getPreference_Translate_Code(context),
+                    translateList
+            );
+            //
+            if (hmAux_trans == null || hmAux_trans.size() == 0) {
+                if (hmAux_trans == null) {
+                    hmAux_trans = new HMAux();
+                }
             }
-        }
 
-        callPendencyNotification(context, hmAux_trans);
+            callPendencyNotification(context, hmAux_trans);
+        }
     }
 
     /**
@@ -3131,8 +3304,10 @@ public class ToolBox_Inf {
      */
     @NonNull
     public static void callPendencyNotification(Context context, HMAux hmAux_Trans){
-        NotificationHelper notificationHelper = new NotificationHelper(context, hmAux_Trans);
-        notificationHelper.call_Notification();
+        if(ToolBox_Con.getPreference_Customer_Code(context) > 0) {
+            NotificationHelper notificationHelper = new NotificationHelper(context, hmAux_Trans);
+            notificationHelper.call_Notification();
+        }
     }
 
     public static StringBuilder wsExceptionTreatment(Context context, Exception e) {
@@ -3614,6 +3789,162 @@ public class ToolBox_Inf {
         dialogScheduleWarning.setCancelable(true);
         dialogScheduleWarning.show();
     }
+
+    /**
+     * Metodo responsavel por verificar se há necessidade de sincronizacao
+     * de formularios no fluxo de ticket
+     * @param context - utilizado para instanciar os DAOs
+     * @return
+     */
+    public static boolean hasFormProductOutdate(Context context, int ticketPrefix, int ticketCode) {
+        long preference_customer_code = ToolBox_Con.getPreference_Customer_Code(context);
+        Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(
+                context,
+                ToolBox_Con.customDBPath(preference_customer_code),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        List<HMAux> hmAuxList;
+        if(ticketPrefix == -1 && ticketCode == -1) {
+            hmAuxList =
+                    syncChecklistDao.query_HM(
+                            new Sync_Checklist_Sql_004(
+                                    preference_customer_code
+                            ).toSqlQuery()
+                    );
+        }else{
+            hmAuxList =
+                    syncChecklistDao.query_HM(
+                            new Sync_Checklist_Sql_004(
+                                    preference_customer_code,
+                                    ticketPrefix,
+                                    ticketCode
+                            ).toSqlQuery()
+                    );
+        }
+        if(hmAuxList != null
+                && !hmAuxList.isEmpty()){
+            for(HMAux aux: hmAuxList){
+                if(aux.hasConsistentValue(Sync_ChecklistDao.PRODUCT_CODE)) {
+                    setProductToSync(preference_customer_code, syncChecklistDao, aux);
+                }
+            }
+            return true;
+        }
+        //
+        return false;
+    }
+
+    public static boolean hasFormProductOutdate(Context context) {
+        return hasFormProductOutdate(context, -1, -1);
+    }
+
+
+    public static boolean isTicketInTokenFile(Context context, int ticket_prefix, int ticket_code) {
+        ArrayList<TK_Ticket> ticketInToken = ToolBox_Inf.getTicketsWithinToken(ToolBox_Con.getPreference_Customer_Code(context));
+        if(ticketInToken != null && ticketInToken.size() > 0){
+            for (TK_Ticket tkTicket : ticketInToken) {
+                if( tkTicket.getCustomer_code() == ToolBox_Con.getPreference_Customer_Code(context)
+                        && tkTicket.getTicket_prefix() == ticket_prefix
+                        && tkTicket.getTicket_code() == ticket_code
+                ){
+                    return true;
+                }
+            }
+        }
+        //
+        return false;
+    }
+    /**
+     * BARRIONUEVO 01-09-2020
+     * Metodo que verifica forms de ctrl que estão em waiting sync.
+     * LUCHE - 10/09/2020
+     * Modificado query do metodo para incluir tb o os forms com pendencia de GPS.
+     * @param ticket_prefix
+     * @param ticket_code
+     * @return
+     */
+    public static boolean hasFormWaitingSyncWithinTicket(Context context, int ticket_prefix, int ticket_code) {
+        GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        GE_Custom_Form_Data formData = formDataDao.getByString(
+                new Sql_Act070_005(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ticket_prefix,
+                        ticket_code
+                ).toSqlQuery()
+        );
+        return formData != null;
+    }
+
+    /**
+     * LUCHE - 10/09/2020
+     * Verifica se existe alguma form com pendencia de GPS para o ticket passado.
+     * @param context
+     * @param ticket_prefix
+     * @param ticket_code
+     * @return
+     */
+    public static boolean hasFormGpsPendencyWithinTicket(Context context, int ticket_prefix, int ticket_code) {
+        GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        ArrayList<GE_Custom_Form_Data> formWithGpsPendency = (ArrayList<GE_Custom_Form_Data>) formDataDao.query(
+            new Sql_Act070_008(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ticket_prefix,
+                ticket_code
+            ).toSqlQuery()
+        );
+        //
+        return formWithGpsPendency != null && formWithGpsPendency.size() > 0;
+    }
+
+    private static void setProductToSync(long preference_customer_code, Sync_ChecklistDao syncChecklistDao, HMAux aux) {
+        Integer productCodeOutdate = Integer.parseInt(aux.get(Sync_ChecklistDao.PRODUCT_CODE));
+        Calendar cDate = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String last_update = dateFormat.format(cDate.getTime());
+
+        Sync_Checklist sync = new Sync_Checklist();
+        sync.setCustomer_code(preference_customer_code);
+        sync.setProduct_code(productCodeOutdate);
+//        sync.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd"));
+        sync.setLast_update(last_update);
+        syncChecklistDao.addUpdate(sync);
+    }
+
+    public static Drawable getNoPhotoDrawable(Context context) {
+        Drawable placeHolder;
+        placeHolder = context.getResources().getDrawable(R.drawable.ic_baseline_photo_camera_24);
+        placeHolder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
+        return placeHolder;
+    }
+
+
+    public static boolean hasOffHandFormInProcess(Context context, int ticket_prefix, int ticket_code) {
+        long preference_customer_code = ToolBox_Con.getPreference_Customer_Code(context);
+        TK_Ticket_CtrlDao tkTicketCtrlDao = new TK_Ticket_CtrlDao(
+                context,
+                ToolBox_Con.customDBPath(preference_customer_code),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        List<TK_Ticket_Ctrl> query = tkTicketCtrlDao.query(new TK_Ticket_Ctrl_Sql_007(
+                preference_customer_code,
+                ticket_prefix,
+                ticket_code
+        ).toSqlQuery());
+        return query != null && query.size() > 0 ;
+    }
+
 
     private static class GenericExtFilter implements FilenameFilter {
         private String[] exts;
@@ -4137,6 +4468,14 @@ public class ToolBox_Inf {
 //        }
         tv_status.setTextColor(context.getResources().getColor(getStatusColor(status)));
 
+    }
+
+    public static Integer getIntOrNull(String value){
+        try{
+            return Integer.parseInt(value);
+        }catch (Exception e){
+            return null;
+        }
     }
 
     public static int convertStringToInt(String value) {
@@ -5951,11 +6290,7 @@ public class ToolBox_Inf {
             if( customer_code != null && customer_code != -1){
                 //
                 if(hasPendingData(context,customer_code)){
-                     EV_User_CustomerDao customerDao = new EV_User_CustomerDao(
-                         context,
-                         Constant.DB_FULL_BASE,
-                         Constant.DB_VERSION_BASE
-                     );
+                     EV_User_CustomerDao customerDao = getEv_user_customerDao(context);
                     //
                     EV_User_Customer evUserCustomer = customerDao.getByString(
                         new EV_User_Customer_Sql_011(
@@ -6291,18 +6626,18 @@ public class ToolBox_Inf {
     private static String getTicketUpdateRequiredCount(Context context, Long customer_code) {
         TK_TicketDao tk_ticketDao = new TK_TicketDao(context,ToolBox_Con.customDBPath(customer_code), Constant.DB_VERSION_CUSTOM);
         int pendencies=0;
-        //
-        HMAux ticketUpdateReq = tk_ticketDao.getByStringHM((
-                new Sql_Act005_010(
+
+        ArrayList<TK_Ticket> ticketUpdateReq = (ArrayList<TK_Ticket>) tk_ticketDao.query((
+                new Sql_WS_TK_Ticket_Save_001(
                     customer_code
                 )
             ).toSqlQuery()
         );
         //
-        if(ticketUpdateReq != null && ticketUpdateReq.hasConsistentValue(Sql_Act005_010.QTY)
+        if(ticketUpdateReq != null && ticketUpdateReq.size() > 0
         ){
             try {
-                pendencies += Integer.valueOf(ticketUpdateReq.get(Sql_Act005_010.QTY));
+                pendencies +=  ticketUpdateReq.size();
             } catch (Exception e) {
                 pendencies = 0;
                 registerException(CLASS_NAME,e);
@@ -6906,8 +7241,8 @@ public class ToolBox_Inf {
         }
     }
 
-    private static boolean checkSameDayDate(String startDate, String endDate) {
-        return startDate.substring(0, 9).equals(endDate.substring(0,9));
+    public static boolean checkSameDayDate(String startDate, String endDate) {
+        return startDate.substring(0, 10).equals(endDate.substring(0,10));
     }
 
 
@@ -7397,4 +7732,545 @@ public class ToolBox_Inf {
         ToolBox_Inf.scheduleDownloadCustomerLogoWork(context);
     }
 
+
+    /**
+     * LUCHE - 08/07/2020
+     * <p></p>
+     * Metodo que valida string tem um valor diferente de null ou vazia
+     * @param value Texto
+     * @return True se string != null e != de vazia
+     */
+    public static boolean hasConsistentValueString(String value) {
+        return value != null && !value.isEmpty();
+    }
+
+    /**
+     * LUCHE - 13/07/2020
+     * <p></p>
+     * Metodo que retorna se o site passado é o mesmo que o site logado.
+     * @param context Contexto
+     * @param siteCode SiteCode a ser comparado
+     * @return Verdadeiro se siteCode != null ,!= vazio e igual ao site da preferencia.
+     */
+    public static boolean equalsToLoggedSite(Context context, String siteCode){
+        return  hasConsistentValueString(siteCode)
+                && siteCode.equals(ToolBox_Con.getPreference_Site_Code(context));
+    }
+
+    /**
+     * LUCHE - 16/07/2020
+     * <p></p>
+     * Formata a data da seguinte maneira:
+     *  - Se apenas data de inicio, data hora
+     *  - Se inicio e fim no mesmo dia, exibe data hora_inicio - hora_fim
+     *  - Se inicio e fim em dias diferente, exibe das duas datas com hora, data_inicio hora_inicio - data_fim hora_fim
+     * @param context
+     * @param startDate Data Inicio
+     * @param endDate Data Fim
+     * @return - Retorna data formata
+     */
+    public static String getStepStartEndDateFormated(Context context, String startDate, String endDate ){
+        SimpleDateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+        SimpleDateFormat dateFormatStart = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
+        SimpleDateFormat dateFormatEnd = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
+        //
+        try {
+            if(ToolBox_Inf.hasConsistentValueString(startDate) && ToolBox_Inf.hasConsistentValueString(endDate)){
+                if (ToolBox_Inf.checkSameDayDate(startDate, endDate)) {
+                    dateFormatEnd = new SimpleDateFormat("HH:mm");
+                }
+                //
+                return dateFormatStart.format(dateFormatIn.parse(startDate)) + " - " + dateFormatEnd.format(dateFormatIn.parse(endDate));
+            }else{
+                return dateFormatStart.format(dateFormatIn.parse(startDate));
+            }
+        }catch (Exception e){
+            ToolBox_Inf.registerException(CLASS_NAME,e);
+            return "01-01-1900";
+        }
+    }
+
+    /**
+     * LUCHE - 20/07/2020
+     * <p></p>
+     * Metodo que copia o arquivo passado em originalFile para o arquivo passado copyFile,
+     * criando o segundo se ele não existir.
+     * Copia o arquivo para qualquer diretorio existente.
+     *
+     * @param originalFile - Arquivo original
+     * @param copyFile - Arquivo para qual será copiado.
+     * @throws IOException
+     * TODO MELHOR ADICIONANDO CRIACAO DE DIR DESTINO?
+     */
+    public static void copyAndRenameFile(File originalFile, File copyFile) throws IOException {
+        if(!copyFile.exists()){
+            copyFile.createNewFile();
+        }
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(copyFile).getChannel();
+            inputChannel = new FileInputStream(originalFile).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            //file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
+    }
+
+    /**
+     * LUCHE - 01/09/2020
+     * Metodo que retorna String formatada com PK + descrição do agendamento
+     * @param error_process - Obj de retorno do WS_Save quando há mensagem de retorno
+     * @return - String formatada
+     */
+    public static String formatTicketErroLabel(TSave_Rec.Error_Process error_process) {
+        return error_process.getTicket_step_pk() +" - "+ error_process.getTicket_step_desc();
+    }
+
+    /**
+     * LUCHE - 01/09/2020
+     * <p></p>
+     * Gera o HmAux de error baseado no tipo do obj, atualmente, schedule e ticket.
+     * @param error_process
+     * @return HmAux a ser exibido.
+     */
+    public static HMAux getWsSaveErrorProcessAuxResult(TSave_Rec.Error_Process error_process) {
+        HMAux mHmAux = new HMAux();
+        String label = "";
+        String type = "";
+        String status = "";
+        String final_status ="";
+        //
+        if(TSave_Rec.Error_Process.ERROR_TYPE_TICKET.equals(error_process.getError_type())){
+            label = ToolBox_Inf.formatTicketErroLabel(error_process);
+            type = TSave_Rec.Error_Process.ERROR_TYPE_TICKET;
+        }else{
+            label = ToolBox_Inf.formatScheduleErroLabel(error_process);
+            type = ConstantBaseApp.SYS_STATUS_SCHEDULE;
+        }
+        status = error_process.getError();
+        final_status = ToolBox_Inf.formatFormErrorDesc(error_process);
+        //
+        mHmAux.put("label", label);
+        mHmAux.put("type", type);
+        mHmAux.put("status", status);
+        mHmAux.put("final_status", final_status);
+        //
+        return mHmAux;
+    }
+
+    /**
+     * LUCHE - 11/09/2020
+     * Metodo que define a exição da descrição da origem do ticket, baseada no tipo.
+     * Até a presente data, só existe um que deve ser tratado diferente, ma sja deixei as constantes
+     * e switch criados pro futuro.
+     * @param ticketOriginType Tipo da Origem
+     * @param ticketOriginDesc Descricao da origem
+     * @return
+     */
+    @NonNull
+    public static String getFormattedTicketOriginDesc(String ticketOriginType, String ticketOriginDesc) {
+        if(ticketOriginType == null){
+            return "\\" + ticketOriginDesc;
+        }
+        switch (ticketOriginType){
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE:
+                return ticketOriginDesc;
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MEASURE:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_SCORE:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_TRANSFER:
+            default:
+                return ticketOriginDesc;
+        }
+    }
+
+    public static Intent getOriginIntent(Context context, String origin_type) {
+        switch (origin_type){
+            case TK_TICKET_ORIGIN_TYPE_MEASURE:
+                return new Intent(context, Act077_Main.class);
+            case TK_TICKET_ORIGIN_TYPE_BARCODE:
+            case TK_TICKET_ORIGIN_TYPE_MANUAL:
+                return new Intent(context, Act078_Main.class);
+            case TK_TICKET_ORIGIN_TYPE_FORM:
+            case TK_TICKET_ORIGIN_TYPE_FORM_NC:
+            case TK_TICKET_ORIGIN_TYPE_FORM_SCORE:
+                return new Intent(context, Act079_Main.class);
+             case TK_TICKET_ORIGIN_TYPE_SCHEDULE:
+                return new Intent(context, Act080_Main.class);
+            default:
+                return null;
+        }
+    }
+
+    public static int getScoreFormColor(@NonNull String score_status){
+
+        if(RANGE_RED.equalsIgnoreCase(score_status)){
+            return R.color.namoa_color_danger_red;
+        }
+        if(RANGE_YELLOW.equalsIgnoreCase(score_status)){
+            return R.color.namoa_color_yellow_2;
+        }
+        if(RANGE_GREEN.equalsIgnoreCase(score_status)){
+            return R.color.namoa_color_success_green;
+        }
+
+        return R.color.namoa_color_gray_chat;
+
+    }
+
+    /**
+     * LUCHE - 03/11/2020
+     * Metodo que verifica se alguma serial do ticket esta marcado com update required.
+     * @param context
+     * @param ticket_prefix
+     * @param ticket_code
+     * @return True se encontrar alguma serial do ticket na condição de atualização
+     */
+    public static boolean hasSerialUpdateRequiredWithinTicket(Context context, int ticket_prefix, int ticket_code) {
+        MD_Product_SerialDao serialDao = new MD_Product_SerialDao(context);
+        //
+        List<MD_Product_Serial> serialList = serialDao.query(
+            new MD_Product_Serial_x_TK_Ticket_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ticket_prefix,
+                ticket_code
+            ).toSqlQuery()
+        );
+        //
+        return serialList != null && serialList.size() > 0;
+    }
+
+    /**
+     * LUCHE - 09/11/2020
+     * Metodo que executa obj none pendente ao executar check-in manual no step.
+     * Regra solicita em 09/11/2020
+     * @param ticketStep
+     * @param setStepUpdateOnForceNone - Define se ao "finalizar" um none, deve setar o step como
+     * update_required.(faz sentido na chamada da act011)
+     */
+    public static boolean forceNoneObjToWaitingSync(TK_Ticket_Step ticketStep, boolean setStepUpdateOnForceNone) {
+        boolean anyNoneFinalizaed = false;
+        if(ticketStep.getCtrl() != null) {
+            for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
+                if(ConstantBaseApp.TK_TICKET_CRTL_TYPE_NONE.equals(ticketCtrl.getCtrl_type())
+                    && ConstantBaseApp.SYS_STATUS_PENDING.equals(ticketCtrl.getCtrl_status())
+                ){
+                    ticketCtrl.setCtrl_start_date(ticketStep.getStep_start_date());
+                    ticketCtrl.setCtrl_start_user(ticketStep.getStep_start_user());
+                    ticketCtrl.setCtrl_start_user_name(ticketStep.getStep_start_user_nick());
+                    //Sim, o end do ctrl é o start do step, ja que a sua exicução é imediata
+                    ticketCtrl.setCtrl_end_date(ticketStep.getStep_start_date());
+                    ticketCtrl.setCtrl_end_user(ticketStep.getStep_start_user());
+                    ticketCtrl.setCtrl_end_user_name(ticketStep.getStep_start_user_nick());
+                    ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+                    ticketCtrl.setUpdate_required(1);
+                    //Se flag true, seta o step tb para atualização.
+                    if(setStepUpdateOnForceNone){
+                        ticketStep.setUpdate_required(1);
+                    }
+                    //
+                    anyNoneFinalizaed = true;
+                }
+            }
+        }
+        return anyNoneFinalizaed;
+    }
+
+    /**
+     * BARRIONUEVO - 18-11-2020
+     * Metodo responsavel por verificar a ultima data valida.
+     */
+    public static boolean isLocalDatetimeOk(Context context) {
+        String sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+        long currentTimeMillis = ToolBox_Inf.dateToMilliseconds(sDate);
+        boolean isDatetimeValid = ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.DATETIME_IS_VALID, true);
+        long lastValidTime = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
+        long datetimeTolerance = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_TOLERANCE, 4200000);
+
+        if(isDatetimeValid) {
+            if ((currentTimeMillis + datetimeTolerance) >= lastValidTime) {
+                if(currentTimeMillis >= lastValidTime) {
+                    ToolBox_Con.setLongPreference(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
+                }
+                return true;
+            }
+        }
+
+        ToolBox_Con.setBooleanPreference(context, ConstantBaseApp.DATETIME_IS_VALID, false);
+        return false;
+    }
+
+    /**
+     * BARRIONUEVO - 03-12-2020
+     * Encapsulamento de configuração de FABMenu do Pipeline.
+     * @param context
+     * @param fabMenu
+     * @param hmAux_Trans
+     * @param ticket
+     * @param listener
+     */
+    public static void setPipelineFabMenu(Context context, FabMenu fabMenu, HMAux hmAux_Trans, TK_Ticket ticket, FabMenu.IFabMenu listener) {
+        ArrayList<FabMenuItem> fabMenuItems  = initFabMenuItens(context, hmAux_Trans, ticket);
+        //
+        fabMenu.setFabMenuItens(fabMenuItems);
+        fabMenu.setmIcons_Enabled(true);
+        fabMenu.setOnFabClickListener(listener);
+        fabMenu.refreshDrawableState();
+    }
+
+    private static ArrayList<FabMenuItem> initFabMenuItens(Context context, HMAux hmAux_Trans, TK_Ticket ticket) {
+        FabMenuItem fabStep;
+        FabMenuItem fabProduct;
+        FabMenuItem fabOrigin;
+        FabMenuItem fabEditHeader;
+
+        ArrayList<FabMenuItem> fabMenuItems = new ArrayList<>();
+        int lblBgColor = context.getResources().getColor(R.color.namoa_pipeline_background_icon);
+        int lblColor = context.getResources().getColor(R.color.padrao_WHITE);
+        int btnBgColor = context.getResources().getColor(R.color.namoa_sync_pipeline_background_btn);
+        int iconColor = context.getResources().getColor(R.color.colorPrimary);
+        fabMenuItems.clear();
+        //atalho para edicao de cabecalho.
+        fabEditHeader = new FabMenuItem(context);
+        fabEditHeader.setTag(ConstantBaseApp.FAB_TO_HEADER_EDIT_LBL);
+        fabEditHeader.setmLabel(hmAux_Trans.get("to_header_edit_lbl"));
+        fabEditHeader.setmLabel_Back_Color(lblBgColor);
+        fabEditHeader.setmLabel_Text_Color(lblColor);
+        fabEditHeader.setmButton_Back_Color(btnBgColor);
+        fabEditHeader.setmButton_Resource_Color(iconColor);
+        fabEditHeader.setmButton_Resource(R.drawable.ic_baseline_pipeline_header_24);
+        fabMenuItems.add(fabEditHeader);
+        //atalho para edicao de grupo de trabalho.
+        if(ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP)
+        && !ticket.isReadOnly(context)) {
+            FabMenuItem fabEditWorkGroup;
+            fabEditWorkGroup = new FabMenuItem(context);
+            fabEditWorkGroup.setTag(ConstantBaseApp.FAB_TO_WORK_GROUP_EDIT_LBL);
+            fabEditWorkGroup.setmLabel(hmAux_Trans.get("to_work_group_edit_lbl"));
+            fabEditWorkGroup.setmLabel_Back_Color(lblBgColor);
+            fabEditWorkGroup.setmLabel_Text_Color(lblColor);
+            fabEditWorkGroup.setmButton_Back_Color(btnBgColor);
+            fabEditWorkGroup.setmButton_Resource_Color(iconColor);
+            fabEditWorkGroup.setmButton_Resource(R.drawable.ic_account_switch_24dp_black);
+            fabMenuItems.add(fabEditWorkGroup);
+        }
+        //atalaho para origin.
+        fabOrigin = new FabMenuItem(context);
+        fabOrigin.setTag(ConstantBaseApp.FAB_TO_ORIGIN_LBL);
+        fabOrigin.setmLabel(hmAux_Trans.get("to_origin_lbl"));
+        fabOrigin.setmLabel_Back_Color(lblBgColor);
+        fabOrigin.setmLabel_Text_Color(lblColor);
+        fabOrigin.setmButton_Back_Color(btnBgColor);
+        fabOrigin.setmButton_Resource_Color(iconColor);
+        fabOrigin.setmButton_Resource(R.drawable.ic_baseline_error_outline_24dp_black);
+        fabMenuItems.add(fabOrigin);
+        //atalho para step
+        fabStep = new FabMenuItem(context);
+        fabStep.setTag(ConstantBaseApp.FAB_TO_STEP_LBL);
+        fabStep.setmLabel(hmAux_Trans.get("to_step_lbl"));
+        fabStep.setmLabel_Back_Color(lblBgColor);
+        fabStep.setmLabel_Text_Color(lblColor);
+        fabStep.setmButton_Back_Color(btnBgColor);
+        fabStep.setmButton_Resource_Color(iconColor);
+        fabStep.setmButton_Resource(R.drawable.ic_baseline_assignment_24);
+        fabMenuItems.add(fabStep);
+        //atalaho para produto.
+        fabProduct = new FabMenuItem(context);
+        fabProduct.setTag(ConstantBaseApp.FAB_TO_PRODUCT_LBL);
+        fabProduct.setmLabel(hmAux_Trans.get("to_product_lbl"));
+        fabProduct.setmLabel_Back_Color(lblBgColor);
+        fabProduct.setmLabel_Text_Color(lblColor);
+        fabProduct.setmButton_Back_Color(btnBgColor);
+        fabProduct.setmButton_Resource_Color(iconColor);
+        fabProduct.setmButton_Resource(R.drawable.ic_baseline_build_24);
+        fabMenuItems.add(fabProduct);
+        //
+        return fabMenuItems;
+    }
+
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que retorna o obj Ev_user_customer do customer logado.
+     * @param context
+     * @return
+     */
+    public static EV_User_Customer getCurrentEvUsrCustomerInfo(Context context) {
+        return new EV_User_CustomerDao(
+            context,
+            Constant.DB_FULL_BASE,
+            Constant.DB_VERSION_BASE
+        ).getByString(
+            new EV_User_Customer_Sql_002(
+                ToolBox_Con.getPreference_User_Code(context),
+                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+            ).toSqlQuery()
+        );
+    }
+
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que retorna o obj site do site logado
+     * @param context
+     * @return
+     */
+    private static MD_Site getCurrentSiteObjInfo(Context context) {
+        return new MD_SiteDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        ).getByString(
+            new MD_Site_Sql_003(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ToolBox_Con.getPreference_Site_Code(context)
+            ).toSqlQuery()
+        );
+    }
+
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que retorna o obj site do site logado
+     * @param context
+     * @return
+     */
+    public static MD_Site getSiteObjInfo(Context context, String site_code) {
+        return new MD_SiteDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        ).getByString(
+            new MD_Site_Sql_003(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                    site_code
+            ).toSqlQuery()
+        );
+    }
+
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que verifica se o tipo de licença do customer logado é o tipo de licença por site.
+     * @param context
+     * @return Verdadeiro se o tipo de licença for LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE
+     */
+    public static boolean isConcurrentBySiteLicense(Context context){
+        EV_User_Customer userCustomer = getCurrentEvUsrCustomerInfo(context);
+        return userCustomer != null && EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE.equals(userCustomer.getLicense_control_type());
+    }
+
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que verifica se o site logado possui licença habilitada.
+     * @param context
+     * @return
+     */
+    public static boolean isSiteLicenseDisabled(Context context){
+        return isSiteLicenseDisabled(context,ToolBox_Con.getPreference_Site_Code(context));
+    }
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que verifica se o site logado possui licença habilitada.
+     * @param context
+     * @return
+     */
+    public static boolean isSiteLicenseDisabled(Context context, String site_code){
+        MD_Site mdSite = getSiteObjInfo(context, site_code);
+        return mdSite != null && mdSite.getLicense_enabled() != null && mdSite.getLicense_enabled() == 0;
+    }
+
+
+
+    /**
+     * LUCHE - 13/01/2021
+     * Metodo que calcula se o limite de execuções gratuitas foi atingida
+     * Os campos Free_executions_max e Free_executions_count são enviados pelo servidor, ja o campo
+     * getApp_executions_count é contabilizado pelo app e para calcular o numero de execuções disponiveis,
+     * é necessario somar os 2 campos.
+     * @param context
+     * @return
+     */
+    public static boolean hasFreeExecutionAvailable(Context context){
+        return hasFreeExecutionAvailable(context, ToolBox_Con.getPreference_Site_Code(context));
+    }
+
+    private static boolean hasFreeExecutionAvailable(Context context, String site_code) {
+        MD_Site mdSite = getSiteObjInfo(context, site_code);
+        if(mdSite != null){
+            //Em teste se site tem licença ativa não deveria ser usado esse metodo, uma vez que com
+            // licença ativa, NÃO HÁ LIMITE DE EXECUÇÃO, mas fica a tratativa
+            if(mdSite.getLicense_enabled() == 1){
+                return true;
+            }else{
+                //Se um dos itens de calculo for null, ja deu algum b.o, retorna falso
+                if( mdSite.getFree_executions_max() == null
+                        || mdSite.getFree_executions_count() == null
+                ){
+                    return false;
+                }else{
+                    /*
+                        Se todos campos preenchidos, faz o calculo
+                        QtdMax - (QtdExecDoServer + QtdExecDoApp)
+                        Se valor maior que zero, tem execução para fazer.
+                     */
+                    return (mdSite.getFree_executions_max() - (mdSite.getFree_executions_count() + mdSite.getApp_executions_count())) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * LUCHE - 14/01/2021
+     * Metodo que verifica se o site logado esta bloquado analizando a proprieade License_blocked
+     * @param context
+     * @return
+     */
+    public static boolean isCurrentSiteBlockedByExecution(Context context){
+        return isCurrentSiteBlockedByExecution(context, ToolBox_Con.getPreference_Site_Code(context));
+    }
+
+    private static boolean isCurrentSiteBlockedByExecution(Context context, String site_code) {
+        MD_Site mdSite = getSiteObjInfo(context, site_code);
+        if(mdSite != null){
+            return mdSite.getLicense_blocked() == 1;
+        }
+        //
+        return true;
+    }
+
+    /**
+     * LUCHE - 14/01/2021
+     * Metodo que verifica se site esta bloquado, verificando tando a propriedade License_blocked
+     * quando o calculo de execuções disponiveis
+     * @param context
+     * @return
+     */
+    public static boolean isSiteBlockedOrLimitExecutionReached(Context context) {
+
+        return isSiteBlockedOrLimitExecutionReached(context, ToolBox_Con.getPreference_Site_Code(context));
+    }
+
+    /**
+     * LUCHE - 14/01/2021
+     * Metodo que verifica se site esta bloquado, verificando tando a propriedade License_blocked
+     * quando o calculo de execuções disponiveis
+     * @param context
+     * @return
+     */
+    public static boolean isSiteBlockedOrLimitExecutionReached(Context context, String site_code) {
+        if(site_code == null){
+            return false;
+        }
+        return
+                ToolBox_Inf.isCurrentSiteBlockedByExecution(context, site_code)
+                        ||( ToolBox_Inf.isConcurrentBySiteLicense(context)
+                        && ToolBox_Inf.isSiteLicenseDisabled(context, site_code)
+                        && !ToolBox_Inf.hasFreeExecutionAvailable(context, site_code)
+                );
+    }
 }

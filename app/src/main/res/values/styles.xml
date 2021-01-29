@@ -36,4 +36,14 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="NamoaSaveButton" parent="@android:style/Widget.Button">
+        <item name="android:background">@color/namoa_pipeline_product_lbl</item>
+        <item name="android:textColor">@color/padrao_WHITE</item>
+    </style>
+
+    <style name="MyTicketRadioButtton" parent="@android:style/Widget.Button">
+        <item name="android:background">@color/padrao_TRANSPARENT</item>
+        <item name="android:textColor">@color/namoa_amount_pipeline_background_btn</item>
+    </style>
+
 </resources>

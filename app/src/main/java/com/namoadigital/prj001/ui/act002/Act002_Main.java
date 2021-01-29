@@ -18,6 +18,9 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.EV_User_Customer_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.model.SiteLicense;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -36,13 +39,16 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     private final String PROCESS_WS_GET_CUSTOMER = "get_customer";
     private final String PROCESS_WS_SYNC = "ws_sync";
     private final String PROCESS_WS_LOGOUT = "ws_logout";
-
-    private Context context;
+    public static final String PROCESS_WS_GET_CUSTOMER_SITE = "get_customer_site";
     private ListView lv_customers;
     private Act002_Main_Presenter mPresenter;
     private EV_User_Customer_Adapter mAdapter;
     private String wsProcess;
     private Bundle mBundle;
+    //Tmp que guarda o hmAux com dados do customer clicado.
+    private HMAux selectedCustomerInfo;
+    //Tmp que guarda a licença de site selecionado, usado somente no fluxo do otherDevice.
+    private SiteLicense siteLicenseTmp = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,12 +65,12 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     }
 
     private void initVars() {
-        context = getBaseContext();
         //
         mPresenter = new Act002_Main_Presenter_Impl(context, this);
+        //LUCHE - 06/01/2020
+        mPresenter.deleteEnvSiteLicenseFile();
         //
         lv_customers = (ListView) findViewById(R.id.act002_lv_customers);
-
         //Tenta pegar bundle - Enviado pela Act001 ou Act005
         mBundle = getIntent().getExtras();
         //Se for != null, verifica se precisa chamar o WS de customer ou não
@@ -73,6 +79,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                 if (ToolBox_Con.isOnline(context, true)) {
                     //Seta variavel que define ação do metodo processCloseACT
                     wsProcess = PROCESS_WS_GET_CUSTOMER;
+                    //
                     showPD(
                             context.getString(R.string.get_customer_alert_title),
                             context.getString(R.string.generic_start_processing_msg),
@@ -80,7 +87,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                             context.getString(R.string.generic_msg_ok)
 
                     );
-
+                    //
                     mPresenter.executeGetCustomerProcess();
                 } else {
                     mPresenter.getAllCustomers(true);
@@ -101,9 +108,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
-
-                prepareExecSessionProcess(item, 0, 1, 0);
-
+                mPresenter.defineClickFlow(item);
             }
         });
 
@@ -128,7 +133,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                 //
                 callAct001();
             } else {
-                prepareExecSessionProcess(customers.get(0), 0, 1, 0);
+                //prepareExecSessionProcess(customers.get(0), 0, 1, 0);
+                mPresenter.defineClickFlow(customers.get(0));
             }
         }
     }
@@ -151,28 +157,46 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
 
     }
 
-    private void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od) {
+    @Override
+    public void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od) {
+        prepareExecSessionProcess(item, forced_login, jump_validation, jump_od, null);
+    }
+
+    /**
+     * LUCHE - 07/01/2021
+     * Criado segunda assinatura do metodo para ser usadao no processo de licença por site.
+     * Executa o mesm processo do metodo anterior, só passando os novos param para a chama do WS de
+     * session
+     * @param item
+     * @param forced_login
+     * @param jump_validation
+     * @param jump_od
+     * @param selectedSiteLicense
+     */
+    @Override
+    public void prepareExecSessionProcess(HMAux item, int forced_login, int jump_validation, int jump_od, SiteLicense selectedSiteLicense) {
         if (ToolBox_Con.isOnline(context, true) || item.get(EV_User_CustomerDao.SESSION_APP).trim().length() != 0) {
             ToolBox_Con.setPreference_Customer_Code_TMP(context, Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
             ToolBox_Con.setPreference_Translate_Code_TMP(context, item.get(EV_User_CustomerDao.TRANSLATE_CODE));
-
+            siteLicenseTmp = selectedSiteLicense;
+            //
             if (item.get(EV_User_CustomerDao.SESSION_APP).trim().length() == 0) {
 
                 showPD(
-                        getString(R.string.alert_title_get_session),
-                        getString(R.string.generic_start_processing_msg),
-                        getString(R.string.generic_msg_cancel),
-                        getString(R.string.generic_msg_ok));
+                    getString(R.string.alert_title_get_session),
+                    getString(R.string.generic_start_processing_msg),
+                    getString(R.string.generic_msg_cancel),
+                    getString(R.string.generic_msg_ok));
 
                 mPresenter.executeSessionProcess(
-                        ToolBox_Con.getPreference_User_Code_Nick(context),
-                        ToolBox_Con.getPreference_User_Pwd(context),
-                        ToolBox_Con.getPreference_User_NFC(context),
-                        item,
-                        forced_login, //Forced Login
-                        jump_validation, //Valida Update Required. 1 = não !!
-                        jump_od  //Valida User_others_device. 1 = não, 0 = sim
-                );
+                    ToolBox_Con.getPreference_User_Code_Nick(context),
+                    ToolBox_Con.getPreference_User_Pwd(context),
+                    ToolBox_Con.getPreference_User_NFC(context),
+                    item,
+                    forced_login, //Forced Login
+                    jump_validation, //Valida Update Required. 1 = não !!
+                    jump_od,  //Valida User_others_device. 1 = não, 0 = sim
+                    selectedSiteLicense);
             } else {
                 //Seta preferecia de customer
                 ToolBox_Con.setPreference_Customer_Code(getApplicationContext(), Long.parseLong(item.get(EV_User_CustomerDao.CUSTOMER_CODE)));
@@ -188,7 +212,6 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         } else {
             ToolBox_Inf.showNoConnectionDialog(Act002_Main.this);
         }
-
     }
 
     public void prepareLogoutProcess() {
@@ -261,6 +284,21 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     }
 
     @Override
+    public void setWsProcess(String wsProcess) {
+        this.wsProcess = wsProcess;
+    }
+
+    @Override
+    public void setSelectedCustomerInfo(HMAux selectedCustomerInfo) {
+        this.selectedCustomerInfo = selectedCustomerInfo;
+    }
+
+    @Override
+    public HMAux getSelectedCustomerInfo() {
+        return selectedCustomerInfo;
+    }
+
+    @Override
     protected void processOtherDevice() {
         super.processOtherDevice();
         HMAux item = new HMAux();
@@ -275,8 +313,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
                 item,
                 1, //Forced Login
                 1, //Valida Update Required. 1 = não !!
-                1  //Valida User_others_device. 1 = não, 0 = sim
-        );
+                1,  //Valida User_others_device. 1 = não, 0 = sim
+            siteLicenseTmp);
 
     }
 
@@ -324,6 +362,13 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
         //
+        processCloseACT(mLink,mRequired,new HMAux());
+    }
+
+    @Override
+    protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
+        super.processCloseACT(mLink, mRequired, hmAux);
+        //
         progressDialog.dismiss();
         //Existem dois processo que chama esse metodo
         //Se processo for get_customer, chama lista de customer
@@ -346,11 +391,23 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             processLogin();
             wsProcess = "";
         }
+        //
+        if(wsProcess.equals(PROCESS_WS_GET_CUSTOMER_SITE)){
+            mPresenter.processCustomerSiteLicenseListReturn();
+            wsProcess = "";
+        }
     }
 
     @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
+        //
+        progressDialog.dismiss();
+    }
+
+    @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
         //
         progressDialog.dismiss();
     }

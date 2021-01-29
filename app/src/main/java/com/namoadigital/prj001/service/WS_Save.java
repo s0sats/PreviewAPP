@@ -13,10 +13,15 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Data_FieldDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Env;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
@@ -24,6 +29,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Field_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -43,6 +49,7 @@ public class WS_Save extends IntentService {
     private GE_Custom_Form_Data_FieldDao formDataFieldDao;
     private GE_Custom_Form_LocalDao formLocalDao;
     private MD_Schedule_ExecDao scheduleExecDao;
+    private TK_Ticket_StepDao ticketStepDao;
     //
     private String token;
     private List<GE_Custom_Form_Data> form_datas;
@@ -55,6 +62,7 @@ public class WS_Save extends IntentService {
     private String mSEND = "";
     private boolean mResend = false;
     private ArrayList<TSave_Rec.Error_Process> errorProcessList = new ArrayList<>();
+    private MD_SiteDao siteDao;
 
     public WS_Save() {
         super("WS_Save");
@@ -87,6 +95,18 @@ public class WS_Save extends IntentService {
                 );
             //
             scheduleExecDao = new MD_Schedule_ExecDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+            ticketStepDao = new TK_Ticket_StepDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+            siteDao = new MD_SiteDao(
                 getApplicationContext(),
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())),
                 Constant.DB_VERSION_CUSTOM
@@ -158,6 +178,7 @@ public class WS_Save extends IntentService {
         env.setForm_data_fields(form_data_fields);
         env.setToken(token);
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
+        //
         String resultado = ToolBox_Con.connWebService(
                 Constant.WS_SAVE,
                 gson.toJson(env)
@@ -277,7 +298,11 @@ public class WS_Save extends IntentService {
             case "OK_DUP":
                 List<GE_Custom_Form_Local> formLocals = new ArrayList<>();
                 List<MD_Schedule_Exec> formSchedules = new ArrayList<>();
+                List<TK_Ticket_Ctrl> formTicketCtrl = new ArrayList<>();
+                List<MD_Site> siteExecution = new ArrayList<>();
+                //
                 boolean isScheduleForm = false;
+                boolean isTicketForm = false;
                 //Se enviado com sucesso, atualiza Status para DONE
                 for (GE_Custom_Form_Data form_data : form_datas){
                     //Se status DONE
@@ -285,10 +310,11 @@ public class WS_Save extends IntentService {
                     //Vars do novo agendamento
                     TSave_Rec.Error_Process errorProcess = null;
                     isScheduleForm = ToolBox_Inf.isScheduleForm(form_data);
+                    isTicketForm = isFormCreateByTicket(form_data);
                     //LUCHE - 20/02/2020
                     //Tratativa pós novo agendamento que registra no banco e exibe o erro
                     //Resgata item com erro se houver.
-                    if(isScheduleForm) {
+                    if(isScheduleForm || isTicketForm) {
                         errorProcess = checkErrorProcess(
                             error_process,
                             form_data.getCustomer_code(),
@@ -344,6 +370,7 @@ public class WS_Save extends IntentService {
                         formSchedules.add(scheduleExec);
                         //Preenche dados no obj de erro.
                         if (errorProcess != null) {
+                            errorProcess.setError_type(TSave_Rec.Error_Process.ERROR_TYPE_SCHEDULE);
                             errorProcess.setSchedule_pk(
                                 ToolBox_Inf.formatSchedulePk(
                                     scheduleExec.getSchedule_prefix(),
@@ -355,15 +382,48 @@ public class WS_Save extends IntentService {
                             errorProcess.setSchedule_desc(scheduleExec.getSchedule_desc());
                         }
                     }
+                    //TODO Continuar daqui, salvar os dados no ctrl;
+                    if(isTicketForm) {
+                        //
+                        TK_Ticket_Step ticketStep = processTicketStepSaveReturn(
+                            form_data.getCustomer_code(),
+                            form_data.getTicket_prefix(),
+                            form_data.getTicket_code(),
+                            form_data.getTicket_seq(),
+                            form_data.getTicket_seq_tmp(),
+                            form_data.getStep_code()
+                        );
+                        if (errorProcess != null) {
+                            errorProcess.setError_type(TSave_Rec.Error_Process.ERROR_TYPE_TICKET);
+                            //
+                            errorProcess.setTicket_step_pk(
+                                formatTicketStepPk(
+                                    ticketStep.getTicket_prefix(), ticketStep.getTicket_code()
+                                )
+                            );
+                            //
+                            errorProcess.setTicket_step_desc(ticketStep.getStep_desc());
+                        }
+                    }
                     //
                     if(errorProcess != null) {
                         errorProcessList.add(errorProcess);
+                    }
+                    //LUCHE - 15/01/2021 - CONTADOR DE LICENÇA DO SITESA
+                    //Se for agendamento ou form espontaneo, verificar a necessidade de atualizar
+                    //os contadores.
+                    //TODO TRATAR O DECREMENTE DO APP_EXECUTION TB NO ABORT DA ACT011
+                    if(isScheduleForm || !isTicketForm){
+                        handleSiteExecutionUpdate(siteExecution, form_data);
                     }
                 }
                 //Atualiza dados na tabela.
                 formLocalDao.addUpdate(formLocals,false);
                 scheduleExecDao.addUpdate(formSchedules,false);
                 formDataDao.addUpdate(form_datas,false);
+                if(siteExecution.size() > 0){
+                    siteDao.addUpdate(siteExecution,false);
+                }
                 /*27-08-2019 BARRIONUEVO
                    Controle de reprocessamento de n-form ao enviar registros com tokens
                  */
@@ -395,6 +455,76 @@ public class WS_Save extends IntentService {
                 return false;
         }
 
+    }
+
+    /**
+     * Luche - 18/01/2021
+     * Metodo que verifica se há necessidade de atualiza as execuções do site.
+     * @param siteExecution
+     * @param form_data
+     */
+
+    private void handleSiteExecutionUpdate(List<MD_Site> siteExecution, GE_Custom_Form_Data form_data) {
+        if(ToolBox_Inf.isConcurrentBySiteLicense(getApplicationContext())) {
+            MD_Site mdSite = getMdSite(siteExecution, form_data.getCustomer_code(), form_data.getSite_code());
+            if (mdSite != null && mdSite.getLicense_enabled() == 0) {
+                if(ConstantBaseApp.SYS_STATUS_DONE.equals(form_data.getCustom_form_status())){
+                    mdSite.transferAppExecutionToServerCount();
+                }else{
+                    mdSite.decreaseAppExecution();
+                }
+            }
+        }
+    }
+
+    /**
+     * LUCHE - 18/01/2021
+     * Metodo que resgata o site do form.
+     * A busca é feito primeramente no array passado com para, caso não seja encontrado, busca no banco
+     * e add no array.
+     * @param siteExecution
+     * @param customerCode
+     * @param siteCode
+     * @return
+     */
+    private MD_Site getMdSite(List<MD_Site> siteExecution, long customerCode, String siteCode){
+        for (MD_Site md_site : siteExecution) {
+            if( md_site.getCustomer_code() == customerCode
+                && md_site.getSite_code().equals(siteCode)
+            ){
+                return md_site;
+            }
+        }
+        //Se não acho o site na lista, busca do banco de dados
+        MD_Site dbSite = ToolBox_Inf.getSiteObjInfo(getApplicationContext(), siteCode);
+        if(dbSite != null && dbSite.getLicense_enabled() == 0) {
+            siteExecution.add(dbSite);
+            return dbSite;
+        }else{
+            return null;
+        }
+    }
+
+    private TK_Ticket_Step processTicketStepSaveReturn(long customer_code, Integer ticket_prefix, Integer ticket_code, Integer ticket_seq, Integer ticket_seq_tmp, Integer step_code) {
+        TK_Ticket_Step auxStep =
+            ticketStepDao.getByString(
+                new TK_Ticket_Step_Sql_001(
+                    customer_code,
+                    ticket_prefix,
+                    ticket_code,
+                    step_code
+                ).toSqlQuery()
+            );
+        //
+        return auxStep;
+    }
+
+    public static String formatTicketStepPk(Integer ticket_prefix, Integer ticket_code) {
+        if(ticket_prefix == null || ticket_code == null ){
+            return "";
+        }
+        //
+        return  ticket_prefix +"."+ ticket_code;
     }
 
     private MD_Schedule_Exec processScheduleExecSaveReturn(long customer_code, Integer schedule_prefix, Integer schedule_code, Integer schedule_exec) {
@@ -434,6 +564,15 @@ public class WS_Save extends IntentService {
         aux.setCustom_form_status(Constant.SYS_STATUS_DONE);
         //
         return aux;
+    }
+
+    public boolean isFormCreateByTicket(GE_Custom_Form_Data geCustomFormData) {
+        return
+            geCustomFormData.getTicket_prefix() != null && geCustomFormData.getTicket_prefix() > -1
+                && geCustomFormData.getTicket_code() != null && geCustomFormData.getTicket_code() > -1
+                && geCustomFormData.getTicket_seq() != null && geCustomFormData.getTicket_seq() > -1
+                && geCustomFormData.getTicket_seq_tmp() != null && geCustomFormData.getTicket_seq_tmp()  > -1
+                && geCustomFormData.getStep_code() != null && geCustomFormData.getStep_code() > -1;
     }
 
     private TSave_Rec.Error_Process checkErrorProcess(ArrayList<TSave_Rec.Error_Process> error_process_list, long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, long custom_form_data) {

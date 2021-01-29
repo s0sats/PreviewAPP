@@ -76,6 +76,9 @@ public class TSave_Rec {
     }
 
     public class Error_Process{
+        public static final String ERROR_TYPE_SCHEDULE = "SCHEDULE";
+        public static final String ERROR_TYPE_TICKET = "TICKET_FORM";
+
         @Expose
         private int customer_code;
         @Expose
@@ -98,6 +101,12 @@ public class TSave_Rec {
         private String schedule_pk;
         @Expose
         private String schedule_desc;
+        @Expose
+        private String error_type;
+        @Expose
+        private String ticket_step_pk;
+        @Expose
+        private String ticket_step_desc;
 
         public int getCustomer_code() {
             return customer_code;
@@ -177,6 +186,30 @@ public class TSave_Rec {
 
         public void setSchedule_desc(String schedule_desc) {
             this.schedule_desc = schedule_desc;
+        }
+
+        public String getError_type() {
+            return error_type;
+        }
+
+        public void setError_type(String error_type) {
+            this.error_type = error_type;
+        }
+
+        public String getTicket_step_pk() {
+            return ticket_step_pk;
+        }
+
+        public void setTicket_step_pk(String ticket_step_pk) {
+            this.ticket_step_pk = ticket_step_pk;
+        }
+
+        public String getTicket_step_desc() {
+            return ticket_step_desc;
+        }
+
+        public void setTicket_step_desc(String ticket_step_desc) {
+            this.ticket_step_desc = ticket_step_desc;
         }
     }
 }

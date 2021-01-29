@@ -30,6 +30,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  * LUCHE - 07/05/2020
  * Modificado query de md_schedule_exec, adcionando filtro somente pelo status schedule pois,
  * caso um agendamento tenha seu status alterado pelo FCM, ele acabava sendo exibido.
+ *
+ * LUCHE - 08/09/2020
+ * Modificado query corrigindo a,pois foi adicionado campos somente em uma das queries.
  */
 
 public class Sql_Act013_001 implements Specification {
@@ -119,9 +122,11 @@ public class Sql_Act013_001 implements Specification {
             "    e.serial_min_length\n," +
             "    e.local_control\n," +
             "    e.io_control\n," +
-            "    e.site_restriction\n," +
-            "    e.product_icon_name\n," +
-            "    e.product_icon_url\n" +
+            "    e.site_restriction,\n" +
+            "    e.product_icon_name,\n" +
+            "    e.product_icon_url,\n" +
+            "    null ticket_prefix,\n" +
+            "    null ticket_code\n" +
             "  FROM\n" +
             "   "+ MD_Schedule_ExecDao.TABLE +" e     \n" +
             "  WHERE\n" +
@@ -195,7 +200,9 @@ public class Sql_Act013_001 implements Specification {
             "  l.product_io_control "+GE_Custom_Form_LocalDao.IO_CONTROL+",\n" +
             "  l.site_restriction,\n" +
             "  l.custom_product_icon_name "+MD_Schedule_ExecDao.PRODUCT_ICON_NAME+",\n" +
-            "  l.custom_product_icon_url "+MD_Schedule_ExecDao.PRODUCT_ICON_URL+"\n" +
+            "  l.custom_product_icon_url "+MD_Schedule_ExecDao.PRODUCT_ICON_URL+",\n" +
+            "  d.ticket_prefix,\n" +
+            "  d.ticket_code\n" +
             "  FROM\n" +
             "   " + GE_Custom_Form_LocalDao.TABLE+ " l\n" +
             "  LEFT JOIN " + GE_Custom_Form_DataDao.TABLE+ " d ON \n" +

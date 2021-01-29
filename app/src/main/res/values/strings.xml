@@ -108,6 +108,17 @@
     <string name="install_app_error_msg">Error on trying app update !\nPlease try again !</string>
     <string name="msg_customer_pendencies_list">Customer :\n</string>
     <string name="msg_update_required_warning">New version available!\nTo update, please submit pending data.</string>
+    <string name="msg_login_invalid_current_time">The date / time of your device is incompatible with the Namoa server. \n Set the date / time of your device and try again.</string>
+    <string name="act002_ws_site_license_ttl">Licenced Sites</string>
+    <string name="act002_ws_site_license_msg">Loading Sites with available licences.</string>
+    <string name="license_site_dialog_ttl">Licenced Sites</string>
+    <string name="license_site_dialog_filter_hint">Select the Site of your licence</string>
+    <string name="license_site_dialog_close">Cancel</string>
+    <string name="act002_alt_no_licenses_returned_ttl">Licence unavailable!</string>
+    <string name="act002_alt_no_licenses_returned_msg">No Site found with available licences for this User. \nPlease try again later or contact IT team in order to verify the amount of available licences.</string>
+    <string name="act002_alt_license_list_not_found_ttl">Error: Licenced Sites</string>
+    <string name="act002_alt_license_list_not_found_msg">Unable to load the list of Site with available licences for this User. \nPlease try again.</string>
+
 
 
 </resources>

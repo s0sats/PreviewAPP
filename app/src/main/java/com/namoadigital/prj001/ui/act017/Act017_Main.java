@@ -75,6 +75,7 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
     public static final String MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN = "module_schedule_status_prevent_to_open" ;
     public static final String PROFILE_PRJ001_AP_NOT_FOUND = "profile_prj001_ap_not_found" ;
     public static final String PROFILE_MENU_TICKET_NOT_FOUND = "profile_menu_ticket_not_found" ;
+    public static final String FREE_EXECUTION_BLOCKED = "free_execution_blocked";
 
     private ListView lv_schedules;
     private Bundle bundle;
@@ -212,6 +213,9 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
         translateList.add("alert_menu_app_profile_not_found_ttl");
         translateList.add("alert_form_ap_menu_profile_not_found_msg");
         translateList.add("alert_ticket_menu_profile_not_found_msg");
+        //
+        translateList.add("alert_free_execution_blocked_ttl");
+        translateList.add("alert_free_execution_blocked_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -511,7 +515,11 @@ public class Act017_Main extends Base_Activity implements Act017_Main_View {
                 msg = hmAux_Trans.get("alert_ticket_menu_profile_not_found_msg");
                 btnNegative = 0;
                 break;
-
+            case FREE_EXECUTION_BLOCKED:
+                title = hmAux_Trans.get("alert_free_execution_blocked_ttl");
+                msg = hmAux_Trans.get("alert_free_execution_blocked_msg");
+                btnNegative = 0;
+                break;
         }
 
         if (btnNegative != null) {

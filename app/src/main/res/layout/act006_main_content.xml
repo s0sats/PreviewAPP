@@ -19,7 +19,7 @@
 
     <include
         android:id="@+id/act006_nform_in_progress"
-        layout="@layout/nform_in_progress"
+        layout="@layout/process_in_progress"
         android:visibility="gone"/>
 
     <LinearLayout

@@ -2,7 +2,9 @@ package com.namoadigital.prj001.view.act.product_selection;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.TK_Ticket_Product;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface Act_Product_Selection_Contract {
@@ -21,6 +23,8 @@ public interface Act_Product_Selection_Contract {
         MD_Product getProduct(String customer_code, String product_code);
 
         void onBtnHomeClicked();
+
+        void setAdapterDataForProductInsert(long group_code, Long recursive_code, ArrayList<TK_Ticket_Product> tk_ticket_products, String filter);
     }
 
 }

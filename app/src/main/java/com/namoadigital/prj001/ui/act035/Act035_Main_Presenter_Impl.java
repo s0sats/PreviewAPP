@@ -12,7 +12,6 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
-import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -20,11 +19,11 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.CH_Message;
-import com.namoadigital.prj001.model.Chat_Ref_Json;
 import com.namoadigital.prj001.model.Chat_Room_Obj_SO;
 import com.namoadigital.prj001.model.Chat_S_Historical_Message;
 import com.namoadigital.prj001.model.Chat_S_Message;
 import com.namoadigital.prj001.model.Chat_S_Read;
+import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
@@ -33,12 +32,13 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
-import com.namoadigital.prj001.sql.CH_Message_Sql_018;
 import com.namoadigital.prj001.sql.CH_Message_Sql_019;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
@@ -152,41 +152,49 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
     @Override
     public void sendHistoricalScrollUp(String mRoom_code, String msg_prefix, String msg_code) {
         if (msg_prefix != null && !msg_prefix.equalsIgnoreCase("0") && !msg_code.equalsIgnoreCase("0")) {
-            ArrayList<HMAux> refJsonAux = (ArrayList<HMAux>) ch_messageDao.query_HM(
-                    new CH_Message_Sql_018(
-                            context,
-                            ToolBox_Inf.returnHmAuxListInString(
-                                    ToolBox_Inf.getSessionCustomerChatList(context),
-                                    EV_User_CustomerDao.CUSTOMER_CODE,
-                                    ","
-                            ),
-                            ToolBox_Con.getPreference_User_Code(context),
-                            mRoom_code
-                    ).toSqlQuery()
-            );
-            ArrayList<Chat_Ref_Json> ref_json = new ArrayList<>();
-            if (refJsonAux != null && refJsonAux.size() > 0) {
-                for (HMAux hmAux : refJsonAux) {
-                    if (hmAux.get(CH_MessageDao.MSG_PREFIX) != null && hmAux.get(CH_MessageDao.MSG_CODE) != null) {
-                        Chat_Ref_Json refAux = new Chat_Ref_Json();
-                        refAux.setMsg_prefix(
-                                Integer.valueOf(hmAux.get(CH_MessageDao.MSG_PREFIX))
-                        );
-                        refAux.setMsg_code(
-                                Integer.valueOf(hmAux.get(CH_MessageDao.MSG_CODE))
-                        );
-                        //
-                        ref_json.add(refAux);
-                    }
-                }
-            }
+            //LUCHE - 25/06/2020
+            //Foi identificado que o refJson estava gerando alto consumo de processamento no servidor,
+            //,pois como muitos usr não entram nas salas, todas as msg ficavam com all_read = 0
+            //Modificado o conceito para que essas msg sejam enviadas somente ao acessar a sala.
+            //region REF_JSON
+//            ArrayList<HMAux> refJsonAux = (ArrayList<HMAux>) ch_messageDao.query_HM(
+//                    new CH_Message_Sql_018(
+//                            context,
+//                            ToolBox_Inf.returnHmAuxListInString(
+//                                    ToolBox_Inf.getSessionCustomerChatList(context),
+//                                    EV_User_CustomerDao.CUSTOMER_CODE,
+//                                    ","
+//                            ),
+//                            ToolBox_Con.getPreference_User_Code(context),
+//                            mRoom_code
+//                    ).toSqlQuery()
+//            );
+//            ArrayList<Chat_Ref_Json> ref_json = new ArrayList<>();
+//            if (refJsonAux != null && refJsonAux.size() > 0) {
+//                for (HMAux hmAux : refJsonAux) {
+//                    if (hmAux.get(CH_MessageDao.MSG_PREFIX) != null && hmAux.get(CH_MessageDao.MSG_CODE) != null) {
+//                        Chat_Ref_Json refAux = new Chat_Ref_Json();
+//                        refAux.setMsg_prefix(
+//                                Integer.valueOf(hmAux.get(CH_MessageDao.MSG_PREFIX))
+//                        );
+//                        refAux.setMsg_code(
+//                                Integer.valueOf(hmAux.get(CH_MessageDao.MSG_CODE))
+//                        );
+//                        //
+//                        ref_json.add(refAux);
+//                    }
+//                }
+//            }
+            //endregion
             //
             Chat_S_Historical_Message sHistoricalMessage = new Chat_S_Historical_Message();
             sHistoricalMessage.setRoom_code(mRoom_code);
             sHistoricalMessage.setMsg_ref_prefix(Integer.parseInt(msg_prefix));
             sHistoricalMessage.setMsg_ref_code(Integer.parseInt(msg_code));
             sHistoricalMessage.setAction(Constant.CHAT_HISTORICAL_MSG_ACTION_SCROLL_UP);
-            sHistoricalMessage.setRef_json(ref_json);
+            // LUCHE - 25/06/2020 - Comentado processo do ref_json
+            //sHistoricalMessage.setRef_json(ref_json);
+            sHistoricalMessage.setRef_json(null);
             //
             SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
             Gson gson = new GsonBuilder().serializeNulls().create();
@@ -722,6 +730,41 @@ public class Act035_Main_Presenter_Impl implements Act035_Main_Presenter {
             mView.callAct027(context);
         }else {
             mView.callAct034(context);
+        }
+    }
+
+    @Override
+    public boolean verifyProductForForm(HMAux hmAux) {
+        int ticketPrefix = hmAux.hasConsistentValue(TK_TicketDao.TICKET_PREFIX) ? Integer.valueOf(hmAux.get(TK_TicketDao.TICKET_PREFIX)) : -1 ;
+        int ticketCode = hmAux.hasConsistentValue(TK_TicketDao.TICKET_CODE) ? Integer.valueOf(hmAux.get(TK_TicketDao.TICKET_CODE)) : -1 ;
+        if(ToolBox_Inf.hasFormProductOutdate(context, ticketPrefix, ticketCode)){
+            if (ToolBox_Con.isOnline(context)) {
+                mView.setWSProcess(WS_Sync.class.getName());
+                //
+                mView.showPD(
+                        hmAux_Trans.get("progress_sync_ttl"),
+                        hmAux_Trans.get("progress_sync_msg")
+                );
+                //
+                ArrayList<String> data_package = new ArrayList<>();
+                data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+                //
+                Intent mIntent = new Intent(context, WBR_Sync.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+                bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+                bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
+                bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+                bundle.putInt(Constant.GC_STATUS, 1);
+                //
+                mIntent.putExtras(bundle);
+                //
+                context.sendBroadcast(mIntent);
+                return true;
+            }
+            return false;
+        }else{
+            return false;
         }
     }
 }

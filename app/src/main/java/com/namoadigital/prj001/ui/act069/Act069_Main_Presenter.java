@@ -9,6 +9,7 @@ import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.model.VH_models.Act069_TicketVH;
+import com.namoadigital.prj001.model.VH_models.Act074_TicketVH;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.sql.Sql_Act069_001;
@@ -70,15 +71,37 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
         mView.loadTicketList(generateTicketVhList(auxTickets));
     }
 
-    private ArrayList<Act069_TicketVH> generateTicketVhList(ArrayList<HMAux> auxTickets) {
-        ArrayList<Act069_TicketVH> tickets = new ArrayList<>();
+    private ArrayList<Act074_TicketVH> generateTicketVhList(ArrayList<HMAux> auxTickets) {
+        ArrayList<Act074_TicketVH> tickets = new ArrayList<>();
         if (auxTickets != null && auxTickets.size() > 0) {
             try {
                 for (HMAux aux : auxTickets) {
-                    getCtrlsSerialsList(aux);
+//                    getCtrlsSerialsList(aux);
+                    //
+//                    tickets.add(
+//                        Act074_TicketVH.getTicketVHObj(aux)
+//                    );
+                    //LUCHE - 12/08/2020 - Ajuste rapido, pois no caso dos ticket ja finalizados
+                    //a data a ser exibida deve ser abertura e fechamento executado
+                    /*
+                        Barrionuevo 13/10/2020
+                        Alterado a data de forecast para de finalizado compatibilizando o layout
+                        do ticket sem foco para o usuário e reaproveitando o adpter da act074.
+                     */
+                    Act074_TicketVH ticketVHObj = Act074_TicketVH.getTicketVHObj(context,hmAux_Trans,aux);
+                    ticketVHObj.setTicket_forecast_date(aux.get(TK_TicketDao.CLOSE_DATE));
+                    ticketVHObj.setUser_focus(0);
+                    //Add set da propriedade suada na busca do filtro, como só usa nessa tela, ficou
+                    //via set
+                    ticketVHObj.setTicket_forecast_date_formmated(
+                        ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(aux.get(TK_TicketDao.CLOSE_DATE)),
+                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                        )
+                    );
                     //
                     tickets.add(
-                        Act069_TicketVH.getTicketVHObj(aux)
+                        ticketVHObj
                     );
                 }
             } catch (Exception e) {
@@ -122,12 +145,38 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
      * @param item Ticket Clicado
      */
     @Override
-    public void checkTicketFlow(Act069_TicketVH item) {
+    public void checkTicketFlow(Act074_TicketVH item) {
         if(isScheduledTicketExecution(item)){
-            mView.callAct071(generateAct071Bundle(item));
+            //LUCHE - 19/08/2020
+            //Não haverá mais naegação para action então foi comentado o if.
+            /*if(isSchedulePossibleToOpen(item)) {
+                mView.callAct071(generateAct071Bundle(item));
+            }else{
+                mView.showMsg(
+                    hmAux_Trans.get("alert_schedule_status_prevents_to_open_ttl"),
+                    hmAux_Trans.get("alert_schedule_status_prevents_to_open_msg")
+                );
+            }*/
+            mView.showMsg(
+                hmAux_Trans.get("alert_schedule_status_prevents_to_open_ttl"),
+                hmAux_Trans.get("alert_schedule_status_prevents_to_open_msg")
+            );
         }else{
             mView.callAct070(generateAct070Bundle(item));
         }
+    }
+
+    private boolean isSchedulePossibleToOpen(Act074_TicketVH item) {
+        return
+            item.getSchedule_prefix() != null && item.getSchedule_prefix() > 0
+            && item.getSchedule_code() != null &&item.getSchedule_code() > 0
+            && item.getSchedule_exec() != null && item.getSchedule_exec() > 0
+            && item.getTicket_prefix() > 0
+            && item.getTicket_code() > 0
+            && !ConstantBaseApp.SYS_STATUS_CANCELLED.equalsIgnoreCase(item.getTicket_status())
+            && !ConstantBaseApp.SYS_STATUS_REJECTED.equalsIgnoreCase(item.getTicket_status())
+            && !ConstantBaseApp.SYS_STATUS_IGNORED.equalsIgnoreCase(item.getTicket_status())
+            && !ConstantBaseApp.SYS_STATUS_NOT_EXECUTED.equalsIgnoreCase(item.getTicket_status());
     }
 
     /**
@@ -137,7 +186,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
      * @param item Item clicado
      * @return - Verdadeiro se scheduelPK existir e ticket_prefix == 0  e ticket_code > 0
      */
-    private boolean isScheduledTicketExecution(Act069_TicketVH item) {
+    private boolean isScheduledTicketExecution(Act074_TicketVH item) {
         return item.getSchedulePk() != null && !item.getSchedulePk().isEmpty()
         && item.getTicket_prefix() == 0
         && item.getTicket_code() > 0;
@@ -150,7 +199,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
      * @param item Ticket clicado
      * @return - Bundle com pk do ticket
      */
-    private Bundle generateAct070Bundle(Act069_TicketVH item) {
+    private Bundle generateAct070Bundle(Act074_TicketVH item) {
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX,item.getTicket_prefix());
         bundle.putInt(TK_TicketDao.TICKET_CODE,item.getTicket_code());
@@ -165,7 +214,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
      * @param item Ticket clicado
      * @return - Bundle com dados do ticket agendamento
      */
-    private Bundle generateAct071Bundle(Act069_TicketVH item) {
+    private Bundle generateAct071Bundle(Act074_TicketVH item) {
         Bundle bundle = new Bundle();
         bundle.putInt(TK_TicketDao.TICKET_PREFIX,item.getTicket_prefix());
         bundle.putInt(TK_TicketDao.TICKET_CODE,item.getTicket_code());
@@ -181,7 +230,7 @@ public class Act069_Main_Presenter implements Act069_Main_Contract.I_Presenter {
             String.valueOf(item.getTicket_code())
             )
         );
-        bundle.putString(TK_TicketDao.TYPE_DESC, item.getType_desc());
+//        bundle.putString(TK_TicketDao.TYPE_DESC, item.getType_desc());
         bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN,false);
         bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.getSchedulePk());
         //

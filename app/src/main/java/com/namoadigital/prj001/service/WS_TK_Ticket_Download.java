@@ -16,9 +16,10 @@ import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_PK_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
-import com.namoadigital.prj001.sql.TK_Ticket_Sql_004;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -65,10 +66,33 @@ public class WS_TK_Ticket_Download extends IntentService {
             ToolBox_Inf.sendBCStatus(getApplicationContext(), "ERROR_1", sb.toString(), "", "0");
 
         } finally {
-
+            //Verifica se existem form com pendencia de GPS
+            checkSetLocationPendencyPreferenceFalse();
+            //Chama atualização da notificação.
+            ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
+            //
             WBR_TK_Ticket_Download.completeWakefulIntent(intent);
         }
 
+    }
+
+    /**
+     * LUCHE - 09/09/2020
+     * <p></p>
+     * Metodo que verifica se existem form com pendencia de GPS e caso não exista nenhum, reseta
+     * preferencia.
+     * A chamada desse metodo se faz necessaria pois, quando o FormDao identifica que existe um form
+     * no server e outro criado localmente, o form local é cancelado e se não houverem mais forms
+     * com pendencia de GPS, a flag deve ser resetada.
+     */
+    private void checkSetLocationPendencyPreferenceFalse() {
+        int pendencies = ToolBox_Inf.getLocationPendencies(getApplicationContext());
+        if(pendencies == 0) {
+            ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, false);
+            if(SV_LocationTracker.status) {
+                ToolBox_Inf.stop_Location_Tracker(getApplicationContext());
+            }
+        }
     }
 
     private void processTicketDownload(String ticketPkList) throws Exception {
@@ -98,7 +122,6 @@ public class WS_TK_Ticket_Download extends IntentService {
             T_TK_Ticket_Download_Rec.class
         );
         //
-        //
         if (
             !ToolBox_Inf.processWSCheckValidation(
                 getApplicationContext(),
@@ -124,41 +147,61 @@ public class WS_TK_Ticket_Download extends IntentService {
 
     private void processTicketReturn(ArrayList<TK_Ticket> ticketList) {
         if(ticketList != null && ticketList.size() > 0){
+            DaoObjReturn daoObjReturn = new DaoObjReturn();
             //
             HMAux hmAux = new HMAux();
-
+            List<TK_Ticket> tickets = new ArrayList<>();
             for (TK_Ticket tkTicket : ticketList) {
                 tkTicket.setPK();
-                TK_Ticket.checkActionPhotoResetNeeds(getDbTicket(tkTicket),tkTicket);
-                tkTicket.updateLocalImagesPathIfExists();
+                TK_Ticket dbTicket = getDbTicket(tkTicket);
 
-                //Reseta sync_required para 0 via query, pois add update via obj não o atualiza.
-                /**
-                 * TODO TALVEZ O MELHOR FOSSE INSERIR UMA A UMA E VERIFICANDO O RETORNO, CASO SUCESSO, RESETA O SYNC REQUIRED
-                 * DO JEITO QUE ESTA CORRE O RISCO DE RESETAR O SYNC REQUIRED E DAR PAU NO ADD UPDATE
-                 * É UM RISCO MUITO BAIXO MAS.....
-                 *
-                 * */
-                ticketDao.addUpdate(
-                    new TK_Ticket_Sql_004(
-                        tkTicket.getCustomer_code(),
-                        tkTicket.getTicket_prefix(),
-                        tkTicket.getTicket_code(),
-                        0
-                    ).toSqlQuery()
-                );
-                if(ticketList.size() == 1){
-                    hmAux.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
-                    hmAux.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
+                if(dbTicket != null) {
+                    /*
+                        Barrionuevo - 2020-11-13
+                        Tratativa para impedir que ticket com form espontaneo em processo seja atualizado pelo server.
+                     */
+                    if(!ToolBox_Inf.hasOffHandFormInProcess(getApplicationContext(), dbTicket.getTicket_prefix(), dbTicket.getTicket_code())) {
+                        //Verifica se precisa resetar alguma foto. Isso deve ser feito se o "file_code" da foto
+                        //for alterado, o que significa que mudaram a foto no server...
+                        TK_Ticket.checkActionPhotoResetNeeds(
+                                dbTicket,
+                                tkTicket
+                        );
+                        //Varre todas as imagens verificando se existe imagem local para cada item que pode ter foto
+                        tkTicket.updateLocalImagesPathIfExists();
+                        //Busca ctrls tipo form em andamento e que seriam resetados.
+                        tkTicket.updateTicketCtrlFormInProcess(getApplicationContext());
+                        //
+                        daoObjReturn = ticketDao.removeFullV2(tkTicket);
+                        tickets.add(tkTicket);
+                        if(daoObjReturn.hasError()) {
+                            break;
+                        }
+                    }
+                }else{
+                    tickets.add(tkTicket);
                 }
+                //
             }
             //
-            DaoObjReturn daoObjReturn = ticketDao.addUpdate(ticketList, false);
-            if(!daoObjReturn.hasError()){
-                startDownloadWorkers();
-                //
-                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"),hmAux , "", "0");
-            }else {
+            if (ticketList.size() == 1) {
+                TK_Ticket tkTicket = ticketList.get(0);
+                hmAux.put(TK_TicketDao.TICKET_PREFIX, String.valueOf(tkTicket.getTicket_prefix()));
+                hmAux.put(TK_TicketDao.TICKET_CODE, String.valueOf(tkTicket.getTicket_code()));
+            }
+            //
+            if(!daoObjReturn.hasError()) {
+                if(tickets != null && !tickets.isEmpty()) {
+                    daoObjReturn = ticketDao.addUpdate(tickets, false);
+                }
+                if(!daoObjReturn.hasError()){
+                    startDownloadWorkers();
+                    //
+                    ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"),hmAux , "", "0");
+                }else {
+                    ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_on_insert_ticket"), new HMAux(), "", "0");
+                }
+            }else{
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_on_insert_ticket"), new HMAux(), "", "0");
             }
         }else{
@@ -184,6 +227,7 @@ public class WS_TK_Ticket_Download extends IntentService {
         //Como será possivel baixar ticket do customer logado, pode ser chamada a rotina de download.
         //Esse as definição mudar, rever, pois seria necessario chamar essa serviço para cada customer code diferente.
         ToolBox_Inf.scheduleDownloadPictureWork(getApplicationContext());
+        ToolBox_Inf.scheduleDownloadPdfWork(getApplicationContext());
     }
 
     private ArrayList<T_TK_Ticket_Download_PK_Env> getTicketPkList(String ticketPkList) throws Exception {
@@ -197,6 +241,11 @@ public class WS_TK_Ticket_Download extends IntentService {
             pkAux.setCustomer_code(pk[0]);
             pkAux.setTicket_prefix(pk[1]);
             pkAux.setTicket_code(pk[2]);
+            if(pk.length >= 4 ) {
+                pkAux.setScn(pk[3]);
+            }else{
+                pkAux.setScn("0");
+            }
             //
             objPkList.add(pkAux);
         }

@@ -4,6 +4,16 @@ import com.google.gson.annotations.Expose;
 
 public class Main_Header_Env {
 
+    public Main_Header_Env() {
+    }
+
+    public Main_Header_Env(String app_code, String app_version, String app_type, String session_app) {
+        this.app_code = app_code;
+        this.app_version = app_version;
+        this.app_type = app_type;
+        this.session_app = session_app;
+    }
+
     @Expose
     private String app_code;
     @Expose

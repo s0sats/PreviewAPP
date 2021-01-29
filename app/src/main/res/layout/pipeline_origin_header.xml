@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/frg_ticket_tv_origin_complete_path"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:gravity="top"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Shopping ABC\Manutenção Limpeza\Limpeza\Banheiros\Banheiro Masculino\Abastecimento\" />
+
+    <TextView
+        android:id="@+id/frg_ticket_tv_origin_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="4dp"
+        android:gravity="top"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/frg_ticket_tv_origin_complete_path"
+        tools:text="Horimetro - 1000 h" />
+
+    <ImageView
+        android:id="@+id/frg_ticket_iv_origin_date_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:tint="@color/namoa_pipeline_header_icon"
+        app:layout_constraintStart_toStartOf="@+id/frg_ticket_tv_origin_desc"
+        app:layout_constraintTop_toBottomOf="@+id/frg_ticket_tv_origin_desc"
+        app:srcCompat="@drawable/ic_check_white_24dp" />
+
+    <TextView
+        android:id="@+id/frg_ticket_tv_origin_end_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="TextView"
+        android:textColor="@color/namoa_pipeline_header_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/frg_ticket_iv_origin_date_end"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/frg_ticket_iv_origin_date_end"
+        app:layout_constraintTop_toTopOf="@+id/frg_ticket_iv_origin_date_end" />
+
+    <ImageView
+        android:id="@+id/frg_ticket_iv_origin_end_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="@+id/frg_ticket_iv_origin_date_end"
+        app:layout_constraintTop_toBottomOf="@+id/frg_ticket_iv_origin_date_end"
+        android:tint="@color/namoa_pipeline_header_icon"
+        app:srcCompat="@drawable/ic_person_black_24dp" />
+
+    <TextView
+        android:id="@+id/frg_ticket_tv_origin_end_user"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="TextView"
+        android:textColor="@color/namoa_pipeline_header_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/frg_ticket_iv_origin_end_user"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/frg_ticket_iv_origin_end_user"
+        app:layout_constraintTop_toTopOf="@+id/frg_ticket_iv_origin_end_user" />
+
+
+</android.support.constraint.ConstraintLayout>

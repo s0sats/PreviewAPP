@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
@@ -78,6 +79,7 @@ import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
 import com.namoadigital.prj001.service.WS_AP_Search;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service_chat.WS_Room_AP;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -361,6 +363,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         transList.add("alert_serial_not_returned_msg");
         transList.add("dialog_product_not_found_ttl");
         transList.add("dialog_product_not_found_msg");
+        //
+        transList.add("progress_sync_ttl");
+        transList.add("progress_sync_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1180,13 +1185,30 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             lv_messages.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
                     if (ToolBox_Con.isOnline(context, true)) {
-
+                        //
                         HMAux hmAux = (HMAux) parent.getItemAtPosition(position);
-
-                        colorName = ((TextView) (view.findViewById(R.id.act035_main_content_cell_whats_tv_name))).getCurrentTextColor();
-
+                        //LUCHE - 18/09/2020
+                        //Adicionado switch para resgatar a cor da view correta. Como o nome da view
+                        // de name foi alterado nos layouts de ticket aqui da va exception.
+                        //A principio, a cor não é utilizada no caso das msg de ticket e form ap,
+                        //mas para deixa compativel com o futuro ja esta corrigido. Em caso de exception
+                        //como acontecia anteriormente, será setada uma cor padrão
+                        try {
+                            int itemViewType = act035_adapter_messages.getItemViewType(position);
+                            switch (itemViewType) {
+                                case Act035_Adapter_Messages.ITEM_VIEW_TYPE_TICKET_OTHER:
+                                case Act035_Adapter_Messages.ITEM_VIEW_TYPE_TICKET_MINE:
+                                    colorName = ((TextView) (view.findViewById(R.id.act035_main_content_cell_ticket_tv_name))).getCurrentTextColor();
+                                    break;
+                                default:
+                                    colorName = ((TextView) (view.findViewById(R.id.act035_main_content_cell_whats_tv_name))).getCurrentTextColor();
+                                    break;
+                            }
+                        }catch (Exception e){
+                            colorName = ContextCompat.getColor(context, R.color.namoa_status_error);
+                        }
+                        //
                         SingletonWebSocket singletonWebSocket = SingletonWebSocket.getInstance(context);
 
                         if (!hmAux.get(CH_MessageDao.MSG_CODE).equalsIgnoreCase("0")) {
@@ -1318,6 +1340,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         bundle.putString(GE_Custom_Form_ApDao.AP_CODE, hmAux.get(GE_Custom_Form_ApDao.AP_CODE));
         bundle.putString(CH_RoomDao.ROOM_CODE, mRoom_code);
         //
+        mRoom_code = "";
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -2345,12 +2368,12 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                     break;
 
                 case Constant.CHAT_ROOM_TYPE_AP:
+                case Constant.CHAT_MESSAGE_TYPE_TICKET:
                     ll_info.setVisibility(View.VISIBLE);
                     ll_view.setVisibility(View.GONE);
 
                     TextView tv_name_ap = (TextView) ll_info.findViewById(R.id.act035_room_info_tv_msg);
                     tv_name_ap.setText(hmAux_Trans.get(ch_Message.getMsg_type()));
-
                     break;
                 default:
                     break;
@@ -2939,6 +2962,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             bundle.putString(CH_RoomDao.ROOM_CODE, mRoom_code);
         }
         mIntent.putExtras(bundle);
+        mRoom_code = "";
         startActivity(mIntent);
         finish();
     }
@@ -2955,6 +2979,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT035);
         }
         mIntent.putExtras(bundle);
+        mRoom_code = "";
         startActivity(mIntent);
         finish();
     }
@@ -3063,9 +3088,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     protected void processCloseACT(String mLink, String mRequired) {
         super.processCloseACT(mLink, mRequired);
-        if(ws_process.equals(WS_Serial_Search.class.getName())){
+        if(ws_process.equals(WS_Serial_Search.class.getName())
+        || ws_process.equals(WS_Sync.class.getName())){
             processCloseACT(mLink, mRequired, new HMAux());
-        }else {
+        } else {
             //
             HMAux hmAuxAP = new HMAux();
             //
@@ -3114,6 +3140,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             progressDialog.dismiss();
         } else if (ws_process.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())) {
             setWSProcess("");
+            progressDialog.dismiss();
             //
             bundle.putString(CH_RoomDao.ROOM_CODE, hmAux.get(CH_RoomDao.ROOM_CODE));
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT035);
@@ -3123,10 +3150,15 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 bundle.putInt(TK_TicketDao.TICKET_CODE, Integer.parseInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
             }
             //
-            callAct070(bundle);
+            if(!mPresenter.verifyProductForForm(hmAux)) {
+                callAct070(bundle);
+            }
             //
+        }else if(WS_Sync.class.getName().equalsIgnoreCase(ws_process)) {
+            setWSProcess("");
             progressDialog.dismiss();
-        }else if(ws_process.equals(WS_Serial_Search.class.getName())){
+            callAct070(bundle);
+        } else if(ws_process.equals(WS_Serial_Search.class.getName())){
             mPresenter.extractSearchResult(mLink, roomObjSo);
         } else if (ws_process.equalsIgnoreCase(WS_SO_Search.class.getName())) {
             mPresenter.processSoDownloadResult(hmAux, String.valueOf(roomObjSo.getSo_prefix()), String.valueOf(roomObjSo.getSo_code()));
@@ -3146,9 +3178,25 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     }
 
     @Override
+    protected void processError_1(String mLink, String mRequired) {
+        super.processError_1(mLink, mRequired);
+        //
+        if(WS_Sync.class.getName().equalsIgnoreCase(ws_process)) {
+            progressDialog.dismiss();
+            callAct070(bundle);
+            resetWSProcess();
+        }
+        //
+    }
+
+    @Override
     protected void processCustom_error(String mLink, String mRequired) {
         super.processCustom_error(mLink, mRequired);
         progressDialog.dismiss();
+        //
+        if(WS_Sync.class.getName().equalsIgnoreCase(ws_process)) {
+            callAct070(bundle);
+        }
         //
         resetWSProcess();
     }

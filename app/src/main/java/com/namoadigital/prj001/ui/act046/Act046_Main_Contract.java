@@ -11,6 +11,8 @@ public interface Act046_Main_Contract {
         void callAct016(Context context);
 
         void callAct017(Context context, String serial_id, boolean late);
+
+        void callAct068();
     }
 
     interface I_Presenter {
@@ -20,6 +22,8 @@ public interface Act046_Main_Contract {
         void saveCheckBoxStatusIntoPreference(String checkboxConstant, boolean isChecked);
 
         boolean loadCheckboxStatusFromPreferencie(String checkboxConstant, boolean defaultValue);
+
+        void onBackPressedClicked(String requestingAct);
     }
 
 }

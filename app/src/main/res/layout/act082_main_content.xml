@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <FrameLayout
+        android:id="@+id/act082_frg_pipeline_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        >
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/text_black">
+
+            <LinearLayout
+                android:id="@+id/act082_ll_header_infos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.namoa_digital.namoa_library.ctls.SearchableSpinner
+                    android:id="@+id/act082_ss_main_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/act082_tv_internal_comments_lbl"
+                    style="@android:style/TextAppearance.Material"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    tools:text="Comentarios do Ticket" />
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act082_mket_internal_comments_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="8dp"
+                    />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/act082_view_divider"
+                android:layout_width="0dp"
+                android:layout_height="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/namoa_color_black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act082_ll_header_infos" />
+
+            <LinearLayout
+                android:id="@+id/act082_ll_date_and_forecast_infos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="vertical"
+                android:padding="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act082_view_divider">
+
+                <TextView
+                    android:id="@+id/act082_tv_date_and_forecast_infos_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    tools:text="Prazo de Atendimento do Ticket" />
+
+                <RadioGroup
+                    android:id="@+id/act082_rg_date_and_forecast_infos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/act082_rb_start_date"
+                        style="@android:style/TextAppearance.Material"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Inicio do Atendimento" />
+
+                    <include
+                        android:id="@+id/act082_start_date_form"
+                        layout="@layout/act082_date_time_service_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/act082_tv_start_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="32dp"
+                        android:textColor="@color/namoa_light_blue"
+                        tools:text="07/12/2020" />
+
+                    <RadioButton
+                        android:id="@+id/act082_rb_end_date"
+                        style="@android:style/TextAppearance.Material"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Final do Atendimento" />
+
+                    <TextView
+                        android:id="@+id/act082_tv_end_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="07/12/2020"
+                        android:textColor="@color/namoa_light_blue"
+                        android:layout_marginLeft="32dp"
+                        />
+
+                    <include
+                        android:id="@+id/act082_end_date_form"
+                        layout="@layout/act082_date_time_service_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+
+                    <RadioButton
+                        android:id="@+id/act082_rb_time"
+                        style="@android:style/TextAppearance.Material"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Tempo do Atendimento" />
+
+                    <TextView
+                        android:id="@+id/act082_tv_service_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        tools:text="1 10:10"
+                        android:layout_marginLeft="32dp"
+                        />
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/act082_cl_service_time_form"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="8dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/act082_tv_service_time_day_lbl"
+                            style="@style/MyTicketRadioButtton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toTopOf="@+id/act082_edt_service_time_day_val"
+                            app:layout_constraintEnd_toEndOf="@+id/act082_edt_service_time_day_val"
+                            app:layout_constraintStart_toStartOf="@+id/act082_edt_service_time_day_val"
+                            tools:text="Dias" />
+
+                        <TextView
+                            android:id="@+id/act082_tv_service_time_hour_lbl"
+                            style="@style/MyTicketRadioButtton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Horas"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toTopOf="@+id/act082_edt_service_time_hour_val"
+                            app:layout_constraintEnd_toEndOf="@+id/act082_edt_service_time_hour_val"
+                            app:layout_constraintStart_toStartOf="@+id/act082_edt_service_time_hour_val"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/act082_tv_service_time_minute_lbl"
+                            style="@style/MyTicketRadioButtton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Minutos"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toTopOf="@+id/act082_edt_service_time_minute_val"
+                            app:layout_constraintEnd_toEndOf="@+id/act082_edt_service_time_minute_val"
+                            app:layout_constraintStart_toStartOf="@+id/act082_edt_service_time_minute_val"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <EditText
+                            android:id="@+id/act082_edt_service_time_day_val"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:ems="5"
+                            android:textAlignment="center"
+                            app:layout_constraintBottom_toTopOf="@+id/act082_chk_shift_service_time_refresh_step_duration"
+                            app:layout_constraintEnd_toStartOf="@+id/act082_edt_service_time_hour_val"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            tools:text="Dias" />
+
+                        <EditText
+                            android:id="@+id/act082_edt_service_time_hour_val"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ems="5"
+                            android:inputType="number"
+                            android:textAlignment="center"
+                            app:layout_constraintBottom_toTopOf="@+id/act082_chk_shift_service_time_refresh_step_duration"
+                            app:layout_constraintEnd_toStartOf="@+id/act082_edt_service_time_minute_val"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/act082_edt_service_time_day_val"
+                            app:layout_constraintTop_toBottomOf="@+id/act082_tv_service_time_day_lbl"
+                            tools:text="Horas" />
+
+                        <EditText
+                            android:id="@+id/act082_edt_service_time_minute_val"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ems="5"
+                            android:inputType="number"
+                            android:textAlignment="center"
+                            app:layout_constraintBottom_toTopOf="@+id/act082_chk_shift_service_time_refresh_step_duration"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toEndOf="@+id/act082_edt_service_time_hour_val"
+                            app:layout_constraintTop_toBottomOf="@+id/act082_tv_service_time_hour_lbl"
+                            tools:text="Minutos" />
+
+                        <CheckBox
+                            android:id="@+id/act082_chk_shift_service_time_refresh_step_duration"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/act082_edt_service_time_day_val"
+
+                            tools:text="Deslocar Data de Inicio" />
+                    </android.support.constraint.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/act082_tv_elapsed_time_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textStyle="bold"
+                        tools:text="Tempo decorrido" />
+
+                    <TextView
+                        android:id="@+id/act082_tv_elapsed_time_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        android:layout_marginLeft="32dp"
+                        tools:text="Au AU " />
+
+                    <TextView
+                        android:id="@+id/act082_tv_remaining_time_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textStyle="bold"
+                        tools:text="Tempo restante" />
+
+                    <TextView
+                        android:id="@+id/act082_tv_remaining_time_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        android:layout_marginLeft="32dp"
+                        tools:text="Au au" />
+                </RadioGroup>
+
+
+
+
+            </LinearLayout>
+
+
+
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/act082_ll_edit_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/act082_btn_cancel_header_form"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/namoa_cell_12_states"
+            android:textAllCaps="true"
+            android:textColor="@color/colorFooterWhite"
+            tools:text="Cancel" />
+
+        <Button
+            android:id="@+id/act082_btn_save_header_form"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/namoa_cell_12_states"
+            android:textAllCaps="true"
+            android:textColor="@color/colorFooterWhite"
+            tools:text="SALVAR" />
+
+    </LinearLayout>
+    <include
+        layout="@layout/footer_base"/>
+</LinearLayout>

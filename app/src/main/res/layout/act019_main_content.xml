@@ -105,7 +105,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="Molsof Customer"
+                    tools:text="Namoa Customer"
                     android:textColor="@color/namoa_color_dark_blue_lib"
                     android:textSize="@dimen/font_size_title"
                     android:textStyle="bold" />
@@ -200,7 +200,7 @@
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="5dp"
-                    android:text="MOSOLF short"
+                    tools:text="Namoa short"
                     android:textColor="@color/namoa_color_light_blue_lib"
                     android:textSize="@dimen/font_size_item" />
 
@@ -221,7 +221,7 @@
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="5dp"
                     android:layout_marginTop="5dp"
-                    android:text="MOSOLF Completa"
+                    tools:text="Namoa Completa"
                     android:textColor="@color/namoa_color_light_blue_lib"
                     android:textSize="@dimen/font_size_item" />
 

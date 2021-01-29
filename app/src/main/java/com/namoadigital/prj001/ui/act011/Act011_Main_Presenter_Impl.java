@@ -20,6 +20,11 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
@@ -28,6 +33,11 @@ import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Form;
+import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_005;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_001;
@@ -38,6 +48,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_005;
+import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_019;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_001_TT;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
@@ -45,6 +56,13 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_016;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act011_002;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_008;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_004;
+import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_005;
+import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_002;
+import com.namoadigital.prj001.sql.TK_Ticket_Form_Sql_005;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
+import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -89,8 +107,13 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     //LUCHE - 20/02/2020
     //Flag que controla se é a primeira abertura do agendamento.
     private boolean isScheduleFirstTime = false;
+    //LUCHE - 24/08/2020
+    private boolean isTicketProcess = false;
+    private TK_Ticket_StepDao ticketStepDao;
+    private Integer mTicketSeqTmp;
+    private MD_SiteDao siteDao;
 
-    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans,MD_Schedule_ExecDao scheduleExecDao) {
+    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans, MD_Schedule_ExecDao scheduleExecDao, TK_Ticket_StepDao ticketStepDao,MD_SiteDao siteDao) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
@@ -106,30 +129,50 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         this.md_productDao = md_productDao;
         this.hmAux_Trans = hmAux_Trans;
         this.scheduleExecDao = scheduleExecDao;
+        this.ticketStepDao = ticketStepDao;
+        this.siteDao = siteDao;
     }
 
     @Override
-    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code) {
+    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code) {
         boolean hasNformPending = false;
         boolean bNew = false;
         boolean bAbortSchedule = false;
-
+        mTicketSeqTmp = mTicket_seq_tmp;
         bAgendado = false;
         //LUCHE - 14/03/2019
         DaoObjReturn daoObjReturn = new DaoObjReturn();
         MD_Schedule_Exec scheduleExec = new MD_Schedule_Exec();
-        GE_Custom_Form_Local customFormLocal = custom_form_LocalDao.getByString(
-            new GE_Custom_Form_Local_Sql_003(
-                customer_code,
-                formtype_code,
-                form_code,
-                formversion_code,
-                s_form_data,
-                product_code,
-                serial_id
-            ).toSqlQuery().toString().toLowerCase()
-        );
-
+        GE_Custom_Form_Local customFormLocal;
+        if(mTicket_prefix != null && mTicket_code != null &&  mTicket_seq!= null &&  mTicket_seq_tmp!= null &&  mStep_code!= null){
+            customFormLocal = custom_form_LocalDao.getByString(
+                    new GE_Custom_Form_Local_Sql_019(
+                            customer_code,
+                            formtype_code,
+                            form_code,
+                            formversion_code,
+                            s_form_data,
+                            product_code,
+                            serial_id,
+                            mTicket_prefix,
+                            mTicket_code,
+                            mTicket_seq,
+                            mStep_code
+                    ).toSqlQuery().toString().toLowerCase()
+            );
+        }else{
+            customFormLocal = custom_form_LocalDao.getByString(
+                new GE_Custom_Form_Local_Sql_003(
+                    customer_code,
+                    formtype_code,
+                    form_code,
+                    formversion_code,
+                    s_form_data,
+                    product_code,
+                    serial_id
+                ).toSqlQuery().toString().toLowerCase()
+            );
+        }
         List<HMAux> cf_fields = null;
         int index = -1;
 
@@ -234,7 +277,12 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setRequire_location(customForm.getRequire_location());
             customFormLocal.setRequire_serial_done(customForm.getRequire_serial_done());
             customFormLocal.setSchedule_comments("");
-
+            //LUCHE - 24/08/2020
+            customFormLocal.setTicket_prefix(mTicket_prefix);
+            customFormLocal.setTicket_code(mTicket_code);
+            customFormLocal.setTicket_seq(mTicket_seq);
+            customFormLocal.setTicket_seq_tmp(mTicket_seq_tmp);
+            customFormLocal.setStep_code(mStep_code);
             //LUCHE -  14/03/2019
             //Alteração Dao de insert com exception NOVO METODO DAO
             //custom_form_LocalDao.addUpdate(customFormLocal);
@@ -276,10 +324,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     ,
                     false
                 );
-
             }
-
         }
+        //LUCHE - 24/08/2020
+        //isTicketProcess = isFormCreateByTicket(customFormLocal.getTicket_prefix(),customFormLocal.getTicket_code(),customFormLocal.getTicket_seq(),customFormLocal.getTicket_seq_tmp(),customFormLocal.getStep_code());
+        isTicketProcess = isFormCreateByTicket(customFormLocal);
         //26/03/2020 - Informa usuario que o form foi abortado.
         if (bAbortSchedule) {
             mView.showFormCancelledMsg(customFormLocal,scheduleExec);
@@ -302,6 +351,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     );
                 }
             } else {
+                //
                 GE_Custom_Form_Data formData = loadAnswer(
                     customFormLocal,
                     so_prefix,
@@ -310,7 +360,53 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     so_operation_code,
                     serial_id
                 );
+                //LUCHE - 24/08/2020
+                //Atualiza TicketCtrl se form for do ticket
+                if (isTicketProcess) {
 
+                    if(bNew){
+                        if(mView.isOffHandForm()){
+                            createTicketCtrlObj(customFormLocal,
+                                    mTicket_prefix,
+                                    mTicket_code,
+                                    mStep_code
+                            );
+                            //
+                            TK_Ticket tkTicket = getTicketbyPk(mTicket_prefix, mTicket_code);
+                            formData.setCustomer_code(Long.parseLong(customer_code));
+                            formData.setTicket_prefix(mTicket_prefix);
+                            formData.setTicket_code(mTicket_code);
+                            formData.setTicket_seq(0);
+                            formData.setTicket_seq_tmp(mTicketSeqTmp);
+                            formData.setStep_code(mStep_code);
+                            formData.setPipeline_code(tkTicket.getPipeline_code());
+                            //
+                        }
+                        //
+                        updateTicketCtrl(
+                            customFormLocal.getCustomer_code(),
+                            customFormLocal.getTicket_prefix(),
+                            customFormLocal.getTicket_code(),
+                            customFormLocal.getTicket_seq(),
+                            customFormLocal.getTicket_seq_tmp(),
+                            customFormLocal.getStep_code(),
+                            customFormLocal.getCustom_form_data(),
+                            ConstantBaseApp.SYS_STATUS_PROCESS,
+                            formData.getLocation_pendency());
+                    }
+
+                    if(formData.getTicket_checkin_date() == null ||formData.getTicket_checkin_date().isEmpty()) {
+                        //Resgata Step para setar data de checkin no form.
+                        TK_Ticket_Step ticketStep = getTicketStep(
+                                customFormLocal.getTicket_prefix(),
+                                customFormLocal.getTicket_code(),
+                                customFormLocal.getStep_code()
+                        );
+                        //Seta data de checkin no formData
+                        formData.setTicket_checkin_date(ticketStep.getStep_start_date());
+                    }
+
+                }
                 //if (bAgendado) {
                 if (isScheduleFirstTime) {
                     if (serial_id == null || serial_id.isEmpty()) {
@@ -355,18 +451,371 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 );
                 if (hasNformPending) {
                     mView.showMsg(
-                        hmAux_Trans.get("alert_nform_already_started_ttl"),
-                        hmAux_Trans.get("alert_nform_already_started_msg") + " " +
-                            ToolBox_Inf.millisecondsToString(
-                                ToolBox_Inf.dateToMilliseconds(formData.getDate_start()),
-                                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-                            ),
-                        0
+                            hmAux_Trans.get("alert_nform_already_started_ttl"),
+                            hmAux_Trans.get("alert_nform_already_started_msg") + " " +
+                                    ToolBox_Inf.millisecondsToString(
+                                            ToolBox_Inf.dateToMilliseconds(formData.getDate_start()),
+                                            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                                    ),
+                            0
                     );
                 }
                 mView.loadFragment_CF_Fields(cf_fields, bNew, customFormLocal, formData, customFormLocal.getCustom_form_pre(), pdfs, index, customFormLocal.getRequire_signature(), customFormLocal.getRequire_serial_done());
             }
         }
+    }
+
+    @Deprecated
+    private boolean ticketCtrlExist(GE_Custom_Form_Local customFormLocal, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code) {
+
+        TK_Ticket_FormDao ticketFormDao = getTicketFormDao();
+        TK_Ticket_Form ticketForm = ticketFormDao.getByString(
+                new TK_Ticket_Form_Sql_002(
+                        customFormLocal.getCustomer_code(),
+                        mTicket_prefix,
+                        mTicket_code,
+                        mTicket_seq_tmp,
+                        mStep_code
+                ).toSqlQuery()
+        );
+        return ticketForm != null;
+    }
+
+    private TK_Ticket_FormDao getTicketFormDao() {
+        return new TK_Ticket_FormDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+    }
+
+    @Override
+    public boolean isFormCreateByTicket(GE_Custom_Form_Local customFormLocal) {
+        return
+                customFormLocal.getTicket_prefix() != null && customFormLocal.getTicket_prefix() > -1
+                        && customFormLocal.getTicket_code() != null && customFormLocal.getTicket_code() > -1
+                        && customFormLocal.getTicket_seq() != null && customFormLocal.getTicket_seq() > -1
+                        && customFormLocal.getTicket_seq_tmp() != null && customFormLocal.getTicket_seq_tmp() > -1
+                        && customFormLocal.getStep_code() != null && customFormLocal.getStep_code() > -1;
+    }
+
+    /**
+     * LUCHE - 08/09/2020
+     * Metodo que altera status do ticket e dependendo do status finaliza ou não ctrl.
+     * Se o form ainda precisar de posição GPS, seta o status waiting_sync MAS NÃO UPDATE REQUIRED
+     * @param customer_code
+     * @param mTicket_prefix
+     * @param mTicket_code
+     * @param mTicket_seq
+     * @param mTicket_seq_tmp
+     * @param mStep_code
+     * @param custom_form_data
+     * @param status
+     * @param location_pendency - Identificador se o form esta com pendencia de GPS.
+     */
+    private void updateTicketCtrl(long customer_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code, long custom_form_data, String status, int location_pendency) {
+        TK_Ticket_Step tkTicketStep = getTicketStep(mTicket_prefix, mTicket_code, mStep_code);
+        //
+        if(tkTicketStep != null && tkTicketStep.getCustomer_code() > 0){
+            if(tkTicketStep.getCtrl() != null){
+                int ctrlIdx = getTicketStepCtrlIdx(customer_code, mTicket_prefix, mTicket_code, mTicket_seq_tmp, mStep_code, tkTicketStep);
+                //
+                if(ctrlIdx > -1){
+                    TK_Ticket_Ctrl tkTicketCtrl = tkTicketStep.getCtrl().get(ctrlIdx);
+                    switch (status){
+                        case ConstantBaseApp.SYS_STATUS_PROCESS:
+                            setStartInfoIntoCtrl(tkTicketCtrl);
+                            setCheckInIntoStepWhenOneTouchStep(tkTicketStep,tkTicketCtrl);
+                            tkTicketCtrl.getForm().setCustom_form_data_tmp((int) custom_form_data);
+                            break;
+                        case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
+                            setCloseInfoIntoCtrl(tkTicketCtrl);
+                            checkCloseStepForWaitingSync(tkTicketStep,tkTicketCtrl);
+                            //
+                            /*
+                             * location_pendency
+                             *  0: Sem pendencia de GPS, finaliza e seta update required
+                             *  1: Com pendencia de GPS, finaliza e deixa serviço de GPS setar update_required
+                             */
+                            if(location_pendency == 0) {
+                                tkTicketCtrl.setUpdate_required(1);
+                                tkTicketStep.setUpdate_required(1);
+                            }
+                            break;
+                    }
+                    tkTicketStep.getCtrl().set(ctrlIdx,tkTicketCtrl);
+                    //
+                    ticketStepDao.addUpdate(tkTicketStep);
+                    //Se finalizou o ctrl, seta sync required tb no ticket.
+                    if(tkTicketStep.getUpdate_required() == 1){
+                        ticketStepDao.addUpdate(
+                            new Sql_WS_TK_Ticket_Save_008(
+                                tkTicketStep.getCustomer_code(),
+                                tkTicketStep.getTicket_prefix(),
+                                tkTicketStep.getTicket_code(),
+                                1
+                            ).toSqlQuery()
+                        );
+                    }
+                } else{
+                    mView.showMsg(
+                        hmAux_Trans.get("alert_ticket_step_or_ctrl_not_found_ttl"),
+                        hmAux_Trans.get("alert_ticket_step_or_ctrl_not_found_msg"),
+                        Act011_Main.SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR
+                    );
+                }
+            } else{
+                mView.showMsg(
+                    hmAux_Trans.get("alert_ticket_step_or_ctrl_not_found_ttl"),
+                    hmAux_Trans.get("alert_ticket_step_or_ctrl_not_found_msg"),
+                    Act011_Main.SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR
+                );
+            }
+        } else {
+            mView.showMsg(
+                hmAux_Trans.get("alert_ticket_step_or_ctrl_not_found_ttl"),
+                hmAux_Trans.get("alert_ticket_step_or_ctrl_not_found_msg"),
+                Act011_Main.SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR
+            );
+        }
+        //TODO TRATAR CASOS NAO ENCONTRE AS INFOS.
+    }
+
+    private int getStepIdx(TK_Ticket_Ctrl mTicketCtrl, TK_Ticket tkTicket) {
+        for (int i = 0; i < tkTicket.getStep().size(); i++) {
+            if (
+                    tkTicket.getStep().get(i).getTicket_prefix() == mTicketCtrl.getTicket_prefix()
+                            && tkTicket.getStep().get(i).getTicket_code() == mTicketCtrl.getTicket_code()
+                            && tkTicket.getStep().get(i).getStep_code() == mTicketCtrl.getStep_code()
+            ) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int getTicketStepCtrlIdx(long customer_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq_tmp, Integer mStep_code, TK_Ticket_Step tkTicketStep) {
+        int ctrlIdx = -1;
+        for (int i = 0; i < tkTicketStep.getCtrl().size(); i++) {
+            if(
+                tkTicketStep.getCtrl().get(i).getCustomer_code() == customer_code
+                && tkTicketStep.getCtrl().get(i).getTicket_prefix() == mTicket_prefix
+                && tkTicketStep.getCtrl().get(i).getTicket_code() == mTicket_code
+                && tkTicketStep.getCtrl().get(i).getTicket_seq_tmp() == mTicket_seq_tmp
+                && tkTicketStep.getCtrl().get(i).getStep_code() == mStep_code
+            ){
+                ctrlIdx = i;
+            }
+        }
+        return ctrlIdx;
+    }
+
+    private TK_Ticket_Step getTicketStep(Integer mTicket_prefix, Integer mTicket_code, Integer mStep_code) {
+        return ticketStepDao.getByString(
+            new TK_Ticket_Step_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                mTicket_prefix,
+                mTicket_code,
+                mStep_code
+            ).toSqlQuery()
+        );
+    }
+
+    private void setStartInfoIntoCtrl(TK_Ticket_Ctrl ticketCtrl) {
+        if( ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(ticketCtrl.getCtrl_status())
+            && ticketCtrl.getCtrl_start_date() == null
+        ){
+            ticketCtrl.setCtrl_start_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            ticketCtrl.setCtrl_start_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+            ticketCtrl.setCtrl_start_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
+            ticketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_PROCESS);
+            ticketCtrl.copyCtrlStatusForInnerProcess();
+        }
+    }
+
+    /**
+     * LUCHE - 09/11/2020
+     * Modificado metodo adicionando a chamada do metdo forceNoneObjToWaitingSync que fecha o processo none planejado caso exista
+     * @param ticketStep
+     * @param mTicketCtrl
+     */
+    private void setCheckInIntoStepWhenOneTouchStep(TK_Ticket_Step ticketStep, TK_Ticket_Ctrl mTicketCtrl) {
+        if(ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH.equals(ticketStep.getExec_type())
+            && !ToolBox_Inf.hasConsistentValueString(ticketStep.getStep_start_date())
+        ) {
+            ticketStep.setStep_start_date(mTicketCtrl.getCtrl_start_date());
+            ticketStep.setStep_start_user(mTicketCtrl.getCtrl_start_user());
+            ticketStep.setStep_start_user_nick(mTicketCtrl.getCtrl_start_user_name());
+            //LUCHE - 09/11/2020
+            //Com a nova definição, se o step é check in manual e seu obj planejado é none, esse deve ser
+            //finalizado junto com o checkin...
+            ToolBox_Inf.forceNoneObjToWaitingSync(ticketStep, true);
+        }
+    }
+
+    private void setCloseInfoIntoCtrl(TK_Ticket_Ctrl tkTicketCtrl) {
+        if( ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(tkTicketCtrl.getCtrl_status())
+            && tkTicketCtrl.getCtrl_end_date() == null
+        ){
+            tkTicketCtrl.setCtrl_end_date(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+            tkTicketCtrl.setCtrl_end_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+            tkTicketCtrl.setCtrl_end_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
+            tkTicketCtrl.setCtrl_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+            tkTicketCtrl.copyCtrlStatusForInnerProcess();
+        }
+    }
+
+    private void checkCloseStepForWaitingSync(TK_Ticket_Step ticketStep, TK_Ticket_Ctrl mTicketCtrl) {
+        int stepCtrlsFinalizedCounter = 0;
+        for (TK_Ticket_Ctrl ticketCtrl : ticketStep.getCtrl()) {
+            if(isDoneOrWaitingSync(ticketCtrl.getCtrl_status())){
+                stepCtrlsFinalizedCounter++;
+            }
+        }
+        //Se todos os ctrl estão finalizado e o step é one_touch ou for start_end com move_next_step,
+        //faz checkout
+        if( stepCtrlsFinalizedCounter == ticketStep.getCtrl().size()
+            && ticketStep.getMove_next_step() == 1
+        ){
+            ticketStep.setStep_status(ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
+            ticketStep.setStep_end_date(mTicketCtrl.getCtrl_end_date());
+            ticketStep.setStep_end_user(mTicketCtrl.getCtrl_end_user());
+            ticketStep.setStep_end_user_nick(mTicketCtrl.getCtrl_end_user_name());
+        }
+    }
+
+    private boolean isDoneOrWaitingSync(String ctrl_status) {
+        return ConstantBaseApp.SYS_STATUS_DONE.equals(ctrl_status)
+            || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(ctrl_status) ;
+    }
+
+    /**
+     * LUCHE - 02/09/2020
+     * <p></p>
+     * Metodo que reseta referencia do custom_form_data no ticket_form
+     * @param formLocal
+     */
+    @Override
+    public void resetTicketCtrlFormDataIfNeeds(GE_Custom_Form_Local formLocal) {
+        if (isFormCreateByTicket(formLocal)) {
+            if (isaOffHandTicketForm(formLocal)) {
+                deleteCtrlFormData(formLocal);
+            } else {
+                resetCtrlFormData(formLocal);
+            }
+        }
+    }
+
+    private boolean isaOffHandTicketForm(GE_Custom_Form_Local formLocal) {
+        TK_Ticket_CtrlDao ticketCtrlDao = getTicketCtrlDao();
+        TK_Ticket_Ctrl tk_ctrl = ticketCtrlDao.getByString(
+                new TK_Ticket_Ctrl_Sql_004(
+                        formLocal.getCustomer_code(),
+                        formLocal.getTicket_prefix(),
+                        formLocal.getTicket_code(),
+                        formLocal.getTicket_seq_tmp()
+                ).toSqlQuery()
+        );
+
+        return tk_ctrl.getObj_planned() == 0;
+    }
+
+    private void deleteCtrlFormData(GE_Custom_Form_Local customFormLocal) {
+
+        TK_Ticket_FormDao ticketFormDao = getTicketFormDao();
+        ticketFormDao.remove(
+                new TK_Ticket_Form_Sql_005(
+                        customFormLocal.getCustomer_code(),
+                        customFormLocal.getTicket_prefix(),
+                        customFormLocal.getTicket_code(),
+                        customFormLocal.getTicket_seq_tmp(),
+                        customFormLocal.getStep_code()
+                ).toSqlQuery()
+        );
+
+        TK_Ticket_CtrlDao ticketCtrlDao = getTicketCtrlDao();
+        ticketCtrlDao.remove(
+                new TK_Ticket_Ctrl_Sql_005(
+                        customFormLocal.getCustomer_code(),
+                        customFormLocal.getTicket_prefix(),
+                        customFormLocal.getTicket_code(),
+                        customFormLocal.getTicket_seq_tmp(),
+                        customFormLocal.getStep_code()
+                ).toSqlQuery()
+        );
+
+    }
+
+    private void resetCtrlFormData(GE_Custom_Form_Local formLocal) {
+        TK_Ticket_FormDao ticketFormDao = new TK_Ticket_FormDao(
+            context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
+        );
+        //
+        TK_Ticket_Form ticketForm = ticketFormDao.getByString(
+            new TK_Ticket_Form_Sql_002(
+                formLocal.getCustomer_code(),
+                formLocal.getTicket_prefix(),
+                formLocal.getTicket_code(),
+                formLocal.getTicket_seq_tmp(),
+                formLocal.getStep_code()
+            ).toSqlQuery()
+        );
+        //
+        if(ticketForm != null){
+            ticketForm.setCustom_form_data_tmp(null);
+            DaoObjReturn daoObjReturn = ticketFormDao.addUpdate(ticketForm);
+            //Tratar diferente ???, não tem rollback sem transaction
+            if(daoObjReturn.hasError()){
+                ToolBox_Inf.registerException(
+                    getClass().getName(),
+                    new Exception(daoObjReturn.getErrorMsg())
+                );
+            }
+        }
+    }
+
+    /**
+     * LUCHE - 08/09/2020
+     * <p></p>
+     * Metodo que verifica se form esta no status waiting_sync.
+     * @param customer_code
+     * @param custom_form_type
+     * @param custom_form_code
+     * @param custom_form_version
+     * @param custom_form_data
+     * @return
+     */
+    public boolean setForceSentByForm(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data){
+        GE_Custom_Form_Data formData =
+            getGeCustomFormDataByPk(customer_code, custom_form_type, custom_form_code, custom_form_version, custom_form_data);
+        //
+        return
+            formData != null
+            && ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(formData.getCustom_form_status())
+            && formData.getLocation_pendency() == 0;
+    }
+
+    /**
+     * LUCHE - 08/09/2020
+     * <p></p>
+     * Metodo que seleciona o custom_form_data atual com o status atualizado.
+     * @param customer_code
+     * @param custom_form_type
+     * @param custom_form_code
+     * @param custom_form_version
+     * @param custom_form_data
+     * @return
+     */
+    private GE_Custom_Form_Data getGeCustomFormDataByPk(long customer_code, int custom_form_type, int custom_form_code, int custom_form_version, int custom_form_data) {
+        return custom_form_dataDao.getByString(
+            new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
+                String.valueOf(customer_code),
+                String.valueOf(custom_form_type),
+                String.valueOf(custom_form_code),
+                String.valueOf(custom_form_version),
+                String.valueOf(custom_form_data)
+            ).toSqlQuery()
+        );
     }
 
     private DaoObjReturn updateScheduleInfos(GE_Custom_Form_Local customFormLocal, String serial_id) {
@@ -444,6 +893,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         if(customFormData != null && !rollback) {
             customFormData.setCustom_form_status(ConstantBaseApp.SYS_STATUS_CANCELLED);
             custom_form_dataDao.addUpdate(customFormData);
+            //LUCHE - 18/01/2021 - Se cancelamento de form via  FCM, decrementa contador de execuções
+            //do app.
+            checkAppExecutionDecrementUpdateNeeds(customFormData.getSo_prefix(),customFormData.getSo_code(),customFormData);
         }
         //Segura na mão de deus e vai
         if(rollback){
@@ -492,9 +944,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
      */
     private GE_Custom_Form_Data loadAnswer(GE_Custom_Form_Local formLocal,Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, String serial_id){
         GE_Custom_Form_Data form_data = custom_form_dataDao
-
             .getByString(
-
                 new GE_Custom_Form_Data_MULTI_UNIQUE_SqlSpecification(
                     String.valueOf(formLocal.getCustomer_code()),
                     String.valueOf(formLocal.getCustom_form_type()),
@@ -502,12 +952,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                     String.valueOf(formLocal.getCustom_form_version()),
                     String.valueOf(formLocal.getCustom_form_data())
                 ).toSqlQuery().toLowerCase()
-
             );
 
         if (form_data != null) {
             form_data.setDataFields(
-
                 custom_form_data_fieldDao.query(
                     new GE_Custom_Form_Data_Field_MULTI_SqlSpecification(
                         String.valueOf(formLocal.getCustomer_code()),
@@ -536,7 +984,13 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setSchedule_prefix(formLocal.getSchedule_prefix());
             form_data.setSchedule_code(formLocal.getSchedule_code());
             form_data.setSchedule_exec(formLocal.getSchedule_exec());
-
+            //LUCHE - 24/08/2020
+            form_data.setTicket_prefix(formLocal.getTicket_prefix());
+            form_data.setTicket_code(formLocal.getTicket_code());
+            form_data.setTicket_seq(formLocal.getTicket_seq());
+            form_data.setTicket_seq_tmp(formLocal.getTicket_seq_tmp());
+            form_data.setStep_code(formLocal.getStep_code());
+            //
             if (serial_id == null || serial_id.isEmpty()) {
                 form_data.setSite_code(ToolBox_Con.getPreference_Site_Code(context));
                 form_data.setZone_code(null);
@@ -567,10 +1021,61 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setToken("");
             form_data.setSo_prefix(so_prefix);
             form_data.setSo_code(so_code);
+            //
+            if(isFreeExecutionControlSituation(so_prefix, so_code, form_data)){
+                updateAppExecutionCounter(form_data,true);
+            }
         }
-
+        //
         return form_data;
+    }
 
+    /**
+     * LUCHE - 18/01/2021
+     * Metodo que verifica se deve decrementar o contador de exe do app no site.
+     * @param mSo_prefix
+     * @param mSo_code
+     * @param formData
+     */
+    @Override
+    public void checkAppExecutionDecrementUpdateNeeds(Integer mSo_prefix, Integer mSo_code, GE_Custom_Form_Data formData) {
+        if(isFreeExecutionControlSituation(mSo_prefix, mSo_code, formData)){
+            updateAppExecutionCounter(formData,false);
+        }
+    }
+
+    /**
+     * LUCHE - 18/01/2021
+     * Metodo que validade se deve contralar a execução no site.
+     * @param so_prefix
+     * @param so_code
+     * @param form_data
+     * @return
+     */
+    private boolean isFreeExecutionControlSituation(Integer so_prefix, Integer so_code, GE_Custom_Form_Data form_data) {
+        return ToolBox_Inf.isConcurrentBySiteLicense(context)
+                && ToolBox_Inf.isSiteLicenseDisabled(context,form_data.getSite_code())
+                && !isTicketProcess
+                && so_prefix == null && so_code == null;
+    }
+
+    /**
+     * LUCHE - 18/01/2021
+     * Metodo que atualiza o contador de exec do app incrementando ou decrementado.
+     * @param form_data
+     * @param increment
+     */
+    private void updateAppExecutionCounter(GE_Custom_Form_Data form_data, boolean increment) {
+        MD_Site mdSite = ToolBox_Inf.getSiteObjInfo(context, form_data.getSite_code());
+        if (mdSite != null) {
+            int app_executions_count = mdSite.getApp_executions_count();
+            if(increment){
+                mdSite.setApp_executions_count(app_executions_count + 1);
+            }else{
+                mdSite.setApp_executions_count(app_executions_count - 1);
+            }
+            siteDao.addUpdate(mdSite);
+        }
     }
 
     /*private GE_Custom_Form_Data loadAnswer(long customer_code, long product_code, long custom_form_type, long custom_form_code, long custom_form_version, long custom_form_data, Long custom_form_data_serv, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, String serial_id) {
@@ -693,8 +1198,27 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ConstantBaseApp.SYS_STATUS_WAITING_SYNC
             );
         }
-        //
+        /**
+         * LUCHE - 08/09/2020
+         * Modificado ordem da chamadas , pois será necessario levar em consideração form com pendencia
+         * de GPS no set do update_required do ticket, sendo assim, o metodo checkGpsFlow deve
+         * ser SEMPRE chamado antes do update do ticket.
+         */
         checkGpsFlow(formData, require_location);
+        //
+        if(isTicketProcess){
+            updateTicketCtrl(
+                formData.getCustomer_code(),
+                formData.getTicket_prefix(),
+                formData.getTicket_code(),
+                formData.getTicket_seq(),
+                formData.getTicket_seq_tmp(),
+                formData.getStep_code(),
+                formData.getCustom_form_data(),
+                ConstantBaseApp.SYS_STATUS_WAITING_SYNC,
+                formData.getLocation_pendency()
+            );
+        }
         formData.setCustom_form_status(Constant.SYS_STATUS_WAITING_SYNC);
         formData.setDate_end(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
 
@@ -711,13 +1235,34 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //LUCHE - 26/06/2020 - Substituido IntentService pel worker de upload de imagem
         ToolBox_Inf.scheduleUploadImgWork(context);
         /*Fim da fila de upload */
-        //
+        //LUCHE - 08/09/2020
+        //Se form for do tipo ticket e fluxo do ticket, seta msgType que finaliza SEM CHAMAR O WS, pois
+        //o Ws será chamado encadeadamento na Act070
+        int msgType =
+                isaTicketFlowForm()
+                ? Act011_Main.SHOW_MSG_TYPE_TICKET_FORM_FINALIZED
+                : 2
+            ;
         mView.showMsg(
                 hmAux_Trans.get("alert_finalize_title"),//"Finalizando Registro",
                 hmAux_Trans.get("alert_finalize_msg"),//"Registro Finalizado!!!",
-                2);
+            msgType
+        );
+    }
 
+    private boolean isFromTicketActs() {
+        return ConstantBaseApp.ACT070.equals(mView.getRequestingAct())
+                || ConstantBaseApp.ACT068.equals(mView.getRequestingAct())
+                || ConstantBaseApp.ACT012.equals(mView.getRequestingAct())
+                || ConstantBaseApp.ACT035.equals(mView.getRequestingAct())
+                || ConstantBaseApp.ACT017.equals(mView.getRequestingAct())
+                || ConstantBaseApp.ACT073.equals(mView.getRequestingAct())
+                || ConstantBaseApp.ACT074.equals(mView.getRequestingAct());
+    }
 
+    @Override
+    public boolean isaTicketFlowForm() {
+        return isTicketProcess && isFromTicketActs();
     }
 
     private void checkGpsFlow(GE_Custom_Form_Data formData, int require_location){
@@ -836,7 +1381,11 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     @Override
     public void onBackPressedClicked() {
-        mView.callAct005(context);
+        if (isaTicketFlowForm()) {
+            mView.callAct070();
+        }else{
+            mView.callAct005(context);
+        }
     }
 
     /**
@@ -1010,11 +1559,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ArrayList<HMAux> auxResults = new ArrayList<>();
                 for (TSave_Rec.Error_Process error_process : errorProcesses) {
                     //
-                    HMAux mHmAux = new HMAux();
-                    mHmAux.put("label", ToolBox_Inf.formatScheduleErroLabel(error_process));
-                    mHmAux.put("type", ConstantBaseApp.SYS_STATUS_SCHEDULE);
-                    mHmAux.put("status", error_process.getError());
-                    mHmAux.put("final_status", ToolBox_Inf.formatFormErrorDesc(error_process));
+                    HMAux mHmAux = ToolBox_Inf.getWsSaveErrorProcessAuxResult(error_process);
                     //
                     auxResults.add(mHmAux);
                 }
@@ -1025,5 +1570,163 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 mView.afterSaveFlow();
             }
         }
+    }
+
+    /**
+     * BARRIONUEVO - Cria ctrl e Tk_Form para formulario espontaneo.
+     * @param customFormLocal
+     * @param mTicketPrefix
+     * @param mTicketCode
+     * @param mStepCode
+     */
+    public void createTicketCtrlObj(GE_Custom_Form_Local customFormLocal, int mTicketPrefix, int mTicketCode, int mStepCode) {
+        TK_Ticket tkTicket = getTicketbyPk(mTicketPrefix, mTicketCode);
+        TK_Ticket_Step stepInfo = getStepInfo(mTicketPrefix, mTicketCode, mStepCode);
+        TK_Ticket_Ctrl ticketCtrl = null;
+        //
+        MD_Product_Serial serialInfo = md_product_serialDao.getByString(
+                new MD_Product_Serial_Sql_002(
+                        customFormLocal.getCustomer_code(),
+                        customFormLocal.getCustom_product_code(),
+                        customFormLocal.getSerial_id()
+                ).toSqlQuery()
+        );
+        //
+        if (tkTicket != null && stepInfo != null) {
+            try { ticketCtrl = new TK_Ticket_Ctrl(
+                        0,
+                        mTicketSeqTmp,
+                        ConstantBaseApp.TK_TICKET_CRTL_TYPE_FORM,
+                        customFormLocal.getCustom_product_code(),
+                        customFormLocal.getCustom_product_id(),
+                        customFormLocal.getCustom_product_desc(),
+                        (int) serialInfo.getSerial_code(),
+                        serialInfo.getSerial_id(),
+                        ConstantBaseApp.SYS_STATUS_PROCESS,
+                        stepInfo.getStep_order(),
+                        0
+                );
+                //Seta PK baseado no Step recebido
+                ticketCtrl.setPK(stepInfo);
+                //
+                ticketCtrl.setCtrl_start_date(
+                        ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
+                );
+                ticketCtrl.setCtrl_start_user(ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context)));
+                ticketCtrl.setCtrl_start_user_name(ToolBox_Con.getPreference_User_Code_Nick(context));
+
+                TK_Ticket_Form tk_ticket_form = new TK_Ticket_Form();
+                tk_ticket_form.setPK(ticketCtrl);
+                tk_ticket_form.setCustom_form_type(customFormLocal.getCustom_form_type());
+                tk_ticket_form.setCustom_form_type_desc(customFormLocal.getCustom_form_type_desc());
+                tk_ticket_form.setCustom_form_code(customFormLocal.getCustom_form_code());
+                tk_ticket_form.setCustom_form_version(customFormLocal.getCustom_form_version());
+                tk_ticket_form.setCustom_form_desc(customFormLocal.getCustom_form_desc());
+                tk_ticket_form.setCustom_form_data((int) customFormLocal.getCustom_form_data());
+                ticketCtrl.setForm(tk_ticket_form);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        stepInfo.getCtrl().add(ticketCtrl);
+        int stepIdx = getStepIdx(ticketCtrl, tkTicket);
+        tkTicket.getStep().set(stepIdx, stepInfo);
+        TK_TicketDao ticketDao = getTicketDao();
+        ticketDao.addUpdate(tkTicket);
+    }
+
+    /**
+     * BARRIONUEVO - Gera seq_tmp para form espontaneo.
+     * @param context
+     * @param mTicket_prefix
+     * @param mTicket_code
+     * @param mStep_code
+     * @return
+     */
+    @Override
+    public Integer getSeqTmpForFormOffHand(Context context, Integer mTicket_prefix, Integer mTicket_code, Integer mStep_code) {
+        TK_Ticket_CtrlDao ticketCtrlDao = getTicketCtrlDao();
+        try {
+            mTicketSeqTmp = ticketCtrlDao.getNextCtrlTicketSeqTmp(
+                    ToolBox_Con.getPreference_Customer_Code(context), mTicket_prefix,mTicket_code, mStep_code, null
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToolBox_Inf.registerException(e);
+            mTicketSeqTmp = -1;
+            mView.showMsg(
+                    hmAux_Trans.get("alert_error_on_create_ctrl_ttl"),
+                    hmAux_Trans.get("alert_error_on_create_ctrl_msg"),
+                    Act011_Main.SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR
+            );
+
+        }
+        return mTicketSeqTmp;
+    }
+
+    private TK_Ticket_CtrlDao getTicketCtrlDao() {
+        return new TK_Ticket_CtrlDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+    }
+
+    private TK_Ticket_Step getStepInfo(int mTicketPrefix, int mTicketCode, int mStepCode) {
+        TK_Ticket_Step ticketStep =
+                ticketStepDao.getByString(
+                        new TK_Ticket_Step_Sql_001(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                mTicketPrefix,
+                                mTicketCode,
+                                mStepCode
+                        ).toSqlQuery()
+                );
+        //
+        if (ticketStep != null) {
+            ticketStep.setCtrl(new ArrayList<TK_Ticket_Ctrl>());
+        }
+        return ticketStep;
+    }
+
+    /**
+     * LUCHE - 16/11/2020
+     * Metodo que retorna formata da a informação do ticket a ser exibido no dialog.
+     * @param ticket_prefix
+     * @param ticket_code
+     * @param step_code
+     * @return
+     */
+    @Override
+    public String getDialogTicketInfo(Integer ticket_prefix, Integer ticket_code, Integer step_code) {
+        if(ticket_prefix != null && ticket_code != null && step_code != null) {
+            TK_Ticket tkTicket = getTicketbyPk(ticket_prefix, ticket_code);
+            TK_Ticket_Step stepInfo = getStepInfo(ticket_prefix, ticket_code, step_code);
+            //
+            if (tkTicket != null && stepInfo != null) {
+                return tkTicket.getTicket_id() + " - " + stepInfo.getStep_desc();
+            }
+        }
+        //Não deveria acontecer, mas ....
+        return ticket_prefix + "." + ticket_code;
+    }
+
+    private TK_Ticket getTicketbyPk(int ticket_prefix, int ticket_code) {
+        TK_TicketDao ticketDao = getTicketDao();
+        return ticketDao.getByString(new TK_Ticket_Sql_001(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                ticket_prefix,
+                ticket_code
+        ).toSqlQuery());
+    }
+
+
+    private TK_TicketDao getTicketDao() {
+        return new TK_TicketDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
     }
 }

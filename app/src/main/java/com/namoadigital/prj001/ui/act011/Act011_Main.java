@@ -56,6 +56,7 @@ import com.namoa_digital.namoa_library.view.NamoaPermissionRequest;
 import com.namoa_digital.namoa_library.view.SignaTure_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
@@ -70,7 +71,11 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.SM_SODao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -79,6 +84,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
@@ -94,6 +100,7 @@ import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act015.Act015_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
+import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -128,7 +135,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR = 5;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR = 6;
-
+    public static final int SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR = 7;
+    public static final int SHOW_MSG_TYPE_TICKET_FORM_FINALIZED = 8;
 
     private Act011_Main_Presenter mPresenter;
 
@@ -214,6 +222,16 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private boolean canSave;
     private String filter_search;
     private int form_selected_index;
+    //
+    private Integer mTicket_prefix;
+    private Integer mTicket_code;
+    private Integer mTicket_seq;
+    private Integer mTicket_seq_tmp;
+    private Integer mStep_code;
+    private String requestingAct;
+    private boolean isOffHandForm=false;
+    private Bundle act081Bundle;
+    private String room_code;
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -253,7 +271,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         initActions();
     }
-
 
     @Override
     protected void onDestroy() {
@@ -344,6 +361,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         transList.add("dialog_info_so_prefix_lbl");
         transList.add("dialog_info_so_code_lbl");
+        transList.add("dialog_info_ticket_code_lbl");
 
         transList.add("alert_location_info_title");
         transList.add("alert_location_info_required");
@@ -395,6 +413,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         transList.add("alert_form_turn_gps_on_title");
         transList.add("alert_form_turn_gps_on_msg");
+        //
+        transList.add("alert_ticket_step_or_ctrl_not_found_ttl");
+        transList.add("alert_ticket_step_or_ctrl_not_found_msg");
+        transList.add("lbl_ticket");
+        //
+        transList.add("alert_error_on_create_ctrl_ttl");
+        transList.add("alert_error_on_create_ctrl_msg");
         //
         transList.add("alert_gps_rationale_permission_ttl");
         transList.add("alert_gps_rationale_permission_msg");
@@ -701,7 +726,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 new MD_Product_SerialDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 new MD_ProductDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
                 hmAux_Trans,
-                new MD_Schedule_ExecDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+                new MD_Schedule_ExecDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new TK_Ticket_StepDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM),
+                new MD_SiteDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
         );
 
         recoverGetIntents();
@@ -728,11 +755,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 mSo_Prefix,
                 mSo_Code,
                 mSite_Code,
-                mOperation_Code
+                mOperation_Code,
+                mTicket_prefix,
+                mTicket_code,
+                mTicket_seq,
+                mTicket_seq_tmp,
+                mStep_code
         );
-
     }
-
+    //TODO averiguar pq mudou de onResume para onStart
     @Override
     protected void onStart() {
         super.onStart();
@@ -742,6 +773,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 && !SV_LocationTracker.status) {
             getLocation();
         }
+    }
+
+    @Override
+    public String getRequestingAct() {
+        return requestingAct;
     }
 
     private void showConfirmDeleteDialog() {
@@ -896,7 +932,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
      * - O N-Form não pode ter sido gerado pela O.S
      * - O N-Form não pode ter sido gerado pelo Agendamento
      * - 0 Serial deve ser informdo
-     *
+     * LUCHE - 28/08/2020
+     *  Modificado metodo, adicionando condição de form NÃO TER SIDO ORIDINADO por um ticket
      * @return
      */
     @Override
@@ -907,10 +944,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             && !ToolBox_Inf.isScheduleForm(formLocal)
             && serial_id != null
             && !serial_id.isEmpty()
+            //LUCHE - 28/08/2020
+            && !mPresenter.isFormCreateByTicket(formLocal)
         ){
             return true;
         }
-
         return false;
     }
 
@@ -1078,7 +1116,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 ).toSqlQuery()
         );
         //
-        callAct005(context);
+        mPresenter.resetTicketCtrlFormDataIfNeeds(formLocal);
+        //
+        mPresenter.checkAppExecutionDecrementUpdateNeeds(mSo_Prefix,mSo_Code, formData);
+        //
+        if(mPresenter.isaTicketFlowForm()){
+            callAct070();
+        }else {
+            callAct005(context);
+        }
     }
 
     private void recoverGetIntents() {
@@ -1117,14 +1163,50 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             bundle_act015.putBoolean(FILTER_CHK_IS_CANCELLED, bundle.getBoolean(FILTER_CHK_IS_CANCELLED, false));
             bundle_act015.putBoolean(FILTER_CHK_IS_IGNORED, bundle.getBoolean(FILTER_CHK_IS_IGNORED, false));
             bundle_act015.putBoolean(FILTER_CHK_HAS_NON_CONFORMITY, bundle.getBoolean(FILTER_CHK_HAS_NON_CONFORMITY, false));
+            //LUCHE - 24/08/2020 - PK Ticket
+            mTicket_prefix = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_PREFIX) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_PREFIX) : null;
+            mTicket_code = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_CODE)? bundle.getInt(TK_Ticket_CtrlDao.TICKET_CODE) : null;
+            mTicket_seq = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_SEQ) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ) : null;
+            mTicket_seq_tmp = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP) : null;
+            mStep_code = bundle.containsKey(TK_Ticket_CtrlDao.STEP_CODE) ? bundle.getInt(TK_Ticket_CtrlDao.STEP_CODE) : null;
+            requestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT005);
+            isOffHandForm = bundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
+
+            if(isOffHandForm){
+                mTicket_seq = 0;
+                mTicket_seq_tmp = mPresenter.getSeqTmpForFormOffHand(context, mTicket_prefix, mTicket_code, mStep_code);
+                act081Bundle = new Bundle();
+                act081Bundle.putString(MD_ProductDao.PRODUCT_CODE, bundle.getString(MD_ProductDao.PRODUCT_CODE, ""));
+                act081Bundle.putString(MD_ProductDao.PRODUCT_DESC, bundle.getString(MD_ProductDao.PRODUCT_DESC, ""));
+                act081Bundle.putString(MD_ProductDao.PRODUCT_ID, bundle.getString(MD_ProductDao.PRODUCT_ID, ""));
+                room_code = bundle.getString(CH_RoomDao.ROOM_CODE);
+                act081Bundle.putBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND, bundle.getBoolean(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND));
+                act081Bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket_prefix);
+                act081Bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket_code);
+
+                act081Bundle.putString(TK_TicketDao.TICKET_ID, bundle.getString(TK_TicketDao.TICKET_ID, ""));
+                act081Bundle.putInt(TK_Ticket_StepDao.STEP_CODE, mStep_code);
+                act081Bundle.putString(TK_Ticket_StepDao.STEP_DESC, bundle.getString(TK_Ticket_StepDao.STEP_DESC, ""));
+
+                act081Bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, ""));
+                act081Bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, ""));
+                act081Bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, ""));
+
+            }
         } else {
             mSo_Prefix = null;
             mSo_Code = null;
             //
             mSite_Code = null;
             mOperation_Code = null;
+            //LUCHE - 24/08/2020 - TICKET
+            mTicket_prefix = null;
+            mTicket_code = null;
+            mTicket_seq = null;
+            mTicket_seq_tmp = null;
+            mStep_code = null;
+            requestingAct = ConstantBaseApp.ACT005;
         }
-
     }
 
     /**
@@ -1416,9 +1498,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             act011_ff_options.enableScheduled(ToolBox_Inf.isScheduleForm(formLocal));
 
             if (mSo_Prefix == null || mSo_Code == null) {
-                act011_ff_options.enableTab(formData.getCustom_form_status(), 0);
+                if((formData.getTicket_prefix() != null && formData.getTicket_prefix() > 0)
+                && (formData.getTicket_code() != null && formData.getTicket_code() > 0 )){
+                    act011_ff_options.enableTab(formData.getCustom_form_status(), 0, 1);
+                }else {
+                    act011_ff_options.enableTab(formData.getCustom_form_status(), 0, 0);
+                }
             } else {
-                act011_ff_options.enableTab(formData.getCustom_form_status(), 1);
+                act011_ff_options.enableTab(formData.getCustom_form_status(), 1, 0);
             }
 
             //act011_ff_options.enableTab(formData.getCustom_form_status());
@@ -2136,24 +2223,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
-                               /* GE_FileDao geFileDao = new GE_FileDao(
-                                        context,
-                                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM
-                                );
-
-                                geFileDao.addUpdate(geFiles, false);
-
-                                activateUpload(context);*/
-
-                                // Hugo is ok
-
-//                                if (mSo_Prefix == null || mSo_Code == null) {
-//                                    callAct051(context);
-//                                } else {
-//                                    nservCall();
-//                                }
-
                                 if (ToolBox_Con.isOnline(context)) {
                                     enableProgressDialog(
                                             hmAux_Trans.get("alert_send_finish_ttl"),
@@ -2174,7 +2243,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                         0,
                         false
                 );
-
                 break;
 
             case 3:
@@ -2222,6 +2290,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 );
                 break;
             case SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR:
+            case SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR:
+                //TODO O QUE FAZER NO CASO DO TICKET
                 ToolBox.alertMSG(
                     context,
                     title,
@@ -2235,6 +2305,22 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     0
                 );
                 break;
+            case SHOW_MSG_TYPE_TICKET_FORM_FINALIZED:
+                ToolBox.alertMSG(
+                    Act011_Main.this,
+                    title,
+                    msg,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            flowControl();
+                        }
+                    },
+                    0,
+                    false
+                );
+                break;
+
         }
     }
 
@@ -2272,6 +2358,11 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         ).setTextColor(getResources().getColor(R.color.namoa_lime_green));
     }
 
+    /**
+     * LUCHE - 31/08/2020
+     * <P></P>
+     * Modificado o if else que existia por if return e adicionado tratativa para o caso da act070(ticket)
+     */
     private void flowControl() {
         //ToolBox_Inf.showNoConnectionDialog(Act011_Main.this);
         /*
@@ -2281,32 +2372,65 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             Tratativa para não alterar os dados apos a execucao do servico de envio do n-form
          */
         canSave = false;
-        if (mSo_Prefix == null || mSo_Code == null) {
-            if(finalizeNewFlow) {
-                if(mPresenter.checkNFormExists(formLocal)){
-                    callAct006(context);
-                }else{
-                    finalizeNewFlow = false;
-                    //
-                    ToolBox.alertMSG(
-                            Act011_Main.this,
-                            hmAux_Trans.get("alert_nform_expired_ttl"),
-                            hmAux_Trans.get("alert_nform_expired_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    callAct005(context);
-                                }
-                            },
-                            0
-                    );
-                }
-            }else{
-                callAct005(context);
+        //LUCHE - 31/08/2020
+        if(mPresenter.isaTicketFlowForm()){
+            callAct070();
+            return;
+        }
+        if(mSo_Prefix != null && mSo_Code != null){
+            nservCall();
+            return;
+        }
+        if (finalizeNewFlow) {
+            if (mPresenter.checkNFormExists(formLocal)) {
+                callAct006(context);
+            } else {
+                finalizeNewFlow = false;
+                //
+                ToolBox.alertMSG(
+                    Act011_Main.this,
+                    hmAux_Trans.get("alert_nform_expired_ttl"),
+                    hmAux_Trans.get("alert_nform_expired_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            callAct005(context);
+                        }
+                    },
+                    0
+                );
             }
         } else {
-            nservCall();
+            callAct005(context);
         }
+        //
+//        if (mSo_Prefix == null || mSo_Code == null) {
+//            if (finalizeNewFlow) {
+//                if (mPresenter.checkNFormExists(formLocal)) {
+//                    callAct006(context);
+//                } else {
+//                    finalizeNewFlow = false;
+//                    //
+//                    ToolBox.alertMSG(
+//                        Act011_Main.this,
+//                        hmAux_Trans.get("alert_nform_expired_ttl"),
+//                        hmAux_Trans.get("alert_nform_expired_msg"),
+//                        new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                callAct005(context);
+//                            }
+//                        },
+//                        0
+//                    );
+//                }
+//            } else {
+//                callAct005(context);
+//            }
+//        } else {
+//            nservCall();
+//        }
+
     }
 
     public void exitAlert() {
@@ -2320,15 +2444,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
-                // modificar para incluir a remossao do custom_form_local.
-                //mPresenter.saveData(formData, false);
-                if (bNew || hasAnyValueChanged()) {
-//                    mPresenter.deleteFormLocal(formLocal);
-
-                }
                 //
-                callAct005(Act011_Main.this);
+                //callAct005(Act011_Main.this);
+                mPresenter.onBackPressedClicked();
             }
         };
 
@@ -2418,10 +2536,42 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     @Override
+    public void callAct070() {
+        Intent mIntent = new Intent(context, Act070_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, mTicket_prefix != null ? mTicket_prefix : -1 );
+        bundle.putInt(TK_TicketDao.TICKET_CODE, mTicket_code != null ? mTicket_code : -1 );
+        //
+        bundle.putInt(TK_Ticket_CtrlDao.STEP_CODE, formData.getStep_code());
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, formData.getTicket_seq());
+        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, formData.getTicket_seq_tmp());
+        //
+        if(isOffHandForm){
+             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
+        }
+        bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
+        //LUCHE - 08/09/2020
+        //Se é finalização do form e esta voltando pra act070, seta flag para forçar o envio ao chegar na act
+        if(mPresenter.setForceSentByForm(formData.getCustomer_code(),formData.getCustom_form_type(),formData.getCustom_form_code(),formData.getCustom_form_version(), (int) formData.getCustom_form_data())){
+            bundle.putBoolean(Act070_Main.PARAM_FORCE_SEND_BY_FORM_EXEC,true);
+        }
+        //
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public boolean isOffHandForm() {
+        return isOffHandForm;
+    }
+
+    @Override
     public void onBackPressed() {
         //super.onBackPressed();
         //mPresenter.onBackPressedClicked();
-
         if (formData != null){
             if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
                 exitAlert();
@@ -2429,7 +2579,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 checkBackFlow();
             }
         } else {
-                callAct005(Act011_Main.this);
+           callAct005(Act011_Main.this);
         }
     }
 
@@ -2441,10 +2591,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
      *
      */
     private void checkBackFlow() {
-        if(formData.getCustom_form_status().equals(Constant.SYS_STATUS_DONE)) {
-            callAct015();
-        }else{
-            callAct005(Act011_Main.this);
+        if(mPresenter.isaTicketFlowForm()){
+            callAct070();
+        }else {
+            if (formData.getCustom_form_status().equals(Constant.SYS_STATUS_DONE)) {
+                callAct015();
+            } else {
+                callAct005(Act011_Main.this);
+            }
         }
     }
 
@@ -2616,6 +2770,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         TextView tv_so_code_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_so_code_lbl);
         TextView tv_so_code_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_so_code_desc);
         //
+        TextView tv_ticket_info_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_ticket_info_lbl);
+        TextView tv_ticket_info_desc = (TextView) view.findViewById(R.id.act_011_dialog_tv_ticket_info_desc);
+        //
         TextView tv_data_serv_lbl = (TextView) view.findViewById(R.id.act_011_dialog_tv_data_serv_lbl);
         TextView tv_data_serv_val = (TextView) view.findViewById(R.id.act_011_dialog_tv_data_serv_val);
         //
@@ -2675,6 +2832,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         tv_form_code_lbl.setText(hmAux_Trans.get("dialog_info_form_code_lbl"));
         tv_form_version_lbl.setText(hmAux_Trans.get("dialog_info_form_version_lbl"));
         tv_so_code_lbl.setText(hmAux_Trans.get("dialog_info_so_code_lbl"));
+        tv_ticket_info_lbl.setText(hmAux_Trans.get("dialog_info_ticket_code_lbl"));
         tv_product_desc.setText(product_desc);
         tv_serial_val.setText(serial_id);
         tv_form_type_desc.setText(type + " - " + type_desc);
@@ -2726,6 +2884,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             tv_so_code_lbl.setVisibility(View.GONE);
             tv_so_code_desc.setVisibility(View.GONE);
         }
+
+        if (formData != null
+            && formData.getTicket_prefix() != null
+            && formData.getTicket_code() != null
+        ) {
+            String ticketDesc = formData.getTicket_prefix() + "." + formData.getTicket_code();
+            //
+            if(formData.getStep_code() != null) {
+                ticketDesc = mPresenter.getDialogTicketInfo(formData.getTicket_prefix(), formData.getTicket_code(), formData.getStep_code());
+            }
+            tv_ticket_info_desc.setText(ticketDesc);
+        } else {
+            tv_ticket_info_desc.setText("");
+            //
+            tv_ticket_info_lbl.setVisibility(View.GONE);
+            tv_ticket_info_desc.setVisibility(View.GONE);
+        }
+
+
 
          if(ToolBox_Inf.isScheduleForm(formLocal)){
             tv_data_serv_lbl.setText(hmAux_Trans.get("dialog_info_data_serv_lbl"));
@@ -3273,7 +3450,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_schedule"));
                     hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
                     break;
-
+                case TSave_Rec.Error_Process.ERROR_TYPE_TICKET:
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_ticket"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
+                    break;
             }
             //
             gAdapterRes.add(hmAux);

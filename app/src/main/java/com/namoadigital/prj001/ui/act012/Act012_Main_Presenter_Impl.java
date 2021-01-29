@@ -266,7 +266,9 @@ public class Act012_Main_Presenter_Impl implements Act012_Main_Presenter {
                 break;
             case Act012_Main.LABEL_TRANS_TK_TICKET:
                 if (!item.get(Sql_Act012_008.PENDING_QTY).equalsIgnoreCase("0")) {
-                    mView.callAct069(context);
+                    //LUCHE - 17/08/2020 - Act de ticket pendentes agora é a act76
+                    //mView.callAct069(context);
+                    mView.callAct076();
                 } else {
                     mView.showMsg();
                 }

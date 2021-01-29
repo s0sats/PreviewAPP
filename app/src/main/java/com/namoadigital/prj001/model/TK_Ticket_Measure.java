@@ -2,7 +2,9 @@ package com.namoadigital.prj001.model;
 
 import com.google.gson.annotations.Expose;
 
-public class TK_Ticket_Measure {
+import java.io.Serializable;
+
+public class TK_Ticket_Measure implements Serializable {
     @Expose
     private long customer_code;//pk
     @Expose
@@ -11,6 +13,8 @@ public class TK_Ticket_Measure {
     private int ticket_code;//pk
     @Expose
     private int ticket_seq;//pk
+    @Expose
+    private int step_code;//pk
     private int measure_tp_code;
     private String measure_tp_id;
     private String measure_tp_desc;
@@ -24,6 +28,7 @@ public class TK_Ticket_Measure {
         this.ticket_prefix = -1;
         this.ticket_code = -1;
         this.ticket_seq = -1;
+        this.step_code = -1;
     }
 
     public void setPK(TK_Ticket_Ctrl tk_ticket_ctrl) {
@@ -31,6 +36,7 @@ public class TK_Ticket_Measure {
         this.ticket_prefix = tk_ticket_ctrl.getTicket_prefix();
         this.ticket_code = tk_ticket_ctrl.getTicket_code();
         this.ticket_seq = tk_ticket_ctrl.getTicket_seq();
+        this.step_code = tk_ticket_ctrl.getStep_code();
     }
 
     public long getCustomer_code() {
@@ -63,6 +69,14 @@ public class TK_Ticket_Measure {
 
     public void setTicket_seq(int ticket_seq) {
         this.ticket_seq = ticket_seq;
+    }
+
+    public int getStep_code() {
+        return step_code;
+    }
+
+    public void setStep_code(int step_code) {
+        this.step_code = step_code;
     }
 
     public int getMeasure_tp_code() {

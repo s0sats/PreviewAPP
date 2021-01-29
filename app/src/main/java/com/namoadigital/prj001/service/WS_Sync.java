@@ -134,6 +134,7 @@ import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_010;
 import com.namoadigital.prj001.sql.MD_Product_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_004;
 import com.namoadigital.prj001.sql.MD_Segment_Sql_Truncate;
+import com.namoadigital.prj001.sql.MD_Site_Sql_004;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_Truncate;
@@ -260,7 +261,16 @@ public class WS_Sync extends IntentService {
             //Se é chamada da Act008, inclui o itenm na lista
             //para receber os forms do produto.
             if (product_code != -1L) {
-                CHECKLIST.add(product_code);
+                /*
+                    BARRIONUEVO - 25-08-2020
+                    PROJETO TICKET
+                    Product_code é setado como zerado para dar um bypass no product_code -1 aproveitando
+                    o processo de sincronismo de produtos da tabela sync_checklist.
+                    a tratativa a baixo evita a inclusão do produto igual a 0.
+                 */
+                if(product_code != 0L) {
+                    CHECKLIST.add(product_code);
+                }
             }
             //Se não existe produtos a serem enviados,
             //Nem adiciona tag na chamada do WS
@@ -320,6 +330,14 @@ public class WS_Sync extends IntentService {
         env.setData_package(dataPackage);
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
         env.setStatus_jump(jump_validation);
+        env.setCurrent_time(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        env.setValid_time(
+            ToolBox_Con.getBooleanPreferencesByKey(
+                getApplicationContext(),
+                ConstantBaseApp.DATETIME_IS_VALID,
+                false
+            ) ? 1 : 0
+        );
 
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.generic_receiving_data_msg), "", "0");
         //LUCHE - 07/06/2019
@@ -521,7 +539,7 @@ public class WS_Sync extends IntentService {
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
-            siteDao.remove(new MD_Site_Sql_Truncate().toSqlQuery());
+
             productDao.remove(new MD_Product_Sql_Truncate().toSqlQuery());
             productGroupDao.remove(new MD_Product_Group_Sql_Truncate().toSqlQuery());
             productGroupProductDao.remove(new MD_Product_Group_Product_Sql_Truncate().toSqlQuery());
@@ -585,7 +603,18 @@ public class WS_Sync extends IntentService {
             // Processamento Site
             //
 
-
+            /**
+             * BARRIONUEVO - 27-01-2021
+             * Truncate recolocado, sera criado uma lista de back para a conciliacao.
+             *
+             */
+            List<MD_Site> backupSites = siteDao.query(
+                    new MD_Site_Sql_004(
+                            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+                    ).toSqlQuery()
+            );
+            //
+            siteDao.remove(new MD_Site_Sql_Truncate().toSqlQuery());
             File[] files_site = ToolBox_Inf.getListOfFiles_v2("md_site-");
 
             for (File _file : files_site) {
@@ -614,8 +643,22 @@ public class WS_Sync extends IntentService {
                         }
                     }
                 }
-
+                //BARRIONUEVO 15-01-2020
+                //Conciliação de dados do site. Projeto de licenças por site.
+                for (MD_Site site : sites) {
+                    //
+                    if(ToolBox_Inf.isConcurrentBySiteLicense(getApplicationContext())) {
+                        for(MD_Site backup: backupSites){
+                            if(backup.getSite_code().equals(site.getSite_code())){
+                                site.setApp_executions_count(backup.getApp_executions_count());
+                                break;
+                            }
+                        }
+                    }
+                }
+                //
                 siteDao.addUpdate(sites, false);
+                //
             }
 
             //
@@ -1324,7 +1367,7 @@ public class WS_Sync extends IntentService {
             //
 
             //Se existe product_code, seta controle para false, se não true.
-            productExist = product_code == -1L;
+            productExist = product_code == -1L || product_code == 0;
             File[] files_cf_product = ToolBox_Inf.getListOfFiles_v2("ge_custom_form_product-");
 
             for (File _file : files_cf_product) {
@@ -1599,9 +1642,39 @@ public class WS_Sync extends IntentService {
         } else if (dataPackageType.contains(DataPackage.DATA_PACKAGE_SO) && !zoneExist) {
             ToolBox.sendBCStatus(getApplicationContext(), "CUSTOM_ERROR", hmAux_Trans.get("msg_lost_access_to_zone"), rec.getLink_url(), "0");
         } else {
+            /**
+             * LUCHE - 17/11/2020
+             * Adicionado tratativa caso o usuario esteja em um horario diferente do atual, com uma pequena
+             * tolerancia, que esta definida no servidor.
+             * Aqui no sincronismo caso data seja invalida, NÃO abortar o processamento,
+             * seta preferencia pra false.
+             * Caso seja valida, atualiza as preferencias.
+             */
+            if(isInvalidCurrentTime(rec.getValid_time())){
+                ToolBox_Con.setBooleanPreference(getApplicationContext(),ConstantBaseApp.DATETIME_IS_VALID,false);
+                //
+                if (dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)){
+                    ToolBox.sendBCStatus(
+                        getApplicationContext(),
+                        Constant.PD_TYPE_ERROR_1,
+                        getString(R.string.msg_login_invalid_current_time),
+                        "",
+                        "0");
+                    //
+                    return;
+                }
+            }else{
+                ToolBox_Con.setBooleanPreference(getApplicationContext(),ConstantBaseApp.DATETIME_IS_VALID,true);
+                ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_TOLERANCE,rec.getTolerance_time());
+                ToolBox_Con.setLongPreference(getApplicationContext(),ConstantBaseApp.DATETIME_LAST_VALID_TIME,ToolBox_Inf.dateToMilliseconds(env.getCurrent_time()));
+            }
             ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", "Ending Processing...", "", "0");
         }
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
+    }
+
+    private boolean isInvalidCurrentTime(int valid_time) {
+        return valid_time != 1;
     }
 
     private void loadTranslation() {

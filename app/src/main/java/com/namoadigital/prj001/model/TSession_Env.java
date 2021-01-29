@@ -19,6 +19,8 @@ public class TSession_Env extends Main_Header_Env {
     private String customer_code;
     private int translate_code;
     private String gcm_id = "";
+    private Integer site_code;
+    private Integer user_level_code;
 
     public String getEmail_p() {
         return email_p;
@@ -114,5 +116,21 @@ public class TSession_Env extends Main_Header_Env {
 
     public void setGcm_id(String gcm_id) {
         this.gcm_id = gcm_id;
+    }
+
+    public Integer getSite_code() {
+        return site_code;
+    }
+
+    public void setSite_code(Integer site_code) {
+        this.site_code = site_code;
+    }
+
+    public Integer getUser_level_code() {
+        return user_level_code;
+    }
+
+    public void setUser_level_code(Integer user_level_code) {
+        this.user_level_code = user_level_code;
     }
 }

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.act074.Act074_Main"
+    tools:showIn="@layout/act074_main">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/act074_cl_result"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/include"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/act074_cv_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+                    android:id="@+id/act074_mket_filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:hint="Search Desc - Trad"
+                    android:inputType="text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:mBARCODE="false"
+                    app:mNFC="false"
+                    app:mOCR="false" />
+
+                <RadioGroup
+                    android:id="@+id/act074_tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act074_mket_filter">
+
+                    <RadioButton
+                        android:id="@+id/act074_tab_my_tickets"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:textColor="@color/my_tickets_radio"
+                        android:layout_weight="1"
+                        android:background="@drawable/act074_radio_states"
+                        tools:text="MEUS TICKETS"
+                        android:checked="true"
+                        android:gravity="center"
+                        android:button="@null" />
+
+                    <View
+                        android:layout_width="2dp"
+                        android:layout_height="match_parent" />
+
+                    <RadioButton
+                        android:id="@+id/act074_tab_other_tickets"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:textColor="@color/my_tickets_radio"
+                        android:layout_weight="1"
+                        tools:text="OUTROS"
+                        android:background="@drawable/act074_radio_states"
+                        android:gravity="center"
+                        android:button="@null" />
+
+                </RadioGroup>
+
+
+
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+
+        <TextView
+            android:id="@+id/act074_tv_no_result"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/act074_cv_header"
+            tools:text="NENHUM ITEM ENCONTRADO" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/act074_rv_ticket_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp"
+            app:layoutManager="LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/act074_cv_header"
+            app:layout_constraintVertical_bias="1.0"
+            tools:listitem="@layout/act074_ticket_cell" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:visibility="gone"
+            android:indeterminateTint="@color/namoa_amount_pipeline_background_btn"
+            app:layout_constraintBottom_toBottomOf="@+id/act074_rv_ticket_list"
+            app:layout_constraintEnd_toEndOf="@+id/act074_rv_ticket_list"
+            app:layout_constraintStart_toStartOf="@+id/act074_rv_ticket_list"
+            app:layout_constraintTop_toBottomOf="@+id/act074_cv_header" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/footer_base"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/act074_cl_result" />
+</android.support.constraint.ConstraintLayout>

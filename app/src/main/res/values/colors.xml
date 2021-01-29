@@ -106,6 +106,11 @@
     <color name="namoa_color_start_action">#6ab330</color>
     <color name="namoa_color_start_action_pressed">#508826</color>
 
+<!--    CORES ESPECIFICAS TICKET-->
+    <color name="namoa_color_pipeline_next_step">#C2E5EE</color>
+    <color name="namoa_color_pipeline_cur_step_no_checkin">#F1F1F1</color>
+    <color name="namoa_color_pipeline_origin_icon">#4292A8</color>
+
 
     <!--&lt;!&ndash;REVISÃO CORES STATUS&ndash;&gt;-->
     <!--<color name="namoa_status_edit" >#FF1493</color>-->
@@ -148,6 +153,17 @@
     <color name="font_required"> #ffa500 </color>
     <color name="namoa_cancel_red">#e30613</color>
     <color name="namoa_icon_petrol_blue">#054b60</color>
+    <color name="namoa_color_ticket_process_highlight">#fff4d2</color>
+    <color name="namoa_color_ticket_process_highlight_pressed">#ffeeb9</color>
 
+    <!-- Cores PIPELINE -->
+    <color name="namoa_sync_pipeline_background_btn">#CCFDC620</color>
+    <color name="namoa_pipeline_background_icon">#CC656565</color>
+    <color name="namoa_pipeline_product_lbl">#3D93AA</color>
+    <color name="namoa_pipeline_extract">#656565</color>
+    <color name="namoa_product_extract_check">#75CA40</color>
+    <color name="namoa_amount_pipeline_background_btn">#FB9C0E</color>
+    <color name="namoa_pipeline_header_icon">#848484</color>
+    <color name="namoa_pipeline_sync_icon">#7F22FD</color>
 
 </resources>

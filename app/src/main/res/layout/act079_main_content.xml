@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.act079.Act079_Main"
+    tools:showIn="@layout/act079_main">
+
+    <FrameLayout
+        android:id="@+id/act079_frg_pipeline_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.namoa_digital.namoa_library.ctls.FabMenu
+        android:id="@+id/act079_fabMenu_anchor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:elevation="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/include"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:mButton_Back_Color="@color/namoa_sync_pipeline_background_btn"
+        app:mButton_Resource="@drawable/ic_menu_hamburger"
+        app:mButton_Resource_Color="@color/colorPrimary" />
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/footer_base"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/act079_gdl_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="8dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/act079_gdl_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="8dp" />
+
+    <ImageView
+        android:id="@+id/act079_iv_form_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/act079_tv_form_score"
+        app:layout_constraintStart_toStartOf="@+id/act079_gdl_start"
+        app:layout_constraintTop_toTopOf="@+id/act079_tv_form_score"
+        android:tint="@color/namoa_color_gray_4"
+        app:srcCompat="@drawable/ic_baseline_star_24" />
+
+    <ImageView
+        android:id="@+id/act079_iv_form_nc_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/act079_gdl_start"
+        app:layout_constraintTop_toBottomOf="@+id/act079_tv_form_score"
+        app:srcCompat="@drawable/ic_non_compliance_on" />
+
+    <TextView
+        android:id="@+id/act079_tv_form_score"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/act079_gdl_end"
+        app:layout_constraintStart_toEndOf="@+id/act079_iv_form_score"
+        app:layout_constraintTop_toBottomOf="@id/act079_frg_pipeline_header"
+        tools:text="TextView" />
+
+    <TextView
+        android:id="@+id/act079_tv_form_nc_count"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/namoa_color_danger_red_lib"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/act079_iv_form_nc_count"
+        app:layout_constraintEnd_toStartOf="@+id/act079_gdl_end"
+        app:layout_constraintStart_toEndOf="@+id/act079_iv_form_nc_count"
+        app:layout_constraintTop_toTopOf="@+id/act079_iv_form_nc_count"
+        tools:text="TextView" />
+
+
+    <ImageView
+        android:id="@+id/act079_iv_form_download_pdf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:tint="@color/namoa_pipeline_product_lbl"
+        app:layout_constraintStart_toStartOf="@+id/act079_gdl_start"
+        app:layout_constraintTop_toBottomOf="@+id/act079_tv_form_nc_count"
+        app:srcCompat="@drawable/ic_baseline_get_app_24" />
+
+    <TextView
+        android:id="@+id/act079_tv_form_download_pdf"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        tools:text="TextView"
+        android:textColor="@color/namoa_pipeline_product_lbl"
+        app:layout_constraintBottom_toBottomOf="@+id/act079_iv_form_download_pdf"
+        app:layout_constraintEnd_toStartOf="@+id/act079_gdl_end"
+        app:layout_constraintStart_toEndOf="@+id/act079_iv_form_download_pdf"
+        app:layout_constraintTop_toTopOf="@+id/act079_iv_form_download_pdf" />
+</android.support.constraint.ConstraintLayout>

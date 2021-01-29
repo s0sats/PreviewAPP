@@ -81,6 +81,8 @@ public class Frg_Serial_Search extends Fragment {
 
     private Frg_Serial_Search_Presenter mPresenter;
     private On_Frg_Serial_Search mFragListener;
+    private On_Frg_Serial_Search.onProductSelectionReturnListener mFragOnProductSelectionReturnListener;
+    private On_Frg_Serial_Search.onProductTypingListener mFragOnProductTypingListener ;
 
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
@@ -120,14 +122,27 @@ public class Frg_Serial_Search extends Fragment {
         void onSearchClick(String btn_Action, HMAux optionsInfo);
 
     }
+    private I_Frg_Serial_Search_Load load_delegate;
+    public interface I_Frg_Serial_Search_Load{
+        /**
+         * Interface disparada após rodar Setar as views.
+         */
+        void onFragIsReady();
+    }
 
     public void setOnSearchClickListener(I_Frg_Serial_Search delegate) {
         this.delegate = delegate;
     }
 
+    public void setLoad_delegate(I_Frg_Serial_Search_Load load_delegate) {
+        this.load_delegate = load_delegate;
+    }
+
     private ArrayList<MKEditTextNM> controls_sta;
     private View.OnClickListener clickListener;
     private boolean supportNFC;
+    private boolean forceExactSearch = false;
+    private MKEditTextNM.IMKEditTextChangeText mketSerialTextChangeListener;
 
     @Override
     public void onAttach(Context context) {
@@ -136,6 +151,16 @@ public class Frg_Serial_Search extends Fragment {
         if (context instanceof On_Frg_Serial_Search) {
             mFragListener = (On_Frg_Serial_Search) context;
         }
+        //LUCHE - 10/11/2020
+        //Tenta inicializar interface via context da act.
+        if(context instanceof On_Frg_Serial_Search.onProductSelectionReturnListener){
+            mFragOnProductSelectionReturnListener = (On_Frg_Serial_Search.onProductSelectionReturnListener) context;
+        }
+        //LUCHE - 13/11/2020
+        //Inicializa interface via context da act
+        if(context instanceof On_Frg_Serial_Search.onProductSelectionReturnListener){
+            mFragOnProductTypingListener = (On_Frg_Serial_Search.onProductTypingListener) context;
+        }
     }
 
     @Nullable
@@ -143,7 +168,13 @@ public class Frg_Serial_Search extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frg_serial_search, container, false);
         mPresenter = new Frg_Serial_Search_Presenter(getContext());
+
         iniVar(view);
+
+        if(load_delegate != null){
+            load_delegate.onFragIsReady();
+        }
+
         iniAction();
 
         return view;
@@ -269,12 +300,27 @@ public class Frg_Serial_Search extends Fragment {
         btn_option_05.setOnClickListener(btnActionListener);
 
         mket_serial.setDelegateTextBySpecialist(new MKEditTextNM.IMKEditTextTextBySpecialist() {
-
             @Override
             public void reportTextBySpecialist(String s) {
+                //LUCHE - 27/10/2020
+                //Seta var q define busca exata
+                forceExactSearch = true;
                 btn_option_01.performClick();
             }
         });
+        //Interface que identifica digitação no campo e reseta var forceExactSearch
+        mketSerialTextChangeListener = new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                forceExactSearch = false;
+            }
+        };
+        mket_serial.setOnReportTextChangeListner(mketSerialTextChangeListener);
         //
         mket_product_id.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
             @Override
@@ -284,6 +330,11 @@ public class Frg_Serial_Search extends Fragment {
 
             @Override
             public void reportTextChange(String text, boolean hasText) {
+                if(mFragOnProductTypingListener != null){
+                    mFragOnProductTypingListener.onProductTyping(
+                        text.trim()
+                    );
+                }
                 if (hasText) {
                     MD_Product mdProduct = productValidCheck(text);
                     //
@@ -321,6 +372,10 @@ public class Frg_Serial_Search extends Fragment {
      */
     private void setProductDesc(String productDesc) {
         til_product.setHelperText(productDesc);
+    }
+
+    public boolean isForceExactSearch() {
+        return forceExactSearch;
     }
 
     private View.OnClickListener btnActionListener = new View.OnClickListener() {
@@ -516,8 +571,13 @@ public class Frg_Serial_Search extends Fragment {
     public HMAux getHMAuxValues() {
         HMAux values = new HMAux();
         values.put(PRODUCT_ID, (mket_product_id.getText().toString().trim().isEmpty() || iv_product_change.getVisibility() == View.VISIBLE) ? "" : mket_product_id.getText().toString().trim());
+        //LUCHE - 27/10/2020
+        //Como o setOnReportTextChangeListner reseta a var de busca exata, foi removido o listener nesse momento.
         String serial_id = ToolBox_Inf.removeForbidenChars(mket_serial.getText().toString().trim());
+        mket_serial.setOnReportTextChangeListner(null);
         mket_serial.setText(serial_id);
+        mket_serial.setOnReportTextChangeListner(mketSerialTextChangeListener);
+        //
         values.put(SERIAL, ToolBox_Inf.removeAllLineBreaks(mket_serial.getText().toString().trim().isEmpty() ? "" : mket_serial.getText().toString().trim()));
         values.put(TRACKING, mket_tracking.getText().toString().trim().isEmpty() ? "" : mket_tracking.getText().toString().trim());
 
@@ -530,7 +590,6 @@ public class Frg_Serial_Search extends Fragment {
         //
         setTranslation();
     }
-
     private void setTranslation() {
         btn_nfc_reader.setText(hmAux_Trans.get("btn_enable_nfc"));
         tv_product_id.setText(hmAux_Trans.get("product_lbl"));
@@ -645,7 +704,15 @@ public class Frg_Serial_Search extends Fragment {
     private void processResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
-
+            //LUCHE - 10/11/2020
+            //Ao retornar da seleção de produto, dispara interface com valor do product id atual + o
+            //retornado.
+            if(mFragOnProductSelectionReturnListener != null){
+                mFragOnProductSelectionReturnListener.onProductSelectionReturn(
+                    mket_product_id.getText().toString().trim(),
+                    pAux.getProduct_id()
+                );
+            }
             mket_product_id.setText(String.valueOf(pAux.getProduct_id()));
             //LUCHE - 08/11/2019
             //Comentado o codigo abaixo pois, o setText acima ja dispara a chamada

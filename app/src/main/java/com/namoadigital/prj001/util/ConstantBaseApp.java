@@ -99,6 +99,15 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT071 = "act071";
     public static final String ACT072 = "act072";
     public static final String ACT073 = "act073";
+    public static final String ACT074 = "act074";
+    public static final String ACT075 = "act075";
+    public static final String ACT076 = "act076";
+    public static final String ACT077 = "act077";
+    public static final String ACT078 = "act078";
+    public static final String ACT079 = "act079";
+    public static final String ACT080 = "act080";
+    public static final String ACT081 = "act081";
+    public static final String ACT082 = "act082";
 
     public static final String title_lbl = "_title";
 
@@ -223,6 +232,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static String CHAT_PATH;
     public static String CACHE_CHAT_PATH;
     public static String UNSENT_IMG_PATH;
+    public static String TICKET_JSON_PATH;
+    public static String CUSTOMER_SITE_LICENSE_JSON_PATH;
 
     public static String ZIP_NAME;
     public static String ZIP_NAME_FULL;
@@ -286,6 +297,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FOOTER_VERSION_LBL = "footer_version_lbl";
     public static final String FOOTER_IMEI_LBL = "footer_imei_lbl";
     public static final String FOOTER_IMEI = "footer_imei";
+    public static final String FOOTER_USER_LEVEL_LBL = "footer_user_level_lbl";
     public static final String FOOTER_SITE_NOT_FOUND = "footer_site_not_found";
     public static final String FOOTER_OPERATION_NOT_FOUND = "footer_operation_not_found";
     public static final String FOOTER_OFFLINE_MODE_LBL = "footer_offline_mode_lbl";
@@ -421,7 +433,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String SCHEDULE_N_FORM_AP_FILTER_PREFERENCE = "schedule_n_form_ap_filter";
     public static final String SCHEDULE_N_TICKET_FILTER_PREFERENCE = "schedule_n_ticket_filter";
     public static final String SCHEDULE_SITE_LOGGED_FILTER_PREFERENCE = "schedule_site_logged_filter";
-
+    public static final String ACT068_TAB_SELECTED = "act068_tab_selected";
+    public static final String DATETIME_IS_VALID = "DATETIME_IS_VALID";
+    public static final String DATETIME_LAST_VALID_TIME = "DATETIME_LAST_VALID_TIME";
+    public static final String DATETIME_TOLERANCE= "DATETIME_TOLERANCE";
 
     public static final String LOGIN_USER_NFC_TMP = "login_user_nfc_tmp";
     public static final String LOGIN_CUSTOMER_CODE_TMP = "login_customer_code_tmp";
@@ -529,6 +544,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_PRJ001_SCHEDULE_CHECKLIST = "PRJ001_SCHEDULE_CHECKLIST";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL = "PRJ001_PRODUCT_SERIAL";
     public static final String PROFILE_PRJ001_OI = "PRJ001_IO";
+
     //Profiles Mket Serial
     public static final String PROFILE_MENU_PROFILE = "PROFILE";
     public static final String PROFILE_MENU_PROFILE_SERIAL_BARCODE = "SERIAL_BARCODE";
@@ -548,6 +564,12 @@ public class ConstantBaseApp extends ConstantBase {
     //Profile Ticket
     public static final String PROFILE_MENU_TICKET = "PRJ001_TICKET";
     public static final String PROFILE_MENU_TICKET_PARAM_ACTION_EXEC = "ACTION_EXEC";
+    public static final String PROFILE_MENU_TICKET_PARAM_SEARCH_CONTRACT_ID = "SEARCH_CONTRACT_ID";
+    public static final String PROFILE_MENU_TICKET_PARAM_SEARCH_CLIENT_ID = "SEARCH_CLIENT_ID";
+    public static final String PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP = "CHANGE_WORKGROUP";
+    public static final String PROFILE_MENU_TICKET_PARAM_EDIT_FORECAST = "EDIT_FORECAST";
+    public static final String PROFILE_MENU_TICKET_PARAM_EDIT_HEADER = "EDIT_HEADER";
+    public static final String PROFILE_MENU_TICKET_PARAM_STEP_EDIT_TIME = "STEP_EDIT_TIME";
 
     //Modulos
     public static final String MODULE_CHECKLIST = "MODULE_CHECKLIST";
@@ -625,12 +647,63 @@ public class ConstantBaseApp extends ConstantBase {
     /*
     * Constantes Ticket
     */
-
-    public static final String TK_TICKET_CRTL_TYPE_ACTION ="ACTION";
-    public static final String TK_TICKET_CRTL_TYPE_FORM ="FORM";
-    public static final String TK_TICKET_CRTL_TYPE_SERVICE ="SERVICE";
-    public static final String TK_TICKET_CRTL_TYPE_MEASURE ="MEASURE";
+    public static final String TK_TICKET_CRTL_TYPE_ACTION ="OBJ_ACTION";
+    public static final String TK_TICKET_CRTL_TYPE_FORM ="OBJ_FORM";
+    public static final String TK_TICKET_CRTL_TYPE_SERVICE ="OBJ_SERVICE";
+    public static final String TK_TICKET_CRTL_TYPE_MEASURE ="OBJ_MEASURE";
+    public static final String TK_TICKET_CRTL_TYPE_APPROVAL ="OBJ_APPROVAL";
+    public static final String TK_TICKET_CRTL_TYPE_NONE ="OBJ_NONE";
     public static final String TK_TICKET_PREX_IMG ="tk_";
+    //Ticket Origin Type
+    public static final String TK_TICKET_ORIGIN_TYPE_SCHEDULE ="SCHEDULE";
+    public static final String TK_TICKET_ORIGIN_TYPE_MANUAL = "MANUAL";
+    public static final String TK_TICKET_ORIGIN_TYPE_BARCODE = "BARCODE";
+    public static final String TK_TICKET_ORIGIN_TYPE_MEASURE = "MEASURE";
+    public static final String TK_TICKET_ORIGIN_TYPE_FORM = "FORM";
+    public static final String TK_TICKET_ORIGIN_TYPE_FORM_SCORE = "FORM_SCORE";
+    public static final String TK_TICKET_ORIGIN_TYPE_FORM_NC = "FORM_NC";
+    public static final String TK_TICKET_ORIGIN_TYPE_TRANSFER = "TRANSFER";
+    //Ticket Header
+    public static final String TK_TICKET_START_DATE_AND_HEADER = "START_DATE_AND_HEADER";
+    public static final String TK_TICKET_START_DATE = "START_DATE";
+    public static final String TK_TICKET_FORECAST_DATE_AND_HEADER = "FORECAST_DATE_AND_HEADER";
+    public static final String TK_TICKET_FORECAST_DATE =  "FORECAST_DATE";
+    public static final String TK_TICKET_FORECAST_TIME_AND_HEADER ="FORECAST_TIME_AND_HEADER";
+    public static final String TK_TICKET_FORECAST_TIME = "FORECAST_TIME";
+    public static final String TK_TICKET_EDIT_HEADER = "EDIT_HEADER";
+    //BROADCAST DE PARA
+    public static final String BR_TICKET_SAVE = "BR_TICKET_SAVE";
+    public static final String TK_TICKET_INTENT_FILTER_ACTION_CTRL_UPDATE = "ACTION_CTRL_UPDATE";
+    //Arquivos json
+    public static final String TICKET_WORKGROUP_LIST_JSON_FILE = "tk_workgroup_list.json";
+    public static final String TICKET_WORKGROUP_EDITION_JSON_FILE = "tk_workgroup_edition.json";
+    public static final String TICKET_MAIN_USER_LIST_JSON_FILE = "tk_main_user_list.json";
+    public static final String TICKET_HEADER_EDITION_JSON_FILE = "tk_header_edition.json";
+    public static final String ENV_SITE_LICENSE_JSON_FILE = "env_site_license.json";
+    /*
+     * Constantes Pipeline
+     */
+    public static final String TK_PIPELINE_STEP_TYPE_ONE_TOUCH = "ONE_TOUCH";
+    public static final String TK_PIPELINE_STEP_TYPE_START_END = "START_END";
+    public static final String TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKIN = "CHECKIN";
+    public static final String TK_PIPELINE_STEP_NEW_PROCESS_TYPE_ADD_NEW = "ADD_NEW";
+    public static final String TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKOUT = "CHECKOUT";
+    public static final String TK_PIPELINE_APPROVAL_GET_MATERIAL = "APPROVAL_GET_MATERIAL";
+    public static final String TK_PIPELINE_APPROVAL_RETURN_MATERIAL = "APPROVAL_RETURN_MATERIAL";
+    public static final String TK_PIPELINE_APPROVAL_OPERATIONAL = "APPROVAL_OPERATIONAL";
+    public static final String TK_PIPELINE_PRODUCT_STATUS_PENDING = "PENDING";
+    public static final String TK_PIPELINE_PRODUCT_STATUS_NO_CONTROL = "NO_CONTROL";
+    public static final String TK_TICKET_FORM_GPS_LOCATION_UPDATE = "TK_TICKET_FORM_GPS_LOCATION_UPDATE";
+    public static final String TK_TICKET_IS_FORM_OFF_HAND = "TK_TICKET_FORM_OFF_HAND";
+
+    /*
+     * Constantes FAB menu item
+     */
+    public static final String FAB_TO_PRODUCT_LBL = "to_product_lbl";
+    public static final String FAB_TO_HEADER_EDIT_LBL = "fab_to_header_edit_lbl";
+    public static final String FAB_TO_WORK_GROUP_EDIT_LBL = "fab_to_work_group_edit_lbl";
+    public static final String FAB_TO_ORIGIN_LBL = "fab_to_origin_lbl";
+    public static final String FAB_TO_STEP_LBL = "fab_to_step_lbl";
 
     /*
      * Constantes agendamento
@@ -756,4 +829,13 @@ public class ConstantBaseApp extends ConstantBase {
     //Paramentros de ACTs
     public static final String IS_LOCAL_PROCESS = "isLocalProcess";
     public static final String FROM_HISTORIC = "from_historic";
+
+    //Status GE_File
+    public static final String GE_FILE_STATUS_OPENED = "OPENED";
+    public static final String GE_FILE_STATUS_FILE_NOT_FOUND = "FILE_NOT_FOUND";
+    public static final String GE_FILE_STATUS_SENT = "SENT";
+
+    //Chave de Bundle act069, 74 e 76
+    public static final String FILTER_TEXT = "FILTER_TEXT";
+
 }

@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center_vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ui.act078.Act078_Main"
+    tools:showIn="@layout/act078_main">
+
+    <FrameLayout
+        android:id="@+id/act078_frg_pipeline_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="60dp"
+        app:layout_constraintBottom_toTopOf="@+id/include"
+        app:layout_constraintEnd_toStartOf="@+id/act078_gdl_end"
+        app:layout_constraintStart_toStartOf="@+id/act078_gdl_start"
+        app:layout_constraintTop_toBottomOf="@+id/act078_frg_pipeline_header">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <android.support.constraint.ConstraintLayout
+                    android:id="@+id/act078_cl_client_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <TextView
+                        android:id="@+id/act078_tv_client_address_ttl"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="@id/act078_btn_navegation"
+                        app:layout_constraintVertical_bias="1"
+                        android:gravity="center_vertical"
+                        tools:text="Endereço do Cliente"
+                        />
+
+                    <TextView
+                        android:id="@+id/act078_tv_client_address_street_lbl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/act078_tv_client_address_ttl"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/act078_tv_client_address_num_lbl"
+                        tools:text="Rua"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/pipeline_smallest_font_size"
+                        app:layout_constraintWidth_default="wrap"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        android:layout_marginEnd="5dp"
+                        />
+
+                    <TextView
+                        android:id="@+id/act078_tv_client_address_num_lbl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintWidth_percent="0.15"
+                        android:textSize="@dimen/pipeline_smallest_font_size"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/act078_tv_client_address_ttl"
+                        app:layout_constraintWidth_default="spread"
+                        android:gravity="center"
+                        tools:text="Numero" />
+
+                    <TextView
+                        android:id="@+id/act078_tv_client_address_street_val"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        app:layout_constraintEnd_toStartOf="@id/act078_tv_client_address_num_val"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/act078_tv_client_address_street_lbl"
+                        tools:text="Rua do arouxe"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/act078_tv_client_address_num_val"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintWidth_percent="0.15"
+                        app:layout_constraintTop_toBottomOf="@id/act078_tv_client_address_num_lbl"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintWidth_default="spread"
+                        tools:text="10000"
+                        android:gravity="center"
+                        />
+
+                    <TextView
+                        android:id="@+id/act078_tv_client_address_district_lbl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/pipeline_smallest_font_size"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/act078_cl_option_infos"
+                        app:layout_constraintWidth_default="wrap"
+                        tools:text="Bairro"
+                        />
+
+                    <TextView
+                        android:id="@+id/act078_tv_client_address_district_val"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/act078_tv_client_address_district_lbl"
+                        tools:text="Largo do Arouxe" />
+
+                    <TextView
+                        android:id="@+id/act078_tv_client_address_city_lbl"
+                        android:layout_width="0dp"
+                        app:layout_constraintWidth_percent="0.5"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/act078_tv_client_address_district_val"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/act078_tv_client_address_state_lbl"
+                        tools:text="Cidade"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/pipeline_smallest_font_size"
+                        app:layout_constraintWidth_default="spread"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        />
+
+                    <TextView
+                        android:id="@+id/act078_tv_client_address_state_lbl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/pipeline_smallest_font_size"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/act078_tv_client_address_city_lbl"
+                        app:layout_constraintTop_toTopOf="@id/act078_tv_client_address_city_lbl"
+                        app:layout_constraintWidth_default="spread"
+                        tools:text="Estado" />
+
+                    <TextView
+                        android:id="@+id/act078_tv_client_address_city_val"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="5dp"
+                        app:layout_constraintEnd_toStartOf="@id/act078_tv_client_address_state_lbl"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/act078_tv_client_address_city_lbl"
+                        app:layout_constraintWidth_default="spread"
+                        app:layout_constraintWidth_percent="0.5"
+                        tools:text="São Paulo" />
+
+                    <TextView
+                        android:id="@+id/act078_tv_client_address_state_val"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/act078_tv_client_address_city_val"
+                        app:layout_constraintTop_toTopOf="@id/act078_tv_client_address_city_val"
+                        app:layout_constraintWidth_default="spread"
+                        tools:text="SP" />
+
+                    <TextView
+                        android:id="@+id/act078_tv_client_address_country_lbl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/pipeline_smallest_font_size"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/act078_tv_client_address_city_val"
+                        app:layout_constraintWidth_default="wrap"
+                        tools:text="Pais" />
+
+                    <TextView
+                        android:id="@+id/act078_tv_client_address_country_val"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/act078_tv_client_address_country_lbl"
+                        app:layout_constraintWidth_default="wrap"
+                        tools:text="Brasil"
+                        app:layout_constraintHorizontal_bias="0"
+                        />
+
+                    <ImageButton
+                        android:id="@+id/act078_btn_navegation"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/emoticons_green"
+                        android:src="@drawable/ic_pin_drop_black_24dp"
+                        android:tint="@color/padrao_WHITE"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/act078_tv_client_address_ttl"
+                        app:layout_constraintWidth_default="wrap" />
+
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/act078_cl_option_infos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/act078_tv_client_address_street_val"
+                        >
+
+                        <TextView
+                            android:id="@+id/act078_tv_client_address_complement_lbl"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/pipeline_smallest_font_size"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/act078_tv_client_address_zipcode_lbl"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_default="spread"
+                            tools:text="Complemento" />
+
+                        <TextView
+                            android:id="@+id/act078_tv_client_address_zipcode_lbl"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/pipeline_smallest_font_size"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_default="spread"
+                            app:layout_constraintWidth_percent="0.3"
+                            tools:text="CEP/Zip" />
+
+                        <TextView
+                            android:id="@+id/act078_tv_client_address_complement_val"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/act078_tv_client_address_zipcode_val"
+                            app:layout_constraintTop_toBottomOf="@+id/act078_tv_client_address_complement_lbl"
+                            app:layout_constraintWidth_default="spread"
+                            tools:text="Proximo a caco"
+                            />
+
+                        <TextView
+                            android:id="@+id/act078_tv_client_address_zipcode_val"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="@+id/act078_tv_client_address_zipcode_lbl"
+                            app:layout_constraintTop_toBottomOf="@+id/act078_tv_client_address_zipcode_lbl"
+                            app:layout_constraintWidth_default="spread"
+                            app:layout_constraintWidth_percent="0.3"
+                            tools:text="09478-586"
+                            />
+
+                    </android.support.constraint.ConstraintLayout>
+
+                </android.support.constraint.ConstraintLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act078_ll_open_photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/act078_tv_open_photo_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textStyle="bold"
+                    tools:text="Photo" />
+
+                <!-- A cor do icone é definida via code-->
+                <ImageView
+                    android:id="@+id/act078_iv_open_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="8dp"
+                    app:srcCompat="@drawable/ic_foto_ns_black" />
+
+                <View
+                    android:id="@+id/act078_divider_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/text_black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act078_ll_open_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/act078_tv_open_comment_lbl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textStyle="bold"
+                    tools:text="Comentario da Abertura - trad" />
+
+                <TextView
+                    android:id="@+id/act078_tv_open_comment_val"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toStartOf="@+id/act078_gdl_end"
+                    app:layout_constraintStart_toStartOf="@+id/act078_gdl_start"
+                    app:layout_constraintTop_toBottomOf="@id/act078_tv_open_comment_lbl"
+                    tools:text="Comentario da Abertura - trad\nComentario da Abertura - trad" />
+
+                <View
+                    android:id="@+id/act078_divider_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/text_black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/act078_ll_privacy_fields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toStartOf="@+id/act078_gdl_end"
+                app:layout_constraintStart_toStartOf="@+id/act078_gdl_start"
+                app:layout_constraintTop_toBottomOf="@+id/act078_divider_2">
+
+                <LinearLayout
+                    android:id="@+id/act078_ll_open_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/act078_tv_open_username_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Nome da Pessoa da Abertura - trad" />
+
+                    <TextView
+                        android:id="@+id/act078_tv_open_username_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/act078_tv_open_username_lbl"
+                        tools:text="Nome da Pessoa da Abertura - trad" />
+
+                    <View
+                        android:id="@+id/act078_divider_3"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@color/text_black" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/act078_ll_open_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/act078_tv_open_email_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="E-Mail da Pessoa da Abertura - trad" />
+
+                    <TextView
+                        android:id="@+id/act078_tv_open_email_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/act078_tv_open_email_lbl"
+                        tools:text="E-Mail da Pessoa da Abertura - trad" />
+
+                    <View
+                        android:id="@+id/act078_divider_4"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@color/text_black" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/act078_ll_open_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/act078_tv_open_phone_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Telefone da Pessoa da Abertura - trad" />
+
+                    <TextView
+                        android:id="@+id/act078_tv_open_phone_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/act078_tv_open_phone_lbl"
+                        tools:text="(11) 99999 8765" />
+
+                    <View
+                        android:id="@+id/act078_divider_5"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@color/text_black" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <com.namoa_digital.namoa_library.ctls.FabMenu
+        android:id="@+id/act078_fabMenu_anchor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:elevation="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/include"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:mButton_Back_Color="@color/namoa_sync_pipeline_background_btn"
+        app:mButton_Resource="@drawable/ic_menu_hamburger"
+        app:mButton_Resource_Color="@color/colorPrimary" />
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/footer_base"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/act078_gdl_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/act078_gdl_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp" />
+
+
+</android.support.constraint.ConstraintLayout>

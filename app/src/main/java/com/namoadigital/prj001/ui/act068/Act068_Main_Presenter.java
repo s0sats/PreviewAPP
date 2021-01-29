@@ -9,25 +9,47 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
+import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Client_Contract_Search;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
+import com.namoadigital.prj001.service.WS_Sync;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Client_Contract_Search;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
+import com.namoadigital.prj001.sql.Sql_Act068_001;
+import com.namoadigital.prj001.sql.Sql_Act068_002;
+import com.namoadigital.prj001.sql.Sql_Act068_003;
+import com.namoadigital.prj001.sql.Sql_Act068_004;
+import com.namoadigital.prj001.sql.Sql_Act069_002;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_008;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.view.frag.frg_ticket_search.Frg_Ticket_Search;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
@@ -69,6 +91,21 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
     }
 
     @Override
+    public void getSync() {
+        //
+        List<TK_Ticket> tickets = ticketDao.query(
+                new Sql_Act068_001(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        int qty = tickets.size();
+        //
+        mView.setSync(qty);
+
+    }
+
+    @Override
     public void getPendencies() {
         int qty = 0;
         HMAux auxPendencies = ticketDao.getByStringHM(
@@ -86,30 +123,26 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
         mView.setPendenciesQty(qty);
     }
 
-    @Override
-    public void checkPendenciesFlow(int pendencies_qty) {
-        if(pendencies_qty > 0){
-            mView.callAct069(new Bundle());
-        } else{
-            mView.showMsg(
-                hmAux_Trans.get("alert_no_pendencies_ttl"),
-                hmAux_Trans.get("alert_no_pendencies_msg")
-            );
-        }
-    }
 
     @Override
     public boolean hasItensToSend() {
-        int qtyToSend =
-            ToolBox_Inf.convertStringToInt(
-                ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context))
-            );
+        List<TK_Ticket> pendencies = ticketDao.query(
+                new Sql_WS_TK_Ticket_Save_001(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        int qtyToSend = pendencies != null ? pendencies.size() : 0;
+//            ToolBox_Inf.convertStringToInt(
+//                ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context))
+//            );
+        ArrayList<TK_Ticket> ticketInToken = ToolBox_Inf.getTicketsWithinToken(ToolBox_Con.getPreference_Customer_Code(context));
+        qtyToSend = qtyToSend + ticketInToken.size();
         //
-        return qtyToSend > 0;
+        return qtyToSend > 0 || hasFormWaitingSyncWithinAnyTicket(context);
     }
 
     @Override
-    public void executeSerialSearch(String product_id, String serial_id, String tracking) {
+    public void executeSerialSearch(String product_id, String serial_id, String tracking, boolean forceExactSearch) {
         mdProduct = searchProduct(product_id);
         mProduct_id = product_id;
         mSerial_id = serial_id;
@@ -130,14 +163,14 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
             //bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
             bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
-            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 0);
+            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, forceExactSearch ? 1 : 0);
             //
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
         } else {
             //LUCHE - 21/01/2020
-            //Enquanto não houver o processo de criaçãode ticket via App, não haverá lista offline.
+            //Enquanto não houver o processo de criaçãode ticket via App, não haverá lista offline. ( Rah Rah)
             //Por hora, será exibida msg de que esta offline e para ele buscar nos itens pendentes.
             //offlineSerialSearch();
             mView.showMsg(
@@ -146,6 +179,200 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
 
             );
         }
+    }
+
+    @Override
+    public void defineWsToCall() {
+        if(hasFormWaitingSyncWithinAnyTicket(context)){
+            //callWsSave();
+            defineFormWaitingSyncFlow();
+        }else {
+            executeWSTicketSave();
+        }
+    }
+
+    /**
+     * LUCHE - 10/09/2020
+     * DEVE SEMPRE SER PRECEDIDO DA CHAMADA DO hasFormWaitingSyncWithinAnyTicket
+     * Metodo que verifica se deve chamar o Ws de save do form ou exibir msg de que existe form com
+     * pendencia de GPS.
+
+     */
+    private void defineFormWaitingSyncFlow(){
+        if(hasFormWaitingSyncAndGpsPendencyWithinAnyTicket(context)){
+            mView.showMsg(
+                hmAux_Trans.get("alert_form_location_pendency_ttl"),
+                hmAux_Trans.get("alert_form_location_pendency_msg")
+            );
+        }else{
+            callWsSave();
+        }
+    }
+
+    @Override
+    public void processWS_SaveReturn(String result) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //
+        ArrayList<TSave_Rec.Error_Process> errorProcesses = null;
+        try {
+            errorProcesses = gson.fromJson(
+                    result,
+                    new TypeToken<ArrayList<TSave_Rec.Error_Process>>() {
+                    }.getType()
+            );
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
+        //
+        if(errorProcesses != null && errorProcesses.size() > 0){
+            ArrayList<HMAux> auxResults = new ArrayList<>();
+            for (TSave_Rec.Error_Process error_process : errorProcesses) {
+                //
+                HMAux mHmAux = ToolBox_Inf.getWsSaveErrorProcessAuxResult(error_process);
+                //
+                HMAux aux = new HMAux();
+                switch (mHmAux.get("type")) {
+                    case ConstantBaseApp.SYS_STATUS_SCHEDULE:
+                        aux.put(Generic_Results_Adapter.LABEL_TTL, mHmAux.get("label"));
+                        aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mHmAux.get("final_status")+"\n"+mHmAux.get("status"));
+                        break;
+                    case TSave_Rec.Error_Process.ERROR_TYPE_TICKET:
+                        aux.put(Generic_Results_Adapter.LABEL_TTL, mHmAux.get("label"));
+                        aux.put(Generic_Results_Adapter.VALUE_ITEM_1, mHmAux.get("final_status")+"\n"+mHmAux.get("status"));
+                        break;
+                }
+                //
+                auxResults.add(aux);
+            }
+            //
+            mView.addResultList(auxResults);
+        }
+
+    }
+
+    @Override
+    public void executeTicketSearch(String contract_id, String client_id, String ticket_id) {
+
+        if (ToolBox_Con.isOnline(context)) {
+            //
+            mView.setWsProcess(WS_TK_Ticket_Client_Contract_Search.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_ticket_search_ttl"),
+                    hmAux_Trans.get("dialog_ticket_search_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_TK_Ticket_Client_Contract_Search.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(TK_TicketDao.CONTRACT_ID, contract_id);
+            bundle.putString(TK_TicketDao.CLIENT_ID, client_id);
+            bundle.putString(TK_TicketDao.TICKET_ID, ticket_id);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+
+        } else {
+            mView.showMsg(
+                    hmAux_Trans.get("alert_no_conection_ttl"),//Title é recurso sys.(usado no metodo showNoConnectionDialog)
+                    hmAux_Trans.get("alert_no_connection_try_pendencies_msg")
+            );
+        }
+    }
+
+    @Override
+    public void processSearchByTicketTab(HMAux hmAux) {
+        if(hmAux != null && hmAux.size() > 0 ){
+            int qtyReturned =
+                hmAux.hasConsistentValue(WS_TK_Ticket_Client_Contract_Search.RETURNED_TICKET_QTY)
+                    ? ToolBox_Inf.convertStringToInt(hmAux.get(WS_TK_Ticket_Client_Contract_Search.RETURNED_TICKET_QTY))
+                    : 0 ;
+            if(qtyReturned == 0){
+                mView.showMsg(
+                    hmAux_Trans.get("alert_no_ticket_found_ttl"),
+                    hmAux_Trans.get("alert_no_ticket_found_msg")
+                );
+            }else if(qtyReturned == 1){
+                if(hmAux.hasConsistentValue(TK_TicketDao.TICKET_PREFIX)
+                    && hmAux.hasConsistentValue(TK_TicketDao.TICKET_CODE)
+                ) {
+                    //Chama Act com a pk do ticket.
+                    mView.callAct070(
+                        buildAct070Bundle(hmAux)
+                    );
+                }else{
+                    mView.showMsg(
+                        hmAux_Trans.get("alert_ticket_params_not_found_ttl"),
+                        hmAux_Trans.get("alert_ticket_params_not_found_msg")
+                    );
+                }
+            }else{
+                mView.callAct076();
+            }
+        }else{
+            mView.showMsg(
+                hmAux_Trans.get("alert_invalid_ticket_return_ttl"),
+                hmAux_Trans.get("alert_invalid_ticket_return_msg")
+            );
+        }
+    }
+
+    private Bundle buildAct070Bundle(HMAux hmAux) {
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT073);
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)));
+        bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
+        return bundle;
+    }
+
+    private boolean hasFormWaitingSyncWithinAnyTicket(Context context) {
+        GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        ArrayList<GE_Custom_Form_Data> formDataList = (ArrayList<GE_Custom_Form_Data>) formDataDao.query(
+            new Sql_Act068_003(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
+        );
+        return formDataList != null && formDataList.size() > 0 ;
+
+    }
+
+    private boolean hasFormWaitingSyncAndGpsPendencyWithinAnyTicket(Context context) {
+        GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        ArrayList<GE_Custom_Form_Data> formDataList = (ArrayList<GE_Custom_Form_Data>) formDataDao.query(
+            new Sql_Act068_004(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
+        );
+        return formDataList != null && formDataList.size() > 0 ;
+
+    }
+
+    private void callWsSave() {
+        mView.setWsProcess(WS_Save.class.getName());
+        //
+        mView.showPD(
+            hmAux_Trans.get("dialog_ticket_form_save_ttl"),
+            hmAux_Trans.get("dialog_ticket_form_save_start")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_Save.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1);//Pula validação Update require
+        bundle.putInt(Constant.GC_STATUS, 1);//Pula validação de other device
+        bundle.putString(Act005_Main.WS_PROCESS_SO_STATUS, "SEND");
+        //
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+
     }
 
     @Override
@@ -315,7 +542,10 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
                     )
                     ) {
                         //Se erro, verifica se erro de processamento qual erro foi e pega msg
-                        auxResult.put(ticketCode, getResultSaveMsgFormmated(actReturn));
+                        if(actReturn.isProcessError()){
+                            ticketResult = !actReturn.isProcessError();
+                            auxResult.put(ticketCode, actReturn.getRetMsg());
+                        }
                     }
                 }
                 //For no resumido por ticket montando msg a ser exibida
@@ -329,7 +559,8 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
                     resultList.add(hmAux);
                 }
                 //
-                mView.showResult(resultList);
+                mView.addResultList(resultList);
+                mView.showResult(ticketResult);
             } else {
                 mView.showMsg(
                     hmAux_Trans.get("alert_none_ticket_returned_ttl"),
@@ -342,6 +573,85 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
                 hmAux_Trans.get("alert_none_ticket_returned_msg")
             );
         }
+    }
+
+    @Override
+    public boolean verifyProductForForm() {
+        if(ToolBox_Inf.hasFormProductOutdate(context)){
+            if (ToolBox_Con.isOnline(context)) {
+                mView.setWsProcess(WS_Sync.class.getName());
+                //
+                mView.showPD(
+                        hmAux_Trans.get("progress_sync_ttl"),
+                        hmAux_Trans.get("progress_sync_msg")
+                );
+                //
+                ArrayList<String> data_package = new ArrayList<>();
+                data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+                //
+                Intent mIntent = new Intent(context, WBR_Sync.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+                bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+                bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
+                bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+                bundle.putInt(Constant.GC_STATUS, 1);
+                //
+                mIntent.putExtras(bundle);
+                //
+                context.sendBroadcast(mIntent);
+                return true;
+            }
+            return false;
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public void executeWSTicketDownload() {
+        if(ToolBox_Con.isOnline(context)){
+            mView.setWsProcess(WS_TK_Ticket_Download.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("dialog_download_ticket_ttl"),
+                    hmAux_Trans.get("dialog_download_ticket_start")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(TK_TicketDao.TICKET_PREFIX, getTicketConcatList());
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    private String getTicketConcatList() {
+        ArrayList<HMAux> auxTickets = getTicketToSync();
+        String ticketPKList = "";
+        for (HMAux aux : auxTickets) {
+            if(aux.hasConsistentValue(Sql_Act069_002.TICKET_PK)){
+                ticketPKList += ConstantBaseApp.MAIN_CONCAT_STRING + aux.get(Sql_Act069_002.TICKET_PK);
+            }
+        }
+        //
+        return ticketPKList.contains(ConstantBaseApp.MAIN_CONCAT_STRING) ? ticketPKList.substring(ConstantBaseApp.MAIN_CONCAT_STRING.length()) : "";
+    }
+
+    private ArrayList<HMAux> getTicketToSync() {
+        ArrayList<HMAux> auxTickets = new ArrayList<>();
+        //
+        auxTickets = (ArrayList<HMAux>) ticketDao.query_HM(
+                new Sql_Act068_002(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return auxTickets;
     }
 
     private String getResultSaveMsgFormmated(WS_TK_Ticket_Save.TicketSaveActReturn actReturn) {
@@ -362,6 +672,25 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
        );
        //
        return md_product;
+    }
+
+    @Override
+    public void updateTabPreference(String sTag) {
+        ToolBox_Con.setStringPreference(context,ConstantBaseApp.ACT068_TAB_SELECTED,sTag);
+    }
+
+    @Override
+    public void setFragTicketSearchParamsIntoBundle(Bundle bundle, HMAux hmAuxValues) {
+        bundle.putString(
+            TK_TicketDao.CONTRACT_ID,
+            hmAuxValues.hasConsistentValue(Frg_Ticket_Search.CONTRACT_ID) ?  hmAuxValues.get(Frg_Ticket_Search.CONTRACT_ID) : ""
+        );
+        bundle.putString(TK_TicketDao.CLIENT_ID,
+            hmAuxValues.hasConsistentValue(Frg_Ticket_Search.CLIENT_ID) ?  hmAuxValues.get(Frg_Ticket_Search.CLIENT_ID) : ""
+        );
+        bundle.putString(TK_TicketDao.TICKET_ID,
+            hmAuxValues.hasConsistentValue(Frg_Ticket_Search.TICKET_ID) ?  hmAuxValues.get(Frg_Ticket_Search.TICKET_ID) : ""
+        );
     }
 
     @Override

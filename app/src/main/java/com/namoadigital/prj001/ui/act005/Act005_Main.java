@@ -16,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -51,6 +53,9 @@ import com.namoadigital.prj001.fcm.RegistrationIntentService;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MenuMainNamoa;
+import com.namoadigital.prj001.model.TSave_Rec;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
+import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
 import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.SV_LocationTracker;
@@ -172,10 +177,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private static final int TOOLBAR_ENABLE_NFC = 2;
     private static final int TOOLBAR_CANCEL_NFC = 3;
     private static final int TOOLBAR_SUPPORT = 4;
+    public static final int SETTINGS_FOR_DATETIME = 10001;
 
     private ArrayList<HMAux> wsResults = new ArrayList<>();
 
     private Context context;
+
+    private CardView cv_invalid_datetime_card;
+    private ImageView iv_datetime_warning;
+    private TextView tv_datetime_warning;
+
     private GridView gv_menu;
     private Act005_Main_Presenter mPresenter;
     private Act005_Adapter mAdapter;
@@ -544,6 +555,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         transList.add("alert_unsent_img_copy_error_msg");
         transList.add("alert_unsent_gps_nform_ttl");
         transList.add("alert_unsent_gps_nform_msg");
+        //Ws_Sync do Form de ticket
+        transList.add("progress_sync_tickets_form_ttl");
+        transList.add("progress_sync_tickets_form_msg");
+        //
+        transList.add("lbl_invalid_datetime_warning");
+        transList.add("alert_invalid_local_datetime_ttl");
+        transList.add("alert_invalid_local_datetime_msg");
+        transList.add("alert_go_to_settings");
         //
         transList.add("alert_gps_rationale_permission_ttl");
         transList.add("alert_gps_rationale_permission_msg");
@@ -574,6 +593,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
         wsProcess = "";
         wsSoProcess = "";
+
+        initializeInvalidDatetimeViews();
 
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act005_drawer);
@@ -691,21 +712,25 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                             );
 
                         } else {
-                            alertTitle = hmAux_Trans.get("drawer_change_customer_alert_ttl");
-                            alertMsg = hmAux_Trans.get("drawer_change_customer_alert_msg");
-                            //
-                            listener = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    //if(ToolBox_Con.isOnline(context)) {
-                                    //Reseta preferencias do Customer e volta para
-                                    //Act002 - lista de customer
-                                    changeCustomer();
+                            if(!ToolBox_Inf.isLocalDatetimeOk(context)){
+                                handleInvalidLocalDatetime();
+                            }else {
+                                alertTitle = hmAux_Trans.get("drawer_change_customer_alert_ttl");
+                                alertMsg = hmAux_Trans.get("drawer_change_customer_alert_msg");
+                                //
+                                listener = new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        //if(ToolBox_Con.isOnline(context)) {
+                                        //Reseta preferencias do Customer e volta para
+                                        //Act002 - lista de customer
+                                        changeCustomer();
 //                                }else{
 //                                    ToolBox_Inf.showNoConnectionDialog(Act005_Main.this);
 //                                }
-                                }
-                            };
+                                    }
+                                };
+                            }
                         }
 
                         break;
@@ -935,6 +960,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
 
     }
 
+    private void initializeInvalidDatetimeViews() {
+        cv_invalid_datetime_card = findViewById(R.id.act005_cv_invalid_datetime_card);
+        iv_datetime_warning = findViewById(R.id.act005_iv_datetime_warning);
+        tv_datetime_warning = findViewById(R.id.act005_tv_datetime_warning);
+        tv_datetime_warning.setText(hmAux_Trans.get("lbl_invalid_datetime_warning"));
+    }
+
     @Override
     public boolean getPendingForms() {
 
@@ -1057,6 +1089,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         );
         //
         gv_menu.setAdapter(mAdapter);
+        //
+        if(!ToolBox_Inf.isLocalDatetimeOk(context)){
+            cv_invalid_datetime_card.setVisibility(View.VISIBLE);
+        }else{
+            cv_invalid_datetime_card.setVisibility(View.GONE);
+        }
     }
 
     private void iniUIFooter() {
@@ -1158,7 +1196,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 alertTitle = hmAux_Trans.get("progress_support_ttl");
                 alertMsg = hmAux_Trans.get("progress_support_msg");
                 break;
-
+            case Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM:
+                alertTitle = hmAux_Trans.get("progress_sync_tickets_form_ttl");
+                alertMsg = hmAux_Trans.get("progress_sync_tickets_form_msg");
+                break;
             default:
                 break;
 
@@ -1892,6 +1933,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             if(sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
             }
+        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM)) {
+            progressDialog.dismiss();
+            setWsSoProcess("");
         } else {
             if(sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
@@ -1949,6 +1993,32 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         );
     }
 
+    /**
+     * BARRIONUEVO - 18-11-2020
+     * Metodo responsavel por alertar o usuario sobre a necessidade de arrumar o relogio para o tempo
+     * correto.
+     */
+    @Override
+    public void handleInvalidLocalDatetime() {
+        android.app.AlertDialog.Builder alertInvalidDatetime = new android.app.AlertDialog.Builder(context);
+
+        alertInvalidDatetime.setTitle(hmAux_Trans.get("alert_invalid_local_datetime_ttl"));
+        alertInvalidDatetime.setMessage(hmAux_Trans.get("alert_invalid_local_datetime_msg"));
+        alertInvalidDatetime.setCancelable(false);
+        //
+        alertInvalidDatetime.setPositiveButton(hmAux_Trans.get("alert_go_to_settings"), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivityForResult(new Intent(android.provider.Settings.ACTION_DATE_SETTINGS), 0);
+            }
+        });
+
+        alertInvalidDatetime.setNegativeButton(hmAux_Trans.get("sys_alert_btn_cancel"), null);
+        //
+        alertInvalidDatetime.show();
+
+    }
+
     @Override
     public void refreshResume(int layout_id, boolean isDone, int sucessAmount, int totalAmount) {
         try {
@@ -1993,6 +2063,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                     break;
                 case ConstantBaseApp.SYS_STATUS_SCHEDULE:
                     hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_schedule_data"));
+                    hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
+                    break;
+                case TSave_Rec.Error_Process.ERROR_TYPE_TICKET:
+                    hmAux.put(Generic_Results_Adapter.LABEL_TTL, hmAux_Trans.get("lbl_ticket"));
                     hmAux.put(Generic_Results_Adapter.VALUE_ITEM_1, item.get("final_status")+"\n"+item.get("status"));
                     break;
                 case WS_RESULT_TYPE_AP:
@@ -2228,10 +2302,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 alertTitle = hmAux_Trans.get("alert_support_finish_ttl");
                 alertMsg = hmAux_Trans.get("alert_support_finish_msg");
                 break;
-
+            case Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM:
+                alertTitle = hmAux_Trans.get("alert_sync_finish_ttl");
+                alertMsg = hmAux_Trans.get("alert_sync_finish_msg");
+                break;
             default:
                 break;
-
         }
 
         wsProcess = "";
@@ -2316,6 +2392,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
      *       app e perca dados.
      */
     private void executeSync() {
+
+        boolean productOutdate = false;
+        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
+            productOutdate = ToolBox_Inf.hasFormProductOutdate(context);
+        }
+
         if (syncAfterSave) {
             setSyncAfterSave(false);
             if(ToolBox_Inf.getLocationPendencies(context) == 0) {
@@ -2329,6 +2411,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                         null,
                         0
                 );
+            }
+        }else{
+            if(productOutdate){
+                mPresenter.callWsSyncForTicketsForm();
             }
         }
     }
@@ -2456,7 +2542,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //abre uma noticação do app e é enviado para act019
         //Rever isso no momento propicio
         mPresenter.getMenuItensV2(hmAux_Trans);
+
     }
+
+
 
     @Override
     protected void processCloseAPP(String mLink, String mRequired) {

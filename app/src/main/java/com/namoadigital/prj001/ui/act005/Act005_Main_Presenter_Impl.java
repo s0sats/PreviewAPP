@@ -80,7 +80,7 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
-import com.namoadigital.prj001.sql.MD_Site_Sql_001;
+import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
@@ -127,6 +127,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
      *
      **/
     private static final int SECUNDARY_MENU_QTY = 6;
+    public static final String SYNC_FOR_TICKETS_FORM = "SYNC_FOR_TICKETS_FORM";
 
     private Context context;
     private Act005_Main_View mView;
@@ -659,8 +660,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             false,
                                             false,
                                             false,
-                                            false
-                                    ).toSqlQuery()
+                                            false,
+                                            true).toSqlQuery()
                             ).get(Sql_Act005_009.PENDING_QTY));
                         } catch (Exception e) {
                             qty = "0";
@@ -675,8 +676,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                                             false,
                                             false,
                                             true,
-                                            false
-                                    ).toSqlQuery()
+                                            false,
+                                            false).toSqlQuery()
                             ).get(Sql_Act005_009.PENDING_QTY));
                         } catch (Exception e) {
                             qtyBadge2 = "0";
@@ -699,6 +700,31 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         mView.loadMenuV2(grantedMenus,calculateNumColumns());
     }
 
+    @Override
+    public void callWsSyncForTicketsForm() {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(SYNC_FOR_TICKETS_FORM);
+            //
+            mView.showPD();
+            //
+            ArrayList<String> data_package = new ArrayList<>();
+            data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+            //
+            Intent mIntent = new Intent(context, WBR_Sync.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+            bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+            bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
+            bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+            bundle.putInt(Constant.GC_STATUS, 1);
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        }
+
+    }
+
     private String handleTicketPendency() {
 
         TK_TicketDao tk_ticketdao = new TK_TicketDao(
@@ -715,8 +741,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         true,
                         false,
                         false,
-                        false
-                ).toSqlQuery()
+                        false,
+                        true).toSqlQuery()
         );
         //
         if(ticketPendencies.hasConsistentValue(PENDING_QTY)){
@@ -1113,10 +1139,12 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         return checkinReturns;
     }
-
+    //TODO REVISAR APÓS PUBLIA PRA TESTE. TALVEZ REVER COMO GERAR LISTA DE RETORNO DO SAVE.
     private String getFormmatedRetMsg(String retStatus, String retMsg ) {
         String msg = retStatus ;
-        msg += retMsg != null && !retMsg.isEmpty() ? "\n" + retMsg  :"";
+        if(!ConstantBaseApp.MAIN_RESULT_OK.equals(retStatus)) {
+            msg += retMsg != null && !retMsg.isEmpty() ? "\n" + retMsg : "";
+        }
         return msg;
     }
 
@@ -1147,12 +1175,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             if(errorProcesses != null && errorProcesses.size() > 0){
                 ArrayList<HMAux> auxResults = new ArrayList<>();
                 for (TSave_Rec.Error_Process error_process : errorProcesses) {
-                    //
-                    HMAux mHmAux = new HMAux();
-                    mHmAux.put("label", ToolBox_Inf.formatScheduleErroLabel(error_process));
-                    mHmAux.put("type", ConstantBaseApp.SYS_STATUS_SCHEDULE);
-                    mHmAux.put("status", error_process.getError());
-                    mHmAux.put("final_status", ToolBox_Inf.formatFormErrorDesc(error_process));
+                    ////
+                    HMAux mHmAux = ToolBox_Inf.getWsSaveErrorProcessAuxResult(error_process);
                     //
                     auxResults.add(mHmAux);
                 }
@@ -1202,7 +1226,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         bundle.putInt(Constant.GC_STATUS, 1);
         //LUCHE - 07/06/2019
         //Add param que redefine timeout da chamada.Usada somente no sync full
-        bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, 180000);
+        bundle.putInt(Constant.WS_CONNECTION_TIMEOUT, 300000);
 
         mIntent.putExtras(bundle);
         //
@@ -1215,99 +1239,110 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     public void accessMenuItem(String menu_id, int jump_validation_UR) {
 
         mView.setWsSoProcess("");
+        /*
+         * BARRIONUEVO - 18-11-2020
+         * Quando usuario estiver com a data muito discrepanta a ultima data valida, as funcoes do
+         * menu principal serão travadas.
+         */
+        if(!ToolBox_Inf.isLocalDatetimeOk(context)
+        && (!menu_id.equals(Act005_Main.MENU_ID_SEND_DATA)
+        && !menu_id.equals(Act005_Main.MENU_ID_SYNC_DATA))
+        ){
+            mView.handleInvalidLocalDatetime();
+        }else {
+            try {
+                switch (menu_id) {
+                    case Act005_Main.MENU_ID_CHECKLIST:
+                        mView.callAct006(context);
+                        break;
 
-        try {
-            switch (menu_id) {
-                case Act005_Main.MENU_ID_CHECKLIST:
-                    mView.callAct006(context);
-                    break;
+                    case Act005_Main.MENU_ID_FORM_AP:
+                        mView.callAct036(context);
+                        break;
+                    case Act005_Main.MENU_ID_TICKET:
+                        mView.callAct068(context);
+                        break;
+                    case Act005_Main.MENU_ID_SERVICE:
+                        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER)) {
+                            mView.callAct040(context);
+                        } else {
+                            mView.callAct021(context);
+                        }
+                        break;
 
-                case Act005_Main.MENU_ID_FORM_AP:
-                    mView.callAct036(context);
-                    break;
-                case Act005_Main.MENU_ID_TICKET:
-                    mView.callAct068(context);
-                    break;
-                case Act005_Main.MENU_ID_SERVICE:
-                    if(ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER)){
-                        mView.callAct040(context);
-                    }else {
-                        mView.callAct021(context);
-                    }
-                    break;
+                    case Act005_Main.MENU_ID_SCHEDULE_DATA:
+                        //mView.callAct016(context);
+                        mView.callAct046(context);
+                        break;
 
-                case Act005_Main.MENU_ID_SCHEDULE_DATA:
-                    //mView.callAct016(context);
-                    mView.callAct046(context);
-                    break;
+                    case Act005_Main.MENU_ID_SERIAL:
+                        mView.callAct030(context);
+                        break;
 
-                case Act005_Main.MENU_ID_SERIAL:
-                    mView.callAct030(context);
-                    break;
+                    case Act005_Main.MENU_ID_IO_ASSETS:
+                        if (isSiteLoggedIoControl()) {
+                            mView.callAct051(context);
+                        } else {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_site_no_io_control_ttl"),
+                                    hmAux_Trans.get("alert_site_no_io_control_msg"),
+                                    null,
+                                    0
+                            );
+                        }
+                        break;
 
-                case Act005_Main.MENU_ID_IO_ASSETS:
-                    if (isSiteLoggedIoControl()) {
-                        mView.callAct051(context);
-                    } else {
-                        ToolBox.alertMSG(
-                                context,
-                                hmAux_Trans.get("alert_site_no_io_control_ttl"),
-                                hmAux_Trans.get("alert_site_no_io_control_msg"),
-                                null,
-                                0
-                        );
-                    }
-                    break;
+                    case Act005_Main.MENU_ID_PENDING_DATA:
+                        mView.callAct012(context);
+                        break;
 
-                case Act005_Main.MENU_ID_PENDING_DATA:
-                    mView.callAct012(context);
-                    break;
+                    case Act005_Main.MENU_ID_HISTORIC_DATA:
+                        mView.callAct014(context);
+                        break;
 
-                case Act005_Main.MENU_ID_HISTORIC_DATA:
-                    mView.callAct014(context);
-                    break;
+                    case Act005_Main.MENU_ID_MESSAGES:
+                        mView.callAct018(context);
+                        break;
 
-                case Act005_Main.MENU_ID_MESSAGES:
-                    mView.callAct018(context);
-                    break;
+                    case Act005_Main.MENU_ID_SEND_DATA:
+                        if (ToolBox_Con.isOnline(context)) {
+                            mView.setWsProcess(Act005_Main.WS_PROCESS_SEND);
+                            mView.setWsSoProcess(WS_Serial_Save.class.getSimpleName());
+                            mView.showPD();
+                            mView.cleanUpResults();
+                            //executeSaveProcess();
+                            executeSerialSave();
+                        } else {
+                            mView.showNoConnectionDialog();
+                        }
 
-                case Act005_Main.MENU_ID_SEND_DATA:
-                    if (ToolBox_Con.isOnline(context)) {
-                        mView.setWsProcess(Act005_Main.WS_PROCESS_SEND);
-                        mView.setWsSoProcess(WS_Serial_Save.class.getSimpleName());
-                        mView.showPD();
-                        mView.cleanUpResults();
-                        //executeSaveProcess();
-                        executeSerialSave();
-                    } else {
-                        mView.showNoConnectionDialog();
-                    }
+                        break;
 
-                    break;
+                    case Act005_Main.MENU_ID_SYNC_DATA:
+                        if (ToolBox_Con.isOnline(context)) {
+                            mView.setWsProcess(Act005_Main.WS_PROCESS_SYNC);
+                            mView.showPD();
+                            executeSyncProcess(jump_validation_UR);
+                        } else {
+                            mView.showNoConnectionDialog();
+                        }
+                        break;
 
-                case Act005_Main.MENU_ID_SYNC_DATA:
-                    if (ToolBox_Con.isOnline(context)) {
-                        mView.setWsProcess(Act005_Main.WS_PROCESS_SYNC);
-                        mView.showPD();
-                        executeSyncProcess(jump_validation_UR);
-                    } else {
-                        mView.showNoConnectionDialog();
-                    }
-                    break;
+                    case Act005_Main.MENU_ID_CHAT:
+                        mView.callAct034(context);
+                        break;
 
-                case Act005_Main.MENU_ID_CHAT:
-                    mView.callAct034(context);
-                    break;
-
-                case Act005_Main.MENU_ID_CLOSE:
-                    mView.closeApp();
-                    break;
-                default:
-                    break;
+                    case Act005_Main.MENU_ID_CLOSE:
+                        mView.closeApp();
+                        break;
+                    default:
+                        break;
+                }
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(getClass().getName(), e);
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            ToolBox_Inf.registerException(getClass().getName(), e);
-            e.printStackTrace();
         }
     }
 
@@ -1844,7 +1879,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     private boolean isSiteLoggedIoControl() {
         MD_Site mdSite = siteDao.getByString(
-                new MD_Site_Sql_001(
+                new MD_Site_Sql_003(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         ToolBox_Con.getPreference_Site_Code(context)
                 ).toSqlQuery()
@@ -1894,4 +1929,28 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         return okInboundItem;
     }
+//    /**
+//     * BARRIONUEVO - 18-11-2020
+//     * Metodo responsavel por verificar a ultima data valida.
+//     */
+//    @Override
+//    public boolean isLocalDatetimeOk() {
+//        String sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+//        long currentTimeMillis = ToolBox_Inf.dateToMilliseconds(sDate);
+//        boolean isDatetimeValid = ToolBox_Con.getBooleanPreferencesByKey(context, ConstantBaseApp.DATETIME_IS_VALID, true);
+//        long lastValidTime = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
+//        long datetimeTolerance = ToolBox_Con.getLongPreferencesByKey(context, ConstantBaseApp.DATETIME_TOLERANCE, 4200000);
+//
+//        if(isDatetimeValid) {
+//            if ((currentTimeMillis + datetimeTolerance) >= lastValidTime) {
+//                if(currentTimeMillis >= lastValidTime) {
+//                    ToolBox_Con.setLongPreference(context, ConstantBaseApp.DATETIME_LAST_VALID_TIME, currentTimeMillis);
+//                }
+//                return true;
+//            }
+//        }
+//
+//        ToolBox_Con.setBooleanPreference(context, ConstantBaseApp.DATETIME_IS_VALID, false);
+//        return false;
+//    }
 }

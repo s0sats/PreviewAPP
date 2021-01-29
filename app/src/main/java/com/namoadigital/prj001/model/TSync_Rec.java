@@ -13,6 +13,8 @@ public class TSync_Rec {
     private String zip;
     private Integer db_version;
     private Integer user_code;
+    private int valid_time = -1 ;
+    private long tolerance_time = -1;
 
     public String getApp() {
         return app;
@@ -68,5 +70,21 @@ public class TSync_Rec {
 
     public void setUser_code(Integer user_code) {
         this.user_code = user_code;
+    }
+
+    public int getValid_time() {
+        return valid_time;
+    }
+
+    public void setValid_time(int valid_time) {
+        this.valid_time = valid_time;
+    }
+
+    public long getTolerance_time() {
+        return tolerance_time;
+    }
+
+    public void setTolerance_time(long tolerance_time) {
+        this.tolerance_time = tolerance_time;
     }
 }

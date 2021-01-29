@@ -47,12 +47,13 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
     public static final String PRODUCT_ICON_NAME = "product_icon_name";
     public static final String PRODUCT_ICON_URL = "product_icon_url";
     public static final String PRODUCT_ICON_URL_LOCAL = "product_icon_url_local";
+    public static final String SPARE_PART = "spare_part" ;
 
     public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC,
             REQUIRE_SERIAL, ALLOW_NEW_SERIAL_CL, UN, SKETCH_CODE, SKETCH_URL, SKETCH_URL_LOCAL,
             SKETCH_LINES, SKETCH_COLUMNS, SKETCH_COLOR, FLAG_OFFLINE, LOCAL_CONTROL, IO_CONTROL,
             SERIAL_RULE, SERIAL_MIN_LENGTH, SERIAL_MAX_LENGTH, SITE_RESTRICTION, PRODUCT_ICON_NAME,
-            PRODUCT_ICON_URL, PRODUCT_ICON_URL_LOCAL
+            PRODUCT_ICON_URL, PRODUCT_ICON_URL_LOCAL, SPARE_PART
     };
 
     public MD_ProductDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -358,6 +359,7 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             }
 
             md_product.setProduct_icon_url_local(cursor.getString(cursor.getColumnIndex(PRODUCT_ICON_URL_LOCAL)));
+            md_product.setSpare_part(cursor.getInt(cursor.getColumnIndex(SPARE_PART)));
 
             return md_product;
         }
@@ -417,6 +419,9 @@ public class MD_ProductDao extends BaseDao implements Dao<MD_Product>, DaoProduc
             contentValues.put(PRODUCT_ICON_URL, md_product.getProduct_icon_url());
             if (md_product.getProduct_icon_url_local() != null) {
                 contentValues.put(PRODUCT_ICON_URL_LOCAL, md_product.getProduct_icon_url_local());
+            }
+            if (md_product.getSpare_part() > -1) {
+                contentValues.put(SPARE_PART, md_product.getSpare_part());
             }
             return contentValues;
         }

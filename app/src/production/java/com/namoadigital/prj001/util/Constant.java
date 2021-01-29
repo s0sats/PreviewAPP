@@ -13,6 +13,7 @@ public class Constant extends ConstantBaseApp {
      * Produção
      */
     public static final String WS_GETCUSTOMERS = "https://portal.namoadigital.com/ws/prj001/server_get_customer.ws";
+    public static final String WS_GET_CUSTOMERS_SITE_LICENSE = "https://portal.namoadigital.com/ws/prj001/server_get_customer_site.ws";
     public static final String WS_GETSESSION = "https://portal.namoadigital.com/ws/prj001/server_get_session.ws";
     public static final String WS_GOOGLE = "https://portal.namoadigital.com/ws/prj001/server_gcm_set.ws";
 
@@ -37,6 +38,8 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_SO_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save_so.ws";
     public static final String WS_SO_PACK_SERVICE = "https://portal.namoadigital.com/ws/prj001/server_sm_so_pack_service_new_app.ws";
     public static final String WS_SO_PRODUCT_EVENT_CANCEL = "https://portal.namoadigital.com/ws/prj001/server_sm_so_product_event_cancel.ws";
+    public static final String WS_SO_NEXT_ORDERS = "https://portal.namoadigital.com/ws/prj001/server_sm_so_to_be_executed.ws";
+    public static final String WS_SO_CREATE_ROOM = "https://portal.namoadigital.com/ws/prj001/server_sm_so_create_room.ws";
     //IO
     public static final String WS_IO_SERIAL_PROCESS_SEARCH = "https://portal.namoadigital.com/ws/prj001/io/server_product_serial.ws";
     public static final String WS_IO_SERIAL_PROCESS_DOWNLOAD = "https://portal.namoadigital.com/ws/prj001/io/server_product_serial_obj.ws";
@@ -61,6 +64,10 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_TICKET_DOWNLOAD_SERIAL = "https://portal.namoadigital.com/ws/prj001/tk/server_ticket_serial.ws";
     public static final String WS_TICKET_CHECKIN = "https://portal.namoadigital.com/ws/prj001/tk/server_ticket_checkin.ws";
     public static final String WS_TICKET_SAVE = "https://portal.namoadigital.com/ws/prj001/tk/server_ticket_set.ws";
+    public static final String WS_NEXT_TICKET = "https://portal.namoadigital.com/ws/prj001/tk/server_ticket_next.ws";
+    public static final String WS_TICKET_DOWNLOAD_CLIENT_CONTRACT = "https://portal.namoadigital.com/ws/prj001/tk/server_ticket_search.ws";
+    public static final String WS_TICKET_GET_WORKGROUP_LIST = "https://portal.namoadigital.com/ws/prj001/tk/server_workgroup.ws";
+    public static final String WS_TICKET_SERVER_MAIN_USER = "https://portal.namoadigital.com/ws/prj001/tk/server_main_user.ws";
 
     public static final String WS_ENABLE_NFC = "https://portal.namoadigital.com/ws/prj001/server_enable_nfc_auth.ws";
     public static final String WS_CANCEL_NFC = "https://portal.namoadigital.com/ws/prj001/server_cancel_nfc_auth.ws";
@@ -73,7 +80,6 @@ public class Constant extends ConstantBaseApp {
 
     public static final String WS_SERIAL_LOG = "https://portal.namoadigital.com/ws/prj001/server_serial_log.ws";
     public static final String WS_GENERATE_FORM_PDF = "https://portal.namoadigital.com/ws/prj001/server_checklist_url.ws";
-    public static final String WS_SO_NEXT_ORDERS = "https://portal.namoadigital.com/ws/prj001/server_sm_so_to_be_executed.ws";
 
     public static final String WEB_SOCKET_CHAT = "https://nchat.namoadigital.com";
     public static final String WS_UPLOAD_NODE_CHAT = "https://nchat.namoadigital.com/messageFile";

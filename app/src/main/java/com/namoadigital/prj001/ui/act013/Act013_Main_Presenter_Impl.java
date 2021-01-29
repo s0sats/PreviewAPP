@@ -632,7 +632,14 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 } else if (isAnyFormInProcessing(item)) {
                     mView.showMsg(Act013_Main.FORM_IN_PROCESSING, item);
                 } else {
-                    mView.showMsg(Act013_Main.START_FORM, item);
+                    //LUCHE - 14/01/2021
+                    //Verifica se deve bloquear a execução e em caso posito, exibe msg informando do
+                    // bloqueio
+                    if(ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)) {
+                        mView.showMsg(Act013_Main.FREE_EXECUTION_BLOCKED, item);
+                    }else {
+                        mView.showMsg(Act013_Main.START_FORM, item);
+                    }
                 }
             } else {
                 //addFormInfoToBundle(item);

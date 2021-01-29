@@ -9,6 +9,7 @@ public class T_TK_Ticket_Download_PK_Env {
     private String customer_code;
     private String ticket_prefix;
     private String ticket_code;
+    private String scn;
 
     public String getCustomer_code() {
         return customer_code;
@@ -32,5 +33,13 @@ public class T_TK_Ticket_Download_PK_Env {
 
     public void setTicket_code(String ticket_code) {
         this.ticket_code = ticket_code;
+    }
+
+    public String getScn() {
+        return scn;
+    }
+
+    public void setScn(String scn) {
+        this.scn = scn;
     }
 }

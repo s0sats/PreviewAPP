@@ -16,9 +16,11 @@ import com.namoadigital.prj001.receiver.WBR_Upload_Img;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.sql.GE_File_Sql_007;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -78,8 +80,15 @@ public class WS_Upload_Img extends IntentService {
                         Constant.NOTIFICATION_UPLOAD
                 );
             }
-
             WBR_Upload_Img.IS_RUNNING = true;
+            /**
+             * APENAS PARA DOCUMENTAÇÃO
+             * A nova metodologia de criar uma copia no de para e apagar a original só tem efeito na S.O
+             * Nos demais processos, N-Form e Ticket, como a foto não recebe o new_path, a fato sempre
+             * será mantida.
+             * Se o if(curGeFile.getFile_path_new() != null) for alterado,
+             * TOME CUIDADO PARA NÃO AFETAR OS DEMAIS PROCESSOS.
+             */
             //
             for (GE_File geFile : geFiles) {
                 GE_File curGeFile = getCurrentFileReg(geFileDao,geFile);
@@ -87,7 +96,10 @@ public class WS_Upload_Img extends IntentService {
                 if(curGeFile == null){
                     curGeFile = geFile;
                 }
-                String sRealFileName = curGeFile.getFile_path_new() != null ? curGeFile.getFile_path_new() : curGeFile.getFile_path();
+                //LUCHE - 20/07/2020
+                //Após mudança do conceito de renomeação para copia da foto e deleção da original,
+                //foi modificado para sempre usar a foto original para verificar a existencia do arquivo
+                String sRealFileName = curGeFile.getFile_path();
                 //
                 if (ToolBox_Inf.verifyFileExists(sRealFileName)) {
                     env.setFile_path(curGeFile.getFile_path());
@@ -102,17 +114,32 @@ public class WS_Upload_Img extends IntentService {
                             sResults,
                             TUploadImg_Rec.class
                     );
-
-                    if (rec.getSave().equalsIgnoreCase("OK")) {
-                        curGeFile.setFile_status("SENT");
+                    //Substituido status chumbados por contantes.
+                    if (rec.getSave().equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_OK)) {
+                        //Se retorno OK, FAZ uma terceira checagem do registro.
+                        GE_File finalGeFile = getCurrentFileReg(geFileDao,curGeFile);
+                        //Se não encontrou registro, seta o obj anterior no novo.
+                        //Caso ten
+                        if(finalGeFile != null){
+                            curGeFile = finalGeFile;
+                        }
+                        //
+                        curGeFile.setFile_status(ConstantBaseApp.GE_FILE_STATUS_SENT);
                         geFileDao.addUpdate(curGeFile);
+                        //
+                        if(curGeFile.getFile_path_new() != null){
+                            //TODO colocar verificação de se nova foto existe?????
+                            //Log.d("del-PHOTO", "WsUpload :" + curGeFile.getFile_path());
+                            ToolBox_Inf.deleteDownloadFile(
+                                imgFileAbsolutePath(curGeFile.getFile_path())
+                            );
+                        }
                     }
                 } else {
-                    curGeFile.setFile_status("FILE_NOT_FOUND");
+                    curGeFile.setFile_status(ConstantBaseApp.GE_FILE_STATUS_FILE_NOT_FOUND);
                     geFileDao.addUpdate(curGeFile);
                 }
             }
-
 
         } catch (Exception e) {
             programAlarm(getApplicationContext(),customer_code);
@@ -134,6 +161,23 @@ public class WS_Upload_Img extends IntentService {
                 geFile.getFile_code()
             ).toSqlQuery()
         );
+    }
+
+    /**
+     * LUCHE - 20/07/2020
+     * <p></p>
+     * Criado metodo que retorno absolute pah do file a ser apagado.
+     * @param file_name
+     * @return
+     */
+    private String imgFileAbsolutePath(String file_name) {
+        File file = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/", file_name);
+        try {
+            return file.getAbsolutePath();
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return "";
+        }
     }
 
     private void programAlarm(Context context, long customer_code) {

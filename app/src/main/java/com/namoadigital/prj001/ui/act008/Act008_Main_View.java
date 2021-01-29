@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act008;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product;
@@ -50,4 +51,13 @@ public interface Act008_Main_View {
     //17/08/18
     void callAct013(Context context);
 
+    void callAct081(Context context);
+
+    boolean isOffHandForm();
+
+    void callAct071(Context context, Bundle bundle);
+
+    boolean isHas_tk_ticket_is_form_off_hand();
+
+    String getmdProductSerialSiteCode();
 }

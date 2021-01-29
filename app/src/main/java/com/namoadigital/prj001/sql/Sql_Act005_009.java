@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.sql;
 
-import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -10,7 +9,7 @@ public class Sql_Act005_009 implements Specification{
     private String status_filtered;
     private long customer_code;
 
-    public Sql_Act005_009(long customer_code, boolean statusProcess, boolean statusPending, boolean statusWaitingSync, boolean statusDone, boolean statusSyncRequired, boolean statusUpdateRequired) {
+    public Sql_Act005_009(long customer_code, boolean statusProcess, boolean statusPending, boolean statusWaitingSync, boolean statusDone, boolean statusSyncRequired, boolean statusUpdateRequired, boolean hasUserFocus) {
         this.customer_code = customer_code;
         if(statusPending || statusProcess || statusWaitingSync || statusDone) {
             status_filtered = "\n   and s.ticket_status in (";
@@ -27,6 +26,9 @@ public class Sql_Act005_009 implements Specification{
         if(statusUpdateRequired){
             status_filtered = "\n and s.update_required = 1";
         }
+        if(hasUserFocus){
+            status_filtered += "\n and s.user_focus = 1";
+        }
     }
 
     @Override
@@ -40,6 +42,7 @@ public class Sql_Act005_009 implements Specification{
                         TK_TicketDao.TABLE +" s\n" +
                         " WHERE \n" +
                         "   s.customer_code = '"+customer_code+"'\n" +
+                        "  and s.ticket_prefix > 0 \n" +
                         status_filtered +
                         "; \n")
                 .toString();

@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class SO_Favorite_PO  implements Serializable {
     @SerializedName("po_code")
@@ -27,6 +28,9 @@ public class SO_Favorite_PO  implements Serializable {
     @SerializedName("po_client3")
     @Expose
     private String poClient3;
+    @SerializedName("pipeline")
+    @Expose
+    private List<SO_Favorite_Pipeline> pipeline;
 
     public Integer getPoCode() {
         return poCode;
@@ -84,4 +88,11 @@ public class SO_Favorite_PO  implements Serializable {
         this.poClient3 = poClient3;
     }
 
+    public List<SO_Favorite_Pipeline> getPipeline() {
+        return pipeline;
+    }
+
+    public void setPipeline(List<SO_Favorite_Pipeline> pipeline) {
+        this.pipeline = pipeline;
+    }
 }

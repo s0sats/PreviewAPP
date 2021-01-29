@@ -18,6 +18,7 @@ import com.namoadigital.prj001.dao.SM_SO_Product_Event_SketchDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_ExecDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_TaskDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
+import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Product_Event;
 import com.namoadigital.prj001.model.SM_SO_Product_Event_File;
@@ -30,6 +31,7 @@ import com.namoadigital.prj001.model.TSO_Save_Env;
 import com.namoadigital.prj001.model.TSO_Save_Rec;
 import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.sql.GE_File_Sql_006;
+import com.namoadigital.prj001.sql.GE_File_Sql_007;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_File_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_006;
@@ -482,8 +484,6 @@ public class WS_SO_Save extends IntentService {
                                         task.getSo_prefix(),
                                         task.getSo_code()
                                 ).toSqlQuery());
-
-
                             } else {
                                 //atualiza só SCN da S.O
                                 soDao.addUpdate(new SM_SO_Sql_010(
@@ -558,18 +558,21 @@ public class WS_SO_Save extends IntentService {
                                 taskFile.getExec_code() + "_" +
                                 taskFile.getTask_code() + "_" +
                                 taskFile.getFile_code() + ".jpg";
-
-                        if (renameTaskFile(auxFile.getFile_name(), new_name)) {
-                            //Atualiza path da imagem na lista de upload
-                            geFileDao.addUpdate(
-                                    new GE_File_Sql_006(
-                                            auxFile.getFile_name().replace(".jpg", "").replace(".png", ""),
-                                            new_name
-                                    ).toSqlQuery()
-                            );
-                        } else {
+                        //Processa de-para e devola sucesos ou falha
+                        if (!fromToImgProcess(geFileDao, auxFile.getFile_name(), new_name)){
                             return false;
                         }
+//                        if (renameTaskFile(auxFile.getFile_name(), new_name)) {
+//                            //Atualiza path da imagem na lista de upload
+//                            geFileDao.addUpdate(
+//                                    new GE_File_Sql_006(
+//                                            auxFile.getFile_name().replace(".jpg", "").replace(".png", ""),
+//                                            new_name
+//                                    ).toSqlQuery()
+//                            );
+//                        } else {
+//                            return false;
+//                        }
                         taskFile.setFile_url_local(new_name);
                         taskFileDao.addUpdateTmp(taskFile);
                         //Valida se é re_send para saber qual será update_required
@@ -736,16 +739,20 @@ public class WS_SO_Save extends IntentService {
                                 eventFile.getSo_code() + "_" +
                                 eventFile.getSeq() + "_" +
                                 eventFile.getFile_code() + ".jpg";
+//                        if (renameTaskFile(auxFile.getFile_name(), new_name)) {
+//                            //Atualiza path da imagem na lista de upload
+//                            geFileDao.addUpdate(
+//                                    new GE_File_Sql_006(
+//                                            auxFile.getFile_name().replace(".jpg", "").replace(".png", ""),
+//                                            new_name
+//                                    ).toSqlQuery()
+//                            );
+//                        } else {
+//                            return false;
+//                        }
 
-                        if (renameTaskFile(auxFile.getFile_name(), new_name)) {
-                            //Atualiza path da imagem na lista de upload
-                            geFileDao.addUpdate(
-                                    new GE_File_Sql_006(
-                                            auxFile.getFile_name().replace(".jpg", "").replace(".png", ""),
-                                            new_name
-                                    ).toSqlQuery()
-                            );
-                        } else {
+                        //Processa de-para e devola sucesos ou falha
+                        if (!fromToImgProcess(geFileDao, auxFile.getFile_name(), new_name)){
                             return false;
                         }
                         eventFile.setFile_url_local(new_name);
@@ -804,6 +811,53 @@ public class WS_SO_Save extends IntentService {
         return true;
     }
 
+    /**LUCHE - 20/07/2020
+     * <p></p>
+     * Após usr da Mosolf ganhar 2 vezes na loteria conseguindo sincornizar o
+     * rename da foto com a rotina de upload, foi criado novo metodo para tratar
+     * o upload das imagens.
+     * Será gerada uma copia da imagem no de-para, na sequencia será avaliado o
+     *  status da foto na GE_File, se OPEN, atualiza registro com o segundo nome
+     *  se SENT, apaga a foto original.
+     * @param geFileDao
+     * @param originalFileName
+     * @param new_name
+     * @return
+     */
+    private boolean fromToImgProcess(GE_FileDao geFileDao, String originalFileName, String new_name) {
+        if(copyAndCheckFile(originalFileName,new_name)){
+            String fileCode = originalFileName.replace(".jpg", "").replace(".png", "");
+            GE_File geFile = getCurrentFileReg(geFileDao, fileCode);
+            if(ConstantBaseApp.GE_FILE_STATUS_OPENED.equals(geFile.getFile_status())){
+                //Atualiza path da imagem na lista de upload
+                geFileDao.addUpdate(
+                    new GE_File_Sql_006(
+                        fileCode,
+                        new_name
+                    ).toSqlQuery()
+                );
+            }else if(ConstantBaseApp.GE_FILE_STATUS_SENT.equals(geFile.getFile_status())){
+                //Log.d("del-PHOTO", "WsSoSave :" + geFile.getFile_path());
+                ToolBox_Inf.deleteFileWithRet(
+                    imgFileAbsolutePath(originalFileName)
+                );
+            }
+            //
+            return true;
+        }
+        return false;
+    }
+
+    private String imgFileAbsolutePath(String file_name) {
+        File file = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/", file_name);
+        try {
+            return file.getAbsolutePath();
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+            return "";
+        }
+    }
+
     private SO_Save_Return getSoReturn(ArrayList<SO_Save_Return> so_save_returns, long customer_code, int so_prefix, int so_code) {
         SO_Save_Return so_save_return = null; //new SO_Save_Return();
 
@@ -834,6 +888,37 @@ public class WS_SO_Save extends IntentService {
 
         }
         return true;
+    }
+
+    /**
+     * LUCHE - 20/07/2020
+     * <p></p>
+     * Cria copia da foto com o nome definitivo.
+     * @param originalFileName - Nome da foto original
+     * @param copiedFileName - Nome definitivo para criação da copia
+     * @return Verdadeiro se foto copiada com sucesso.
+     */
+    private boolean copyAndCheckFile(String originalFileName, String copiedFileName){
+        try {
+            File originalFile = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/", originalFileName);
+            File copiedFile = new File(ConstantBaseApp.CACHE_PATH_PHOTO + "/", copiedFileName);
+            //
+            ToolBox_Inf.copyAndRenameFile(originalFile,copiedFile);
+            //
+            return ToolBox_Inf.verifyDownloadFileInf(copiedFileName,ConstantBaseApp.CACHE_PATH_PHOTO);
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private GE_File getCurrentFileReg(GE_FileDao geFileDao, String fileCode) {
+        return geFileDao.getByString(
+            new GE_File_Sql_007(
+                fileCode
+            ).toSqlQuery()
+        );
     }
 
 

@@ -37,8 +37,9 @@
                 android:visibility="gone" />
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="vertical"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
@@ -84,6 +85,13 @@
                     android:textSize="@dimen/font_size_title" />
 
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/lib_custom_cell_iv_002"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_gravity="center" />
 
         </LinearLayout>
 
