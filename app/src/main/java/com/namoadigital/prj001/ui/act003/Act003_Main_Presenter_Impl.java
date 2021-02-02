@@ -3,12 +3,12 @@ package com.namoadigital.prj001.ui.act003;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.service.AppBackgroundService;
-import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_004;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
@@ -61,10 +61,14 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
 //        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
             try {
                 //
-                if (!ScreenStatusService.isRunning) {
-                    Intent mIntent = new Intent(context, ScreenStatusService.class);
-                    context.startService(mIntent);
-                }
+                /*
+                    BARRIONUEVO 02-02-2021
+                    Remocao de ScreenStatusService para Android 10+
+                 */
+//                if (!ScreenStatusService.isRunning) {
+//                    Intent mIntent = new Intent(context, ScreenStatusService.class);
+//                    context.startService(mIntent);
+//                }
                 //File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
                 if (ToolBox_Inf.isUsrAppLogged(context)) {
                     //Se usr esta logado, mas não tem preferencias se site e operação

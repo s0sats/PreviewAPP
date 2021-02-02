@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.namoadigital.prj001.service.SV_LocationTracker;
-import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -64,10 +63,10 @@ public class WBR_BootCompleted extends BroadcastReceiver {
 //        }
         //endregion
 
-        if (/*ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) &&*/ ToolBox_Inf.isUsrAppLogged(context) && ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_OK) && !ScreenStatusService.isRunning) {
-            Intent mIntent = new Intent(context, ScreenStatusService.class);
-            context.startService(mIntent);
-        }
+//        if (/*ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) &&*/ ToolBox_Inf.isUsrAppLogged(context) && ToolBox_Con.getPreference_Status_Login(context).equals(Constant.LOGIN_STATUS_OK) && !ScreenStatusService.isRunning) {
+//            Intent mIntent = new Intent(context, ScreenStatusService.class);
+//            context.startService(mIntent);
+//        }
 
     }
 }

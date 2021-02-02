@@ -62,7 +62,6 @@ import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.AppBackgroundService;
-import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
@@ -1800,11 +1799,14 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 Intent socketService = new Intent(context, AppBackgroundService.class);
                 context.stopService(socketService);
             }
-
-            if (ScreenStatusService.isRunning) {
+            /*
+                BARRIONUEVO 02-02-2021
+                Remocao de ScreenStatusService para Android 10+
+           */
+           /* if (ScreenStatusService.isRunning) {
                 Intent screenService = new Intent(context, ScreenStatusService.class);
                 context.stopService(screenService);
-            }
+            }*/
         }
     }
 

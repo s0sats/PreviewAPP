@@ -54,12 +54,8 @@ import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.model.TSave_Rec;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Customer_Logo;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.SV_LocationTracker;
-import com.namoadigital.prj001.service.ScreenStatusService;
 import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_IO_Blind_Move_Save;
 import com.namoadigital.prj001.service.WS_IO_Inbound_Item_Save;
@@ -244,10 +240,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         ToolBox_Inf.scheduleDownloadPictureWork(context);
         //
-        if (ToolBox_Inf.isUsrAppLogged(context) && !ScreenStatusService.isRunning) {
+        /*
+            BARRIONUEVO 02-02-2021
+            Remocao de ScreenStatusService para Android 10+
+       */
+       /* if (ToolBox_Inf.isUsrAppLogged(context) && !ScreenStatusService.isRunning) {
             Intent mScreenStatusService = new Intent(context, ScreenStatusService.class);
             context.startService(mScreenStatusService);
-        }
+        }*/
         //
         fcmReceiver = new FCMReceiver();
         IntentFilter filter = new IntentFilter();
