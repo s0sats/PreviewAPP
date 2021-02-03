@@ -481,6 +481,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             ft.commit();
         }else{
             mFrgPipelineHeader.updateSyncRequired(mPresenter.getSyncStatusParam(mTicket));
+            if(mTicket != null) {
+                mFrgPipelineHeader.updateTicketStatus(
+                        hmAux_Trans.get(mTicket.getTicket_status()),
+                        ToolBox_Inf.getStatusColorV2(context, mTicket.getTicket_status())
+                );
+            }
         }
 
     }
