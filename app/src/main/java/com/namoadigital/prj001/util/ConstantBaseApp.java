@@ -449,6 +449,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final int NOTIFICATION_DOWNLOAD = 667;
     public static final int NOTIFICATION_CHAT_MSG = 668;
     public static final int NOTIFICATION_CHAT_ROOM = 669;
+    public static final int NOTIFICATION_CHAT_FOREGROUND_SERVICE = 670;
     /**
      * Alarms
      */
@@ -818,6 +819,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_SERVICE_MODE = "CHAT_SERVICE_MODE";
     public static final String CHAT_SERVICE_MODE_LOGIN = "CHAT_SERVICE_MODE_LOGIN";
     public static final String CHAT_SERVICE_MODE_ACTIVED = "CHAT_SERVICE_MODE_ACTIVED";
+    public static final String CHAT_SERVICE_MODE_DESC = "CHAT_SERVICE_MODE_DESC";
 
     public static final String CHAT_NOTIFICATION_FCM_MSG = "<CHAT_MSG>";
     public static final String CHAT_NOTIFICATION_FCM_ADD_ROOM = "<CHAT_ADD_ROOM>";
