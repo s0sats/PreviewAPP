@@ -809,6 +809,16 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_NOTIFICATION_TYPE_RECONNECTING = "RECONNECTING";
     public static final String CHAT_NOTIFICATION_TYPE_CHAT = "CHAT";
     public static final String CHAT_START_SERVICE_CALLER = "CHAT_START_SERVICE_CALLER";
+    /**
+     * BARRIONUEVO - 10-02-2021
+     * Constantes do servico de chat
+     *  CHAT_SERVICE_MODE_LOGIN - Utilizado no processo de sincronia de mensagens no login
+     *  CHAT_SERVICE_MODE_ACTIVED - Utilizado nas telas 34, 35 e worker.
+     */
+    public static final String CHAT_SERVICE_MODE = "CHAT_SERVICE_MODE";
+    public static final String CHAT_SERVICE_MODE_LOGIN = "CHAT_SERVICE_MODE_LOGIN";
+    public static final String CHAT_SERVICE_MODE_ACTIVED = "CHAT_SERVICE_MODE_ACTIVED";
+
     public static final String CHAT_NOTIFICATION_FCM_MSG = "<CHAT_MSG>";
     public static final String CHAT_NOTIFICATION_FCM_ADD_ROOM = "<CHAT_ADD_ROOM>";
     public static final String CHAT_NOTIFICATION_FCM_REMOVE_ROOM = "<CHAT_REMOVE_ROOM>";

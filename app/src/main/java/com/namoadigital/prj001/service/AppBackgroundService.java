@@ -2,6 +2,7 @@ package com.namoadigital.prj001.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.util.Log;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -23,6 +25,10 @@ public class AppBackgroundService extends Service {
     //APAGAR APOS TESTE
     //private File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
     private String serviceLastCaller = "";
+    /**
+     * Variavel de controle utiliza para finalizar o servico.
+     */
+    public static String serviceChatMode = "";
     //
 
     @Override
@@ -32,6 +38,7 @@ public class AppBackgroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         this.isRunning = true;
+
         if ( /*ToolBox_Inf.parameterExists(getApplicationContext(),Constant.PARAM_CHAT)
              &&*/ ToolBox_Con.getPreference_Status_Login(getApplicationContext()).equals(Constant.LOGIN_STATUS_OK)
             ) {
@@ -39,7 +46,10 @@ public class AppBackgroundService extends Service {
             try {
                 //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService OnStart \n", log_file);
                 if (intent != null) {
+                    serviceChatMode = intent.getStringExtra(Constant.CHAT_SERVICE_MODE);
                     serviceLastCaller = intent.getStringExtra(Constant.CHAT_START_SERVICE_CALLER);
+                }else{
+                    serviceChatMode = ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN;
                 }
                 //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n", log_file);
                 Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: " + serviceLastCaller + " \n");
