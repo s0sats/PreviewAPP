@@ -566,24 +566,6 @@ public class SingletonWebSocket {
                     } else {
                         Log.d("ChatEvent", "EVENT_RECONNECTING - Tentativa :  " + String.valueOf(args[0]));
                     }
-                    /*
-                        BARRIONUEVO 02-02-2021
-                        Tratativa de encerramento do serviço para forçar a chamada via FCM.
-                     */
-                    try{
-                        int reconnectAttempts = (int) args[0];
-                        if(reconnectAttempts > 19){
-                            Log.d("ChatEvent", "EVENT_RECONNECTING - AppBackgroundService.isRunning :  " + AppBackgroundService.isRunning);
-                            if (AppBackgroundService.isRunning) {
-                                //
-                                Intent socketService = new Intent(context, AppBackgroundService.class);
-                                context.stopService(socketService);
-                            }
-                        }
-                    }catch (Exception e ){
-                        ToolBox.registerException(context.getClass().getName(), e);
-                        Log.d("ChatEvent", "Deu ruim no try catch: " + e);
-                    }
 //                    try {
 //                        ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - EVENT_RECONNECTING. Tentativa :  " + String.valueOf(args[0]) + "  \n", log_file);
 //                    } catch (Exception e) {

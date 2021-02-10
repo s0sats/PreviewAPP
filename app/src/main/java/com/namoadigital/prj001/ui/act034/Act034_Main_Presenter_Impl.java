@@ -83,12 +83,11 @@ public class Act034_Main_Presenter_Impl implements Act034_Main_Presenter {
     public void tryToRestartChatService() {
         if (/*ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT) &&*/ ToolBox_Inf.isUsrAppLogged(context)) {
             //ToolBox_Inf.defineChatServiceAction(context,Constant.ACT034,true);
-            if(!AppBackgroundService.isRunning) {
-                Intent mIntent = new Intent(context, AppBackgroundService.class);
-                mIntent.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
-                context.startService(mIntent);
-            }
-//            else{
+//            if(!AppBackgroundService.isRunning) {
+//                Intent mIntent = new Intent(context, AppBackgroundService.class);
+//                mIntent.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
+//                context.startService(mIntent);
+//            }else{
 //                try{
 //                    File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
 //                    ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act034 Startou o singletonGetInstance()\n", log_file);
