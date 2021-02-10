@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -49,6 +50,7 @@ import com.namoadigital.prj001.receiver.NotificationReceiver;
 import com.namoadigital.prj001.receiver_chat.WBR_Add_User_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service_chat.WS_Add_User_Room_AP;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
@@ -60,6 +62,9 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACTIVED;
 
 /**
  * Created by d.luche on 27/11/2017.
@@ -257,6 +262,14 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!AppBackgroundService.isRunning) {
+            callChatService();
+        }
+    }
+
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
         bTT = getIntent().getBooleanExtra(NotificationReceiver.NOTIFICATION, false);
@@ -384,6 +397,17 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
         setDrawerState(customer_list.size() > 1);
 
+    }
+
+
+    private void callChatService() {
+        Intent mIntent = new Intent(context, AppBackgroundService.class);
+        mIntent.putExtra(CHAT_SERVICE_MODE, CHAT_SERVICE_MODE_ACTIVED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(mIntent);
+        }else {
+            context.startService(mIntent);
+        }
     }
 
     public void setSelectedCustomer(long customer_code) {

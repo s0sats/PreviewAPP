@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -76,6 +77,7 @@ import com.namoadigital.prj001.receiver_chat.WBR_Add_User_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Leave_Room;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_AP;
 import com.namoadigital.prj001.receiver_chat.WBR_Room_Private;
+import com.namoadigital.prj001.service.AppBackgroundService;
 import com.namoadigital.prj001.service.WS_AP_Search;
 import com.namoadigital.prj001.service.WS_SO_Search;
 import com.namoadigital.prj001.service.WS_Serial_Search;
@@ -112,6 +114,8 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.namoadigital.prj001.receiver.NotificationReceiver.NOTIFICATION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACTIVED;
 
 /**
  * Created by d.luche on 31/08/2017.
@@ -525,6 +529,16 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         if (mRoom.getRoom_type().equalsIgnoreCase(Constant.CHAT_ROOM_TYPE_SO)) {
             Gson gson = new GsonBuilder().serializeNulls().create();
             roomObjSo = getRoomObjSo(gson);
+        }
+    }
+
+    private void callChatService() {
+        Intent mIntent = new Intent(context, AppBackgroundService.class);
+        mIntent.putExtra(CHAT_SERVICE_MODE, CHAT_SERVICE_MODE_ACTIVED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(mIntent);
+        }else {
+            context.startService(mIntent);
         }
     }
 
@@ -1242,6 +1256,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     protected void onResume() {
         super.onResume();
+        if(!AppBackgroundService.isRunning) {
+            callChatService();
+        }
     }
 
     private void rearrange_list() {
@@ -1327,6 +1344,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     @Override
     public void callAct038(Context context, HMAux hmAux) {
+        //
+        ToolBox_Inf.stopChatService(context);
+        //
         Intent mIntent = new Intent(context, Act038_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
@@ -1342,6 +1362,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         //
         mRoom_code = "";
         mIntent.putExtras(bundle);
+        //
+        ToolBox_Inf.stopChatService(context);
+        //
         startActivity(mIntent);
         finish();
     }
@@ -2963,6 +2986,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
         mIntent.putExtras(bundle);
         mRoom_code = "";
+        //
+        ToolBox_Inf.stopChatService(context);
+        //
         startActivity(mIntent);
         finish();
     }
@@ -2980,6 +3006,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
         mIntent.putExtras(bundle);
         mRoom_code = "";
+        //
+        ToolBox_Inf.stopChatService(context);
+        //
         startActivity(mIntent);
         finish();
     }

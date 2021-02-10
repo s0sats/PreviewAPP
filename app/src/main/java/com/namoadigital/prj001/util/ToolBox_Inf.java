@@ -3993,6 +3993,18 @@ public class ToolBox_Inf {
         writer.close();
     }
 
+    /**
+     * BARRIONUEVO 10-02-2021
+     * Metodo responsavel
+     * @param context
+     */
+    public static void stopChatService(Context context) {
+        if(AppBackgroundService.isRunning) {
+            Intent chatService = new Intent(context, AppBackgroundService.class);
+            context.stopService(chatService);
+        }
+    }
+
     public static String getDateHourStr() {
         //
         SimpleDateFormat formater = new SimpleDateFormat("yyyyMMdd");
