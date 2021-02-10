@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act003;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
@@ -64,6 +63,7 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                 /*
                     BARRIONUEVO 02-02-2021
                     Remocao de ScreenStatusService para Android 10+
+                    TODO apagar trecho após testes.
                  */
 //                if (!ScreenStatusService.isRunning) {
 //                    Intent mIntent = new Intent(context, ScreenStatusService.class);

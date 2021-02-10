@@ -1788,8 +1788,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 //            return 0 + qty;
 //        }
 //    }
-
+    /*
+        TODO substiuir pelo cancelamento do worker?
+     */
     @Override
+    @Deprecated
     public void stopChatServices() {
         //No logoff, verifica se era a ultima sessão ativa.
         //Caso fosse, parar serviços do chat e do screestatus
