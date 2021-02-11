@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -34,9 +35,15 @@ public class AppBackgroundService extends Service {
      */
     public static String serviceChatMode = ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN;
     private String notificationContentText = "";
+    private Handler mHandler;
+    private Runnable mRunnable;
+    private static int PROGRESS_TIME_OUT = 1000 * 30 ;
 
     @Override
     public void onCreate() {
+        if(mHandler == null && mRunnable == null){
+            configServiceHandler();
+        }
     }
 
     @Override
@@ -59,6 +66,9 @@ public class AppBackgroundService extends Service {
                 }
                 //
                 setNotificationForForegroundService();
+                //
+                startServiceTimeout();
+
                 //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: "+serviceLastCaller+" \n", log_file);
                 Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService Caller: " + serviceLastCaller + " \n");
                 //
@@ -75,6 +85,8 @@ public class AppBackgroundService extends Service {
         }
         return START_STICKY;
     }
+
+
 
 
     private void setNotificationForForegroundService() {
@@ -94,9 +106,33 @@ public class AppBackgroundService extends Service {
         startForeground(ConstantBaseApp.NOTIFICATION_CHAT_FOREGROUND_SERVICE, notification);
     }
 
+    private void configServiceHandler() {
+        mHandler = new Handler();
+        mRunnable = new Runnable() {
+            public void run() {
+                if(ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(serviceChatMode)) {
+                    stopSelf();
+                }
+            }
+        };
+    }
+
+    private void startServiceTimeout() {
+        if(ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(serviceChatMode)) {
+            mHandler.postDelayed(mRunnable, PROGRESS_TIME_OUT);
+        }
+    }
+
+    private void stopServiceTimeout(){
+        if(mHandler != null){
+            mHandler.removeCallbacksAndMessages(null);
+        }
+    }
     @Override
     public void onDestroy() {
         this.isRunning = false;
+        //
+        stopServiceTimeout();
 //        try {
 //            ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - AppBackgroundService onDestroy \n", log_file);
 //        } catch (Exception e) {

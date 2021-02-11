@@ -56,6 +56,7 @@ import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -265,7 +266,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     @Override
     protected void onResume() {
         super.onResume();
-        if(!AppBackgroundService.isRunning) {
+        if(!AppBackgroundService.isRunning || ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(AppBackgroundService.serviceChatMode)) {
             callChatService();
         }
     }

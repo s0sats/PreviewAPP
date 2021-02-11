@@ -1256,7 +1256,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     protected void onResume() {
         super.onResume();
-        if(!AppBackgroundService.isRunning) {
+        if(!AppBackgroundService.isRunning || ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(AppBackgroundService.serviceChatMode)) {
             callChatService();
         }
     }
