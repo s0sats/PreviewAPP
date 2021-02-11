@@ -507,6 +507,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     public void callAct005(Context context) {
         Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        ToolBox_Inf.stopChatService(context);
         startActivity(mIntent);
         finish();
     }

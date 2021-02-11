@@ -198,6 +198,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                       &&*/ ToolBox_Con.getPreference_Status_Login(getApplicationContext()).equals(Constant.LOGIN_STATUS_OK)
                       && ToolBox_Inf.isUsrAppLogged(getApplicationContext())
                     ) {
+                    Log.d("ChatEvent", "CHAT_NOTIFICATION_TYPE_CHAT   -  getTitle:" + fcmMessage.getTitle());
                     String param = "";
                     switch (fcmMessage.getTitle()){
                         case Constant.CHAT_NOTIFICATION_FCM_MSG:

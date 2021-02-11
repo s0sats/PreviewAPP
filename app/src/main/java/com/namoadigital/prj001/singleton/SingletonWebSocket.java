@@ -1374,6 +1374,7 @@ public class SingletonWebSocket {
 
     public void destroySingletonWebSocket() {
         if (mSocket != null) {
+            Log.d("ChatEvent", " mSocket: " + mSocket);
             //Pega manager do socket e seta reconnectin para false;
             Manager socketManager = mSocket.io();
             socketManager.reconnection(false);
@@ -1384,6 +1385,7 @@ public class SingletonWebSocket {
         }
         //
         if (sSoleInstance != null) {
+            Log.d("ChatEvent", " sSoleInstance: " + sSoleInstance);
             sSoleInstance.mSocketRunning = false;
             //sSoleInstance.mSocket = null;
             //
@@ -1394,6 +1396,7 @@ public class SingletonWebSocket {
             sSoleInstance = null;
         }
         Log.d("ChatEvent", " destroySingletonWebSocketV\n");
+        Log.d("ChatEvent", " getPreference_Google_ID: " + ToolBox_Con.getPreference_Google_ID(context));
     }
 
 }
