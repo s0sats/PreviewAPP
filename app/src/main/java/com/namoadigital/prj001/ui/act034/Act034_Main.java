@@ -66,6 +66,7 @@ import java.util.List;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACTIVED;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_DESC;
 
 /**
  * Created by d.luche on 27/11/2017.
@@ -104,7 +105,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private long selected_customer;
     private HashMap<String,String> auxFilters;
     private String wsProcess = "0";
-
+    private boolean stopChatService = true;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -266,8 +267,20 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     @Override
     protected void onResume() {
         super.onResume();
-        if(!AppBackgroundService.isRunning || ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(AppBackgroundService.serviceChatMode)) {
+        if(!AppBackgroundService.isRunning
+                || ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(AppBackgroundService.serviceChatMode)
+                || ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED.equals(AppBackgroundService.serviceChatMode)
+        ) {
+            Log.d("ChatEvent","callChatService " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             callChatService();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(stopChatService) {
+            ToolBox_Inf.stopChatService(context);
         }
     }
 
@@ -404,11 +417,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private void callChatService() {
         Intent mIntent = new Intent(context, AppBackgroundService.class);
         mIntent.putExtra(CHAT_SERVICE_MODE, CHAT_SERVICE_MODE_ACTIVED);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(mIntent);
-        }else {
-            context.startService(mIntent);
-        }
+        mIntent.putExtra(CHAT_SERVICE_MODE_DESC, "O Chat estah ativo - trad\"");
+        startService(mIntent);
     }
 
     public void setSelectedCustomer(long customer_code) {
@@ -515,6 +525,9 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 
     @Override
     public void callAct035(Context context, HMAux item, String mReload) {
+        //
+        stopChatService = false;
+        //
         Intent mIntent = new Intent(context, Act035_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtra(NotificationReceiver.NOTIFICATION, bTT);

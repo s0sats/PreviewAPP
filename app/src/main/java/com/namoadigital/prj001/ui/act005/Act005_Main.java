@@ -238,6 +238,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
         startService(mIntent);
         //
+        ToolBox_Inf.scheduleWorkQuarterChatRefresh();
 //        ToolBox_Inf.stopChatService(context);
         //
         ToolBox_Inf.scheduleDownloadPictureWork(context);

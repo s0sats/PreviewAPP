@@ -217,6 +217,7 @@ import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
 import com.namoadigital.prj001.worker.Work_DownLoad_Picture;
 import com.namoadigital.prj001.worker.Work_Four_Hour_Schedule_Notification;
+import com.namoadigital.prj001.worker.Work_Quarter_Chat_Refresh;
 import com.namoadigital.prj001.worker.Work_Quarter_Schedule_Notification;
 import com.namoadigital.prj001.worker.Work_Upload_Img;
 import com.namoadigital.prj001.worker.Work_Upload_Img_Chat;
@@ -269,6 +270,8 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.namoadigital.prj001.dao.EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL;
 import static com.namoadigital.prj001.ui.AppBase.NAMOA_NOTIF_INFO;
 import static com.namoadigital.prj001.ui.AppBase.NAMOA_PEND_INFO;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_DESC;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
@@ -4003,6 +4006,19 @@ public class ToolBox_Inf {
             Intent chatService = new Intent(context, AppBackgroundService.class);
             context.stopService(chatService);
         }
+    }
+
+    /**
+     * BARRIONUEVO 10-02-2021
+     * Metodo responsavel pela chamada do chat fora das acts de lista e conversas do chat.
+     * @param context
+     */
+    public static void callChatService(Context context, String mode, String notificationDescription) {
+        Log.d("ChatEvent"," callChatService mode : " + mode);
+        Intent mIntent = new Intent(context, AppBackgroundService.class);
+        mIntent.putExtra(CHAT_SERVICE_MODE, mode);
+        mIntent.putExtra(CHAT_SERVICE_MODE_DESC, notificationDescription);
+        context.startService(mIntent);
     }
 
     public static String getDateHourStr() {
@@ -7744,6 +7760,43 @@ public class ToolBox_Inf {
         ToolBox_Inf.scheduleDownloadCustomerLogoWork(context);
     }
 
+    /**
+     * Metodo que faz o agendamento do Work verifica msg do chat a cada 15 min
+     * Configuração:
+     *  - Execução recorrente a cada 15 min sem flexibilidade, pois 15 é o tempo minimo para execução
+     *  recorrente
+     *  - Verifica se usuário está logado ou com customer válido.
+     *  - Em caso de exception o worker tenta de novo.
+     *
+     */
+    public static void scheduleWorkQuarterChatRefresh(){
+        //
+        Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  scheduleWorkQuarterChatRefresh \n");
+        //Periodicidade
+        //
+        Constraints networkConstraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        PeriodicWorkRequest  workQuarterChatRefresh =
+                new PeriodicWorkRequest.Builder(
+                        Work_Quarter_Chat_Refresh.class,
+                        15 , TimeUnit.MINUTES //Periodicidade
+                         ,5,  TimeUnit.MINUTES //Flexibilidade
+                )
+                        .setBackoffCriteria(
+                                BackoffPolicy.LINEAR,
+                                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                                TimeUnit.MILLISECONDS)
+                        .build();
+        //
+        WorkManager.getInstance()
+                .enqueueUniquePeriodicWork(
+                        Work_Quarter_Chat_Refresh.WORKER_TAG,
+                        ExistingPeriodicWorkPolicy.KEEP,
+                        workQuarterChatRefresh
+                );
+    }
 
     /**
      * LUCHE - 08/07/2020
