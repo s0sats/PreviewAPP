@@ -9,9 +9,22 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 
+import androidx.work.WorkManager;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.worker.Work_Cleanning_Data;
+import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
+import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
+import com.namoadigital.prj001.worker.Work_DownLoad_Picture;
+import com.namoadigital.prj001.worker.Work_Firebase_Registration;
+import com.namoadigital.prj001.worker.Work_Four_Hour_Schedule_Notification;
+import com.namoadigital.prj001.worker.Work_Quarter_Schedule_Notification;
+import com.namoadigital.prj001.worker.Work_Firebase_ID_Report;
+import com.namoadigital.prj001.worker.Work_Upload_Img;
+import com.namoadigital.prj001.worker.Work_Upload_Img_Chat;
+import com.namoadigital.prj001.worker.Work_Upload_Other_User_Img;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -1244,6 +1257,27 @@ public class ToolBox_Con {
                 "SERVICE",
                 "NO_SERVICE"
         ).apply();
+
+        cancelAllWorkers(context);
+    }
+
+    private static void cancelAllWorkers(Context context) {
+        WorkManager workManager = WorkManager.getInstance();
+        //workers periodicos
+        workManager.cancelUniqueWork(Work_Cleanning_Data.WORKER_TAG);
+        workManager.cancelUniqueWork(Work_Quarter_Schedule_Notification.WORKER_TAG);
+        workManager.cancelUniqueWork(Work_Four_Hour_Schedule_Notification.WORKER_TAG);
+        //Workers de download.
+        workManager.cancelUniqueWork(Work_DownLoad_Customer_Logo.WORKER_TAG);
+        workManager.cancelUniqueWork(Work_DownLoad_Picture.WORKER_TAG);
+        workManager.cancelUniqueWork(Work_DownLoad_PDF.WORKER_TAG);
+        //Workers de upload
+        workManager.cancelUniqueWork(Work_Upload_Img.WORKER_TAG);
+        workManager.cancelUniqueWork(Work_Upload_Img_Chat.WORKER_TAG);
+        workManager.cancelUniqueWork(Work_Upload_Other_User_Img.WORKER_TAG);
+        //Firebase
+        workManager.cancelUniqueWork(Work_Firebase_Registration.WORKER_TAG);
+        workManager.cancelUniqueWork(Work_Firebase_ID_Report.WORKER_TAG);
     }
 
     public static void resetCustomerSiteOperationPreferences(Context context) {

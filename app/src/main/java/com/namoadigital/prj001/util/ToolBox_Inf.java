@@ -216,8 +216,10 @@ import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
 import com.namoadigital.prj001.worker.Work_DownLoad_Picture;
+import com.namoadigital.prj001.worker.Work_Firebase_Registration;
 import com.namoadigital.prj001.worker.Work_Four_Hour_Schedule_Notification;
 import com.namoadigital.prj001.worker.Work_Quarter_Schedule_Notification;
+import com.namoadigital.prj001.worker.Work_Firebase_ID_Report;
 import com.namoadigital.prj001.worker.Work_Upload_Img;
 import com.namoadigital.prj001.worker.Work_Upload_Img_Chat;
 import com.namoadigital.prj001.worker.Work_Upload_Other_User_Img;
@@ -3944,7 +3946,6 @@ public class ToolBox_Inf {
         ).toSqlQuery());
         return query != null && query.size() > 0 ;
     }
-
 
     private static class GenericExtFilter implements FilenameFilter {
         private String[] exts;
@@ -7744,6 +7745,59 @@ public class ToolBox_Inf {
         ToolBox_Inf.scheduleDownloadCustomerLogoWork(context);
     }
 
+    public static void scheduleFirebaseRegistrationWork() {
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workFirebaseResgistrationRequest =
+            new OneTimeWorkRequest.Builder(Work_Firebase_Registration.class)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    5,
+                    TimeUnit.MINUTES
+                )
+                .setConstraints(constraints)
+                .build();
+        //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
+        //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
+        //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
+        //isStopped(), foi adicionado nos loop
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_Firebase_Registration.WORKER_TAG,
+                ExistingWorkPolicy.KEEP,
+                workFirebaseResgistrationRequest
+            );
+    }
+
+    public static void scheduleFirebaseID_ReportWork() {
+        Constraints constraints =
+            new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+        //
+        OneTimeWorkRequest workReportFirebasIdRequest =
+            new OneTimeWorkRequest.Builder(Work_Firebase_ID_Report.class)
+                .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    5,
+                    TimeUnit.MINUTES
+                )
+                .setConstraints(constraints)
+                .build();
+        //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
+        //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
+        //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
+        //isStopped(), foi adicionado nos loop
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_Firebase_ID_Report.WORKER_TAG,
+                ExistingWorkPolicy.KEEP,
+                workReportFirebasIdRequest
+            );
+    }
 
     /**
      * LUCHE - 08/07/2020

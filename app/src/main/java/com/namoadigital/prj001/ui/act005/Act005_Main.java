@@ -234,14 +234,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         initVars();
         iniUIFooter();
         initActions();
-        //
-        Intent mIntent = new Intent(getApplicationContext(), RegistrationIntentService.class);
-        startService(mIntent);
-        //
-//        ToolBox_Inf.stopChatService(context);
+        //LUCHE - 12/02/2021 - substituido IntentService pelo worker
+        ToolBox_Inf.scheduleFirebaseRegistrationWork();
         //
         ToolBox_Inf.scheduleDownloadPictureWork(context);
-        //
+        // ToolBox_Inf.stopChatService(context);
         /*
             BARRIONUEVO 02-02-2021
             Remocao de ScreenStatusService para Android 10+

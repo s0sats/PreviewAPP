@@ -94,10 +94,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * LUCHE - 16/04/2020
      * <p></p>
      * Metodo que chama o serviço WS_Google que informará ao servidor o novo token
+     * LUCHE - 12/02/2021
+     * Susbtituido o intent service pelo novo worker
      */
     private void startWsGoogle() {
-        Intent mIntent = new Intent(getApplicationContext(), WS_Google.class);
-        startService(mIntent);
+//        Intent mIntent = new Intent(getApplicationContext(), WS_Google.class);
+//        startService(mIntent);
+        ToolBox_Inf.scheduleFirebaseID_ReportWork();
     }
 
 
