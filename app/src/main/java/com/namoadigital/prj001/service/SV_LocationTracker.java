@@ -393,8 +393,8 @@ public class SV_LocationTracker extends Service {
 
     @Override
     public void onCreate() {
-        setNotificationForForegroundService();
         loadTranslation();
+        setNotificationForForegroundService();
         initializeLocationManager();
         status = true;
     }

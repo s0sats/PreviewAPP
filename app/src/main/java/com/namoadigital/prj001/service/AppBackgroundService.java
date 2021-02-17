@@ -83,7 +83,7 @@ public class AppBackgroundService extends Service {
         }else{
             stopSelf();
         }
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
 
@@ -110,20 +110,28 @@ public class AppBackgroundService extends Service {
         mHandler = new Handler();
         mRunnable = new Runnable() {
             public void run() {
-                if(ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(serviceChatMode)) {
+                Log.d("ChatEvent"," mRunnable");
+                Log.d("ChatEvent"," serviceChatMode: " + serviceChatMode);
+                if(hasLifeSpanMode()) {
                     stopSelf();
                 }
             }
         };
     }
 
+    private boolean hasLifeSpanMode() {
+        return ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(serviceChatMode)
+        || ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED.equals(serviceChatMode);
+    }
+
     private void startServiceTimeout() {
-        if(ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(serviceChatMode)) {
+        if(hasLifeSpanMode()) {
             mHandler.postDelayed(mRunnable, PROGRESS_TIME_OUT);
         }
     }
 
     private void stopServiceTimeout(){
+        Log.d("ChatEvent"," stopServiceTimeout: " + mHandler);
         if(mHandler != null){
             mHandler.removeCallbacksAndMessages(null);
         }

@@ -116,6 +116,7 @@ import java.util.UUID;
 import static com.namoadigital.prj001.receiver.NotificationReceiver.NOTIFICATION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACTIVED;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_DESC;
 
 /**
  * Created by d.luche on 31/08/2017.
@@ -220,6 +221,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private int colorName;
     private String mRequest_act = "";
     private Chat_Room_Obj_SO roomObjSo;
+    private boolean stopChatService = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -535,11 +537,9 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     private void callChatService() {
         Intent mIntent = new Intent(context, AppBackgroundService.class);
         mIntent.putExtra(CHAT_SERVICE_MODE, CHAT_SERVICE_MODE_ACTIVED);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(mIntent);
-        }else {
-            context.startService(mIntent);
-        }
+        mIntent.putExtra(CHAT_SERVICE_MODE_DESC, hmAux_Trans.get("sys_active_chat_notification_detail"));
+        context.startService(mIntent);
+
     }
 
     private void turnOnDownIcon() {
@@ -1256,7 +1256,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     @Override
     protected void onResume() {
         super.onResume();
-        if(!AppBackgroundService.isRunning || ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(AppBackgroundService.serviceChatMode)) {
+        if(!AppBackgroundService.isRunning
+                || ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(AppBackgroundService.serviceChatMode)
+                || ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED.equals(AppBackgroundService.serviceChatMode)
+        ) {
             callChatService();
         }
     }
@@ -1302,6 +1305,10 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     protected void onPause() {
         super.onPause();
         //
+        if(stopChatService) {
+            ToolBox_Inf.stopChatService(context);
+        }
+        //
         if (mThread != null) {
             mThread.interrupt();
         }
@@ -1333,7 +1340,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
     public void callAct034(Context context) {
 
         mRoom_code = "";
-
+        stopChatService = false;
         Intent mIntent = new Intent(context, Act034_Main.class);
         mIntent.putExtra(NOTIFICATION, bTT);
         mIntent.putExtras(bundle);

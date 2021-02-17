@@ -819,6 +819,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_SERVICE_MODE = "CHAT_SERVICE_MODE";
     public static final String CHAT_SERVICE_MODE_LOGIN = "CHAT_SERVICE_MODE_LOGIN";
     public static final String CHAT_SERVICE_MODE_ACTIVED = "CHAT_SERVICE_MODE_ACTIVED";
+    public static final String CHAT_SERVICE_MODE_SCHEDULED = "CHAT_SERVICE_MODE_SCHEDULED";
     public static final String CHAT_SERVICE_MODE_DESC = "CHAT_SERVICE_MODE_DESC";
 
     public static final String CHAT_NOTIFICATION_FCM_MSG = "<CHAT_MSG>";

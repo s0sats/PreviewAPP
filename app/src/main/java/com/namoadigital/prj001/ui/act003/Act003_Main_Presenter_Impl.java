@@ -56,7 +56,7 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
     }
 
     @Override
-    public void startChatService() {
+    public void startChatService(HMAux hmAux_Trans) {
 //        //Se Possui Acesso ao Chat, inicia serviço
 //        if (ToolBox_Inf.parameterExists(context, Constant.PARAM_CHAT)) {
             try {
@@ -98,7 +98,7 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                             Intent chatIntent = new Intent(context, AppBackgroundService.class);
                             chatIntent.putExtra(ConstantBaseApp.CHAT_START_SERVICE_CALLER, getClass().getName());
                             chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE, ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN);
-                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE_DESC, "Sincronizando dados do Chat - trad");
+                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE_DESC, hmAux_Trans.get("sys_sync_chat_notification_detail"));
                             context.startService(chatIntent);
 
                             //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço \n", log_file);
@@ -135,6 +135,8 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                             }
                             Intent chatIntent = new Intent(context, AppBackgroundService.class);
                             chatIntent.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
+                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE, ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN);
+                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE_DESC, hmAux_Trans.get("sys_sync_chat_notification_detail"));
                             context.startService(chatIntent);
 
                             //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço \n", log_file);
