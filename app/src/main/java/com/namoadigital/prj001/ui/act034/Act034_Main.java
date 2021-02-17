@@ -417,7 +417,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private void callChatService() {
         Intent mIntent = new Intent(context, AppBackgroundService.class);
         mIntent.putExtra(CHAT_SERVICE_MODE, CHAT_SERVICE_MODE_ACTIVED);
-        mIntent.putExtra(CHAT_SERVICE_MODE_DESC, "O Chat estah ativo - trad\"");
+        mIntent.putExtra(CHAT_SERVICE_MODE_DESC, hmAux_Trans.get("sys_active_chat_notification_detail"));
         startService(mIntent);
     }
 

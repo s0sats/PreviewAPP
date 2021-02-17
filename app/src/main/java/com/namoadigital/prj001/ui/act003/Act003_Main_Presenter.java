@@ -18,7 +18,7 @@ public interface Act003_Main_Presenter {
      */
     boolean checkPreferenceIsSet();
 
-    void startChatService();
+    void startChatService(HMAux hmAux_Trans);
 
     void onBackPressedClicked();
 

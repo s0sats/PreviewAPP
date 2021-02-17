@@ -7,10 +7,14 @@ import android.util.Log;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.service.AppBackgroundService;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_DESC;
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED;
 
 public class Work_Quarter_Chat_Refresh extends Worker {
@@ -24,6 +28,9 @@ public class Work_Quarter_Chat_Refresh extends Worker {
     @Override
     public Result doWork() {
         Log.d("ChatEvent", WORKER_TAG+" :doWork");
+        Context context = getApplicationContext();
+        HMAux hmAux_Trans;
+        List<String> translist = new ArrayList<>();
         try {
             Log.d("ChatEvent"," doWork \n");
             if (!ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
@@ -31,11 +38,19 @@ public class Work_Quarter_Chat_Refresh extends Worker {
                 return Result.success();
             }
 
+            hmAux_Trans = ToolBox_Inf.setLanguage(
+                    context,
+                    "",
+                    "0",
+                    ToolBox_Con.getPreference_Translate_Code(context),
+                    translist,
+                    ToolBox_Con.getPreference_Customer_Code(context)
+            );
+
             if(!AppBackgroundService.isRunning){
-                ToolBox_Inf.callChatService(getApplicationContext(), CHAT_SERVICE_MODE_SCHEDULED,  "O Chat estah ativo - trad\"");
+                ToolBox_Inf.callChatService(getApplicationContext(), CHAT_SERVICE_MODE_SCHEDULED, hmAux_Trans.get("sys_sync_chat_notification_detail"));
             }
             Log.d("ChatEvent"," AppBackgroundService.isRunning: " + AppBackgroundService.isRunning);
-
 
             Log.d("ChatEvent"," success ");
 
