@@ -711,10 +711,8 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
 
         <receiver android:name=".receiver_chat.WBR_Room_Info" />
 
-        <service android:name=".service_chat.WS_Room_Info" /> <!-- Screen On/Off Status -->
-<!--        <receiver android:name=".service.ScreenStatusReceiver" />-->
+        <service android:name=".service_chat.WS_Room_Info" />
 
-<!--        <service android:name=".service.ScreenStatusService" /> &lt;!&ndash; Screen On/Off Status &ndash;&gt;-->
         <receiver android:name=".receiver.NotificationReceiver" />
         <receiver android:name=".receiver_chat.WBR_Stop_Chat_service" />
         <receiver android:name=".receiver_chat.WBR_Delivered" />
