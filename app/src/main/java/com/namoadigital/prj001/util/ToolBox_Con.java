@@ -20,6 +20,7 @@ import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
 import com.namoadigital.prj001.worker.Work_DownLoad_Picture;
 import com.namoadigital.prj001.worker.Work_Firebase_Registration;
 import com.namoadigital.prj001.worker.Work_Four_Hour_Schedule_Notification;
+import com.namoadigital.prj001.worker.Work_Quarter_Chat_Refresh;
 import com.namoadigital.prj001.worker.Work_Quarter_Schedule_Notification;
 import com.namoadigital.prj001.worker.Work_Firebase_ID_Report;
 import com.namoadigital.prj001.worker.Work_Upload_Img;
@@ -1278,6 +1279,7 @@ public class ToolBox_Con {
         //Firebase
         workManager.cancelUniqueWork(Work_Firebase_Registration.WORKER_TAG);
         workManager.cancelUniqueWork(Work_Firebase_ID_Report.WORKER_TAG);
+        workManager.cancelUniqueWork(Work_Quarter_Chat_Refresh.WORKER_TAG);
     }
 
     public static void resetCustomerSiteOperationPreferences(Context context) {
