@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -1260,7 +1259,8 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
                 || ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(AppBackgroundService.serviceChatMode)
                 || ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED.equals(AppBackgroundService.serviceChatMode)
         ) {
-            callChatService();
+            //callChatService();
+            ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_ACTIVED, hmAux_Trans.get("sys_active_chat_notification_detail"));
         }
     }
 

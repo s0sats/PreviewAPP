@@ -4019,7 +4019,11 @@ public class ToolBox_Inf {
         Intent mIntent = new Intent(context, AppBackgroundService.class);
         mIntent.putExtra(CHAT_SERVICE_MODE, mode);
         mIntent.putExtra(CHAT_SERVICE_MODE_DESC, notificationDescription);
-        context.startService(mIntent);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(mIntent);
+        }else{
+            context.startService(mIntent);
+        }
     }
 
     public static String getDateHourStr() {

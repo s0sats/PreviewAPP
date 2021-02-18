@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.ui.act003;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.CH_MessageDao;
@@ -12,9 +12,10 @@ import com.namoadigital.prj001.singleton.SingletonWebSocket;
 import com.namoadigital.prj001.sql.CH_Message_Sql_004;
 import com.namoadigital.prj001.sql.MD_Site_Sql_002;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN;
 
 /**
  * Created by neomatrix on 17/01/17.
@@ -95,11 +96,12 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                                         Long.parseLong(msgAux.get(CH_MessageDao.MSG_TOKEN))
                                 );
                             }
-                            Intent chatIntent = new Intent(context, AppBackgroundService.class);
-                            chatIntent.putExtra(ConstantBaseApp.CHAT_START_SERVICE_CALLER, getClass().getName());
-                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE, ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN);
-                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE_DESC, hmAux_Trans.get("sys_sync_chat_notification_detail"));
-                            context.startService(chatIntent);
+//                            Intent chatIntent = new Intent(context, AppBackgroundService.class);
+//                            chatIntent.putExtra(ConstantBaseApp.CHAT_START_SERVICE_CALLER, getClass().getName());
+//                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE, CHAT_SERVICE_MODE_LOGIN);
+//                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE_DESC, hmAux_Trans.get("sys_sync_chat_notification_detail"));
+//                            context.startService(chatIntent);
+                            ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_LOGIN, hmAux_Trans.get("sys_sync_chat_notification_detail"));
 
                             //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço \n", log_file);
                             Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço\n");
@@ -133,11 +135,12 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
                                         Long.parseLong(msgAux.get(CH_MessageDao.MSG_TOKEN))
                                 );
                             }
-                            Intent chatIntent = new Intent(context, AppBackgroundService.class);
-                            chatIntent.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
-                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE, ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN);
-                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE_DESC, hmAux_Trans.get("sys_sync_chat_notification_detail"));
-                            context.startService(chatIntent);
+//                            Intent chatIntent = new Intent(context, AppBackgroundService.class);
+//                            chatIntent.putExtra(Constant.CHAT_START_SERVICE_CALLER, getClass().getName());
+//                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE, CHAT_SERVICE_MODE_LOGIN);
+//                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE_DESC, hmAux_Trans.get("sys_sync_chat_notification_detail"));
+//                            context.startService(chatIntent);
+                            ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_LOGIN, hmAux_Trans.get("sys_sync_chat_notification_detail"));
 
                             //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço \n", log_file);
                             Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço\n");

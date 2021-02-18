@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -272,7 +271,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                 || ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED.equals(AppBackgroundService.serviceChatMode)
         ) {
             Log.d("ChatEvent","callChatService " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-            callChatService();
+            //callChatService();
+            ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_ACTIVED, hmAux_Trans.get("sys_active_chat_notification_detail"));
         }
     }
 
