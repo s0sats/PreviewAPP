@@ -101,7 +101,7 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
 //                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE, CHAT_SERVICE_MODE_LOGIN);
 //                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE_DESC, hmAux_Trans.get("sys_sync_chat_notification_detail"));
 //                            context.startService(chatIntent);
-                            ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_LOGIN, hmAux_Trans.get("sys_sync_chat_notification_detail"));
+                            ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_LOGIN);
 
                             //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço \n", log_file);
                             Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço\n");
@@ -140,7 +140,7 @@ public class Act003_Main_Presenter_Impl implements Act003_Main_Presenter {
 //                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE, CHAT_SERVICE_MODE_LOGIN);
 //                            chatIntent.putExtra(ConstantBaseApp.CHAT_SERVICE_MODE_DESC, hmAux_Trans.get("sys_sync_chat_notification_detail"));
 //                            context.startService(chatIntent);
-                            ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_LOGIN, hmAux_Trans.get("sys_sync_chat_notification_detail"));
+                            ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_LOGIN);
 
                             //ToolBox_Inf.writeIn(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço \n", log_file);
                             Log.d("ChatEvent", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " - Act003 Startou o Serviço\n");

@@ -3,6 +3,7 @@ package com.namoadigital.prj001.service;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
@@ -10,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
@@ -17,6 +19,13 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACTIVED;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED;
 
 /**
  * Created by neomatrix on 27/11/17.
@@ -29,11 +38,11 @@ public class AppBackgroundService extends Service {
     //APAGAR APOS TESTE
     //private File log_file = new File(Constant.SUPPORT_PATH, "webSocket_log.txt");
     private String serviceLastCaller = "";
-
+    private HMAux hmAux_Trans;
     /**
      * Variavel de controle utiliza para finalizar o servico.
      */
-    public static String serviceChatMode = ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN;
+    public static String serviceChatMode = CHAT_SERVICE_MODE_LOGIN;
     private String notificationContentText = "";
     private Handler mHandler;
     private Runnable mRunnable;
@@ -41,9 +50,26 @@ public class AppBackgroundService extends Service {
 
     @Override
     public void onCreate() {
+        //
+        Context context = getApplicationContext();
+        List<String> translist = new ArrayList<>();
+        //
         if(mHandler == null && mRunnable == null){
             configServiceHandler();
         }
+        //
+        hmAux_Trans = ToolBox_Inf.setLanguage(
+                context,
+                "",
+                "0",
+                ToolBox_Con.getPreference_Translate_Code(context),
+                translist,
+                ToolBox_Con.getPreference_Customer_Code(context)
+        );
+        //
+        setNotificationContentText();
+        setNotificationForForegroundService(true);
+        //
     }
 
     @Override
@@ -59,13 +85,12 @@ public class AppBackgroundService extends Service {
                 if (intent != null) {
                     serviceLastCaller = intent.getStringExtra(Constant.CHAT_START_SERVICE_CALLER);
                     serviceChatMode = intent.getStringExtra(Constant.CHAT_SERVICE_MODE);
-                    notificationContentText = intent.getStringExtra(Constant.CHAT_SERVICE_MODE_DESC);
-                }else{
-                    serviceChatMode = ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN;
-                    notificationContentText = "Sincronizando dados do Chat";
+                } else {
+                    serviceChatMode = CHAT_SERVICE_MODE_LOGIN;
                 }
                 //
-                setNotificationForForegroundService();
+                setNotificationContentText();
+                setNotificationForForegroundService(false);
                 //
                 startServiceTimeout();
 
@@ -86,10 +111,26 @@ public class AppBackgroundService extends Service {
         return START_NOT_STICKY;
     }
 
+    private void setNotificationContentText() {
+        String chat_service_mode_desc;
+        //
+        switch (serviceChatMode){
+            case CHAT_SERVICE_MODE_ACTIVED:
+                chat_service_mode_desc =  hmAux_Trans.get("sys_active_chat_notification_detail");
+                break;
+            case CHAT_SERVICE_MODE_LOGIN:
+            case CHAT_SERVICE_MODE_SCHEDULED:
+            default:
+                chat_service_mode_desc = hmAux_Trans.get("sys_sync_chat_notification_detail");
+
+        }
+        //
+        notificationContentText = chat_service_mode_desc;
+        //
+    }
 
 
-
-    private void setNotificationForForegroundService() {
+    private void setNotificationForForegroundService(boolean executeService) {
         NotificationManager nm = (NotificationManager)
             getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
         //
@@ -103,7 +144,9 @@ public class AppBackgroundService extends Service {
         builder.setContentText(notificationContentText);
         notification = builder.build();
         nm.notify(ConstantBaseApp.NOTIFICATION_CHAT_FOREGROUND_SERVICE, notification);
-        startForeground(ConstantBaseApp.NOTIFICATION_CHAT_FOREGROUND_SERVICE, notification);
+        if(executeService) {
+            startForeground(ConstantBaseApp.NOTIFICATION_CHAT_FOREGROUND_SERVICE, notification);
+        }
     }
 
     private void configServiceHandler() {
@@ -120,8 +163,8 @@ public class AppBackgroundService extends Service {
     }
 
     private boolean hasLifeSpanMode() {
-        return ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(serviceChatMode)
-        || ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED.equals(serviceChatMode);
+        return CHAT_SERVICE_MODE_LOGIN.equals(serviceChatMode)
+        || CHAT_SERVICE_MODE_SCHEDULED.equals(serviceChatMode);
     }
 
     private void startServiceTimeout() {

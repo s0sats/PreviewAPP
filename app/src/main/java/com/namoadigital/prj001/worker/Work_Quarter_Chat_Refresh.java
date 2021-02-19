@@ -29,8 +29,7 @@ public class Work_Quarter_Chat_Refresh extends Worker {
     public Result doWork() {
         Log.d("ChatEvent", WORKER_TAG+" :doWork");
         Context context = getApplicationContext();
-        HMAux hmAux_Trans;
-        List<String> translist = new ArrayList<>();
+
         try {
             Log.d("ChatEvent"," doWork \n");
             if (!ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
@@ -38,17 +37,8 @@ public class Work_Quarter_Chat_Refresh extends Worker {
                 return Result.success();
             }
 
-            hmAux_Trans = ToolBox_Inf.setLanguage(
-                    context,
-                    "",
-                    "0",
-                    ToolBox_Con.getPreference_Translate_Code(context),
-                    translist,
-                    ToolBox_Con.getPreference_Customer_Code(context)
-            );
-
             if(!AppBackgroundService.isRunning){
-                ToolBox_Inf.callChatService(getApplicationContext(), CHAT_SERVICE_MODE_SCHEDULED, hmAux_Trans.get("sys_sync_chat_notification_detail"));
+                ToolBox_Inf.callChatService(getApplicationContext(), CHAT_SERVICE_MODE_SCHEDULED);
             }
             Log.d("ChatEvent"," AppBackgroundService.isRunning: " + AppBackgroundService.isRunning);
 
@@ -58,7 +48,11 @@ public class Work_Quarter_Chat_Refresh extends Worker {
         } catch (Exception e) {
             Log.d("ChatEvent", WORKER_TAG + " : Exception\n" + e.getMessage());
             ToolBox_Inf.registerException(getClass().getName(),e);
-            return Result.retry();
+            /*
+                Barrionuevo 18-02-2021
+                Sucesso para evitar loop de erros com retry.
+             */
+            return Result.success();
         }
     }
 

@@ -272,7 +272,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         ) {
             Log.d("ChatEvent","callChatService " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             //callChatService();
-            ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_ACTIVED, hmAux_Trans.get("sys_active_chat_notification_detail"));
+            ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_ACTIVED);
         }
     }
 

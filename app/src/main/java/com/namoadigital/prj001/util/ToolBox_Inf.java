@@ -4014,11 +4014,10 @@ public class ToolBox_Inf {
      * Metodo responsavel pela chamada do chat fora das acts de lista e conversas do chat.
      * @param context
      */
-    public static void callChatService(Context context, String mode, String notificationDescription) {
+    public static void callChatService(Context context, String mode) {
         Log.d("ChatEvent"," callChatService mode : " + mode);
         Intent mIntent = new Intent(context, AppBackgroundService.class);
         mIntent.putExtra(CHAT_SERVICE_MODE, mode);
-        mIntent.putExtra(CHAT_SERVICE_MODE_DESC, notificationDescription);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(mIntent);
         }else{
