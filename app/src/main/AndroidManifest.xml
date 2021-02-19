@@ -678,7 +678,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WS_UserAuthor" />
         <service
             android:name=".service.AppBackgroundService"
-            android:stopWithTask="false" />
+            android:stopWithTask="true" />
 
         <receiver android:name=".receiver_chat.WBR_C_Room" />
 
