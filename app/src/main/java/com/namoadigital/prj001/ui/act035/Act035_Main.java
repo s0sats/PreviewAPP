@@ -1276,6 +1276,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
 
     @Override
     public void callCamera(int mId, int mType, String mFName, boolean mEdit, boolean mEnabled) {
+        stopChatService = false;
         Intent mIntent = new Intent(context, Camera_Activity.class);
         mIntent.putExtra(ConstantBase.PID, mId);
         mIntent.putExtra(ConstantBase.PTYPE, mType);
