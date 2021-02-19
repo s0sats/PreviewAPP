@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -105,6 +106,28 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     private HashMap<String,String> auxFilters;
     private String wsProcess = "0";
     private boolean stopChatService = true;
+    private boolean receiverInProgress = false;
+    private Handler updateChatMsgOnReceiver = new Handler();
+    /**
+     * BARRIONUEVO 19-02-2021
+     * Runnable responsavel por executar a atualização das msgs nas salas
+     * Foi criado uma instancia para finalizar a execução no ao trocar de act.
+     */
+    Runnable updateActivityData = new Runnable() {
+        @Override
+        public void run() {
+            Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Apos sleep");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    act034_room.updateRoomListAndOtherMsgInfo();
+                }
+            });
+            Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Apos processamento");
+            receiverInProgress = false;
+        }
+    };
+    //
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -282,6 +305,8 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         if(stopChatService) {
             ToolBox_Inf.stopChatService(context);
         }
+
+        updateChatMsgOnReceiver.removeCallbacks(updateActivityData);
     }
 
     private void recoverIntentsInfo() {
@@ -566,10 +591,19 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                     //
                     if (currentFrag.equalsIgnoreCase(FRAG_TAG_ROOM)) {
                         //act034_room.loadRoomList();
-                        act034_room.loadDataToScreen();
+                        if(!receiverInProgress){
+                            receiverInProgress = true;
+                            Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Inicio de proc Sem OPC");
+                            updateChatMsgOnReceiver.postDelayed(updateActivityData, 3000);
+                        }
                     }
                     if (act034_opc != null) {
-                        act034_opc.loadDataToScreen();
+                        if(!receiverInProgress) {
+//                            act034_opc.loadDataToScreen();
+                            receiverInProgress = true;
+                            Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Inicio de proc Com OPC");
+                            updateChatMsgOnReceiver.postDelayed(updateActivityData, 3000);
+                        }
                     }
                     break;
                 case Constant.CHAT_BR_TYPE_ROOM_PRIVATE_ADD:

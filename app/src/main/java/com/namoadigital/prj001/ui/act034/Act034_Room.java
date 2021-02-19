@@ -399,6 +399,16 @@ public class Act034_Room extends BaseFragment {
         }
     }
 
+    /**
+     * BARRIONUEVO  19-02-2021
+     * Metodo enxuto responsável por atualizar as mensagens.
+     */
+    public void updateRoomListAndOtherMsgInfo() {
+        loadRoomList();
+        //
+        updateOtherMsgInfo();
+    }
+
     private void showRoomFilterDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
