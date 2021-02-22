@@ -212,15 +212,16 @@ import com.namoadigital.prj001.ui.act077.Act077_Main;
 import com.namoadigital.prj001.ui.act078.Act078_Main;
 import com.namoadigital.prj001.ui.act079.Act079_Main;
 import com.namoadigital.prj001.ui.act080.Act080_Main;
+import com.namoadigital.prj001.worker.Work_Chat_Refresh;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
 import com.namoadigital.prj001.worker.Work_DownLoad_Picture;
+import com.namoadigital.prj001.worker.Work_Firebase_ID_Report;
 import com.namoadigital.prj001.worker.Work_Firebase_Registration;
 import com.namoadigital.prj001.worker.Work_Four_Hour_Schedule_Notification;
 import com.namoadigital.prj001.worker.Work_Quarter_Chat_Refresh;
 import com.namoadigital.prj001.worker.Work_Quarter_Schedule_Notification;
-import com.namoadigital.prj001.worker.Work_Firebase_ID_Report;
 import com.namoadigital.prj001.worker.Work_Upload_Img;
 import com.namoadigital.prj001.worker.Work_Upload_Img_Chat;
 import com.namoadigital.prj001.worker.Work_Upload_Other_User_Img;
@@ -273,7 +274,6 @@ import static com.namoadigital.prj001.dao.EV_User_CustomerDao.LICENSE_CONTROL_TY
 import static com.namoadigital.prj001.ui.AppBase.NAMOA_NOTIF_INFO;
 import static com.namoadigital.prj001.ui.AppBase.NAMOA_PEND_INFO;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_DESC;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
@@ -7800,6 +7800,36 @@ public class ToolBox_Inf {
                         ExistingPeriodicWorkPolicy.KEEP,
                         workQuarterChatRefresh
                 );
+    }
+
+    public static void scheduleWorkChatRefresh(){
+        //
+        Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  scheduleWorkChatRefresh \n");
+        //Periodicidade
+        Constraints networkConstraints = new Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build();
+        //
+        OneTimeWorkRequest  workQuarterChatRefresh =
+            new OneTimeWorkRequest.Builder(
+                Work_Chat_Refresh.class
+            )
+            .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    10,
+                    TimeUnit.SECONDS
+            )
+            .setConstraints(networkConstraints).build();
+        //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
+        //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
+        //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
+        //isStopped(), foi adicionado nos loop
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_Chat_Refresh.WORKER_TAG,
+                ExistingWorkPolicy.KEEP,
+                workQuarterChatRefresh
+            );
     }
 
     public static void scheduleFirebaseRegistrationWork() {
