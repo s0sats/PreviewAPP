@@ -281,14 +281,6 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         initFragments();
         //
-        //
-        if(AppBackgroundService.isRunning
-        && (ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(AppBackgroundService.serviceChatMode)
-                || ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED.equals(AppBackgroundService.serviceChatMode)
-        ) ) {
-            ToolBox_Inf.stopChatService(context);
-        }
-        //
         setFrag(act034_room, FRAG_TAG_ROOM);
         //
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -297,7 +289,10 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     @Override
     protected void onResume() {
         super.onResume();
-        if(!AppBackgroundService.isRunning) {
+        if(!AppBackgroundService.isRunning
+                || ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(AppBackgroundService.serviceChatMode)
+                || ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED.equals(AppBackgroundService.serviceChatMode)
+        ) {
             Log.d("ChatEvent","callChatService " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             //callChatService();
             ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_ACTIVED);

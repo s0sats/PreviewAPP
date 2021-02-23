@@ -67,10 +67,8 @@ public class AppBackgroundService extends Service {
                 ToolBox_Con.getPreference_Customer_Code(context)
         );
         //
-        if(hasLifeSpanMode()){
-            setNotificationContentText();
-            setNotificationForForegroundService(true);
-        }
+        setNotificationContentText();
+        setNotificationForForegroundService(true);
         //
     }
 
@@ -91,10 +89,8 @@ public class AppBackgroundService extends Service {
                     serviceChatMode = CHAT_SERVICE_MODE_LOGIN;
                 }
                 //
-                if(hasLifeSpanMode()) {
-                    setNotificationContentText();
-                    setNotificationForForegroundService(false);
-                }
+                setNotificationContentText();
+                setNotificationForForegroundService(false);
                 //
                 startServiceTimeout();
 
