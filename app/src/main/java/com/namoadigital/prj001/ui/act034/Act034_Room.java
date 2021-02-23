@@ -407,6 +407,10 @@ public class Act034_Room extends BaseFragment {
         loadRoomList();
         //
         updateOtherMsgInfo();
+        //
+        ToolBox_Inf.cancelChatNotification(context);
+        //
+        ToolBox_Inf.cancelChatRoomNotification(context);
     }
 
     private void showRoomFilterDialog() {

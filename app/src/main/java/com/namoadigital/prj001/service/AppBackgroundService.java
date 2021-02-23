@@ -42,7 +42,7 @@ public class AppBackgroundService extends Service {
     /**
      * Variavel de controle utiliza para finalizar o servico.
      */
-    public static String serviceChatMode = CHAT_SERVICE_MODE_LOGIN;
+    public static String serviceChatMode;
     private String notificationContentText = "";
     private Handler mHandler;
     private Runnable mRunnable;
@@ -67,8 +67,10 @@ public class AppBackgroundService extends Service {
                 ToolBox_Con.getPreference_Customer_Code(context)
         );
         //
-        setNotificationContentText();
-        setNotificationForForegroundService(true);
+        if(hasLifeSpanMode()){
+            setNotificationContentText();
+            setNotificationForForegroundService(true);
+        }
         //
     }
 
@@ -89,8 +91,10 @@ public class AppBackgroundService extends Service {
                     serviceChatMode = CHAT_SERVICE_MODE_LOGIN;
                 }
                 //
-                setNotificationContentText();
-                setNotificationForForegroundService(false);
+                if(hasLifeSpanMode()) {
+                    setNotificationContentText();
+                    setNotificationForForegroundService(false);
+                }
                 //
                 startServiceTimeout();
 

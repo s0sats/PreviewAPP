@@ -281,6 +281,14 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
         //
         initFragments();
         //
+        //
+        if(AppBackgroundService.isRunning
+        && (ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(AppBackgroundService.serviceChatMode)
+                || ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED.equals(AppBackgroundService.serviceChatMode)
+        ) ) {
+            ToolBox_Inf.stopChatService(context);
+        }
+        //
         setFrag(act034_room, FRAG_TAG_ROOM);
         //
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -289,10 +297,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
     @Override
     protected void onResume() {
         super.onResume();
-        if(!AppBackgroundService.isRunning
-                || ConstantBaseApp.CHAT_SERVICE_MODE_LOGIN.equals(AppBackgroundService.serviceChatMode)
-                || ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED.equals(AppBackgroundService.serviceChatMode)
-        ) {
+        if(!AppBackgroundService.isRunning) {
             Log.d("ChatEvent","callChatService " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
             //callChatService();
             ToolBox_Inf.callChatService(context, CHAT_SERVICE_MODE_ACTIVED);
@@ -594,7 +599,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
                         if(!receiverInProgress){
                             receiverInProgress = true;
                             Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Inicio de proc Sem OPC");
-                            updateChatMsgOnReceiver.postDelayed(updateActivityData, 3000);
+                            updateChatMsgOnReceiver.postDelayed(updateActivityData, 500);
                         }
                     }
                     if (act034_opc != null) {
@@ -602,7 +607,7 @@ public class Act034_Main extends Base_Activity_Frag implements Act034_Main_View 
 //                            act034_opc.loadDataToScreen();
                             receiverInProgress = true;
                             Log.d("ChatProc", ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + "Inicio de proc Com OPC");
-                            updateChatMsgOnReceiver.postDelayed(updateActivityData, 3000);
+                            updateChatMsgOnReceiver.postDelayed(updateActivityData, 500);
                         }
                     }
                     break;

@@ -273,7 +273,7 @@ import static com.namoadigital.prj001.dao.EV_User_CustomerDao.LICENSE_CONTROL_TY
 import static com.namoadigital.prj001.ui.AppBase.NAMOA_NOTIF_INFO;
 import static com.namoadigital.prj001.ui.AppBase.NAMOA_PEND_INFO;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_DESC;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACTIVED;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
@@ -4018,7 +4018,9 @@ public class ToolBox_Inf {
         Log.d("ChatEvent"," callChatService mode : " + mode);
         Intent mIntent = new Intent(context, AppBackgroundService.class);
         mIntent.putExtra(CHAT_SERVICE_MODE, mode);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        AppBackgroundService.serviceChatMode = mode;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+        && !CHAT_SERVICE_MODE_ACTIVED.equals(mode)) {
             context.startForegroundService(mIntent);
         }else{
             context.startService(mIntent);
