@@ -216,6 +216,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             break;
                         case Constant.CHAT_NOTIFICATION_FCM_ADD_ROOM:
                             ToolBox_Inf.showChatRoomNotification(getApplicationContext());
+                            //LUCHE - 22/02/2021 - Add agendamento do worker que subirá o serviço do chat
+                            //para atualizar as rooms
+                            ToolBox_Inf.scheduleWorkChatRefresh();
                             break;
                         case Constant.CHAT_NOTIFICATION_FCM_REMOVE_ROOM:
                             Gson gson = new GsonBuilder().serializeNulls().create();

@@ -212,15 +212,16 @@ import com.namoadigital.prj001.ui.act077.Act077_Main;
 import com.namoadigital.prj001.ui.act078.Act078_Main;
 import com.namoadigital.prj001.ui.act079.Act079_Main;
 import com.namoadigital.prj001.ui.act080.Act080_Main;
+import com.namoadigital.prj001.worker.Work_Chat_Refresh;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
 import com.namoadigital.prj001.worker.Work_DownLoad_Picture;
+import com.namoadigital.prj001.worker.Work_Firebase_ID_Report;
 import com.namoadigital.prj001.worker.Work_Firebase_Registration;
 import com.namoadigital.prj001.worker.Work_Four_Hour_Schedule_Notification;
 import com.namoadigital.prj001.worker.Work_Quarter_Chat_Refresh;
 import com.namoadigital.prj001.worker.Work_Quarter_Schedule_Notification;
-import com.namoadigital.prj001.worker.Work_Firebase_ID_Report;
 import com.namoadigital.prj001.worker.Work_Upload_Img;
 import com.namoadigital.prj001.worker.Work_Upload_Img_Chat;
 import com.namoadigital.prj001.worker.Work_Upload_Other_User_Img;
@@ -7804,6 +7805,47 @@ public class ToolBox_Inf {
                 );
     }
 
+    /**
+     * LUCHE - 22/02/2021
+     * <p></p>
+     * Metodo que agenda o work que subirá o serviço de chat.
+     */
+    public static void scheduleWorkChatRefresh(){
+        //
+        Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  scheduleWorkChatRefresh \n");
+        //Cosntraint de conexão.
+        Constraints networkConstraints = new Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build();
+        //
+        OneTimeWorkRequest  workQuarterChatRefresh =
+            new OneTimeWorkRequest.Builder(
+                Work_Chat_Refresh.class
+            )
+            .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    10,
+                    TimeUnit.SECONDS
+            )
+            .setConstraints(networkConstraints).build();
+        //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
+        //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
+        //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
+        //isStopped(), foi adicionado nos loop
+        WorkManager.getInstance()
+            .enqueueUniqueWork(
+                Work_Chat_Refresh.WORKER_TAG,
+                ExistingWorkPolicy.KEEP,
+                workQuarterChatRefresh
+            );
+    }
+
+    /**
+     * LUCHE
+     * <P></P>
+     * Metodo que agenda o work que chamará a instancia do firebase e tentará atualiza o firebase_id
+     * do usr.
+     */
     public static void scheduleFirebaseRegistrationWork() {
         Constraints constraints =
             new Constraints.Builder()
@@ -7831,6 +7873,11 @@ public class ToolBox_Inf {
             );
     }
 
+    /**
+     * LUCHE
+     * <P></P>
+     * Metodo que agenda o work que do serviço que reporta para o servidor o novo firebaseId
+     */
     public static void scheduleFirebaseID_ReportWork() {
         Constraints constraints =
             new Constraints.Builder()

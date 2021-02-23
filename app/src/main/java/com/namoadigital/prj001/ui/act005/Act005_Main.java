@@ -236,8 +236,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         initActions();
         //LUCHE - 12/02/2021 - substituido IntentService pelo worker
         ToolBox_Inf.scheduleFirebaseRegistrationWork();
-        //
-        ToolBox_Inf.scheduleWorkQuarterChatRefresh();
+        //LUCHE - 22/02/2021 - Comentado chamada pois agora não será recorrente será apenas quando FCM de ROom
+        //ToolBox_Inf.scheduleWorkQuarterChatRefresh();
         //
         ToolBox_Inf.scheduleDownloadPictureWork(context);
         //
