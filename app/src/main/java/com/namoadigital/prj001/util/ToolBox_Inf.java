@@ -7802,10 +7802,15 @@ public class ToolBox_Inf {
                 );
     }
 
+    /**
+     * LUCHE - 22/02/2021
+     * <p></p>
+     * Metodo que agenda o work que subirá o serviço de chat.
+     */
     public static void scheduleWorkChatRefresh(){
         //
         Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  scheduleWorkChatRefresh \n");
-        //Periodicidade
+        //Cosntraint de conexão.
         Constraints networkConstraints = new Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build();
@@ -7832,6 +7837,12 @@ public class ToolBox_Inf {
             );
     }
 
+    /**
+     * LUCHE
+     * <P></P>
+     * Metodo que agenda o work que chamará a instancia do firebase e tentará atualiza o firebase_id
+     * do usr.
+     */
     public static void scheduleFirebaseRegistrationWork() {
         Constraints constraints =
             new Constraints.Builder()
@@ -7859,6 +7870,11 @@ public class ToolBox_Inf {
             );
     }
 
+    /**
+     * LUCHE
+     * <P></P>
+     * Metodo que agenda o work que do serviço que reporta para o servidor o novo firebaseId
+     */
     public static void scheduleFirebaseID_ReportWork() {
         Constraints constraints =
             new Constraints.Builder()
