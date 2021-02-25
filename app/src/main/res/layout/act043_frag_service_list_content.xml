@@ -51,7 +51,7 @@
             android:layout_marginTop="2dp"
             android:background="@color/namoa_color_gray"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/act043_frag_service_rv_services"
             android:layout_width="match_parent"
             android:layout_height="0dp"

@@ -2,7 +2,7 @@ package com.namoadigital.prj001.dao;
 
 
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.namoadigital.prj001.model.DaoObjReturn;
 

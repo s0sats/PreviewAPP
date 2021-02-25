@@ -3,7 +3,7 @@ package com.namoadigital.prj001.view.act.test2;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
+import androidx.fragment.app.FragmentManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;

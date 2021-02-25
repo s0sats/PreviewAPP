@@ -1,12 +1,6 @@
 package com.namoadigital.prj001.service;
 
-import android.app.Service;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
-
-import com.namoadigital.prj001.util.ToolBox_Inf;
+import androidx.annotation.Nullable;
 
 /**
  * Created by neomatrix on 1/16/18.

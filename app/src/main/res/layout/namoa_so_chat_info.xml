@@ -266,7 +266,7 @@
                     tools:text="Wtf? - Traduzir" />
             </LinearLayout>
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/namoa_so_cl_purchase_order"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -310,7 +310,7 @@
                     app:layout_constraintStart_toEndOf="@+id/view15"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="2049/01/01 00;00" />
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/namoa_so_ll_external_customer"
@@ -370,7 +370,7 @@
                     tools:text="(-1) Ronaldo - trad" />
             </LinearLayout>
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/namoa_so_cl_brand_model_color"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -405,7 +405,7 @@
                     app:layout_constraintStart_toEndOf="@+id/namoa_so_tv_brand_model_color_lbl"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="2049/01/01 00;00" />
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/namoa_so_ll_product"

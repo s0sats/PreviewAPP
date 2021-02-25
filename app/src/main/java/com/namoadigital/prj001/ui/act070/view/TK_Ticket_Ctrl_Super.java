@@ -1,8 +1,8 @@
 package com.namoadigital.prj001.ui.act070.view;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.cardview.widget.CardView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;

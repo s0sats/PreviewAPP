@@ -1,7 +1,7 @@
 package com.namoadigital.prj001.ui.act034;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 

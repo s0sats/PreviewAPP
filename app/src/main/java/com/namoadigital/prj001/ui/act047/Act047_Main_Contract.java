@@ -3,7 +3,7 @@ package com.namoadigital.prj001.ui.act047;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj;

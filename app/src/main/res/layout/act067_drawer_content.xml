@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.namoadigital.prj001.ui.act067.frag_drawer.Act067_Frag_Drawer">
 
-    <android.support.constraint.ConstraintLayout 
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/content_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,7 +25,7 @@
             app:layout_constraintTop_toTopOf="parent"
             >
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/act067_drawer_cl_main"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -36,14 +36,14 @@
                 android:paddingBottom="8dp"
                 >
 
-                <android.support.constraint.Guideline
+                <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/act067_drawer_gd_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:layout_constraintGuide_begin="8dp"/>
 
-                <android.support.constraint.Guideline
+                <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/act067_drawer_gd_end"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -261,7 +261,7 @@
                     android:maxLines="2"
                     />
 
-                <android.support.constraint.ConstraintLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/act067_drawer_cl_position"
                     android:layout_width="0dp"
                     android:layout_height="61dp"
@@ -319,9 +319,9 @@
 
                         />
 
-                </android.support.constraint.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>
         <RadioGroup
@@ -384,6 +384,6 @@
         <!--app:layout_constraintVertical_bias="1.0"-->
         <!--tools:listitem="@layout/act061_drawer_opt_cell" />-->
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

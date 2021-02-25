@@ -8,10 +8,10 @@
             android:padding="8dp"
 >
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -85,9 +85,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/act061_header_mket_transport_order"/>
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_marginTop="5dp"
                 android:id="@+id/act061_header_cl_other_info"
                 android:layout_width="match_parent"
@@ -96,14 +96,14 @@
                 android:background="@color/fieldset_background"
         >
 
-            <android.support.constraint.Guideline
+            <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/act061_header_gd_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:layout_constraintGuide_begin="8dp"/>
 
-            <android.support.constraint.Guideline
+            <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/act061_header_gd_end"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -460,6 +460,6 @@
                     app:layout_constraintTop_toBottomOf="@id/act061_header_et_comments"
                     app:layout_constraintVertical_bias="1.0"/>
 
-        </android.support.constraint.ConstraintLayout>
-    </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/padrao_WHITE"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_withdrawn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_product_info"
         tools:visibility="visible">
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gdl_withdrawn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -88,9 +88,9 @@
             app:layout_constraintStart_toEndOf="@+id/product_cell_iv_withdrawn_substract"
             app:layout_constraintTop_toTopOf="@+id/product_cell_iv_withdrawn_add"
             tools:text="1 un" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_applied"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
         app:layout_constraintTop_toBottomOf="@+id/cl_withdrawn"
         tools:visibility="visible">
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gdl_applied"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -161,9 +161,9 @@
             app:layout_constraintTop_toTopOf="@+id/product_cell_iv_applied_add"
             tools:text="1 un" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_returned"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -172,7 +172,7 @@
         app:layout_constraintTop_toBottomOf="@+id/cl_applied"
         tools:visibility="visible">
 
-        <android.support.constraint.Guideline
+        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gdl_returned"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -236,7 +236,7 @@
             app:layout_constraintStart_toEndOf="@+id/product_cell_iv_returned_substract"
             app:layout_constraintTop_toTopOf="@+id/product_cell_iv_returned_add"
             tools:text="1 un" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/product_cell_tv_extract"
@@ -251,4 +251,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cl_returned" />
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

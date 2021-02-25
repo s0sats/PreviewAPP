@@ -3,7 +3,7 @@ package com.namoadigital.prj001.receiver_chat;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.WakefulBroadcastReceiver;
+import androidx.legacy.content.WakefulBroadcastReceiver;
 
 import com.namoadigital.prj001.service_chat.WS_C_Message_Tmp;
 

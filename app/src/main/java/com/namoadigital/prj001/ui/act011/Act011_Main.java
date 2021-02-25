@@ -12,15 +12,15 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.core.view.GravityCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -781,7 +781,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     private void showConfirmDeleteDialog() {
-        final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+        final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.act011_dialog_delete_warning, null);
@@ -804,7 +804,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         builder.setView(view);
         builder.setCancelable(false);
-        final android.support.v7.app.AlertDialog show = builder.show();
+        final androidx.appcompat.app.AlertDialog show = builder.show();
 
         btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -3423,7 +3423,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     public void showResults(List<HMAux> res) {
-        final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(context);
+        final androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.act028_dialog_results, null);
@@ -3471,7 +3471,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         builder.setView(view);
         builder.setCancelable(false);
 
-        final android.support.v7.app.AlertDialog show = builder.show();
+        final androidx.appcompat.app.AlertDialog show = builder.show();
 
         /**
          * Ini Action

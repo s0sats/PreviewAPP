@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.model;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 public class WS_TK_Ticket_Ctrl_Obj{
     private int ticket_seq;

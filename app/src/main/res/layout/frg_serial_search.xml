@@ -47,7 +47,7 @@
                 android:paddingRight="5dp"
                 android:paddingTop="5dp">
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/frg_serial_search_til_prod"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                     app:mBARCODE="false"
                     app:mNFC="false"
                     app:mOCR="false" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <ImageView
                     android:id="@+id/frg_serial_search_iv_product_change"
@@ -119,7 +119,7 @@
                 android:padding="5dp"
                 >
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/frg_serial_search_til_serial"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -139,7 +139,7 @@
                     app:mNFC="false"
                     app:mOCR="false" />
 
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
 
