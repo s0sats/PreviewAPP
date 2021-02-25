@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.model;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 

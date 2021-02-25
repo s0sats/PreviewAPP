@@ -1,19 +1,14 @@
 package com.namoadigital.prj001.worker;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.service.AppBackgroundService;
-import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_SCHEDULED;
 

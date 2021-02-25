@@ -3,7 +3,7 @@ package com.namoadigital.prj001.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,7 +14,6 @@ import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.IO_Outbound;
-import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.T_IO_Outbound_Download_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_IO_Outbound_Download;
@@ -23,9 +22,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class WS_IO_Outbound_Download extends IntentService {
 

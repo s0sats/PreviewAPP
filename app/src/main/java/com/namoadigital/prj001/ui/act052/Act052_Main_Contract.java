@@ -2,7 +2,7 @@ package com.namoadigital.prj001.ui.act052;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.IO_Serial_Process_Record;
 

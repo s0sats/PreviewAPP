@@ -2,8 +2,8 @@ package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

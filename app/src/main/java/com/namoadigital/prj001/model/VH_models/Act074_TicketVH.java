@@ -1,8 +1,7 @@
 package com.namoadigital.prj001.model.VH_models;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.util.Log;
+import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
