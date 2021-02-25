@@ -7100,26 +7100,30 @@ public class ToolBox_Inf {
      * Para a implementação no Android 10+, foi necessario usar o FileProvider com configuração de xml
      * de acesso a diretorios externos e adicionar a flag FLAG_GRANT_READ_URI_PERMISSION
      *
+     * LUCHE - 29/01/2021
+     * Após mudana do diretorio do pdf para o SandBox em produção, foi removido o IF que condicionava
+     * qual metodologia usar, agora todoas as versões usarão o fileprovider.
+     *
      * @param context - Contexto
      * @param pathname - Caminho + /+ nome do arquivo
-     * @return - Intent usando URI via FileProvider (Android 7+) ou URI via File (Android 7-)
+     * @return - Intent usando URI via FileProvider
      */
     public static Intent getOpenPdfIntent(Context context, String pathname){
         Intent intent;
         Uri uri;
         File pdfFile = new File(pathname);
         //
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             intent = new Intent(Intent.ACTION_VIEW);
             uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileprovider", pdfFile);
             intent.setDataAndType(uri, "application/pdf");
             intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NO_HISTORY);
-        } else {
-            intent = new Intent(Intent.ACTION_VIEW);
-            uri = Uri.fromFile(pdfFile);
-            intent.setDataAndType(uri, "application/pdf");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        }
+//        } else {
+//            intent = new Intent(Intent.ACTION_VIEW);
+//            uri = Uri.fromFile(pdfFile);
+//            intent.setDataAndType(uri, "application/pdf");
+//            intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+//        }
         //
         return intent;
     }

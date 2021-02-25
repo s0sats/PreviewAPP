@@ -534,6 +534,13 @@ public class Frg_Pipeline_Header extends Fragment {
         }
     }
 
+    public void updateTicketStatus(String ticket_status, int statusColor) {
+        status_desc_param = ticket_status;
+        status_color_param = statusColor;
+        tv_status.setText(ticket_status);
+        tv_status.setTextColor(statusColor);
+    }
+
     public interface OnPipelineFragmentInteractionListener {
         void syncPipeline();
     }

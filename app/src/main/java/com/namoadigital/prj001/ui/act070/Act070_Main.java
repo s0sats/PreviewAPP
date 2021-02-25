@@ -455,28 +455,40 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     private void iniHeaderFrag() {
-        mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForPipeline(
-            mTicket,
-            mTicket.getTicket_id(),
-            ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(mTicket.getOpen_date()),
-                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
-            ),
-            mTicket.getOpen_site_code(),
-            mTicket.getOpen_site_desc(),
-            mTicket.getOpen_serial_id(),
-            mTicket.getOpen_product_desc(),
-            hmAux_Trans.get(mTicket.getTicket_status()),
-            ToolBox_Inf.getStatusColorV2(context,mTicket.getTicket_status()),
-            ToolBox_Inf.getFormattedTicketOriginDesc(mTicket.getOrigin_type(), mTicket.getOrigin_desc()),
-            hmAux_Trans.get("please_sync_lbl"),
-            mPresenter.getSyncStatusParam(mTicket)
-        );
-        //
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.act070_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
-        ft.addToBackStack(null);
-        ft.commit();
+        if(mFrgPipelineHeader == null) {
+            mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForPipeline(
+                mTicket,
+                mTicket.getTicket_id(),
+                ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(mTicket.getOpen_date()),
+                    ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                ),
+                mTicket.getOpen_site_code(),
+                mTicket.getOpen_site_desc(),
+                mTicket.getOpen_serial_id(),
+                mTicket.getOpen_product_desc(),
+                hmAux_Trans.get(mTicket.getTicket_status()),
+                ToolBox_Inf.getStatusColorV2(context, mTicket.getTicket_status()),
+                ToolBox_Inf.getFormattedTicketOriginDesc(mTicket.getOrigin_type(), mTicket.getOrigin_desc()),
+                hmAux_Trans.get("please_sync_lbl"),
+                mPresenter.getSyncStatusParam(mTicket)
+            );
+            //
+            //
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.act070_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
+            ft.addToBackStack(null);
+            ft.commit();
+        }else{
+            mFrgPipelineHeader.updateSyncRequired(mPresenter.getSyncStatusParam(mTicket));
+            if(mTicket != null) {
+                mFrgPipelineHeader.updateTicketStatus(
+                        hmAux_Trans.get(mTicket.getTicket_status()),
+                        ToolBox_Inf.getStatusColorV2(context, mTicket.getTicket_status())
+                );
+            }
+        }
+
     }
 
     @Override
@@ -1049,9 +1061,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     private void initFCMReceiver() {
-        fcmReceiver = new FCMReceiver();
-        //
-        startStopFCMReceiver(true);
+        if(fcmReceiver == null) {
+            fcmReceiver = new FCMReceiver();
+            startStopFCMReceiver(true);
+        }
     }
 
     private void startStopFCMReceiver(boolean start) {
