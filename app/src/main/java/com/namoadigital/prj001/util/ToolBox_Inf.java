@@ -8186,7 +8186,7 @@ public class ToolBox_Inf {
     /**
      * BARRIONUEVO - 03-12-2020
      * Encapsulamento de configuração de FABMenu do Pipeline.
-     * @param context
+     * @param context   Deve ser o contexto da Activity e nao da Applicacao
      * @param fabMenu
      * @param hmAux_Trans
      * @param ticket
