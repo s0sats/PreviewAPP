@@ -71,7 +71,8 @@ public class Act004_Main extends Base_Activity implements Act004_Main_View {
     }
 
     private void iniSetup() {
-        context = getBaseContext();
+        //Mudado o context para activity evitar problemas com layout
+        context = Act004_Main.this;
         //
         mResource_Code = ToolBox_Inf.getResourceCode(context, mModule_Code, Constant.ACT004);
         //

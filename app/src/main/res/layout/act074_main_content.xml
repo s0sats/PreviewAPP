@@ -125,6 +125,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:visibility="gone"
+            android:indeterminateTintMode="src_in"
             android:indeterminateTint="@color/namoa_amount_pipeline_background_btn"
             app:layout_constraintBottom_toBottomOf="@+id/act074_rv_ticket_list"
             app:layout_constraintEnd_toEndOf="@+id/act074_rv_ticket_list"

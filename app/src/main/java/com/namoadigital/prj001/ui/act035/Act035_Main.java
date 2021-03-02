@@ -625,7 +625,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
         //
         act035_adapter_messages = new Act035_Adapter_Messages(
-                getBaseContext(),
+                context,
                 this.dados,
                 hmAux_Trans,
                 hmAux_Trans_Extra,
