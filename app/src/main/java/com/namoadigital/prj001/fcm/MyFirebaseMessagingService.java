@@ -7,8 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Log;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -98,9 +99,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * Susbtituido o intent service pelo novo worker
      */
     private void startWsGoogle() {
-//        Intent mIntent = new Intent(getApplicationContext(), WS_Google.class);
-//        startService(mIntent);
-        ToolBox_Inf.scheduleFirebaseID_ReportWork();
+        ToolBox_Inf.scheduleFirebaseID_ReportWork(getApplicationContext());
     }
 
 
@@ -218,7 +217,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             ToolBox_Inf.showChatRoomNotification(getApplicationContext());
                             //LUCHE - 22/02/2021 - Add agendamento do worker que subirá o serviço do chat
                             //para atualizar as rooms
-                            ToolBox_Inf.scheduleWorkChatRefresh();
+                            ToolBox_Inf.scheduleWorkChatRefresh(getApplicationContext());
                             break;
                         case Constant.CHAT_NOTIFICATION_FCM_REMOVE_ROOM:
                             Gson gson = new GsonBuilder().serializeNulls().create();
@@ -231,6 +230,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             removeBundle.putString(Constant.CHAT_WS_EVENT_PARAM, Constant.CHAT_NOTIFICATION_FCM_REMOVE_ROOM);
                             cRemoveRoomIntent.putExtras(removeBundle);
                             getApplicationContext().sendBroadcast(cRemoveRoomIntent);
+                            break;
+                        case ConstantBaseApp.CHAT_NOTIFICATION_FCM_ALERT:
+                            //LUCHE - 02/03/2021 - FCM disparado a cada 10 min se houver msg pendente
+                            //no servidor. Deve subir o serviço para sincronizar as novas msg.
+                            ToolBox_Inf.scheduleWorkChatRefresh(getApplicationContext());
                             break;
                         default:
                             ToolBox_Inf.showChatNotification(

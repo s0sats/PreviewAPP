@@ -120,9 +120,12 @@ public class Work_DownLoad_Picture extends Worker {
             //Popula listas dos modulos
             getDownloadModulesList();
             //
-            //APÓS GERAR TODAS AS LISTA , SE NÃO HOUVER REGISTROS PARA DOWNLOAD
-            //SAI DO SERVIÇO SEM EXIBIR NOTIFICAÇÃO DE DOWNLOAD.
-            if (isStopped() || areAllListEmpty()) {
+            //Se nada para baixar, cancela chamas encadeadas
+            if (areAllListEmpty()) {
+                return Result.failure();
+            }
+            //Se parado, finaliza processamento
+            if (isStopped()) {
                 return Result.success();
             }
             //POSSUI ITEM NA LISTA, AI SIM VERIFICA NECESSIDADE DE NOTIFICAÇÃO E INICIA DOWNLOADS
@@ -148,12 +151,14 @@ public class Work_DownLoad_Picture extends Worker {
             processTicketDownloads();
             //
             //Verifica se ainda existens itens para serem baixados, se tiver, envia retry ao inves de success
-            if(hasMoreItensToDownload()){
-                Log.d("workerTsts", WORKER_TAG+" : New Itens toDownload\n");
-                return Result.retry();
-            }else{
-                return Result.success();
-            }
+//            if(hasMoreItensToDownload()){
+//                Log.d("workerTsts", WORKER_TAG+" : New Itens toDownload\n");
+//                return Result.retry();
+//            }else{
+//                return Result.success();
+//            }
+            ///
+            return Result.success();
         } catch (Exception e) {
             Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
             ToolBox_Inf.registerException(getClass().getName(), e);
@@ -175,6 +180,21 @@ public class Work_DownLoad_Picture extends Worker {
     }
 
     private boolean areAllListEmpty() {
+        int i = dados_geral.size() +
+             so_file_list.size() +
+             so_client_approval_image.size() +
+             product_sketch_list.size() +
+             all_product_sketch_list.size() +
+             event_sketch_list.size() +
+             event_file_list.size() +
+             roomImgList.size() +
+             messageImgList.size() +
+             product_icon_list.size() +
+             ticketImgList.size() +
+             ticketActionImgList.size() ;
+
+        Log.d("workerTsts", WORKER_TAG+" : Itens to download = " + i);
+
         return dados_geral.size() == 0
             && so_file_list.size() == 0
             && so_client_approval_image.size() == 0

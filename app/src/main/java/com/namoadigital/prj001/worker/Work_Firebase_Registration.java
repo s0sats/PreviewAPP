@@ -1,9 +1,9 @@
 package com.namoadigital.prj001.worker;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -49,7 +49,7 @@ public class Work_Firebase_Registration  extends Worker {
                                 getApplicationContext(),
                                 sToken);
                             //Log.d("ID_GOOGLE", sToken);
-                            ToolBox_Inf.scheduleFirebaseID_ReportWork();
+                            ToolBox_Inf.scheduleFirebaseID_ReportWork(getApplicationContext());
                         }
                     }
                 })

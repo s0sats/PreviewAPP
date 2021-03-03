@@ -11,13 +11,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -36,6 +29,14 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -247,7 +248,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         context.sendBroadcast(mIntent);*/
         //LUCHE - 27/01/2021
         //Substituido esquema antigo de service / receiver pelo agendamento do Worker
-        ToolBox_Inf.scheduleUploadImgChat();
+        ToolBox_Inf.scheduleUploadImgChat(context);
     }
 
     private void iniSetup() {
@@ -625,7 +626,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
         }
         //
         act035_adapter_messages = new Act035_Adapter_Messages(
-                getBaseContext(),
+                this,
                 this.dados,
                 hmAux_Trans,
                 hmAux_Trans_Extra,

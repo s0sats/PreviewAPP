@@ -222,9 +222,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //TODO APAGAR APÓS SUBSTITUIR PELOS WORKERS
         //ToolBox_Inf.reprogramAlarms_Full_Quarter(Act005_Main.this);
         //LUCHE - 24/06/2020 Worker de agendamento
-        ToolBox_Inf.scheduleQuarterScheduleNotification();
-        ToolBox_Inf.schedule4HoursScheduleNotification();
-        ToolBox_Inf.scheduleCleanningWork();
+        ToolBox_Inf.scheduleQuarterScheduleNotification(context);
+        ToolBox_Inf.schedule4HoursScheduleNotification(context);
+        ToolBox_Inf.scheduleCleanningWork(context);
         //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -234,7 +234,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         iniUIFooter();
         initActions();
         //LUCHE - 12/02/2021 - substituido IntentService pelo worker
-        ToolBox_Inf.scheduleFirebaseRegistrationWork();
+        ToolBox_Inf.scheduleFirebaseRegistrationWork(context);
         //LUCHE - 22/02/2021 - Comentado chamada pois agora não será recorrente será apenas quando FCM de ROom
         //ToolBox_Inf.scheduleWorkQuarterChatRefresh();
         //

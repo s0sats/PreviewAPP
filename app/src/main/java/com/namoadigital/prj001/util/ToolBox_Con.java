@@ -1260,7 +1260,7 @@ public class ToolBox_Con {
                 "NO_SERVICE"
         ).apply();
 
-        cancelAllWorkers();
+        cancelAllWorkers(context);
     }
 
     /**
@@ -1268,8 +1268,8 @@ public class ToolBox_Con {
      * <P></P>
      * Metodo que cancela todos os workers agendados ao fazer login.
      */
-    private static void cancelAllWorkers() {
-        WorkManager workManager = WorkManager.getInstance();
+    private static void cancelAllWorkers(Context context) {
+        WorkManager workManager = WorkManager.getInstance(context);
         //workers periodicos
         workManager.cancelUniqueWork(Work_Cleanning_Data.WORKER_TAG);
         workManager.cancelUniqueWork(Work_Quarter_Schedule_Notification.WORKER_TAG);

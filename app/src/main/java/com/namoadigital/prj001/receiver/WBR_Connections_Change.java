@@ -77,7 +77,7 @@ public class WBR_Connections_Change extends BroadcastReceiver {
 //        Intent mIntent = new Intent(context, WBR_Upload_Other_User_Img.class);
 //        context.sendBroadcast(mIntent);
 
-        ToolBox_Inf.scheduleUploadOtherUserImgWork();
+        ToolBox_Inf.scheduleUploadOtherUserImgWork(context);
     }
     /**
      * BARRIONUEVO - 30/04/2020
