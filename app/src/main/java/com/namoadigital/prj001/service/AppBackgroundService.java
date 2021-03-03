@@ -7,14 +7,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import android.util.Log;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.model.CH_Message;
 import com.namoadigital.prj001.singleton.SingletonWebSocket;
+import com.namoadigital.prj001.sql.CH_Message_Sql_011;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -200,6 +204,27 @@ public class AppBackgroundService extends Service {
         if(singletonWebSocket != null) {
             singletonWebSocket.destroySingletonWebSocket();
         }
+        //
+        if(hasChatPendencies()){
+            //ToolBox_Inf.scheduleWorkQuarterChatRefresh(getApplicationContext());
+            ToolBox_Inf.scheduleWorkChatRefresh(getApplicationContext());
+       }
+        //else{
+//            WorkManager.getInstance(getApplicationContext()).cancelUniqueWork(Work_Quarter_Chat_Refresh.WORKER_TAG);
+//        }
+    }
+
+    private boolean hasChatPendencies() {
+        CH_MessageDao messageDao = new CH_MessageDao(getApplicationContext());
+        //
+        ArrayList<CH_Message> offlineMsgs =
+            (ArrayList<CH_Message>) messageDao.query(
+                new CH_Message_Sql_011().toSqlQuery()
+            );
+        //
+        Log.d("ChatEvent","AppBackgroundService, chatPendencies = " + (offlineMsgs == null ? "null" : offlineMsgs.size()));
+        //
+        return offlineMsgs != null && offlineMsgs.size() > 0 ;
     }
 
 

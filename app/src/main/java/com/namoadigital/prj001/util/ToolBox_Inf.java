@@ -7789,22 +7789,23 @@ public class ToolBox_Inf {
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
         //
-        PeriodicWorkRequest  workQuarterChatRefresh =
+        PeriodicWorkRequest workQuarterChatRefresh =
                 new PeriodicWorkRequest.Builder(
                         Work_Quarter_Chat_Refresh.class,
                         15 , TimeUnit.MINUTES //Periodicidade
                          ,5,  TimeUnit.MINUTES //Flexibilidade
                 )
-                        .setBackoffCriteria(
-                                BackoffPolicy.LINEAR,
-                                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
-                                TimeUnit.MILLISECONDS)
-                        .build();
+                .setConstraints(networkConstraints)
+                .setBackoffCriteria(
+                        BackoffPolicy.LINEAR,
+                        PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                        TimeUnit.MILLISECONDS)
+                .build();
         //
         WorkManager.getInstance(context)
                 .enqueueUniquePeriodicWork(
                         Work_Quarter_Chat_Refresh.WORKER_TAG,
-                        ExistingPeriodicWorkPolicy.KEEP,
+                        ExistingPeriodicWorkPolicy.REPLACE,
                         workQuarterChatRefresh
                 );
     }

@@ -1221,13 +1221,8 @@ public class SingletonWebSocket {
             //Se não houver msg, envia broadcast de Scrool_Up
             if (messages.size() == 0) {
                 ToolBox_Inf.sendBRChat(context, Constant.CHAT_BR_TYPE_MSG_SCROLL_UP);
-               //TODO POSSIVEL CORREÇÃO PARA RESPECAGEM DO OFFLINE AO FAZER LOGIN.
-               // HOJE AO SE NO LOGIN DO CHAT, O RETORNO DO chISTORICALmSG NÃO TIVER MSG, O ENVIO DOS
-               // OFFLINE NÃO OCORRERÁ. ADICIONAR A LINHA COMENTADA BAIXO, RESOLVE O PROBLEMA,
-               // MAS FALTA AVALIAR SE HÁ IMPACTO.
-                //LUCHE - 23/02/2021 - Possivel solução para envio de offlines
-                // no processo de login do chat
-                // attempSendOfflineMessagesV2();
+                //TODO Verificar se a correção abaixo ,não tem efeito colateral.
+                 attempSendOfflineMessagesV2();
                 return;
             }
             /*
