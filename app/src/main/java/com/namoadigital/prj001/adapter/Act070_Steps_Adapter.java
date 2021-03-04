@@ -2,26 +2,27 @@ package com.namoadigital.prj001.adapter;
 
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_ActionVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_ApprovalVH;
-import com.namoadigital.prj001.ui.act070.VH.Act070_Step_FormVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_FooterVH;
+import com.namoadigital.prj001.ui.act070.VH.Act070_Step_FormVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_MainVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_NoneVH;
 import com.namoadigital.prj001.ui.act070.VH.Act070_Step_Process_Btn_VH;
 import com.namoadigital.prj001.ui.act070.model.BaseStep;
 import com.namoadigital.prj001.ui.act070.model.StepAction;
 import com.namoadigital.prj001.ui.act070.model.StepApproval;
-import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepFooter;
+import com.namoadigital.prj001.ui.act070.model.StepForm;
 import com.namoadigital.prj001.ui.act070.model.StepMain;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;

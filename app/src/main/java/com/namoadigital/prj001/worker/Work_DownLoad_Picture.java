@@ -1,9 +1,9 @@
 package com.namoadigital.prj001.worker;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
@@ -62,7 +62,44 @@ public class Work_DownLoad_Picture extends Worker {
     public static final String WORKER_TAG = "Work_DownLoad_Picture";
     public static boolean IS_RUNNING = false;
     private long customer_code = -1;
-    //
+    //DAOS
+    private MD_ProductDao productDao;
+    private MD_All_ProductDao allProductDao;
+    private GE_Custom_Form_FieldDao form_fieldDao;
+    private GE_Custom_Form_Field_LocalDao form_fieldLocalDao;
+    private GE_Custom_Form_LocalDao formLocalDao;
+    //So
+    private SM_SO_Service_Exec_Task_FileDao taskFileDao;
+    private SM_SO_Product_EventDao eventDao;
+    private SM_SO_Product_Event_FileDao eventFileDao;
+    private SM_SODao smSoDao;
+    //Chat
+    private CH_RoomDao roomDao = null;
+    private CH_MessageDao messageDao = null;
+    //ticket
+    private TK_TicketDao ticketDao;
+    private TK_Ticket_ActionDao ticketActionDao;
+
+    //LISTAS
+    //N-Form
+    private ArrayList<HMAux> dados = new ArrayList<>();
+    private ArrayList<HMAux> dados_geral = new ArrayList<>();
+    //Produtos
+    private ArrayList<HMAux> product_sketch_list = new ArrayList<>();
+    private ArrayList<HMAux> all_product_sketch_list = new ArrayList<>();
+    private ArrayList<HMAux> product_icon_list = new ArrayList<>();
+    //OS
+    private ArrayList<HMAux> so_file_list = new ArrayList<>();
+    private ArrayList<HMAux> event_sketch_list = new ArrayList<>();
+    private ArrayList<HMAux> event_file_list = new ArrayList<>();
+    private ArrayList<HMAux> so_client_approval_image = new ArrayList<>();
+    //Chat
+    private ArrayList<HMAux> roomImgList = new ArrayList<>();
+    private ArrayList<HMAux> messageImgList = new ArrayList<>();
+    //Ticket
+    private ArrayList<HMAux> ticketImgList = new ArrayList<>();
+    private ArrayList<HMAux> ticketActionImgList = new ArrayList<>();
+
     public Work_DownLoad_Picture(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
@@ -78,232 +115,17 @@ public class Work_DownLoad_Picture extends Worker {
             if (customer_code == -1L) {
                 return Result.success();
             }
-
-            /*
-             * Download images do N-Form
-             * */
+            //Inicia Daos
+            initDaos();
+            //Popula listas dos modulos
+            getDownloadModulesList();
             //
-            ArrayList<HMAux> dados = new ArrayList<>();
-            ArrayList<HMAux> dados_geral = new ArrayList<>();
-            MD_ProductDao productDao = null;
-            ArrayList<HMAux> product_sketch_list = new ArrayList<>();
-            MD_All_ProductDao allProductDao = null;
-            ArrayList<HMAux> all_product_sketch_list = new ArrayList<>();
-            ArrayList<HMAux> product_icon_list = new ArrayList<>();
-            //LUCHE - 17/02/2020
-            //Comentado lista, pois após analise concluimos que não faze sentido, ja que ela é gerada
-            //porem não é considerada na lista de download
-            //ArrayList<HMAux> schedule_product_icon_list = new ArrayList<>();
-            //
-            GE_Custom_Form_FieldDao form_fieldDao = new GE_Custom_Form_FieldDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(customer_code),
-                Constant.DB_VERSION_CUSTOM
-            );
-            //
-            GE_Custom_Form_Field_LocalDao form_fieldLocalDao = new GE_Custom_Form_Field_LocalDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(customer_code),
-                Constant.DB_VERSION_CUSTOM
-            );
-            //
-            GE_Custom_Form_LocalDao formLocalDao = new GE_Custom_Form_LocalDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(customer_code),
-                Constant.DB_VERSION_CUSTOM
-            );
-            //
-            dados_geral = (ArrayList<HMAux>) form_fieldDao.query_HM(
-                new GE_Custom_Form_Field_Sql_001().toSqlQuery().toLowerCase()
-            );
-            //
-            dados_geral.addAll(
-                (ArrayList<HMAux>) form_fieldLocalDao.query_HM(
-                    new GE_Custom_Form_Field_Local_Sql_001().toSqlQuery().toLowerCase()
-                )
-            );
-            //CROQUIS MD Products
-            productDao = new MD_ProductDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(customer_code),
-                Constant.DB_VERSION_CUSTOM
-            );
-            //
-            product_sketch_list = (ArrayList<HMAux>) productDao.query_HM(
-                new MD_Product_Sql_004(
-                    customer_code
-                ).toSqlQuery()
-            );
-            //CROQUIS MD ALL Products
-            //allProductDao = new MD_All_ProductDao(getApplicationContext());
-            allProductDao = new MD_All_ProductDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(customer_code),
-                Constant.DB_VERSION_CUSTOM
-            );
-            //
-            all_product_sketch_list = (ArrayList<HMAux>) allProductDao.query_HM(
-                new MD_All_Product_Sql_004(
-                    customer_code
-                ).toSqlQuery()
-            );
-            //
-            product_icon_list = (ArrayList<HMAux>) productDao.query_HM(
-                new MD_Product_Sql_007(
-                    customer_code
-                ).toSqlQuery()
-            );
-            //LUCHE - 17/02/2020
-            //Comentado lista, pois após analise concluimos que não faze sentido, ja que ela é gerada
-            //porem não é considerada na lista de download
-            /*schedule_product_icon_list = (ArrayList<HMAux>) formLocalDao.query_HM(
-                new GE_Custom_Form_Local_Sql_017(
-                    customer_code
-                ).toSqlQuery()
-            );*/
-
-            /**
-             *
-             * LISTAS VINCULADAS AS.O
-             *
-             */
-            SM_SO_Service_Exec_Task_FileDao taskFileDao = null;
-            ArrayList<HMAux> so_file_list = new ArrayList<>();
-            SM_SO_Product_EventDao eventDao = null;
-            ArrayList<HMAux> event_sketch_list = new ArrayList<>();
-            SM_SO_Product_Event_FileDao eventFileDao = null;
-            ArrayList<HMAux> event_file_list = new ArrayList<>();
-            SM_SODao smSoDao = null;
-            ArrayList<HMAux> so_client_approval_image = new ArrayList<>();
-
-            // if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
-            if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO, null)) {
-                //
-                smSoDao = new SM_SODao(
-                    getApplicationContext(),
-                    ToolBox_Con.customDBPath(customer_code),
-                    Constant.DB_VERSION_CUSTOM
-                );
-                //Adiciona lista de assinaturas da s.o
-                so_client_approval_image.addAll(
-                    smSoDao.query_HM(
-                        new SM_SO_Sql_021(customer_code).toSqlQuery()
-                    )
-                );
-                //
-                taskFileDao =
-                    new SM_SO_Service_Exec_Task_FileDao(
-                        getApplicationContext(),
-                        ToolBox_Con.customDBPath(customer_code),
-                        Constant.DB_VERSION_CUSTOM
-                    );
-
-                //Adiciona lista de task files para download
-                so_file_list.addAll(taskFileDao.query_HM(
-                    new SM_SO_Service_Exec_Task_File_Sql_003(
-                        customer_code
-                    ).toSqlQuery()
-                    )
-                );
-                //CROQUIS PRODUTO EVENTO
-                eventDao = new SM_SO_Product_EventDao(
-                    getApplicationContext(),
-                    ToolBox_Con.customDBPath(customer_code),
-                    Constant.DB_VERSION_CUSTOM
-                );
-                //
-                event_sketch_list = (ArrayList<HMAux>) eventDao.query_HM(
-                    new SM_SO_Product_Event_Sql_004(
-                        customer_code
-                    ).toSqlQuery()
-                );
-                /*
-                 * Download imagem dos PRODUTO EVENTO
-                 */
-                eventFileDao = new SM_SO_Product_Event_FileDao(
-                    getApplicationContext(),
-                    ToolBox_Con.customDBPath(customer_code),
-                    Constant.DB_VERSION_CUSTOM
-                );
-                //
-                event_file_list = (ArrayList<HMAux>) eventFileDao.query_HM(
-                    new SM_SO_Product_Event_File_Sql_004(
-                        customer_code
-                    ).toSqlQuery()
-                );
-                //
+            //Se nada para baixar, cancela chamas encadeadas
+            if (areAllListEmpty()) {
+                return Result.failure();
             }
-            /**
-             *
-             *
-             * Lista de download Chat
-             *
-             */
-            CH_RoomDao roomDao = null;
-            ArrayList<HMAux> roomImgList = new ArrayList<>();
-            CH_MessageDao messageDao = null;
-            ArrayList<HMAux> messageImgList = new ArrayList<>();
-            //if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
-            // Room
-            roomDao = new CH_RoomDao(getApplicationContext());
-            //
-            roomImgList.addAll(roomDao.query_HM(
-                new CH_Room_Sql_002().toSqlQuery()
-            ));
-            // Messages
-            messageDao = new CH_MessageDao(getApplicationContext());
-            //
-            messageImgList.addAll(messageDao.query_HM(
-                new CH_Message_Sql_006().toSqlQuery()
-            ));
-            /**
-             * LISTA DE DOWNLOAD TICKET
-             *
-             */
-            TK_TicketDao ticketDao = new TK_TicketDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(customer_code),
-                Constant.DB_VERSION_CUSTOM
-            );
-            TK_Ticket_ActionDao ticketActionDao = new TK_Ticket_ActionDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(customer_code),
-                Constant.DB_VERSION_CUSTOM
-            );
-            ArrayList<HMAux> ticketImgList = new ArrayList<>();
-            ArrayList<HMAux> ticketActionImgList = new ArrayList<>();
-            //
-            ticketImgList.addAll(
-                ticketDao.query_HM(
-                    new TK_Ticket_Sql_Img_Download_001(customer_code).toSqlQuery()
-                )
-            );
-            //
-            ticketActionImgList.addAll(
-                ticketActionDao.query_HM(
-                    new TK_Ticket_Action_Sql_Img_Download_001(customer_code).toSqlQuery()
-                )
-            );
-            //
-            //}
-            //APÓS GERAR TODAS AS LISTA , SE NÃO HOUVER REGISTROS PARA DOWNLOAD
-            //SAI DO SERVIÇO SEM EXIBIR NOTIFICAÇÃO DE DOWNLOAD.
-            if (isStopped()
-                ||  (dados_geral.size() == 0
-                    && so_file_list.size() == 0
-                    && so_client_approval_image.size() == 0
-                    && product_sketch_list.size() == 0
-                    && all_product_sketch_list.size() == 0
-                    && event_sketch_list.size() == 0
-                    && event_file_list.size() == 0
-                    && roomImgList.size() == 0
-                    && messageImgList.size() == 0
-                    && product_icon_list.size() == 0
-                    //&& schedule_product_icon_list.size() == 0
-                    && ticketImgList.size() == 0
-                    && ticketActionImgList.size() == 0
-                )
-            ) {
+            //Se parado, finaliza processamento
+            if (isStopped()) {
                 return Result.success();
             }
             //POSSUI ITEM NA LISTA, AI SIM VERIFICA NECESSIDADE DE NOTIFICAÇÃO E INICIA DOWNLOADS
@@ -315,44 +137,32 @@ public class Work_DownLoad_Picture extends Worker {
             // PROCESSAMENTO DAS LISTAS
             //
             /**Download de files do N-FORM*/
-            processNFormDownloads(form_fieldDao, form_fieldLocalDao ,dados_geral,dados);
+            processNFormDownloads();
             /** Download croquis de MD Produtos e MD ALL Products*/
             //
-            processProductDownloads(productDao,allProductDao,product_sketch_list,all_product_sketch_list,product_icon_list);
+            processProductDownloads();
             /** Download de files do S.O*/
             if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO, null)) {
-                processSODownloads(
-                    smSoDao,
-                    taskFileDao,
-                    eventDao,
-                    productDao,
-                    so_client_approval_image,
-                    so_file_list,
-                    event_sketch_list,
-                    event_file_list
-                );
-                //
+                processSODownloads();
             }
             /**Download de files do CHAT*/
-            processChatDownloads(
-                roomDao,
-                messageDao,
-                roomImgList,
-                messageImgList
-            );
+            processChatDownloads();
             /**Download de files do Ticket */
-            processTicketDownloads(
-                ticketDao,
-                ticketActionDao,
-                ticketImgList,
-                ticketActionImgList
-            );
+            processTicketDownloads();
             //
+            //Verifica se ainda existens itens para serem baixados, se tiver, envia retry ao inves de success
+//            if(hasMoreItensToDownload()){
+//                Log.d("workerTsts", WORKER_TAG+" : New Itens toDownload\n");
+//                return Result.retry();
+//            }else{
+//                return Result.success();
+//            }
+            ///
             return Result.success();
         } catch (Exception e) {
             Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
             ToolBox_Inf.registerException(getClass().getName(), e);
-            return  Result.retry();
+            return Result.retry();
         } finally {
             IS_RUNNING = false;
             if (!ToolBox_Inf.isDownloadRunning()) {
@@ -363,12 +173,245 @@ public class Work_DownLoad_Picture extends Worker {
         }
     }
 
+    private boolean hasMoreItensToDownload() {
+        getDownloadModulesList();
+        //
+        return !areAllListEmpty();
+    }
+
+    private boolean areAllListEmpty() {
+        int i = dados_geral.size() +
+             so_file_list.size() +
+             so_client_approval_image.size() +
+             product_sketch_list.size() +
+             all_product_sketch_list.size() +
+             event_sketch_list.size() +
+             event_file_list.size() +
+             roomImgList.size() +
+             messageImgList.size() +
+             product_icon_list.size() +
+             ticketImgList.size() +
+             ticketActionImgList.size() ;
+
+        Log.d("workerTsts", WORKER_TAG+" : Itens to download = " + i);
+
+        return dados_geral.size() == 0
+            && so_file_list.size() == 0
+            && so_client_approval_image.size() == 0
+            && product_sketch_list.size() == 0
+            && all_product_sketch_list.size() == 0
+            && event_sketch_list.size() == 0
+            && event_file_list.size() == 0
+            && roomImgList.size() == 0
+            && messageImgList.size() == 0
+            && product_icon_list.size() == 0
+            //&& schedule_product_icon_list.size() == 0
+            && ticketImgList.size() == 0
+            && ticketActionImgList.size() == 0;
+    }
+
+    /**
+     * Popula listas com os itens para download.
+     */
+    private void getDownloadModulesList() {
+        /*
+         * Download images do N-Form
+         */
+        //
+        dados_geral = (ArrayList<HMAux>) form_fieldDao.query_HM(
+            new GE_Custom_Form_Field_Sql_001().toSqlQuery().toLowerCase()
+        );
+        //
+        dados_geral.addAll(
+            (ArrayList<HMAux>) form_fieldLocalDao.query_HM(
+                new GE_Custom_Form_Field_Local_Sql_001().toSqlQuery().toLowerCase()
+            )
+        );
+        product_sketch_list = (ArrayList<HMAux>) productDao.query_HM(
+            new MD_Product_Sql_004(
+                customer_code
+            ).toSqlQuery()
+        );
+
+        //
+        all_product_sketch_list = (ArrayList<HMAux>) allProductDao.query_HM(
+            new MD_All_Product_Sql_004(
+                customer_code
+            ).toSqlQuery()
+        );
+        //
+        product_icon_list = (ArrayList<HMAux>) productDao.query_HM(
+            new MD_Product_Sql_007(
+                customer_code
+            ).toSqlQuery()
+        );
+        //LUCHE - 17/02/2020
+        //Comentado lista, pois após analise concluimos que não faze sentido, ja que ela é gerada
+        //porem não é considerada na lista de download
+            /*schedule_product_icon_list = (ArrayList<HMAux>) formLocalDao.query_HM(
+                new GE_Custom_Form_Local_Sql_017(
+                    customer_code
+                ).toSqlQuery()
+            );*/
+
+        /**
+         *
+         * LISTAS VINCULADAS AS.O
+         *
+         */
+        // if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+        if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO, null)) {
+            //Adiciona lista de assinaturas da s.o
+            so_client_approval_image.addAll(
+                smSoDao.query_HM(
+                    new SM_SO_Sql_021(customer_code).toSqlQuery()
+                )
+            );
+            //Adiciona lista de task files para download
+            so_file_list.addAll(taskFileDao.query_HM(
+                new SM_SO_Service_Exec_Task_File_Sql_003(
+                    customer_code
+                ).toSqlQuery()
+                )
+            );
+            //CROQUIS PRODUTO EVENTO
+            event_sketch_list = (ArrayList<HMAux>) eventDao.query_HM(
+                new SM_SO_Product_Event_Sql_004(
+                    customer_code
+                ).toSqlQuery()
+            );
+            /*
+             * Download imagem dos PRODUTO EVENTO
+             */
+            //
+            event_file_list = (ArrayList<HMAux>) eventFileDao.query_HM(
+                new SM_SO_Product_Event_File_Sql_004(
+                    customer_code
+                ).toSqlQuery()
+            );
+            //
+        }
+        /**
+         *
+         *
+         * Lista de download Chat
+         *
+         */
+
+        //if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_CHAT)) {
+        //
+        roomImgList.addAll(roomDao.query_HM(
+            new CH_Room_Sql_002().toSqlQuery()
+        ));
+
+        //
+        messageImgList.addAll(messageDao.query_HM(
+            new CH_Message_Sql_006().toSqlQuery()
+        ));
+        /**
+         * LISTA DE DOWNLOAD TICKET
+         *
+         */
+
+        //
+        ticketImgList.addAll(
+            ticketDao.query_HM(
+                new TK_Ticket_Sql_Img_Download_001(customer_code).toSqlQuery()
+            )
+        );
+        //
+        ticketActionImgList.addAll(
+            ticketActionDao.query_HM(
+                new TK_Ticket_Action_Sql_Img_Download_001(customer_code).toSqlQuery()
+            )
+        );
+    }
+
+    private void initDaos() {
+        form_fieldDao = new GE_Custom_Form_FieldDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        form_fieldLocalDao = new GE_Custom_Form_Field_LocalDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        formLocalDao = new GE_Custom_Form_LocalDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //CROQUIS MD Products
+        productDao = new MD_ProductDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //All products
+        allProductDao = new MD_All_ProductDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+
+        if (ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO, null)) {
+            //
+            smSoDao = new SM_SODao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(customer_code),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+            taskFileDao =
+                new SM_SO_Service_Exec_Task_FileDao(
+                    getApplicationContext(),
+                    ToolBox_Con.customDBPath(customer_code),
+                    Constant.DB_VERSION_CUSTOM
+                );
+
+            //CROQUIS PRODUTO EVENTO
+            eventDao = new SM_SO_Product_EventDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(customer_code),
+                Constant.DB_VERSION_CUSTOM
+            );
+            //
+                      /*
+             * Download imagem dos PRODUTO EVENTO
+             */
+            eventFileDao = new SM_SO_Product_Event_FileDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(customer_code),
+                Constant.DB_VERSION_CUSTOM
+            );
+        }
+        // Room
+        roomDao = new CH_RoomDao(getApplicationContext());
+        // Messages
+        messageDao = new CH_MessageDao(getApplicationContext());
+        //TICKET
+        ticketDao = new TK_TicketDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        ticketActionDao = new TK_Ticket_ActionDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+    }
+
     @Override
     public void onStopped() {
         super.onStopped();
         Log.d("workerTsts", WORKER_TAG+" : onStopped");
     }
-    private void processTicketDownloads(TK_TicketDao ticketDao, TK_Ticket_ActionDao ticketActionDao, ArrayList<HMAux> ticketImgList, ArrayList<HMAux> ticketActionImgList) throws Exception {
+    private void processTicketDownloads() throws Exception {
         for (HMAux hmAux : ticketImgList) {
             if(isStopped()){
                 break;
@@ -456,7 +499,7 @@ public class Work_DownLoad_Picture extends Worker {
         }
     }
 
-    private void processChatDownloads(CH_RoomDao roomDao, CH_MessageDao messageDao, ArrayList<HMAux> roomImgList, ArrayList<HMAux> messageImgList) throws Exception {
+    private void processChatDownloads() throws Exception {
         for (HMAux hmAux : roomImgList) {
             if(isStopped()){
                 break;
@@ -541,7 +584,7 @@ public class Work_DownLoad_Picture extends Worker {
         }
     }
 
-    private void processSODownloads(SM_SODao smSoDao, SM_SO_Service_Exec_Task_FileDao taskFileDao, SM_SO_Product_EventDao eventDao, MD_ProductDao productDao, ArrayList<HMAux> so_client_approval_image, ArrayList<HMAux> so_file_list, ArrayList<HMAux> event_sketch_list, ArrayList<HMAux> event_file_list) throws Exception {
+    private void processSODownloads() throws Exception {
         for (HMAux hmAux : so_client_approval_image) {
             if(isStopped()){
                 break;
@@ -685,7 +728,7 @@ public class Work_DownLoad_Picture extends Worker {
     }
 
 
-    private void processProductDownloads(MD_ProductDao productDao, MD_All_ProductDao allProductDao, ArrayList<HMAux> product_sketch_list, ArrayList<HMAux> all_product_sketch_list, ArrayList<HMAux> product_icon_list) throws Exception {
+    private void processProductDownloads() throws Exception {
         for (HMAux hmAux : product_sketch_list) {
             if(isStopped()){
                 break;
@@ -783,7 +826,7 @@ public class Work_DownLoad_Picture extends Worker {
         }
     }
 
-    private void processNFormDownloads(GE_Custom_Form_FieldDao form_fieldDao, GE_Custom_Form_Field_LocalDao form_fieldLocalDao, ArrayList<HMAux> dados_geral, ArrayList<HMAux> dados) throws Exception {
+    private void processNFormDownloads() throws Exception {
         //BAIXANDO ITENS DO FORM
         for (HMAux hmAux : dados_geral) {
             HMAux item = new HMAux();
@@ -834,7 +877,7 @@ public class Work_DownLoad_Picture extends Worker {
                         hmAux.get("custom_name") + ".jpg"
                     ).toSqlQuery().toLowerCase()
                 );
-
+                //
                 form_fieldLocalDao.addUpdate(
                     new GE_Custom_Form_Field_Local_Sql_002(
                         nome_parte[1],

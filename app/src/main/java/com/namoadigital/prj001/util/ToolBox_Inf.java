@@ -212,7 +212,6 @@ import com.namoadigital.prj001.ui.act077.Act077_Main;
 import com.namoadigital.prj001.ui.act078.Act078_Main;
 import com.namoadigital.prj001.ui.act079.Act079_Main;
 import com.namoadigital.prj001.ui.act080.Act080_Main;
-import com.namoadigital.prj001.worker.Work_Chat_Refresh;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
@@ -1663,7 +1662,7 @@ public class ToolBox_Inf {
         if(geFiles.size() > 0){
 //            Intent mIntent = new Intent(context,WBR_Upload_Other_User_Img.class);
 //            context.sendBroadcast(mIntent);
-            scheduleUploadOtherUserImgWork();
+            scheduleUploadOtherUserImgWork(context);
         }
         //Se contador de erro 0 , então sucesso.
         return errorCount == 0;
@@ -7453,7 +7452,7 @@ public class ToolBox_Inf {
                     .setConstraints(constraints)
                     .build();
         //
-        WorkManager.getInstance()
+        WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 Work_Upload_Img.WORKER_TAG,
                 ExistingWorkPolicy.REPLACE,
@@ -7471,7 +7470,7 @@ public class ToolBox_Inf {
      *  conexão pode fazer o agendamento e não faria sentido esperar pelo tempo de repescagem da
      *  chamada anterior
      */
-    public static void scheduleUploadOtherUserImgWork(){
+    public static void scheduleUploadOtherUserImgWork(Context context){
         Constraints constraints =
             new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -7487,7 +7486,7 @@ public class ToolBox_Inf {
                 .setConstraints(constraints)
                 .build();
         //
-        WorkManager.getInstance()
+        WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 Work_Upload_Other_User_Img.WORKER_TAG,
                 ExistingWorkPolicy.REPLACE,
@@ -7495,7 +7494,7 @@ public class ToolBox_Inf {
             );
     }
 
-    public static void scheduleUploadImgChat(){
+    public static void scheduleUploadImgChat(Context context){
         Constraints constraints =
             new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -7511,7 +7510,7 @@ public class ToolBox_Inf {
                 .setConstraints(constraints)
                 .build();
         //
-        WorkManager.getInstance()
+        WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 Work_Upload_Img_Chat.WORKER_TAG,
                 ExistingWorkPolicy.REPLACE,
@@ -7531,7 +7530,7 @@ public class ToolBox_Inf {
      *  - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
      *  a ultima chamada será ignora e a primeira será mantida.
      */
-    public static void scheduleQuarterScheduleNotification(){
+    public static void scheduleQuarterScheduleNotification(Context context){
         //Periodicidade
         //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
         PeriodicWorkRequest  workQuarterScheduleNotification =
@@ -7546,7 +7545,7 @@ public class ToolBox_Inf {
                  TimeUnit.MILLISECONDS)
              .build();
         //
-        WorkManager.getInstance()
+        WorkManager.getInstance(context)
             .enqueueUniquePeriodicWork(
                 Work_Quarter_Schedule_Notification.WORKER_TAG,
                 ExistingPeriodicWorkPolicy.KEEP,
@@ -7564,7 +7563,7 @@ public class ToolBox_Inf {
      *  - Caso acontece de tentar agendar mais uma chamada sendo que ja existe uma pendente,
      *  a ultima chamada será ignora e a primeira será mantida.
      */
-    public static void schedule4HoursScheduleNotification(){
+    public static void schedule4HoursScheduleNotification(Context context){
         //Periodicidade
         //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
         PeriodicWorkRequest  work4HoursScheduleNotification =
@@ -7579,7 +7578,7 @@ public class ToolBox_Inf {
                     TimeUnit.MILLISECONDS)
                 .build();
         //
-        WorkManager.getInstance()
+        WorkManager.getInstance(context)
             .enqueueUniquePeriodicWork(
                 Work_Four_Hour_Schedule_Notification.WORKER_TAG,
                 ExistingPeriodicWorkPolicy.KEEP,
@@ -7598,7 +7597,7 @@ public class ToolBox_Inf {
      *  a ultima chamada será ignora e a primeira será mantida.
      *
      */
-    public static void scheduleCleanningWork(){
+    public static void scheduleCleanningWork(Context context){
         //Periodicidade
         //Flexibilidade - "Janela" de permissão para executar mais cedo. Periodicidade - Flexibilidade.(15-5 = 10)A partir de
         PeriodicWorkRequest  workCleanningRequest =
@@ -7614,7 +7613,7 @@ public class ToolBox_Inf {
             )
             .build();
         //
-        WorkManager.getInstance()
+        WorkManager.getInstance(context)
             .enqueueUniquePeriodicWork(
                 Work_Cleanning_Data.WORKER_TAG,
                 ExistingPeriodicWorkPolicy.KEEP,
@@ -7663,7 +7662,7 @@ public class ToolBox_Inf {
         //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
         //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
         //isStopped(), foi adicionado nos loop
-        WorkManager.getInstance()
+        WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 Work_DownLoad_Customer_Logo.WORKER_TAG,
                 ExistingWorkPolicy.KEEP,
@@ -7711,10 +7710,10 @@ public class ToolBox_Inf {
         //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
         //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
         //isStopped(), foi adicionado nos loop
-        WorkManager.getInstance()
+        WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 Work_DownLoad_PDF.WORKER_TAG,
-                ExistingWorkPolicy.KEEP,
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
                 workDownloadPdfRequest
             );
     }
@@ -7756,10 +7755,10 @@ public class ToolBox_Inf {
         //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
         //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
         //isStopped(), foi adicionado nos loop
-        WorkManager.getInstance()
+        WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 Work_DownLoad_Picture.WORKER_TAG,
-                ExistingWorkPolicy.KEEP,
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
                 workDownloadPictureRequest
             );
     }
@@ -7784,7 +7783,7 @@ public class ToolBox_Inf {
      *  - Em caso de exception o worker tenta de novo.
      *
      */
-    public static void scheduleWorkQuarterChatRefresh(){
+    public static void scheduleWorkQuarterChatRefresh(Context context){
         //
         Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  scheduleWorkQuarterChatRefresh \n");
         //Periodicidade
@@ -7793,59 +7792,25 @@ public class ToolBox_Inf {
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build();
         //
-        PeriodicWorkRequest  workQuarterChatRefresh =
+        PeriodicWorkRequest workQuarterChatRefresh =
                 new PeriodicWorkRequest.Builder(
                         Work_Quarter_Chat_Refresh.class,
                         15 , TimeUnit.MINUTES //Periodicidade
-                         ,5,  TimeUnit.MINUTES //Flexibilidade
+                         //,5,  TimeUnit.MINUTES //Flexibilidade
                 )
-                        .setBackoffCriteria(
-                                BackoffPolicy.LINEAR,
-                                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
-                                TimeUnit.MILLISECONDS)
-                        .build();
+                .setConstraints(networkConstraints)
+                .setBackoffCriteria(
+                        BackoffPolicy.LINEAR,
+                        PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                        TimeUnit.MILLISECONDS)
+                .build();
         //
-        WorkManager.getInstance()
+        WorkManager.getInstance(context)
                 .enqueueUniquePeriodicWork(
                         Work_Quarter_Chat_Refresh.WORKER_TAG,
-                        ExistingPeriodicWorkPolicy.KEEP,
+                        ExistingPeriodicWorkPolicy.REPLACE,
                         workQuarterChatRefresh
                 );
-    }
-
-    /**
-     * LUCHE - 22/02/2021
-     * <p></p>
-     * Metodo que agenda o work que subirá o serviço de chat.
-     */
-    public static void scheduleWorkChatRefresh(){
-        //
-        Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  scheduleWorkChatRefresh \n");
-        //Cosntraint de conexão.
-        Constraints networkConstraints = new Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build();
-        //
-        OneTimeWorkRequest  workQuarterChatRefresh =
-            new OneTimeWorkRequest.Builder(
-                Work_Chat_Refresh.class
-            )
-            .setBackoffCriteria(
-                    BackoffPolicy.LINEAR,
-                    10,
-                    TimeUnit.SECONDS
-            )
-            .setConstraints(networkConstraints).build();
-        //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
-        //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
-        //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
-        //isStopped(), foi adicionado nos loop
-        WorkManager.getInstance()
-            .enqueueUniqueWork(
-                Work_Chat_Refresh.WORKER_TAG,
-                ExistingWorkPolicy.KEEP,
-                workQuarterChatRefresh
-            );
     }
 
     /**
@@ -7854,7 +7819,7 @@ public class ToolBox_Inf {
      * Metodo que agenda o work que chamará a instancia do firebase e tentará atualiza o firebase_id
      * do usr.
      */
-    public static void scheduleFirebaseRegistrationWork() {
+    public static void scheduleFirebaseRegistrationWork(Context context) {
         Constraints constraints =
             new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -7873,7 +7838,7 @@ public class ToolBox_Inf {
         //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
         //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
         //isStopped(), foi adicionado nos loop
-        WorkManager.getInstance()
+        WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 Work_Firebase_Registration.WORKER_TAG,
                 ExistingWorkPolicy.KEEP,
@@ -7886,7 +7851,7 @@ public class ToolBox_Inf {
      * <P></P>
      * Metodo que agenda o work que do serviço que reporta para o servidor o novo firebaseId
      */
-    public static void scheduleFirebaseID_ReportWork() {
+    public static void scheduleFirebaseID_ReportWork(Context context) {
         Constraints constraints =
             new Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -7905,7 +7870,7 @@ public class ToolBox_Inf {
         //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
         //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
         //isStopped(), foi adicionado nos loop
-        WorkManager.getInstance()
+        WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 Work_Firebase_ID_Report.WORKER_TAG,
                 ExistingWorkPolicy.KEEP,

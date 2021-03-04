@@ -227,7 +227,7 @@ public class WS_C_Message_Tmp extends IntentService {
 
         //LUCHE - 27/01/2021
         //Substituido esquema antigo de service / receiver pelo agendamento do Worker
-        ToolBox_Inf.scheduleUploadImgChat();
+        ToolBox_Inf.scheduleUploadImgChat(getApplicationContext());
     }
 
 }

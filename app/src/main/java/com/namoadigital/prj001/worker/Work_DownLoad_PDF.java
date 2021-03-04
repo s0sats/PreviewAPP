@@ -1,9 +1,9 @@
 package com.namoadigital.prj001.worker;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
@@ -14,6 +14,7 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_BlobDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_Blob_LocalDao;
 import com.namoadigital.prj001.dao.SM_SO_FileDao;
+import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_007;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_008;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Local_Sql_002;
@@ -22,7 +23,10 @@ import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_002;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Blob_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_003;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_004;
+import com.namoadigital.prj001.sql.WS_Download_PDF_Sql_001;
+import com.namoadigital.prj001.sql.WS_Download_PDF_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -31,6 +35,25 @@ import java.util.ArrayList;
 public class Work_DownLoad_PDF extends Worker {
     public static final String WORKER_TAG = "Work_DownLoad_PDF";
     public static boolean IS_RUNNING = false;
+    private long customer_code = -1;
+    /*
+    * Listas
+    */
+    private ArrayList<HMAux> dados = new ArrayList<>();
+    private ArrayList<HMAux> dados_geral = new ArrayList<>();
+    private ArrayList<HMAux> formAplist = new ArrayList<>();
+    private ArrayList<HMAux> so_file_list = new ArrayList<>();
+    private ArrayList<HMAux> ticket_form_list = new ArrayList<>();
+    /*
+    * Daos
+    */
+    private GE_Custom_Form_BlobDao form_blobDao;
+    private GE_Custom_Form_Blob_LocalDao form_blob_localDao;
+    private GE_Custom_Form_ApDao formApDao;
+    private SM_SO_FileDao soFileDao;
+    private TK_Ticket_FormDao ticketFormDao;
+    private boolean hasSoProfile = false;
+    private boolean hasTicketProfile = false;
 
     public Work_DownLoad_PDF(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -42,82 +65,25 @@ public class Work_DownLoad_PDF extends Worker {
         Log.d("workerTsts", WORKER_TAG+" :doWork");
         //
         try{
-            long customer_code;
-            boolean hasSoProfile = ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO, null);;
-            //
             Data inpuData = getInputData();
             customer_code = inpuData.getLong(Constant.LOGIN_CUSTOMER_CODE, -1);
+            hasSoProfile = ToolBox_Inf.profileExists(getApplicationContext(), Constant.PROFILE_PRJ001_SO, null);
+            hasTicketProfile = ToolBox_Inf.profileExists(getApplicationContext(), ConstantBaseApp.PROFILE_MENU_TICKET, null);
+
             //Se parametro de customer não foi enviado, aborta chamada
             if (customer_code == -1L) {
                 return Result.success();
             }
-            ArrayList<HMAux> dados = new ArrayList<>();
-            ArrayList<HMAux> dados_geral = new ArrayList<>();
-            ArrayList<HMAux> formAplist = new ArrayList<>();
-            ArrayList<HMAux> so_file_list = new ArrayList<>();
-            //region IniDaos
-            GE_Custom_Form_BlobDao form_blobDao = new GE_Custom_Form_BlobDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(customer_code),
-                Constant.DB_VERSION_CUSTOM
-            );
             //
-            GE_Custom_Form_Blob_LocalDao form_blob_localDao = new GE_Custom_Form_Blob_LocalDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(customer_code),
-                Constant.DB_VERSION_CUSTOM
-            );
+            initDaos();
             //
-            GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(
-                getApplicationContext(),
-                ToolBox_Con.customDBPath(customer_code),
-                Constant.DB_VERSION_CUSTOM
-            );
-            //
-            SM_SO_FileDao soFileDao =
-                new SM_SO_FileDao(
-                    getApplicationContext(),
-                    ToolBox_Con.customDBPath(customer_code),
-                    Constant.DB_VERSION_CUSTOM
-                );
-            //endregion
-            //region GERAÇÃO DE LISTAS
-            dados_geral = (ArrayList<HMAux>) form_blobDao.query_HM(
-                new GE_Custom_Form_Blob_Sql_002().toSqlQuery().toLowerCase()
-            );
-            //
-            dados_geral.addAll(
-                (ArrayList<HMAux>) form_blob_localDao.query_HM(
-                    new GE_Custom_Form_Blob_Local_Sql_002().toSqlQuery().toLowerCase()
-                )
-            );//fim N FORM
-            //
-            formAplist.addAll(
-                formApDao.query_HM(
-                    new GE_Custom_Form_Ap_Sql_007(
-                        customer_code
-                    ).toSqlQuery()
-
-                )
-            );
-            /**
-             * LISTA DE PDF DA S.O
-             */
-            if (hasSoProfile) {
-                so_file_list.addAll(
-                    soFileDao.query_HM(
-                        new SM_SO_File_Sql_003(
-                            customer_code
-                        ).toSqlQuery()
-                    )
-                );
-            }//END S.O
-            //endregion
-            //SE NÃO PDF PARA BAIXAR, SAI DO SERVIÇO
-            if (dados_geral.size() == 0
-                && formAplist.size() == 0
-                && so_file_list.size() == 0
-            ) {
+            getPdfDownloadLists();
+            //SE sem pdf para baixar, cancela chamas encadeadas
+            if (areAllListEmpty()) {
+                return Result.failure();
+            }
+            //Se parado, finaliza processamento
+            if (isStopped()) {
                 return Result.success();
             }
             //SE POSSUI ITENS PARA DOWNLOAD, VERIFICA NECESSIDA DE NOTIFICAÇÃO
@@ -287,7 +253,57 @@ public class Work_DownLoad_PDF extends Worker {
                 }
             }
             //endregion
+            //region Ticket
+            /**
+             * LISTA DE PDF DO TICKET
+             */
+            if (hasTicketProfile) {
+                for (HMAux hmAux : ticket_form_list) {
+                    try {
+                        if(isStopped()){
+                            break;
+                        }
+                        //
+                        if (!ToolBox_Inf.verifyDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase() + ".pdf")) {
+                            ToolBox_Inf.deleteDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp");
+                            //
+                            ToolBox_Inf.downloadImagePDF(
+                                hmAux.get(TK_Ticket_FormDao.PDF_URL),
+                                Constant.CACHE_PATH + "/" + hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase() + ".tmp"
+                            );
+                            //
+                            ToolBox_Inf.renameDownloadFileInf(hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME).toLowerCase(), ".pdf");
+                        }
+                        //
+                        ticketFormDao.addUpdate(
+                            new WS_Download_PDF_Sql_002(
+                                hmAux.get(TK_Ticket_FormDao.CUSTOMER_CODE),
+                                hmAux.get(TK_Ticket_FormDao.TICKET_PREFIX),
+                                hmAux.get(TK_Ticket_FormDao.TICKET_CODE),
+                                hmAux.get(TK_Ticket_FormDao.TICKET_SEQ),
+                                hmAux.get(TK_Ticket_FormDao.TICKET_SEQ_TMP),
+                                hmAux.get(TK_Ticket_FormDao.STEP_CODE),
+                                hmAux.get(WS_Download_PDF_Sql_001.FILE_LOCAL_NAME)+ ".pdf"
+                            ).toSqlQuery().toLowerCase()
+                        );
+                    } catch (Exception e) {
+                        ToolBox_Inf.registerException(getClass().getName(), e);
+                    }
+                }
+
+            }
+            //endregion
+
+            //Verifica se ainda existens itens para serem baixados, se tiver, envia retry ao inves de success
+//            if(hasMoreItensToDownload(hasSoProfile)){
+//                Log.d("workerTsts", WORKER_TAG+" : New Itens toDownload\n");
+//                return Result.retry();
+//            }else{
+//                return Result.success();
+//            }
+            //
             return Result.success();
+
         } catch (Exception e) {
             Log.d("workerTsts", WORKER_TAG+" : Exception\n" + e.getMessage());
             ToolBox_Inf.registerException(getClass().getName(), e);
@@ -298,6 +314,102 @@ public class Work_DownLoad_PDF extends Worker {
                 ToolBox_Inf.cancelNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
         }
+    }
+
+    private boolean areAllListEmpty() {
+        int i = dados_geral.size() +
+            formAplist.size() +
+            so_file_list.size() +
+            ticket_form_list.size()
+            ;
+
+        Log.d("workerTsts", WORKER_TAG+" : Itens to download = " + i);
+
+        return dados_geral.size() == 0
+            && formAplist.size() == 0
+            && so_file_list.size() == 0
+            && ticket_form_list.size() == 0;
+    }
+
+    private void initDaos() {
+        //region IniDaos
+        form_blobDao = new GE_Custom_Form_BlobDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        form_blob_localDao = new GE_Custom_Form_Blob_LocalDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        formApDao = new GE_Custom_Form_ApDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        soFileDao =
+            new SM_SO_FileDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(customer_code),
+                Constant.DB_VERSION_CUSTOM
+            );
+        //
+        ticketFormDao = new TK_Ticket_FormDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //endregion
+
+    }
+
+    private void getPdfDownloadLists() {
+        //region GERAÇÃO DE LISTAS
+        dados_geral = (ArrayList<HMAux>) form_blobDao.query_HM(
+            new GE_Custom_Form_Blob_Sql_002().toSqlQuery().toLowerCase()
+        );
+        //
+        dados_geral.addAll(
+            (ArrayList<HMAux>) form_blob_localDao.query_HM(
+                new GE_Custom_Form_Blob_Local_Sql_002().toSqlQuery().toLowerCase()
+            )
+        );//fim N FORM
+        //
+        formAplist.addAll(
+            formApDao.query_HM(
+                new GE_Custom_Form_Ap_Sql_007(
+                    customer_code
+                ).toSqlQuery()
+
+            )
+        );
+        /**
+         * LISTA DE PDF DA S.O
+         */
+        if (hasSoProfile) {
+            so_file_list.addAll(
+                soFileDao.query_HM(
+                    new SM_SO_File_Sql_003(
+                        customer_code
+                    ).toSqlQuery()
+                )
+            );
+        }//END S.O
+        //
+        if(hasTicketProfile) {
+            ticket_form_list.addAll(
+                ticketFormDao.query_HM(
+                    new WS_Download_PDF_Sql_001(
+                        customer_code
+                    ).toSqlQuery()
+                )
+            );
+        }
+        //endregion
     }
 
     @Override

@@ -825,6 +825,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String CHAT_NOTIFICATION_FCM_MSG = "<CHAT_MSG>";
     public static final String CHAT_NOTIFICATION_FCM_ADD_ROOM = "<CHAT_ADD_ROOM>";
     public static final String CHAT_NOTIFICATION_FCM_REMOVE_ROOM = "<CHAT_REMOVE_ROOM>";
+    //Disparado a cada 10 minutos se msg pendente de envio pelo server
+    public static final String CHAT_NOTIFICATION_FCM_ALERT = "<CHAT_MSG_ALERT>";
 
     //Errors
     public static final String CHAT_ERROR_CHAT_SESSION_NOT_FOUND = "CHAT_SESSION_NOT_FOUND";

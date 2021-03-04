@@ -1,9 +1,9 @@
 package com.namoadigital.prj001.worker;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -23,8 +23,6 @@ public class Work_Quarter_Chat_Refresh extends Worker {
     @Override
     public Result doWork() {
         Log.d("ChatEvent", WORKER_TAG+" :doWork");
-        Context context = getApplicationContext();
-
         try {
             Log.d("ChatEvent"," doWork \n");
             if (!ToolBox_Inf.isUsrAppLogged(getApplicationContext())) {
@@ -36,7 +34,6 @@ public class Work_Quarter_Chat_Refresh extends Worker {
                 ToolBox_Inf.callChatService(getApplicationContext(), CHAT_SERVICE_MODE_SCHEDULED);
             }
             Log.d("ChatEvent"," AppBackgroundService.isRunning: " + AppBackgroundService.isRunning);
-
             Log.d("ChatEvent"," success ");
 
             return Result.success();
