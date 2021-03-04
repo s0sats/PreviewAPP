@@ -212,7 +212,6 @@ import com.namoadigital.prj001.ui.act077.Act077_Main;
 import com.namoadigital.prj001.ui.act078.Act078_Main;
 import com.namoadigital.prj001.ui.act079.Act079_Main;
 import com.namoadigital.prj001.ui.act080.Act080_Main;
-import com.namoadigital.prj001.worker.Work_Chat_Refresh;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
@@ -7793,7 +7792,7 @@ public class ToolBox_Inf {
                 new PeriodicWorkRequest.Builder(
                         Work_Quarter_Chat_Refresh.class,
                         15 , TimeUnit.MINUTES //Periodicidade
-                         ,5,  TimeUnit.MINUTES //Flexibilidade
+                         //,5,  TimeUnit.MINUTES //Flexibilidade
                 )
                 .setConstraints(networkConstraints)
                 .setBackoffCriteria(
@@ -7808,41 +7807,6 @@ public class ToolBox_Inf {
                         ExistingPeriodicWorkPolicy.REPLACE,
                         workQuarterChatRefresh
                 );
-    }
-
-    /**
-     * LUCHE - 22/02/2021
-     * <p></p>
-     * Metodo que agenda o work que subirá o serviço de chat.
-     */
-    public static void scheduleWorkChatRefresh(Context context){
-        //
-        Log.d("ChatEvent",ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z") + " -  scheduleWorkChatRefresh \n");
-        //Cosntraint de conexão.
-        Constraints networkConstraints = new Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build();
-        //
-        OneTimeWorkRequest  workQuarterChatRefresh =
-            new OneTimeWorkRequest.Builder(
-                Work_Chat_Refresh.class
-            )
-            .setBackoffCriteria(
-                    BackoffPolicy.LINEAR,
-                    10,
-                    TimeUnit.SECONDS
-            )
-            .setConstraints(networkConstraints).build();
-        //Testei com ExistingWorkPolicy.REPLACE, mas pode acontecer de ter chamadas concorrente.
-        //Apesar de a cada "replace" o worker anterior ser cancelado, o doWork não para de forma
-        //instananea e o codigo continuará sendo executado, porem não será feito downlaod por a trativa
-        //isStopped(), foi adicionado nos loop
-        WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                Work_Chat_Refresh.WORKER_TAG,
-                ExistingWorkPolicy.KEEP,
-                workQuarterChatRefresh
-            );
     }
 
     /**

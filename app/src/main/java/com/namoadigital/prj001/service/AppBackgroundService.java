@@ -11,6 +11,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.work.WorkManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -23,6 +24,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+import com.namoadigital.prj001.worker.Work_Quarter_Chat_Refresh;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -204,14 +206,14 @@ public class AppBackgroundService extends Service {
         if(singletonWebSocket != null) {
             singletonWebSocket.destroySingletonWebSocket();
         }
-        //
+        //LUCHE - 04/03/2021
+        //Se existemsg pendente de envio, então agenda o worker de atualização do chat a cada 15 minutos.
+        //Caso não haja, cancela o worker
         if(hasChatPendencies()){
-            //ToolBox_Inf.scheduleWorkQuarterChatRefresh(getApplicationContext());
-            ToolBox_Inf.scheduleWorkChatRefresh(getApplicationContext());
-       }
-        //else{
-//            WorkManager.getInstance(getApplicationContext()).cancelUniqueWork(Work_Quarter_Chat_Refresh.WORKER_TAG);
-//        }
+            ToolBox_Inf.scheduleWorkQuarterChatRefresh(getApplicationContext());
+       } else{
+            WorkManager.getInstance(getApplicationContext()).cancelUniqueWork(Work_Quarter_Chat_Refresh.WORKER_TAG);
+        }
     }
 
     private boolean hasChatPendencies() {

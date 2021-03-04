@@ -217,7 +217,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             ToolBox_Inf.showChatRoomNotification(getApplicationContext());
                             //LUCHE - 22/02/2021 - Add agendamento do worker que subirá o serviço do chat
                             //para atualizar as rooms
-                            ToolBox_Inf.scheduleWorkChatRefresh(getApplicationContext());
+                            ToolBox_Inf.scheduleWorkQuarterChatRefresh(getApplicationContext());
                             break;
                         case Constant.CHAT_NOTIFICATION_FCM_REMOVE_ROOM:
                             Gson gson = new GsonBuilder().serializeNulls().create();
@@ -234,7 +234,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         case ConstantBaseApp.CHAT_NOTIFICATION_FCM_ALERT:
                             //LUCHE - 02/03/2021 - FCM disparado a cada 10 min se houver msg pendente
                             //no servidor. Deve subir o serviço para sincronizar as novas msg.
-                            ToolBox_Inf.scheduleWorkChatRefresh(getApplicationContext());
+                            ToolBox_Inf.scheduleWorkQuarterChatRefresh(getApplicationContext());
                             break;
                         default:
                             ToolBox_Inf.showChatNotification(

@@ -14,7 +14,6 @@ import androidx.work.WorkManager;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.worker.Work_Chat_Refresh;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
@@ -1286,7 +1285,6 @@ public class ToolBox_Con {
         workManager.cancelUniqueWork(Work_Firebase_Registration.WORKER_TAG);
         workManager.cancelUniqueWork(Work_Firebase_ID_Report.WORKER_TAG);
         workManager.cancelUniqueWork(Work_Quarter_Chat_Refresh.WORKER_TAG);
-        workManager.cancelUniqueWork(Work_Chat_Refresh.WORKER_TAG);
     }
 
     public static void resetCustomerSiteOperationPreferences(Context context) {

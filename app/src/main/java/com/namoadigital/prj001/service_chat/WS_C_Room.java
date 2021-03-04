@@ -153,6 +153,8 @@ public class WS_C_Room extends IntentService {
         //LUCHE - 30/06/2020
         //Substituido o antigo serviço pelo Worker de Download de Img
         ToolBox_Inf.scheduleDownloadPictureWork(getApplicationContext());
+        //LUCHE - 04/03/2021 - Cancela notificação de sala ao processa las
+        ToolBox_Inf.cancelChatRoomNotification(getApplicationContext());
         //
         ToolBox_Inf.sendBRChat(getApplicationContext(), Constant.CHAT_BR_TYPE_ROOM);
         //
