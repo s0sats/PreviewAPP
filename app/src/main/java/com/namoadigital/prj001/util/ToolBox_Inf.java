@@ -7808,7 +7808,7 @@ public class ToolBox_Inf {
         WorkManager.getInstance(context)
                 .enqueueUniquePeriodicWork(
                         Work_Quarter_Chat_Refresh.WORKER_TAG,
-                        ExistingPeriodicWorkPolicy.REPLACE,
+                        ExistingPeriodicWorkPolicy.KEEP,
                         workQuarterChatRefresh
                 );
     }
