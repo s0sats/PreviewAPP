@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.util;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
@@ -68,7 +69,7 @@ public class NotificationHelper {
         this.moduleShowCount =0;
     }
 
-    public void call_Notification() {
+    public Notification call_Notification() {
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
@@ -106,11 +107,19 @@ public class NotificationHelper {
         //
         int totalPendency = locationPendencies + fileUploadPendencies + updatePendenciesCount;
         //
+        Notification notification = null;
+        //
+//        Log.d("GPS_Service", "totalPendency: " + totalPendency);
+        //
         if (totalPendency > 0) {
-            nm.notify(LOCATION_NOTIFICATION_ID, builder.build());
+            notification = builder.build();
+            nm.notify(LOCATION_NOTIFICATION_ID, notification);
+//            Log.d("GPS_Service", "totalPendency: " + totalPendency);
         } else {
+//            Log.d("GPS_Service", "cancelNotification");
             ToolBox_Inf.cancelNotification(context, LOCATION_NOTIFICATION_ID);
         }
+        return notification;
     }
 
     @NonNull

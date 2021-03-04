@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -36,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.NotificationHelper.LOCATION_NOTIFICATION_ID;
+
 /**
  * Created by neomatrix on 11/05/17.
  */
@@ -64,7 +67,7 @@ public class SV_LocationTracker extends Service {
     private LocationManager mLocationManager = null;
 
     private static final int LOCATION_INTERVAL_NFORM_ON = 5 * 1 * 60 * 1000;
-    private static final int LOCATION_INTERVAL_DEFAULT  = 1 * 60 * 1000;
+    private static final int LOCATION_INTERVAL_DEFAULT = 1 * 60 * 1000;
     private static final float LOCATION_DISTANCE = 0f;
 
     private Handler mHandler;
@@ -76,6 +79,7 @@ public class SV_LocationTracker extends Service {
     private String mLocation_Longitude;
     private String mLocation_Type;
     private int async_gps;
+    private boolean isForegroundService = false;
 
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
@@ -99,7 +103,7 @@ public class SV_LocationTracker extends Service {
             mLocation_Longitude = String.valueOf(location.getLongitude());
 
             boolean hasError;
-            switch (async_gps){
+            switch (async_gps) {
                 case LOCATION_NFORM_ON:
                     hasError = setFormLocation();
                     setLocationPreference(location, hasError);
@@ -112,8 +116,12 @@ public class SV_LocationTracker extends Service {
 //                    Log.i("GPS_Service", "async_gps: " + async_gps);
 //                    recordProcess("onLocationChanged -> async_gps: " + async_gps );
                     ToolBox_Inf.callPendencyNotification(getApplicationContext());
-                    if(!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(),Constant.HAS_PENDING_LOCATION,false)) {
-                        stopSelf();
+                    if (!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), Constant.HAS_PENDING_LOCATION, false)) {
+                        if(isForegroundService){
+                            stopForeground(true);
+                        }else {
+                            stopSelf();
+                        }
                     }
                     break;
             }
@@ -167,37 +175,37 @@ public class SV_LocationTracker extends Service {
                 DaoObjReturn daoObjReturn = ge_custom_form_dataDao.addUpdateWithReturn(form_data);
                 if(daoObjReturn.hasError()){
                     hasError = true;
-                }else{
+                } else {
                     //Se não teve erro ao atualizar for, verifica se é de ticket e se for,
                     //atualiza flags.
-                    if(isFormCreateByTicket(form_data)){
+                    if (isFormCreateByTicket(form_data)) {
                         //Seta update required pra 1 no ticket
                         ticketDao.addUpdate(
-                            new Sql_SV_Location_Tracker_001(
-                                form_data.getCustomer_code(),
-                                form_data.getTicket_prefix(),
-                                form_data.getTicket_code()
-                            ).toSqlQuery()
+                                new Sql_SV_Location_Tracker_001(
+                                        form_data.getCustomer_code(),
+                                        form_data.getTicket_prefix(),
+                                        form_data.getTicket_code()
+                                ).toSqlQuery()
                         );
                         //Seta update required pra 1 no step
                         ticketDao.addUpdate(
-                            new Sql_SV_Location_Tracker_002(
-                                form_data.getCustomer_code(),
-                                form_data.getTicket_prefix(),
-                                form_data.getTicket_code(),
-                                form_data.getStep_code()
-                            ).toSqlQuery()
+                                new Sql_SV_Location_Tracker_002(
+                                        form_data.getCustomer_code(),
+                                        form_data.getTicket_prefix(),
+                                        form_data.getTicket_code(),
+                                        form_data.getStep_code()
+                                ).toSqlQuery()
                         );
                         //Seta update required pra 1 no ctrl
                         ticketDao.addUpdate(
-                            new Sql_SV_Location_Tracker_003(
-                                form_data.getCustomer_code(),
-                                form_data.getTicket_prefix(),
-                                form_data.getTicket_code(),
-                                form_data.getStep_code(),
-                                form_data.getTicket_seq(),
-                                form_data.getTicket_seq_tmp()
-                            ).toSqlQuery()
+                                new Sql_SV_Location_Tracker_003(
+                                        form_data.getCustomer_code(),
+                                        form_data.getTicket_prefix(),
+                                        form_data.getTicket_code(),
+                                        form_data.getStep_code(),
+                                        form_data.getTicket_seq(),
+                                        form_data.getTicket_seq_tmp()
+                                ).toSqlQuery()
                         );
                         //Envia broadcast para tela
                         sendTicketBroadcastStatus();
@@ -231,11 +239,11 @@ public class SV_LocationTracker extends Service {
      */
     private boolean isFormCreateByTicket(GE_Custom_Form_Data customFormData) {
         return
-            customFormData.getTicket_prefix() != null && customFormData.getTicket_prefix() > -1
-                && customFormData.getTicket_code() != null && customFormData.getTicket_code() > -1
-                && customFormData.getTicket_seq() != null && customFormData.getTicket_seq() > -1
-                && customFormData.getTicket_seq_tmp() != null && customFormData.getTicket_seq_tmp()  > -1
-                && customFormData.getStep_code() != null && customFormData.getStep_code() > -1;
+                customFormData.getTicket_prefix() != null && customFormData.getTicket_prefix() > -1
+                        && customFormData.getTicket_code() != null && customFormData.getTicket_code() > -1
+                        && customFormData.getTicket_seq() != null && customFormData.getTicket_seq() > -1
+                        && customFormData.getTicket_seq_tmp() != null && customFormData.getTicket_seq_tmp() > -1
+                        && customFormData.getStep_code() != null && customFormData.getStep_code() > -1;
     }
 
     /**
@@ -247,7 +255,7 @@ public class SV_LocationTracker extends Service {
         Intent mIntent = new Intent();
         mIntent.setAction(Constant.WS_FCM);
         mIntent.addCategory(Intent.CATEGORY_DEFAULT);
-        mIntent.putExtra(ConstantBaseApp.SW_TYPE,ConstantBaseApp.TK_TICKET_FORM_GPS_LOCATION_UPDATE);
+        mIntent.putExtra(ConstantBaseApp.SW_TYPE, ConstantBaseApp.TK_TICKET_FORM_GPS_LOCATION_UPDATE);
         //
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(mIntent);
     }
@@ -258,7 +266,7 @@ public class SV_LocationTracker extends Service {
             String filePath = getApplicationContext().getFilesDir().getPath().toString() + "/GPS_Histo.txt";
             ToolBox_Inf.writeIn(data + "  ---  " + date, new File(filePath));
             Log.i("GPS_Service", "recordProcess: " + date + data);
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
@@ -270,9 +278,9 @@ public class SV_LocationTracker extends Service {
         ToolBox_Con.setStringPreference(getApplicationContext(), Constant.LOCATION_LNG, String.valueOf(location.getLongitude()));
         ToolBox_Con.setStringPreference(getApplicationContext(), Constant.LOCATION_TYPE, location.getProvider().toUpperCase());
         ToolBox_Con.setLongPreference(getApplicationContext(), Constant.LOCATION_DATE, Calendar.getInstance().getTime().getTime());
-        if(hasError) {
+        if (hasError) {
             ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, true);
-        }else {
+        } else {
             ToolBox_Con.setBooleanPreference(getApplicationContext(), Constant.HAS_PENDING_LOCATION, false);
         }
 
@@ -296,13 +304,13 @@ public class SV_LocationTracker extends Service {
 //        ToolBox.toastMSG(getApplicationContext(), "onStartCommand");
         if (intent != null) {
             async_gps = intent.getIntExtra(ASYNC_GPS, LOCATION_BACKGROUND);
-        }else{
+        } else {
             async_gps = LOCATION_BACKGROUND;
         }
 
 //        Log.i("GPS_Service", "onStartCommand: " + async_gps);
 
-        switch (async_gps){
+        switch (async_gps) {
             //Parametrizacao para recuperar localizacao durante a exec do N-FORM no intervalo de 5min
             case LOCATION_NFORM_ON:
 //                Log.i("GPS_Service", "onStartCommand LOCATION_NFORM_ON");
@@ -313,7 +321,14 @@ public class SV_LocationTracker extends Service {
             case LOCATION_BACKGROUND:
 //                Log.i("GPS_Service", "onStartCommand LOCATION_BACKGROUND");
 //                recordProcess("onStartCommand -> async_gps: " + async_gps );
-                ToolBox_Inf.callPendencyNotification(getApplicationContext());
+                Notification notification = ToolBox_Inf.callPendencyNotification(getApplicationContext());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                        && notification != null) {
+                    isForegroundService = true;
+//                    Log.d("GPS_Service", "startForeground notification_id: " + LOCATION_NOTIFICATION_ID);
+//                    Log.d("GPS_Service", "startForeground isForegroundService: " + isForegroundService);
+                    startForeground(LOCATION_NOTIFICATION_ID, notification);
+                }
                 setLocationListeners(LOCATION_INTERVAL_DEFAULT);
                 break;
 
@@ -332,8 +347,8 @@ public class SV_LocationTracker extends Service {
     }
 
     /**
-     *  BARRIONUEVO - 02-04-2020
-     *  METODO PARA TESTES
+     * BARRIONUEVO - 02-04-2020
+     * METODO PARA TESTES
      */
 //    private void debugNotificacao() {
 //        String latloc, longloc,typeloc, dateloc;
@@ -394,14 +409,24 @@ public class SV_LocationTracker extends Service {
     @Override
     public void onCreate() {
         loadTranslation();
-        setNotificationForForegroundService();
+        isForegroundService = false;
+//        setNotificationForForegroundService();
+        Notification notification = ToolBox_Inf.callPendencyNotification(getApplicationContext());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                && notification != null) {
+            isForegroundService = true;
+            Log.d("GPS_Service", "startForeground isForegroundService: " + isForegroundService);
+            Log.d("GPS_Service", "startForeground notification_id: " + LOCATION_NOTIFICATION_ID);
+            startForeground(LOCATION_NOTIFICATION_ID, notification);
+        }
         initializeLocationManager();
         status = true;
     }
 
     /**
-     *  BARRIONUEVO 26-06-2020
-     *  Seta notification responsavel por segurar o servico de busca de posicao GPS.
+     * BARRIONUEVO 26-06-2020
+     * Seta notification responsavel por segurar o servico de busca de posicao GPS.
      */
     private void setNotificationForForegroundService() {
         NotificationManager nm = (NotificationManager)
@@ -427,7 +452,12 @@ public class SV_LocationTracker extends Service {
                     mLocationListeners[1]);
         } catch (SecurityException ex) {
             status = false;
-            stopSelf();
+            Log.d("GPS_Service", "isForegroundService: " + isForegroundService);
+            if(isForegroundService){
+                stopForeground(true);
+            }else {
+                stopSelf();
+            }
         } catch (IllegalArgumentException ex) {
         }
         try {
@@ -436,7 +466,12 @@ public class SV_LocationTracker extends Service {
                     mLocationListeners[0]);
         } catch (SecurityException ex) {
             status = false;
-            stopSelf();
+            Log.d("GPS_Service", "isForegroundService: " + isForegroundService);
+            if(isForegroundService){
+                stopForeground(true);
+            }else {
+                stopSelf();
+            }
         } catch (IllegalArgumentException ex) {
         } catch (Exception e) {
             status = false;
@@ -464,10 +499,15 @@ public class SV_LocationTracker extends Service {
 //                    recordProcess("removeLocationListener exception: " + ex.toString());
                     ToolBox_Inf.registerException(ex);
                     status = false;
-                    stopSelf();
+                    Log.d("GPS_Service", "isForegroundService: " + isForegroundService);
+                    if(isForegroundService) {
+                        stopForeground(true);
+                    }else {
+                        stopSelf();
+                    }
                 }
             }
-        }else{
+        } else {
 //            recordProcess("removeLocationListeners: LocationManager eh null");
         }
     }
@@ -475,7 +515,7 @@ public class SV_LocationTracker extends Service {
     private void initializeLocationManager() {
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        }else{
+        } else {
 //            recordProcess("initLocationManager: " + mLocationManager.toString());
 //            Log.i("GPS_Service", mLocationManager.toString());
         }

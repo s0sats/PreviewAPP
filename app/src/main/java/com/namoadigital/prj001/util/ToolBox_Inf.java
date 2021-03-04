@@ -24,13 +24,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.FileProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -50,6 +43,13 @@ import android.widget.RemoteViews;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.FileProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.work.BackoffPolicy;
 import androidx.work.Constraints;
 import androidx.work.Data;
@@ -1760,7 +1760,7 @@ public class ToolBox_Inf {
     public static NotificationCompat.Builder getLowImportanceBuilder(Context context, NotificationManager notificationManager) {
         NotificationCompat.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(ConstantBaseApp.GENERIC_CHANNEL_ID);
+            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(ConstantBaseApp.PENDENCY_CHANNEL_ID);
             if (notificationChannel == null) {
                 createChannelNotification(context, notificationManager, NAMOA_PEND_INFO, NotificationManager.IMPORTANCE_LOW, ConstantBaseApp.PENDENCY_CHANNEL_ID);
             }
@@ -3270,7 +3270,7 @@ public class ToolBox_Inf {
         manager.cancel(notification_id);
     }
 
-    public static void callPendencyNotification(Context context) {
+    public static Notification callPendencyNotification(Context context) {
         if(ToolBox_Con.getPreference_Customer_Code(context) > 0) {
             HMAux hmAux_trans = new HMAux();
             List<String> translateList = new ArrayList<>();
@@ -3297,8 +3297,9 @@ public class ToolBox_Inf {
                 }
             }
 
-            callPendencyNotification(context, hmAux_trans);
+            return callPendencyNotification(context, hmAux_trans);
         }
+        return null;
     }
 
     /**
@@ -3309,11 +3310,12 @@ public class ToolBox_Inf {
      * @param hmAux_Trans Traducao utilizada na Notification eh do Sys
      */
     @NonNull
-    public static void callPendencyNotification(Context context, HMAux hmAux_Trans){
+    public static Notification callPendencyNotification(Context context, HMAux hmAux_Trans){
         if(ToolBox_Con.getPreference_Customer_Code(context) > 0) {
             NotificationHelper notificationHelper = new NotificationHelper(context, hmAux_Trans);
-            notificationHelper.call_Notification();
+            return notificationHelper.call_Notification();
         }
+        return null;
     }
 
     public static StringBuilder wsExceptionTreatment(Context context, Exception e) {
@@ -3973,7 +3975,9 @@ public class ToolBox_Inf {
     public static void call_Location_Tracker_On_Background(Context context, int mode) {
         Intent mIntent = new Intent(context, SV_LocationTracker.class);
         mIntent.putExtra(SV_LocationTracker.ASYNC_GPS, mode);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        int pendencies = ToolBox_Inf.getLocationPendencies(context);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+        && pendencies > 0) {
             context.startForegroundService(mIntent);
         }else {
             context.startService(mIntent);

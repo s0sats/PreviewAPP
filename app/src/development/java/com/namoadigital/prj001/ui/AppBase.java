@@ -40,6 +40,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PENDENCY_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_PATH;
@@ -180,7 +181,7 @@ public class AppBase extends Application {
          */
         ConstantBase.AUTHORITIES_FOR_PROVIDER = BuildConfig.APPLICATION_ID + ".fileprovider";
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
-        ToolBox_Inf.createChannelNotification(getApplicationContext(), notificationManager, NAMOA_PEND_INFO, NotificationManager.IMPORTANCE_LOW, ConstantBaseApp.PENDENCY_CHANNEL_ID);
+        ToolBox_Inf.createChannelNotification(getApplicationContext(), notificationManager, NAMOA_PEND_INFO, NotificationManager.IMPORTANCE_LOW, PENDENCY_CHANNEL_ID);
         ToolBox_Inf.createChannelNotification(getApplicationContext(), notificationManager, NAMOA_NOTIF_INFO, NotificationManager.IMPORTANCE_DEFAULT, GENERIC_CHANNEL_ID);
         registerConnectionsChanges();
     }
