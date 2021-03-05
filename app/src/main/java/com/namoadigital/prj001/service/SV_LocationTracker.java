@@ -11,9 +11,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.core.app.NotificationCompat;
 import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -107,21 +108,21 @@ public class SV_LocationTracker extends Service {
                 case LOCATION_NFORM_ON:
                     hasError = setFormLocation();
                     setLocationPreference(location, hasError);
-//                    Log.i("GPS_Service", "async_gps: " + async_gps);
+//                    Log.i("GPS_Service", "LocationListener: " + async_gps);
 //                    recordProcess("onLocationChanged -> async_gps: " + async_gps );
                     break;
                 case LOCATION_BACKGROUND:
                     hasError = setFormLocation();
                     setLocationPreference(location, hasError);
-//                    Log.i("GPS_Service", "async_gps: " + async_gps);
+//                    Log.i("GPS_Service", "LocationListener: " + async_gps);
 //                    recordProcess("onLocationChanged -> async_gps: " + async_gps );
                     ToolBox_Inf.callPendencyNotification(getApplicationContext());
                     if (!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), Constant.HAS_PENDING_LOCATION, false)) {
-                        if(isForegroundService){
-                            stopForeground(true);
-                        }else {
-                            stopSelf();
+//                        Log.i("GPS_Service", "LocationListener: " + async_gps);
+                        if(isForegroundService) {
+                            stopForeground(false);
                         }
+                        stopSelf();
                     }
                     break;
             }
@@ -411,15 +412,15 @@ public class SV_LocationTracker extends Service {
         loadTranslation();
         isForegroundService = false;
 //        setNotificationForForegroundService();
-        Notification notification = ToolBox_Inf.callPendencyNotification(getApplicationContext());
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && notification != null) {
-            isForegroundService = true;
-            Log.d("GPS_Service", "startForeground isForegroundService: " + isForegroundService);
-            Log.d("GPS_Service", "startForeground notification_id: " + LOCATION_NOTIFICATION_ID);
-            startForeground(LOCATION_NOTIFICATION_ID, notification);
-        }
+//        Notification notification = ToolBox_Inf.callPendencyNotification(getApplicationContext());
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+//                && notification != null) {
+//            isForegroundService = true;
+//            Log.d("GPS_Service", "startForeground isForegroundService: " + isForegroundService);
+//            Log.d("GPS_Service", "startForeground notification_id: " + LOCATION_NOTIFICATION_ID);
+//            startForeground(LOCATION_NOTIFICATION_ID, notification);
+//        }
         initializeLocationManager();
         status = true;
     }
@@ -453,11 +454,11 @@ public class SV_LocationTracker extends Service {
         } catch (SecurityException ex) {
             status = false;
             Log.d("GPS_Service", "isForegroundService: " + isForegroundService);
-            if(isForegroundService){
-                stopForeground(true);
-            }else {
-                stopSelf();
+            if(isForegroundService) {
+//                ToolBox_Inf.cancelNotification(getApplicationContext(), LOCATION_NOTIFICATION_ID);
+                stopForeground(false);
             }
+            stopSelf();
         } catch (IllegalArgumentException ex) {
         }
         try {
@@ -467,11 +468,10 @@ public class SV_LocationTracker extends Service {
         } catch (SecurityException ex) {
             status = false;
             Log.d("GPS_Service", "isForegroundService: " + isForegroundService);
-            if(isForegroundService){
-                stopForeground(true);
-            }else {
-                stopSelf();
+            if(isForegroundService) {
+                stopForeground(false);
             }
+            stopSelf();
         } catch (IllegalArgumentException ex) {
         } catch (Exception e) {
             status = false;
@@ -480,31 +480,29 @@ public class SV_LocationTracker extends Service {
 
     @Override
     public void onDestroy() {
-        status = false;
-        ToolBox_Inf.callPendencyNotification(getApplicationContext());
-
-        removeLocationListeners();
-//        ToolBox.toastMSG(getApplicationContext(), "onDestroy");
         super.onDestroy();
-
+        status = false;
+        removeLocationListeners();
+        ToolBox_Inf.callPendencyNotification(getApplicationContext());
+        Log.d("GPS_Service", "onDestroy");
     }
 
     private void removeLocationListeners() {
         if (mLocationManager != null) {
             for (int i = 0; i < mLocationListeners.length; i++) {
                 try {
+//                    Log.d("GPS_Service", "removeUpdates mLocationListeners: " + (mLocationListeners[i]));
                     mLocationManager.removeUpdates(mLocationListeners[i]);
 //                    recordProcess("removeLocationListener index: " + i);
                 } catch (Exception ex) {
 //                    recordProcess("removeLocationListener exception: " + ex.toString());
                     ToolBox_Inf.registerException(ex);
                     status = false;
-                    Log.d("GPS_Service", "isForegroundService: " + isForegroundService);
+//                    Log.d("GPS_Service", "removeLocationListeners  catch isForegroundService: " + isForegroundService);
                     if(isForegroundService) {
-                        stopForeground(true);
-                    }else {
-                        stopSelf();
+                        stopForeground(false);
                     }
+                    stopSelf();
                 }
             }
         } else {

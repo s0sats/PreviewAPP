@@ -73,9 +73,6 @@ public class NotificationHelper {
         NotificationManager nm = (NotificationManager)
                 context.getSystemService(NOTIFICATION_SERVICE);
         //
-        RemoteViews notificationLayout = new RemoteViews(context.getPackageName(), R.layout.namoa_notification_small);
-
-
         int locationPendencies = ToolBox_Inf.getLocationPendencies(context);
         //int fileUploadPendencies = getFileUploadPendencies();
         int fileUploadPendencies = getTotalUploadPendencies();
@@ -83,43 +80,37 @@ public class NotificationHelper {
         String formatLocationPendencies = String.valueOf(locationPendencies);
         String formatFileUploadPendencies = String.valueOf(fileUploadPendencies);
         String updatePendencies = String.valueOf(updatePendenciesCount);
-        notificationLayout.setImageViewResource(R.id.iv_location_placeholder, R.drawable.ic_pin_drop_black_24dp);
-        notificationLayout.setImageViewResource(R.id.iv_file_upload_placeholder, R.drawable.ic_photo_size_select_actual_black_24dp);
-        notificationLayout.setImageViewResource(R.id.iv_update_required_placeholder, R.drawable.ic_mail_black_24dp);
-        notificationLayout.setTextViewText(R.id.tv_location_val, formatLocationPendencies);
-        notificationLayout.setTextViewText(R.id.tv_file_upload_val, formatFileUploadPendencies);
-        notificationLayout.setTextViewText(R.id.tv_update_required_val, updatePendencies);
-        NotificationCompat.Builder builder;
-        builder = getNotificationBuilder(nm);
-
-        builder.setSmallIcon(R.drawable.namoa_logo_white24x24);
-        builder.setOngoing(true);
-        builder.setContentTitle(context.getString(R.string.title_notification_generic));
-        builder.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
-        builder.setCustomContentView(notificationLayout);
-        builder.setCustomBigContentView(notificationLayoutExpanded);
-
-
-//        RemoteViews view = new RemoteViews(context.context.getPackageName(), R.layout.sv_resume_notification);
-        String gps_searching_location = hmAux_Trans.get("gps_searching_location");
-        //
-        int versao = Build.VERSION.SDK_INT;
         //
         int totalPendency = locationPendencies + fileUploadPendencies + updatePendenciesCount;
-        //
-        Notification notification = null;
         //
 //        Log.d("GPS_Service", "totalPendency: " + totalPendency);
         //
         if (totalPendency > 0) {
-            notification = builder.build();
+            RemoteViews notificationLayout = new RemoteViews(context.getPackageName(), R.layout.namoa_notification_small);
+            notificationLayout.setImageViewResource(R.id.iv_location_placeholder, R.drawable.ic_pin_drop_black_24dp);
+            notificationLayout.setImageViewResource(R.id.iv_file_upload_placeholder, R.drawable.ic_photo_size_select_actual_black_24dp);
+            notificationLayout.setImageViewResource(R.id.iv_update_required_placeholder, R.drawable.ic_mail_black_24dp);
+            notificationLayout.setTextViewText(R.id.tv_location_val, formatLocationPendencies);
+            notificationLayout.setTextViewText(R.id.tv_file_upload_val, formatFileUploadPendencies);
+            notificationLayout.setTextViewText(R.id.tv_update_required_val, updatePendencies);
+            NotificationCompat.Builder builder;
+            builder = getNotificationBuilder(nm);
+
+            builder.setSmallIcon(R.drawable.namoa_logo_white24x24);
+            builder.setOngoing(true);
+            builder.setContentTitle(context.getString(R.string.title_notification_generic));
+            builder.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
+            builder.setCustomContentView(notificationLayout);
+            builder.setCustomBigContentView(notificationLayoutExpanded);
+            //
+            Notification notification = builder.build();
             nm.notify(LOCATION_NOTIFICATION_ID, notification);
-//            Log.d("GPS_Service", "totalPendency: " + totalPendency);
+            return notification;
         } else {
-//            Log.d("GPS_Service", "cancelNotification");
+//            Log.d("GPS_Service", "cancelNotification id:" + LOCATION_NOTIFICATION_ID);
             ToolBox_Inf.cancelNotification(context, LOCATION_NOTIFICATION_ID);
         }
-        return notification;
+        return null;
     }
 
     @NonNull
