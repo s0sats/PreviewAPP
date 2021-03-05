@@ -270,6 +270,7 @@ import java.util.zip.ZipOutputStream;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 import static com.namoadigital.prj001.dao.EV_User_CustomerDao.LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL;
+import static com.namoadigital.prj001.service.SV_LocationTracker.LOCATION_BACKGROUND;
 import static com.namoadigital.prj001.ui.AppBase.NAMOA_NOTIF_INFO;
 import static com.namoadigital.prj001.ui.AppBase.NAMOA_PEND_INFO;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE;
@@ -3267,6 +3268,7 @@ public class ToolBox_Inf {
     public static void cancelNotification(Context context, int notification_id) {
         NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         manager.cancel(notification_id);
+//        Log.d("GPS_Service", "Cancel id :" +notification_id);
     }
 
     public static Notification callPendencyNotification(Context context) {
@@ -3976,7 +3978,8 @@ public class ToolBox_Inf {
         mIntent.putExtra(SV_LocationTracker.ASYNC_GPS, mode);
         int pendencies = ToolBox_Inf.getLocationPendencies(context);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-        && pendencies > 0) {
+        && pendencies > 0
+        && mode == LOCATION_BACKGROUND) {
             context.startForegroundService(mIntent);
         }else {
             context.startService(mIntent);
