@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
+<!--Arquivo de configuração de rede que libera url sem httpS para downalod de apk direto do bucket-->
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true" >idev.namoa.ftp.s3-eu-west-1.amazonaws.com</domain>
         <domain includeSubdomains="true">iportal.namoa.ftp.s3-eu-west-1.amazonaws.com</domain>
-        <trust-anchors>
-            <certificates src="system"/>
-        </trust-anchors>
     </domain-config>
 </network-security-config>
