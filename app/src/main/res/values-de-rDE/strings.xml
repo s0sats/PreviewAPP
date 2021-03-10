@@ -115,4 +115,12 @@
     <string name="act002_alt_no_licenses_returned_msg">Kein Standort mit verfügbarer Lizenz für diesen Benutzer gefunden.\nVersuchen Sie es bitte später erneut oder kontaktieren Sie Ihr IT-Team, um die Anzahl der verfügbaren Lizenzen zu prüfen.</string>
     <string name="act002_alt_license_list_not_found_ttl">Fehler: Lizenzierte Standorte</string>
     <string name="act002_alt_license_list_not_found_msg">Standortliste lässt sich nicht laden.\nVersuchen Sie es bitte erneut.</string>
+    <!--Permissão da camera-->
+    <string name="lib_alert_allow_btn">Allow</string>
+    <string name="lib_alert_deny_btn">Deny</string>
+    <string name="lib_alert_settings_btn">Settings</string>
+    <string name="lib_alert_camera_never_ask_again_ttl">Camera Permission Denied</string>
+    <string name="lib_alert_camera_never_ask_again_msg">Permission to access the camera has been permanently denied!\nTo allow the use of the camera, click the button under Settings, Permissions -> Camera -> Allow</string>
+    <string name="lib_alert_rationale_camera_permission_ttl">Camera Permission</string>
+    <string name="lib_alert_rationale_barcode_camera_permission_msg">To read a barcode, access to the cell phone\'s camera is required.\nDo you want to allow access?</string>
 </resources>

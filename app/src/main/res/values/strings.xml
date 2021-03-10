@@ -118,7 +118,14 @@
     <string name="act002_alt_no_licenses_returned_msg">No Site found with available licences for this User. \nPlease try again later or contact IT team in order to verify the amount of available licences.</string>
     <string name="act002_alt_license_list_not_found_ttl">Error: Licenced Sites</string>
     <string name="act002_alt_license_list_not_found_msg">Unable to load the list of Site with available licences for this User. \nPlease try again.</string>
-
+    <!--Permissão da camera-->
+    <string name="lib_alert_allow_btn">Allow</string>
+    <string name="lib_alert_deny_btn">Deny</string>
+    <string name="lib_alert_settings_btn">Settings</string>
+    <string name="lib_alert_camera_never_ask_again_ttl">Camera Permission Denied</string>
+    <string name="lib_alert_camera_never_ask_again_msg">Permission to access the camera has been permanently denied!\nTo allow the use of the camera, click the button under Settings, Permissions -> Camera -> Allow</string>
+    <string name="lib_alert_rationale_camera_permission_ttl">Camera Permission</string>
+    <string name="lib_alert_rationale_barcode_camera_permission_msg">To read a barcode, access to the cell phone\'s camera is required.\nDo you want to allow access?</string>
 
 
 </resources>
