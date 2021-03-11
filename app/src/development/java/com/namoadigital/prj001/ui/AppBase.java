@@ -2,7 +2,6 @@ package com.namoadigital.prj001.ui;
 
 import android.app.Application;
 import android.app.NotificationManager;
-import android.util.Log;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 
@@ -84,7 +83,7 @@ public class AppBase extends Application {
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable ex) {
-                ToolBox_Inf.registerException(ex);
+                ToolBox_Inf.registerFatalException(ex);
                 //
                 mDefaultUncaughtExceptionHandler.uncaughtException(thread, ex);
 

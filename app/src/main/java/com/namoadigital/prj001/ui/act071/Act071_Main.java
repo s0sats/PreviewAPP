@@ -11,15 +11,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.Group;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,10 +23,20 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Group;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -558,7 +559,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                                     }
                                 }catch (Exception e){
                                     e.printStackTrace();
-                                    ToolBox_Inf.registerException(e);
+                                    ToolBox_Inf.registerException(getClass().getName(), e);
                                     showAlert(hmAux_Trans.get("alert_error_on_save_photo_ttl"),
                                             hmAux_Trans.get("alert_error_on_save_photo_msg"),
                                                     new DialogInterface.OnClickListener() {
@@ -945,7 +946,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                     try {
                         copyFiles(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath, path);
                     } catch (IOException e) {
-                        ToolBox_Inf.registerException(e);
+                        ToolBox_Inf.registerException(getClass().getName(), e);
                     }
                     previousLenght = sFile.length();
                 }

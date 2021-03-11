@@ -427,7 +427,7 @@ public class Act007_Main_Presenter_Impl implements Act007_Main_Presenter {
             try {
                 context.startActivity(intent);
             }catch (ActivityNotFoundException e){
-                ToolBox_Inf.registerException(e);
+                ToolBox_Inf.registerException(getClass().getName(), e);
                 ToolBox.alertMSG(
                         context,
                         hmAux_trans.get("alert_starting_pdf_not_supported_ttl"),

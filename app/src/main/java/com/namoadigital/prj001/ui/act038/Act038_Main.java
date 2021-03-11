@@ -8,8 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +21,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
@@ -1909,7 +1910,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             try {
                 startActivity(intent);
             }catch (ActivityNotFoundException e){
-                ToolBox_Inf.registerException(e);
+                ToolBox_Inf.registerException(getClass().getName(), e);
                 ToolBox.alertMSG(
                         context,
                         hmAux_Trans.get("alert_starting_pdf_not_supported_ttl"),

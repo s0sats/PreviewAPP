@@ -1653,7 +1653,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             );
         } catch (Exception e) {
             e.printStackTrace();
-            ToolBox_Inf.registerException(e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
             mTicketSeqTmp = -1;
             mView.showMsg(
                     hmAux_Trans.get("alert_error_on_create_ctrl_ttl"),

@@ -4092,7 +4092,7 @@ public class ToolBox_Inf {
      * Metodo chamado pelo Callback de exceptions não tratadas  gerandp arquvio de suport
      * @param exception
      */
-    public static void registerException(Throwable exception) {
+    public static void registerFatalException(Throwable exception) {
         String local = AppBase.class.getSimpleName();
         File exception_file = new File(Constant.SUPPORT_PATH, "fatal_excep_" + getDateHourStr() + ".txt");
 

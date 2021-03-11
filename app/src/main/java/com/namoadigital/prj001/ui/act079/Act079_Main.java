@@ -4,15 +4,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -389,7 +390,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                     }
 
                 }catch (NullPointerException e){
-                    ToolBox_Inf.registerException(e);
+                    ToolBox_Inf.registerException(getClass().getName(), e);
                     tv_form_score.setVisibility(View.GONE);
                     iv_form_score.setVisibility(View.GONE);
                     tv_form_nc_count.setVisibility(View.GONE);

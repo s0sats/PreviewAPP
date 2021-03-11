@@ -3,9 +3,6 @@ package com.namoadigital.prj001.ui.act067.frag_header;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +11,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
@@ -657,7 +658,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
             try {
                 ssToType.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
             }catch (NullPointerException e ){
-                ToolBox_Inf.registerException(e);
+                ToolBox_Inf.registerException(getClass().getName(),e);
             }
             msg += hmAux_Trans.get("alert_no_to_type_selected_msg") + "\n";
             validate = false;
@@ -674,7 +675,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     try {
                         ssToSite.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
                     }catch (NullPointerException e ){
-                        ToolBox_Inf.registerException(e);
+                        ToolBox_Inf.registerException(getClass().getName(),e);
                     }
                     msg += hmAux_Trans.get("alert_no_to_site_selected_msg") + "\n";
                     validate = false;
@@ -687,7 +688,7 @@ public class Act067_Frag_Header extends BaseFragment implements Act067_Frag_Head
                     try {
                         ssPartner.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
                     }catch (NullPointerException e ){
-                        ToolBox_Inf.registerException(e);
+                        ToolBox_Inf.registerException(getClass().getName(),e);
                     }
                     msg += hmAux_Trans.get("alert_no_to_partner_selected_msg") + "\n";
                     validate = false;

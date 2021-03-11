@@ -829,7 +829,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             try {
                 startActivity(intent);
             } catch (ActivityNotFoundException e) {
-                ToolBox_Inf.registerException(e);
+                ToolBox_Inf.registerException(getClass().getName(), e);
                 showAlert(hmAux_Trans.get("alert_starting_pdf_not_supported_ttl"), hmAux_Trans.get("alert_starting_pdf_not_supported_msg"));
             }
         } else {

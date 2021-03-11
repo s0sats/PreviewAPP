@@ -496,7 +496,7 @@ public class SV_LocationTracker extends Service {
 //                    recordProcess("removeLocationListener index: " + i);
                 } catch (Exception ex) {
 //                    recordProcess("removeLocationListener exception: " + ex.toString());
-                    ToolBox_Inf.registerException(ex);
+                    ToolBox_Inf.registerException(getClass().getName(), ex);
                     status = false;
 //                    Log.d("GPS_Service", "removeLocationListeners  catch isForegroundService: " + isForegroundService);
                     if(isForegroundService) {

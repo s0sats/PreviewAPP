@@ -8,10 +8,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +16,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.util.ConstantBase;
@@ -569,7 +570,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                     iv_open_photo.setImageBitmap(bitmap);
                 }
             } catch (NullPointerException e) {
-                ToolBox_Inf.registerException(e);
+                ToolBox_Inf.registerException(getClass().getName(), e);
                 e.printStackTrace();
             }
         }

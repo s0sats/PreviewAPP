@@ -75,7 +75,7 @@ public class Act079_Main_Presenter implements Act079_Main_Contract.I_Presenter{
         try {
             context.startActivity(pdfIntent);
         }catch (ActivityNotFoundException e){
-            ToolBox_Inf.registerException(e);
+            ToolBox_Inf.registerException(getClass().getName(), e);
             //
             ToolBox.alertMSG(
                     context,

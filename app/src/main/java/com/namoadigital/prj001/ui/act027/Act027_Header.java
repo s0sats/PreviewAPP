@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.BaseFragment;
@@ -644,7 +645,7 @@ public class Act027_Header extends BaseFragment {
                 try {
                     startActivity(intent);
                 }catch (ActivityNotFoundException e){
-                    ToolBox_Inf.registerException(e);
+                    ToolBox_Inf.registerException(getClass().getName(), e);
                     ToolBox.alertMSG(context,
                             hmAux_Trans.get("alert_starting_pdf_not_supported_ttl"),
                             hmAux_Trans.get("alert_starting_pdf_not_supported_msg"),
