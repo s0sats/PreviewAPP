@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
 <!--Arquivo de configuração de rede que libera url sem httpS para downalod de apk direto do bucket-->
+<!--
+    LUCHE - 11/03/2021
+    Descobrimos uma nova maneira de gerar a url da apk, agora com https, e , portanto, esse arquivo
+    nao e mais necessario. Ficara aqui apenas de consulta, caso algum dia tenhamos que configurar
+    como liberar o http em alguma url.
+ -->
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true" >idev.namoa.ftp.s3-eu-west-1.amazonaws.com</domain>
         <domain includeSubdomains="true">iportal.namoa.ftp.s3-eu-west-1.amazonaws.com</domain>
