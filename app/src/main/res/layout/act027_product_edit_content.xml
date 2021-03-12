@@ -264,8 +264,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/namoa_danger_bg_states"
-                android:drawableLeft="@drawable/ic_delete_black_24px"
-                android:drawableTint="@color/padrao_WHITE"
+                android:drawableLeft="@drawable/ic_delete_white_24px"
                 android:paddingHorizontal="16dp"
                 android:textColor="@color/padrao_WHITE"
                 tools:text="Cancelar Produto Evento" />
