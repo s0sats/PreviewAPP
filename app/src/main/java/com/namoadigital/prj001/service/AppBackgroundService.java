@@ -119,16 +119,12 @@ public class AppBackgroundService extends Service {
 
     private void setNotificationContentText() {
         String chat_service_mode_desc;
-        //
-        switch (serviceChatMode){
-            case CHAT_SERVICE_MODE_ACTIVED:
-                chat_service_mode_desc =  hmAux_Trans.get("sys_active_chat_notification_detail");
-                break;
-            case CHAT_SERVICE_MODE_LOGIN:
-            case CHAT_SERVICE_MODE_SCHEDULED:
-            default:
-                chat_service_mode_desc = hmAux_Trans.get("sys_sync_chat_notification_detail");
-
+        //LUCHE - 15/03/2021 - Substituido switch por if, pois embora haja mais 2 modos, só existem
+        //2 opções retornaveis. Alem disse, como o if evitamo so null pointer caso serviceChatMode null
+        if(CHAT_SERVICE_MODE_ACTIVED.equalsIgnoreCase(serviceChatMode)){
+            chat_service_mode_desc =  hmAux_Trans.get("sys_active_chat_notification_detail");
+        }else{
+            chat_service_mode_desc = hmAux_Trans.get("sys_sync_chat_notification_detail");
         }
         //
         notificationContentText = chat_service_mode_desc;
