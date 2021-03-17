@@ -138,6 +138,7 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
                 );
                 //
                 if (nextOrderList != null && nextOrderList.size() > 0) {
+                    setFilterData(nextOrderList);
                     mView.loadNextOrders(nextOrderList);
                 } else {
                     mView.showEmptyLogMsg();
@@ -149,6 +150,28 @@ public class Act047_Main_Presenter implements Act047_Main_Contract.I_Presenter {
                 mView.showEmptyLogMsg();
             }
         }
+    }
+
+    private void setFilterData(ArrayList<SO_Next_Orders_Obj> nextOrderList) {
+        for (SO_Next_Orders_Obj so_next_orders_obj : nextOrderList) {
+            so_next_orders_obj.setDeadline_filter(getFormatedDeadlineDate(so_next_orders_obj.getDeadline()));
+            so_next_orders_obj.setStatus_filter(getTranslatedStatus(so_next_orders_obj.getStatus()));
+        }
+    }
+
+    private String getTranslatedStatus(String status) {
+      return status == null ? null : hmAux_Trans.get(status);
+    }
+
+    private String getFormatedDeadlineDate(String deadline){
+        if (deadline == null){
+            return null;
+        }
+        //
+        return ToolBox_Inf.millisecondsToString(
+            ToolBox_Inf.dateToMilliseconds(deadline),
+            ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+        );
     }
 
     /**

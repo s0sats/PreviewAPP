@@ -5,11 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj;
 import com.namoadigital.prj001.util.Constant;
@@ -19,18 +22,20 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Act047_SO_Next_Orders_Adapter extends BaseAdapter {
+public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filterable {
 
     private Context context;
-    private ArrayList<SO_Next_Orders_Obj>source;
+    private ArrayList<SO_Next_Orders_Obj> mValues;
     private int resource;
     private String mResource_Code;
     private String mResource_Name = "act047_next_orders_adapter";
     private HMAux hmAux_Trans;
+    private ArrayList<SO_Next_Orders_Obj> mFilteredValues;
+    private NextOrdersFilter mFilter;
 
-    public Act047_SO_Next_Orders_Adapter(Context context, ArrayList<SO_Next_Orders_Obj> source, int resource) {
+    public Act047_SO_Next_Orders_Adapter(Context context, ArrayList<SO_Next_Orders_Obj> mValues, int resource) {
         this.context = context;
-        this.source = source;
+        this.mValues = mValues;
         this.resource = resource;
         //
         this.mResource_Code = ToolBox_Inf.getResourceCode(
@@ -38,17 +43,19 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter {
                 Constant.APP_MODULE,
                 mResource_Name
         );
+        //
+        this.mFilteredValues = mValues;
         loadTranslation();
     }
 
     @Override
     public int getCount() {
-        return source.size();
+        return mFilteredValues.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return source.get(position);
+        return mFilteredValues.get(position);
     }
 
     @Override
@@ -64,7 +71,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter {
             convertView = inflater.inflate(resource,parent,false);
         }
         //
-        final SO_Next_Orders_Obj item = source.get(position);
+        final SO_Next_Orders_Obj item = mFilteredValues.get(position);
         //IniVars
         TextView tv_so_ttl = (TextView) convertView.findViewById(R.id.act047_cell_tv_so_ttl);
         TextView tv_prefix_code = (TextView) convertView.findViewById(R.id.act047_cell_tv_prefix_code);
@@ -176,5 +183,48 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter {
                 translateList
         );
     }
+
+    @Override
+    public Filter getFilter() {
+        if(mFilter == null){
+            mFilter = new NextOrdersFilter();
+        }
+        return mFilter;
+    }
+
+    private class NextOrdersFilter extends Filter{
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<SO_Next_Orders_Obj> temp = new ArrayList<>();
+            String charString = ToolBox.AccentMapper(constraint.toString().toLowerCase());
+            if (charString.isEmpty()) {
+                temp = mValues;
+            } else {
+                ArrayList<SO_Next_Orders_Obj> filteredList = new ArrayList<>();
+                for (SO_Next_Orders_Obj row : mValues) {
+                    //Resgata todos os campos concatenado e com remoção de acentuacao
+                    String rowFields = ToolBox.AccentMapper(row.getAllFieldForFilter().toLowerCase());if (rowFields.contains(charString)) {
+                        filteredList.add(row);
+                    }
+                }
+                temp = filteredList;
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.count = temp.size();
+            filterResults.values = temp;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults results) {
+            mFilteredValues = (ArrayList<SO_Next_Orders_Obj>) results.values;
+            notifyDataSetChanged();
+        }
+    }
+
+
+
+
 
 }

@@ -89,6 +89,21 @@
 
     </LinearLayout>
 
+    <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+        android:id="@+id/act047_mket_filter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="50dp"
+        app:mBARCODE="false"
+        app:mNFC="false"
+        app:mOCRVin="false"
+        app:mOCR="false"
+        android:inputType="text"
+        tools:text="Busca"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        />
+
     <ListView
         android:id="@+id/act047_lv_services"
         android:layout_width="match_parent"
