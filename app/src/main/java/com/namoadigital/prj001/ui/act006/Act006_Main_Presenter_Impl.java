@@ -134,12 +134,18 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             context.sendBroadcast(mIntent);
             ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("dialog_serial_search_start"), "", "0");
         } else {
-            offlineSerialSearch();
+            offlineSerialSearch(forceExactSearch);
         }
     }
+
+    /**
+     * LUCHE - 17/03/2021 - Aplicado busca exata na leitura de barcode offline
+     * Alterado assinatua do metodo , add param que indica se a cusca deve ser exata ou por like
+     * @param forceExactSearch
+     */
     @Override
-    public void offlineSerialSearch() {
-        ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(mProduct_id, mSerial_id, mTracking);
+    public void offlineSerialSearch(boolean forceExactSearch) {
+        ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(mProduct_id, mSerial_id, mTracking,forceExactSearch);
         //
         if (serial_list.size() > 0) {
             defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), true);
@@ -153,7 +159,16 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         }
     }
 
-    private ArrayList<MD_Product_Serial> hasLocalSerial(String product_id, String serial_id, String tracking) {
+    /**
+     * LUCHE - 17/03/2021 - Aplicado busca exata na leitura de barcode offline
+     * Add para forceExactSearch que indica query se a busca do serial deve ser exata ou like
+     * @param product_id
+     * @param serial_id
+     * @param tracking
+     * @param forceExactSearch
+     * @return
+     */
+    private ArrayList<MD_Product_Serial> hasLocalSerial(String product_id, String serial_id, String tracking, boolean forceExactSearch) {
         ArrayList<MD_Product_Serial> serial_list =
                 (ArrayList<MD_Product_Serial>) serialDao.query(
                         new Sql_Act020_002(
@@ -161,7 +176,8 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
                                 ToolBox_Con.getPreference_Site_Code(context),
                                 product_id,
                                 serial_id,
-                                tracking
+                                tracking,
+                                forceExactSearch
                         ).toSqlQuery()
                 );
 
