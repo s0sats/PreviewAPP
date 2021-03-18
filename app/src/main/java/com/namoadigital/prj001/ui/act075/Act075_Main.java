@@ -34,8 +34,10 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act075_Product_List_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
+import com.namoadigital.prj001.dao.MD_All_ProductDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.model.MD_All_Product;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
@@ -1120,17 +1122,22 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
     private void processResult(int resultCode, Intent data) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             updateSaveButton(true);
-            MD_Product pAux = (MD_Product) data.getSerializableExtra(MD_Product.class.getName());
+            Bundle extras = data.getExtras();
+            int product_code    = extras.getInt(MD_All_ProductDao.PRODUCT_CODE);
+            String product_id   = extras.getString(MD_All_ProductDao.PRODUCT_ID);
+            String product_desc = extras.getString(MD_All_ProductDao.PRODUCT_DESC);
+            String product_un   = extras.getString(MD_All_ProductDao.UN);
             String pickup_status = tkTicket.getInventory_control() == 0 ? TK_PIPELINE_PRODUCT_STATUS_NO_CONTROL : TK_PIPELINE_PRODUCT_STATUS_PENDING;
+
             mAdapter.getmValues().add(
                     new TK_Ticket_Product(
                             ToolBox_Con.getPreference_Customer_Code(context),
                             tkTicket.getTicket_prefix(),
                             tkTicket.getTicket_code(),
-                            (int) pAux.getProduct_code(),
-                            pAux.getProduct_id(),
-                            pAux.getProduct_desc(),
-                            pAux.getUn(),
+                            product_code,
+                            product_id,
+                            product_desc,
+                            product_un,
                             0.0,
                             0.0,
                             pickup_status,
@@ -1139,6 +1146,7 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                     )
             );
             mAdapter.notifyDataSetChanged();
+
         } else {
         }
     }
