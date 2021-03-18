@@ -19,12 +19,61 @@
 
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/cl_withdrawn"
+        android:id="@+id/cl_planned"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_product_info"
+        tools:visibility="visible">
+
+        <android.support.constraint.Guideline
+            android:id="@+id/gdl_planned"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/product_cell_tv_planned"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/namoa_pipeline_product_lbl"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/gdl_planned"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="TextView" />
+
+        <TextView
+            android:id="@+id/product_cell_tv_planned_qty"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="48dp"
+            android:background="@color/padrao_WHITE"
+            android:padding="4dp"
+            android:textAlignment="center"
+            android:textColor="@color/namoa_pipeline_product_lbl"
+            app:layout_constraintBottom_toBottomOf="@+id/product_cell_tv_planned"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="@+id/gdl_planned"
+            app:layout_constraintTop_toTopOf="@+id/product_cell_tv_planned"
+            tools:text="1 un" />
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_withdrawn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cl_planned"
         tools:visibility="visible">
 
         <android.support.constraint.Guideline

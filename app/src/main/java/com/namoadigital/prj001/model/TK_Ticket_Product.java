@@ -20,6 +20,9 @@ public class TK_Ticket_Product implements Serializable {
     private String un;
     @Nullable
     @Expose
+    private Double qty_planned;
+    @Nullable
+    @Expose
     private Double qty;
     @Nullable
     @Expose
@@ -129,6 +132,15 @@ public class TK_Ticket_Product implements Serializable {
 
     public void setUn(String un) {
         this.un = un;
+    }
+
+    @Nullable
+    public Double getQty_planned() {
+        return qty_planned;
+    }
+
+    public void setQty_planned(@Nullable Double qty_planned) {
+        this.qty_planned = qty_planned;
     }
 
     @Nullable

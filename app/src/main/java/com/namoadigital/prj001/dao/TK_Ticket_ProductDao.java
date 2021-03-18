@@ -32,6 +32,7 @@ public class TK_Ticket_ProductDao extends BaseDao implements DaoWithReturn<TK_Ti
     public static final String PRODUCT_ID = "product_id";
     public static final String PRODUCT_DESC = "product_desc";
     public static final String UN = "un";
+    public static final String QTY_PLANNED = "qty_planned";
     public static final String QTY = "qty";
     public static final String QTY_USED = "qty_used";
     public static final String PICKUP_STATUS = "pickup_status";
@@ -428,6 +429,11 @@ public class TK_Ticket_ProductDao extends BaseDao implements DaoWithReturn<TK_Ti
             tk_ticket_product.setProduct_id(cursor.getString(cursor.getColumnIndex(PRODUCT_ID)));
             tk_ticket_product.setProduct_desc(cursor.getString(cursor.getColumnIndex(PRODUCT_DESC)));
             tk_ticket_product.setUn(cursor.getString(cursor.getColumnIndex(UN)));
+            if (cursor.isNull(cursor.getColumnIndex(QTY_PLANNED))) {
+                tk_ticket_product.setQty_planned(null);
+            } else {
+                tk_ticket_product.setQty_planned(cursor.getDouble(cursor.getColumnIndex(QTY_PLANNED)));
+            }
             if (cursor.isNull(cursor.getColumnIndex(QTY))) {
                 tk_ticket_product.setQty(null);
             } else {
@@ -482,6 +488,7 @@ public class TK_Ticket_ProductDao extends BaseDao implements DaoWithReturn<TK_Ti
             if (tk_ticket_product.getUn() != null) {
                 contentValues.put(UN, tk_ticket_product.getUn());
             }
+            contentValues.put(QTY_PLANNED, tk_ticket_product.getQty_planned());
             contentValues.put(QTY, tk_ticket_product.getQty());
             contentValues.put(QTY_USED, tk_ticket_product.getQty_used());
             contentValues.put(PICKUP_STATUS, tk_ticket_product.getPickup_status());
