@@ -36,7 +36,7 @@ public class Constant extends ConstantBaseApp {
     public static final String WS_SO_FAVORITE_LIST = "https://portal.namoadigital.com/ws/prj001/sm_order/server_main.ws";
     public static final String WS_SO_CREATION = "https://portal.namoadigital.com/ws/prj001/sm_order/server_save_so.ws";
     public static final String WS_SO_SAVE = "https://portal.namoadigital.com/ws/prj001/server_save_so.ws";
-    public static final String WS_SO_PACK_SERVICE = "https://portal.namoadigital.com/ws/prj001/server_sm_so_pack_service_new_app.ws";
+    public static final String WS_SO_PACK_SERVICE = "https://portal.namoadigital.com/ws/prj001/server_sm_so_pack_service_new_app_2.ws";
     public static final String WS_SO_PRODUCT_EVENT_CANCEL = "https://portal.namoadigital.com/ws/prj001/server_sm_so_product_event_cancel.ws";
     public static final String WS_SO_NEXT_ORDERS = "https://portal.namoadigital.com/ws/prj001/server_sm_so_to_be_executed.ws";
     public static final String WS_SO_CREATE_ROOM = "https://portal.namoadigital.com/ws/prj001/server_sm_so_create_room.ws";

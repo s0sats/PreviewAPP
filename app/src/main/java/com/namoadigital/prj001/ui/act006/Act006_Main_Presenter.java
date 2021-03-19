@@ -20,8 +20,8 @@ public interface Act006_Main_Presenter {
     void checkPendenciesFlow(int pendencies_qty);
 
     void executeSerialSearch(String product_id, String serial_id, String tracking, boolean forceExactSearch);
-
-    void offlineSerialSearch();
+    //LUCHE - 17/03/2021 - Aplicado busca exata na leitura de barcode offline
+    void offlineSerialSearch(boolean forceExactSearch);
 
     void extractSearchResult(String result);
 
