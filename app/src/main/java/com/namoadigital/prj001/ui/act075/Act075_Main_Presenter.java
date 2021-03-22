@@ -620,7 +620,8 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
         if (getWithdrawStatus(tkTicket)) {
             for (TK_Ticket_Product product : tkTicket.getProduct()) {
 
-                if (product.getQty() > 0) {
+                if (product.getQty()!= null && product.getQty() > 0
+                || (product.getQty_planned()!= null && product.getQty_planned() > 0) ) {
                     productList.add(product);
                 }
 

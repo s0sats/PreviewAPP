@@ -31,7 +31,7 @@ public class TK_Ticket_Product_Sql_003 implements Specification {
                         "      p.customer_code = '" + customer_code +"'\n" +
                         "      and p.ticket_prefix = '" + ticket_prefix +"'\n" +
                         "      and p.ticket_code = '" + ticket_code +"'\n" +
-                        "      and p.qty > 0" + "\n;"
+                        "      and (p.qty > 0 or p.qty_planned > 0)" + "\n;"
                 )
                 .toString();
     }
