@@ -250,6 +250,12 @@ public class WS_TK_Ticket_Save extends IntentService {
         for (TK_Ticket tk_ticket : ticketList) {
             if (tk_ticket.getUpdate_required_product() != 1) {
                 tk_ticket.setProduct(new ArrayList<TK_Ticket_Product>());
+            }else{
+                //LUCHE - 22/03/2021
+                //Com advento no produto planajeado, agora temos produtos comstatus cancelled no ticket
+                //porem o server não esta preparado para receber objs com ess status, entãoa ntes do
+                //envio, os objs com status cancelled são removido da lista enviada.
+                removeCancelledProducts(tk_ticket);
             }
             //
             if (tk_ticket.getStep() != null && tk_ticket.getStep().size() > 0) {
@@ -277,6 +283,28 @@ public class WS_TK_Ticket_Save extends IntentService {
         }
         //
         return ticketList;
+    }
+
+    /**
+     * LUCHE - 22/03/2021
+     * <P></P>
+     * Metodo que analisa lista de produtos e remove os com status cancelled da lista de envio.
+     * Adequanção necessaria após implementação do produto planejado, onde produtos com status cancelled
+     * passaram a existir no app.
+     * @param tk_ticket
+     */
+    private void removeCancelledProducts(TK_Ticket tk_ticket) {
+        if (tk_ticket.getProduct() != null) {
+            ArrayList<TK_Ticket_Product> checkCancelledList = new ArrayList<TK_Ticket_Product>(tk_ticket.getProduct());
+            //
+            if (checkCancelledList.size() > 0) {
+                for (int i = 0; i < checkCancelledList.size(); i++) {
+                    if(ConstantBaseApp.SYS_STATUS_CANCELLED.equals(checkCancelledList.get(i).getPickup_status())){
+                        tk_ticket.getProduct().remove(i);
+                    }
+                }
+            }
+        }
     }
 
     private ArrayList<TK_Ticket> getTicketsDB() {
