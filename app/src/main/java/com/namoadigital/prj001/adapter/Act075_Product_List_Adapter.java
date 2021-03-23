@@ -474,7 +474,14 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             product_cell_tv_applied_qty.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mProductListener.callQtyUsedDialog(position, tk_ticket_product);
+                    if(hasWithdrawApproved){
+                        if(tk_ticket_product.getQty() > 0) {
+                            mProductListener.callQtyUsedDialog(position, tk_ticket_product);
+                        }
+                    }else{
+                        mProductListener.callQtyUsedDialog(position, tk_ticket_product);
+                    }
+
                 }
             });
             //LUCHE - 18/08/2020
