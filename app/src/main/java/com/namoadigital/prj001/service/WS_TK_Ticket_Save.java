@@ -532,13 +532,16 @@ public class WS_TK_Ticket_Save extends IntentService {
                     /*
                         1) Avaliar status do Schedule
                             - Caso seja ERROR
-                                1) manter registro para proxima execução.
+                                1) manter registro para proximo envio.
                             - Caso seja DONE/PROCESS/CANCELLED
                                 1) Mudar status de ticket para cancelled.
                                 2) Apagar registro da tabela de Schedule.
                     */
                         if(ConstantBase.SYS_STATUS_ERROR.equalsIgnoreCase(recResult.getSchedule_status())){
-
+                            //LUCHE - 23/03/2021 - Aplicado tratativa que faltava.
+                            //No caso de satus erro, os ticket será setado como update required para
+                            //um proximo envio.
+                            forceScheduleTicketUpdateRequired(ticket);
                         }else{
                             if(ConstantBase.SYS_STATUS_CANCELLED.equalsIgnoreCase(recResult.getSchedule_status())
                             || ConstantBase.SYS_STATUS_PROCESS.equalsIgnoreCase(recResult.getSchedule_status())
@@ -632,6 +635,28 @@ public class WS_TK_Ticket_Save extends IntentService {
             //
             actReturnList.add(actReturn);
         }
+    }
+
+    /**
+     * LUCHE - 23/03/2021
+     * Metodo que seta update required no ticket do agendamento para reenvio em loop
+     * @param ticket
+     */
+    private void forceScheduleTicketUpdateRequired(TK_Ticket ticket) {
+        ticket.setUpdate_required(1);
+        if(ticket.getStep() != null && ticket.getStep().size() > 0 ){
+            for (TK_Ticket_Step tk_ticket_step : ticket.getStep()) {
+                tk_ticket_step.setUpdate_required(1);
+                //
+                if(tk_ticket_step.getCtrl() != null && tk_ticket_step.getCtrl().size() > 0){
+                    for (TK_Ticket_Ctrl tk_ticket_ctrl : tk_ticket_step.getCtrl()) {
+                        tk_ticket_ctrl.setUpdate_required(1);
+                    }
+                }
+            }
+        }
+        //
+        ticketDao.addUpdate(ticket);
     }
 
     /**
