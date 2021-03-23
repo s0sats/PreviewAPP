@@ -40,7 +40,7 @@ public class Sql_Act017_005 implements Specification {
                     " and t.ticket_prefix = c.ticket_prefix\n" +
                     " and t.ticket_code = c.ticket_code\n" +
                     " --\n" +
-                    " and t.customer_code = 1\n" +
+                    " and t.customer_code = '"+customer_code+"'\n" +
                     " and t.schedule_prefix = '"+schedule_prefix+"' \n" +
                     " and t.schedule_code = '"+schedule_code+"'\n" +
                     " and t.schedule_exec = '"+schedule_exec+"'\n" +
