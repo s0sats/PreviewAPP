@@ -18,8 +18,10 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_NFC;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act_Product_Selectio_Adapter_Groups_Products;
+import com.namoadigital.prj001.dao.MD_All_ProductDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
+import com.namoadigital.prj001.model.MD_All_Product;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
@@ -320,14 +322,41 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     }
 
     private void setProductForResult(HMAux item) {
-        MD_Product pAux = mPresenter.getProduct(
-                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                String.valueOf(item.get("code"))
-        );
 
-        if (pAux != null) {
-            sendResult(pAux);
+        //
+        if (isProductAddProcess) {
+            MD_All_Product pAux = mPresenter.getProductFromAll(String.valueOf(
+                    ToolBox_Con.getPreference_Customer_Code(context)),
+                    String.valueOf(item.get("code"))
+            );
+            if (pAux != null) {
+                sendAllProductResult(pAux);
+            }
+        }else{
+            MD_Product pAux = mPresenter.getProduct(
+                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
+                    String.valueOf(item.get("code"))
+            );
+            if (pAux != null) {
+                sendResult(pAux);
+            }
         }
+        //
+
+    }
+
+    private void sendAllProductResult(MD_All_Product md_all_product) {
+        Intent data = new Intent();
+        Bundle bundle = new Bundle();
+
+        bundle.putInt(MD_All_ProductDao.PRODUCT_CODE, (int) md_all_product.getProduct_code());
+        bundle.putString(MD_All_ProductDao.PRODUCT_ID,md_all_product.getProduct_id());
+        bundle.putString(MD_All_ProductDao.PRODUCT_DESC,md_all_product.getProduct_desc());
+        bundle.putString(MD_All_ProductDao.UN,md_all_product.getUn());
+
+        data.putExtras(bundle);
+        setResult(RESULT_OK, data);
+        finish();
     }
 
     @Override

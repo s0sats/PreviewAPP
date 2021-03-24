@@ -116,6 +116,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
     private void loadTranslation() {
         List<String> transList = new ArrayList<>();
         transList.add("product_withdraw_lbl");
+        transList.add("product_planned_lbl");
         transList.add("product_to_withdraw_lbl");
         transList.add("product_aplied_lbl");
         transList.add("product_returned_lbl");
@@ -213,13 +214,16 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
     public class ProductViewHolder extends RecyclerView.ViewHolder {
         TextView tv_product_info;
+        TextView product_cell_tv_planned;
         TextView product_cell_tv_withdrawn;
         TextView product_cell_tv_applied;
         TextView product_cell_tv_returned;
         TextView product_cell_tv_extract;
+        TextView product_cell_tv_planned_qty;
         TextView product_cell_tv_withdrawn_qty;
         TextView product_cell_tv_applied_qty;
         TextView product_cell_tv_returned_qty;
+        ConstraintLayout cl_planned;
         ConstraintLayout cl_withdrawn;
         ConstraintLayout cl_applied;
         ConstraintLayout cl_returned;
@@ -233,14 +237,17 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             tv_product_info = itemView.findViewById(R.id.tv_product_info);
+            product_cell_tv_planned = itemView.findViewById(R.id.product_cell_tv_planned);
             product_cell_tv_withdrawn = itemView.findViewById(R.id.product_cell_tv_withdrawn);
             product_cell_tv_applied = itemView.findViewById(R.id.product_cell_tv_applied);
             product_cell_tv_returned = itemView.findViewById(R.id.product_cell_tv_returned);
             product_cell_tv_extract = itemView.findViewById(R.id.product_cell_tv_extract);
+            product_cell_tv_planned_qty = itemView.findViewById(R.id.product_cell_tv_planned_qty);
             product_cell_tv_withdrawn_qty = itemView.findViewById(R.id.product_cell_tv_withdrawn_qty);
             product_cell_tv_applied_qty = itemView.findViewById(R.id.product_cell_tv_applied_qty);
             product_cell_tv_returned_qty = itemView.findViewById(R.id.product_cell_tv_returned_qty);
             //
+            cl_planned = itemView.findViewById(R.id.cl_planned);
             cl_withdrawn = itemView.findViewById(R.id.cl_withdrawn);
             cl_applied = itemView.findViewById(R.id.cl_applied);
             cl_returned = itemView.findViewById(R.id.cl_returned);
@@ -259,10 +266,12 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
         private void setTranslation() {
             if(act_profile == 1) {
+                product_cell_tv_planned.setText(hmAux_Trans.get("product_planned_lbl"));
                 product_cell_tv_withdrawn.setText(hmAux_Trans.get("product_to_withdraw_lbl"));
                 product_cell_tv_applied.setText(hmAux_Trans.get("product_aplied_lbl"));
                 product_cell_tv_returned.setText(hmAux_Trans.get("product_returned_lbl"));
             }else{
+                product_cell_tv_planned.setText(hmAux_Trans.get("product_planned_lbl"));
                 product_cell_tv_withdrawn.setText(hmAux_Trans.get("product_amount_lbl"));
                 product_cell_tv_applied.setText(hmAux_Trans.get("product_amount_lbl"));
                 product_cell_tv_returned.setText(hmAux_Trans.get("product_amount_lbl"));
@@ -274,7 +283,13 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             //
             tv_product_info.setText(tk_ticket_product.getProduct_desc());
             //String.format("%,.2f", myValue);
-
+            if(tk_ticket_product.getQty_planned() != null
+            && tk_ticket_product.getQty_planned() > 0 ) {
+                cl_planned.setVisibility(View.VISIBLE);
+                product_cell_tv_planned_qty.setText(String.format("%s %s", (new DecimalFormat(DECIMAL_PRODUCT_QTY_PATTERN).format(handleNullForQty(tk_ticket_product.getQty_planned()))), tk_ticket_product.getUn()));
+            }else{
+                cl_planned.setVisibility(View.GONE);
+            }
             product_cell_tv_withdrawn_qty.setText(String.format("%s %s", (new DecimalFormat(DECIMAL_PRODUCT_QTY_PATTERN).format(handleNullForQty(tk_ticket_product.getQty()))), tk_ticket_product.getUn()));
             product_cell_tv_applied_qty.setText(String.format("%s %s", (new DecimalFormat(DECIMAL_PRODUCT_QTY_PATTERN).format(handleNullForQty(tk_ticket_product.getQty_used()))), tk_ticket_product.getUn()));
 
@@ -374,7 +389,7 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
                     }
                 }
             } else if (act_profile == 2) {
-                setAmountControllersVisibility(View.GONE);
+                setAmountControllersVisibility(View.INVISIBLE);
                 product_cell_tv_extract.setVisibility(View.GONE);
                 setDetailsForApprovalVisibility();
             }
@@ -459,7 +474,14 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
             product_cell_tv_applied_qty.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mProductListener.callQtyUsedDialog(position, tk_ticket_product);
+                    if(hasWithdrawApproved){
+                        if(tk_ticket_product.getQty() > 0) {
+                            mProductListener.callQtyUsedDialog(position, tk_ticket_product);
+                        }
+                    }else{
+                        mProductListener.callQtyUsedDialog(position, tk_ticket_product);
+                    }
+
                 }
             });
             //LUCHE - 18/08/2020

@@ -333,7 +333,19 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" +tv_open_phone_val.getText().toString()));
-                startActivity(intent);
+                //LUCHE - 18/03/2021 - Add trativa que verifica se existe app para resolver a ação
+                //se não houve, exibe msg
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }else{
+                    ToolBox.alertMSG(
+                        context,
+                        hmAux_Trans.get("alert_no_caller_app_found_ttl"),
+                        hmAux_Trans.get("alert_no_caller_app_found_msg"),
+                        null,
+                        0
+                    );
+                }
             }
         });
 
@@ -345,9 +357,18 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                     intent.setData(Uri.parse("mailto:"));
                     String[] email = new String[]{tv_open_email_val.getText().toString()};
                     intent.putExtra(Intent.EXTRA_EMAIL, email);
-
+                    //LUCHE - 18/03/2021 - Add trativa que verifica se existe app para resolver a ação
+                    //se não houve, exibe msg
                     if (intent.resolveActivity(getPackageManager()) != null) {
                         startActivity(intent);
+                    }else{
+                        ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_no_email_app_found_ttl"),
+                            hmAux_Trans.get("alert_no_email_app_found_msg"),
+                            null,
+                            0
+                        );
                     }
                 }catch (Exception e){
                     ToolBox.registerException(getClass().getName(), e);
@@ -418,6 +439,11 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         //
         transList.add("alert_wg_edit_need_connection_ttl");
         transList.add("alert_wg_edit_need_connection_msg");
+        //
+        transList.add("alert_no_email_app_found_ttl");
+        transList.add("alert_no_email_app_found_msg");
+        transList.add("alert_no_caller_app_found_ttl");
+        transList.add("alert_no_caller_app_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

@@ -20,10 +20,31 @@ public class Sql_Act020_002 implements Specification {
     private String serial_id;
     private String tracking;
     private String HmAuxFields = ToolBox_Inf.getColumnsToHmAux(MD_Product_SerialDao.columns);
+    private String serialIdClause = "";
 
     private String mOption_Site = "";
 
     public Sql_Act020_002(long customer_code, String site_code, String product_id, String serial_id, String tracking) {
+        setupConstructorInfos(customer_code,site_code,product_id,serial_id,tracking,false);
+    }
+
+    /**
+     * LUCHE - 16/03/2021
+     * Novo construtor que permite a busca de serial exata. Usada apenas quando a busca for realizada
+     * via barcode
+     *
+     * @param customer_code
+     * @param site_code
+     * @param product_id
+     * @param serial_id
+     * @param tracking
+     * @param forceExactSearch
+     */
+    public Sql_Act020_002(long customer_code, String site_code, String product_id, String serial_id, String tracking, boolean forceExactSearch) {
+        setupConstructorInfos(customer_code,site_code,product_id,serial_id,tracking,forceExactSearch);
+    }
+
+    private void setupConstructorInfos(long customer_code, String site_code, String product_id, String serial_id, String tracking, boolean forceExactSearch) {
         this.customer_code = customer_code;
         this.site_code = site_code;
         this.product_id = product_id.trim().length() > 0 ? product_id : "null";
@@ -34,6 +55,12 @@ public class Sql_Act020_002 implements Specification {
             mOption_Site = "     and s.site_code = '" + site_code + "'\n";
         } else {
             mOption_Site = "     \n";
+        }
+        //LUCHE - 16/03/2021 - Aplicação da busca exata por serial quando leitura vinda do barcode.
+        if(forceExactSearch){
+            serialIdClause = "     and ( '" + serial_id + "' is null or s.serial_id = '" + serial_id + "')\n";
+        }else{
+            serialIdClause = "     and ( '" + serial_id + "' is null or s.serial_id like '%" + serial_id + "%')\n";
         }
     }
 
@@ -104,7 +131,8 @@ public class Sql_Act020_002 implements Specification {
                                 mOption_Site +
 
                                 "     and ( '" + product_id + "' is null or p.product_id = '" + product_id + "')\n" +
-                                "     and ( '" + serial_id + "' is null or s.serial_id like '%" + serial_id + "%')\n" +
+                                //"     and ( '" + serial_id + "' is null or s.serial_id like '%" + serial_id + "%')\n" +
+                                serialIdClause +
                                 "     and ( '" + tracking + "' is null  or t.tracking = '" + tracking + "')\n" +
                                 "     \n" +
                                 " ORDER BY\n" +

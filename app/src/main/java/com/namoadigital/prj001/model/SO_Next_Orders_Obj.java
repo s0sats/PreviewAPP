@@ -23,6 +23,8 @@ public class SO_Next_Orders_Obj {
     private String serial_local_desc;
     private String create_user;
     private String last_approval_budget_user;
+    private String deadline_filter;
+    private String status_filter;
 
 
     public String getSo_prefix() {
@@ -191,5 +193,55 @@ public class SO_Next_Orders_Obj {
 
     public void setLast_approval_budget_user(String last_approval_budget_user) {
         this.last_approval_budget_user = last_approval_budget_user;
+    }
+
+    public String getDeadline_filter() {
+        return deadline_filter;
+    }
+
+    public void setDeadline_filter(String deadline_filter) {
+        this.deadline_filter = deadline_filter;
+    }
+
+    public String getStatus_filter() {
+        return status_filter;
+    }
+
+    public void setStatus_filter(String status_filter) {
+        this.status_filter = status_filter;
+    }
+
+    /**
+     * LUCHE - 17/03/2021
+     * Metodo que retorna todos os campos filtraveis e que será usado no filtro da
+     * lista de proximas o.s
+     * @return
+     */
+    public String getAllFieldForFilter(){
+        return  (
+                so_prefix+ "|" +
+                so_code+ "|" +
+                so_id+ "|" +
+                so_desc+ "|" +
+                product_id+ "|" +
+                //serial_code+ "|" +
+                serial_id+ "|" +
+                status_filter+ "|" +
+                deadline_filter+ "|" +
+                tracking+ "|" +
+                brand_model_color+ "|"
+                    /*+
+                comments+ "|" +
+                service+ "|" +
+                //serial_site_code+ "|" +
+                serial_site_desc+ "|" +
+                serial_zone_desc+ "|" +
+                serial_local_desc+ "|" +
+                create_user+ "|" +
+                last_approval_budget_user*/
+        )
+            .replace("null|","")
+            .replace("null","")
+            ;
     }
 }

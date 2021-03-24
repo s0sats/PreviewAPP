@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -50,6 +51,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
     private String wsProcess ="";
     //Var tmp que armazena o item da lista clicado.
     private SO_Next_Orders_Obj wsTmpItem = null;
+    private MKEditTextNM mketFilter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -118,6 +120,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("dialog_so_created_by_lbl");
         transList.add("dialog_so_approved_by_lbl");
         //
+        transList.add("filter_hint");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -137,6 +141,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         //
         tv_zone = (TextView) findViewById(R.id.act047_tv_zone_val);
         //
+        mketFilter = findViewById(R.id.act047_mket_filter);
+        //
         lv_services = (ListView) findViewById(R.id.act047_lv_services);
         //
         mPresenter = new Act047_Main_Presenter(
@@ -147,7 +153,13 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         );
         setLocationInfo();
         //
+        setLabels();
+        //
         mPresenter.executeNextOrdersSearch();
+    }
+
+    private void setLabels() {
+        mketFilter.setHint(hmAux_Trans.get("filter_hint"));
     }
 
     private void recoverIntentsInfo() {
@@ -327,9 +339,6 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         TextView tv_so_approved_by_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_approved_by_lbl);
         TextView tv_so_approved_by_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_approved_by_val);
 
-
-
-
         final TextView tv_error =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_error);
         final MKEditTextNM mket_serial =  view.findViewById(R.id.act047_so_next_orders_dialog_mket_serial_confirm);
         //Seta data
@@ -384,8 +393,6 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         tv_so_position_local_lbl.setText(hmAux_Trans.get("dialog_so_local_lbl"));
         tv_so_position_local_val.setText(item.getSerial_local_desc());
 
-
-
         if (item.getLast_approval_budget_user()==null
                 || item.getLast_approval_budget_user().isEmpty()) {
             ll_so_approved_by.setVisibility(View.GONE);
@@ -406,6 +413,7 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
         //Config TIl e Mket do seria
         configSerialViews(tv_error,mket_serial,item);
+        hideSerialForByPassProfile(mket_serial);
         //
         builder
                 .setView(view)
@@ -437,6 +445,12 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         });
     }
 
+    private void hideSerialForByPassProfile(MKEditTextNM mket_serial) {
+        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_PARAM_BYPASS_SERIAL_VERIFICATION)){
+            mket_serial.setVisibility(View.GONE);
+        }
+    }
+
     /**
      * LUCHE - 16/01/2020
      *
@@ -457,32 +471,45 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
      */
     private void checkDialogFlow(@Nullable AlertDialog dialog, TextView tv_error, MKEditTextNM mket_serial, SO_Next_Orders_Obj item) {
         String mketVal = mket_serial.getText().toString().trim();
-        //
-        if(mketVal.length() > 0){
-            if(mketVal.equalsIgnoreCase(item.getSerial_id())) {
-                if(mPresenter.checkSoExits(item.getSo_prefix(),item.getSo_code())){
-                    callAct027(
-                        mPresenter.getAct027Bundle(
-                            item.getSo_prefix(),
-                            item.getSo_code()
-                        )
-                    );
-                }else {
-                    wsTmpItem = item;
-                    mPresenter.executeSerialDownload(item.getProduct_id(), item.getSerial_id());
+        //LUCHE - 17/03/2021 - Aplicado profile que pula necessidade de digitação do serial.
+        if(ToolBox_Inf.profileExists(context,Constant.PROFILE_MENU_SO,Constant.PROFILE_MENU_SO_PARAM_BYPASS_SERIAL_VERIFICATION)){
+            callSoAction(item);
+        }else {
+            if (mketVal.length() > 0) {
+                if (mketVal.equalsIgnoreCase(item.getSerial_id())) {
+                    callSoAction(item);
+                } else {
+                    if (dialog == null) {
+                        mket_serial.getText().clear();
+                    }
+                    //
+                    tv_error.setVisibility(View.VISIBLE);
+                    tv_error.setError(hmAux_Trans.get("serial_no_match_hint"));
                 }
-            }else{
-                if(dialog == null){
-                    mket_serial.getText().clear();
+            } else {
+                if (dialog != null) {
+                    dialog.dismiss();
                 }
-                //
-                tv_error.setVisibility(View.VISIBLE);
-                tv_error.setError(hmAux_Trans.get("serial_no_match_hint"));
             }
-        }else{
-            if(dialog != null) {
-                dialog.dismiss();
-            }
+        }
+    }
+
+    /**
+     * LUCHE - 17/03/2021
+     * Metodo que define a ação para abertura da O.S, se avança ou faz download antes de avançar.
+     * @param item
+     */
+    private void callSoAction(SO_Next_Orders_Obj item) {
+        if(mPresenter.checkSoExits(item.getSo_prefix(),item.getSo_code())){
+            callAct027(
+                mPresenter.getAct027Bundle(
+                    item.getSo_prefix(),
+                    item.getSo_code()
+                )
+            );
+        }else {
+            wsTmpItem = item;
+            mPresenter.executeSerialDownload(item.getProduct_id(), item.getSerial_id());
         }
     }
 
@@ -566,6 +593,36 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
                 SO_Next_Orders_Obj item = (SO_Next_Orders_Obj) parent.getItemAtPosition(position);
                 //
                 showDetailsDialog(item);
+            }
+        });
+
+        lv_services.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+                if (scrollState == SCROLL_STATE_IDLE) {
+                    mketFilter.setEnabled(true);
+                } else {
+                    mketFilter.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+
+            }
+        });
+
+        mketFilter.setOnReportTextChangeListner(new MKEditTextNM.IMKEditTextChangeText() {
+            @Override
+            public void reportTextChange(String s) {
+
+            }
+
+            @Override
+            public void reportTextChange(String s, boolean b) {
+                if(mAdapter != null) {
+                    mAdapter.getFilter().filter(s.trim());
+                }
             }
         });
     }

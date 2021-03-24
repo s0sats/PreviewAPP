@@ -563,7 +563,9 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         //Super realiza o mesmo comportamento do error_1
 //        super.processError_http();
         progressDialog.dismiss();
-        mPresenter.offlineSerialSearch();
+        //LUCHE - 17/03/2021 - Aplicado busca exata tb no offline
+        //Nesse caso em especifico, de erro http, não faz exato
+        mPresenter.offlineSerialSearch(false);
     }
 
     // Hugo
