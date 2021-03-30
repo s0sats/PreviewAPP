@@ -131,6 +131,9 @@ public class Act001_Main extends Base_Activity_NFC implements Act001_Main_View {
 
     private void initVars() {
         //context = Act001_Main.this;  //getBaseContext();
+        //LUCHE - 30/03/2021
+        //Chama metodo que cancela os alarms que eram usados antes do WorkManager.
+        ToolBox_Inf.cancelAlarmsTarget21(context);
 
         mk_login = (MKEditTextNM) findViewById(R.id.act001_mk_login);
         et_password = (EditText) findViewById(R.id.act001_et_password);
