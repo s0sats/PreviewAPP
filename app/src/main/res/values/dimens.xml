@@ -26,4 +26,6 @@
     <dimen name="pipeline_step_btn_min_height">36dp</dimen>
     <dimen name="pipeline_smallest_font_size">10sp</dimen>
 
+    <dimen name="my_action_info_margin_top">4dp</dimen>
+
 </resources>
