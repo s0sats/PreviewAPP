@@ -4,8 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/my_actions_item_cl_main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="8dp">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginLeft="5dp"
+    >
 
     <TextView
         android:id="@+id/my_actions_item_tv_status"
@@ -25,7 +28,9 @@
         android:background="@drawable/namoa_cell_8_states"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_status">
+        app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_status"
+        android:paddingBottom="5dp"
+        >
 
         <TextView
             android:id="@+id/my_actions_item_tv_contract"
@@ -37,7 +42,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_client"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_client" />
+            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_client"
+            android:visibility="gone"
+            />
 
         <TextView
             android:id="@+id/my_actions_item_tv_os_code"
@@ -49,7 +56,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_contract"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_contract" />
+            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_contract"
+            android:visibility="gone"
+            />
 
         <TextView
             android:id="@+id/my_actions_item_tv_site"
@@ -62,7 +71,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_focus_step_desc"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_focus_step_desc" />
+            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_focus_step_desc"
+            android:visibility="gone"
+            />
 
         <TextView
             android:id="@+id/my_actions_item_tv_focus_step_desc"
@@ -86,7 +97,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_site"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_site" />
+            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_site"
+            android:visibility="gone"
+            />
 
         <ImageView
             android:id="@+id/my_actions_item_iv_icon_right"
@@ -181,14 +194,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:layout_marginBottom="8dp"
             android:text="Done Date"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_os_code"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_os_code" />
+            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_os_code"
+            android:visibility="gone"
+
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
