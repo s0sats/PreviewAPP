@@ -220,7 +220,7 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     private void iniVar(View view) {
-        if(mSm_so == null || hmAux_Trans == null){
+        if(isSmSoDataEmpty()){
             delegate.callAct005();
         } else {
             context = getActivity();
@@ -564,51 +564,64 @@ public class Act027_Product_Edit extends BaseFragment {
     }
 
     private void iniAction() {
+        if(isSmSoDataEmpty()) {
+            return;
+        }else{
+            arff_applyrepair.setOnSelectionChangedListener(new ApplyRepairImageFF.IApplyRepairImageFF() {
+                @Override
+                public void selectionChanged(String status) {
 
-        arff_applyrepair.setOnSelectionChangedListener(new ApplyRepairImageFF.IApplyRepairImageFF() {
-            @Override
-            public void selectionChanged(String status) {
-
-                switch (status) {
-                    case "10":
-                        mk_qty.setmRequired(true);
-                        ll_qty.setVisibility(View.VISIBLE);
+                    switch (status) {
+                        case "10":
+                            mk_qty.setmRequired(true);
+                            ll_qty.setVisibility(View.VISIBLE);
 //                        mk_qty.setVisibility(View.VISIBLE);
 //                        tv_unit.setVisibility(View.VISIBLE);
-                        break;
-                    case "01":
-                        mk_qty.setmRequired(false);
-                        ll_qty.setVisibility(View.GONE);
+                            break;
+                        case "01":
+                            mk_qty.setmRequired(false);
+                            ll_qty.setVisibility(View.GONE);
 //                        mk_qty.setVisibility(View.INVISIBLE);
 //                        tv_unit.setVisibility(View.INVISIBLE);
-                        break;
-                    default:
-                        mk_qty.setmRequired(false);
-                        ll_qty.setVisibility(View.GONE);
+                            break;
+                        default:
+                            mk_qty.setmRequired(false);
+                            ll_qty.setVisibility(View.GONE);
 //                        mk_qty.setVisibility(View.INVISIBLE);
 //                        tv_unit.setVisibility(View.INVISIBLE);
-                        break;
+                            break;
+                    }
+
                 }
+            });
 
-            }
-        });
+            btn_delete_prod_event.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ToolBox.alertMSG(context,
+                        hmAux_Trans.get("alert_cancel_product_event_ttl"),
+                        hmAux_Trans.get("alert_cancel_product_event_confirm"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                cancelProdEventFlow();
+                            }
+                        },
+                        1
+                    );
+                }
+            });
+        }
+    }
 
-        btn_delete_prod_event.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ToolBox.alertMSG(context,
-                    hmAux_Trans.get("alert_cancel_product_event_ttl"),
-                    hmAux_Trans.get("alert_cancel_product_event_confirm"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            cancelProdEventFlow();
-                        }
-                    },
-                    1
-                );
-            }
-        });
+    /**
+     * LUCHE - 13/04/2021
+     * Metodo que valida de dados necessario para criação da tela estão ok.
+     * @return
+     */
+
+    private boolean isSmSoDataEmpty() {
+        return mSm_so == null || hmAux_Trans == null;
     }
 
     private void cancelProdEventFlow() {
