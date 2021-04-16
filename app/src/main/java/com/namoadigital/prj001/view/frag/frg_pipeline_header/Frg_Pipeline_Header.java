@@ -484,11 +484,11 @@ public class Frg_Pipeline_Header extends Fragment {
     private void defineTicketIdLayout(){
         if(PIPELINE.equals(header_profile_param)){
             try {
-                Drawable drawableEnd = getContext().getDrawable(R.drawable.ic_sync_black_24dp);
-                drawableEnd.setColorFilter(ContextCompat.getColor(getContext(), R.color.font_normal), PorterDuff.Mode.SRC_ATOP);
+                Drawable drawableEnd = getContext().getDrawable(R.drawable.ic_cloud_upload);
+                drawableEnd.setColorFilter(ContextCompat.getColor(getContext(), R.color.namoa_light_blue), PorterDuff.Mode.SRC_ATOP);
                 //Background TicketId
                 Drawable ticketIdBgYellow = getContext().getDrawable(R.drawable.stroke_yellow_states);
-                Drawable ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_blue2_states);
+                Drawable ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_blue_states);
 
                 tv_ticket_id.setPadding(8, 8, 8, 8);
                 tv_ticket_id.setCompoundDrawablesWithIntrinsicBounds(null, null, drawableEnd, null);
