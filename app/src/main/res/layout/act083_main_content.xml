@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.act083.Act083_Main">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/act083_cl_result"
         android:layout_width="match_parent"
@@ -30,6 +29,72 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/act083_cg_filter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="12dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    >
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ronaldo"
+                        android:textSize="10sp"
+                        android:textFontWeight="400"
+                        android:textColor="@color/namoa_color_black"
+                        />
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ronaldo"/>
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ronaldo"/>
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ronaldo"/>
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ronaldo"/>
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ronaldo"/>
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ronaldo"/>
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ronaldo"/>
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ronaldo"/>
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:text="200.SHOPPING COLINAS.1º ANDAR.BANHEIRO MASCULINO.3"
+                        android:maxLines="2"
+                        />
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ronaldo"/>
+
+
+                </com.google.android.material.chip.ChipGroup>
+
                 <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                     android:id="@+id/act083_mket_filter"
                     android:layout_width="0dp"
@@ -40,7 +105,7 @@
                     android:inputType="text"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act083_cg_filter"
                     app:mBARCODE="false"
                     app:mNFC="false"
                     app:mOCR="false" />
@@ -83,7 +148,6 @@
                         android:button="@null" />
 
                 </RadioGroup>
-
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
