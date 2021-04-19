@@ -23,7 +23,6 @@
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toTopOf="@+id/include"
         app:layout_constraintEnd_toStartOf="@+id/act078_gdl_end"
         app:layout_constraintStart_toStartOf="@+id/act078_gdl_start"
@@ -429,7 +428,8 @@
                     android:id="@+id/act078_ll_open_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_marginBottom="60dp">
 
                     <TextView
                         android:id="@+id/act078_tv_open_phone_lbl"
