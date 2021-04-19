@@ -1,3 +1,4 @@
 package com.namoadigital.prj001.receiver;
-public class WBR_AL_Quarter {
+
+public class WBR_Cleanning {
 }

@@ -816,17 +816,17 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
     public void executeSoSave(boolean jumpOnlineExecution) {
         setWsSoProcess(WS_SO_Save.class.getSimpleName());
 
+        //LUCHE - 26/06/2020
+        //Substituido chamada do conjunto WBR e WS_Upload_img, pelo Worker_Upload_img
+        ToolBox_Inf.scheduleUploadImgWork(context);
+        //
         if (ToolBox_Con.isOnline(context) && !jumpOnlineExecution) {
-
             Intent mIntent = new Intent(context, WBR_SO_Save.class);
             Bundle bundle = new Bundle();
             bundle.putString(Constant.WS_SO_SAVE_SO_ACTION, Constant.SO_ACTION_EXECUTION);
             mIntent.putExtras(bundle);
 
             context.sendBroadcast(mIntent);
-            //LUCHE - 26/06/2020
-            //Substituido chamada do conjunto WBR e WS_Upload_img, pelo Worker_Upload_img
-            ToolBox_Inf.scheduleUploadImgWork(context);
         } else {
             if (mTaskCall) {
                 mTaskCall = false;

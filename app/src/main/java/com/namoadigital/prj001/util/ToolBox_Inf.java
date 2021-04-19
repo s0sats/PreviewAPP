@@ -2,6 +2,7 @@ package com.namoadigital.prj001.util;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -137,6 +138,9 @@ import com.namoadigital.prj001.model.T_IO_Inbound_Item_Env;
 import com.namoadigital.prj001.model.T_IO_Outbound_Item_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Save_Env;
 import com.namoadigital.prj001.receiver.NotificationReceiver;
+import com.namoadigital.prj001.receiver.WBR_AL_Full;
+import com.namoadigital.prj001.receiver.WBR_AL_Quarter;
+import com.namoadigital.prj001.receiver.WBR_Cleanning;
 import com.namoadigital.prj001.receiver.WBR_UpdateSoftware;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.AppBackgroundService;
@@ -8429,5 +8433,52 @@ public class ToolBox_Inf {
                         && ToolBox_Inf.isSiteLicenseDisabled(context, site_code)
                         && !ToolBox_Inf.hasFreeExecutionAvailable(context, site_code)
                 );
+    }
+
+    /**
+     * LUCHE - 30/03/2021
+     * Cancela os alarms que foram substituidos pelos workers
+     * @param context
+     */
+    public static void cancelAlarmsTarget21(Context context){
+        AlarmManager am = (AlarmManager)
+            context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent cleanningAlarmIntent = new Intent(context,
+            WBR_Cleanning.class
+        );
+        //
+        PendingIntent piCleanning = PendingIntent.getBroadcast(
+            context,
+            0,
+            cleanningAlarmIntent,
+            0
+        );
+        //
+        Intent mIntent_Full = new Intent(context,
+            WBR_AL_Full.class
+        );
+        PendingIntent piFull = PendingIntent.getBroadcast(
+            context,
+            //100,
+            ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_FULL,
+            mIntent_Full,
+            0
+        );
+        //
+        Intent mIntent_Quarter = new Intent(context,
+            WBR_AL_Quarter.class
+        );
+        PendingIntent piQuarter = PendingIntent.getBroadcast(
+            context,
+            //200,
+            ConstantBaseApp.ALARM_REQUEST_CODE_WS_AL_QUARTER,
+            mIntent_Quarter,
+            0
+        );
+        //
+        am.cancel(piCleanning);
+        am.cancel(piFull);
+        am.cancel(piQuarter);
     }
 }
