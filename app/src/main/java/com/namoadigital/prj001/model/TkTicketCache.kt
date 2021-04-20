@@ -1,0 +1,30 @@
+package com.namoadigital.prj001.model
+
+class TkTicketCache(
+        var customer_code: Int,
+        var ticket_prefix: Int,
+        var ticket_code: Int,
+        var scn: Int,
+        var user_level_min: Int,
+        var ticket_id: String,
+        var tag_operational_code: Int,
+        var tag_operational_id: String,
+        var tag_operational_desc: String,
+        var type_code: Int,
+        var type_id: String,
+        var type_desc: String,
+        var user_focus: Int,
+        var order_by: String,
+        var open_site_code: Int,
+        var open_site_desc: String,
+        var open_product_desc: String,
+        var open_serial_id: String,
+        var current_step_order: Int,
+        var ticket_status: String,
+        var origin_desc: String,
+        var step_desc: String,
+        var forecast_start: String,
+        var forecast_end: String?,
+        var step_count: Int,
+        var step_order_seq: Int?
+)

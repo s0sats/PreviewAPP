@@ -1,6 +1,6 @@
 package com.namoadigital.prj001.model
 
- data class MdTag(
+data class MdTag(
         var customer_code: Int,
         var tag_code: Int,
         var tag_id: String,

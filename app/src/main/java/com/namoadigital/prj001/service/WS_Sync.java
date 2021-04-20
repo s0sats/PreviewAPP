@@ -56,6 +56,7 @@ import com.namoadigital.prj001.dao.MD_UserDao;
 import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.dao.TkTicketCacheDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_Module_Res;
@@ -105,6 +106,7 @@ import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSearch_Ap_Env;
 import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
+import com.namoadigital.prj001.model.TkTicketCache;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_Truncate;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_004;
@@ -144,6 +146,7 @@ import com.namoadigital.prj001.sql.MD_User_Sql_Truncate;
 import com.namoadigital.prj001.sql.MdTagSqlTruncate;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_Truncate;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_001;
+import com.namoadigital.prj001.sql.TkTicketCacheSqlTruncate;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -163,7 +166,6 @@ public class WS_Sync extends IntentService {
 
     private EV_UserDao userDao;
     private EV_User_CustomerDao ev_user_customerDao;
-
     //
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -231,7 +233,6 @@ public class WS_Sync extends IntentService {
         Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         EV_ProfileDao evProfileDao = new EV_ProfileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
-        MdTagDao mdTagDao = new MdTagDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -541,6 +542,8 @@ public class WS_Sync extends IntentService {
             MD_ClassDao classDao = new MD_ClassDao(getApplicationContext());
             IO_Move_ReasonDao io_move_reasonDao = new IO_Move_ReasonDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MD_PartnerDao partnerDao = new MD_PartnerDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MdTagDao mdTagDao = new MdTagDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            TkTicketCacheDao tkTicketCacheDao = new TkTicketCacheDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
@@ -568,6 +571,7 @@ public class WS_Sync extends IntentService {
             io_move_reasonDao.remove(new IO_Move_Reason_Sql_Truncate().toSqlQuery());
             partnerDao.remove(new MD_Partner_Sql_Truncate().toSqlQuery());
             mdTagDao.remove(new MdTagSqlTruncate().toSqlQuery());
+            tkTicketCacheDao.remove(new TkTicketCacheSqlTruncate().toSqlQuery());
             //
             // Processamento Operation
             //
@@ -1329,23 +1333,43 @@ public class WS_Sync extends IntentService {
 
                 partnerDao.addUpdate(mdPartners, false);
             }
-        }
-        /**
-         * Processamento MD_TAG
-         */
-        File[] files_tag = ToolBox_Inf.getListOfFiles_v2("md_tag-");
 
-        for (File _file : files_tag) {
-            ArrayList<MdTag> tags = gson.fromJson(
-                ToolBox.jsonFromOracle(
-                    ToolBox_Inf.getContents(_file)
-                ),
-                new TypeToken<ArrayList<MdTag>>() {
-                }.getType()
-            );
+            /**
+             * Processamento MD_TAG
+             */
+            File[] files_tag = ToolBox_Inf.getListOfFiles_v2("md_tag-");
 
-            mdTagDao.addUpdate(tags, false);
+            for (File _file : files_tag) {
+                ArrayList<MdTag> tags = gson.fromJson(
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(_file)
+                    ),
+                    new TypeToken<ArrayList<MdTag>>() {
+                    }.getType()
+                );
+
+                mdTagDao.addUpdate(tags, false);
+            }
+
+            /**
+             * Processamento TK_TICKET_CACHE
+             */
+            File[] files_ticket_cache = ToolBox_Inf.getListOfFiles_v2("tk_ticket_cache-");
+
+            for (File _file : files_ticket_cache) {
+                ArrayList<TkTicketCache> ticketCaches = gson.fromJson(
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(_file)
+                    ),
+                    new TypeToken<ArrayList<TkTicketCache>>() {
+                    }.getType()
+                );
+                //
+                tkTicketCacheDao.addUpdate(ticketCaches, false);
+            }
+
         }
+
         //endregion
         //region Processamento das tabelas do Checklist
         //

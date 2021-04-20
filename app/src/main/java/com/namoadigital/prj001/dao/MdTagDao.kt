@@ -22,7 +22,7 @@ public class MdTagDao(
         context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
 ), DaoWithReturn<MdTag> {
 
-    companion object{
+    companion object {
         const val TABLE = "md_tag"
         const val CUSTOMER_CODE = "customer_code"
         const val TAG_CODE = "tag_code"
@@ -89,7 +89,7 @@ public class MdTagDao(
 
     @Throws(java.lang.Exception::class)
     private fun getWherePkClause(mdTag: MdTag?): StringBuilder {
-        mdTag?.let{
+        mdTag?.let {
             return java.lang.StringBuilder()
                     .append("""
                         $CUSTOMER_CODE = '${mdTag.customer_code}'  
@@ -116,7 +116,7 @@ public class MdTagDao(
                 db.delete(TABLE, null, null)
             }
             //
-            mdTags?.forEach{ mdTag ->
+            mdTags?.forEach { mdTag ->
                 curAction = DaoObjReturn.UPDATE
                 //Where para update
                 val sbWhere: StringBuilder = getWherePkClause(mdTag)
@@ -257,15 +257,15 @@ public class MdTagDao(
         return mdTags
     }
 
-    class MdTagToContentValuesMapper : Mapper<MdTag, ContentValues> {
+    private class MdTagToContentValuesMapper : Mapper<MdTag, ContentValues> {
         override fun map(mdTag: MdTag?): ContentValues {
             val contentValues = ContentValues()
             mdTag?.let {
-                with(contentValues){
-                    if(mdTag.customer_code > -1){
+                with(contentValues) {
+                    if (mdTag.customer_code > -1) {
                         put(CUSTOMER_CODE, mdTag.customer_code)
                     }
-                    if(mdTag.tag_code > -1){
+                    if (mdTag.tag_code > -1) {
                         put(TAG_CODE, mdTag.tag_code)
                     }
                     put(TAG_ID, mdTag.tag_id)
@@ -277,9 +277,9 @@ public class MdTagDao(
 
     }
 
-    class CursorToMdTagMapper : Mapper<Cursor, MdTag> {
+    private class CursorToMdTagMapper : Mapper<Cursor, MdTag> {
         override fun map(cursor: Cursor?): MdTag? {
-            cursor?.let{
+            cursor?.let {
                 with(cursor) {
                     return MdTag(
                             getInt(getColumnIndex(CUSTOMER_CODE)),
