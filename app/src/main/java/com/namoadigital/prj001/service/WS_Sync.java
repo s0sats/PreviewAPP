@@ -53,6 +53,7 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.MD_UserDao;
+import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
@@ -98,6 +99,7 @@ import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.MD_Site_Zone_Local;
 import com.namoadigital.prj001.model.MD_User;
+import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSearch_Ap_Env;
@@ -139,6 +141,7 @@ import com.namoadigital.prj001.sql.MD_Site_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_User_Sql_Truncate;
+import com.namoadigital.prj001.sql.MdTagSqlTruncate;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_Truncate;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -228,6 +231,8 @@ public class WS_Sync extends IntentService {
         Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         EV_ProfileDao evProfileDao = new EV_ProfileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
+        MdTagDao mdTagDao = new MdTagDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+
         Gson gson = new GsonBuilder().serializeNulls().create();
 
         DataPackage dataPackage = new DataPackage();
@@ -562,7 +567,7 @@ public class WS_Sync extends IntentService {
             classDao.remove(new MD_Class_Sql_Truncate().toSqlQuery());
             io_move_reasonDao.remove(new IO_Move_Reason_Sql_Truncate().toSqlQuery());
             partnerDao.remove(new MD_Partner_Sql_Truncate().toSqlQuery());
-
+            mdTagDao.remove(new MdTagSqlTruncate().toSqlQuery());
             //
             // Processamento Operation
             //
@@ -1324,6 +1329,22 @@ public class WS_Sync extends IntentService {
 
                 partnerDao.addUpdate(mdPartners, false);
             }
+        }
+        /**
+         * Processamento MD_TAG
+         */
+        File[] files_tag = ToolBox_Inf.getListOfFiles_v2("md_tag-");
+
+        for (File _file : files_tag) {
+            ArrayList<MdTag> tags = gson.fromJson(
+                ToolBox.jsonFromOracle(
+                    ToolBox_Inf.getContents(_file)
+                ),
+                new TypeToken<ArrayList<MdTag>>() {
+                }.getType()
+            );
+
+            mdTagDao.addUpdate(tags, false);
         }
         //endregion
         //region Processamento das tabelas do Checklist
