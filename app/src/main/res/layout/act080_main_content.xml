@@ -21,7 +21,6 @@
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toTopOf="@+id/include"
         app:layout_constraintEnd_toStartOf="@+id/act080_gdl_end"
         app:layout_constraintStart_toStartOf="@+id/act080_gdl_start"
@@ -69,6 +68,7 @@
                 android:id="@+id/act080_ll_open_comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="60dp"
                 android:orientation="vertical">
 
                 <TextView
