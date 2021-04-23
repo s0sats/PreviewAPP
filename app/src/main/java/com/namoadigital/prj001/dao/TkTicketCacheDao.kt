@@ -24,32 +24,36 @@ class TkTicketCacheDao(
 
     companion object {
         const val TABLE = "tk_ticket_cache"
-        const val CUSTOMER_CODE = "CUSTOMER_CODE"
-        const val TICKET_PREFIX = "TICKET_PREFIX"
-        const val TICKET_CODE = "TICKET_CODE"
-        const val SCN = "SCN"
-        const val USER_LEVEL_MIN = "USER_LEVEL_MIN"
-        const val TICKET_ID = "TICKET_ID"
-        const val TAG_OPERATIONAL_CODE = "TAG_OPERATIONAL_CODE"
-        const val TAG_OPERATIONAL_ID = "TAG_OPERATIONAL_ID"
-        const val TAG_OPERATIONAL_DESC = "TAG_OPERATIONAL_DESC"
-        const val TYPE_CODE = "TYPE_CODE"
-        const val TYPE_ID = "TYPE_ID"
-        const val TYPE_DESC = "TYPE_DESC"
-        const val USER_FOCUS = "USER_FOCUS"
-        const val ORDER_BY = "ORDER_BY"
-        const val OPEN_SITE_CODE = "OPEN_SITE_CODE"
-        const val OPEN_SITE_DESC = "OPEN_SITE_DESC"
-        const val OPEN_PRODUCT_DESC = "OPEN_PRODUCT_DESC"
-        const val OPEN_SERIAL_ID = "OPEN_SERIAL_ID"
-        const val CURRENT_STEP_ORDER = "CURRENT_STEP_ORDER"
-        const val TICKET_STATUS = "TICKET_STATUS"
-        const val ORIGIN_DESC = "ORIGIN_DESC"
-        const val STEP_DESC = "STEP_DESC"
-        const val FORECAST_START = "FORECAST_START"
-        const val FORECAST_END = "FORECAST_END"
-        const val STEP_COUNT = "STEP_COUNT"
-        const val STEP_ORDER_SEQ = "STEP_ORDER_SEQ"
+        const val CUSTOMER_CODE = "customer_code"
+        const val TICKET_PREFIX = "ticket_prefix"
+        const val TICKET_CODE = "ticket_code"
+        const val SCN = "scn"
+        const val USER_LEVEL_MIN = "user_level_min"
+        const val TICKET_ID = "ticket_id"
+        const val TAG_OPERATIONAL_CODE = "tag_operational_code"
+        const val TAG_OPERATIONAL_ID = "tag_operational_id"
+        const val TAG_OPERATIONAL_DESC = "tag_operational_desc"
+        const val TYPE_CODE = "type_code"
+        const val TYPE_ID = "type_id"
+        const val TYPE_DESC = "type_desc"
+        const val USER_FOCUS = "user_focus"
+        const val ORDER_BY = "order_by"
+        const val CLIENT_CODE =  "client_code"
+        const val CLIENT_NAME = "client_name"
+        const val CONTRACT_CODE = "contract_code"
+        const val CONTRACT_DESC = "contract_desc"
+        const val OPEN_SITE_CODE = "open_site_code"
+        const val OPEN_SITE_DESC = "open_site_desc"
+        const val OPEN_PRODUCT_DESC = "open_product_desc"
+        const val OPEN_SERIAL_ID = "open_serial_id"
+        const val CURRENT_STEP_ORDER = "current_step_order"
+        const val TICKET_STATUS = "ticket_status"
+        const val ORIGIN_DESC = "origin_desc"
+        const val STEP_DESC = "step_desc"
+        const val FORECAST_START = "forecast_start"
+        const val FORECAST_END = "forecast_end"
+        const val STEP_COUNT = "step_count"
+        const val STEP_ORDER_SEQ = "step_order_seq"
     }
 
     private val toTkTicketCacheMapper: Mapper<Cursor, TkTicketCache>
@@ -312,12 +316,14 @@ class TkTicketCacheDao(
                     if(ticketCache.open_site_code > -1){
                         put(OPEN_SITE_CODE,ticketCache.open_site_code)
                     }
+                    put(CLIENT_CODE,ticketCache.client_code)
+                    put(CLIENT_NAME, ticketCache.client_name)
+                    put(CONTRACT_CODE,ticketCache.contract_code)
+                    put(CONTRACT_DESC, ticketCache.contract_desc)
                     put(OPEN_SITE_DESC,ticketCache.open_site_desc)
                     put(OPEN_PRODUCT_DESC,ticketCache.open_product_desc)
                     put(OPEN_SERIAL_ID,ticketCache.open_serial_id)
-                    if(ticketCache.current_step_order > -1){
-                        put(CURRENT_STEP_ORDER,ticketCache.current_step_order)
-                    }
+                    put(CURRENT_STEP_ORDER,ticketCache.current_step_order)
                     put(TICKET_STATUS,ticketCache.ticket_status)
                     put(ORIGIN_DESC,ticketCache.origin_desc)
                     put(STEP_DESC,ticketCache.step_desc)
@@ -354,7 +360,11 @@ class TkTicketCacheDao(
                             type_id = getString(getColumnIndex(TYPE_ID)),
                             type_desc = getString(getColumnIndex(TYPE_DESC)),
                             user_focus = getInt(getColumnIndex(USER_FOCUS)),
-                            order_by = getString(getColumnIndex(ORDER_BY)),
+                            order_by = getLong(getColumnIndex(ORDER_BY)),
+                            client_code = getInt(getColumnIndex(CLIENT_CODE)),
+                            client_name = getString(getColumnIndex(CLIENT_NAME)),
+                            contract_code = getInt(getColumnIndex(CONTRACT_CODE)),
+                            contract_desc = getString(getColumnIndex(CONTRACT_DESC)),
                             open_site_code = getInt(getColumnIndex(OPEN_SITE_CODE)),
                             open_site_desc = getString(getColumnIndex(OPEN_SITE_DESC)),
                             open_product_desc = getString(getColumnIndex(OPEN_PRODUCT_DESC)),
@@ -364,10 +374,9 @@ class TkTicketCacheDao(
                             origin_desc = getString(getColumnIndex(ORIGIN_DESC)),
                             step_desc = getString(getColumnIndex(STEP_DESC)),
                             forecast_start = getString(getColumnIndex(FORECAST_START)),
-                            forecast_end = getString(getColumnIndex(FORECAST_END))
-                                    ?: null,//desnecessario
+                            forecast_end = getString(getColumnIndex(FORECAST_END)),
                             step_count = getInt(getColumnIndex(STEP_COUNT)),
-                            step_order_seq = getInt(getColumnIndex(STEP_ORDER_SEQ)) ?: null
+                            step_order_seq = getInt(getColumnIndex(STEP_ORDER_SEQ))
                     )
                 }
             }
