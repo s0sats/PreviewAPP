@@ -157,8 +157,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         );
         //
         loadTranslation();
-        //
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        //22/04/2021 - Add flag SOFT_INPUT_ADJUST_PAN para evitar crash ao selecionar WG do item.
+        //Por algum motivo, quando o
+        getWindow().setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+            | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+        );
     }
 
     private void loadTranslation() {

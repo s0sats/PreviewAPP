@@ -1308,7 +1308,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
-                                                startDownloadServices();
+//                                                startDownloadServices();
+                                                ToolBox_Inf.startPdfPhotoDownloadWorkers(context);
                                             }
                                         },
                                         0
@@ -1391,26 +1392,26 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             );
         }
     }
+    //BARRIONUEVO -23/04/2021 - Metodo nãoé mais chamado e a chamada via WBR foi descontinuada.
+//    private void startDownloadServices() {
+//        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
+//        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
+//        Bundle bundle = new Bundle();
+//        //
+//        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
+//        //
+//        mIntentPDF.putExtras(bundle);
+//        mIntentPIC.putExtras(bundle);
+//        //
+//        if (!WBR_DownLoad_PDF.IS_RUNNING) {
+//            context.sendBroadcast(mIntentPDF);
+//        }
+//        if (!WBR_DownLoad_Picture.IS_RUNNING) {
+//            context.sendBroadcast(mIntentPIC);
+//        }
+//    }
 
-    private void startDownloadServices() {
-        Intent mIntentPDF = new Intent(context, WBR_DownLoad_PDF.class);
-        Intent mIntentPIC = new Intent(context, WBR_DownLoad_Picture.class);
-        Bundle bundle = new Bundle();
-        //
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(context));
-        //
-        mIntentPDF.putExtras(bundle);
-        mIntentPIC.putExtras(bundle);
-        //
-        if (!WBR_DownLoad_PDF.IS_RUNNING) {
-            context.sendBroadcast(mIntentPDF);
-        }
-        if (!WBR_DownLoad_Picture.IS_RUNNING) {
-            context.sendBroadcast(mIntentPIC);
-        }
-    }
-
-    /**
+    /**m
      * LUCHE - 16/11/2020
      * Metodo que verifica se formulario possui os seus resources como pdf e imagens ja baixados.
      * @param form

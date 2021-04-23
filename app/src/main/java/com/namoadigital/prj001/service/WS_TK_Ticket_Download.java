@@ -193,7 +193,7 @@ public class WS_TK_Ticket_Download extends IntentService {
                     daoObjReturn = ticketDao.addUpdate(tickets, false);
                 }
                 if(!daoObjReturn.hasError()){
-                    startDownloadWorkers();
+                    ToolBox_Inf.startPdfPhotoDownloadWorkers(getApplicationContext());
                     //
                     ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"),hmAux , "", "0");
                 }else {
