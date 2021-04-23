@@ -153,6 +153,10 @@ public class TK_Ticket implements Cloneable, Serializable {
     @Expose
     String apply_perc_steps;
     @Expose
+    private int tag_operational_code;
+    private String tag_operational_id;
+    private String tag_operational_desc;
+    @Expose
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
     @Expose
     private ArrayList<TK_Ticket_Product> product = new ArrayList<>();
@@ -893,6 +897,30 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public void setApply_perc_steps(String apply_perc_steps) {
         this.apply_perc_steps = apply_perc_steps;
+    }
+
+    public int getTag_operational_code() {
+        return tag_operational_code;
+    }
+
+    public void setTag_operational_code(int tag_operational_code) {
+        this.tag_operational_code = tag_operational_code;
+    }
+
+    public String getTag_operational_id() {
+        return tag_operational_id;
+    }
+
+    public void setTag_operational_id(String tag_operational_id) {
+        this.tag_operational_id = tag_operational_id;
+    }
+
+    public String getTag_operational_desc() {
+        return tag_operational_desc;
+    }
+
+    public void setTag_operational_desc(String tag_operational_desc) {
+        this.tag_operational_desc = tag_operational_desc;
     }
 
     public ArrayList<TK_Ticket_Step> getStep() {

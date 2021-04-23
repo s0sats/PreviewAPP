@@ -9,15 +9,16 @@ import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.MdTag
+import com.namoadigital.prj001.sql.MdTagSql001
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.*
 
-public class MdTagDao(
-        val context: Context,
-        val mDB_NAME: String,
-        val mDB_VERSION: Int
+class MdTagDao(
+        private val context: Context,
+        private val mDB_NAME: String,
+        private val mDB_VERSION: Int
 ) : BaseDao(
         context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI
 ), DaoWithReturn<MdTag> {
@@ -239,6 +240,8 @@ public class MdTagDao(
         closeDB()
         return mdTags
     }
+
+    fun getMdTagByPk(customer_code:Int, tag_code: Int): MdTag? = this.getByString(MdTagSql001(customer_code,tag_code).toSqlQuery())
 
     override fun query_HM(sQuery: String?): MutableList<HMAux> {
         val mdTags: MutableList<HMAux> = ArrayList()

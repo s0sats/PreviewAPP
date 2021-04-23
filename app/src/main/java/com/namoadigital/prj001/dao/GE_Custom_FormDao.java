@@ -34,6 +34,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
     public static final String ALL_SITE = "all_site";
     public static final String ALL_OPERATION = "all_operation";
     public static final String ALL_PRODUCT = "all_product";
+    public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
     //Não é campo da tabela, descrição vem da tradução
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
 
@@ -252,6 +253,12 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             custom_form.setAll_product(cursor.getInt(cursor.getColumnIndex(ALL_PRODUCT)));
             custom_form.setAll_site(cursor.getInt(cursor.getColumnIndex(ALL_SITE)));
             custom_form.setAll_operation(cursor.getInt(cursor.getColumnIndex(ALL_OPERATION)));
+            //
+            if(cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_CODE))) {
+                custom_form.setTag_operational_code(null);
+            }else{
+                custom_form.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
+            }
 
             return custom_form;
         }
@@ -295,7 +302,8 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             if (custom_form.getAll_operation() > -1) {
                 contentValues.put(ALL_OPERATION, custom_form.getAll_operation());
             }
-
+            //
+            contentValues.put(TAG_OPERATIONAL_CODE, custom_form.getTag_operational_code());
             return contentValues;
         }
     }

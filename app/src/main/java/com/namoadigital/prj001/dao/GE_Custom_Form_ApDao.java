@@ -61,6 +61,7 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
     public static final String LAST_UPDATE = "last_update";
     public static final String CREATE_DATE = "create_date";
     public static final String CREATE_USER = "create_user";
+    public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
 
 
     public static String[] columns = {
@@ -68,7 +69,7 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             CUSTOM_FORM_DATA, AP_CODE, AP_DESCRIPTION, AP_STATUS, AP_COMMENTS, AP_WHAT, AP_WHERE, AP_WHY, AP_WHO,
             AP_WHO_NICK, AP_HOW, AP_HOW_MUCH, AP_WHEN, DEPARTMENT_CODE, DEPARTMENT_ID, DEPARTMENT_DESC, ROOM_CODE, AP_SCN,
             PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SERIAL_ID, SYNC_REQUIRED, UPLOAD_REQUIRED, CUSTOM_FORM_URL,
-            CUSTOM_FORM_URL_LOCAL, LAST_UPDATE, CREATE_DATE, CREATE_USER
+            CUSTOM_FORM_URL_LOCAL, LAST_UPDATE, CREATE_DATE, CREATE_USER,TAG_OPERATIONAL_CODE
     };
 
     public GE_Custom_Form_ApDao(Context context) {
@@ -365,6 +366,11 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             custom_form_ap.setLast_update(cursor.getString(cursor.getColumnIndex(LAST_UPDATE)));
             custom_form_ap.setCreate_date(cursor.getString(cursor.getColumnIndex(CREATE_DATE)));
             custom_form_ap.setCreate_user(cursor.getString(cursor.getColumnIndex(CREATE_USER)));
+            if (cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_CODE))) {
+                custom_form_ap.setTag_operational_code(null);
+            } else {
+                custom_form_ap.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
+            }
             //
             return custom_form_ap;
         }
@@ -451,6 +457,8 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             if (custom_form_ap.getCreate_user() != null) {
                 contentValues.put(CREATE_USER, custom_form_ap.getCreate_user());
             }
+            //
+            contentValues.put(TAG_OPERATIONAL_CODE, custom_form_ap.getTag_operational_code());
             //
             return contentValues;
         }

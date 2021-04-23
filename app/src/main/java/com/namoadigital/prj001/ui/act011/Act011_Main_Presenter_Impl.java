@@ -2,6 +2,8 @@ package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -21,6 +23,7 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
@@ -34,6 +37,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
@@ -99,6 +103,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
     private MD_Product_SerialDao md_product_serialDao;
     private MD_ProductDao md_productDao;
+    private MdTagDao mdTagDao;
 
     private HMAux hmAux_Trans;
 
@@ -113,7 +118,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     private Integer mTicketSeqTmp;
     private MD_SiteDao siteDao;
 
-    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans, MD_Schedule_ExecDao scheduleExecDao, TK_Ticket_StepDao ticketStepDao,MD_SiteDao siteDao) {
+    public Act011_Main_Presenter_Impl(Context context, Act011_Main_View mView, EV_Module_Res_Txt_TransDao module_res_txt_transDao, GE_Custom_FormDao custom_formDao, GE_Custom_Form_FieldDao custom_form_fieldDao, GE_Custom_Form_DataDao custom_form_dataDao, GE_Custom_Form_Data_FieldDao custom_form_data_fieldDao, GE_Custom_Form_LocalDao custom_form_LocalDao, GE_Custom_Form_Field_LocalDao custom_form_field_LocalDao, GE_Custom_Form_BlobDao custom_form_blobDao, GE_Custom_Form_Blob_LocalDao custom_form_blob_localDao, MD_Product_SerialDao md_product_serialDao, MD_ProductDao md_productDao, HMAux hmAux_Trans, MD_Schedule_ExecDao scheduleExecDao, TK_Ticket_StepDao ticketStepDao,MD_SiteDao siteDao, MdTagDao mdTagDao) {
         this.context = context;
         this.mView = mView;
         this.module_res_txt_transDao = module_res_txt_transDao;
@@ -131,6 +136,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         this.scheduleExecDao = scheduleExecDao;
         this.ticketStepDao = ticketStepDao;
         this.siteDao = siteDao;
+        this.mdTagDao = mdTagDao;
     }
 
     @Override
@@ -249,6 +255,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
             );
             MD_Product productInfo = getProduct(Integer.parseInt(product_code));
+            MdTag tagInfo = getTag(customForm.getTag_operational_code());
             //
             customFormLocal = new GE_Custom_Form_Local();
 
@@ -259,6 +266,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_form_data(Long.parseLong(ii.get("id")));
             customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
             customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
+            customFormLocal.setTag_operational_code(tagInfo != null ? tagInfo.getTag_code() : null);
+            customFormLocal.setTag_operational_id(tagInfo != null ? tagInfo.getTag_id() : null);
+            customFormLocal.setTag_operational_desc(tagInfo != null ? tagInfo.getTag_desc() : null);
             customFormLocal.setCustom_product_code(Integer.parseInt(product_code));
             customFormLocal.setCustom_product_desc(product_desc);
             customFormLocal.setCustom_product_id(product_id);
@@ -1021,6 +1031,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             form_data.setToken("");
             form_data.setSo_prefix(so_prefix);
             form_data.setSo_code(so_code);
+            form_data.setTag_operational_code(formLocal.getTag_operational_code());
             //
             if(isFreeExecutionControlSituation(so_prefix, so_code, form_data)){
                 updateAppExecutionCounter(form_data,true);
@@ -1535,6 +1546,16 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         );
         //
         return result != null ? result : new MD_Product() ;
+    }
+
+    @Nullable
+    private MdTag getTag(Integer tag_operational_code) {
+        MdTag mdTag = mdTagDao.getMdTagByPk(
+            (int) ToolBox_Con.getPreference_Customer_Code(context),
+            tag_operational_code
+        );
+        //
+        return mdTag;
     }
 
     @Override

@@ -109,6 +109,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
     public static final String CONTRACT_ID = "contract_id";
     public static final String CONTRACT_DESC = "contract_desc";
     public static final String FCM_SCN = "fcm_scn";
+    public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
+    public static final String TAG_OPERATIONAL_ID = "tag_operational_id";
+    public static final String TAG_OPERATIONAL_DESC = "tag_operational_desc";
 
     public TK_TicketDao(Context context, String mDB_NAME, int mDB_VERSION) {
         super(context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI);
@@ -993,6 +996,9 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                 tk_ticket.setContract_desc(cursor.getString(cursor.getColumnIndex(CONTRACT_DESC)));
             }
             tk_ticket.setFcm_scn(cursor.getInt(cursor.getColumnIndex(FCM_SCN)));
+            tk_ticket.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
+            tk_ticket.setTag_operational_id(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_ID)));
+            tk_ticket.setTag_operational_desc(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_DESC)));
             return tk_ticket;
         }
     }
@@ -1168,6 +1174,15 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             //
             if (tk_ticket.getFcm_scn() > -1) {
                 contentValues.put(FCM_SCN, tk_ticket.getFcm_scn());
+            }
+            if (tk_ticket.getTag_operational_code() > -1) {
+                contentValues.put(TAG_OPERATIONAL_CODE, tk_ticket.getTag_operational_code());
+            }
+            if (tk_ticket.getTag_operational_id() != null) {
+                contentValues.put(TAG_OPERATIONAL_ID, tk_ticket.getTag_operational_id());
+            }
+            if (tk_ticket.getTag_operational_desc() != null) {
+                contentValues.put(TAG_OPERATIONAL_DESC, tk_ticket.getTag_operational_desc());
             }
             //
             return contentValues;

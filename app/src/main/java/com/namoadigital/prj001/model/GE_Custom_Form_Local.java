@@ -61,6 +61,9 @@ public class GE_Custom_Form_Local {
     private Integer ticket_seq;
     private Integer ticket_seq_tmp;
     private Integer step_code;
+    private Integer tag_operational_code;
+    private String tag_operational_id;
+    private String tag_operational_desc;
 
     public long getCustomer_code() {
         return customer_code;
@@ -476,5 +479,29 @@ public class GE_Custom_Form_Local {
 
     public void setStep_code(Integer step_code) {
         this.step_code = step_code;
+    }
+
+    public Integer getTag_operational_code() {
+        return tag_operational_code;
+    }
+
+    public void setTag_operational_code(Integer tag_operational_code) {
+        this.tag_operational_code = tag_operational_code;
+    }
+
+    public String getTag_operational_id() {
+        return tag_operational_id;
+    }
+
+    public void setTag_operational_id(String tag_operational_id) {
+        this.tag_operational_id = tag_operational_id;
+    }
+
+    public String getTag_operational_desc() {
+        return tag_operational_desc;
+    }
+
+    public void setTag_operational_desc(String tag_operational_desc) {
+        this.tag_operational_desc = tag_operational_desc;
     }
 }

@@ -17,6 +17,7 @@ public class GE_Custom_Form {
     private int all_site;
     private int all_operation;
     private int all_product;
+    private Integer tag_operational_code;
 
     public long getCustomer_code() {
         return customer_code;
@@ -106,5 +107,11 @@ public class GE_Custom_Form {
         this.all_product = all_product;
     }
 
+    public Integer getTag_operational_code() {
+        return tag_operational_code;
+    }
 
+    public void setTag_operational_code(Integer tag_operational_code) {
+        this.tag_operational_code = tag_operational_code;
+    }
 }

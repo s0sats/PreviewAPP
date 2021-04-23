@@ -64,6 +64,7 @@ public class GE_Custom_Form_Ap {
 
     private transient String custom_form_url_local;
     private String last_update;
+    private Integer tag_operational_code;
 
     public GE_Custom_Form_Ap() {
         this.custom_form_url_local = "";
@@ -355,5 +356,13 @@ public class GE_Custom_Form_Ap {
 
     public void setCreate_user(String create_user) {
         this.create_user = create_user;
+    }
+
+    public Integer getTag_operational_code() {
+        return tag_operational_code;
+    }
+
+    public void setTag_operational_code(Integer tag_operational_code) {
+        this.tag_operational_code = tag_operational_code;
     }
 }

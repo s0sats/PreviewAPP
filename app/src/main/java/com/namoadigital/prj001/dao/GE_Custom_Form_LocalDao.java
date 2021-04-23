@@ -85,6 +85,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
     public static final String TICKET_SEQ = "ticket_seq";
     public static final String TICKET_SEQ_TMP = "ticket_seq_tmp";
     public static final String STEP_CODE = "step_code";
+    public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
+    public static final String TAG_OPERATIONAL_ID = "tag_operational_id";
+    public static final String TAG_OPERATIONAL_DESC = "tag_operational_desc";
 
     public GE_Custom_Form_LocalDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);
@@ -754,6 +757,22 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
                 custom_form_local.setStep_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
             }
 
+            if(cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_CODE))){
+                custom_form_local.setTag_operational_code(null);
+            }else{
+                custom_form_local.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_ID))){
+                custom_form_local.setTag_operational_id(null);
+            }else{
+                custom_form_local.setTag_operational_id(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_DESC))){
+                custom_form_local.setTag_operational_desc(null);
+            }else{
+                custom_form_local.setTag_operational_desc(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_DESC)));
+            }
+
             return custom_form_local;
         }
     }
@@ -907,6 +926,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             contentValues.put(TICKET_SEQ, custom_form_local.getTicket_seq());
             contentValues.put(TICKET_SEQ_TMP, custom_form_local.getTicket_seq_tmp());
             contentValues.put(STEP_CODE, custom_form_local.getStep_code());
+            contentValues.put(TAG_OPERATIONAL_CODE, custom_form_local.getTag_operational_code());
+            contentValues.put(TAG_OPERATIONAL_ID, custom_form_local.getTag_operational_id());
+            contentValues.put(TAG_OPERATIONAL_DESC, custom_form_local.getTag_operational_desc());
             //
             return contentValues;
         }

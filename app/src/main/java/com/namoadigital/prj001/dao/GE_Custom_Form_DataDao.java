@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -64,6 +65,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
     public static final String PIPELINE_CODE = "pipeline_code";
     public static final String STEP_CODE = "step_code";
     public static final String TICKET_CHECKIN_DATE = "ticket_checkin_date";
+    public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
 
     //private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DATA, CUSTOM_FORM_STATUS, PRODUCT_CODE, SERIAL_ID, DATE_START, DATE_END, USER_CODE, SITE_CODE , OPERATION_CODE , SIGNAURE, TOKEN};
 
@@ -534,6 +536,13 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             }else{
                 custom_form_data.setTicket_checkin_date(cursor.getString(cursor.getColumnIndex(TICKET_CHECKIN_DATE)));
             }
+
+            if(cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_CODE))){
+                custom_form_data.setTag_operational_code(null);
+            }else{
+                custom_form_data.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
+            }
+
             return custom_form_data;
         }
     }
@@ -635,6 +644,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             contentValues.put(PIPELINE_CODE, custom_form_data.getPipeline_code());
             contentValues.put(STEP_CODE, custom_form_data.getStep_code());
             contentValues.put(TICKET_CHECKIN_DATE, custom_form_data.getTicket_checkin_date());
+            contentValues.put(TAG_OPERATIONAL_CODE, custom_form_data.getTag_operational_code());
             return contentValues;
         }
     }

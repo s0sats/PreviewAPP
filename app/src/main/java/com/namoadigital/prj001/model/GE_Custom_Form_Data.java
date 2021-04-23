@@ -108,7 +108,8 @@ public class GE_Custom_Form_Data {
     private Integer step_code;
     @Expose
     private String ticket_checkin_date;
-
+    @Expose
+    private Integer tag_operational_code;
 
     public GE_Custom_Form_Data() {
         this.customer_code = -1L;
@@ -148,6 +149,7 @@ public class GE_Custom_Form_Data {
         this.pipeline_code=null;
         this.step_code=null;
         this.ticket_checkin_date = null;
+        this.tag_operational_code = -1;
     }
 
     public long getCustomer_code() {
@@ -444,5 +446,13 @@ public class GE_Custom_Form_Data {
 
     public void setTicket_checkin_date(String ticket_checkin_date) {
         this.ticket_checkin_date = ticket_checkin_date;
+    }
+
+    public Integer getTag_operational_code() {
+        return tag_operational_code;
+    }
+
+    public void setTag_operational_code(Integer tag_operational_code) {
+        this.tag_operational_code = tag_operational_code;
     }
 }
