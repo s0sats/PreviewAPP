@@ -364,6 +364,8 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
                     actionPhotoLocalPath = action.getAction_photo_local();
                     if ((actionPhotoLocalPath == null || actionPhotoLocalPath.isEmpty())
                             && (action.getAction_photo_url() == null || action.getAction_photo_url().isEmpty())
+                            && (action.getAction_photo_name() == null || action.getAction_photo_name().isEmpty())
+
                     ) {
                         ll_open_photo.setVisibility(View.GONE);
                     } else {
