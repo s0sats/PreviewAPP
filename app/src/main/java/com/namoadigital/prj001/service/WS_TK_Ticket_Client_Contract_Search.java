@@ -224,7 +224,7 @@ public class WS_TK_Ticket_Client_Contract_Search extends IntentService {
                         daoObjReturn = ticketDao.addUpdate(tickets, false);
                     }
                     if (!daoObjReturn.hasError()) {
-                        startDownloadServices();
+                        ToolBox_Inf.startPdfPhotoDownloadWorkers(getApplicationContext());
                         //
                         ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), hmAux, "", "0");
                     } else {
@@ -282,19 +282,19 @@ public class WS_TK_Ticket_Client_Contract_Search extends IntentService {
             ).toSqlQuery()
         );
     }
-
-    private void startDownloadServices() {
-        //Como será possivel baixar ticket do customer logado, pode ser chamada a rotina de download.
-        //Esse as definição mudar, rever, pois seria necessario chamar essa serviço para cada customer code diferente.
-        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
-        Intent mIntentPDF = new Intent(getApplicationContext(), WBR_DownLoad_PDF.class);
-        Bundle bundle = new Bundle();
-        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
-        mIntentPIC.putExtras(bundle);
-        mIntentPDF.putExtras(bundle);
-        getApplicationContext().sendBroadcast(mIntentPIC);
-        getApplicationContext().sendBroadcast(mIntentPDF);
-    }
+    //BARRIONUEVO -23/04/2021 - Metodo nãoé mais chamado e a chamada via WBR foi descontinuada.
+//    private void startDownloadServices() {
+//        //Como será possivel baixar ticket do customer logado, pode ser chamada a rotina de download.
+//        //Esse as definição mudar, rever, pois seria necessario chamar essa serviço para cada customer code diferente.
+//        Intent mIntentPIC = new Intent(getApplicationContext(), WBR_DownLoad_Picture.class);
+//        Intent mIntentPDF = new Intent(getApplicationContext(), WBR_DownLoad_PDF.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putLong(Constant.LOGIN_CUSTOMER_CODE,ToolBox_Con.getPreference_Customer_Code(getApplicationContext()));
+//        mIntentPIC.putExtras(bundle);
+//        mIntentPDF.putExtras(bundle);
+//        getApplicationContext().sendBroadcast(mIntentPIC);
+//        getApplicationContext().sendBroadcast(mIntentPDF);
+//    }
 
     private void loadTranslation() {
         List<String> translist = new ArrayList<>();

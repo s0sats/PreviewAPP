@@ -583,23 +583,28 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         //
 
         actionPhotoLocalPath = ticket.getOpen_photo_local();
-        if (actionPhotoLocalPath == null && (ticket.getOpen_photo() == null || ticket.getOpen_photo().isEmpty()) ) {
-            ll_open_photo.setVisibility(View.GONE);
-        }else {
-            try {
-                Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
-                if (bitmap == null) {
-                    Drawable dPlaceholder = getResources().getDrawable(R.drawable.sand_watch_transp);
-                    dPlaceholder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
-                    iv_open_photo.setImageDrawable(dPlaceholder);
-                } else {
-                    iv_open_photo.setImageBitmap(bitmap);
+            if (actionPhotoLocalPath == null && (ticket.getOpen_photo() == null || ticket.getOpen_photo().isEmpty())) {
+                ll_open_photo.setVisibility(View.GONE);
+            } else {
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                    if (bitmap == null) {
+                        setImagePlaceHolder();
+                    } else {
+                        iv_open_photo.setImageBitmap(bitmap);
+                    }
+                } catch (NullPointerException e) {
+                    setImagePlaceHolder();
+                    ToolBox_Inf.registerException(getClass().getName(), e);
+                    e.printStackTrace();
                 }
-            } catch (NullPointerException e) {
-                ToolBox_Inf.registerException(getClass().getName(), e);
-                e.printStackTrace();
             }
-        }
+    }
+
+    private void setImagePlaceHolder() {
+        Drawable dPlaceholder = getResources().getDrawable(R.drawable.sand_watch_transp);
+        dPlaceholder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
+        iv_open_photo.setImageDrawable(dPlaceholder);
     }
 
     private void callAct082() {
