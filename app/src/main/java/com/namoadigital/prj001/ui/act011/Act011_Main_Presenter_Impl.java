@@ -255,6 +255,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
 
             );
             MD_Product productInfo = getProduct(Integer.parseInt(product_code));
+            //
             MdTag tagInfo = getTag(customForm.getTag_operational_code());
             //
             customFormLocal = new GE_Custom_Form_Local();
@@ -266,7 +267,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_form_data(Long.parseLong(ii.get("id")));
             customFormLocal.setCustom_form_pre(ToolBox_Inf.getPrefix(context));
             customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
-            customFormLocal.setTag_operational_code(tagInfo != null ? tagInfo.getTag_code() : null);
+            customFormLocal.setTag_operational_code(tagInfo != null ? tagInfo.getTag_code() : -1);
             customFormLocal.setTag_operational_id(tagInfo != null ? tagInfo.getTag_id() : null);
             customFormLocal.setTag_operational_desc(tagInfo != null ? tagInfo.getTag_desc() : null);
             customFormLocal.setCustom_product_code(Integer.parseInt(product_code));
@@ -1549,7 +1550,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Nullable
-    private MdTag getTag(Integer tag_operational_code) {
+    private MdTag getTag(int tag_operational_code) {
         MdTag mdTag = mdTagDao.getMdTagByPk(
             (int) ToolBox_Con.getPreference_Customer_Code(context),
             tag_operational_code

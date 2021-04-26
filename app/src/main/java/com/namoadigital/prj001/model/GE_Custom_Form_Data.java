@@ -109,7 +109,7 @@ public class GE_Custom_Form_Data {
     @Expose
     private String ticket_checkin_date;
     @Expose
-    private Integer tag_operational_code;
+    private int tag_operational_code;
 
     public GE_Custom_Form_Data() {
         this.customer_code = -1L;
@@ -448,11 +448,11 @@ public class GE_Custom_Form_Data {
         this.ticket_checkin_date = ticket_checkin_date;
     }
 
-    public Integer getTag_operational_code() {
+    public int getTag_operational_code() {
         return tag_operational_code;
     }
 
-    public void setTag_operational_code(Integer tag_operational_code) {
+    public void setTag_operational_code(int tag_operational_code) {
         this.tag_operational_code = tag_operational_code;
     }
 }

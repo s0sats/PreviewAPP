@@ -254,12 +254,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             custom_form.setAll_site(cursor.getInt(cursor.getColumnIndex(ALL_SITE)));
             custom_form.setAll_operation(cursor.getInt(cursor.getColumnIndex(ALL_OPERATION)));
             //
-            if(cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_CODE))) {
-                custom_form.setTag_operational_code(null);
-            }else{
-                custom_form.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
-            }
-
+            custom_form.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
             return custom_form;
         }
     }
@@ -303,7 +298,9 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
                 contentValues.put(ALL_OPERATION, custom_form.getAll_operation());
             }
             //
-            contentValues.put(TAG_OPERATIONAL_CODE, custom_form.getTag_operational_code());
+            if (custom_form.getTag_operational_code() > -1) {
+                contentValues.put(TAG_OPERATIONAL_CODE, custom_form.getTag_operational_code());
+            }
             return contentValues;
         }
     }

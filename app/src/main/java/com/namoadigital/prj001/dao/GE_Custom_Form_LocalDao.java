@@ -756,22 +756,9 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             }else{
                 custom_form_local.setStep_code(cursor.getInt(cursor.getColumnIndex(STEP_CODE)));
             }
-
-            if(cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_CODE))){
-                custom_form_local.setTag_operational_code(null);
-            }else{
-                custom_form_local.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
-            }
-            if(cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_ID))){
-                custom_form_local.setTag_operational_id(null);
-            }else{
-                custom_form_local.setTag_operational_id(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_ID)));
-            }
-            if(cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_DESC))){
-                custom_form_local.setTag_operational_desc(null);
-            }else{
-                custom_form_local.setTag_operational_desc(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_DESC)));
-            }
+            custom_form_local.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
+            custom_form_local.setTag_operational_id(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_ID)));
+            custom_form_local.setTag_operational_desc(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_DESC)));
 
             return custom_form_local;
         }
@@ -926,9 +913,16 @@ public class GE_Custom_Form_LocalDao extends BaseDao implements Dao<GE_Custom_Fo
             contentValues.put(TICKET_SEQ, custom_form_local.getTicket_seq());
             contentValues.put(TICKET_SEQ_TMP, custom_form_local.getTicket_seq_tmp());
             contentValues.put(STEP_CODE, custom_form_local.getStep_code());
-            contentValues.put(TAG_OPERATIONAL_CODE, custom_form_local.getTag_operational_code());
-            contentValues.put(TAG_OPERATIONAL_ID, custom_form_local.getTag_operational_id());
-            contentValues.put(TAG_OPERATIONAL_DESC, custom_form_local.getTag_operational_desc());
+
+            if(custom_form_local.getTag_operational_code() > -1){
+                contentValues.put(TAG_OPERATIONAL_CODE, custom_form_local.getTag_operational_code());
+            }
+            if(custom_form_local.getTag_operational_id() != null){
+                contentValues.put(TAG_OPERATIONAL_ID, custom_form_local.getTag_operational_id());
+            }
+            if(custom_form_local.getTag_operational_desc() != null){
+                contentValues.put(TAG_OPERATIONAL_DESC, custom_form_local.getTag_operational_desc());
+            }
             //
             return contentValues;
         }

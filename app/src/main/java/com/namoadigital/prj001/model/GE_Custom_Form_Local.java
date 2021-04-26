@@ -61,7 +61,7 @@ public class GE_Custom_Form_Local {
     private Integer ticket_seq;
     private Integer ticket_seq_tmp;
     private Integer step_code;
-    private Integer tag_operational_code;
+    private int tag_operational_code;
     private String tag_operational_id;
     private String tag_operational_desc;
 
@@ -481,11 +481,11 @@ public class GE_Custom_Form_Local {
         this.step_code = step_code;
     }
 
-    public Integer getTag_operational_code() {
+    public int getTag_operational_code() {
         return tag_operational_code;
     }
 
-    public void setTag_operational_code(Integer tag_operational_code) {
+    public void setTag_operational_code(int tag_operational_code) {
         this.tag_operational_code = tag_operational_code;
     }
 

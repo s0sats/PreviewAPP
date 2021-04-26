@@ -537,11 +537,7 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
                 custom_form_data.setTicket_checkin_date(cursor.getString(cursor.getColumnIndex(TICKET_CHECKIN_DATE)));
             }
 
-            if(cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_CODE))){
-                custom_form_data.setTag_operational_code(null);
-            }else{
-                custom_form_data.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
-            }
+            custom_form_data.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
 
             return custom_form_data;
         }
@@ -644,7 +640,10 @@ public class GE_Custom_Form_DataDao extends BaseDao implements Dao<GE_Custom_For
             contentValues.put(PIPELINE_CODE, custom_form_data.getPipeline_code());
             contentValues.put(STEP_CODE, custom_form_data.getStep_code());
             contentValues.put(TICKET_CHECKIN_DATE, custom_form_data.getTicket_checkin_date());
-            contentValues.put(TAG_OPERATIONAL_CODE, custom_form_data.getTag_operational_code());
+            if (custom_form_data.getTag_operational_code() > -1) {
+                contentValues.put(TAG_OPERATIONAL_CODE, custom_form_data.getTag_operational_code());
+            }
+
             return contentValues;
         }
     }
