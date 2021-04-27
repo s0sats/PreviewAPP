@@ -8,7 +8,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 44
-        versionName "3.22.1.3"
+        versionName "3.22.1.4"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         multiDexEnabled true
@@ -71,7 +71,7 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 //Var com o nome do import da lib
-def namoaLibVersion = "com.namoa_digital:library:2.0.0.1"
+def namoaLibVersion = "com.namoa_digital:library:2.0.0.2"
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
