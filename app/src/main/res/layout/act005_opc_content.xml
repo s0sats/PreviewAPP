@@ -1,145 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="10dp"
     android:background="@color/padrao_WHITE"
     android:gravity="center_vertical"
-    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <ImageView
         android:id="@+id/act005_opc_iv_logo"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="10dp"
-        android:layout_weight="1"
-        android:background="@color/padrao_WHITE"
-        android:padding="10dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/logo_namoa_oficial" />
+        android:layout_width="0dp"
+        app:layout_constraintWidth_default="spread"
+        android:layout_height="150dp"
+        app:layout_constraintHeight_default="wrap"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo_namoa" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@color/namoa_color_light_blue3"/>
-
-    <ListView
-        android:id="@+id/act005_opc_lv_opt"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:divider="@color/namoa_color_light_blue3"
-        android:dividerHeight="0dp">
-
-    </ListView>
-
-    <LinearLayout
-        android:id="@+id/act005_opc_ll_footer"
-        android:layout_width="match_parent"
+    <ScrollView
+        android:id="@+id/act005_opc_sv_main"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="bottom"
-        android:clickable="false">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/act005_opc_iv_logo"
+        app:layout_constraintVertical_bias="1.0">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/act005_opc_cl_option"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="15dp"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:id="@+id/act005_opc_ll_unfinished_forms">
-
-            <ImageView
-                android:id="@+id/act005_opc_iv_unfinished_forms"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:maxHeight="24dp"
-                android:maxWidth="24dp"
-                android:src="@drawable/ic_exclamation"
-                android:tint="@color/namoa_color_red" />
+            android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/act005_opc_tv_unfinished_forms"
-                android:layout_width="match_parent"
+                android:id="@+id/act005_opc_tv_pendencies"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:text="Unfinished Forms"
+                android:drawablePadding="10dp"
+                android:paddingStart="19dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="10dp"
+                android:text="Existem formularios pendentes de envio na sua maquina local"
                 android:textColor="@color/namoa_color_red"
-                android:textSize="@dimen/font_size_title_md" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="15dp"
-            android:background="@drawable/btn_namoa_main_states"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:id="@+id/act005_opc_ll_sync"
-            >
-
-            <ImageView
-                android:id="@+id/act005_opc_iv_sync"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:maxHeight="24dp"
-                android:maxWidth="24dp"
-                android:src="@drawable/ic_sync_black_24dp"
-                android:tint="@color/padrao_WHITE" />
+                android:textSize="@dimen/font_size_font_16"
+                app:drawableStartCompat="@drawable/ic_baseline_priority_high_24"
+                app:drawableTint="@color/namoa_color_red"
+                app:drawableTintMode="src_atop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/act005_opc_tv_sync"
-                android:layout_width="match_parent"
+                android:id="@+id/act005_opc_tv_historic"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:text="Sync"
-                android:textColor="@color/padrao_WHITE"
-                android:textSize="@dimen/font_size_title_md" />
+                android:drawablePadding="10dp"
+                android:paddingStart="19dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="10dp"
+                android:text="Historico"
+                android:textSize="@dimen/font_size_font_16"
+                app:drawableStartCompat="@drawable/ic_baseline_history_24_black"
+                app:drawableTint="@color/namoa_dark_blue"
+                app:drawableTintMode="src_atop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/act005_opc_tv_pendencies" />
 
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="15dp"
-            android:background="@drawable/btn_namoa_main_states"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:id="@+id/act005_opc_ll_logout"
-            >
-
-            <ImageView
-                android:id="@+id/act005_opc_iv_logout"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/act005_opc_tv_enable_nfc"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:maxHeight="24dp"
-                android:maxWidth="24dp"
-                android:src="@drawable/ic_power_settings_new_black_24dp"
-                android:tint="@color/padrao_WHITE" />
+                android:drawablePadding="10dp"
+                android:paddingStart="19dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="10dp"
+                android:text="Libera NFC"
+                android:textColor="@color/namoa_status_process"
+                android:textSize="@dimen/font_size_font_16"
+                app:drawableStartCompat="@drawable/ic_baseline_badge_24"
+                app:drawableTint="@color/namoa_status_process"
+                app:drawableTintMode="src_atop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/act005_opc_tv_historic" />
+
+            <TextView
+                android:id="@+id/act005_opc_tv_disable_nfc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="10dp"
+                android:paddingStart="19dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="10dp"
+                android:text="Cancelar NFC"
+                android:textSize="@dimen/font_size_font_16"
+                app:drawableStartCompat="@drawable/ic_baseline_badge_24"
+                app:drawableTint="@color/namoa_dark_blue"
+                app:drawableTintMode="src_atop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/act005_opc_tv_enable_nfc" />
+
+            <TextView
+                android:id="@+id/act005_opc_tv_support_data"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="10dp"
+                android:paddingStart="19dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="10dp"
+                android:text="Enviar dados de suporte"
+                android:textSize="@dimen/font_size_font_16"
+                app:drawableStartCompat="@drawable/ic_file_upload_black_24dp"
+                app:drawableTint="@color/namoa_dark_blue"
+                app:drawableTintMode="src_atop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/act005_opc_tv_disable_nfc" />
+
+            <View
+                android:id="@+id/act005_opc_v_divisor"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/namoa_color_gray_6"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/act005_opc_tv_support_data" />
+
+            <TextView
+                android:id="@+id/act005_opc_tv_change_customer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="10dp"
+                android:paddingStart="19dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="10dp"
+                android:text="Trocar Customer"
+                android:textSize="@dimen/font_size_font_16"
+                app:drawableStartCompat="@drawable/ic_baseline_switch_right_24"
+                app:drawableTint="@color/namoa_dark_blue"
+                app:drawableTintMode="src_atop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/act005_opc_v_divisor" />
 
             <TextView
                 android:id="@+id/act005_opc_tv_logout"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:text="Log me out"
-                android:textColor="@color/padrao_WHITE"
-                android:textSize="@dimen/font_size_title_md" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-</LinearLayout>
+                android:drawablePadding="10dp"
+                android:paddingStart="19dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="10dp"
+                android:text="Logout"
+                android:textSize="@dimen/font_size_font_16"
+                app:drawableStartCompat="@drawable/ic_power_settings_new_black_24dp"
+                app:drawableTint="@color/namoa_dark_blue"
+                app:drawableTintMode="src_atop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/act005_opc_tv_change_customer" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
 

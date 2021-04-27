@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,10 +45,7 @@ import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.dao.GE_FileDao;
-import com.namoadigital.prj001.dao.MD_OperationDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
-import com.namoadigital.prj001.dao.MD_SiteDao;
-import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.EV_User;
@@ -68,9 +67,6 @@ import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_015;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
-import com.namoadigital.prj001.sql.MD_Operation_Sql_001;
-import com.namoadigital.prj001.sql.MD_Site_Sql_002;
-import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_002;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.ui.act004.Act004_Main;
@@ -96,6 +92,8 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.dialog.SendResumeDialog;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -108,7 +106,7 @@ import java.util.Map;
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View {
+public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View, Act005Opc.Act005DrawerInteraction {
 
     public static final String MENU_ID = "menu_id";
     public static final String MENU_ICON = "menu_icon";
@@ -190,7 +188,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
     private ActionBarDrawerToggle mDrawerToggle;
 
     private FragmentManager fm;
-    private Act005_Opc fragOpc;
+    private Act005Opc fragOpc;
 
     private String alertTitle = "";
     private String alertMsg = "";
@@ -668,9 +666,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
                 //
                 invalidateOptionsMenu();
                 //
-                if(fragOpc != null){
-                    fragOpc.setPendingForms(getPendingForms());
-                }
+//                if(fragOpc != null){
+//                    fragOpc.setPendingForms(getPendingForms());
+//                }
             }
 
             @Override
@@ -688,275 +686,339 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         //
         mDrawerToggle.syncState();
         //
-        fragOpc = (Act005_Opc) fm.findFragmentById(R.id.act005_frag_opc);
-        fragOpc.setHmAux_Trans(hmAux_Trans, mModule_Code, mResource_Code);
-        fragOpc.setPendingForms(getPendingForms());
-        fragOpc.setOnOpcItemClicked(new Act005_Opc.IAct005_Opc() {
-            @Override
-            public void itemClicked(String index) {
-                DialogInterface.OnClickListener listener = null;
-                int negativeBtn = 1;
-
-                switch (index) {
-                    case Act005_Opc.DRAWER_OPC_CUSTOMER:
-                        //
-                        if (getSendBadgeQty() > 0 || getImagesToUpload() > 0) {
-
-                            ToolBox.alertMSG(
-                                    context,
-                                    hmAux_Trans.get("alert_changecustomer_data_to_send_ttl"),
-                                    hmAux_Trans.get("alert_changecustomer_data_to_send_msg"),
-                                    null,
-                                    -1,
-                                    null
-                            );
-
-                        } else {
-                            if(!ToolBox_Inf.isLocalDatetimeOk(context)){
-                                handleInvalidLocalDatetime();
-                            }else {
-                                alertTitle = hmAux_Trans.get("drawer_change_customer_alert_ttl");
-                                alertMsg = hmAux_Trans.get("drawer_change_customer_alert_msg");
-                                //
-                                listener = new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        //if(ToolBox_Con.isOnline(context)) {
-                                        //Reseta preferencias do Customer e volta para
-                                        //Act002 - lista de customer
-                                        changeCustomer();
-//                                }else{
-//                                    ToolBox_Inf.showNoConnectionDialog(Act005_Main.this);
+//        fragOpc = (Act005_Opc_Bkp) fm.findFragmentById(R.id.act005_frag_opc);
+//        fragOpc.setHmAux_Trans(hmAux_Trans, mModule_Code, mResource_Code);
+//        fragOpc.setPendingForms(getPendingForms());
+//        fragOpc.setOnOpcItemClicked(new Act005_Opc_Bkp.IAct005_Opc() {
+//            @Override
+//            public void itemClicked(String index) {
+//                DialogInterface.OnClickListener listener = null;
+//                int negativeBtn = 1;
+//
+//                switch (index) {
+//                    case Act005_Opc_Bkp.DRAWER_OPC_CUSTOMER:
+//                        //
+//                        if (getSendBadgeQty() > 0 || getImagesToUpload() > 0) {
+//
+//                            ToolBox.alertMSG(
+//                                    context,
+//                                    hmAux_Trans.get("alert_changecustomer_data_to_send_ttl"),
+//                                    hmAux_Trans.get("alert_changecustomer_data_to_send_msg"),
+//                                    null,
+//                                    -1,
+//                                    null
+//                            );
+//
+//                        } else {
+//                            if(!ToolBox_Inf.isLocalDatetimeOk(context)){
+//                                handleInvalidLocalDatetime();
+//                            }else {
+//                                alertTitle = hmAux_Trans.get("drawer_change_customer_alert_ttl");
+//                                alertMsg = hmAux_Trans.get("drawer_change_customer_alert_msg");
+//                                //
+//                                listener = new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialogInterface, int i) {
+//                                        //if(ToolBox_Con.isOnline(context)) {
+//                                        //Reseta preferencias do Customer e volta para
+//                                        //Act002 - lista de customer
+//                                        changeCustomer();
+////                                }else{
+////                                    ToolBox_Inf.showNoConnectionDialog(Act005_Main.this);
+////                                }
+//                                    }
+//                                };
+//                            }
+//                        }
+//
+//                        break;
+//                    case Act005_Opc_Bkp.DRAWER_OPC_SITE:
+//                        MD_SiteDao siteDao = new MD_SiteDao(
+//                                context,
+//                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                                Constant.DB_VERSION_CUSTOM
+//                        );
+//
+//                        int qty_sites = siteDao.query_HM(
+//                                new MD_Site_Sql_002(
+//                                        ToolBox_Con.getPreference_Customer_Code(context)
+//                                ).toSqlQuery()
+//                        ).size();
+//
+//                        if (qty_sites <= 1) {
+//                            //Se apenas um site, da alert e não permite troca.
+//                            alertTitle = hmAux_Trans.get("drawer_change_site_one_site_alert_ttl");
+//                            alertMsg = hmAux_Trans.get("drawer_change_site_one_site_alert_msg");
+//
+//                            listener = new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialogInterface, int i) {
+//
 //                                }
-                                    }
-                                };
-                            }
-                        }
+//                            };
+//
+//                            negativeBtn = 0;
+//                        } else {
+//                            //
+//                            alertTitle = hmAux_Trans.get("drawer_change_site_alert_ttl");
+//                            alertMsg = hmAux_Trans.get("drawer_change_site_alert_msg");
+//                            //
+//                            //Apaga preferencia de Site, Operatione volta a lista de site
+//                            listener = new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialogInterface, int i) {
+//                                    //Reseta preferencias do Customer e volta para
+//                                    ToolBox_Con.setPreference_Site_Code(context, "-1");
+//                                    ToolBox_Con.setPreference_Zone_Code(context, -1);
+//                                    ToolBox_Con.setPreference_Operation_Code(context, -1);
+//                                    //
+//                                    callAct003(context);
+//                                }
+//                            };
+//                        }
+//                        break;
+//                    case Act005_Opc_Bkp.DRAWER_OPC_ZONE:
+//                        MD_Site_ZoneDao zoneDao = new MD_Site_ZoneDao(
+//                                context,
+//                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                                Constant.DB_VERSION_CUSTOM
+//                        );
+//
+//                        int qty_zones = zoneDao.query_HM(
+//                                new MD_Site_Zone_Sql_002(
+//                                        ToolBox_Con.getPreference_Customer_Code(context),
+//                                        Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))
+//                                ).toSqlQuery()
+//                        ).size();
+//
+//                        if (qty_zones <= 1) {
+//                            //Se apenas um site, da alert e não permite troca.
+//                            alertTitle = hmAux_Trans.get("drawer_change_zone_one_zone_alert_ttl");
+//                            alertMsg = hmAux_Trans.get("drawer_change_zone_one_zone_alert_msg");
+//
+//                            listener = new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                                }
+//                            };
+//
+//                            negativeBtn = 0;
+//                        } else {
+//                            //
+//                            alertTitle = hmAux_Trans.get("drawer_change_zone_alert_ttl");
+//                            alertMsg = hmAux_Trans.get("drawer_change_zone_alert_msg");
+//                            //
+//                            //Apaga preferencia de zona volta a lista de zona
+//                            listener = new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialogInterface, int i) {
+//                                    //Reseta preferencias da zona e volta para
+//                                    ToolBox_Con.setPreference_Zone_Code(context, -1);
+//                                    //
+//                                    callAct033(context);
+//                                }
+//                            };
+//                        }
+//                        break;
+//                    case Act005_Opc_Bkp.DRAWER_OPC_OPERATION:
+//                        MD_OperationDao operationDao = new MD_OperationDao(
+//                                context,
+//                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                                Constant.DB_VERSION_CUSTOM
+//                        );
+//
+//                        int qty_operation = operationDao.query_HM(
+//                                new MD_Operation_Sql_001(
+//                                        ToolBox_Con.getPreference_Customer_Code(context)
+//                                ).toSqlQuery()
+//                        ).size();
+//
+//                        if (qty_operation <= 1) {
+//                            //Se apenas uma operação, da alert e não permite troca.
+//                            alertTitle = hmAux_Trans.get("drawer_change_operation_one_operation_alert_ttl");
+//                            alertMsg = hmAux_Trans.get("drawer_change_operation_one_operation_alert_msg");
+//
+//                            listener = new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                                }
+//                            };
+//
+//                            negativeBtn = 0;
+//                        } else {
+//                            //
+//                            alertTitle = hmAux_Trans.get("drawer_change_operation_alert_ttl");
+//                            alertMsg = hmAux_Trans.get("drawer_change_operation_alert_msg");
+//                            //
+//                            listener = new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialogInterface, int i) {
+//                                    //Apaga preferencia de Operatione volta a ista de operation
+//                                    ToolBox_Con.setPreference_Operation_Code(context, -1);
+//                                    //
+//                                    callAct004(context);
+//                                }
+//                            };
+//
+//                        }
+//
+//                        break;
+//                    case Act005_Opc_Bkp.DRAWER_OPC_LOGOUT:
+//                        /*
+//                         *
+//                         *
+//                         * Esse case não funciona mais, o metodo chamado no "botão logout" é
+//                         * a interface logoutClicked()
+//                         *
+//                         * */
+//                        //
+//                        alertTitle = hmAux_Trans.get("drawer_logout_alert_ttl");
+//                        alertMsg = hmAux_Trans.get("drawer_logout_alert_msg");
+//                        //
+//                        listener = new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                ToolBox_Con.cleanPreferences(Act005_Main.this);
+//                                ToolBox_Inf.call_Act001_Main(Act005_Main.this);
+//                                finish();
+//                            }
+//                        };
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                //Verifica se listner foi setado,
+//                //se foi, exibe Dialog.
+//                if (listener != null) {
+//                    ToolBox.alertMSG(
+//                            Act005_Main.this,
+//                            alertTitle,
+//                            alertMsg,
+//                            listener,
+//                            negativeBtn
+//                    );
+//
+//                }
+//                //Fecha Drawer
+//                mDrawerLayout.closeDrawer(GravityCompat.START);
+//            }
+//
+//            @Override
+//            public void syncClicked() {
+//
+//                ToolBox.alertMSG(
+//                        Act005_Main.this,
+//                        hmAux_Trans.get("drawer_sync_alert_ttl"),
+//                        hmAux_Trans.get("drawer_sync_alert_msg"),
+//                        new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
+//                                mPresenter.syncFlow(mAdapter.getBadgeQty(MENU_ID_SEND_DATA));
+//                            }
+//                        },
+//                        1
+//                );
+//
+//            }
+//
+//            @Override
+//            public void logoutClicked() {
+//                if (getSendBadgeQty() > 0 || getImagesToUpload() > 0) {
+//                    //
+//                    callSendAction("LOGOUT");
+//                } else if (getPendingForms()) {
+//                    ToolBox.alertMSG_YES_NO(
+//                            Act005_Main.this,
+//                            hmAux_Trans.get("alert_pending_data_ttl"),
+//                            hmAux_Trans.get("alert_pending_form_logout_msg"),
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialogInterface, int i) {
+//                                    mPresenter.showLogoutDialog();
+//                                }
+//                            },
+//                            2,
+//                            new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    mDrawerLayout.closeDrawer(GravityCompat.START);
+//                                }
+//                            }
+//                    );
+//
+//                } else {
+//                    mPresenter.showLogoutDialog();
+//                }
+//            }
+//        });
+          initilizeDrawer();
+    }
 
-                        break;
-                    case Act005_Opc.DRAWER_OPC_SITE:
-                        MD_SiteDao siteDao = new MD_SiteDao(
-                                context,
-                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                                Constant.DB_VERSION_CUSTOM
-                        );
+    private void initilizeDrawer() {
+        fragOpc = (Act005Opc) fm.findFragmentById(R.id.act005_frag_opc);
+        fragOpc.setHmAux_Trans(hmAux_Trans);
+    }
 
-                        int qty_sites = siteDao.query_HM(
-                                new MD_Site_Sql_002(
-                                        ToolBox_Con.getPreference_Customer_Code(context)
-                                ).toSqlQuery()
-                        ).size();
+    @NotNull
+    @Override
+    public Bitmap getCustomerLogo() {
+        Bitmap bitmap = ToolBox_Inf.getCustomerImage(ToolBox_Inf.getCustomerLogoPath(context));
+        if(bitmap == null){
+            bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.logo_namoa);
+        }
+        return bitmap;
+    }
 
-                        if (qty_sites <= 1) {
-                            //Se apenas um site, da alert e não permite troca.
-                            alertTitle = hmAux_Trans.get("drawer_change_site_one_site_alert_ttl");
-                            alertMsg = hmAux_Trans.get("drawer_change_site_one_site_alert_msg");
+    @Override
+    public boolean hasPendencies() {
+        return getPendingForms();
+    }
 
-                            listener = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
+    @Override
+    public boolean showEnableNfcOption() {
+        return false;
+    }
 
-                                }
-                            };
+    @Override
+    public boolean showDisableNfcOption() {
+        return false;
+    }
 
-                            negativeBtn = 0;
-                        } else {
-                            //
-                            alertTitle = hmAux_Trans.get("drawer_change_site_alert_ttl");
-                            alertMsg = hmAux_Trans.get("drawer_change_site_alert_msg");
-                            //
-                            //Apaga preferencia de Site, Operatione volta a lista de site
-                            listener = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    //Reseta preferencias do Customer e volta para
-                                    ToolBox_Con.setPreference_Site_Code(context, "-1");
-                                    ToolBox_Con.setPreference_Zone_Code(context, -1);
-                                    ToolBox_Con.setPreference_Operation_Code(context, -1);
-                                    //
-                                    callAct003(context);
-                                }
-                            };
-                        }
-                        break;
-                    case Act005_Opc.DRAWER_OPC_ZONE:
-                        MD_Site_ZoneDao zoneDao = new MD_Site_ZoneDao(
-                                context,
-                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                                Constant.DB_VERSION_CUSTOM
-                        );
+    @Override
+    public boolean showChangeCustomerOption() {
+        return false;
+    }
 
-                        int qty_zones = zoneDao.query_HM(
-                                new MD_Site_Zone_Sql_002(
-                                        ToolBox_Con.getPreference_Customer_Code(context),
-                                        Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context))
-                                ).toSqlQuery()
-                        ).size();
+    @Override
+    public void onHistoricClick() {
 
-                        if (qty_zones <= 1) {
-                            //Se apenas um site, da alert e não permite troca.
-                            alertTitle = hmAux_Trans.get("drawer_change_zone_one_zone_alert_ttl");
-                            alertMsg = hmAux_Trans.get("drawer_change_zone_one_zone_alert_msg");
+    }
 
-                            listener = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
+    @Override
+    public void onEnableNfcClick() {
 
-                                }
-                            };
+    }
 
-                            negativeBtn = 0;
-                        } else {
-                            //
-                            alertTitle = hmAux_Trans.get("drawer_change_zone_alert_ttl");
-                            alertMsg = hmAux_Trans.get("drawer_change_zone_alert_msg");
-                            //
-                            //Apaga preferencia de zona volta a lista de zona
-                            listener = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    //Reseta preferencias da zona e volta para
-                                    ToolBox_Con.setPreference_Zone_Code(context, -1);
-                                    //
-                                    callAct033(context);
-                                }
-                            };
-                        }
-                        break;
-                    case Act005_Opc.DRAWER_OPC_OPERATION:
-                        MD_OperationDao operationDao = new MD_OperationDao(
-                                context,
-                                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                                Constant.DB_VERSION_CUSTOM
-                        );
+    @Override
+    public void onDisableNfcClick() {
 
-                        int qty_operation = operationDao.query_HM(
-                                new MD_Operation_Sql_001(
-                                        ToolBox_Con.getPreference_Customer_Code(context)
-                                ).toSqlQuery()
-                        ).size();
+    }
 
-                        if (qty_operation <= 1) {
-                            //Se apenas uma operação, da alert e não permite troca.
-                            alertTitle = hmAux_Trans.get("drawer_change_operation_one_operation_alert_ttl");
-                            alertMsg = hmAux_Trans.get("drawer_change_operation_one_operation_alert_msg");
+    @Override
+    public void onSupportDataClick() {
 
-                            listener = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
+    }
 
-                                }
-                            };
+    @Override
+    public void onChangeCustomerClick() {
 
-                            negativeBtn = 0;
-                        } else {
-                            //
-                            alertTitle = hmAux_Trans.get("drawer_change_operation_alert_ttl");
-                            alertMsg = hmAux_Trans.get("drawer_change_operation_alert_msg");
-                            //
-                            listener = new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    //Apaga preferencia de Operatione volta a ista de operation
-                                    ToolBox_Con.setPreference_Operation_Code(context, -1);
-                                    //
-                                    callAct004(context);
-                                }
-                            };
+    }
 
-                        }
-
-                        break;
-                    case Act005_Opc.DRAWER_OPC_LOGOUT:
-                        /*
-                         *
-                         *
-                         * Esse case não funciona mais, o metodo chamado no "botão logout" é
-                         * a interface logoutClicked()
-                         *
-                         * */
-                        //
-                        alertTitle = hmAux_Trans.get("drawer_logout_alert_ttl");
-                        alertMsg = hmAux_Trans.get("drawer_logout_alert_msg");
-                        //
-                        listener = new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                ToolBox_Con.cleanPreferences(Act005_Main.this);
-                                ToolBox_Inf.call_Act001_Main(Act005_Main.this);
-                                finish();
-                            }
-                        };
-                        break;
-                    default:
-                        break;
-                }
-                //Verifica se listner foi setado,
-                //se foi, exibe Dialog.
-                if (listener != null) {
-                    ToolBox.alertMSG(
-                            Act005_Main.this,
-                            alertTitle,
-                            alertMsg,
-                            listener,
-                            negativeBtn
-                    );
-
-                }
-                //Fecha Drawer
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-            }
-
-            @Override
-            public void syncClicked() {
-
-                ToolBox.alertMSG(
-                        Act005_Main.this,
-                        hmAux_Trans.get("drawer_sync_alert_ttl"),
-                        hmAux_Trans.get("drawer_sync_alert_msg"),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
-                                mPresenter.syncFlow(mAdapter.getBadgeQty(MENU_ID_SEND_DATA));
-                            }
-                        },
-                        1
-                );
-
-            }
-
-            @Override
-            public void logoutClicked() {
-                if (getSendBadgeQty() > 0 || getImagesToUpload() > 0) {
-                    //
-                    callSendAction("LOGOUT");
-                } else if (getPendingForms()) {
-                    ToolBox.alertMSG_YES_NO(
-                            Act005_Main.this,
-                            hmAux_Trans.get("alert_pending_data_ttl"),
-                            hmAux_Trans.get("alert_pending_form_logout_msg"),
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    mPresenter.showLogoutDialog();
-                                }
-                            },
-                            2,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mDrawerLayout.closeDrawer(GravityCompat.START);
-                                }
-                            }
-                    );
-
-                } else {
-                    mPresenter.showLogoutDialog();
-                }
-            }
-        });
-
+    @Override
+    public void onLogoutClick() {
 
     }
 
@@ -1554,9 +1616,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
             if (wsProcess.equals(Act005_Main.WS_PROCESS_LOGOUT)) {
                 progressDialog.dismiss();
                 //Atualiza lbl de form pendentes
-                if(fragOpc != null){
-                    fragOpc.setPendingForms(getPendingForms());
-                }
+                //TODO VER IF ABAIXO APLICA NO NOVO DRAWER
+//                if(fragOpc != null){
+//                    fragOpc.setPendingForms(getPendingForms());
+//                }
                 //
                 if (ToolBox_Con.getPreference_Customer_Code(context) == -1L) {
                     mPresenter.stopChatServices();

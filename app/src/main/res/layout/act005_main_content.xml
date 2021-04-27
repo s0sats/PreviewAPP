@@ -83,7 +83,7 @@
 
         <fragment
             android:id="@+id/act005_frag_opc"
-            android:name="com.namoadigital.prj001.ui.act005.Act005_Opc"
+            android:name="com.namoadigital.prj001.ui.act005.Act005Opc"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout="@layout/act005_opc_content" />

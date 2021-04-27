@@ -2552,7 +2552,7 @@ public class ToolBox_Inf {
         searchableSpinner.setmOption(mOption);
     }
 
-    private static Bitmap getCustomerImage(String path) {
+    public static Bitmap getCustomerImage(String path) {
         File image = new File(path);
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         Bitmap bitmap = BitmapFactory.decodeFile(image.getAbsolutePath(), bmOptions);

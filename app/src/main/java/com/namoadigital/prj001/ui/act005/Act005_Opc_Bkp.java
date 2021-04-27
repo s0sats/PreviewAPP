@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.databinding.Act005OpcContentBinding;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -26,7 +27,7 @@ import java.util.List;
  * Created by DANIEL.LUCHE on 31/01/2017.
  */
 
-public class Act005_Opc extends Fragment {
+public class Act005_Opc_Bkp extends Fragment {
 
     public static final String DRAWER_KEY_OPC_ID = "drawer_opc_id";
     public static final String DRAWER_KEY_OPC_ICON = "drawer_opc_icon";
@@ -37,6 +38,8 @@ public class Act005_Opc extends Fragment {
     public static final String DRAWER_OPC_ZONE = "drawer_opc_zone";
     public static final String DRAWER_OPC_OPERATION = "drawer_opc_operation";
     public static final String DRAWER_OPC_LOGOUT = "drawer_opc_logout";
+    //
+    private Act005OpcContentBinding binding;
     //
     private ImageView iv_logo;
     private ListView lv_opc;
@@ -67,51 +70,25 @@ public class Act005_Opc extends Fragment {
 
     public void setHmAux_Trans(HMAux hmAux_Trans, String mModule_Code, String mResource_Code) {
         this.hmAux_Trans = hmAux_Trans;
-        translateItens(mModule_Code, mResource_Code);
-        sAdapter.notifyDataSetChanged();
-        //
-        tv_unfinished_forms_label.setText(hmAux_Trans.get("lbl_unfinished_data"));
-        tv_sync_label.setText(hmAux_Trans.get("lbl_sync_data"));
-        tv_logout_label.setText(hmAux_Trans.get("lbl_logout"));
     }
 
-    private void translateItens(String mModule_Code, String mResource_Code) {
-        for (HMAux item : drawerItemList) {
-            if (hmAux_Trans.get(item.get(Act005_Opc.DRAWER_KEY_OPC_DESC)) != null) {
-                item.put(Act005_Opc.DRAWER_KEY_OPC_DESC, hmAux_Trans.get(item.get(Act005_Opc.DRAWER_KEY_OPC_DESC)));
-            } else {
-                item.put(Act005_Opc.DRAWER_KEY_OPC_DESC, ToolBox.setNoTrans(mModule_Code, mResource_Code, item.get(Act005_Opc.DRAWER_KEY_OPC_DESC)));
-            }
-        }
-    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.act005_opc_content, container, false);
+        binding = Act005OpcContentBinding.inflate(inflater,  container, false);
         //
-        iniVar(view);
+        iniVar();
         iniAction();
         //
-        return view;
+        return binding.getRoot();
 
     }
 
-    private void iniVar(View view) {
-        iv_logo = (ImageView) view.findViewById(R.id.act005_opc_iv_logo);
-        //
-        ll_unfinished_forms = (LinearLayout) view.findViewById(R.id.act005_opc_ll_unfinished_forms);
-        ll_sync = (LinearLayout) view.findViewById(R.id.act005_opc_ll_sync);
-        ll_logout = (LinearLayout) view.findViewById(R.id.act005_opc_ll_logout);
-        //
-        tv_unfinished_forms_label = (TextView) view.findViewById(R.id.act005_opc_tv_unfinished_forms);
-        tv_sync_label = (TextView) view.findViewById(R.id.act005_opc_tv_sync);
-        tv_logout_label = (TextView) view.findViewById(R.id.act005_opc_tv_logout);
-        //
-        lv_opc = (ListView) view.findViewById(R.id.act005_opc_lv_opt);
-        //
-        lvSetup();
+    private void iniVar() {
+
+        //setLabels();
+
     }
 
     private void lvSetup() {
@@ -130,29 +107,29 @@ public class Act005_Opc extends Fragment {
     }
 
     private void iniAction() {
-        lv_opc.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (delegate != null) {
-                    HMAux item = (HMAux) parent.getItemAtPosition(position);
-                    delegate.itemClicked(item.get(DRAWER_KEY_OPC_ID));
-                }
-            }
-        });
-
-        ll_sync.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                delegate.syncClicked();
-            }
-        });
-
-        ll_logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                delegate.logoutClicked();
-            }
-        });
+//        lv_opc.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                if (delegate != null) {
+//                    HMAux item = (HMAux) parent.getItemAtPosition(position);
+//                    delegate.itemClicked(item.get(DRAWER_KEY_OPC_ID));
+//                }
+//            }
+//        });
+//
+//        ll_sync.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                delegate.syncClicked();
+//            }
+//        });
+//
+//        ll_logout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                delegate.logoutClicked();
+//            }
+//        });
     }
 
     private List<HMAux> loadOptions() {
@@ -199,10 +176,10 @@ public class Act005_Opc extends Fragment {
     }
 
     public void setPendingForms(boolean status) {
-        if (status) {
-            ll_unfinished_forms.setVisibility(View.VISIBLE);
-        } else {
-            ll_unfinished_forms.setVisibility(View.GONE);
-        }
+//        if (status) {
+//            ll_unfinished_forms.setVisibility(View.VISIBLE);
+//        } else {
+//            ll_unfinished_forms.setVisibility(View.GONE);
+//        }
     }
 }
