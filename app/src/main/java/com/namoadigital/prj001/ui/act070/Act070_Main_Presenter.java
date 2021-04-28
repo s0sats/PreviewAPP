@@ -37,8 +37,6 @@ import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.T_TK_Get_Workgroup_List_Rec;
 import com.namoadigital.prj001.model.T_TK_Header_N_Group_Save_WG_Env;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_PDF;
-import com.namoadigital.prj001.receiver.WBR_DownLoad_Picture;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
@@ -1681,7 +1679,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
             Barrionuevo - 02-09-2020
             Parametro com a versão mais atual do form.
          */
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(customForm.getCustom_form_version()));
+        String formVersionTarget = getVersionToUse(customForm,ticketCtrl);
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, formVersionTarget);
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, ticketCtrl.getForm().getCustom_form_desc());
         bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
             getCustomFormDataOrNew(ticketCtrl)
@@ -1694,6 +1693,15 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT070);
         return bundle;
+    }
+
+    private String getVersionToUse(GE_Custom_Form customForm, TK_Ticket_Ctrl ticketCtrl) {
+        if(ticketCtrl.getForm() != null){
+            return String.valueOf(ticketCtrl.getForm().getCustom_form_version());
+        }
+        //
+        return String.valueOf(customForm.getCustom_form_version());
+
     }
 
     /**
