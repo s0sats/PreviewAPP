@@ -151,8 +151,11 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), true);
         } else {
             if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1 )) {
-                // mudar mensagem
-                ToolBox_Inf.showNoConnectionDialog(context);
+                //LUCHE - 28/04/2021 - Modificado msg para msg traduzida.
+                mView.showMsg(
+                        hmAux_Trans.get("alert_serial_offline_not_found_ttl"),
+                        hmAux_Trans.get("alert_serial_offline_not_found_msg")
+                );
             } else {
                 defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), true);
             }
