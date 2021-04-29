@@ -291,6 +291,8 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
         while (cursor.moveToNext()) {
             serial_tmp = cursor.getInt(cursor.getColumnIndex(SERIAL_TMP));
         }
+        //
+        cursor.close();
         //Seta o novo valor no tmp no serial e atualiza pk na listagem de tracking
         //
         if (serial_tmp != 0) {
@@ -401,6 +403,8 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                 while (cursor.moveToNext()) {
                     serial_tmp = cursor.getInt(cursor.getColumnIndex(SERIAL_TMP));
                 }
+                //
+                cursor.close();
                 //Seta o novo valor no tmp no serial e atualiza pk na listagem de tracking
                 //
                 if (serial_tmp != 0) {
