@@ -1695,8 +1695,25 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         return bundle;
     }
 
+    /**
+     * LUCHE - 28/04/2021
+     * Criado metodo que avalia qual versão de form deve usar. Como pode haver troca de versão de form
+     * durante a execução, caso o form ja existe localmente, com data_tmp, utiliza a versão criada.
+     * Caso form não tenha sido inciado, usa a versão mais atual da tabela de custom_form.
+     * Mesmo com o processamento do tk_ticket.updateTicketCtrlFormInProcess funcionando, no de etapas
+     * paralelas com o mesmo form, caso um deles não houve sido iniciado, o form mais recente era
+     * baixado e passava a versão errado, culminando na abertura de um novo form.
+     * Metodo criado para corrigir esse bug
+     *
+     * @param customForm
+     * @param ticketCtrl
+     * @return
+     */
     private String getVersionToUse(GE_Custom_Form customForm, TK_Ticket_Ctrl ticketCtrl) {
-        if(ticketCtrl.getForm() != null){
+        if(ticketCtrl.getForm() != null
+                && ticketCtrl.getForm().getCustom_form_data_tmp() != null
+                && ticketCtrl.getForm().getCustom_form_data_tmp() > 0
+        ){
             return String.valueOf(ticketCtrl.getForm().getCustom_form_version());
         }
         //
