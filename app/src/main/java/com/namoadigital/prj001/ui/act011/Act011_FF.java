@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.ctls.CustomFF;
@@ -27,6 +28,7 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -72,6 +74,8 @@ public class Act011_FF extends Fragment {
     private Act011_Main mAct = null;
     private Button go_to_history;
     private Button go_to_home;
+    //LUCHE - 29/04/2021 - Dado id pro scroll view.
+    private ScrollView svMain;
 
     public void setHmAux_Trans(HMAux hmAux_Trans) {
         this.hmAux_Trans = hmAux_Trans;
@@ -190,6 +194,7 @@ public class Act011_FF extends Fragment {
         tv_product_serial_infos = view.findViewById(R.id.tv_product_serial_infos);
         iv_editable_serial = view.findViewById(R.id.iv_editable_serial);
         cv_product_serial_card = view.findViewById(R.id.cv_product_serial_card);
+        svMain = view.findViewById(R.id.act011_ff_sv_main);
         //
         tv_drawer.setText(hmAux_Trans.get("btn_open_drawer"));
         tv_check.setText(hmAux_Trans.get("btn_check"));
@@ -213,7 +218,6 @@ public class Act011_FF extends Fragment {
             go_to_history.setVisibility(View.GONE);
             go_to_home.setVisibility(View.GONE);
         }
-
     }
 
     private void iniActions() {
@@ -413,6 +417,15 @@ public class Act011_FF extends Fragment {
         } else {
             tv_schedule_desc.setVisibility(View.GONE);
         }
+    }
+
+    /**
+     * LUCHE - 29/04/2021
+     * Metodo que faz scroll para o customFF passado. Falta arruma um offset, mas ta melhor que antes.
+     * @param customFF
+     */
+    public void scrollToSelectedView(CustomFF customFF){
+        svMain.smoothScrollTo((int) customFF.getX(), (int) (customFF.getY() - customFF.getHeight()));
     }
 
     /**
