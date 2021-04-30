@@ -11,6 +11,11 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
+/**
+ * LUCHE - 30/04/2021
+ * Corrigido a query, substituindo o segundo param customerGMT, pelo deviceGMT
+ */
+
 public class Sql_Act017_004 implements Specification {
     private long customer_code;
     private String selected_date;
@@ -52,8 +57,8 @@ public class Sql_Act017_004 implements Specification {
                 "  s.date_end ,\n" +
                 "  s.date_start ||' "+customerGMT+"' "+ MD_Schedule_ExecDao.SCHEDULE_DATE_START_FORMAT+",\n"+
                 "  s.date_end ||' "+customerGMT+"' "+MD_Schedule_ExecDao.SCHEDULE_DATE_END_FORMAT+",\n"+
-                "  strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n"+
-                "  (strftime('%s',s.date_start ||' "+customerGMT+"','"+customerGMT+"') * 1000)  "+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+",\n"+
+                "  strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+deviceGMT+"') "+Act017_Main.ACT017_ADAPTER_DATE_REF+",\n"+
+                "  (strftime('%s',s.date_start ||' "+customerGMT+"','"+deviceGMT+"') * 1000)  "+Act017_Main.ACT017_ADAPTER_DATE_REF_MS+",\n"+
                 "  s.comments\n,"+
                 "  s.schedule_prefix||'.'||s.schedule_code||'.'||s.schedule_exec "+ MD_Schedule_ExecDao.SCHEDULE_PK +", \n "+
                 "  s.schedule_prefix,\n" +
@@ -86,12 +91,12 @@ public class Sql_Act017_004 implements Specification {
                 "                       '"+ ConstantBaseApp.SYS_STATUS_DONE+"',\n" +
                 "                       '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"'\n" +
                 "                      )\n " +
-                "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"') = '"+selected_date+"') \n" +
+                "      AND ('"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start||'"+customerGMT+"','"+deviceGMT+"') = '"+selected_date+"') \n" +
                 "      AND ('"+serial_id+"' is null or s.serial_id like '%"+serial_id+"%' or s.serial_id like '%"+serial_id+"%' ) \n" +
                 "      AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') \n" +
-                "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))  and s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"')) \n" +
+                "      AND ('"+filter_only_delay+"' is null or ( (strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+deviceGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))  and s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"')) \n" +
                 "  ORDER BY\n" +
-                "      strftime('%Y-%m-%d %H:%M',s.date_start ||' "+customerGMT+"','"+customerGMT+"'), \n" +
+                "      strftime('%Y-%m-%d %H:%M',s.date_start ||' "+customerGMT+"','"+deviceGMT+"'), \n" +
                 "      CASE WHEN s.status = '"+Constant.SYS_STATUS_PROCESS+"' THEN 0\n" +
                 "           WHEN s.status = '"+Constant.SYS_STATUS_WAITING_SYNC+"' THEN 1\n" +
                 "           WHEN s.status = '"+Constant.SYS_STATUS_SCHEDULE+"' THEN 2\n" +
