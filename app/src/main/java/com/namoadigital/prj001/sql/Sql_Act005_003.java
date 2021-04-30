@@ -36,6 +36,9 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * LUCHE - 08/04/2020
  * Modificado query adicionando filtro do modulo de ticket, caso usr tenha acesso tb o considera, se não, não.
  *
+ * LUCHE - 30/04/2021
+ * - Corrigido query, substituindo add o customerGMT concatenado na data e tb o param do time zone do device para converter o resultado para o timezone correto
+ *
  */
 
 public class Sql_Act005_003 implements Specification {
@@ -67,7 +70,7 @@ public class Sql_Act005_003 implements Specification {
                         "   s.customer_code = '"+customer_code+"' \n" +
                         "   and s.status = '"+ Constant.SYS_STATUS_SCHEDULE+"'\n" +
                         "   and s.schedule_type in ('"+ ConstantBaseApp.MD_SCHEDULE_TYPE_FORM +"' "+scheduleTypeTicket+")\n" +
-                        "   and (strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))  \n"
+                        "   and (strftime('%Y-%m-%d',s.date_start||'"+customerGMT+"','"+deviceGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))  \n"
                 )
                 .append(";")
                 //.append(BADGE_SCHEDULED_QTY)

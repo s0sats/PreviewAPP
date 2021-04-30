@@ -47,6 +47,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  *
  * LUCHE - 03/04/2020
  * Modificado query add filtro dos status que devem aparecer no calendario, corrindo bug de clicar me item sem nada abrir a adata
+ *
+ * LUCHE - 30/04/2021
+ * - Corrigido a query, substituindo o segundo param customerGMT, pelo deviceGMT
  */
 
 public class Sql_Act016_001 implements Specification {
@@ -72,10 +75,10 @@ public class Sql_Act016_001 implements Specification {
     private void buildFinalSql(boolean filter_form, boolean filter_form_ap, boolean filter_ticket) {
         sql_form =  UNION_ALL +
                     "   \nSELECT\n" +
-                    "      strftime('%Y-%m-%d',s.date_start||' "+customerGMT+"','"+customerGMT+"') schedule_date_start,\n" +
-                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) "+CalendarView.DELAYED_COUNT+ ",\n" +
+                    "      strftime('%Y-%m-%d',s.date_start||' "+customerGMT+"','"+deviceGMT+"') schedule_date_start,\n" +
+                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+deviceGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) "+CalendarView.DELAYED_COUNT+ ",\n" +
                     "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"') "+CalendarView.INPROCESSING_COUNT+ ",\n" +
-                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') "+CalendarView.SCHEDULED_COUNT+ ",    \n" +
+                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+deviceGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') "+CalendarView.SCHEDULED_COUNT+ ",    \n" +
                     "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
                     "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') "+CalendarView.DONE_COUNT+", \n" +
                     "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"') "+CalendarView.NOT_EXECUTED_COUNT+"\n" +
@@ -115,10 +118,10 @@ public class Sql_Act016_001 implements Specification {
         sql_ticket =
                 UNION_ALL +
                 "   \nSELECT\n" +
-                "      strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+customerGMT+"') schedule_date_start,\n" +
-                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+customerGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) "+CalendarView.DELAYED_COUNT+ ",\n" +
+                "      strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+deviceGMT+"') schedule_date_start,\n" +
+                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+deviceGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) "+CalendarView.DELAYED_COUNT+ ",\n" +
                 "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"') "+CalendarView.INPROCESSING_COUNT+ ",\n" +
-                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+customerGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') "+CalendarView.SCHEDULED_COUNT+ ",    \n" +
+                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+deviceGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') "+CalendarView.SCHEDULED_COUNT+ ",    \n" +
                 "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
                 "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') "+CalendarView.DONE_COUNT+", \n" +
                 "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"') "+CalendarView.NOT_EXECUTED_COUNT+"\n" +
