@@ -233,7 +233,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private boolean isOffHandForm=false;
     private Bundle act081Bundle;
     private String room_code;
-    private CustomFF.ICustomFFFocus onBackFocusEvent;
+    private CustomFF.ICustomFFDotsDialogDismiss onBackFocusEvent;
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -744,17 +744,20 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
         /**
          * LUCHE - 29/04/2021
-         * Implmentado interface aciona após o dismiss do dialog e faz o scroll para a view aberta.
+         * Implmentado interface aciona após o dismiss do dialog.
+         * Nesse caso,faz o scroll para a view aberta.
          */
-        onBackFocusEvent = new CustomFF.ICustomFFFocus() {
+        onBackFocusEvent = new CustomFF.ICustomFFDotsDialogDismiss() {
             @Override
-            public void OnBackfocusTo(CustomFF customFF) {
+            public void OnDotsDialogDismiss(CustomFF customFF) {
+                //Remove o foco da view atual
                 View currentFocus = getCurrentFocus();
                 if (currentFocus != null) {
                     currentFocus.clearFocus();
                 }
                 customFF.requestFocus();
-                //
+                //Inicia processo de scroll, buscando o fragment atual e depois chamando o metodo que
+                //faz o scroll
                 int currentItem = pager.getCurrentItem();
                 Fragment fragment = screens.get(currentItem);
                 if (fragment instanceof Act011_FF) {
@@ -1384,7 +1387,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 //Implments PhotoInterface
                 customFF.setOnPhotoClickListener(onPhotoClick);
                 //Implments da interface que faz o scroll ao rodar o dismiss do dialog dos dots
-                customFF.setOnBackfocusClickListener(onBackFocusEvent);
+                customFF.setOnDotsDialogDismiss(onBackFocusEvent);
             }
 
             for (int i = 1; i <= pages; i++) {

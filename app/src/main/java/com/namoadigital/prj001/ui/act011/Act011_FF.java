@@ -425,7 +425,11 @@ public class Act011_FF extends Fragment {
      * @param customFF
      */
     public void scrollToSelectedView(CustomFF customFF){
-        svMain.smoothScrollTo((int) customFF.getX(), (int) (customFF.getY() - customFF.getHeight()));
+        try {
+            svMain.smoothScrollTo((int) customFF.getX(), (int) (customFF.getY() - customFF.getHeight()));
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }
     }
 
     /**
