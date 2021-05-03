@@ -1014,12 +1014,70 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void onChangeCustomerClick() {
+        if (getSendBadgeQty() > 0 || getImagesToUpload() > 0) {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("alert_changecustomer_data_to_send_ttl"),
+                    hmAux_Trans.get("alert_changecustomer_data_to_send_msg"),
+                    null,
+                    -1,
+                    null
+            );
 
+        } else {
+            if(!ToolBox_Inf.isLocalDatetimeOk(context)){
+                handleInvalidLocalDatetime();
+            }else {
+                ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans.get("drawer_change_customer_alert_ttl"),
+                    hmAux_Trans.get("drawer_change_customer_alert_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //if(ToolBox_Con.isOnline(context)) {
+                            //Reseta preferencias do Customer e volta para
+                            //Act002 - lista de customer
+                            changeCustomer();
+//                                }else{
+//                                    ToolBox_Inf.showNoConnectionDialog(Act005_Main.this);
+//                                }
+                        }
+                    },
+                    0
+                );
+            }
+        }
     }
 
     @Override
     public void onLogoutClick() {
+        if (getSendBadgeQty() > 0 || getImagesToUpload() > 0) {
+            //
+            callSendAction("LOGOUT");
+        } else if (getPendingForms()) {
+            ToolBox.alertMSG_YES_NO(
+                    Act005_Main.this,
+                    hmAux_Trans.get("alert_pending_data_ttl"),
+                    hmAux_Trans.get("alert_pending_form_logout_msg"),
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mPresenter.showLogoutDialog();
+                        }
+                    },
+                    2,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+                        }
+                    }
+            );
 
+        } else {
+            mPresenter.showLogoutDialog();
+        }
     }
 
     private void initializeInvalidDatetimeViews() {

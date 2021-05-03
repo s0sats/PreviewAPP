@@ -81,7 +81,7 @@
         android:clickable="true"
         android:orientation="vertical">
 
-        <fragment
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/act005_frag_opc"
             android:name="com.namoadigital.prj001.ui.act005.Act005Opc"
             android:layout_width="match_parent"

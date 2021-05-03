@@ -63,8 +63,11 @@ class Act005Opc : Fragment() {
     }
 
     private fun iniVars() {
+//        if(!this::hmAux_Trans.isInitialized){
+//            hmAux_Trans = HMAux()
+//        }
         setLabels()
-        setSetupViews()
+        //setSetupViews()
     }
 
     fun setHmAux_Trans(hmAux_Trans: HMAux){
@@ -79,11 +82,11 @@ class Act005Opc : Fragment() {
         with(binding){
             act005OpcTvPendencies.text = hmAux_Trans.get("lbl_unfinished_data")
             act005OpcTvHistoric.text = hmAux_Trans.get("lbl_historic")
-            act005OpcTvEnableNfc.text = hmAux_Trans.get("lbl_historic")
-            act005OpcTvDisableNfc.text = hmAux_Trans.get("lbl_historic")
-            act005OpcTvSupportData.text = hmAux_Trans.get("lbl_historic")
-            act005OpcTvChangeCustomer.text = hmAux_Trans.get("lbl_historic")
-            act005OpcTvLogout.text = hmAux_Trans.get("lbl_historic")
+            act005OpcTvEnableNfc.text = hmAux_Trans.get("toolbar_enable_nfc")
+            act005OpcTvDisableNfc.text = hmAux_Trans.get("toolbar_cancel_nfc")
+            act005OpcTvSupportData.text = hmAux_Trans.get("toolbar_support")
+            act005OpcTvChangeCustomer.text = hmAux_Trans.get("lbl_change_customer")
+            act005OpcTvLogout.text = hmAux_Trans.get("lbl_logout")
         }
     }
 
