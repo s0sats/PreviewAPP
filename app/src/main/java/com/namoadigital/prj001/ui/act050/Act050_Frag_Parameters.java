@@ -487,7 +487,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
     public ArrayList<HMAux>  generatePOOptionForSS(List<SO_Favorite_Contract> contracts, Integer contract_code) {
         for(SO_Favorite_Contract contract: contracts){
-            if(contract.getContractCode() == contract_code) {
+            if(contract.getContractCode().equals(contract_code)) {
                 return  generateSSPoOption(contract.getPoList());
             }
         }
