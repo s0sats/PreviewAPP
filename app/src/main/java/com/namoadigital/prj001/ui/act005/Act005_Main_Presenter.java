@@ -1,8 +1,11 @@
 package com.namoadigital.prj001.ui.act005;
 
+import android.graphics.Bitmap;
+
 import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 
@@ -82,4 +85,34 @@ public interface Act005_Main_Presenter {
     ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn> getTicketSaveActReturns(String jsonRet, ArrayList<WS_TK_Ticket_Save.TicketSaveActReturn> checkinReturns);
 
     void processWS_SaveReturn(String wsRet);
+
+    /**
+     * Metodo que retorna se deve ser exibido ou não a opção de habilitar NFC
+     * @return
+     */
+    boolean showEnableNfcOption();
+
+    /**
+     * Metodo que retorna se deve ser exibido ou não a opção de desabilitar NFC
+     * @return
+     */
+    boolean showDisableNfcOption();
+
+    /**
+     * Metodo que retorna se deve ser exibido ou não a opção de changeCustomer
+     * @return
+     */
+    boolean showChangeCustomerOption();
+
+    /**
+     * Retorna o Bitmap do logo do customer
+     *  - Null se existe link pra donwload e não existe logo local
+     *  - Logo da namoa, caso não tenha logo definido pro customer
+     *  - Logo do customer quando houver ja baixado.
+     * @return
+     */
+    @Nullable
+    Bitmap getLogoBitmap();
+
+    EV_User getEv_user();
 }

@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.worker;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
+import android.content.Intent;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
@@ -12,6 +14,7 @@ import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class Work_DownLoad_Customer_Logo extends Worker {
@@ -78,6 +81,7 @@ public class Work_DownLoad_Customer_Logo extends Worker {
                     //Extensão sempre .png ,
                     //pois no android le a imagens independente da extensão
                     ToolBox_Inf.renameDownloadFileInfV2(Constant.IMG_PATH, logo_prefix, "", ".png");
+                    sendCustomerBR();
                 } else {
                     throw new Exception("ImgIntegrity");
                 }
@@ -93,6 +97,14 @@ public class Work_DownLoad_Customer_Logo extends Worker {
                 ToolBox_Inf.cancelNotification(getApplicationContext(), Constant.NOTIFICATION_DOWNLOAD);
             }
         }
+    }
+
+    private void sendCustomerBR() {
+        Intent mIntent = new Intent();
+        mIntent.setAction(ConstantBaseApp.BR_CUSTOMER_LOGO_ACTION);
+        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        //
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(mIntent);
     }
 
     @Override

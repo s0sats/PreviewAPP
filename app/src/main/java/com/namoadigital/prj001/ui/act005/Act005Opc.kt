@@ -1,23 +1,27 @@
 package com.namoadigital.prj001.ui.act005
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.databinding.Act005OpcContentBinding
-import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.HashMap
+import com.namoadigital.prj001.util.ConstantBaseApp
+import java.util.*
 
 class Act005Opc : Fragment() {
     private val ARGUMENT_HMAUX_TRANS = "ARGUMENT_HMAUX_TRANS"
     private lateinit var binding: Act005OpcContentBinding
     private lateinit var hmAux_Trans: HMAux
-
     private var delegate: Act005DrawerInteraction? = null
+    private lateinit var logoReceiver: CustomerLogoReceiver
 
     interface Act005DrawerInteraction{
         fun getCustomerLogo(): Bitmap
@@ -67,7 +71,14 @@ class Act005Opc : Fragment() {
 //            hmAux_Trans = HMAux()
 //        }
         setLabels()
-        //setSetupViews()
+        setSetupViews()
+        registerLogoReceiver()
+    }
+
+    private fun registerLogoReceiver() {
+        if(!this::logoReceiver.isInitialized){
+            logoReceiver = CustomerLogoReceiver()
+        }
     }
 
     fun setHmAux_Trans(hmAux_Trans: HMAux){
@@ -80,8 +91,9 @@ class Act005Opc : Fragment() {
 
     private fun setLabels() {
         with(binding){
+            act005OpcTvLoadingLogo.text = hmAux_Trans.get("drawer_loading_lbl")
             act005OpcTvPendencies.text = hmAux_Trans.get("lbl_unfinished_data")
-            act005OpcTvHistoric.text = hmAux_Trans.get("lbl_historic")
+            act005OpcTvHistoric.text = hmAux_Trans.get("drawer_historic_lbl")
             act005OpcTvEnableNfc.text = hmAux_Trans.get("toolbar_enable_nfc")
             act005OpcTvDisableNfc.text = hmAux_Trans.get("toolbar_cancel_nfc")
             act005OpcTvSupportData.text = hmAux_Trans.get("toolbar_support")
@@ -93,9 +105,8 @@ class Act005Opc : Fragment() {
     private fun setSetupViews() {
         with(binding){
             val innerDelegate = delegate
-            act005OpcIvLogo.apply {
-                setImageBitmap(innerDelegate?.getCustomerLogo())
-            }
+            setCustomerLogoUI()
+            //
             act005OpcTvEnableNfc.apply {
                 visibility =
                         if(innerDelegate == null || !innerDelegate.showEnableNfcOption()){
@@ -125,9 +136,50 @@ class Act005Opc : Fragment() {
         updatePendenceStatus()
     }
 
+    private fun setCustomerLogoUI(){
+        binding.act005OpcIvLogo.apply {
+            val customerLogo = delegate?.getCustomerLogo()
+            binding.act005OpcClLogo.visibility = if(customerLogo != null){
+                View.GONE
+            }else{
+                View.VISIBLE
+            }
+            setImageBitmap(customerLogo)
+        }
+    }
+
+    fun revalidateOptionSetup(){
+        setSetupViews()
+    }
+
+    private fun startNStopCustomerLogoReceiver(start: Boolean){
+        val filter = IntentFilter()
+        filter.addAction(ConstantBaseApp.BR_CUSTOMER_LOGO_ACTION)
+        filter.addCategory(Intent.CATEGORY_DEFAULT)
+        context?.let {
+            if(start) {
+                LocalBroadcastManager.getInstance(it).registerReceiver(logoReceiver, filter)
+            }else{
+                LocalBroadcastManager.getInstance(it).unregisterReceiver(logoReceiver)
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         updatePendenceStatus()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        //
+        startNStopCustomerLogoReceiver(true)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        //
+        startNStopCustomerLogoReceiver(false)
     }
 
     private fun updatePendenceStatus() {
@@ -168,4 +220,9 @@ class Act005Opc : Fragment() {
         }
     }
 
+    inner class CustomerLogoReceiver : BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            setCustomerLogoUI()
+        }
+    }
 }

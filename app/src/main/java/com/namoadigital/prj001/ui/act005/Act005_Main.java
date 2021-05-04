@@ -237,6 +237,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //ToolBox_Inf.scheduleWorkQuarterChatRefresh();
         //
         ToolBox_Inf.scheduleDownloadPictureWork(context);
+        ToolBox_Inf.scheduleDownloadCustomerLogoWork(context);
         //
         /*
             BARRIONUEVO 02-02-2021
@@ -568,6 +569,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         transList.add("alert_gps_denied_permission_msg");
         transList.add("alert_gps_never_ask_again_permission_ttl");
         transList.add("alert_gps_never_ask_again_permission_msg");
+        //
+        transList.add("drawer_historic_lbl");
+        transList.add("drawer_loading_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -964,13 +968,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @NotNull
     @Override
-    public Bitmap getCustomerLogo() {
-        Bitmap bitmap = ToolBox_Inf.getCustomerImage(ToolBox_Inf.getCustomerLogoPath(context));
-        if(bitmap == null){
-            bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.logo_namoa);
-        }
-        return bitmap;
-    }
+    public Bitmap getCustomerLogo() {return mPresenter.getLogoBitmap();}
 
     @Override
     public boolean hasPendencies() {
@@ -979,37 +977,56 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public boolean showEnableNfcOption() {
-        return false;
+        return mPresenter.showEnableNfcOption();
     }
 
     @Override
     public boolean showDisableNfcOption() {
-        return false;
+        return mPresenter.showDisableNfcOption();
     }
 
     @Override
     public boolean showChangeCustomerOption() {
-        return false;
+        return mPresenter.showChangeCustomerOption();
     }
 
     @Override
     public void onHistoricClick() {
-
+        callAct014(context);
     }
 
     @Override
     public void onEnableNfcClick() {
+        showDrawerAlertConfirm(
+            hmAux_Trans.get("alert_enable_nfc_ttl"),
+            hmAux_Trans.get("alert_enable_nfc_msg"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mPresenter.executeEnableNFC();
+                }
+            }
+        );
 
     }
 
     @Override
     public void onDisableNfcClick() {
-
+        showDrawerAlertConfirm(
+            hmAux_Trans.get("alert_cancel_nfc_ttl"),
+            hmAux_Trans.get("alert_cancel_nfc_msg"),
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mPresenter.executeCancelNFC();
+                }
+            }
+        );
     }
 
     @Override
     public void onSupportDataClick() {
-
+        mPresenter.showSupportDialog();
     }
 
     @Override
@@ -1028,23 +1045,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             if(!ToolBox_Inf.isLocalDatetimeOk(context)){
                 handleInvalidLocalDatetime();
             }else {
-                ToolBox.alertMSG(
+                ToolBox.alertMSG_YES_NO(
                     context,
                     hmAux_Trans.get("drawer_change_customer_alert_ttl"),
                     hmAux_Trans.get("drawer_change_customer_alert_msg"),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            //if(ToolBox_Con.isOnline(context)) {
-                            //Reseta preferencias do Customer e volta para
-                            //Act002 - lista de customer
                             changeCustomer();
-//                                }else{
-//                                    ToolBox_Inf.showNoConnectionDialog(Act005_Main.this);
-//                                }
                         }
                     },
-                    0
+                    1
                 );
             }
         }
@@ -1078,6 +1089,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         } else {
             mPresenter.showLogoutDialog();
         }
+    }
+
+    private void showDrawerAlertConfirm(String ttl, String msg, DialogInterface.OnClickListener clickListener) {
+        ToolBox.alertMSG_YES_NO(
+            context,
+            ttl,
+            msg,
+            clickListener,
+            1
+        );
     }
 
     private void initializeInvalidDatetimeViews() {
@@ -2410,13 +2431,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             case Act005_Main.WS_PROCESS_ENABLE_NFC:
                 alertTitle = hmAux_Trans.get("alert_enable_nfc_finish_ttl");
                 alertMsg = hmAux_Trans.get("alert_enable_nfc_finish_msg");
-                invalidateOptionsMenu();
+                updateDrawerInfo();
                 break;
 
             case Act005_Main.WS_PROCESS_CANCEL_NFC:
                 alertTitle = hmAux_Trans.get("alert_cancel_nfc_finish_ttl");
                 alertMsg = hmAux_Trans.get("alert_cancel_nfc_finish_msg");
-                invalidateOptionsMenu();
+                updateDrawerInfo();
                 break;
 
             case Act005_Main.WS_PROCESS_SUPPORT:
@@ -2441,6 +2462,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 0
         );
 
+    }
+
+    /**
+     * LUCHE - 04/05/2021
+     * Metodo que chama atualização das opções do drawer
+     */
+    private void updateDrawerInfo() {
+        if(fragOpc != null){
+            fragOpc.revalidateOptionSetup();
+        }
     }
 
     @Override
@@ -2551,12 +2582,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             ((MenuBuilder) menu).setOptionalIconsVisible(true);
         }
 
-        EV_UserDao userDao = new EV_UserDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
-        EV_User user = userDao.getByString(
-                new EV_User_Sql_001(
-                        ToolBox_Con.getPreference_User_Code(getApplicationContext())
-                ).toSqlQuery()
-        );
+        EV_User user = mPresenter.getEv_user();
 
         //
         //Menu Namoa logo

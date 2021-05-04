@@ -5,8 +5,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -26,6 +29,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Logout_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
@@ -40,6 +44,8 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DataPackage;
+import com.namoadigital.prj001.model.EV_User;
+import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
@@ -72,8 +78,11 @@ import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.sql.CH_Message_Sql_025;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_004;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_005;
+import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_002;
@@ -1934,6 +1943,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         return okInboundItem;
     }
+
 //    /**
 //     * BARRIONUEVO - 18-11-2020
 //     * Metodo responsavel por verificar a ultima data valida.
@@ -1958,4 +1968,70 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 //        ToolBox_Con.setBooleanPreference(context, ConstantBaseApp.DATETIME_IS_VALID, false);
 //        return false;
 //    }
+
+    //region UI 4.0
+    @Override
+    public EV_User getEv_user() {
+        EV_UserDao userDao = new EV_UserDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+        return userDao.getByString(
+            new EV_User_Sql_001(
+                ToolBox_Con.getPreference_User_Code(context)
+            ).toSqlQuery()
+        );
+    }
+
+    private ArrayList<EV_User_Customer> getCustomerAccessList() {
+        return (ArrayList<EV_User_Customer>) userCustomerDao.query(
+            new EV_User_Customer_Sql_001(
+                ToolBox_Con.getPreference_User_Code(context)
+            ).toSqlQuery()
+        );
+    }
+
+    @Override
+    public boolean showEnableNfcOption() {
+        EV_User ev_user = getEv_user();
+        return ev_user != null && ev_user.getNfc_blocked() == 1;
+    }
+
+
+    @Override
+    public boolean showDisableNfcOption() {
+        EV_User ev_user = getEv_user();
+        return ev_user != null && ev_user.getExist_nfc() == 1;
+    }
+
+    @Override
+    public boolean showChangeCustomerOption() {
+        ArrayList<EV_User_Customer> customerAccessList = getCustomerAccessList();
+        return customerAccessList != null && customerAccessList.size() > 1;
+    }
+
+    @Override
+    public Bitmap getLogoBitmap() {
+        EV_User_Customer customer = getEvUserCustomer();
+        if(customer != null && customer.getLogo_url() != null){
+            Bitmap bm = ToolBox_Inf.getCustomerImage(ToolBox_Inf.getCustomerLogoPath(context));
+            return bm;
+        }
+        return BitmapFactory.decodeResource(context.getResources(),R.drawable.logo_namoa);
+    }
+
+    /**
+     * LUCHE - 04/05/2021
+     * Metodo que retorna o EV_User_Customer do customer atual
+     * @return
+     */
+    private EV_User_Customer getEvUserCustomer() {
+        return userCustomerDao.getByString(
+            new EV_User_Customer_Sql_002(
+                    ToolBox_Con.getPreference_User_Code(context),
+                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+            ).toSqlQuery()
+        );
+    }
+
+    //endregion
+
+
 }

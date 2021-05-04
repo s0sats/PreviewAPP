@@ -12,14 +12,49 @@
     <ImageView
         android:id="@+id/act005_opc_iv_logo"
         android:layout_width="0dp"
-        app:layout_constraintWidth_default="spread"
         android:layout_height="150dp"
-        app:layout_constraintHeight_default="wrap"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="spread"
         app:srcCompat="@drawable/logo_namoa" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/act005_opc_cl_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/act005_opc_iv_logo"
+        app:layout_constraintEnd_toEndOf="@id/act005_opc_iv_logo"
+        app:layout_constraintStart_toStartOf="@id/act005_opc_iv_logo"
+        app:layout_constraintTop_toTopOf="@id/act005_opc_iv_logo">
+
+        <ProgressBar
+            android:id="@+id/act005_opc_pb_loading_logo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:max="100"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/act005_opc_tv_loading_logo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            tools:text="Baixando logo"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/act005_opc_pb_loading_logo"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="wrap" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <ScrollView
         android:id="@+id/act005_opc_sv_main"
@@ -60,6 +95,7 @@
                 android:id="@+id/act005_opc_tv_historic"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@drawable/namoa_icon_bg_states"
                 android:drawablePadding="10dp"
                 android:paddingStart="19dp"
                 android:paddingTop="10dp"
@@ -75,10 +111,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/act005_opc_tv_pendencies" />
 
+
             <TextView
                 android:id="@+id/act005_opc_tv_enable_nfc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@drawable/namoa_icon_bg_states"
                 android:drawablePadding="10dp"
                 android:paddingStart="19dp"
                 android:paddingTop="10dp"
@@ -99,6 +137,7 @@
                 android:id="@+id/act005_opc_tv_disable_nfc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@drawable/namoa_icon_bg_states"
                 android:drawablePadding="10dp"
                 android:paddingStart="19dp"
                 android:paddingTop="10dp"
@@ -118,6 +157,7 @@
                 android:id="@+id/act005_opc_tv_support_data"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@drawable/namoa_icon_bg_states"
                 android:drawablePadding="10dp"
                 android:paddingStart="19dp"
                 android:paddingTop="10dp"
@@ -146,6 +186,7 @@
                 android:id="@+id/act005_opc_tv_change_customer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@drawable/namoa_icon_bg_states"
                 android:drawablePadding="10dp"
                 android:paddingStart="19dp"
                 android:paddingTop="10dp"
@@ -165,6 +206,7 @@
                 android:id="@+id/act005_opc_tv_logout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:background="@drawable/namoa_icon_bg_states"
                 android:drawablePadding="10dp"
                 android:paddingStart="19dp"
                 android:paddingTop="10dp"

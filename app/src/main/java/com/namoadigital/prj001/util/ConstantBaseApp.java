@@ -855,4 +855,6 @@ public class ConstantBaseApp extends ConstantBase {
     //Chave de Bundle act069, 74 e 76
     public static final String FILTER_TEXT = "FILTER_TEXT";
 
+    public static final String BR_CUSTOMER_LOGO_ACTION = "CUSTOMER_LOGO_FILTER";
+
 }

@@ -7681,7 +7681,7 @@ public class ToolBox_Inf {
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
                 Work_DownLoad_Customer_Logo.WORKER_TAG,
-                ExistingWorkPolicy.KEEP,
+                ExistingWorkPolicy.APPEND_OR_REPLACE,
                 workDownloadCustomerLogoRequest
             );
     }
