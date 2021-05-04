@@ -362,28 +362,34 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
                         tv_action_comment_val.setText(action.getAction_comments());
                     }
                     actionPhotoLocalPath = action.getAction_photo_local();
-                    if (actionPhotoLocalPath == null || actionPhotoLocalPath.isEmpty()) {
+                    if ((actionPhotoLocalPath == null || actionPhotoLocalPath.isEmpty())
+                            && (action.getAction_photo_url() == null || action.getAction_photo_url().isEmpty())
+                            && (action.getAction_photo_name() == null || action.getAction_photo_name().isEmpty())
+
+                    ) {
                         ll_open_photo.setVisibility(View.GONE);
                     } else {
                         try {
                             Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
                             if (bitmap == null) {
-                                Drawable dPlaceholder = getResources().getDrawable(R.drawable.sand_watch_transp);
-                                dPlaceholder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
-                                iv_action_photo.setImageDrawable(dPlaceholder);
+                                setImagePlaceholder();
                             } else {
                                 iv_action_photo.setImageBitmap(bitmap);
                             }
                         } catch (NullPointerException e) {
-                            Bitmap placeholder = BitmapFactory.decodeResource(context.getResources(),
-                                    R.drawable.sand_watch_transp);
-                            iv_action_photo.setImageBitmap(placeholder);
+                            setImagePlaceholder();
                             e.printStackTrace();
                         }
                     }
                 }
             }
         }
+    }
+
+    private void setImagePlaceholder() {
+        Drawable dPlaceholder = getResources().getDrawable(R.drawable.sand_watch_transp);
+        iv_action_photo.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
+        iv_action_photo.setImageDrawable(dPlaceholder);
     }
 
     @Override

@@ -7790,6 +7790,13 @@ public class ToolBox_Inf {
         ToolBox_Inf.scheduleDownloadCustomerLogoWork(context);
     }
 
+    public static void startPdfPhotoDownloadWorkers(Context context) {
+        //Como será possivel baixar ticket do customer logado, pode ser chamada a rotina de download.
+        //Esse as definição mudar, rever, pois seria necessario chamar essa serviço para cada customer code diferente.
+        ToolBox_Inf.scheduleDownloadPictureWork(context);
+        ToolBox_Inf.scheduleDownloadPdfWork(context);
+    }
+
     /**
      * Metodo que faz o agendamento do Work verifica msg do chat a cada 15 min
      * Configuração:

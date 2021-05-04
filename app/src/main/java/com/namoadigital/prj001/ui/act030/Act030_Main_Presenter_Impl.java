@@ -175,7 +175,12 @@ public class Act030_Main_Presenter_Impl implements Act030_Main_Presenter {
         } else {
 
             ArrayList<MD_Product_Serial> results = processEqualCheck(serial_list);
-
+            //LUCHE - 03/05/2021 - Aplicado corte limite de 100 item para evitar crash ao passar
+            //lista via bundle e compatibilizar o comportamento com o da busca online.
+            if(serial_list != null && serial_list.size() > 101){
+                record_page = 100;
+                serial_list = new ArrayList<>(serial_list.subList(0, 100));
+            }
             Bundle bundle = new Bundle();
             bundle.putString(MD_ProductDao.PRODUCT_ID, mdProduct != null ? mdProduct.getProduct_id() : "");
 

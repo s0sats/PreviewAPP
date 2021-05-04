@@ -1215,6 +1215,9 @@ public class TK_Ticket implements Cloneable, Serializable {
                 serverCtrl.copyCtrlStatusForInnerProcess();
                 //Atualiza custom_form_data_tmp com o do banco.
                 if(serverCtrl.getForm() != null){
+                    //LUCHE - 22/04/2021 - Correção form perdido ao trocar versão do form quando
+                    //ja existia um aberto localmente.
+                    serverCtrl.getForm().setCustom_form_version(dbTicketCtrl.getForm().getCustom_form_version());
                     serverCtrl.getForm().setCustom_form_data_tmp(dbTicketCtrl.getForm().getCustom_form_data_tmp());
                 }
             }

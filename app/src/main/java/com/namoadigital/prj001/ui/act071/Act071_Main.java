@@ -447,6 +447,9 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
             MD_Schedule_Exec scheduleExec = mPresenter.getScheduleExec(mSchedulePrefix,mScheduleCode,mScheduleExec);
             if(scheduleExec != null) {
                 //
+                long lDate_start = ToolBox_Inf.dateToMilliseconds(scheduleExec.getDate_start() + " " + ToolBox_Con.getPreference_Customer_TMZ(context));
+                long lDate_end = ToolBox_Inf.dateToMilliseconds(scheduleExec.getDate_end() + " " + ToolBox_Con.getPreference_Customer_TMZ(context));
+                //
                 mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForSchedule(
                     mTicketID,
                     scheduleExec.getSerial_id(),
@@ -455,8 +458,8 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                     scheduleExec.getComments(),
                     ToolBox_Inf.getStepStartEndDateFormated(
                         context,
-                        scheduleExec.getDate_start() + " " + ToolBox_Con.getPreference_Customer_TMZ(context),
-                        scheduleExec.getDate_end() + " " + ToolBox_Con.getPreference_Customer_TMZ(context)
+                        ToolBox_Inf.millisecondsToString(lDate_start, "yyyy-MM-dd HH:mm:ss Z"),
+                        ToolBox_Inf.millisecondsToString(lDate_end, "yyyy-MM-dd HH:mm:ss Z")
                     )
                 );
             }

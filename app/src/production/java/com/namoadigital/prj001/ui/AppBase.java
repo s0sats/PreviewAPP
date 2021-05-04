@@ -1,10 +1,14 @@
 package com.namoadigital.prj001.ui;
 
 import android.app.Application;
+import android.app.NotificationManager;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoadigital.prj001.BuildConfig;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.receiver.WBR_Connections_Change;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -35,6 +39,8 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH;
+import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PENDENCY_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TICKET_JSON_PATH;
@@ -59,6 +65,8 @@ public class AppBase extends Application {
     public static final String CHAT_DIR = "/chat";
     public static final String UNSENT_IMGS_DIR = "/unsentImgs";
     public static final String TICKET_DIR = "/ticket";
+    public static final String NAMOA_PEND_INFO = "Namoa Pend. Info.";
+    public static final String NAMOA_NOTIF_INFO = "Namoa Notif. Info.";
     private static Thread.UncaughtExceptionHandler mDefaultUncaughtExceptionHandler;
 
     @Override
@@ -170,5 +178,19 @@ public class AppBase extends Application {
         Constant.HM_ICON_NAMOA = R.mipmap.ic_namoa;
         Constant.HM_ICON_NAMOA_GO_ACT021 = "com.namoadigital.prj001.ui.act021.Act021_Main";
         ConstantBase.AUTHORITIES_FOR_PROVIDER = BuildConfig.APPLICATION_ID + ".fileprovider";
+
+        /**
+         * Migração target28+
+         */
+        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+        ToolBox_Inf.createChannelNotification(getApplicationContext(), notificationManager, NAMOA_PEND_INFO, NotificationManager.IMPORTANCE_LOW, PENDENCY_CHANNEL_ID);
+        ToolBox_Inf.createChannelNotification(getApplicationContext(), notificationManager, NAMOA_NOTIF_INFO, NotificationManager.IMPORTANCE_DEFAULT, GENERIC_CHANNEL_ID);
+        registerConnectionsChanges();
+    }
+
+    private void registerConnectionsChanges() {
+        WBR_Connections_Change connectionsChange = new WBR_Connections_Change();
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(connectionsChange,intentFilter);
     }
 }

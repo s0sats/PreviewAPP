@@ -518,7 +518,7 @@ public class Act050_Main extends Base_Activity_Frag implements
             if(contract.getContractCode() == mSOCreationObj.getContract_code()){
                 if(contract.getPoList() != null){
                     for (SO_Favorite_PO po : contract.getPoList()) {
-                        if(po.getPoCode() != null  && po.getPoCode() == mSOCreationObj.getPo_code()){
+                        if(po.getPoCode() != null  && po.getPoCode().equals(mSOCreationObj.getPo_code())){
                            return po.getPipeline() != null ? po.getPipeline(): new ArrayList<SO_Favorite_Pipeline>() ;
                         }
                     }
@@ -569,7 +569,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public boolean hasValidPackageDefault(Integer contract_code_selected) {
-        if(contract_code_selected != mSoFavoriteItem.getContractCode()
+        if(!contract_code_selected.equals(mSoFavoriteItem.getContractCode())
         || mSoFavoriteItem.getPackDefault() == null
         || mSoFavoriteItem.getPackDefault().equals(Act050_Frag_SO.WITHOUT_PACK_DEFAULT_PENDING)){
             return false;

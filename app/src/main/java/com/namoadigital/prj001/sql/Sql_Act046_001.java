@@ -50,8 +50,8 @@ public class Sql_Act046_001 implements Specification {
         sql_form =
                 UNION_ALL +
                 "   \nSELECT\n" +
-                "      strftime('%Y-%m-%d',s.date_start,'"+customerGMT+"') schedule_date_start,\n" +
-                "      ((strftime('%Y-%m-%d',s.date_start ,'"+customerGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"')) and s.status = '" + Constant.SYS_STATUS_SCHEDULE + "' ) delayed_count\n" +
+                "      strftime('%Y-%m-%d',s.date_start||'"+customerGMT+"') schedule_date_start,\n" +
+                "      ((strftime('%Y-%m-%d',s.date_start||'"+customerGMT+"' ) <= strftime('%Y-%m-%d','now','"+deviceGMT+"')) and s.status = '" + Constant.SYS_STATUS_SCHEDULE + "' ) delayed_count\n" +
                 "     \n" +
                 "  FROM " + MD_Schedule_ExecDao.TABLE + " s\n" +
                 "  \n" +
