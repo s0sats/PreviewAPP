@@ -31,6 +31,9 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * LUCHE - 09/04/2020
  * Modificado query adicionando validação de acesso aos modulos Ticket e FormAp
  *
+ * LUCHE - 30/04/2021
+ * Corrigido a query, substituindo o segundo param customerGMT, pelo deviceGMT
+ *
  */
 
 public class Sql_Act017_003 implements Specification {
@@ -76,7 +79,7 @@ public class Sql_Act017_003 implements Specification {
                         "                       '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"'\n" +
                         "                      )\n " +
                         "       AND s.schedule_type in ('"+ ConstantBaseApp.MD_SCHEDULE_TYPE_FORM +"' "+scheduleTypeTicket+")\n" +
-                        "       AND ( '"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start||' "+customerGMT+"','"+customerGMT+"') = '"+selected_date+"' )\n" +
+                        "       AND ( '"+selected_date+"' is null or strftime('%Y-%m-%d',s.date_start||' "+customerGMT+"','"+deviceGMT+"') = '"+selected_date+"' )\n" +
                         "       \n" +
                         "     UNION  ALL \n" +
                         "        \n" +

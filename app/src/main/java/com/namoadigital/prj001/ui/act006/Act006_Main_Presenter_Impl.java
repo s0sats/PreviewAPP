@@ -22,7 +22,6 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,8 +150,11 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), true);
         } else {
             if (mdProduct == null || (mdProduct.getAllow_new_serial_cl() == 0 && mdProduct.getRequire_serial() == 1 )) {
-                // mudar mensagem
-                ToolBox_Inf.showNoConnectionDialog(context);
+                //LUCHE - 28/04/2021 - Modificado msg para msg traduzida.
+                mView.showMsg(
+                        hmAux_Trans.get("alert_serial_offline_not_found_ttl"),
+                        hmAux_Trans.get("alert_serial_offline_not_found_msg")
+                );
             } else {
                 defineSearchResultFlow(serial_list, (long) serial_list.size(), (long) serial_list.size(), true);
             }
@@ -206,7 +208,13 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         } else {
 
             ArrayList<MD_Product_Serial> results = processEqualCheck(serial_list);
-
+            //LUCHE - 03/05/2021 - Aplicado corte limite de 100 item para evitar crash ao passar
+            //lista via bundle e compatibilizar o comportamento com o da busca online.
+            if(serial_list != null && serial_list.size() > 101){
+                record_page = 100;
+                serial_list = new ArrayList<>(serial_list.subList(0, 100));
+            }
+            //
             Bundle bundle = new Bundle();
             bundle.putBoolean(FROM_OFFLINE_SOURCE, from_offline_source);
             bundle.putString(MD_ProductDao.PRODUCT_ID, mdProduct != null ? mdProduct.getProduct_id() : "");

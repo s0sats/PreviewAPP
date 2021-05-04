@@ -87,8 +87,8 @@ public class Sql_Notification_Schedule_001 implements Specification {
                 "   s.customer_code = '"+ customerCode +"' \n" +
                 "   and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"' \n" +
                 "   and s.schedule_type in ('"+ ConstantBaseApp.MD_SCHEDULE_TYPE_FORM +"' "+scheduleTypeTicket+")\n" +
-                "   and (strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') * 1000) >= " + dt_start + "\n"+
-                "   and (strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') * 1000) <= " + dt_end + "\n" +
+                "   and (strftime('%s',s.date_start||' "+customerGMT+"','"+deviceGMT+"') * 1000) >= " + dt_start + "\n"+
+                "   and (strftime('%s',s.date_start||' "+customerGMT+"','"+deviceGMT+"') * 1000) <= " + dt_end + "\n" +
                 " union\n" +
                 "  SELECT\n" +
                 "   '"+ConstantBaseApp.MD_SCHEDULE_KEY_LATE+"' as "+ConstantBaseApp.MD_SCHEDULE_KEY_TYPE+",\n" +
@@ -99,7 +99,7 @@ public class Sql_Notification_Schedule_001 implements Specification {
                 "   s.customer_code = '"+ customerCode +"' \n" +
                 "   and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE +"' \n" +
                 "   and s.schedule_type in ('"+ ConstantBaseApp.MD_SCHEDULE_TYPE_FORM +"' "+scheduleTypeTicket+")\n" +
-                "   and (strftime('%s',s.date_start||' "+customerGMT+"','"+customerGMT+"') * 1000) < "+dt_start +"\n";
+                "   and (strftime('%s',s.date_start||' "+customerGMT+"','"+deviceGMT+"') * 1000) < "+dt_start +"\n";
     }
 
     @Override

@@ -150,6 +150,9 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         transList.add("alert_free_execution_blocked_ttl");
         transList.add("alert_free_execution_blocked_msg");
         //
+        transList.add("alert_serial_offline_not_found_ttl");
+        transList.add("alert_serial_offline_not_found_msg");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
