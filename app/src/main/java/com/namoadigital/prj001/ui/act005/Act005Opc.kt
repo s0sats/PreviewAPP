@@ -9,21 +9,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.databinding.Act005OpcContentBinding
 import com.namoadigital.prj001.util.ConstantBaseApp
-import java.util.*
 
 class Act005Opc : Fragment() {
-    private val ARGUMENT_HMAUX_TRANS = "ARGUMENT_HMAUX_TRANS"
     private lateinit var binding: Act005OpcContentBinding
     private lateinit var hmAux_Trans: HMAux
     private var delegate: Act005DrawerInteraction? = null
     private lateinit var logoReceiver: CustomerLogoReceiver
 
+    /**
+     * Interface com os metodo usados no frag e que deve ser implementado pela act host
+     */
     interface Act005DrawerInteraction{
+        @Nullable
         fun getCustomerLogo(): Bitmap
         fun hasPendencies() : Boolean
         fun showEnableNfcOption(): Boolean
@@ -39,19 +42,14 @@ class Act005Opc : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = Act005OpcContentBinding.inflate(inflater, container, false)
-        //
-        recoverBundleInfo(savedInstanceState)
         iniVars()
         iniActions()
         return binding.root
     }
 
-    private fun recoverBundleInfo(savedInstanceState: Bundle?) {
-        savedInstanceState?.let {
-            hmAux_Trans = HMAux.getHmAuxFromHashMap(it.getSerializable(ARGUMENT_HMAUX_TRANS) as HashMap<String, String>?)
-        }
-    }
-
+    /**
+     * Seta interface no momento do attach ou for exception se não implementado
+     */
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if(context is Act005DrawerInteraction){
@@ -61,34 +59,39 @@ class Act005Opc : Fragment() {
         }
     }
 
+    /**
+     * Remove a interface
+     */
     override fun onDetach() {
         super.onDetach()
         delegate = null
     }
 
     private fun iniVars() {
-//        if(!this::hmAux_Trans.isInitialized){
-//            hmAux_Trans = HMAux()
-//        }
         setLabels()
         setSetupViews()
-        registerLogoReceiver()
+        initializeLogoReceiver()
     }
 
-    private fun registerLogoReceiver() {
+    /**
+     * Metodo que iniciaçiza o receiver do logo
+     */
+    private fun initializeLogoReceiver() {
         if(!this::logoReceiver.isInitialized){
             logoReceiver = CustomerLogoReceiver()
         }
     }
 
+    /**
+     * Metodo que seta hmAux na propriedade.
+     */
     fun setHmAux_Trans(hmAux_Trans: HMAux){
         this.hmAux_Trans = hmAux_Trans
-        if(arguments != null){
-            arguments = Bundle()
-        }
-        arguments?.putSerializable(ARGUMENT_HMAUX_TRANS, hmAux_Trans)
     }
 
+    /**
+     * Metodo que seta as traduções nos text views
+     */
     private fun setLabels() {
         with(binding){
             act005OpcTvLoadingLogo.text = hmAux_Trans.get("drawer_loading_lbl")
@@ -102,6 +105,9 @@ class Act005Opc : Fragment() {
         }
     }
 
+    /**
+     * Metodo responsavel pelo setup de exibição das views q são opções condicionais.
+     */
     private fun setSetupViews() {
         with(binding){
             val innerDelegate = delegate
@@ -136,6 +142,15 @@ class Act005Opc : Fragment() {
         updatePendenceStatus()
     }
 
+    /**
+     * Metodo qe define o latou do que deve ser exibido no logo.
+     * Se houver logo, exibe
+     *  - Haverá logo se:
+     *      1 - Customer com logo e logo baixado;
+     *      2 - Customer sem logo, então exibisse o da namoa;
+     * Se for null, exibe progress com texto
+     *  - O retorno é null apenas se o customer possui logo definido mais ainda nao foi baixado.
+     */
     private fun setCustomerLogoUI(){
         binding.act005OpcIvLogo.apply {
             val customerLogo = delegate?.getCustomerLogo()
@@ -148,10 +163,16 @@ class Act005Opc : Fragment() {
         }
     }
 
+    /**
+     * Metodo publico camado pela act quando um ação pode refletir nas opções que devem ser exibidas.
+     */
     fun revalidateOptionSetup(){
         setSetupViews()
     }
 
+    /**
+     * Metodo que resgistra e desregistra o receiver do logo do cliente
+     */
     private fun startNStopCustomerLogoReceiver(start: Boolean){
         val filter = IntentFilter()
         filter.addAction(ConstantBaseApp.BR_CUSTOMER_LOGO_ACTION)
@@ -182,6 +203,9 @@ class Act005Opc : Fragment() {
         startNStopCustomerLogoReceiver(false)
     }
 
+    /**
+     * Metodo que revalida a exibição da informações de pendencias
+     */
     private fun updatePendenceStatus() {
         binding.act005OpcTvPendencies.apply {
             val innerDelegate = delegate
@@ -194,6 +218,9 @@ class Act005Opc : Fragment() {
         }
     }
 
+    /**
+     * Seta ações nas opções
+     */
     private fun iniActions() {
         delegate?.let{ checkedDelegate->
             with(binding){
@@ -220,6 +247,10 @@ class Act005Opc : Fragment() {
         }
     }
 
+    /**
+     * LUCHE - 04/05/2021
+     * Criado class broadcast receiver para interceptar "notificação" de que iconde foi baixado.
+     */
     inner class CustomerLogoReceiver : BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             setCustomerLogoUI()

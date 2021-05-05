@@ -961,9 +961,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
           initilizeDrawer();
     }
 
+    /**
+     * Metodo que inicializa o frag do drawer
+     */
     private void initilizeDrawer() {
         fragOpc = (Act005Opc) fm.findFragmentById(R.id.act005_frag_opc);
-        fragOpc.setHmAux_Trans(hmAux_Trans);
+        if(fragOpc != null) {
+            fragOpc.setHmAux_Trans(hmAux_Trans);
+        }
     }
 
     @NotNull
@@ -2591,29 +2596,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         menu.findItem(TOOLBAR_NAMOA_LOGO).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menu.findItem(TOOLBAR_NAMOA_LOGO).setTitle(getResources().getString(R.string.app_name));
 
-        //
-        //Menu Habilita nfc
-        if (user.getNfc_blocked() == 1) {
-            menu.add(0, TOOLBAR_ENABLE_NFC, Menu.FIRST + 1, hmAux_Trans.get("toolbar_enable_nfc"));
-            menu.findItem(TOOLBAR_ENABLE_NFC).setIcon(R.drawable.ic_nfc_green);
-            menu.findItem(TOOLBAR_ENABLE_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-            menu.findItem(TOOLBAR_ENABLE_NFC).setTitle(hmAux_Trans.get("toolbar_enable_nfc"));
-        }
-
-        //
-        //Menu Cancela nfc
-        if (user.getExist_nfc() == 1) {
-            menu.add(0, TOOLBAR_CANCEL_NFC, Menu.FIRST + 2, hmAux_Trans.get("toolbar_cancel_nfc"));
-            menu.findItem(TOOLBAR_CANCEL_NFC).setIcon(R.drawable.ic_nfc_red);
-            menu.findItem(TOOLBAR_CANCEL_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-            menu.findItem(TOOLBAR_CANCEL_NFC).setTitle(hmAux_Trans.get("toolbar_cancel_nfc"));
-        }
-        //
-        //Menu Suporte
-        menu.add(0, TOOLBAR_SUPPORT, Menu.FIRST + 3, hmAux_Trans.get("toolbar_support"));
-        menu.findItem(TOOLBAR_SUPPORT).setIcon(getResources().getDrawable(R.drawable.ic_file_upload_black_24dp));
-        menu.findItem(TOOLBAR_SUPPORT).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
-        menu.findItem(TOOLBAR_SUPPORT).setTitle(hmAux_Trans.get("toolbar_support"));
+        menu.add(0, TOOLBAR_ENABLE_NFC, Menu.FIRST + 1, hmAux_Trans.get("lbl_sync_data"));
+        menu.findItem(TOOLBAR_ENABLE_NFC).setIcon(R.drawable.ic_sync_black_24dp);
+        menu.findItem(TOOLBAR_ENABLE_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.findItem(TOOLBAR_ENABLE_NFC).setTitle(hmAux_Trans.get("lbl_sync_data"));
 
         return true;
     }
@@ -2632,35 +2618,25 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         DialogInterface.OnClickListener listener = null;
 
         switch (id) {
+            //TODO REVISAR AQUI, POIS FOI MODIFICADO APENAS PARA SYNC GAMBIS
             case TOOLBAR_NAMOA_LOGO:
                 return true;
 
             case TOOLBAR_ENABLE_NFC:
-                alertTitle = hmAux_Trans.get("alert_enable_nfc_ttl");
-                alertMsg = hmAux_Trans.get("alert_enable_nfc_msg");
-                listener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mPresenter.executeEnableNFC();
-                    }
-                };
+                ToolBox.alertMSG(
+                        Act005_Main.this,
+                        hmAux_Trans.get("drawer_sync_alert_ttl"),
+                        hmAux_Trans.get("drawer_sync_alert_msg"),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
+                                mPresenter.syncFlow(mAdapter.getBadgeQty(MENU_ID_SEND_DATA));
+                            }
+                        },
+                        1
+                );
                 break;
-
-            case TOOLBAR_CANCEL_NFC:
-                alertTitle = hmAux_Trans.get("alert_cancel_nfc_ttl");
-                alertMsg = hmAux_Trans.get("alert_cancel_nfc_msg");
-                listener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mPresenter.executeCancelNFC();
-                    }
-                };
-                break;
-
-            case TOOLBAR_SUPPORT:
-                mPresenter.showSupportDialog();
-                break;
-
             default:
                 return true;
         }
