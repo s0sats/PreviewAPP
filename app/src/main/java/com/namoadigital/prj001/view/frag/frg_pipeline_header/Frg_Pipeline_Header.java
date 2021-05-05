@@ -484,12 +484,31 @@ public class Frg_Pipeline_Header extends Fragment {
     private void defineTicketIdLayout(){
         if(PIPELINE.equals(header_profile_param)){
             try {
-                Drawable drawableEnd = getContext().getDrawable(R.drawable.ic_sync_black_24dp);
-                drawableEnd.setColorFilter(ContextCompat.getColor(getContext(), R.color.font_normal), PorterDuff.Mode.SRC_ATOP);
+                Drawable drawableEnd;
+                Drawable ticketIdBgDefault;
                 //Background TicketId
-                Drawable ticketIdBgYellow = getContext().getDrawable(R.drawable.stroke_yellow_states);
-                Drawable ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_blue2_states);
+                int color;
+                if(mTicket.getSync_required() == 1
+                && mTicket.getUpdate_required() == 1){
+                    ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_red_states);
+                    drawableEnd = getContext().getDrawable(R.drawable.ic_cloud_upload);
+                    color = ContextCompat.getColor(getContext(), R.color.namoa_cancel_red);
+                }else if(mTicket.getSync_required() == 1){
+                    ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_yellow_states);
+                    color = ContextCompat.getColor(getContext(), R.color.namoa_color_yellow_2);
+                    drawableEnd = getContext().getDrawable(R.drawable.ic_cloud_upload);
+                }else if(mTicket.getUpdate_required() == 1){
+                    ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_red_states);
+                    color = ContextCompat.getColor(getContext(), R.color.namoa_cancel_red);
+                    drawableEnd = getContext().getDrawable(R.drawable.ic_cloud_upload);
+                }else{
+                    ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_blue_states);
+                    color = ContextCompat.getColor(getContext(), R.color.namoa_light_blue);
+                    drawableEnd = getContext().getDrawable(R.drawable.ic_cloud_upload);
+                }
 
+                tv_ticket_id.setTextColor(color);
+                drawableEnd.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
                 tv_ticket_id.setPadding(8, 8, 8, 8);
                 tv_ticket_id.setCompoundDrawablesWithIntrinsicBounds(null, null, drawableEnd, null);
                 tv_ticket_id.setCompoundDrawablePadding(3);
@@ -502,7 +521,7 @@ public class Frg_Pipeline_Header extends Fragment {
                     }
                 });
                 //
-                tv_ticket_id.setBackground(btn_sync_status_param ? ticketIdBgYellow : ticketIdBgDefault);
+                tv_ticket_id.setBackground(ticketIdBgDefault);
             }catch (Exception e){
                 //LUCHE - 15/09/2020
                 //Ajuste feito para caso o context ser null, não crashsar.

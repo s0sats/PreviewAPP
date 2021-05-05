@@ -46,4 +46,9 @@
         <item name="android:textColor">@color/namoa_amount_pipeline_background_btn</item>
     </style>
 
+    <style name="MyHomeFilterDialogRadioButtton" parent="@android:style/Widget.Button">
+        <item name="android:background">@color/padrao_TRANSPARENT</item>
+        <item name="android:textColor">@color/namoa_color_green_2</item>
+    </style>
+
 </resources>

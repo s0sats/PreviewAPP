@@ -855,6 +855,28 @@ public class ConstantBaseApp extends ConstantBase {
     //Chave de Bundle act069, 74 e 76
     public static final String FILTER_TEXT = "FILTER_TEXT";
 
+    /*
+     * Constantes MainTagMenuStatus
+     */
+    public static final String MAIN_TAG_MENU_SYNC_DATA = "SYNC_DATA";
+    public static final String MAIN_TAG_MENU_SEND_DATA = "SEND_DATA";
+    public static final String MAIN_TAG_MENU_RECEIVE_DATA = "RECEIVE_DATA";
+    public static final String MAIN_TAG_MENU_DATA_OK = "DATA_OK";
+
+    public static final String PREFERENCE_HOME_PERIOD_FILTER = "PREFERENCE_HOME_PERIOD_FILTER";
+    public static final String PREFERENCE_HOME_PERIOD_NEXT_ACTION_OPTION = "PREFERENCE_HOME_PERIOD_NEXT_ACTION_OPTION";
+    public static final String PREFERENCE_HOME_UNTIL_TODAY_OPTION = "PREFERENCE_HOME_UNTIL_TODAY_OPTION";
+    public static final String PREFERENCE_HOME_NEXT_WEEK_OPTION = "PREFERENCE_HOME_NEXT_WEEK_OPTION";
+    public static final String PREFERENCE_HOME_ALL_TIME_OPTION = "PREFERENCE_HOME_ALL_TIME_OPTION";
+
+    public static final String PREFERENCE_HOME_SITES_FILTER = "PREFERENCE_HOME_SITES_FILTER";
+    public static final String PREFERENCE_HOME_ALL_SITE_OPTION = "PREFERENCE_HOME_ALL_SITE_OPTION";
+    public static final String PREFERENCE_HOME_CURRENT_SITE_OPTION = "PREFERENCE_HOME_CURRENT_SITE_OPTION";
+
+    public static final String PREFERENCE_HOME_FOCUS_FILTER = "PREFERENCE_HOME_ONLY_MY_TAGS_FILTER";
+    public static final String PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION = "PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION";
+    public static final String PREFERENCE_HOME_ALL_ACTIONS_FILTER = "PREFERENCE_HOME_ALL_ACTIONS_FILTER";
+
     public static final String BR_CUSTOMER_LOGO_ACTION = "CUSTOMER_LOGO_FILTER";
 
 }

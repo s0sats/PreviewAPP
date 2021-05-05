@@ -429,7 +429,8 @@
                     android:id="@+id/act078_ll_open_phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:layout_marginBottom="60dp">
 
                     <TextView
                         android:id="@+id/act078_tv_open_phone_lbl"
