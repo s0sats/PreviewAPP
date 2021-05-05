@@ -51,6 +51,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.GE_File;
+import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
@@ -96,6 +97,8 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.dialog.SendResumeDialog;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -104,11 +107,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome.*;
+
 /**
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View {
+public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View, OnFrgMainHomeIteract {
 
     public static final String MENU_ID = "menu_id";
     public static final String MENU_ICON = "menu_icon";
@@ -2563,6 +2568,37 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View 
         ToolBox_Con.cleanPreferences(context);
         //
         finish();
+    }
+
+    @Override
+    public void onSelectMenuTagItem(@NotNull MainTagMenu item) {
+        //todo call new act.
+    }
+
+    @Override
+    public void onSelectHeaderCalendar() {
+        callAct046(context);
+    }
+
+    @Override
+    public void onSelectHeadeSearch() {
+        callAct068(context);
+    }
+
+    @Override
+    public void onSelectHeaderMessenger() {
+        callAct034(context);
+    }
+
+    @Override
+    public void onSelectFABAssetLocal() {
+        callAct006(context);
+    }
+
+    @NotNull
+    @Override
+    public List<MainTagMenu> getTagList(@NotNull String periodFilter, @NotNull String sitesFilter, @NotNull String focusFilter) {
+        return mPresenter.getMenuItensV3(periodFilter, sitesFilter, focusFilter);
     }
 
     private class FCMReceiver extends BroadcastReceiver {

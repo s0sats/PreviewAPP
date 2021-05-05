@@ -43,6 +43,7 @@ import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
@@ -101,6 +102,8 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -108,6 +111,9 @@ import java.util.Map;
 import static com.namoadigital.prj001.sql.Sql_Act005_009.PENDING_QTY;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -340,6 +346,15 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         );
     }
 
+    @Override
+    public List<MainTagMenu> getMenuItensV3(@NotNull String periodFilter, @NotNull String sitesFilter, @NotNull String focusFilter) {
+        ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_PERIOD_FILTER,  periodFilter);
+        ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_SITES_FILTER,  sitesFilter);
+        ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_FOCUS_FILTER,  focusFilter);
+        return new ArrayList<MainTagMenu>();
+    }
+
+    @Deprecated
     @Override
     public void getMenuItensV2(HMAux hmAux_Trans) {
         ArrayList<MenuMainNamoa> grantedMenus = new ArrayList<>();

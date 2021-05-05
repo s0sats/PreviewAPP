@@ -3,16 +3,22 @@ package com.namoadigital.prj001.ui.act005;
 import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by neomatrix on 23/01/17.
  */
 
 public interface Act005_Main_Presenter {
+
+    List<MainTagMenu> getMenuItensV3(@NotNull String periodFilter, @NotNull String sitesFilter, @NotNull String focusFilter);
 
     void getMenuItensV2(HMAux hmAux_Trans);
 

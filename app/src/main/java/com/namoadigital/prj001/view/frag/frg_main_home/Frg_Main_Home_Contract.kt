@@ -10,25 +10,11 @@ import java.util.*
 interface Frg_Main_Home_Contract {
 
     interface View{
-        fun showMsg(ttl: String, msg: String)
-        //
-        fun showAlert(ttl: String, msg: String, listenerOk: DialogInterface.OnClickListener?, showNegative: Boolean)
-        //
-        fun setWsProcess(wsProcess: String)
-        //
-        fun showPD(ttl: String, msg: String)
-        //
-        fun loadMenuV3(tags: MdTag)
+
     }
 
     interface Presenter{
-        fun getMenuItensV3()
 
-        fun applyFilter(dataRangeFilter: Int, siteFIlter: Int)
-
-        fun showFilterDialog()
-        
-        fun processWS_SaveReturn(wsRet: String?)
     }
 
 }

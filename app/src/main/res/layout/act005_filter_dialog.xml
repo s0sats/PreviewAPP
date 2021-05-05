@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/tv_filter_lbl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Filtros" />
+
+    <RadioGroup
+        android:id="@+id/rg_period"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tv_filter_lbl"
+        app:layout_constraintTop_toBottomOf="@+id/tv_filter_lbl">
+
+        <TextView
+            android:id="@+id/rg_period_lbl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Periodo" />
+
+        <RadioButton
+            android:id="@+id/rb_period_next_action"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/namoa_color_dark_blue"
+            tools:text="Ate a proxima acao" />
+
+        <RadioButton
+            android:id="@+id/rb_period_until_today"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/namoa_color_dark_blue"
+            tools:text="Ate o fim do dia de hoje" />
+
+        <RadioButton
+            android:id="@+id/rb_period_next_week"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/namoa_color_dark_blue"
+            tools:text="Ate a proxima acao" />
+
+        <RadioButton
+            android:id="@+id/rb_all_action_periods"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/namoa_color_dark_blue"
+            tools:text="TODAS as acoes" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/rg_site"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/rg_period"
+        app:layout_constraintTop_toBottomOf="@+id/rg_period">
+
+        <TextView
+            android:id="@+id/rg_site_lbl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="TextView"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <RadioButton
+            android:id="@+id/rb_all_sites"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/namoa_color_dark_blue"
+            tools:text="TODOS os Sites" />
+
+        <RadioButton
+            android:id="@+id/rb_current_site"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/namoa_color_dark_blue"
+            tools:text="Somente o Site atual" />
+
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/rg_focus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/rg_site"
+        app:layout_constraintTop_toBottomOf="@+id/rg_site">
+
+        <TextView
+            android:id="@+id/rg_focus_lbl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="TextView"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <RadioButton
+            android:id="@+id/rb_focusable_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/namoa_color_dark_blue"
+            tools:text="Somente as minhas acoes " />
+
+        <RadioButton
+            android:id="@+id/rb_all_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/namoa_color_dark_blue"
+            tools:text="TODAS as acoes" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btn_filter_save"
+        style="@style/MyHomeFilterDialogRadioButtton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_filter_cancel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_filter_cancel"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="SALVAR" />
+
+    <Button
+        android:id="@+id/btn_filter_cancel"
+        style="@style/MyHomeFilterDialogRadioButtton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="14dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_filter_save"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rg_focus"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="CANCELAR" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
