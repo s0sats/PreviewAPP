@@ -39,11 +39,14 @@ class TkTicketCacheDao(
         const val USER_FOCUS = "user_focus"
         const val ORDER_BY = "order_by"
         const val CLIENT_CODE =  "client_code"
+        const val CLIENT_ID = "client_id"
         const val CLIENT_NAME = "client_name"
         const val CONTRACT_CODE = "contract_code"
+        const val CONTRACT_ID = "contract_id"
         const val CONTRACT_DESC = "contract_desc"
         const val OPEN_SITE_CODE = "open_site_code"
         const val OPEN_SITE_DESC = "open_site_desc"
+        const val OPEN_PRODUCT_CODE = "open_product_code"
         const val OPEN_PRODUCT_DESC = "open_product_desc"
         const val OPEN_SERIAL_ID = "open_serial_id"
         const val CURRENT_STEP_ORDER = "current_step_order"
@@ -317,10 +320,13 @@ class TkTicketCacheDao(
                         put(OPEN_SITE_CODE,ticketCache.open_site_code)
                     }
                     put(CLIENT_CODE,ticketCache.client_code)
+                    put(CLIENT_ID,ticketCache.client_id)
                     put(CLIENT_NAME, ticketCache.client_name)
                     put(CONTRACT_CODE,ticketCache.contract_code)
+                    put(CONTRACT_ID, ticketCache.contract_id)
                     put(CONTRACT_DESC, ticketCache.contract_desc)
                     put(OPEN_SITE_DESC,ticketCache.open_site_desc)
+                    put(OPEN_PRODUCT_CODE,ticketCache.open_product_code)
                     put(OPEN_PRODUCT_DESC,ticketCache.open_product_desc)
                     put(OPEN_SERIAL_ID,ticketCache.open_serial_id)
                     put(CURRENT_STEP_ORDER,ticketCache.current_step_order)
@@ -362,11 +368,14 @@ class TkTicketCacheDao(
                             user_focus = getInt(getColumnIndex(USER_FOCUS)),
                             order_by = getLong(getColumnIndex(ORDER_BY)),
                             client_code = getInt(getColumnIndex(CLIENT_CODE)),
+                            client_id = getInt(getColumnIndex(CLIENT_ID)),
                             client_name = getString(getColumnIndex(CLIENT_NAME)),
                             contract_code = getInt(getColumnIndex(CONTRACT_CODE)),
+                            contract_id = getString(getColumnIndex(CONTRACT_ID)),
                             contract_desc = getString(getColumnIndex(CONTRACT_DESC)),
                             open_site_code = getInt(getColumnIndex(OPEN_SITE_CODE)),
                             open_site_desc = getString(getColumnIndex(OPEN_SITE_DESC)),
+                            open_product_code = getInt(getColumnIndex(OPEN_PRODUCT_CODE)),
                             open_product_desc = getString(getColumnIndex(OPEN_PRODUCT_DESC)),
                             open_serial_id = getString(getColumnIndex(OPEN_SERIAL_ID)),
                             current_step_order = getInt(getColumnIndex(CURRENT_STEP_ORDER)),

@@ -51,4 +51,13 @@
         <item name="android:textColor">@color/namoa_color_green_2</item>
     </style>
 
+    <style name="TextViewChips" parent="Widget.AppCompat.TextView">
+        <item name="android:background">@drawable/textview_chip_bg</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:layout_marginStart">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
 </resources>
