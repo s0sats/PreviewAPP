@@ -72,6 +72,7 @@ public class MD_Schedule_Exec {
     private String schedule_erro_msg;
     @Nullable
     private String close_date;
+    private int tag_operational_code;
 
 
     /**
@@ -483,5 +484,13 @@ public class MD_Schedule_Exec {
 
     public void setClose_date(@Nullable String close_date) {
         this.close_date = close_date;
+    }
+
+    public int getTag_operational_code() {
+        return tag_operational_code;
+    }
+
+    public void setTag_operational_code(int tag_operational_code) {
+        this.tag_operational_code = tag_operational_code;
     }
 }

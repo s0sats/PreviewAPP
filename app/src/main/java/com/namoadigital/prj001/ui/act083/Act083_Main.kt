@@ -1,18 +1,14 @@
 package com.namoadigital.prj001.ui.act083
 
-import android.os.Build
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.marginBottom
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.chip.Chip
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act083MainBinding
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -26,8 +22,35 @@ class Act083_Main : Base_Activity() {
     private lateinit var binding: Act083MainBinding
 
     private val viewModel by lazy {
-        val provedor = ViewModelProvider(this)
-        provedor.get(Act083ViewModel::class.java)
+        val factory = Act083ViewModelFactory(
+                TK_TicketDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                TkTicketCacheDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                MD_Schedule_ExecDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                GE_Custom_Form_ApDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                GE_Custom_Form_LocalDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                )
+        )
+        //
+        ViewModelProvider(this,factory).get(Act083ViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,8 +65,6 @@ class Act083_Main : Base_Activity() {
         initVars()
         iniUIFooter()
         initActions()
-
-
     }
 
     private fun iniSetup() {
@@ -89,7 +110,7 @@ class Act083_Main : Base_Activity() {
     }
 
     private fun createTvChip(chipLabel: String) : TextView {
-        val tvChip = TextView(ContextThemeWrapper(context,R.style.TextViewChips))
+        val tvChip = TextView(ContextThemeWrapper(context, R.style.TextViewChips))
         tvChip.apply {
             text = chipLabel
         }

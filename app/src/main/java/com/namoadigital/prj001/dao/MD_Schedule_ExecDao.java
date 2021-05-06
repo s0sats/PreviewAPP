@@ -81,6 +81,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public static final String FCM_USER_NICK = "fcm_user_nick";
     public static final String SCHEDULE_ERRO_MSG = "schedule_erro_msg";
     public static final String CLOSE_DATE = "close_date";
+    public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
 
     //NÃO SÃO CAMPOS DA TABELA, mas são usados em queries
     public static final String SCHEDULE_DATE_START_FORMAT = "schedule_date_start_format";
@@ -1041,6 +1042,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             md_schedule_exec.setSchedule_desc(cursor.getString(cursor.getColumnIndex(SCHEDULE_DESC)));
             md_schedule_exec.setSchedule_type(cursor.getString(cursor.getColumnIndex(SCHEDULE_TYPE)));
             md_schedule_exec.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
+            md_schedule_exec.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
             md_schedule_exec.setSite_code(cursor.getInt(cursor.getColumnIndex(SITE_CODE)));
             if(cursor.isNull(cursor.getColumnIndex(SITE_ID))){
                 md_schedule_exec.setSite_id(null);
@@ -1230,6 +1232,9 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             }
             if(md_schedule_exec.getStatus() != null){
                 contentValues.put(STATUS,md_schedule_exec.getStatus().toUpperCase());
+            }
+            if(md_schedule_exec.getTag_operational_code() > -1){
+                contentValues.put(TAG_OPERATIONAL_CODE,md_schedule_exec.getTag_operational_code());
             }
             if(md_schedule_exec.getSite_code() > -1){
                 contentValues.put(SITE_CODE,md_schedule_exec.getSite_code());
