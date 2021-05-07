@@ -368,7 +368,7 @@ class TkTicketCacheDao(
                             user_focus = getInt(getColumnIndex(USER_FOCUS)),
                             order_by = getLong(getColumnIndex(ORDER_BY)),
                             client_code = getInt(getColumnIndex(CLIENT_CODE)),
-                            client_id = getInt(getColumnIndex(CLIENT_ID)),
+                            client_id = getString(getColumnIndex(CLIENT_ID)),
                             client_name = getString(getColumnIndex(CLIENT_NAME)),
                             contract_code = getInt(getColumnIndex(CONTRACT_CODE)),
                             contract_id = getString(getColumnIndex(CONTRACT_ID)),

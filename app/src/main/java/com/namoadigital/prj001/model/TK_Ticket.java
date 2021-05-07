@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.model;
 
 import android.content.Context;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.util.Constant;
@@ -1289,4 +1291,44 @@ public class TK_Ticket implements Cloneable, Serializable {
         return isReadOnlyUserLevel(context)
                 || isReadOnlyStatus();
     }
+
+    public MyActions toMyActionsObj(Context context){
+        int rightIcon;
+        if(update_required == 0 && sync_required == 0) {
+            rightIcon = R.drawable.ic_baseline_cloud_done_24;
+        }else {
+            if(update_required == 1 && sync_required == 1){
+                rightIcon = R.drawable.ic_sync_main_menu_data;
+            }else if(update_required == 1){
+                rightIcon = R.drawable.ic_cloud_upload;
+            }else{
+                rightIcon = R.drawable.ic_baseline_cloud_download_24;
+            }
+        }
+
+       return new MyActions(
+                    ticket_prefix+"."+ticket_code,
+                    ticket_status,
+                    null,
+                    rightIcon,
+                    ToolBox_Inf.getStepStartEndDateFormated(context,forecast_date,forecast_date),
+                    tag_operational_desc,
+                    open_product_desc,
+                    open_serial_id,
+                    origin_desc,
+                    type_desc,
+                    "Traze nome do step autal ou varias etapas",
+                    open_site_desc,
+                    client_id +" - "+ client_name,
+                    contract_id +" - "+ contract_desc,
+                    null,
+                    null,
+                    ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(this.getForecast_date()),
+                        "yyyyMMddHHmm"
+                    )
+                );
+    }
+
+
 }

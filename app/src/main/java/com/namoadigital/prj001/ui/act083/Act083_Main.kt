@@ -3,11 +3,14 @@ package com.namoadigital.prj001.ui.act083
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.adapter.MyActionsAdapter
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act083MainBinding
 import com.namoadigital.prj001.util.Constant
@@ -20,9 +23,11 @@ import java.util.*
 class Act083_Main : Base_Activity() {
 
     private lateinit var binding: Act083MainBinding
+    private lateinit var mAdapter: MyActionsAdapter
 
     private val viewModel by lazy {
         val factory = Act083ViewModelFactory(
+                application,
                 TK_TicketDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -97,6 +102,16 @@ class Act083_Main : Base_Activity() {
     private fun initVars() {
         //fakeChipsGenerator()
         setLabels()
+        iniRecycler()
+
+    }
+
+    private fun iniRecycler() {
+        mAdapter = MyActionsAdapter(viewModel.myActionsList)
+        with(binding.act083MainContent.act083RvActionsList){
+            layoutManager = LinearLayoutManager(context)
+            adapter = mAdapter
+        }
     }
 
     private fun fakeChipsGenerator() {

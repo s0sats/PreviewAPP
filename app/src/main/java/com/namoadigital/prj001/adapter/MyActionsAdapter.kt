@@ -37,6 +37,7 @@ class MyActionsAdapter(
             binding.myActionsItemIvIconLeft.applyVisibilityIfSourceExists(myAction.processLeftIcon)
             binding.myActionsItemIvIconRight.applyVisibilityIfSourceExists(myAction.processRightIcon)
             //
+            binding.myActionsItemTvTagDesc.text = myAction.tagOperationDesc
             binding.myActionsItemTvProdDesc.text = myAction.productDesc
             binding.myActionsItemTvSerialId.text = myAction.serialId
             binding.myActionsItemTvProcessDesc.text = myAction.processDesc

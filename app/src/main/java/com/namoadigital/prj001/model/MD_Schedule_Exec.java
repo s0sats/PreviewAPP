@@ -1,6 +1,13 @@
 package com.namoadigital.prj001.model;
 
+import android.content.Context;
+
 import androidx.annotation.Nullable;
+
+import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public class MD_Schedule_Exec {
     private long customer_code;
@@ -492,5 +499,32 @@ public class MD_Schedule_Exec {
 
     public void setTag_operational_code(int tag_operational_code) {
         this.tag_operational_code = tag_operational_code;
+    }
+
+    public MyActions toMyActionsObj(Context context){
+           String customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
+           return new MyActions(
+            ToolBox_Inf.formatSchedulePk(schedule_prefix,schedule_code,schedule_exec),
+            status,
+            null,
+            R.drawable.ic_baseline_cloud_download_24,
+            ToolBox_Inf.formatScheduleIntervalDateFormatted(context,date_start,date_end),
+            String.valueOf(tag_operational_code),
+            product_desc,
+            serial_id == null ? "" : serial_id,
+            schedule_desc,
+            ConstantBaseApp.MD_SCHEDULE_TYPE_FORM.equals(schedule_type) ? custom_form_desc  : ticket_type_desc ,
+            comments,
+            site_desc,
+            null,
+            null,
+            null,
+            close_date,
+            ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(date_start+" "+customerGMT),
+                "yyyyMMddHHmm"
+            )
+        );
+
     }
 }

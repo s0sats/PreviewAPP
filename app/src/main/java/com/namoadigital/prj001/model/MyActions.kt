@@ -8,14 +8,16 @@ data class MyActions(
         @DrawableRes val  processLeftIcon: Int?,
         @DrawableRes val processRightIcon: Int?,
         val plannedDate: String,
+        val tagOperationDesc: String,
         val productDesc: String,
         val serialId: String,
         val originDescriptor: String,
         val processDesc: String,
-        val focusStepDesc: String,
+        val focusStepDesc: String?,
         val siteDesc: String?,
         val clientInfo: String?,
         val contractInfo: String?,
         val serviceOrderCode: String?,
-        val doneDate: String?
+        val doneDate: String?,
+        val orderBy: String
 )

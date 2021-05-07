@@ -1,6 +1,10 @@
 package com.namoadigital.prj001.model;
 
+import android.content.Context;
+
 import com.google.gson.annotations.Expose;
+import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
  * Created by d.luche on 23/02/2018.
@@ -364,5 +368,56 @@ public class GE_Custom_Form_Ap {
 
     public void setTag_operational_code(int tag_operational_code) {
         this.tag_operational_code = tag_operational_code;
+    }
+
+    public String getFormatedPk(){
+        return
+            custom_form_type + "." +
+            custom_form_code + "." +
+            custom_form_version + "." +
+            custom_form_data + "." +
+            ap_code;
+    }
+
+    public MyActions toMyActionsObj(Context context){
+        int rightIcon;
+        if(upload_required == 0 && sync_required == 0) {
+            rightIcon = R.drawable.ic_baseline_cloud_done_24;
+        }else {
+            if(upload_required == 1 && sync_required == 1){
+                rightIcon = R.drawable.ic_sync_main_menu_data;
+            }else if(upload_required == 1){
+                rightIcon = R.drawable.ic_cloud_upload;
+            }else{
+                rightIcon = R.drawable.ic_baseline_cloud_download_24;
+            }
+        }
+
+        return new MyActions(
+            getFormatedPk(),
+            ap_status,
+            null,
+            rightIcon,
+            ToolBox_Inf.getStepStartEndDateFormated(context,ap_when,ap_when),
+            String.valueOf(tag_operational_code),
+            product_desc,
+            serial_id,
+            custom_form_desc,
+            ap_description,
+            MyActionStepFocusDesc(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(ap_when),
+                "yyyyMMddHHmm"
+            )
+        );
+    }
+
+    private String MyActionStepFocusDesc() {
+        return ap_who_nick + " " + ap_what;
     }
 }

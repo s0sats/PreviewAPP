@@ -1,5 +1,9 @@
 package com.namoadigital.prj001.model
 
+import android.content.Context
+import com.namoadigital.prj001.R
+import com.namoadigital.prj001.util.ToolBox_Inf
+
 class TkTicketCache(
         var customer_code: Int,
         var ticket_prefix: Int,
@@ -16,7 +20,7 @@ class TkTicketCache(
         var user_focus: Int,
         var order_by: Long,
         var client_code: Int?,
-        var client_id: Int?,
+        var client_id: String?,
         var client_name: String?,
         var contract_code: Int?,
         var contract_id: String?,
@@ -34,4 +38,29 @@ class TkTicketCache(
         var forecast_end: String?,
         var step_count: Int,
         var step_order_seq: Int?
-)
+){
+    fun toMyActionsObj(context: Context): MyActions{
+        return MyActions(
+                ticket_id,
+                ticket_status,
+                null,
+                R.drawable.ic_baseline_cloud_download_24,
+                ToolBox_Inf.getStepStartEndDateFormated(context, forecast_start, forecast_end),
+                tag_operational_desc,
+                open_product_desc,
+                open_serial_id,
+                origin_desc,
+                processDesc = type_desc,
+                step_desc,
+                open_site_desc,
+                client_id?.let { "$client_id - $client_name" },
+                contract_id?.let { "$contract_id - $contract_desc" },
+                null,
+                null,
+                ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(forecast_start),
+                        "yyyyMMddHHmm"
+                )
+        )
+    }
+}
