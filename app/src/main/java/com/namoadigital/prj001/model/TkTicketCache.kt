@@ -49,8 +49,7 @@ class TkTicketCache(
                 ticket_id,
                 statusTrad,
                 null,
-                R.drawable.ic_baseline_cloud_download_24,
-                R.color.namoa_cloud_download,
+                R.drawable.ic_baseline_cloud_download_24_gray,
                 ToolBox_Inf.getMyActionStartEndDateFormated (context, forecast_start, forecast_end),
                 tag_operational_desc,
                 open_product_desc,
@@ -66,7 +65,10 @@ class TkTicketCache(
                 ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(forecast_start),
                         "yyyyMMddHHmm"
-                )
+                ),
+                origin_type,
+                false,
+                false
         )
     }
 }

@@ -525,8 +525,7 @@ public class MD_Schedule_Exec {
             ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
             ConstantBaseApp.HMAUX_TRANS_LIB.get(status),
             null,
-            R.drawable.ic_baseline_cloud_done_24,
-            R.color.namoa_status_pending,
+            R.drawable.ic_baseline_cloud_done_24_blue,
             //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
             ToolBox_Inf.getMyActionStartEndDateFormated(context, date_start + " " + customerGMT, date_end + " " + customerGMT),
             tag_operational_desc,
@@ -543,7 +542,10 @@ public class MD_Schedule_Exec {
             ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(date_start + " " + customerGMT),
                 "yyyyMMddHHmm"
-            )
+            ),
+            null,
+            ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
+            ToolBox_Inf.isItemLate(date_start + " " + customerGMT)
         );
         return myActions;
     }

@@ -9,7 +9,6 @@ data class MyActions(
         val processStatus: String,
         @DrawableRes val  processLeftIcon: Int?,
         @DrawableRes val processRightIcon: Int?,
-        @ColorRes val processRightIconColor: Int?,
         val plannedDate: String,
         val tagOperationDesc: String,
         val productDesc: String,
@@ -22,7 +21,10 @@ data class MyActions(
         val contractInfo: String?,
         val serviceOrderCode: String?,
         val doneDate: String?,
-        val orderBy: String
+        val orderBy: String,
+        val ticketOriginType: String?,
+        val highlightItem: Boolean,
+        val lateItem: Boolean
 ){
     companion object{
         const val MY_ACTION_TYPE_TICKET = "TICKET"

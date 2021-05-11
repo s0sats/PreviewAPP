@@ -400,20 +400,15 @@ public class GE_Custom_Form_Ap {
 
     public MyActions toMyActionsObj(Context context){
         int rightIcon;
-        Integer rightIconColor;
         if(upload_required == 0 && sync_required == 0) {
-            rightIcon = R.drawable.ic_baseline_cloud_done_24;
-            rightIconColor = R.color.namoa_status_pending;
+            rightIcon = R.drawable.ic_baseline_cloud_done_24_blue;
         }else {
             if(upload_required == 1 && sync_required == 1){
                 rightIcon = R.drawable.ic_sync_main_menu_data;
-                rightIconColor = null;
             }else if(upload_required == 1){
-                rightIcon = R.drawable.ic_cloud_upload;
-                rightIconColor = R.color.namoa_cloud_red;
+                rightIcon = R.drawable.ic_cloud_upload_24_red;
             }else{
-                rightIcon = R.drawable.ic_baseline_cloud_download_24;
-                rightIconColor = R.color.namoa_cloud_download;
+                rightIcon = R.drawable.ic_baseline_cloud_download_24_gray;
             }
         }
         String dateToUse = ap_when != null ? ap_when : create_date;
@@ -424,7 +419,6 @@ public class GE_Custom_Form_Ap {
             ConstantBaseApp.HMAUX_TRANS_LIB.get(ap_status),
             null,
             rightIcon,
-            rightIconColor,
             ToolBox_Inf.getMyActionStartEndDateFormated(context,dateToUse,dateToUse),
             tag_operational_desc,
             product_desc,
@@ -440,7 +434,10 @@ public class GE_Custom_Form_Ap {
             ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(dateToUse),
                 "yyyyMMddHHmm"
-            )
+            ),
+            null,
+            false,
+            ToolBox_Inf.isItemLate(dateToUse)
         );
     }
 

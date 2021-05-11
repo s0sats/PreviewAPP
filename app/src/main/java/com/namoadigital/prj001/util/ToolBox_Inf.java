@@ -8561,4 +8561,17 @@ public class ToolBox_Inf {
         return ToolBox_Inf.dateToMilliseconds(startDate) == ToolBox_Inf.dateToMilliseconds(endDate);
     }
 
+    /**
+     * LUCHE - 11/05/2021
+     * Verifica se data passada é menor ou igual a atual.
+     * Data enviada deve estar no formato "yyyy-MM-dd HH:mm:ss Z"
+     * @param itemDateWithTmz - Data no formato "yyyy-MM-dd HH:mm:ss Z"
+     * @return
+     */
+    public static boolean isItemLate(String itemDateWithTmz){
+        long itemMill = dateToMilliseconds(itemDateWithTmz);
+        long nowMs = dateToMilliseconds(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+
+        return itemMill <= nowMs;
+    }
 }
