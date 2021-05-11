@@ -18,6 +18,7 @@ import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.MyActionsItemBinding
 import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.util.ConstantBaseApp
 
 class MyActionsAdapter(
         private val myActions: List<MyActions>
@@ -45,10 +46,10 @@ class MyActionsAdapter(
         fun onBinding(myAction: MyActions) {
             binding.myActionsItemTvCode.text = myAction.processId
             binding.myActionsItemTvStatus.text = myAction.processStatus
-            binding.myActionsItemTvPlannedDate.text = myAction.plannedDate
+            configPlannedDate(myAction)
             //
             binding.myActionsItemIvIconLeft.applyVisibilityIfSourceExists(myAction.processLeftIcon)
-            configIvIconRight(myAction)
+            binding.myActionsItemIvIconRight.applyVisibilityIfSourceExists(myAction.processRightIcon)
             //
             binding.myActionsItemTvTagDesc.text = myAction.tagOperationDesc.toUpperCase()
             binding.myActionsItemTvProdDesc.text = myAction.productDesc
@@ -68,35 +69,48 @@ class MyActionsAdapter(
             binding.myActionsItemTvContract.applyVisibilityIfTextExists(myAction.contractInfo)
             binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
             binding.myActionsItemTvDoneDate.applyVisibilityIfTextExists(myAction.doneDate)
+            applyBackgroundStrokeColor(myAction)
         }
 
-        private fun configIvIconRight(myAction: MyActions) {
-            binding.myActionsItemIvIconRight.applyVisibilityIfSourceExists(myAction.processRightIcon)
-            //Apos aplica visibilidade, se for visivel e tiver cor definida, aplica
-            if( binding.myActionsItemIvIconRight.visibility == View.VISIBLE
-                && myAction.processRightIconColor != null
-            ){
-                binding.myActionsItemIvIconRight.apply {
-                    colorFilter = BlendModeColorFilter(
-                            ContextCompat.getColor(context, myAction.processRightIconColor),
-                            BlendMode.SRC_ATOP
-                    )
+        private fun configPlannedDate(myAction: MyActions) {
+            binding.myActionsItemTvPlannedDate.apply {
+                text = myAction.plannedDate
+                if(myAction.lateItem && myAction.doneDate.isNullOrEmpty()){
+                    setTextColor(ContextCompat.getColor(context,R.color.text_red))
+                }else{
+                    setTextColor(ContextCompat.getColor(context,R.color.namoa_color_dark_blue))
                 }
             }
+        }
+
+        private fun applyBackgroundStrokeColor(myAction: MyActions) {
+             binding.myActionsItemClInfos.apply {
+                 background = if(!myAction.doneDate.isNullOrEmpty()) {
+                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_stroke_green_states)
+                 }else if(myAction.highlightItem) {
+                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_stroke_orange_states)
+                 }else {
+                    ContextCompat.getDrawable(context,R.drawable.namoa_cell_default_gray_states)
+                 }
+             }
         }
 
         private fun configTvOriginView(myAction: MyActions) {
             binding.myActionsItemTvOrigin.apply {
                 text = myAction.originDescriptor
-                ellipsize = if (    MyActions.MY_ACTION_TYPE_TICKET == myAction.actionType
-                                    || MyActions.MY_ACTION_TYPE_TICKET_CACHE == myAction.actionType
-                                ) {
+                ellipsize = if (isTicketOriginManulOrBarcode(myAction)) {
                                     TextUtils.TruncateAt.START
                                 } else {
                                     TextUtils.TruncateAt.END
                                 }
             }
         }
+
+        private fun isTicketOriginManulOrBarcode(myAction: MyActions) =
+                ((MyActions.MY_ACTION_TYPE_TICKET == myAction.actionType
+                        || MyActions.MY_ACTION_TYPE_TICKET_CACHE == myAction.actionType)
+                        && (ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE == myAction.ticketOriginType
+                        || ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL == myAction.ticketOriginType))
 
         /**
          * Formata step focado com bullet quando há informação.

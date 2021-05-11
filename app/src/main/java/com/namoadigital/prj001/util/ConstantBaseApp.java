@@ -881,4 +881,11 @@ public class ConstantBaseApp extends ConstantBase {
 
     public static final String BR_CUSTOMER_LOGO_ACTION = "CUSTOMER_LOGO_FILTER";
 
+    /*
+     * Const MyAction
+     */
+
+    public static final String MY_ACTIONS_ORIGIN_FLOW = "MY_ACTIONS_ORIGIN_FLOW";
+
+
 }

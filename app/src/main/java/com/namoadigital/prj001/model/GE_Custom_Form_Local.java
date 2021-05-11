@@ -3,6 +3,7 @@ package com.namoadigital.prj001.model;
 import android.app.Application;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -514,13 +515,19 @@ public class GE_Custom_Form_Local {
     }
 
     public static MyActions toMyActionsObj(Application context, HMAux hmAux){
+        String endDate = null;
+        if(ConstantBaseApp.SYS_STATUS_DONE.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))){
+            endDate = ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(hmAux.get(GE_Custom_Form_DataDao.DATE_END)),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            );
+        }
         MyActions myActions = new MyActions(
             MyActions.MY_ACTION_TYPE_FORM,
             null,
-            ConstantBaseApp.HMAUX_TRANS_LIB.get(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)),
+            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS),
             null,
-            null,
-            null,
+            R.drawable.ic_baseline_cloud_done_24_blue,
             ToolBox_Inf.getMyActionStartEndDateFormated(context, hmAux.get(GE_Custom_Form_DataDao.DATE_START), hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
             hmAux.get(GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC),
             hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC),
@@ -532,11 +539,14 @@ public class GE_Custom_Form_Local {
             null,
             null,
             hmAux.get(GE_Custom_Form_DataDao.SO_CODE),
-            hmAux.get(GE_Custom_Form_DataDao.DATE_END),
+            endDate,
             ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
                 "yyyyMMddHHmm"
-            )
+            ),
+            null,
+            true,
+            false
         );
         return myActions;
     }

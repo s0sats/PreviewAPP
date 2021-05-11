@@ -7,6 +7,7 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
@@ -45,6 +46,8 @@ class Act083ViewModel(private val appContext: Application,
             transList.add("tab_my_actions_lbl")
             transList.add("tab_other_actions_lbl")
             transList.add("filter_hint")
+            transList.add("form_lbl")
+            transList.add("IN_PROCESSING")
             //
             return ToolBox_Inf.setLanguage(
                     appContext,
@@ -56,40 +59,46 @@ class Act083ViewModel(private val appContext: Application,
         }
 
         private fun generateMyActionList(mketTextFilter: String, tabFilter: Boolean){
-//        _myActionsList.addAll(
-//                getLocalTickets(mketTextFilter,tabFilter
-//                ).map {
-//                    it.toMyActionsObj(appContext)
-//                }
-//        )
-//        //
-//       _myActionsList.addAll(
-//                getCachedTickets(mketTextFilter,tabFilter
-//                ).map {
-//                    it.toMyActionsObj(appContext)
-//                }
-//        )
-//        //
+        _myActionsList.addAll(
+                getLocalTickets(mketTextFilter,tabFilter
+                ).map {
+                    it.toMyActionsObj(appContext)
+                }
+        )
+        //
+       _myActionsList.addAll(
+                getCachedTickets(mketTextFilter,tabFilter
+                ).map {
+                    it.toMyActionsObj(appContext)
+                }
+        )
+        //
 //        _myActionsList.addAll(
 //                getSchedules(mketTextFilter,tabFilter
 //                ).map {
 //                    it.toMyActionsObj(appContext)
 //                }
 //        )
-//        //
-//        _myActionsList.addAll(
-//                getFormAp(mketTextFilter,tabFilter
-//                ).map {
-//                    it.toMyActionsObj(appContext)
-//                }
-//        )
+        //
+        _myActionsList.addAll(
+                getFormAp(mketTextFilter,tabFilter
+                ).map {
+                    it.toMyActionsObj(appContext)
+                }
+        )
             myActionsList.addAll(
                     getLocalForms(mketTextFilter,tabFilter
                     ).map {
+                        if( it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
+                            && ConstantBaseApp.SYS_STATUS_IN_PROCESSING == it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS]
+                        ){
+                            it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS] = _hmAux_Trans?.get(ConstantBaseApp.SYS_STATUS_IN_PROCESSING)
+                        }
+                        //
                         GE_Custom_Form_Local.toMyActionsObj(appContext,it)
                     }
             )
-
+            //
             _myActionsList.sortBy {
                 it.orderBy
             }
