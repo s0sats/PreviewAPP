@@ -41,7 +41,7 @@
                     android:layout_marginBottom="8dp"
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_warning_white_24dp"
-                    android:tint="@color/namoa_color_danger_red" />
+                    app:tint="@color/namoa_color_danger_red" />
 
                 <TextView
                     android:id="@+id/act005_tv_datetime_warning"
@@ -57,18 +57,12 @@
         </androidx.cardview.widget.CardView>
 
 
-        <GridView
-            android:id="@+id/act005_gv_menu"
+        <FrameLayout
+            android:id="@+id/act005_frg_placeholder"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:columnWidth="100dp"
-            android:gravity="center"
-            android:horizontalSpacing="2dp"
-            android:numColumns="auto_fit"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="2dp" />
+            android:gravity="center"/>
 
         <include layout="@layout/footer_base" />
 

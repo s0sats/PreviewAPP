@@ -28,6 +28,7 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
@@ -39,6 +40,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
+import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
@@ -97,6 +99,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
     private TK_TicketDao ticketDao;
     private MD_OperationDao operationDao;
     private TK_Ticket_CtrlDao ticketCtrlDao;
+    private MdTagDao mdTagDao;
 
 
     public Act017_Main_Presenter_Impl(Context context, Act017_Main_View mView, GE_Custom_Form_LocalDao formLocalDao, HMAux hmAux_Trans) {
@@ -129,6 +132,11 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
+        );
+        mdTagDao = new MdTagDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
         );
     }
 
@@ -539,6 +547,10 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         tkTicket.setSchedule_prefix(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_PREFIX)));
         tkTicket.setSchedule_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_CODE)));
         tkTicket.setSchedule_exec(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.SCHEDULE_EXEC)));
+        //
+        tkTicket.setTag_operational_code(Integer.parseInt(item.get("tag_operational_code")));
+        tkTicket.setTag_operational_id(item.get("tag_operational_id"));
+        tkTicket.setTag_operational_desc(item.get("tag_operational_desc"));
         //
         return tkTicket;
     }

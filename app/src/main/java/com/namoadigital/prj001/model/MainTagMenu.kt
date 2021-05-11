@@ -2,7 +2,7 @@ package com.namoadigital.prj001.model
 
 import com.namoadigital.prj001.util.ConstantBaseApp.*
 
-class MainTagMenu(val tagCode: Int,val tagName: String, val tagQty: Int, val tagQtyInExecution: Int, private val updateRequired: Int, private val syncRequired: Int) {
+class MainTagMenu(val tagCode: Int,val tagName: String, val tagQty: Int, val tagHasFormInExecution: Int, private val updateRequired: Int, private val syncRequired: Int) {
     var status: String? = null
 
     init {

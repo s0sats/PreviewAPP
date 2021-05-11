@@ -103,20 +103,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            tools:text="Aplicações por tema: - trad"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_filter"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll_header" />
+            app:layout_constraintTop_toTopOf="@+id/iv_filter"
+            tools:text="Aplicações por tema: - trad" />
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/iv_filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="20dp"
             android:src="@drawable/ic_baseline_filter_alt_24"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_list_tag_lbl"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_list_tag_lbl"
+            app:layout_constraintTop_toBottomOf="@+id/ll_header"
             app:tint="@color/namoa_color_dark_blue" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -136,7 +136,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:visibility="gone"
-            tools:text="Aplicações por tema: - trad"
+            tools:text="Nao há nada para voce"
             app:layout_constraintStart_toStartOf="@+id/rv_tags"
             app:layout_constraintEnd_toEndOf="@+id/rv_tags"
             app:layout_constraintTop_toTopOf="@+id/rv_tags" />

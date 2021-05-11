@@ -43,6 +43,7 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TkTicketCacheDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.EV_User_Customer;
@@ -91,6 +92,7 @@ import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
+import com.namoadigital.prj001.sql.SqlAct005Ticket001;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_003;
@@ -120,6 +122,7 @@ import java.util.Map;
 import static com.namoadigital.prj001.sql.Sql_Act005_009.PENDING_QTY;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE;
 import static com.namoadigital.prj001.ui.act005.Act005_Main.WS_PROCESS_SO_SAVE_APPROVAL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_CURRENT_SITE_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER;
@@ -159,6 +162,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     private CH_MessageDao chMessageDao;
     private MD_SiteDao siteDao;
     private MD_Schedule_ExecDao scheduleExecDao;
+    private TkTicketCacheDao tkTicketCacheDao;
 
     private SO_Pack_Express_LocalDao soPackExpressLocalDao;
 
@@ -212,6 +216,11 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                 Constant.DB_VERSION_CUSTOM
         );
         this.scheduleExecDao = new MD_Schedule_ExecDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        this.tkTicketCacheDao = new TkTicketCacheDao(
             context,
             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
             Constant.DB_VERSION_CUSTOM
@@ -356,11 +365,31 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
-    public List<MainTagMenu> getMenuItensV3(@NotNull String periodFilter, @NotNull String sitesFilter, @NotNull String focusFilter) {
+    public List<HMAux> getMenuItensV3(@NotNull String periodFilter, @NotNull String sitesFilter, @NotNull String focusFilter) {
         ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_PERIOD_FILTER,  periodFilter);
         ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_SITES_FILTER,  sitesFilter);
         ToolBox_Con.setStringPreference(context, PREFERENCE_HOME_FOCUS_FILTER,  focusFilter);
-        return new ArrayList<MainTagMenu>();
+        int site_code = -1;
+        if(PREFERENCE_HOME_CURRENT_SITE_OPTION.equals(sitesFilter)){
+            site_code = Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context));
+        }
+        List<HMAux> queryResult = tkTicketCacheDao.query_HM(
+                new SqlAct005Ticket001(
+                        context,
+                        (int) ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox.getDeviceGMT(false),
+                        site_code,
+                        periodFilter,
+                        focusFilter
+                ).toSqlQuery()
+        );
+
+        return queryResult;
+    }
+
+    @Override
+    public boolean hasSOProfile() {
+        return false;
     }
 
     @Deprecated

@@ -24,7 +24,7 @@ class SqlAct083_001(
 ) : Specification {
     private val deviceGMT = ToolBox.getDeviceGMT(false)
     private val dateFilter: String =
-            when(ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_PERIOD_NEXT_ACTION_OPTION)){
+            when(ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)){
                 ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "  and   (strftime('%Y-%m-%d',c.${TkTicketCacheDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))"
                 ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "  and   (strftime('%Y-%m-%d',c.${TkTicketCacheDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"','+7 days'))"
                 else -> ""

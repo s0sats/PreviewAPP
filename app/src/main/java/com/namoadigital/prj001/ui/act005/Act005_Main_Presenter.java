@@ -21,7 +21,9 @@ import java.util.List;
 
 public interface Act005_Main_Presenter {
 
-    List<MainTagMenu> getMenuItensV3(@NotNull String periodFilter, @NotNull String sitesFilter, @NotNull String focusFilter);
+    List<HMAux> getMenuItensV3(@NotNull String periodFilter, @NotNull String sitesFilter, @NotNull String focusFilter);
+
+    boolean hasSOProfile();
 
     void getMenuItensV2(HMAux hmAux_Trans);
 

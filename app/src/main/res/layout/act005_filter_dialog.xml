@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -35,37 +36,36 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:textSize="12sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Periodo" />
-
-        <RadioButton
-            android:id="@+id/rb_period_next_action"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/namoa_color_dark_blue"
-            tools:text="Ate a proxima acao" />
-
-        <RadioButton
-            android:id="@+id/rb_period_until_today"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/namoa_color_dark_blue"
-            tools:text="Ate o fim do dia de hoje" />
-
-        <RadioButton
-            android:id="@+id/rb_period_next_week"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/namoa_color_dark_blue"
-            tools:text="Ate a proxima acao" />
 
         <RadioButton
             android:id="@+id/rb_all_action_periods"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/namoa_color_dark_blue"
-            tools:text="TODAS as acoes" />
+            android:textSize="12sp"
+            tools:text="Não restringir" />
+
+        <RadioButton
+            android:id="@+id/rb_period_until_today"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/namoa_color_dark_blue"
+            android:textSize="12sp"
+            tools:text="Ate hoje" />
+
+        <RadioButton
+            android:id="@+id/rb_period_next_week"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/namoa_color_dark_blue"
+            android:textSize="12sp"
+            tools:text="Ate proximos 7 dias" />
+
+
     </RadioGroup>
 
     <RadioGroup
@@ -83,7 +83,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="TextView"
+            android:textStyle="bold"
+            tools:text="Restringir Sites"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -93,6 +94,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/namoa_color_dark_blue"
+            android:textSize="12sp"
             tools:text="TODOS os Sites" />
 
         <RadioButton
@@ -100,6 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/namoa_color_dark_blue"
+            android:textSize="12sp"
             tools:text="Somente o Site atual" />
 
     </RadioGroup>
@@ -119,7 +122,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="TextView"
+            android:textStyle="bold"
+            tools:text="Restringir Direcionamento"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -129,6 +133,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/namoa_color_dark_blue"
+            android:textSize="12sp"
             tools:text="Somente as minhas acoes " />
 
         <RadioButton
@@ -136,6 +141,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/namoa_color_dark_blue"
+            android:textSize="12sp"
             tools:text="TODAS as acoes" />
 
     </RadioGroup>

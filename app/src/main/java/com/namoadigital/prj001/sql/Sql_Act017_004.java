@@ -70,7 +70,10 @@ public class Sql_Act017_004 implements Specification {
                 "  t.type_path,\n "+
                 "  s.fcm_new_status,\n "+
                 "  s.fcm_user_nick,\n "+
-                "  s.schedule_erro_msg\n "+
+                "  s.schedule_erro_msg,\n "+
+                "  s.tag_operational_code,\n "+
+                "  s.tag_operational_id,\n "+
+                "  s.tag_operational_desc\n "+
                 " \n" +
                 "  FROM\n" +
                 "   " + MD_Schedule_ExecDao.TABLE+ " s\n" +

@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -29,6 +30,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -82,6 +84,7 @@ import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act036.Act036_Main;
 import com.namoadigital.prj001.ui.act040.Act040_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
+import com.namoadigital.prj001.ui.act050.Act050_Frag_Favorite;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
@@ -91,6 +94,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.dialog.SendResumeDialog;
+import com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -172,6 +176,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private static final int TOOLBAR_ENABLE_NFC = 2;
     private static final int TOOLBAR_CANCEL_NFC = 3;
     private static final int TOOLBAR_SUPPORT = 4;
+    private static final int TOOLBAR_SYNC_DATA_STATUS = 5;
     public static final int SETTINGS_FOR_DATETIME = 10001;
 
     private ArrayList<HMAux> wsResults = new ArrayList<>();
@@ -181,8 +186,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private CardView cv_invalid_datetime_card;
     private ImageView iv_datetime_warning;
     private TextView tv_datetime_warning;
+    private FrameLayout flTagMenu;
 
-    private GridView gv_menu;
+
     private Act005_Main_Presenter mPresenter;
     private Act005_Adapter mAdapter;
 
@@ -214,7 +220,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     int inboundItensTotal=0;
     int outboundItensTotal=0;
     ArrayList<HMAux> outbound_items;
-
+    Toolbar toolbar;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -226,8 +232,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         ToolBox_Inf.schedule4HoursScheduleNotification(context);
         ToolBox_Inf.scheduleCleanningWork(context);
         //
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         //
         iniSetup();
         initVars();
@@ -641,7 +648,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 new CH_MessageDao(context)
         );
         //
-        gv_menu = (GridView) findViewById(R.id.act005_gv_menu);
+        flTagMenu =  findViewById(R.id.act005_frg_placeholder);
         //
         ToolBox_Inf.mkDirectory();
         ToolBox_Inf.cleanUpApproval(
@@ -961,6 +968,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 //            }
 //        });
           initilizeDrawer();
+
+
+        //
     }
 
     /**
@@ -1214,18 +1224,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     private void initActions() {
-        gv_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MenuMainNamoa item = (MenuMainNamoa) parent.getItemAtPosition(position);
-                mPresenter.accessMenuItem(item.getMenu_id(), 0);
-            }
-        });
+//        gv_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                MenuMainNamoa item = (MenuMainNamoa) parent.getItemAtPosition(position);
+//                mPresenter.accessMenuItem(item.getMenu_id(), 0);
+//            }
+//        });
 
     }
 
     public void loadMenuV2(ArrayList<MenuMainNamoa> menus, int columnsQty) {
-        gv_menu.setNumColumns(columnsQty);
+//        gv_menu.setNumColumns(columnsQty);
         int idxFakeSpaceStart = mPresenter.processFakeMenus(menus,columnsQty);
         //
         mAdapter = new Act005_Adapter(
@@ -1236,7 +1246,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             columnsQty
         );
         //
-        gv_menu.setAdapter(mAdapter);
+//        gv_menu.setAdapter(mAdapter);
         //
         if(!ToolBox_Inf.isLocalDatetimeOk(context)){
             cv_invalid_datetime_card.setVisibility(View.VISIBLE);
@@ -1307,10 +1317,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             BARRIONUEVO 17-04-2020
             desabilita acesso a modulos enquanto atuliza tela.
          */
-        gv_menu.setClickable(false);
+//        gv_menu.setClickable(false);
         mPresenter.getMenuItensV2(hmAux_Trans);
         iniUIFooter();
-        gv_menu.setClickable(true);
+//        gv_menu.setClickable(true);
     }
 
     @Override
@@ -2592,16 +2602,23 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         EV_User user = mPresenter.getEv_user();
 
         //
-        //Menu Namoa logo
-        menu.add(0, TOOLBAR_NAMOA_LOGO, Menu.FIRST + 0, getResources().getString(R.string.app_name));
-        menu.findItem(TOOLBAR_NAMOA_LOGO).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.findItem(TOOLBAR_NAMOA_LOGO).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.findItem(TOOLBAR_NAMOA_LOGO).setTitle(getResources().getString(R.string.app_name));
-
+        menu.add(0, TOOLBAR_SYNC_DATA_STATUS, Menu.FIRST + 0, hmAux_Trans.get("lbl_sync_data"));
+        menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setIcon(R.drawable.ic_baseline_cloud_done_24);
+        menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        //
         menu.add(0, TOOLBAR_ENABLE_NFC, Menu.FIRST + 1, hmAux_Trans.get("lbl_sync_data"));
         menu.findItem(TOOLBAR_ENABLE_NFC).setIcon(R.drawable.ic_sync_black_24dp);
         menu.findItem(TOOLBAR_ENABLE_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menu.findItem(TOOLBAR_ENABLE_NFC).setTitle(hmAux_Trans.get("lbl_sync_data"));
+
+        //Menu Namoa logo
+        menu.add(0, TOOLBAR_NAMOA_LOGO, Menu.FIRST + 2, getResources().getString(R.string.app_name));
+        menu.findItem(TOOLBAR_NAMOA_LOGO).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
+        menu.findItem(TOOLBAR_NAMOA_LOGO).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.findItem(TOOLBAR_NAMOA_LOGO).setTitle(getResources().getString(R.string.app_name));
+
+
+//        menu.findItem(TOOLBAR_ENABLE_NFC).setTitle(hmAux_Trans.get("lbl_sync_data"));
 
         return true;
     }
@@ -2666,8 +2683,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //Aparentemente, serve apenas para quando o usuario, estando com a act005,
         //abre uma noticação do app e é enviado para act019
         //Rever isso no momento propicio
-        mPresenter.getMenuItensV2(hmAux_Trans);
+//        mPresenter.getMenuItensV2(hmAux_Trans);
+        if(mPresenter.hasSOProfile()){
 
+        }else {
+            initTagFragment();
+        }
     }
 
 
@@ -2718,7 +2739,48 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @NotNull
     @Override
     public List<MainTagMenu> getTagList(@NotNull String periodFilter, @NotNull String sitesFilter, @NotNull String focusFilter) {
-        return mPresenter.getMenuItensV3(periodFilter, sitesFilter, focusFilter);
+        //
+        List<HMAux> queryResult = mPresenter.getMenuItensV3(periodFilter, sitesFilter, focusFilter);
+        //
+        boolean hasUpdateRequired = false;
+        boolean hasSyncRequired = false;
+        //
+        ArrayList<MainTagMenu> mainTagMenus = new ArrayList<>();
+        for(HMAux aux: queryResult){
+            //
+            int updateRequired = aux.hasConsistentValue("update_required")? Integer.parseInt(aux.get("update_required")) : 0;
+            int syncRequired   = aux.hasConsistentValue("sync_required")? Integer.parseInt(aux.get("sync_required")) : 0;
+            //
+            if(!hasUpdateRequired){
+                hasUpdateRequired = updateRequired > 0;
+            }
+            //
+            if(!hasSyncRequired) {
+                hasSyncRequired = syncRequired > 0;
+            }
+            //
+            mainTagMenus.add( new MainTagMenu(
+                            aux.hasConsistentValue("tag_operational_code")? Integer.parseInt(aux.get("tag_operational_code")) : 0,
+                            aux.get("tag_operational_desc"),
+                            aux.hasConsistentValue("qty")? Integer.parseInt(aux.get("qty")) : 0,
+                            aux.hasConsistentValue("in_processing")? Integer.parseInt(aux.get("in_processing")) : 0,
+                            updateRequired,
+                            syncRequired
+                    )
+            );
+        }
+
+//        if(hasUpdateRequired && hasSyncRequired){
+//            toolbar.getMenu().getItem(Menu.FIRST + 0).setIcon(R.drawable.ic_sync_main_menu_data);
+//        }else if(hasUpdateRequired){
+//            toolbar.getMenu().getItem(Menu.FIRST + 0).setIcon(R.drawable.ic_cloud_upload);
+//        }else if(hasSyncRequired){
+//            toolbar.getMenu().getItem(Menu.FIRST + 0).setIcon(R.drawable.ic_baseline_cloud_download_24);
+//        }else{
+//            toolbar.getMenu().getItem(Menu.FIRST + 0).setIcon(R.drawable.ic_baseline_cloud_done_24);
+//        }
+
+        return mainTagMenus;
     }
 
     private class FCMReceiver extends BroadcastReceiver {
@@ -2767,5 +2829,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     protected void processNotification_close(String mValue, String mActivity) {
+    }
+
+    private void initTagFragment() {
+        FragmentTransaction transaction = fm.beginTransaction();
+        FrgMainHome frgMainHome = FrgMainHome.newInstance(mModule_Code);
+        //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
+        transaction.add(R.id.act005_frg_placeholder, frgMainHome, frgMainHome.getTag());
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

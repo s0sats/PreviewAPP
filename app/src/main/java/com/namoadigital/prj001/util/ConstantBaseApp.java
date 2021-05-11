@@ -122,6 +122,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FRAG_SEARCH_SERIAL_ID_RECOVER = "frag_search_serial_id_recover";
     public static final String FRAG_SEARCH_TRACKING_ID_RECOVER = "frag_search_tracking_id_recover";
     public static final String FRAG_SEARCH_ISONLYONE = "frag_search_isonlyone";
+    public static final String FRG_MAIN_HOME = "frg_main_home";
+    public static final String FRG_MAIN_HOME_ALT = "frg_main_home_alt";
 
     public static final String ACT_SELECTED_DATE = "selected_date";
     public static final String ACT_FILTER_FORM = "filter_form";
@@ -865,7 +867,6 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_TAG_MENU_DATA_OK = "DATA_OK";
 
     public static final String PREFERENCE_HOME_PERIOD_FILTER = "PREFERENCE_HOME_PERIOD_FILTER";
-    public static final String PREFERENCE_HOME_PERIOD_NEXT_ACTION_OPTION = "PREFERENCE_HOME_PERIOD_NEXT_ACTION_OPTION";
     public static final String PREFERENCE_HOME_UNTIL_TODAY_OPTION = "PREFERENCE_HOME_UNTIL_TODAY_OPTION";
     public static final String PREFERENCE_HOME_NEXT_WEEK_OPTION = "PREFERENCE_HOME_NEXT_WEEK_OPTION";
     public static final String PREFERENCE_HOME_ALL_TIME_OPTION = "PREFERENCE_HOME_ALL_TIME_OPTION";
