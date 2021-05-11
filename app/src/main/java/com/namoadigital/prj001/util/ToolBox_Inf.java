@@ -100,6 +100,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
+import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
@@ -124,6 +125,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
+import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.Sync_Checklist;
@@ -190,6 +192,7 @@ import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
 import com.namoadigital.prj001.sql.MD_Site_Sql_SS_002;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_SS;
+import com.namoadigital.prj001.sql.MdTagSql001;
 import com.namoadigital.prj001.sql.SM_SO_Sql_014;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.Sql_Act002_001;
@@ -8488,4 +8491,74 @@ public class ToolBox_Inf {
         am.cancel(piFull);
         am.cancel(piQuarter);
     }
+
+    @Nullable
+    public static MdTag getMdTagInfo(Context context, int tag_operational_code) {
+        long customer_code = ToolBox_Con.getPreference_Customer_Code(context);
+        MdTagDao tagDao = new MdTagDao(
+            context,
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        if(tagDao != null){
+            return tagDao.getByString(
+                new MdTagSql001(
+                    (int) customer_code,
+                    tag_operational_code
+                ).toSqlQuery()
+            );
+        }
+        return null;
+    }
+
+
+    /**
+     * LUCHE - 16/07/2020
+     * <p></p>
+     * Formata a data da seguinte maneira:
+     *  - Se apenas data de inicio, data hora
+     *  - Se inicio e fim no mesmo dia, exibe data hora_inicio - hora_fim
+     *  - Se inicio e fim em dias diferente, exibe das duas datas com hora, data_inicio hora_inicio - data_fim hora_fim
+     * @param context
+     * @param startDate Data Inicio
+     * @param endDate Data Fim
+     * @return - Retorna data formata
+     */
+    public static String getMyActionStartEndDateFormated(Context context, String startDate, String endDate ){
+        SimpleDateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+        SimpleDateFormat dateFormatStart = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
+        SimpleDateFormat dateFormatEnd = new SimpleDateFormat(ToolBox_Inf.nlsDateFormat(context) + " HH:mm");
+        //
+        try {
+            if(ToolBox_Inf.hasConsistentValueString(startDate) && ToolBox_Inf.hasConsistentValueString(endDate)){
+                //Se for a mesma data e hora, não faz nada pois o return fora do if resolve
+                if(!checkSameDayAndHourDate(startDate, endDate)) {
+                    if (ToolBox_Inf.checkSameDayDate(startDate, endDate)) {
+                        dateFormatEnd = new SimpleDateFormat("HH:mm");
+                    }
+                    //
+                    return dateFormatStart.format(dateFormatIn.parse(startDate)) + " - " + dateFormatEnd.format(dateFormatIn.parse(endDate));
+                }
+            }
+            //
+            return dateFormatStart.format(dateFormatIn.parse(startDate));
+        }catch (Exception e){
+            ToolBox_Inf.registerException(CLASS_NAME,e);
+            return "01-01-1900";
+        }
+    }
+
+    /**
+     * LUCHE - 10/05/2021
+     * Verifica se o millisegundos das data são iguais.
+     * A data deve estar no formato do banco yyyy-MM-dd HH:mm:ss Z
+     * @param startDate
+     * @param endDate
+     * @return Verdadeiro se iguais.
+     */
+    private static boolean checkSameDayAndHourDate(String startDate, String endDate) {
+        return ToolBox_Inf.dateToMilliseconds(startDate) == ToolBox_Inf.dateToMilliseconds(endDate);
+    }
+
 }

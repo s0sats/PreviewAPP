@@ -51,6 +51,7 @@ class TkTicketCacheDao(
         const val OPEN_SERIAL_ID = "open_serial_id"
         const val CURRENT_STEP_ORDER = "current_step_order"
         const val TICKET_STATUS = "ticket_status"
+        const val ORIGIN_TYPE = "origin_type"
         const val ORIGIN_DESC = "origin_desc"
         const val STEP_DESC = "step_desc"
         const val FORECAST_START = "forecast_start"
@@ -331,6 +332,7 @@ class TkTicketCacheDao(
                     put(OPEN_SERIAL_ID,ticketCache.open_serial_id)
                     put(CURRENT_STEP_ORDER,ticketCache.current_step_order)
                     put(TICKET_STATUS,ticketCache.ticket_status)
+                    put(ORIGIN_TYPE,ticketCache.origin_type)
                     put(ORIGIN_DESC,ticketCache.origin_desc)
                     put(STEP_DESC,ticketCache.step_desc)
                     put(FORECAST_START,ticketCache.forecast_start)
@@ -380,6 +382,7 @@ class TkTicketCacheDao(
                             open_serial_id = getString(getColumnIndex(OPEN_SERIAL_ID)),
                             current_step_order = getInt(getColumnIndex(CURRENT_STEP_ORDER)),
                             ticket_status = getString(getColumnIndex(TICKET_STATUS)),
+                            origin_type = getString(getColumnIndex(ORIGIN_TYPE)),
                             origin_desc = getString(getColumnIndex(ORIGIN_DESC)),
                             step_desc = getString(getColumnIndex(STEP_DESC)),
                             forecast_start = getString(getColumnIndex(FORECAST_START)),

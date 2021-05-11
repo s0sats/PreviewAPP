@@ -118,6 +118,7 @@
     <string name="act002_alt_no_licenses_returned_msg">Nenhum Site licenciado disponível para o Usuário.\nFavor tentar novamente mais tarde ou entrar em contato com a sua equipe de TI interna para verificar a quantidade de licenças disponíveis.</string>
     <string name="act002_alt_license_list_not_found_ttl">Falha: Sites licenciados</string>
     <string name="act002_alt_license_list_not_found_msg">Erro ao caregar lista de sites licenciados!\nArquivo ou lista de licenças não encontradas.\nTente novamente.</string>
+    <!--Permissão da camera-->
     <string name="lib_alert_allow_btn">Permitir</string>
     <string name="lib_alert_deny_btn">Negar</string>
     <string name="lib_alert_settings_btn">Configurações</string>
@@ -125,4 +126,6 @@
     <string name="lib_alert_camera_never_ask_again_msg">A permissão de acesso a câmera foi negada permanentemente!\nPara permitir o uso da câmera, click no botão em Configurações, Permissões -> Câmera -> Permitir</string>
     <string name="lib_alert_rationale_camera_permission_ttl">Permissão de Câmera</string>
     <string name="lib_alert_rationale_barcode_camera_permission_msg">Para ler um código de barras é necessário acesso a câmera do celular.\nDeseja permitir o acesso ?</string>
+    <!--Text Helpers -->
+    <string name="unicode_bullet">"\u2022"</string>
 </resources>

@@ -126,6 +126,8 @@
     <string name="lib_alert_camera_never_ask_again_msg">Permission to access the camera has been permanently denied!\nTo allow the use of the camera, click the button under Settings, Permissions -> Camera -> Allow</string>
     <string name="lib_alert_rationale_camera_permission_ttl">Camera Permission</string>
     <string name="lib_alert_rationale_barcode_camera_permission_msg">To read a barcode, access to the cell phone\'s camera is required.\nDo you want to allow access?</string>
+    <!--Text Helpers -->
+    <string name="unicode_bullet">"\u2022"</string>
 
 
 </resources>

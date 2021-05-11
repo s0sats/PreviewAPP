@@ -62,6 +62,8 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
     public static final String CREATE_DATE = "create_date";
     public static final String CREATE_USER = "create_user";
     public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
+    public static final String TAG_OPERATIONAL_ID = "tag_operational_id";
+    public static final String TAG_OPERATIONAL_DESC = "tag_operational_desc";
 
 
     public static String[] columns = {
@@ -69,7 +71,7 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             CUSTOM_FORM_DATA, AP_CODE, AP_DESCRIPTION, AP_STATUS, AP_COMMENTS, AP_WHAT, AP_WHERE, AP_WHY, AP_WHO,
             AP_WHO_NICK, AP_HOW, AP_HOW_MUCH, AP_WHEN, DEPARTMENT_CODE, DEPARTMENT_ID, DEPARTMENT_DESC, ROOM_CODE, AP_SCN,
             PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SERIAL_ID, SYNC_REQUIRED, UPLOAD_REQUIRED, CUSTOM_FORM_URL,
-            CUSTOM_FORM_URL_LOCAL, LAST_UPDATE, CREATE_DATE, CREATE_USER,TAG_OPERATIONAL_CODE
+            CUSTOM_FORM_URL_LOCAL, LAST_UPDATE, CREATE_DATE, CREATE_USER,TAG_OPERATIONAL_CODE,TAG_OPERATIONAL_ID,TAG_OPERATIONAL_DESC
     };
 
     public GE_Custom_Form_ApDao(Context context) {
@@ -367,6 +369,16 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             custom_form_ap.setCreate_date(cursor.getString(cursor.getColumnIndex(CREATE_DATE)));
             custom_form_ap.setCreate_user(cursor.getString(cursor.getColumnIndex(CREATE_USER)));
             custom_form_ap.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
+            if (cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_ID))) {
+                custom_form_ap.setTag_operational_id(null);
+            }else{
+                custom_form_ap.setTag_operational_id(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_ID)));
+            }
+            if (cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_DESC))) {
+                custom_form_ap.setTag_operational_desc(null);
+            }else{
+                custom_form_ap.setTag_operational_desc(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_DESC)));
+            }
             //
             return custom_form_ap;
         }
@@ -457,6 +469,8 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             if (custom_form_ap.getTag_operational_code() > -1) {
                 contentValues.put(TAG_OPERATIONAL_CODE, custom_form_ap.getTag_operational_code());
             }
+            contentValues.put(TAG_OPERATIONAL_ID, custom_form_ap.getTag_operational_id());
+            contentValues.put(TAG_OPERATIONAL_DESC, custom_form_ap.getTag_operational_desc());
             //
             return contentValues;
         }

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.google.gson.annotations.Expose;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 /**
@@ -69,6 +70,8 @@ public class GE_Custom_Form_Ap {
     private transient String custom_form_url_local;
     private String last_update;
     private int tag_operational_code;
+    private String tag_operational_id;
+    private String tag_operational_desc;
 
     public GE_Custom_Form_Ap() {
         this.custom_form_url_local = "";
@@ -370,6 +373,22 @@ public class GE_Custom_Form_Ap {
         this.tag_operational_code = tag_operational_code;
     }
 
+    public String getTag_operational_id() {
+        return tag_operational_id;
+    }
+
+    public void setTag_operational_id(String tag_operational_id) {
+        this.tag_operational_id = tag_operational_id;
+    }
+
+    public String getTag_operational_desc() {
+        return tag_operational_desc;
+    }
+
+    public void setTag_operational_desc(String tag_operational_desc) {
+        this.tag_operational_desc = tag_operational_desc;
+    }
+
     public String getFormatedPk(){
         return
             custom_form_type + "." +
@@ -381,25 +400,33 @@ public class GE_Custom_Form_Ap {
 
     public MyActions toMyActionsObj(Context context){
         int rightIcon;
+        Integer rightIconColor;
         if(upload_required == 0 && sync_required == 0) {
             rightIcon = R.drawable.ic_baseline_cloud_done_24;
+            rightIconColor = R.color.namoa_status_pending;
         }else {
             if(upload_required == 1 && sync_required == 1){
                 rightIcon = R.drawable.ic_sync_main_menu_data;
+                rightIconColor = null;
             }else if(upload_required == 1){
                 rightIcon = R.drawable.ic_cloud_upload;
+                rightIconColor = R.color.namoa_cloud_red;
             }else{
                 rightIcon = R.drawable.ic_baseline_cloud_download_24;
+                rightIconColor = R.color.namoa_cloud_download;
             }
         }
+        String dateToUse = ap_when != null ? ap_when : create_date;
 
         return new MyActions(
+            MyActions.MY_ACTION_TYPE_FORM_AP,
             getFormatedPk(),
-            ap_status,
+            ConstantBaseApp.HMAUX_TRANS_LIB.get(ap_status),
             null,
             rightIcon,
-            ToolBox_Inf.getStepStartEndDateFormated(context,ap_when,ap_when),
-            String.valueOf(tag_operational_code),
+            rightIconColor,
+            ToolBox_Inf.getMyActionStartEndDateFormated(context,dateToUse,dateToUse),
+            tag_operational_desc,
             product_desc,
             serial_id,
             custom_form_desc,
@@ -411,13 +438,19 @@ public class GE_Custom_Form_Ap {
             null,
             null,
             ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(ap_when),
+                ToolBox_Inf.dateToMilliseconds(dateToUse),
                 "yyyyMMddHHmm"
             )
         );
     }
 
     private String MyActionStepFocusDesc() {
-        return ap_who_nick + " " + ap_what;
+        if( ap_who_nick != null && !ap_who_nick.isEmpty()
+            && ap_what != null && !ap_what.isEmpty()
+        ){
+            return ap_who_nick + " - " + ap_what;
+        }else{
+           return ap_who_nick != null && !ap_who_nick.isEmpty() ? ap_who_nick : ap_what;
+        }
     }
 }

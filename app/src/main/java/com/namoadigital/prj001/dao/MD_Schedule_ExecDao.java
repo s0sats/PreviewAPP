@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -17,10 +18,12 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Schedule_Exec_Operation;
 import com.namoadigital.prj001.model.MD_Schedule_Exec_Product;
 import com.namoadigital.prj001.model.MD_Schedule_Exec_Site;
+import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Dao_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_001;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_003;
 import com.namoadigital.prj001.sql.MD_Schedule_Exec_Sql_008;
+import com.namoadigital.prj001.sql.MdTagSql001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -82,6 +85,8 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public static final String SCHEDULE_ERRO_MSG = "schedule_erro_msg";
     public static final String CLOSE_DATE = "close_date";
     public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
+    public static final String TAG_OPERATIONAL_ID = "tag_operational_id";
+    public static final String TAG_OPERATIONAL_DESC = "tag_operational_desc";
 
     //NÃO SÃO CAMPOS DA TABELA, mas são usados em queries
     public static final String SCHEDULE_DATE_START_FORMAT = "schedule_date_start_format";
@@ -587,6 +592,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                                 );
                                 break;
                         }
+                        setTagInfos(scheduleExec);
                     }
                 }
             }
@@ -651,6 +657,29 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         closeDB();
         //
         return daoObjReturn;
+    }
+
+    /**
+     * Luche - 10/05/2021
+     * Metdo que resgata os dados relacionais da tag e seta no obj schedule
+     * @param scheduleExec
+     */
+    private void setTagInfos(MD_Schedule_Exec scheduleExec) {
+        MdTagDao tagDao = getMdTagDao();
+        //
+        if(tagDao != null) {
+            MdTag tag = tagDao.getByString(
+                new MdTagSql001(
+                    (int) scheduleExec.getCustomer_code(),
+                    scheduleExec.getTag_operational_code()
+                ).toSqlQuery()
+            );
+            //
+            if(tag != null){
+                scheduleExec.setTag_operational_id(tag.getTag_id());
+                scheduleExec.setTag_operational_desc(tag.getTag_desc());
+            }
+        }
     }
 
     private void updateScheduleExecProductInfos(ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList, MD_Schedule_Exec scheduleExec, MD_Schedule_Exec dbSchedule) {
@@ -952,6 +981,19 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         );
     }
 
+    @NonNull
+    /**
+     * LUCHE - 10/05/2021
+     * Metodo que gera instancia do MdTagDao
+     */
+    private MdTagDao getMdTagDao() {
+        return new MdTagDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+    }
+
     /**
      * LUCHE - 27/03/2020
      * <p></p>
@@ -1043,6 +1085,16 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             md_schedule_exec.setSchedule_type(cursor.getString(cursor.getColumnIndex(SCHEDULE_TYPE)));
             md_schedule_exec.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
             md_schedule_exec.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
+            if(cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_ID))) {
+                md_schedule_exec.setTag_operational_id(null);
+            }else{
+                md_schedule_exec.setTag_operational_id(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_ID)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(TAG_OPERATIONAL_DESC))) {
+                md_schedule_exec.setTag_operational_desc(null);
+            }else{
+                md_schedule_exec.setTag_operational_desc(cursor.getString(cursor.getColumnIndex(TAG_OPERATIONAL_DESC)));
+            }
             md_schedule_exec.setSite_code(cursor.getInt(cursor.getColumnIndex(SITE_CODE)));
             if(cursor.isNull(cursor.getColumnIndex(SITE_ID))){
                 md_schedule_exec.setSite_id(null);
@@ -1236,6 +1288,8 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             if(md_schedule_exec.getTag_operational_code() > -1){
                 contentValues.put(TAG_OPERATIONAL_CODE,md_schedule_exec.getTag_operational_code());
             }
+            contentValues.put(TAG_OPERATIONAL_ID,md_schedule_exec.getTag_operational_id());
+            contentValues.put(TAG_OPERATIONAL_DESC,md_schedule_exec.getTag_operational_desc());
             if(md_schedule_exec.getSite_code() > -1){
                 contentValues.put(SITE_CODE,md_schedule_exec.getSite_code());
             }

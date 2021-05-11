@@ -85,6 +85,7 @@
     <color name="namoa_color_gray_6">#D5D5D6</color>
     <color name="namoa_color_gray_7">#BDBDBE</color>
     <color name="namoa_color_gray_8">#A1A1A1</color>
+    <color name="namoa_color_gray_9">#646464</color>
     <color name="namoa_color_red">#FF0000</color>
     <color name="namoa_color_black">#000000</color>
     <color name="namoa_color_purple_3">#800080</color>
@@ -171,4 +172,6 @@
     <!--Cores my action cards-->
     <color name="my_action_gray_font">@color/namoa_color_gray_8</color>
     <color name="namoa_textview_chips_bg">#EBEBEB</color>
+    <color name="namoa_cloud_red">#EF2043</color>
+    <color name="namoa_cloud_download">@color/namoa_color_gray_9</color>
 </resources>

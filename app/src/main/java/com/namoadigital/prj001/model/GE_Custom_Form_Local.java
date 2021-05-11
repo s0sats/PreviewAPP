@@ -1,5 +1,13 @@
 package com.namoadigital.prj001.model;
 
+import android.app.Application;
+
+import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
+import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
 /**
  * Created by neomatrix on 7/22/16.
  */
@@ -503,5 +511,33 @@ public class GE_Custom_Form_Local {
 
     public void setTag_operational_desc(String tag_operational_desc) {
         this.tag_operational_desc = tag_operational_desc;
+    }
+
+    public static MyActions toMyActionsObj(Application context, HMAux hmAux){
+        MyActions myActions = new MyActions(
+            MyActions.MY_ACTION_TYPE_FORM,
+            null,
+            ConstantBaseApp.HMAUX_TRANS_LIB.get(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)),
+            null,
+            null,
+            null,
+            ToolBox_Inf.getMyActionStartEndDateFormated(context, hmAux.get(GE_Custom_Form_DataDao.DATE_START), hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
+            hmAux.get(GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC),
+            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC),
+            hmAux.get(GE_Custom_Form_LocalDao.SERIAL_ID),
+            hmAux.get(MyActions.MY_ACTION_TYPE_FORM),
+            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC),
+            null,
+            ToolBox_Inf.equalsToLoggedSite(context, hmAux.get(GE_Custom_Form_LocalDao.SITE_CODE)) ? null : hmAux.get(GE_Custom_Form_LocalDao.SITE_DESC),
+            null,
+            null,
+            hmAux.get(GE_Custom_Form_DataDao.SO_CODE),
+            hmAux.get(GE_Custom_Form_DataDao.DATE_END),
+            ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
+                "yyyyMMddHHmm"
+            )
+        );
+        return myActions;
     }
 }

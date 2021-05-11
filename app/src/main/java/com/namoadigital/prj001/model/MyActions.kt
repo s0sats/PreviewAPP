@@ -1,12 +1,15 @@
 package com.namoadigital.prj001.model
 
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 
 data class MyActions(
-        val processId: String,
+        val actionType: String,
+        val processId: String?,
         val processStatus: String,
         @DrawableRes val  processLeftIcon: Int?,
         @DrawableRes val processRightIcon: Int?,
+        @ColorRes val processRightIconColor: Int?,
         val plannedDate: String,
         val tagOperationDesc: String,
         val productDesc: String,
@@ -20,4 +23,30 @@ data class MyActions(
         val serviceOrderCode: String?,
         val doneDate: String?,
         val orderBy: String
-)
+){
+    companion object{
+        const val MY_ACTION_TYPE_TICKET = "TICKET"
+        const val MY_ACTION_TYPE_TICKET_CACHE = "TICKET_CACHE"
+        const val MY_ACTION_TYPE_SCHEDULE = "SCHEDULE"
+        const val MY_ACTION_TYPE_FORM_AP = "FORM_AP"
+        const val MY_ACTION_TYPE_FORM = "FORM"
+    }
+
+    fun getAllFieldForFilter() : String{
+        return  "$processId|" +
+                "$processStatus|" +
+                "$plannedDate|" +
+                "$tagOperationDesc|" +
+                "$productDesc|" +
+                "$serialId|" +
+                "$originDescriptor|" +
+                "$processDesc|" +
+                "$focusStepDesc|" +
+                "$siteDesc|" +
+                "$clientInfo|" +
+                "$contractInfo|" +
+                "$serviceOrderCode"
+                .replace("null|","")
+                .replace("null","")
+    }
+}

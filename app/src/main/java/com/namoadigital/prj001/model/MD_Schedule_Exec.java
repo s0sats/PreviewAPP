@@ -80,7 +80,8 @@ public class MD_Schedule_Exec {
     @Nullable
     private String close_date;
     private int tag_operational_code;
-
+    private String tag_operational_id;
+    private String tag_operational_desc;
 
     /**
      * LUCHE - 14/02/2020
@@ -501,30 +502,49 @@ public class MD_Schedule_Exec {
         this.tag_operational_code = tag_operational_code;
     }
 
+    public String getTag_operational_id() {
+        return tag_operational_id;
+    }
+
+    public void setTag_operational_id(String tag_operational_id) {
+        this.tag_operational_id = tag_operational_id;
+    }
+
+    public String getTag_operational_desc() {
+        return tag_operational_desc;
+    }
+
+    public void setTag_operational_desc(String tag_operational_desc) {
+        this.tag_operational_desc = tag_operational_desc;
+    }
+
     public MyActions toMyActionsObj(Context context){
-           String customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
-           return new MyActions(
-            ToolBox_Inf.formatSchedulePk(schedule_prefix,schedule_code,schedule_exec),
-            status,
+        String customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
+        MyActions myActions = new MyActions(
+            MyActions.MY_ACTION_TYPE_SCHEDULE,
+            ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
+            ConstantBaseApp.HMAUX_TRANS_LIB.get(status),
             null,
-            R.drawable.ic_baseline_cloud_download_24,
-            ToolBox_Inf.formatScheduleIntervalDateFormatted(context,date_start,date_end),
-            String.valueOf(tag_operational_code),
+            R.drawable.ic_baseline_cloud_done_24,
+            R.color.namoa_status_pending,
+            //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
+            ToolBox_Inf.getMyActionStartEndDateFormated(context, date_start + " " + customerGMT, date_end + " " + customerGMT),
+            tag_operational_desc,
             product_desc,
             serial_id == null ? "" : serial_id,
             schedule_desc,
-            ConstantBaseApp.MD_SCHEDULE_TYPE_FORM.equals(schedule_type) ? custom_form_desc  : ticket_type_desc ,
+            ConstantBaseApp.MD_SCHEDULE_TYPE_FORM.equals(schedule_type) ? custom_form_desc : ticket_type_desc,
             comments,
-            site_desc,
+            ToolBox_Inf.equalsToLoggedSite(context, String.valueOf(site_code)) ? null : site_desc,//so exibe se for diferente
             null,
             null,
             null,
             close_date,
             ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(date_start+" "+customerGMT),
+                ToolBox_Inf.dateToMilliseconds(date_start + " " + customerGMT),
                 "yyyyMMddHHmm"
             )
         );
-
+        return myActions;
     }
 }

@@ -1294,33 +1294,40 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public MyActions toMyActionsObj(Context context){
         int rightIcon;
+        Integer rightIconColor = null;
         if(update_required == 0 && sync_required == 0) {
             rightIcon = R.drawable.ic_baseline_cloud_done_24;
+            rightIconColor = R.color.namoa_status_pending;
         }else {
             if(update_required == 1 && sync_required == 1){
                 rightIcon = R.drawable.ic_sync_main_menu_data;
+                rightIconColor = null;
             }else if(update_required == 1){
                 rightIcon = R.drawable.ic_cloud_upload;
+                rightIconColor = R.color.namoa_cloud_red;
             }else{
                 rightIcon = R.drawable.ic_baseline_cloud_download_24;
+                rightIconColor = R.color.namoa_cloud_download;
             }
         }
 
        return new MyActions(
+                    MyActions.MY_ACTION_TYPE_TICKET,
                     ticket_prefix+"."+ticket_code,
-                    ticket_status,
+                    ConstantBaseApp.HMAUX_TRANS_LIB.get(ticket_status),
                     null,
                     rightIcon,
-                    ToolBox_Inf.getStepStartEndDateFormated(context,forecast_date,forecast_date),
+                    rightIconColor,
+                    ToolBox_Inf.getMyActionStartEndDateFormated(context,forecast_date,forecast_date),
                     tag_operational_desc,
                     open_product_desc,
                     open_serial_id,
                     origin_desc,
                     type_desc,
                     "Traze nome do step autal ou varias etapas",
-                    open_site_desc,
-                    client_id +" - "+ client_name,
-                    contract_id +" - "+ contract_desc,
+                    ToolBox_Inf.equalsToLoggedSite(context,String.valueOf(open_site_code)) ? null : open_site_desc,
+                    client_id != null ? client_id +" - "+ client_name: null,
+                    contract_id != null ?contract_id +" - "+ contract_desc: null,
                     null,
                     null,
                     ToolBox_Inf.millisecondsToString(

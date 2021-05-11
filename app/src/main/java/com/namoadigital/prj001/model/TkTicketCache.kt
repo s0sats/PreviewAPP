@@ -2,6 +2,7 @@ package com.namoadigital.prj001.model
 
 import android.content.Context
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class TkTicketCache(
@@ -32,6 +33,7 @@ class TkTicketCache(
         var open_serial_id: String,
         var current_step_order: Int?,
         var ticket_status: String,
+        var origin_type: String,
         var origin_desc: String,
         var step_desc: String?,
         var forecast_start: String?,
@@ -40,12 +42,16 @@ class TkTicketCache(
         var step_order_seq: Int?
 ){
     fun toMyActionsObj(context: Context): MyActions{
+        val statusTrad = ConstantBaseApp.HMAUX_TRANS_LIB?.get(ticket_status) ?: ticket_status
+        //
         return MyActions(
+                MyActions.MY_ACTION_TYPE_TICKET_CACHE,
                 ticket_id,
-                ticket_status,
+                statusTrad,
                 null,
                 R.drawable.ic_baseline_cloud_download_24,
-                ToolBox_Inf.getStepStartEndDateFormated(context, forecast_start, forecast_end),
+                R.color.namoa_cloud_download,
+                ToolBox_Inf.getMyActionStartEndDateFormated (context, forecast_start, forecast_end),
                 tag_operational_desc,
                 open_product_desc,
                 open_serial_id,

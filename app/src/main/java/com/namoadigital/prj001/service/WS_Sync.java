@@ -411,7 +411,8 @@ public class WS_Sync extends IntentService {
 
             userDao.addUpdate(users, false);
         }
-
+        //Libera pro GB
+        files_user = null;
         //Processa traduções
         File[] files_module_res = ToolBox_Inf.getListOfFiles_v2("ev_module_res-");
         //LUCHE - 07/02/2020
@@ -435,7 +436,9 @@ public class WS_Sync extends IntentService {
 
             moduleResDao.addUpdate(moduleRes, false);
         }
-
+        //Libera pro GB
+        files_module_res = null;
+        //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step2), "", "0");
 
         File[] files_module_res_txt = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt-");
@@ -452,7 +455,9 @@ public class WS_Sync extends IntentService {
 
             moduleResTxtDao.addUpdate(moduleResTxts, false);
         }
-
+        //Libera pro GB
+        files_module_res_txt = null;
+        //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step3), "", "0");
 
         File[] files_module_res_txt_trans = ToolBox_Inf.getListOfFiles_v2("ev_module_res_txt_trans-");
@@ -469,7 +474,8 @@ public class WS_Sync extends IntentService {
 
             moduleResTxtTransDao.addUpdate(moduleResTxtTrans, false);
         }
-
+        //Libera pro GB
+        files_module_res_txt_trans = null;
         //limpa tabela de profile.
         evProfileDao.remove(new EV_Profile_Sql_Truncate().toSqlQuery());
 
@@ -487,6 +493,8 @@ public class WS_Sync extends IntentService {
 
             evProfileDao.addUpdate(ev_profiles, false);
         }
+        ////Libera pro GB
+        files_ev_profile = null;
 
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", getString(R.string.msg_processing_data_step4), "", "0");
         //
@@ -607,7 +615,8 @@ public class WS_Sync extends IntentService {
 
                 operationDao.addUpdate(operations, false);
             }
-
+            //Libebera referencia para GB
+            files_operation = null;
             //
             // Processamento Site
             //
@@ -669,7 +678,8 @@ public class WS_Sync extends IntentService {
                 siteDao.addUpdate(sites, false);
                 //
             }
-
+            ////Libera pro GB
+            files_site = null;
             //
             // Processamento Product
             //
@@ -748,6 +758,8 @@ public class WS_Sync extends IntentService {
                 //com os produtos que o usr ainda tem acesso.
                 syncChecklistDao.addUpdate(newSyncList, true);
             }
+            //Libera pro GB
+            files_product = null;
             //
             // Processamento Product Group
             //
@@ -766,7 +778,8 @@ public class WS_Sync extends IntentService {
 
                 productGroupDao.addUpdate(productGroups, false);
             }
-
+            //Libera pro GB
+            files_product_group = null;
             //
             // Processamento Product Group Product
             //
@@ -784,6 +797,8 @@ public class WS_Sync extends IntentService {
 
                 productGroupProductDao.addUpdate(productGroupProducts, false);
             }
+            //Libera pro GB
+            files_product_group_product = null;
             //
             // Processamento Produto Serial
             //
@@ -899,6 +914,8 @@ public class WS_Sync extends IntentService {
                 serialDao.processSerialSync(serialList);
 
             }
+            //Libera pro GB
+            files_serial = null;
             /**
              * Após inserir todos os seriais de todos os arquivos,
              * Seleciona todos os seriais que NÃO FORAM ATUALIZADOS PELO PROCESSO ACIMA,
@@ -963,6 +980,24 @@ public class WS_Sync extends IntentService {
 //                }
 //            }
             //endregion
+            /**
+             * Processamento MD_TAG
+             */
+            File[] files_tag = ToolBox_Inf.getListOfFiles_v2("md_tag-");
+
+            for (File _file : files_tag) {
+                ArrayList<MdTag> tags = gson.fromJson(
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(_file)
+                    ),
+                    new TypeToken<ArrayList<MdTag>>() {
+                    }.getType()
+                );
+
+                mdTagDao.addUpdate(tags, false);
+            }
+            //Libera pro GB
+            files_tag = null;
             //
             // Processamento Department
             //
@@ -980,6 +1015,8 @@ public class WS_Sync extends IntentService {
 
                 departmentDao.addUpdate(departments, false);
             }
+            //Libera pro GB
+            files_deparment = null;
             //
             // Processamento Users do customer
             //
@@ -997,6 +1034,7 @@ public class WS_Sync extends IntentService {
 
                 mdUserDao.addUpdate(mdUsers, false);
             }
+            files_md_user = files_md_user;
             //
             // Processamento ActionPlans
             //
@@ -1014,6 +1052,12 @@ public class WS_Sync extends IntentService {
                 //
                 for (GE_Custom_Form_Ap formAp : action_plans) {
                     formAp.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+                    //LUCHE - 10/05/2021 - Add infos da tag ja que o server não manda.
+                    MdTag mdTagInfo = ToolBox_Inf.getMdTagInfo(getApplicationContext(), formAp.getTag_operational_code());
+                    if(mdTagInfo != null){
+                        formAp.setTag_operational_id(mdTagInfo.getTag_id());
+                        formAp.setTag_operational_desc(mdTagInfo.getTag_desc());
+                    }
                 }
                 //
                 geCustomFormApDao.addUpdate(action_plans, false);
@@ -1024,6 +1068,8 @@ public class WS_Sync extends IntentService {
                 int qtyDel = ToolBox_Inf.deleteUnnecessaryAP(getApplicationContext());
                 Log.d("FORM_AP", "AP's del: " + qtyDel);
             }
+            //Libera pro GB
+            files_action_plan = null;
             //
             // Processamento ALL Product
             //
@@ -1042,6 +1088,8 @@ public class WS_Sync extends IntentService {
 
                 allProductDao.addUpdate(allProducts, false);
             }
+            //Libera pro GB
+            files_all_product = null;
             //
             // Processamento ALL Product Group
             //
@@ -1060,6 +1108,8 @@ public class WS_Sync extends IntentService {
 
                 allProductGroupDao.addUpdate(allProductGroups, false);
             }
+            //Libera pro GB
+            files_all_product_group = null;
             //
             // Processamento ALL Product Group
             //
@@ -1077,6 +1127,8 @@ public class WS_Sync extends IntentService {
 
                 allProductGroupProductDao.addUpdate(allProductGroupProducts, false);
             }
+            //Libera pro GB
+            files_all_product_group_product = null;
             //
             // Processamento Site Zone
             //
@@ -1120,7 +1172,8 @@ public class WS_Sync extends IntentService {
 
                 siteZoneDao.addUpdate(mdSiteZones, false);
             }
-
+            //Libera pro GB
+            files_site_zone = null;
             //
             // Processamento Site Zone Local
             //
@@ -1138,7 +1191,8 @@ public class WS_Sync extends IntentService {
 
                 siteZoneLocalDao.addUpdate(mdSiteZoneLocals, false);
             }
-
+            //Libera pro GB
+            files_site_zone_local = null;
             //
             // Processamento Segment
             //
@@ -1156,6 +1210,8 @@ public class WS_Sync extends IntentService {
 
                 segmentDao.addUpdate(mdSegments, false);
             }
+            //Libera pro GB
+            files_segment = null;
 
             //
             // Processamento MD_Category_Price
@@ -1174,7 +1230,8 @@ public class WS_Sync extends IntentService {
 
                 categoryPriceDao.addUpdate(mdCategoryPrices, false);
             }
-
+            //Libera pro GB
+            files_category_price = null;
             //
             // Processamento Brand
             //
@@ -1192,7 +1249,8 @@ public class WS_Sync extends IntentService {
 
                 brandDao.addUpdate(mdBrands, false);
             }
-
+            //Libera pro GB
+            files_brand = null;
             //
             // Processamento Brand Model
             //
@@ -1210,7 +1268,8 @@ public class WS_Sync extends IntentService {
 
                 brandModelDao.addUpdate(mdBrandModels, false);
             }
-
+            //Libera pro GB
+            files_brand_model = null;
             //
             // Processamento Brand Color
             //
@@ -1228,7 +1287,8 @@ public class WS_Sync extends IntentService {
 
                 brandColorDao.addUpdate(mdBrandColors, false);
             }
-
+            //Libera pro GB
+            files_brand_color = null;
             //
             // Processamento Product Brand
             //
@@ -1246,6 +1306,8 @@ public class WS_Sync extends IntentService {
 
                 productBrandDao.addUpdate(mdProductBrands, false);
             }
+            //Libera pro GB
+            files_product_brand = null;
             //
             // Processamento Product Segment
             //
@@ -1263,7 +1325,8 @@ public class WS_Sync extends IntentService {
 
                 productSegmentDao.addUpdate(mdProductSegments, false);
             }
-
+            //Libera pro GB
+            files_product_segment = null;
             //
             // Processamento Product Category Price
             //
@@ -1281,6 +1344,8 @@ public class WS_Sync extends IntentService {
 
                 productCategoryPriceDao.addUpdate(mdProductCategoryPrices, false);
             }
+            //Libera pro GB
+            files_product_category_price = null;
             //
             // Processamento MD Class
             //
@@ -1298,6 +1363,8 @@ public class WS_Sync extends IntentService {
 
                 classDao.addUpdate(md_classes, false);
             }
+            //Libera pro GB
+            files_classes = null;
             //
             // Processamento IO Move Reason
             //
@@ -1315,7 +1382,8 @@ public class WS_Sync extends IntentService {
 
                 io_move_reasonDao.addUpdate(io_move_reasons, false);
             }
-
+            //Libera pro GB
+            file_io_move_reason = null;
             //
             // Processamento Partner
             //
@@ -1333,24 +1401,8 @@ public class WS_Sync extends IntentService {
 
                 partnerDao.addUpdate(mdPartners, false);
             }
-
-            /**
-             * Processamento MD_TAG
-             */
-            File[] files_tag = ToolBox_Inf.getListOfFiles_v2("md_tag-");
-
-            for (File _file : files_tag) {
-                ArrayList<MdTag> tags = gson.fromJson(
-                    ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
-                    ),
-                    new TypeToken<ArrayList<MdTag>>() {
-                    }.getType()
-                );
-
-                mdTagDao.addUpdate(tags, false);
-            }
-
+            //Libera pro GB
+            files_partner = null;
             /**
              * Processamento TK_TICKET_CACHE
              */
@@ -1367,7 +1419,8 @@ public class WS_Sync extends IntentService {
                 //
                 tkTicketCacheDao.addUpdate(ticketCaches, false);
             }
-
+            //Libera pro GB
+            files_ticket_cache = null;
         }
 
         //endregion
@@ -1440,7 +1493,8 @@ public class WS_Sync extends IntentService {
 
                 customFormProductDao.addUpdate(customFormsProduct, false);
             }
-
+            //Libera pro GB
+            files_cf_product = null;
             //
             // Processamento Custom Form
             //
@@ -1475,7 +1529,8 @@ public class WS_Sync extends IntentService {
 
                 customFormDao.addUpdate(customForms, false);
             }
-
+            //Libera pro GB
+            files_custom_form = null;
             //
             // Processamento Custom Form Type
             //
@@ -1493,6 +1548,8 @@ public class WS_Sync extends IntentService {
 
                 customFormTypeDao.addUpdate(customFormsTypes, false);
             }
+            //Libera pro GB
+            files_cf_type = null;
             //
             // Processamento Custom Form Field
             //
@@ -1510,6 +1567,8 @@ public class WS_Sync extends IntentService {
 
                 customFormFieldDao.addUpdate(customFormsFields, false);
             }
+            //Libera pro GB
+            files_cf_field = null;
             //
             // Processamento Custom Form Operation
             //
@@ -1527,7 +1586,8 @@ public class WS_Sync extends IntentService {
 
                 customFormOperationDao.addUpdate(customFormsOperations, false);
             }
-
+            //Libera pro GB
+            files_cf_operation = null;
             //
             // Processamento Custom Form Blob
             //
@@ -1545,6 +1605,8 @@ public class WS_Sync extends IntentService {
 
                 customFormBlobDao.addUpdate(geCustomFormBlobs, false);
             }
+            //Libera pro GB
+            files_cf_blob = null;
             //
             // Processamento Custom Form Site
             //
@@ -1562,7 +1624,8 @@ public class WS_Sync extends IntentService {
 
                 customFormSiteDao.addUpdate(customFormSites, false);
             }
-
+            //Libera pro GB
+            files_cf_site = null;
         }//Fim processamento Checklist
         //endregion
         //region Processamento das tabelas do SCHEDULE
@@ -1594,7 +1657,6 @@ public class WS_Sync extends IntentService {
             ArrayList<MD_Schedule_Exec_Operation> scheduleExecOperationList = new ArrayList<>();
             ArrayList<MD_Schedule_Exec_Product> scheduleExecProductList = new ArrayList<>();
             //
-
             if(files_md_schedule_exec.length > 0) {
                 //Carrega lista de sites dos agendamentos
                 for (File fileSite : files_md_schedule_exec_site) {
@@ -1649,6 +1711,11 @@ public class WS_Sync extends IntentService {
                 //
                 mdScheduleExecDao.processConciliation(scheduleExecs,scheduleExecSiteList,scheduleExecOperationList,scheduleExecProductList);
             }
+            //Libera referencias par ao GB
+            files_md_schedule_exec = null;
+            files_md_schedule_exec_site = null;
+            files_md_schedule_exec_operation = null;
+            files_md_schedule_exec_product = null;
         }
         //endregion
         //region Processamento das tabelas do SO
@@ -1676,7 +1743,9 @@ public class WS_Sync extends IntentService {
 
                 so_pack_expressDao.addUpdate(mdSo_pack_expresss, false);
             }
-
+            //
+            //Libera pro GB
+            files_so_pack_express = null;
         }
         //endregion
 

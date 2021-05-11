@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
@@ -182,24 +183,34 @@ class MdTagDao(
         closeDB()
     }
 
-    override fun getByString(sQuery: String?): MdTag? {
+    fun getByString(sQuery: String?, dbInstance: SQLiteDatabase?) : MdTag?{
         var mdTag: MdTag? = null
-        openDB()
+        if(dbInstance == null) {
+            openDB()
+        } else{
+            this.db = dbInstance
+        }
+        lateinit var cursor: Cursor
         try {
-            val cursor = db.rawQuery(sQuery, null)
+            cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
                 mdTag = toMdTagMapper.map(cursor)
             }
-            //
-            cursor.close()
         } catch (e: java.lang.Exception) {
             ToolBox_Inf.registerException(javaClass.name, e)
         } finally {
+            cursor.close()
         }
-        closeDB()
-
+        //
+        if(dbInstance == null) {
+            closeDB()
+        }
+        //
         return mdTag
     }
+
+    override fun getByString(sQuery: String?) = getByString(sQuery,null)
+
 
     override fun getByStringHM(sQuery: String?): HMAux? {
         var hmAux: HMAux? = null

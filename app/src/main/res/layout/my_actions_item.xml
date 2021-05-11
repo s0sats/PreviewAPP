@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="2dp"
-        android:text="(Status)"
+        tools:text="(Status)"
         android:textColor="@color/my_action_gray_font"
         android:textSize="8sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,7 +28,7 @@
         android:background="@drawable/namoa_cell_8_states"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_status"
+        app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_status"
         android:paddingBottom="5dp"
         >
 
@@ -37,12 +37,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:text="Contract Desc"
+            tools:text="Contract Desc"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_client"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_client"
+            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_client"
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_client"
             android:visibility="gone"
             />
 
@@ -51,12 +51,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:text="O.S Code"
+            tools:text="O.S Code"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_contract"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_contract"
+            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_contract"
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_contract"
             android:visibility="gone"
             />
 
@@ -65,39 +65,41 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:text="Site"
+            tools:text="Site"
             android:textColor="@color/namoa_color_danger_red"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_focus_step_desc"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_focus_step_desc"
+            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_focus_step_desc"
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_focus_step_desc"
             android:visibility="gone"
             />
 
         <TextView
             android:id="@+id/my_actions_item_tv_focus_step_desc"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:text="Focus Step Desc"
+            tools:text="Focus Step Desc"
             android:textSize="12sp"
+            android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_process_desc"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_process_desc" />
+            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_process_desc"
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_process_desc" />
 
         <TextView
             android:id="@+id/my_actions_item_tv_client"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:text="Client Desc"
+            tools:text="Client Desc"
             android:textSize="12sp"
+            android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_site"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_site"
+            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_site"
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_site"
             android:visibility="gone"
             />
 
@@ -119,12 +121,12 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:text="22/01/2020 14:50 - 23/01/2021 15:00"
+            tools:text="22/01/2020 14:50 - 23/01/2021 15:00"
             app:layout_constraintWidth_default="wrap"
             android:textSize="12sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/my_actions_item_iv_icon_right"
-            app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_icon_left"
+            app:layout_constraintBottom_toBottomOf="@id/my_actions_item_iv_icon_right"
+            app:layout_constraintEnd_toStartOf="@id/my_actions_item_iv_icon_left"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -135,86 +137,97 @@
             android:layout_height="@dimen/namoa_icon_cell_so_height"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/my_actions_item_iv_icon_right"
+            app:layout_constraintEnd_toStartOf="@id/my_actions_item_iv_icon_right"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_twotone_warning_24" />
 
         <TextView
             android:id="@+id/my_actions_item_tv_tag_desc"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:text="Desc Tag"
+            tools:text="Desc Tag"
             android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="@color/namoa_status_pending"
+            android:layout_marginEnd="8dp"
+            android:textAllCaps="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_planned_date"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_planned_date" />
+            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_planned_date"
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_planned_date"
+            
+            />
 
         <TextView
             android:id="@+id/my_actions_item_tv_prod_desc"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:text="Desc Prod"
+            tools:text="Desc Prod"
             android:textSize="12sp"
             android:textStyle="bold"
+            android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_planned_date"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_tag_desc" />
+            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_planned_date"
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_tag_desc" />
 
         <TextView
             android:id="@+id/my_actions_item_tv_serial_id"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:text="ID Serial"
+            tools:text="ID Serial"
             android:textSize="12sp"
             android:textStyle="bold"
+            android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_prod_desc"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_prod_desc" />
+            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_prod_desc"
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_prod_desc" />
 
         <TextView
             android:id="@+id/my_actions_item_tv_origin"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:text="Origin Desc"
+            tools:text="Origin Desc"
             android:textSize="12sp"
+            android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_prod_desc"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_serial_id" />
+            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_prod_desc"
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_serial_id"
+            android:maxLines="1"
+            />
 
         <TextView
             android:id="@+id/my_actions_item_tv_process_desc"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:text="Process Desc"
+            tools:text="Process Desc"
             android:textSize="12sp"
+            android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_origin"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_origin" />
+            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_origin"
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_origin" />
 
         <TextView
             android:id="@+id/my_actions_item_tv_done_date"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/my_action_info_margin_top"
-            android:text="Done Date"
+            tools:text="Done Date"
             android:textSize="12sp"
+            android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/my_actions_item_tv_os_code"
-            app:layout_constraintTop_toBottomOf="@+id/my_actions_item_tv_os_code"
+            app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_os_code"
+            app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_os_code"
             android:visibility="gone"
 
             />
@@ -225,11 +238,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="2dp"
-        android:text="2021.1.1"
+        tools:text="2021.1.1"
         android:textColor="@color/my_action_gray_font"
         android:textSize="8sp"
-        app:layout_constraintBottom_toBottomOf="@+id/my_actions_item_tv_status"
-        app:layout_constraintEnd_toStartOf="@+id/my_actions_item_tv_status"
+        app:layout_constraintBottom_toBottomOf="@id/my_actions_item_tv_status"
+        app:layout_constraintEnd_toStartOf="@id/my_actions_item_tv_status"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

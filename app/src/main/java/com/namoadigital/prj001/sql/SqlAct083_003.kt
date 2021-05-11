@@ -43,7 +43,7 @@ class SqlAct083_003(
                      and ($tagOperCode is null or a.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE} = $tagOperCode) 
                      and ($productCode is null or a.${GE_Custom_Form_ApDao.PRODUCT_CODE} = $productCode )
                      and ($serialId is null or a.${GE_Custom_Form_ApDao.SERIAL_ID} = $serialId ) 
-                     and ($calendarDate is null or strftime('%Y-%m-%d',a.${GE_Custom_Form_ApDao.AP_WHEN},$deviceGMT) = $calendarDate )
+                     and ($calendarDate is null or strftime('%Y-%m-%d',a.${GE_Custom_Form_ApDao.AP_WHEN},'$deviceGMT') = $calendarDate )
                      $dateFilter
               """
     }
