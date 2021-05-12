@@ -103,12 +103,12 @@ class Act083ViewModel(private val context: Application,
                 }
         )
         //
-//        _myActionsList.addAll(
-//                getSchedules(mketTextFilter,tabFilter
-//                ).map {
-//                    it.toMyActionsObj(appContext)
-//                }
-//        )
+        _myActionsList.addAll(
+                getSchedules(mketTextFilter,tabFilter
+                ).map {
+                    it.toMyActionsObj(context)
+                }
+        )
         //
         _myActionsList.addAll(
                 getFormAp(mketTextFilter, tabFilter
@@ -171,16 +171,18 @@ class Act083ViewModel(private val context: Application,
     }
 
     private fun getSchedules(mketTextFilter: String, tabFilter: Boolean): MutableList<MD_Schedule_Exec> {
+        val toSqlQuery = SqlAct083_005(
+                context,
+                ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                tagFilter,
+                productCode,
+                serialId,
+                null,
+                calendarDate
+        ).toSqlQuery()
         return scheduleDao.query(
-                SqlAct083_005(
-                        context,
-                        ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                        tagFilter,
-                        productCode,
-                        serialId,
-                        null,
-                        calendarDate
-                ).toSqlQuery()
+                toSqlQuery
+
         )
     }
 
