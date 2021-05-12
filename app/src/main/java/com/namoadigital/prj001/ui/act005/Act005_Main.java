@@ -7,15 +7,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,6 +26,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
@@ -41,6 +42,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
+import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
@@ -67,6 +69,7 @@ import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_015;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
@@ -76,7 +79,6 @@ import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
-import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
 import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
@@ -85,7 +87,6 @@ import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act036.Act036_Main;
 import com.namoadigital.prj001.ui.act040.Act040_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
-import com.namoadigital.prj001.ui.act050.Act050_Frag_Favorite;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
@@ -222,6 +223,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     int outboundItensTotal=0;
     ArrayList<HMAux> outbound_items;
     Toolbar toolbar;
+    private boolean hasUpdateRequired = false;
+    private boolean hasSyncRequired = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -2609,11 +2613,34 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             ((MenuBuilder) menu).setOptionalIconsVisible(true);
         }
 
-        EV_User user = mPresenter.getEv_user();
-
+        EV_UserDao userDao = new EV_UserDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+        EV_User user = userDao.getByString(
+                new EV_User_Sql_001(
+                        ToolBox_Con.getPreference_User_Code(getApplicationContext())
+                ).toSqlQuery()
+        );
+        int icon = 0;
+        int iconColor = 0;
+        if(hasUpdateRequired && hasSyncRequired){
+            icon = R.drawable.ic_sync_main_menu_data;
+        }else if(hasUpdateRequired){
+            icon = R.drawable.ic_cloud_upload;
+            iconColor = R.color.namoa_cancel_red;
+        }else if(hasSyncRequired){
+            icon = R.drawable.ic_baseline_cloud_download_24;
+            iconColor = R.color.custom_yellow_sync;
+        }else{
+            iconColor = android.R.color.white;
+            icon = R.drawable.ic_baseline_cloud_done_24;
+        }
+        //
+        Drawable wrappedDrawable = DrawableCompat.wrap(context.getDrawable(icon));
+        if (wrappedDrawable != null) {
+            DrawableCompat.setTint(wrappedDrawable.mutate(), ContextCompat.getColor(context, iconColor));
+        }
         //
         menu.add(0, TOOLBAR_SYNC_DATA_STATUS, Menu.FIRST + 0, hmAux_Trans.get("lbl_sync_data"));
-        menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setIcon(R.drawable.ic_baseline_cloud_done_24);
+        menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setIcon(wrappedDrawable);
         menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         //
         menu.add(0, TOOLBAR_ENABLE_NFC, Menu.FIRST + 1, hmAux_Trans.get("lbl_sync_data"));
@@ -2752,9 +2779,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //
         List<HMAux> queryResult = mPresenter.getMenuItensV3(periodFilter, sitesFilter, focusFilter);
         //
-        boolean hasUpdateRequired = false;
-        boolean hasSyncRequired = false;
-        //
         ArrayList<MainTagMenu> mainTagMenus = new ArrayList<>();
         for(HMAux aux: queryResult){
             //
@@ -2779,16 +2803,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     )
             );
         }
-
-//        if(hasUpdateRequired && hasSyncRequired){
-//            toolbar.getMenu().getItem(Menu.FIRST + 0).setIcon(R.drawable.ic_sync_main_menu_data);
-//        }else if(hasUpdateRequired){
-//            toolbar.getMenu().getItem(Menu.FIRST + 0).setIcon(R.drawable.ic_cloud_upload);
-//        }else if(hasSyncRequired){
-//            toolbar.getMenu().getItem(Menu.FIRST + 0).setIcon(R.drawable.ic_baseline_cloud_download_24);
-//        }else{
-//            toolbar.getMenu().getItem(Menu.FIRST + 0).setIcon(R.drawable.ic_baseline_cloud_done_24);
-//        }
 
         return mainTagMenus;
     }

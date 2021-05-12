@@ -70,14 +70,14 @@ class ActionByTagFilterDialog(context: Context,
                 else -> PREFERENCE_HOME_ALL_TIME_OPTION
             }
             //
-            val siteFilterPreference =when(binding.rgPeriod.checkedRadioButtonId){
+            val siteFilterPreference =when(binding.rgSite.checkedRadioButtonId){
                 R.id.rb_all_sites -> PREFERENCE_HOME_ALL_SITE_OPTION
-                else -> PREFERENCE_HOME_UNTIL_TODAY_OPTION
+                else -> PREFERENCE_HOME_CURRENT_SITE_OPTION
             }
             //
-            val focusFilterPreference =when(binding.rgPeriod.checkedRadioButtonId){
+            val focusFilterPreference =when(binding.rgFocus.checkedRadioButtonId){
                 R.id.rb_focusable_actions -> PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION
-                else -> PREFERENCE_HOME_ALL_ACTIONS_FILTER
+                else -> PREFERENCE_HOME_ALL_ACTIONS_OPTION
             }
             //
             listener.onApply(periodFilterPreference, siteFilterPreference, focusFilterPreference)
@@ -89,7 +89,6 @@ class ActionByTagFilterDialog(context: Context,
         }
         //
     }
-
 
     private fun initValues() {
         val periodFilter = ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION)

@@ -24,7 +24,7 @@ class Act005MainMenuTagAdapter(
         val mListener: FrgMainHome.OnFrgMainHomeIteract?
 ): RecyclerView.Adapter<Act005MainMenuTagAdapter.MyTagVh>() {
 
-    val mMainTagMenu get() = _mMainTagMenu
+    public val mMainTagMenu get() = _mMainTagMenu
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyTagVh {
         return MyTagVh(Act005TagCellBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
