@@ -24,10 +24,12 @@ class Act083_Main : Base_Activity() {
 
     private lateinit var binding: Act083MainBinding
     private lateinit var mAdapter: MyActionsAdapter
+    private lateinit var bundle: Bundle
 
     private val viewModel by lazy {
         val factory = Act083ViewModelFactory(
                 application,
+                bundle,
                 TK_TicketDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
@@ -68,11 +70,16 @@ class Act083_Main : Base_Activity() {
         val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         //
+        initBundle(savedInstanceState)
         iniSetup()
         iniTrans()
         initVars()
         iniUIFooter()
         initActions()
+    }
+
+    private fun initBundle(savedInstanceState: Bundle?) {
+        bundle = (savedInstanceState?: intent.extras) as Bundle
     }
 
     private fun iniTrans() {
@@ -89,9 +96,15 @@ class Act083_Main : Base_Activity() {
     }
 
     private fun initVars() {
-        //fakeChipsGenerator()
         setLabels()
+        setChips()
         iniRecycler()
+    }
+
+    private fun setChips() {
+        viewModel.getChipList().forEach {
+            binding.act083MainContent.act083CgFilter.addView(createTvChip(it))
+        }
     }
 
     private fun iniRecycler() {

@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act005;
 
 import android.graphics.Bitmap;
+import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
@@ -123,4 +124,6 @@ public interface Act005_Main_Presenter {
     Bitmap getLogoBitmap();
 
     EV_User getEv_user();
+
+    Bundle getAct083BundleParams(MainTagMenu mainTagMenu);
 }
