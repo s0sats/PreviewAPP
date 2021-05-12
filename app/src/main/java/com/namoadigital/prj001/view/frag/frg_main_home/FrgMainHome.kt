@@ -1,10 +1,9 @@
 package com.namoadigital.prj001.view.frag.frg_main_home
 
+import android.R
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +12,6 @@ import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.adapter.Act005MainMenuTagAdapter
 import com.namoadigital.prj001.databinding.FrgMainHomeBinding
 import com.namoadigital.prj001.model.MainTagMenu
-import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ConstantBaseApp.*
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -35,7 +33,7 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
     private var mModule_Code: String? = null
 
     private val hmAux_Trans_Frag: HMAux by lazy {
-        var transListFrag = ArrayList<String>();
+        var transListFrag = ArrayList<String>()
         //
         transListFrag.add("calendar_lbl")
         transListFrag.add("empty_list_lbl")
@@ -86,10 +84,6 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
     private fun initializeLayoutVisibility() {
 
         val tagList = mListener?.getTagList(
@@ -102,16 +96,17 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
             binding.tvListPlaceholder.visibility = View.GONE
             if(mListener != null){
                 adapter = Act005MainMenuTagAdapter(tagList, hmAux_Trans_Frag, mListener)
-                binding.rvTags.adapter = adapter
-                val layoutManager = LinearLayoutManager(context)
-                binding.rvTags.layoutManager = layoutManager
-                binding.rvTags.addItemDecoration(DividerItemDecoration(context,
-                        DividerItemDecoration.VERTICAL))
             }
         }else{
+            adapter = Act005MainMenuTagAdapter(mutableListOf(), hmAux_Trans_Frag, mListener)
             binding.rvTags.visibility = View.GONE
             binding.tvListPlaceholder.visibility = View.VISIBLE
         }
+        binding.rvTags.adapter = adapter
+        val layoutManager = LinearLayoutManager(context)
+        binding.rvTags.layoutManager = layoutManager
+        binding.rvTags.addItemDecoration(DividerItemDecoration(context,
+                DividerItemDecoration.VERTICAL))
     }
 
     private fun setLabels() {
@@ -163,7 +158,6 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         }
     }
 
-
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -204,9 +198,18 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
     override fun onApply(periodFilter: String, siteFilter: String, focusFilter: String) {
         mListener?.let {
             val tagList = it.getTagList(periodFilter, siteFilter, focusFilter)
-            adapter.mMainTagMenu.clear()
+            if(adapter.mMainTagMenu != null && !adapter.mMainTagMenu.isEmpty()) {
+                adapter.mMainTagMenu.clear()
+            }
             adapter.mMainTagMenu.addAll(tagList)
             adapter.notifyDataSetChanged()
+            //
+            if (tagList == null || tagList.isEmpty()){
+                binding.tvListPlaceholder.visibility = View.VISIBLE
+            }else{
+                binding.tvListPlaceholder.visibility = View.GONE
+            }
+            //
         }
     }
 
