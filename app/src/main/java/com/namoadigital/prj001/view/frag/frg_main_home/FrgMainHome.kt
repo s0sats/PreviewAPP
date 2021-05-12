@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.view.frag.frg_main_home
 
-import android.R
 import android.content.Context
 import android.os.Bundle
 import android.view.*
@@ -18,7 +17,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.dialog.ActionByTagFilterDialog
 
 
-// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM_MODULE_CODE = "ARG_PARAM_MODULE_CODE"
 
