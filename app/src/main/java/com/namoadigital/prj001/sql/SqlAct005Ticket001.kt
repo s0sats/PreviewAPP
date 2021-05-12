@@ -18,28 +18,41 @@ class SqlAct005Ticket001(private val context: Context,
     var ticketFilter = ""
     var formApFilter = ""
     var scheduleFilter = ""
+    var formFilter = ""
     init{
         ticketFilter = when (periodFilter) {
-            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n (strftime('%Y-%m-%d',s.${TK_Ticket_StepDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
-            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n (strftime('%Y-%m-%d',s.${TK_Ticket_StepDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
+            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n and (strftime('%Y-%m-%d',s.${TK_Ticket_StepDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
+            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n and (strftime('%Y-%m-%d',s.${TK_Ticket_StepDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
             else -> ""
         }
         //
         formApFilter = when (periodFilter) {
-            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n (strftime('%Y-%m-%d',geap.${GE_Custom_Form_ApDao.AP_WHEN},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
-            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n (strftime('%Y-%m-%d',geap.${GE_Custom_Form_ApDao.AP_WHEN},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
+            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> """ and ( (case when gcdl.${GE_Custom_Form_ApDao.AP_WHEN} is null or gcdl.${GE_Custom_Form_ApDao.AP_WHEN} = "" 
+                      then strftime('%Y-%m-%d',geap.${GE_Custom_Form_ApDao.AP_WHEN},'$deviceGMT') <= strftime('%Y-%m-%d','now','$deviceGMT'))
+                      else strftime('%Y-%m-%d',geap.${GE_Custom_Form_ApDao.CREATE_DATE},'$deviceGMT') <= strftime('%Y-%m-%d','now','$deviceGMT'))
+                 end)"""
+            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION ->""" and ( (case when gcdl.${GE_Custom_Form_ApDao.AP_WHEN} is null or gcdl.${GE_Custom_Form_ApDao.AP_WHEN} = "" 
+                      then strftime('%Y-%m-%d',geap.${GE_Custom_Form_ApDao.AP_WHEN},'$deviceGMT') <= strftime('%Y-%m-%d','now','$deviceGMT'))
+                      else strftime('%Y-%m-%d',geap.${GE_Custom_Form_ApDao.CREATE_DATE},'$deviceGMT') <= strftime('%Y-%m-%d','now','$deviceGMT', '+7 days'))
+                 end)"""
             else -> ""
         }
         //
         scheduleFilter = when (periodFilter) {
-            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
-            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
+            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
+            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
+            else -> ""
+        }
+        scheduleFilter = when (periodFilter) {
+            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
+            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
             else -> ""
         }
 
         if (siteCode > 0) {
             ticketFilter += "\n and tk.${TK_TicketDao.OPEN_SITE_CODE} = $siteCode "
             scheduleFilter += "\n and mse.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode "
+            formFilter += "\n and gcdl.${GE_Custom_Form_LocalDao.SITE_CODE} = $siteCode "
         }
 
         if (PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION.equals(focusFilter)) {
@@ -62,7 +75,7 @@ class SqlAct005Ticket001(private val context: Context,
                count(tk.tag_operational_code) qty, 
                max( max(tk.update_required), max(tk.update_required_product)) update_required, 
                max(tk.sync_required) sync_required,
-               0 in_processing 
+               max(0) in_processing 
           from ${TK_TicketDao.TABLE} tk 
             JOIN tk_ticket_step s ON 
                    tk.customer_code = s.customer_code 
@@ -82,7 +95,7 @@ class SqlAct005Ticket001(private val context: Context,
                    count(tkc.tag_operational_code) qty, 
                    max(0) update_required, 
                    max(0) sync_required, 
-                   0 in_processing 
+                   max(0) in_processing 
              from ${TkTicketCacheDao.TABLE} tkc
              left join tk_ticket tk
                      on tk.customer_code = tkc.customer_code 
@@ -91,12 +104,12 @@ class SqlAct005Ticket001(private val context: Context,
                     and tk.ticket_id = tkc.ticket_id
                 where tk.ticket_code is null
         union 
-            select  mdt.${MdTagDao.TAG_CODE}, 
-                    mdt.${MdTagDao.TAG_DESC}, 
+            select  mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
+                    mdt.${MdTagDao.TAG_DESC} tag_operational_desc, 
                     count(geap.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE}) qty,
-                     0 updated_required,
-                     0 sync_required,
-                     0 in_processing
+                     max(0) update_required,
+                     max(0) sync_required,
+                     max(0) in_processing
               from ${MdTagDao.TABLE} mdt
              inner join ${GE_Custom_Form_ApDao.TABLE} geap
                     on  mdt.${MdTagDao.TAG_CODE} = geap.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE}
@@ -104,15 +117,15 @@ class SqlAct005Ticket001(private val context: Context,
                and geap.${GE_Custom_Form_ApDao.AP_STATUS} not in ('${Constant.SYS_STATUS_DONE}','${Constant.SYS_STATUS_CANCELLED}')
             group by mdt.${MdTagDao.TAG_CODE} 
         union 
-            select mdt.${MdTagDao.TAG_CODE}, 
-            mdt.${MdTagDao.TAG_DESC}, 
+            select mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
+            mdt.${MdTagDao.TAG_DESC} tag_operational_desc, 
             count(mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}) qty,
-            (case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
+            max((case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                   then 1
                   else 0
-            end) updated_required,
-             0 sync_required,
-             0 in_processing
+            end)) update_required,
+             max(0) sync_required,
+             max(0) in_processing
               from ${MdTagDao.TABLE} mdt
             inner join ${MD_Schedule_ExecDao.TABLE} mse
                     on  mdt.${MdTagDao.TAG_CODE} = mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}
@@ -125,18 +138,19 @@ class SqlAct005Ticket001(private val context: Context,
             select gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}, 
                    gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC}, 
                    count(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}), 
-            (case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
+            max((case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                   then 1
                   else 0
-            end) updated_required,
-            0 sync_required,
-            (case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} =  '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
+            end)) update_required,
+            max(0) sync_required,
+            max((case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} =  '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
                   then 1
                   else 0
-            end) in_processing
+            end)) in_processing
             from   ${GE_Custom_Form_LocalDao.TABLE} gcdl   
             where  gcdl.${GE_Custom_Form_LocalDao.CUSTOMER_CODE} = '$customerCode'
             and gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} in ('${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}', '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')  
+            $formFilter
             )  ticket 
    where  ticket.tag_operational_code is not null
    group by ticket.tag_operational_code, ticket.tag_operational_desc;"""

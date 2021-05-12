@@ -92,6 +92,7 @@ import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
+import com.namoadigital.prj001.sql.SqlAct005Schedule001;
 import com.namoadigital.prj001.sql.SqlAct005Ticket001;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
@@ -373,7 +374,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         if(PREFERENCE_HOME_CURRENT_SITE_OPTION.equals(sitesFilter)){
             site_code = Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context));
         }
-        List<HMAux> queryResult = tkTicketCacheDao.query_HM(
+        List<HMAux> queryResult = tk_ticketDao.query_HM(
                 new SqlAct005Ticket001(
                         context,
                         (int) ToolBox_Con.getPreference_Customer_Code(context),

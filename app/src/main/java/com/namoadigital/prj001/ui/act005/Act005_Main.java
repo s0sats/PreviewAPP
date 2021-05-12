@@ -2770,6 +2770,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         List<HMAux> queryResult = mPresenter.getMenuItensV3(periodFilter, sitesFilter, focusFilter);
         //
         ArrayList<MainTagMenu> mainTagMenus = new ArrayList<>();
+        //
+        int tagListItemCount = 0;
         for(HMAux aux: queryResult){
             //
             int updateRequired = aux.hasConsistentValue("update_required")? Integer.parseInt(aux.get("update_required")) : 0;
@@ -2783,6 +2785,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 hasSyncRequired = syncRequired > 0;
             }
             //
+            tagListItemCount += aux.hasConsistentValue("qty")? Integer.parseInt(aux.get("qty")) : 0;
             mainTagMenus.add( new MainTagMenu(
                             aux.hasConsistentValue("tag_operational_code")? Integer.parseInt(aux.get("tag_operational_code")) : 0,
                             aux.get("tag_operational_desc"),
@@ -2794,6 +2797,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             );
         }
 
+        mainTagMenus.add(new MainTagMenu(0,
+                "",
+                tagListItemCount,
+                0,
+                0,
+                0)
+        );
         return mainTagMenus;
     }
 
