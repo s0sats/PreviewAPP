@@ -18,6 +18,7 @@ class SqlAct005Ticket001(private val context: Context,
     var ticketFilter = ""
     var formApFilter = ""
     var scheduleFilter = ""
+    var scheduleNextFilter = ""
     var formFilter = ""
     init{
         ticketFilter = when (periodFilter) {
@@ -43,15 +44,16 @@ class SqlAct005Ticket001(private val context: Context,
             ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
             else -> ""
         }
-        scheduleFilter = when (periodFilter) {
-            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
-            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
-            else -> ""
+        scheduleNextFilter = when (periodFilter) {
+            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') > strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
+            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') > strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
+            else -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') >= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
         }
 
         if (siteCode > 0) {
             ticketFilter += "\n and tk.${TK_TicketDao.OPEN_SITE_CODE} = $siteCode "
             scheduleFilter += "\n and mse.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode "
+            scheduleNextFilter += "\n and mse.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode "
             formFilter += "\n and gcdl.${GE_Custom_Form_LocalDao.SITE_CODE} = $siteCode "
         }
 
@@ -63,7 +65,7 @@ class SqlAct005Ticket001(private val context: Context,
     override fun toSqlQuery(): String {
         val sb = StringBuilder()
         return sb.append(
-"""select ticket.tag_operational_code tag_operational_code, 
+    """select ticket.tag_operational_code tag_operational_code, 
           ticket.tag_operational_desc tag_operational_desc, 
           sum(qty) qty, 
           max(ticket.update_required) update_required, 
@@ -134,6 +136,24 @@ class SqlAct005Ticket001(private val context: Context,
             and mse.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_WAITING_SYNC}')
             $scheduleFilter
             group by mdt.${MdTagDao.TAG_CODE} 
+        union 
+            select mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
+            mdt.${MdTagDao.TAG_DESC} tag_operational_desc, 
+            count(mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}) qty,
+            max((case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
+                  then 1
+                  else 0
+            end)) update_required,
+             max(0) sync_required,
+             max(0) in_processing
+              from ${MdTagDao.TABLE} mdt
+            inner join ${MD_Schedule_ExecDao.TABLE} mse
+                    on  mdt.${MdTagDao.TAG_CODE} = mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}
+             where 
+            mse.${MD_Schedule_ExecDao.CUSTOMER_CODE} = '$customerCode'
+            and mse.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_WAITING_SYNC}')
+            $scheduleNextFilter
+            group by mdt.${MdTagDao.TAG_CODE} 
         union
             select gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}, 
                    gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC}, 
@@ -149,28 +169,19 @@ class SqlAct005Ticket001(private val context: Context,
             end)) in_processing
             from   ${GE_Custom_Form_LocalDao.TABLE} gcdl   
             where  gcdl.${GE_Custom_Form_LocalDao.CUSTOMER_CODE} = '$customerCode'
-            and gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} in ('${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}', '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')  
+              and gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} in ('${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}', '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
+              and schedule_prefix is null
+              and schedule_code is null
+              and schedule_exec is null
+              and ticket_prefix is null
+              and ticket_code is null
+              and ticket_seq is null
+              and ticket_seq_tmp is null
+              and step_code is null 
             $formFilter
             )  ticket 
    where  ticket.tag_operational_code is not null
    group by ticket.tag_operational_code, ticket.tag_operational_desc;"""
-
-
-//                "select mdt.tag_desc, count(mdt.tag_code) \n" +
-//                "  from " + MdTagDao.TABLE +" mdt\n" +
-//                " inner join " + GE_Custom_Form_LocalDao.TABLE +" geform \n" +
-//                "    on  mdt.tag_code = geform.tag_operational_code \n" +
-//                " where " +
-//                formFilter +
-//                " group by mdt.tag_code"
-//              + "union \n" +
-//                "select mdt.tag_desc, count(mdt.tag_code)\n" +
-//                "  from md_tag mdt\n" +
-//                " inner join "+ TK_TicketDao.TABLE + " tk\n" +
-//                "    on  mdt.tag_code = tk.tag_operational_code\n" +
-//                " where tk.ticket_status = " + ConstantBaseApp.SYS_STATUS_PROCESS + "\n"+
-//                ticketFilter +
-//                " group by mdt.tag_code\n"
         ).toString()
     }
 }
