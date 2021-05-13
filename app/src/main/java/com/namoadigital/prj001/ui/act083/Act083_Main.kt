@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
@@ -21,7 +22,6 @@ import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class Act083_Main : Base_Activity() {
-
     private lateinit var binding: Act083MainBinding
     private lateinit var mAdapter: MyActionsAdapter
     private lateinit var bundle: Bundle
@@ -67,8 +67,7 @@ class Act083_Main : Base_Activity() {
         binding = Act083MainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         //
-        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         //
         initBundle(savedInstanceState)
         iniSetup()
@@ -87,7 +86,6 @@ class Act083_Main : Base_Activity() {
     }
 
     private fun iniSetup() {
-        //
         mResource_Code = ToolBox_Inf.getResourceCode(
                 context,
                 mModule_Code,
@@ -96,6 +94,7 @@ class Act083_Main : Base_Activity() {
     }
 
     private fun initVars() {
+        supportActionBar?.title = viewModel.getActTitle()
         setLabels()
         setChips()
         iniRecycler()
@@ -108,21 +107,27 @@ class Act083_Main : Base_Activity() {
     }
 
     private fun iniRecycler() {
-        mAdapter = MyActionsAdapter(viewModel.myActionsList)
-        with(binding.act083MainContent.act083RvActionsList){
-            layoutManager = LinearLayoutManager(context)
-            adapter = mAdapter
+        val myActionsList = viewModel.myActionsList
+        if(myActionsList.size > 0) {
+            binding.act083MainContent.act083TvNoResult.visibility = View.GONE
+            //
+            mAdapter = MyActionsAdapter(myActionsList)
+            //
+            with(binding.act083MainContent.act083RvActionsList) {
+                layoutManager = LinearLayoutManager(context)
+                adapter = mAdapter
+                visibility = View.VISIBLE
+            }
+            //
+            if(!binding.act083MainContent.act083MketFilter.text.isNullOrEmpty()){
+                applyTextFilter(binding.act083MainContent.act083MketFilter.text.toString())
+            }
+        }else{
+            with(binding.act083MainContent){
+                act083TvNoResult.visibility = View.VISIBLE
+                act083RvActionsList.visibility = View.INVISIBLE
+            }
         }
-    }
-
-    private fun fakeChipsGenerator() {
-        for(i in 1..5){
-            binding.act083MainContent.act083CgFilter.addView(
-                    createTvChip("banheiro $i")
-            )
-        }
-        //
-       // binding.act083MainContent.act083CgFilter.requestLayout()
     }
 
     private fun createTvChip(chipLabel: String) : TextView {
@@ -136,9 +141,10 @@ class Act083_Main : Base_Activity() {
 
     private fun setLabels() {
         with(binding.act083MainContent){
-            this.act083MketFilter.hint = hmAux_Trans["filter_hint"]
-            this.act083TabMyActions.text = hmAux_Trans["tab_my_actions_lbl"]
-            this.act083TabOtherActions.text = hmAux_Trans["tab_other_actions_lbl"]
+            act083MketFilter.hint = hmAux_Trans["filter_hint"]
+            act083TabMyActions.text = hmAux_Trans["tab_my_actions_lbl"]
+            act083TabOtherActions.text = hmAux_Trans["tab_other_actions_lbl"]
+            act083TvNoResult.text = hmAux_Trans["no_record_lbl"]
         }
     }
 
@@ -155,7 +161,8 @@ class Act083_Main : Base_Activity() {
         //
         setUILanguage(hmAux_Trans)
         setMenuLanguage(hmAux_Trans)
-        setTitleLanguage()
+        //LUCHE - 12/05/2021 - Comentaod pois nessa pagina o titulo será o tema escolhido
+        //setTitleLanguage()
         setFooter()
     }
 
@@ -165,9 +172,26 @@ class Act083_Main : Base_Activity() {
             }
 
             override fun reportTextChange(text: String?, p1: Boolean) {
-                mAdapter.filter.filter(text)
+                applyTextFilter(text)
             }
         })
+        binding.act083MainContent.act083Tabs.setOnCheckedChangeListener {
+            _, checkedId ->
+            when(checkedId){
+                binding.act083MainContent.act083TabMyActions.id -> updateMyActionList(1)
+                else -> updateMyActionList(0)
+            }
+        }
+    }
+
+    private fun applyTextFilter(text: String?) {
+        mAdapter.filter.filter(text)
+    }
+
+    private fun updateMyActionList(userFocusFilter: Int) {
+        viewModel.updateMyActionList(userFocusFilter)
+        iniRecycler()
+
     }
 
     private fun callAct005() {

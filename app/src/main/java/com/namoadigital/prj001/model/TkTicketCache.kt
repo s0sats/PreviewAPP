@@ -68,7 +68,7 @@ class TkTicketCache(
                 ),
                 origin_type,
                 false,
-                false
+                ToolBox_Inf.isItemLate(forecast_end)
         )
     }
 }

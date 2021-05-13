@@ -437,7 +437,8 @@ public class GE_Custom_Form_Ap {
             ),
             null,
             false,
-            ToolBox_Inf.isItemLate(dateToUse)
+            //Se a data usada for o when, entao valida atraso, se não, não é atrasado
+            ap_when != null ? ToolBox_Inf.isItemLate(dateToUse) : false
         );
     }
 

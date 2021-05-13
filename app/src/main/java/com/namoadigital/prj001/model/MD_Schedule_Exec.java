@@ -545,7 +545,7 @@ public class MD_Schedule_Exec {
             ),
             null,
             ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
-            ToolBox_Inf.isItemLate(date_start + " " + customerGMT)
+            ToolBox_Inf.isItemLate(date_end + " " + customerGMT)
         );
         return myActions;
     }

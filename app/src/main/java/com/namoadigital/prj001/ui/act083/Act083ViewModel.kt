@@ -34,8 +34,8 @@ class Act083ViewModel(private val context: Application,
     private var ticketId: String? = null
     private var clientId: String? = null
     private var contractId: String? = null
-    private var focusFilter: Int = 1
     private var calendarDate: String? = null
+    private lateinit var originFlow: String
 
     var myActionsList = mutableListOf<MyActions>()
         get() {
@@ -48,13 +48,12 @@ class Act083ViewModel(private val context: Application,
         }
 
     init {
+        recoverIntentsInfo()
         loadFilters()
-        generateMyActionList("", true)
+        generateMyActionList(1)
     }
 
     private fun loadFilters() {
-        myActionFilterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM) as MyActionFilterParam
-
         tagFilter = myActionFilterParam.tagFilterCode
         productCode = myActionFilterParam.productCode
         serialId = myActionFilterParam.serialId
@@ -67,7 +66,11 @@ class Act083ViewModel(private val context: Application,
                     }else{
                         null
                     }
-        focusFilter
+    }
+
+    private fun recoverIntentsInfo() {
+        myActionFilterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM) as MyActionFilterParam
+        originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
     }
 
     private fun loadTranslation(): HMAux? {
@@ -78,6 +81,7 @@ class Act083ViewModel(private val context: Application,
         transList.add("filter_hint")
         transList.add("form_lbl")
         transList.add("IN_PROCESSING")
+        transList.add("no_record_lbl")
         //
         return ToolBox_Inf.setLanguage(
                 context,
@@ -88,39 +92,36 @@ class Act083ViewModel(private val context: Application,
         )
     }
 
-    private fun generateMyActionList(mketTextFilter: String, tabFilter: Boolean) {
+    private fun generateMyActionList(tabUserFocusFilter: Int) {
+        _myActionsList.clear()
+        //
         _myActionsList.addAll(
-                getLocalTickets(mketTextFilter, tabFilter
-                ).map {
+                getLocalTickets(tabUserFocusFilter).map {
+                    TK_Ticket.toMyActionsObj(context,it)
+                }
+        )
+        //
+        _myActionsList.addAll(
+                getCachedTickets(tabUserFocusFilter).map {
                     it.toMyActionsObj(context)
                 }
         )
         //
         _myActionsList.addAll(
-                getCachedTickets(mketTextFilter, tabFilter
-                ).map {
+                getSchedules(tabUserFocusFilter).map {
                     it.toMyActionsObj(context)
                 }
         )
         //
         _myActionsList.addAll(
-                getSchedules(mketTextFilter,tabFilter
-                ).map {
-                    it.toMyActionsObj(context)
-                }
-        )
-        //
-        _myActionsList.addAll(
-                getFormAp(mketTextFilter, tabFilter
-                ).map {
+                getFormAp(tabUserFocusFilter).map {
                     it.toMyActionsObj(context)
                 }
         )
         myActionsList.addAll(
-                getLocalForms(mketTextFilter, tabFilter
-                ).map {
-                    if (it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
-                            && ConstantBaseApp.SYS_STATUS_IN_PROCESSING == it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS]
+                getLocalForms(tabUserFocusFilter).map {
+                    if ( it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
+                         && ConstantBaseApp.SYS_STATUS_IN_PROCESSING == it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS]
                     ) {
                         it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS] = _hmAux_Trans?.get(ConstantBaseApp.SYS_STATUS_IN_PROCESSING)
                     }
@@ -134,84 +135,90 @@ class Act083ViewModel(private val context: Application,
         }
     }
 
-    private fun getLocalTickets(mketTextFilter: String, tabFilter: Boolean): MutableList<TK_Ticket> {
+    private fun getLocalTickets(userFocus: Int): MutableList<HMAux> {
         //
-        return ticketDao.query(
+        return ticketDao.query_HM(
                 SqlAct083_002(
                         context,
+                        originFlow,
                         ToolBox_Con.getPreference_Customer_Code(context).toInt(),
                         tagFilter,
-                        null,
+                        siteCode,
                         productCode,
                         serialId,
                         clientId,
                         contractId,
                         ticketId,
                         calendarDate,
-                        userFocus = focusFilter
+                        userFocus
                 ).toSqlQuery()
         )
     }
 
-    private fun getCachedTickets(mketTextFilter: String, tabFilter: Boolean): MutableList<TkTicketCache> {
+    private fun getCachedTickets(userFocus: Int): MutableList<TkTicketCache> {
         return ticketCacheDao.query(
                 SqlAct083_001(
                         context,
+                        originFlow,
                         ToolBox_Con.getPreference_Customer_Code(context).toInt(),
                         tagFilter,
-                        null,
+                        siteCode,
                         productCode,
                         serialId,
                         clientId,
                         contractId,
                         ticketId,
-                        calendarDate
+                        calendarDate,
+                        userFocus
                 ).toSqlQuery()
         )
     }
 
-    private fun getSchedules(mketTextFilter: String, tabFilter: Boolean): MutableList<MD_Schedule_Exec> {
-        val toSqlQuery = SqlAct083_005(
-                context,
-                ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                tagFilter,
-                productCode,
-                serialId,
-                null,
-                calendarDate
-        ).toSqlQuery()
+    private fun getSchedules(userFocus: Int): MutableList<MD_Schedule_Exec> {
         return scheduleDao.query(
-                toSqlQuery
-
+                SqlAct083_005(
+                        context,
+                        originFlow,
+                        ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                        tagFilter,
+                        productCode,
+                        serialId,
+                        siteCode,
+                        calendarDate,
+                        userFocus
+                ).toSqlQuery()
         )
     }
 
-    private fun getFormAp(mketTextFilter: String, tabFilter: Boolean): MutableList<GE_Custom_Form_Ap> {
-        var toSqlQuery = SqlAct083_003(
-                context,
-                ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                tagFilter,
-                productCode,
-                serialId,
-                calendarDate
-        ).toSqlQuery()
+    private fun getFormAp(userFocus: Int): MutableList<GE_Custom_Form_Ap> {
         return formApDao.query(
-                toSqlQuery
+                SqlAct083_003(
+                        context,
+                        originFlow,
+                        ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                        tagFilter,
+                        productCode,
+                        serialId,
+                        calendarDate,
+                        userFocus
+                ).toSqlQuery()
         )
     }
 
-    private fun getLocalForms(mketTextFilter: String, tabFilter: Boolean): MutableList<HMAux> {
-        var lbl = _hmAux_Trans?.get("form_lbl") ?: "FORMULARIO"
-        var toSqlQuery = SqlAct083_004(
-                ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                tagFilter,
-                productCode,
-                serialId,
-                calendarDate,
-                lbl
-        ).toSqlQuery()
+    private fun getLocalForms(userFocus: Int): MutableList<HMAux> {
+        val lbl = _hmAux_Trans?.get("form_lbl") ?: "FORMULARIO"
+
         return formLocalDao.query_HM(
-                toSqlQuery
+                SqlAct083_004(
+                        originFlow,
+                        ToolBox_Con.getPreference_Customer_Code(context).toInt(),
+                        tagFilter,
+                        productCode,
+                        serialId,
+                        calendarDate,
+                        lbl,
+                        userFocus
+                ).toSqlQuery()
         )
     }
 
@@ -225,17 +232,23 @@ class Act083ViewModel(private val context: Application,
             _hmAux_Trans?.get(timePrefence)?.let {chipList.add(it) }
         }
         val sitePrefence = ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION)
-        if(ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION != timePrefence){
-            //_hmAux_Trans?.get(sitePrefence)?.let {chipList.add(it) }
-            chipList.add(sitePrefence)
-        }
-        val focusPrefence = ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER, ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION)
-        if(ConstantBaseApp.PREFERENCE_HOME_ALL_ACTIONS_FILTER != focusPrefence){
-            _hmAux_Trans?.get(focusPrefence)?.let {chipList.add(it) }
+        if(ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION != sitePrefence){
+            val siteObjInfo = ToolBox_Inf.getSiteObjInfo(context, ToolBox_Con.getPreference_Site_Code(context))
+            chipList.add(siteObjInfo?.site_desc ?: _hmAux_Trans?.get("site_desc_not_found_lbl")?:"SITE_DESC_NOT_FOUND")
         }
         return chipList
     }
 
+    fun getActTitle(): String {
+        return when(originFlow){
+            ConstantBaseApp.ACT005 -> myActionFilterParam.tagFilterDesc!!
+            else -> _hmAux_Trans!!["act083_title"]!!
+        }
+    }
+
+    fun updateMyActionList(userFocusFilter: Int) {
+        generateMyActionList(userFocusFilter)
+    }
 
 }
 

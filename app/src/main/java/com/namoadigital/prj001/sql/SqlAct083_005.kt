@@ -2,41 +2,63 @@ package com.namoadigital.prj001.sql
 
 import android.content.Context
 import com.namoa_digital.namoa_library.util.ToolBox
-import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
+import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.database.Specification
-import com.namoadigital.prj001.model.GE_Custom_Form_Data
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 
 class SqlAct083_005(
         private val context: Context,
+        private val originFlow: String,
         private val customerCode: Int,
-        private val tagOperCode: Int?,
-        private val productCode: Int?,
-        private val serialId: String?,
-        private val siteCode: Int?,
-        private val calendarDate: String?
+        private var tagOperCode: Int?,
+        private var productCode: Int?,
+        private var serialId: String?,
+        private var siteCode: String?,
+        private var calendarDate: String?,
+        private var userFocus: Int
 ) : Specification {
     private val deviceGMT = ToolBox.getDeviceGMT(false)
     private val customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context)
-    private val dateFilter: String =
-            when(ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)){
-                ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> " and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))"
-                ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> " and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"','+7 days'))"
-                else -> ""
-            }
+    private var periodDateFilter: String =""
+    private var statusFilter = ""
+
+    init {
+        setFiltersByOriginAndFocus()
+    }
+
+    private fun setFiltersByOriginAndFocus() {
+        when(originFlow){
+            ConstantBaseApp.ACT005 -> setHomeFilterConfg()
+        }
+    }
+
+    private fun setHomeFilterConfg() {
+        periodDateFilter = when(ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)){
+                                ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> " and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))"
+                                ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> " and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"','+7 days'))"
+                                else -> ""
+                            }
+        productCode = null
+        serialId = null
+        calendarDate = null
+        statusFilter = when(userFocus){
+                        1 -> """    and     s.${MD_Schedule_ExecDao.STATUS} in('${ConstantBaseApp.SYS_STATUS_SCHEDULE}','${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}') """
+                        else -> """    and     s.${MD_Schedule_ExecDao.STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'"""
+        }
+
+    }
 
     override fun toSqlQuery(): String {
-        return  """  SELECT
+        var s = """  SELECT
                              s.*,
                              1 line_number
                             FROM
                              ${MD_Schedule_ExecDao.TABLE} s
                             WHERE
                              s.${MD_Schedule_ExecDao.CUSTOMER_CODE} = $customerCode   
+                             $statusFilter
                              and ($calendarDate is null or (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT')) = $calendarDate)                             
                              and ($tagOperCode is null or s.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE} = $tagOperCode)
                              and ($siteCode is null or s.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode)
@@ -88,12 +110,13 @@ class SqlAct083_005(
                                                              ${MD_Schedule_ExecDao.TABLE} s
                                                             WHERE
                                                                  s.${MD_Schedule_ExecDao.CUSTOMER_CODE} = $customerCode
+                                                                 $statusFilter
                                                                  and ($tagOperCode is null or s.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE} = $tagOperCode)
                                                                  and ($siteCode is null or s.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode)
                                                                  and ($productCode is null or s.${MD_Schedule_ExecDao.PRODUCT_CODE} = $productCode )
                                                                  and ($serialId is null or s.${MD_Schedule_ExecDao.SERIAL_ID} = $serialId )
                                                                  and (strftime('%s',s.${MD_Schedule_ExecDao.DATE_START}||' $customerGMT','$deviceGMT') * 1000) >= (strftime('%s','now','$deviceGMT') * 1000)
-                                                                 $dateFilter
+                                                                 $periodDateFilter
                                                             GROUP BY
                                                                  s.${MD_Schedule_ExecDao.PRODUCT_CODE},
                                                                  s.${MD_Schedule_ExecDao.SERIAL_ID},
@@ -108,5 +131,6 @@ class SqlAct083_005(
                             WHERE
                              T.LINE_NUMBER = 1         
                       """
+        return s
     }
 }

@@ -19,9 +19,9 @@ class MyActionFilterParam(
 
     fun getFilledFilters() : List<String>{
         val filters = mutableListOf<String>()
-        tagFilterDesc?.let {
-            filters.add(it)
-        }
+//        tagFilterDesc?.let {
+//            filters.add(it)
+//        }
         productDesc?.let {
             filters.add(it)
         }

@@ -76,7 +76,7 @@ class MyActionsAdapter(
             binding.myActionsItemTvPlannedDate.apply {
                 text = myAction.plannedDate
                 if(myAction.lateItem && myAction.doneDate.isNullOrEmpty()){
-                    setTextColor(ContextCompat.getColor(context,R.color.text_red))
+                    setTextColor(ContextCompat.getColor(context,R.color.namoa_status_process))
                 }else{
                     setTextColor(ContextCompat.getColor(context,R.color.namoa_color_dark_blue))
                 }
