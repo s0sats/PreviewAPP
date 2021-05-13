@@ -9,6 +9,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -1355,6 +1356,7 @@ public class TK_Ticket implements Cloneable, Serializable {
         return new MyActions(
             MyActions.MY_ACTION_TYPE_TICKET,
             hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE),
+            hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE),
             ConstantBaseApp.HMAUX_TRANS_LIB.get(hmAux.get(TK_TicketDao.TICKET_STATUS)),
             null,
             rightIcon,
@@ -1364,7 +1366,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             hmAux.get(TK_TicketDao.OPEN_SERIAL_ID),
             hmAux.get(TK_TicketDao.ORIGIN_DESC),
             hmAux.get(TK_TicketDao.TYPE_DESC),
-            "Traze nome do step autal ou varias etapas",
+            hmAux.get(TK_Ticket_StepDao.STEP_DESC),
             ToolBox_Inf.equalsToLoggedSite(context,hmAux.get(TK_TicketDao.OPEN_SITE_CODE)) ? null : hmAux.get(TK_TicketDao.OPEN_SITE_DESC),
             clientInf,
             contractInf,
@@ -1376,7 +1378,8 @@ public class TK_Ticket implements Cloneable, Serializable {
             ),
             hmAux.get(TK_TicketDao.ORIGIN_TYPE),
             !"0".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM)),
-            ToolBox_Inf.isItemLate(hmAux.get(TK_TicketDao.FORECAST_DATE))
+            ToolBox_Inf.isItemLate(hmAux.get(TK_TicketDao.FORECAST_DATE)),
+            false
         );
     }
 

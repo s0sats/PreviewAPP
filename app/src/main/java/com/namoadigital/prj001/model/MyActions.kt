@@ -1,13 +1,13 @@
 package com.namoadigital.prj001.model
 
-import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 
 data class MyActions(
         val actionType: String,
+        val processPk: String,
         val processId: String?,
         val processStatus: String,
-        @DrawableRes val  processLeftIcon: Int?,
+        @DrawableRes val processLeftIcon: Int?,
         @DrawableRes val processRightIcon: Int?,
         val plannedDate: String,
         val tagOperationDesc: String,
@@ -24,6 +24,7 @@ data class MyActions(
         val orderBy: String,
         val ticketOriginType: String?,
         val highlightItem: Boolean,
+        val periodStarted: Boolean,
         val lateItem: Boolean
 ){
     companion object{
@@ -32,6 +33,14 @@ data class MyActions(
         const val MY_ACTION_TYPE_SCHEDULE = "SCHEDULE"
         const val MY_ACTION_TYPE_FORM_AP = "FORM_AP"
         const val MY_ACTION_TYPE_FORM = "FORM"
+    }
+    var siteCode: Int? = null
+    var productCode: Int? = null
+    var customFormTypeDesc: String? = null
+    var customFormDesc: String? = null
+
+    fun getSplippedPk(): List<String> {
+        return processPk.split(".")
     }
 
     fun getAllFieldForFilter() : String{

@@ -4,9 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
-import android.widget.RadioGroup
 import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -15,7 +13,11 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.MyActionsAdapter
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act083MainBinding
+import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.ui.act005.Act005_Main
+import com.namoadigital.prj001.ui.act011.Act011_Main
+import com.namoadigital.prj001.ui.act038.Act038_Main
+import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -111,7 +113,10 @@ class Act083_Main : Base_Activity() {
         if(myActionsList.size > 0) {
             binding.act083MainContent.act083TvNoResult.visibility = View.GONE
             //
-            mAdapter = MyActionsAdapter(myActionsList)
+            mAdapter = MyActionsAdapter(
+                    myActionsList,
+                    this::onMyActionClick
+            )
             //
             with(binding.act083MainContent.act083RvActionsList) {
                 layoutManager = LinearLayoutManager(context)
@@ -129,6 +134,71 @@ class Act083_Main : Base_Activity() {
             }
         }
     }
+
+    fun onMyActionClick(myAction: MyActions): Unit{
+        //viewModel.processActionClick(myAction)
+        when(myAction.actionType){
+            MyActions.MY_ACTION_TYPE_TICKET -> processLocalTicketClick(myAction)
+            MyActions.MY_ACTION_TYPE_TICKET_CACHE -> processCachedTicketClick(myAction)
+            MyActions.MY_ACTION_TYPE_SCHEDULE -> processScheduleClick(myAction)
+            MyActions.MY_ACTION_TYPE_FORM_AP -> processFormApClick(myAction)
+            MyActions.MY_ACTION_TYPE_FORM -> processFormClick(myAction)
+        }
+    }
+
+    private fun processLocalTicketClick(myAction: MyActions) {
+        callAct070(
+                viewModel.getLocalTicket(
+                        myAction
+                )
+        )
+    }
+
+    private fun processCachedTicketClick(myAction: MyActions) {
+        TODO("Not yet implemented")
+    }
+
+    private fun processScheduleClick(myAction: MyActions) {
+        TODO("Not yet implemented")
+    }
+
+    private fun processFormApClick(myAction: MyActions) {
+        callAct038(
+                viewModel.getFormApBundle(myAction)
+        )
+    }
+
+    private fun processFormClick(myAction: MyActions) {
+        callAct011(
+                viewModel.getFormBundle(myAction)
+        )
+    }
+
+    private fun callAct070(bundle: Bundle) {
+        val mIntent = Intent(context, Act070_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.putExtras(bundle)
+        startActivity(mIntent)
+        finish()
+    }
+
+    private fun callAct038(bundle: Bundle) {
+        val mIntent = Intent(context, Act038_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.putExtras(bundle)
+        startActivity(mIntent)
+        finish()
+    }
+
+    private fun callAct011(bundle: Bundle) {
+        val mIntent = Intent(context, Act011_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.putExtras(bundle)
+        context.startActivity(mIntent)
+        finish()
+    }
+
+
 
     private fun createTvChip(chipLabel: String) : TextView {
         val tvChip = TextView(ContextThemeWrapper(context, R.style.TextViewChips))

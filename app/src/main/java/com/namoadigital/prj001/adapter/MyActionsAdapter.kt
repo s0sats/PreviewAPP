@@ -21,7 +21,8 @@ import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.util.ConstantBaseApp
 
 class MyActionsAdapter(
-        private val myActions: List<MyActions>
+        private val myActions: List<MyActions>,
+        private val myActionClickListener: (myAction: MyActions) -> Unit
 ) : RecyclerView.Adapter<MyActionsAdapter.MyActionVh>(), Filterable {
     private var myFilteredAction: MutableList<MyActions>
     private val mFilter = MyActionFilter()
@@ -44,6 +45,10 @@ class MyActionsAdapter(
     inner class MyActionVh(private val binding: MyActionsItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun onBinding(myAction: MyActions) {
+            binding.root.setOnClickListener {
+                myActionClickListener(myAction)
+            }
+            //
             binding.myActionsItemTvCode.text = myAction.processId
             binding.myActionsItemTvStatus.text = myAction.processStatus
             configPlannedDate(myAction)
@@ -75,10 +80,20 @@ class MyActionsAdapter(
         private fun configPlannedDate(myAction: MyActions) {
             binding.myActionsItemTvPlannedDate.apply {
                 text = myAction.plannedDate
-                if(myAction.lateItem && myAction.doneDate.isNullOrEmpty()){
-                    setTextColor(ContextCompat.getColor(context,R.color.namoa_status_process))
+                if(myAction.doneDate.isNullOrEmpty()) {
+                    when {
+                        myAction.lateItem -> {
+                            setTextColor(ContextCompat.getColor(context, R.color.text_red))
+                        }
+                        myAction.periodStarted -> {
+                            setTextColor(ContextCompat.getColor(context, R.color.namoa_status_process))
+                        }
+                        else -> {
+                            setTextColor(ContextCompat.getColor(context, R.color.namoa_color_dark_blue))
+                        }
+                    }
                 }else{
-                    setTextColor(ContextCompat.getColor(context,R.color.namoa_color_dark_blue))
+                    setTextColor(ContextCompat.getColor(context, R.color.namoa_color_dark_blue))
                 }
             }
         }

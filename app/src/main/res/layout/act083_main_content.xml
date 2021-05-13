@@ -40,6 +40,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:paddingTop="2dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="8dp"
                     >
 
 <!--                    <TextView-->
@@ -56,8 +59,8 @@
                     android:id="@+id/act083_mket_filter"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
                     android:hint="Search Desc - Trad"
                     android:inputType="text"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -71,7 +74,6 @@
                     android:id="@+id/act083_tabs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -87,7 +89,9 @@
                         android:checked="true"
                         android:gravity="center"
                         android:textColor="@color/my_tickets_radio"
-                        tools:text="ACOES" />
+                        tools:text="ACOES"
+                        android:textAllCaps="true"
+                        />
 
                     <View
                         android:layout_width="2dp"
@@ -102,7 +106,8 @@
                         android:button="@null"
                         android:gravity="center"
                         android:textColor="@color/my_tickets_radio"
-                        tools:text="OUTROS" />
+                        tools:text="OUTROS"
+                        android:textAllCaps="true"/>
 
                 </RadioGroup>
 

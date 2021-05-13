@@ -416,6 +416,7 @@ public class GE_Custom_Form_Ap {
         return new MyActions(
             MyActions.MY_ACTION_TYPE_FORM_AP,
             getFormatedPk(),
+            getFormatedPk(),
             ConstantBaseApp.HMAUX_TRANS_LIB.get(ap_status),
             null,
             rightIcon,
@@ -436,6 +437,7 @@ public class GE_Custom_Form_Ap {
                 "yyyyMMddHHmm"
             ),
             null,
+            false,
             false,
             //Se a data usada for o when, entao valida atraso, se não, não é atrasado
             ap_when != null ? ToolBox_Inf.isItemLate(dateToUse) : false

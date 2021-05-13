@@ -523,6 +523,7 @@ public class MD_Schedule_Exec {
         MyActions myActions = new MyActions(
             MyActions.MY_ACTION_TYPE_SCHEDULE,
             ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
+            ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
             ConstantBaseApp.HMAUX_TRANS_LIB.get(status),
             null,
             R.drawable.ic_baseline_cloud_done_24_blue,
@@ -545,8 +546,13 @@ public class MD_Schedule_Exec {
             ),
             null,
             ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
+            ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
             ToolBox_Inf.isItemLate(date_end + " " + customerGMT)
         );
+        myActions.setSiteCode(site_code);
+        myActions.setProductCode(product_code);
+        myActions.setCustomFormTypeDesc(custom_form_type_desc);
+        myActions.setCustomFormTypeDesc(custom_form_desc);
         return myActions;
     }
 }

@@ -8,6 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -82,6 +83,7 @@ class Act083ViewModel(private val context: Application,
         transList.add("form_lbl")
         transList.add("IN_PROCESSING")
         transList.add("no_record_lbl")
+        transList.add("other_steps_available_lbl")
         //
         return ToolBox_Inf.setLanguage(
                 context,
@@ -97,7 +99,7 @@ class Act083ViewModel(private val context: Application,
         //
         _myActionsList.addAll(
                 getLocalTickets(tabUserFocusFilter).map {
-                    TK_Ticket.toMyActionsObj(context,it)
+                    TK_Ticket.toMyActionsObj(context, it)
                 }
         )
         //
@@ -120,10 +122,10 @@ class Act083ViewModel(private val context: Application,
         )
         myActionsList.addAll(
                 getLocalForms(tabUserFocusFilter).map {
-                    if ( it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
-                         && ConstantBaseApp.SYS_STATUS_IN_PROCESSING == it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS]
+                    if (it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
+                            && ConstantBaseApp.SYS_STATUS_IN_PROCESSING == it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS]
                     ) {
-                        it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS] = _hmAux_Trans?.get(ConstantBaseApp.SYS_STATUS_IN_PROCESSING)
+                        it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS] = _hmAux_Trans?.get(ConstantBaseApp.SYS_STATUS_PROCESS)
                     }
                     //
                     GE_Custom_Form_Local.toMyActionsObj(context, it)
@@ -150,7 +152,8 @@ class Act083ViewModel(private val context: Application,
                         contractId,
                         ticketId,
                         calendarDate,
-                        userFocus
+                        userFocus,
+                        _hmAux_Trans?.get("other_steps_available_lbl")
                 ).toSqlQuery()
         )
     }
@@ -234,7 +237,8 @@ class Act083ViewModel(private val context: Application,
         val sitePrefence = ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION)
         if(ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION != sitePrefence){
             val siteObjInfo = ToolBox_Inf.getSiteObjInfo(context, ToolBox_Con.getPreference_Site_Code(context))
-            chipList.add(siteObjInfo?.site_desc ?: _hmAux_Trans?.get("site_desc_not_found_lbl")?:"SITE_DESC_NOT_FOUND")
+            chipList.add(siteObjInfo?.site_desc ?: _hmAux_Trans?.get("site_desc_not_found_lbl")
+            ?: "SITE_DESC_NOT_FOUND")
         }
         return chipList
     }
@@ -248,6 +252,54 @@ class Act083ViewModel(private val context: Application,
 
     fun updateMyActionList(userFocusFilter: Int) {
         generateMyActionList(userFocusFilter)
+    }
+
+    private fun processCachedTicketClick(myAction: MyActions) {
+        //executeTicketDownload()
+    }
+
+    private fun processScheduleClick(myAction: MyActions) {
+        TODO("Not yet implemented")
+    }
+
+    fun getFormBundle(myAction: MyActions): Bundle {
+        val splippedPk = myAction.getSplippedPk()
+        val bundle = Bundle()
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, myAction.productCode.toString())
+        bundle.putString(MD_ProductDao.PRODUCT_DESC, myAction.productDesc)
+        //bundle.putString(MD_ProductDao.PRODUCT_ID, myAction.productDesc)
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, myAction.serialId)
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, splippedPk[0])
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, myAction.customFormTypeDesc)
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, splippedPk[1])
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, splippedPk[2])
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, myAction.customFormDesc)
+        bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, splippedPk[3])
+        bundle.putString(Constant.ACT017_SCHEDULED_SITE, myAction.siteCode.toString())
+        return bundle
+    }
+
+
+
+    fun getLocalTicket(myAction: MyActions): Bundle {
+        val splippedPk = myAction.getSplippedPk()
+        val bundle = Bundle()
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, splippedPk[0].toInt())
+        bundle.putInt(TK_TicketDao.TICKET_CODE, splippedPk[1].toInt())
+        return bundle
+    }
+
+    fun getFormApBundle(myAction: MyActions): Bundle {
+        val splippedPk = myAction.getSplippedPk()
+        val bundle = Bundle()
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT037)
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context).toString())
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, splippedPk[0])
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, splippedPk[1])
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, splippedPk[2])
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, splippedPk[3])
+        bundle.putString(GE_Custom_Form_ApDao.AP_CODE, splippedPk[4])
+        return bundle
     }
 
 }

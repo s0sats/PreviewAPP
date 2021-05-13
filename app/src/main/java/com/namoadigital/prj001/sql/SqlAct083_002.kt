@@ -4,6 +4,7 @@ import android.content.Context
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
 import com.namoadigital.prj001.dao.TK_TicketDao
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao
 import com.namoadigital.prj001.dao.TkTicketCacheDao
 import com.namoadigital.prj001.database.Specification
 import com.namoadigital.prj001.model.MyActions
@@ -22,7 +23,8 @@ class SqlAct083_002(
         private var contractId: String?,
         private var ticketId: String?,
         private var calendarDate: String?,
-        private var userFocus: Int?
+        private var userFocus: Int?,
+        private val multStepsLbl: String?
 ) : Specification {
     private val deviceGMT = ToolBox.getDeviceGMT(false)
     private var periodDateFilter: String = ""
@@ -77,13 +79,39 @@ class SqlAct083_002(
                                     and l.${GE_Custom_Form_LocalDao.TICKET_PREFIX} = t.${TK_TicketDao.TICKET_PREFIX}
                                     and l.${GE_Custom_Form_LocalDao.TICKET_CODE} = t.${TK_TicketDao.TICKET_CODE}
                                     and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
-                     ) ${MyActions.MY_ACTION_TYPE_FORM}
+                     ) ${MyActions.MY_ACTION_TYPE_FORM},
+                     ts.${TK_Ticket_StepDao.STEP_DESC}
                     FROM
                         ${TK_TicketDao.TABLE} t
+                    LEFT JOIN    
+                        (SELECT
+                           s.${TK_Ticket_StepDao.CUSTOMER_CODE},
+                           s.${TK_Ticket_StepDao.TICKET_PREFIX},
+                           s.${TK_Ticket_StepDao.TICKET_CODE},
+                           s.${TK_Ticket_StepDao.STEP_ORDER},
+                           s.${TK_Ticket_StepDao.USER_FOCUS},
+                           (case when count(1) = 1
+                                 then min(s.${TK_Ticket_StepDao.STEP_DESC})
+                                 else '$multStepsLbl'
+                           end) ${TK_Ticket_StepDao.STEP_DESC}                           
+                         FROM
+                           ${TK_Ticket_StepDao.TABLE} s
+                         WHERE  
+                           s.${TK_Ticket_StepDao.CUSTOMER_CODE} = ${customerCode}
+                           and s.${TK_Ticket_StepDao.USER_FOCUS} = 1
+                         GROUP BY  
+                           s.${TK_Ticket_StepDao.CUSTOMER_CODE},
+                           s.${TK_Ticket_StepDao.TICKET_PREFIX},
+                           s.${TK_Ticket_StepDao.TICKET_CODE},
+                           s.${TK_Ticket_StepDao.STEP_ORDER}     
+                        ) ts ON  ts.${TK_Ticket_StepDao.CUSTOMER_CODE} = t.${TK_TicketDao.CUSTOMER_CODE}
+                                and ts.${TK_Ticket_StepDao.TICKET_PREFIX} = t.${TK_TicketDao.TICKET_PREFIX}
+                                and ts.${TK_Ticket_StepDao.TICKET_CODE} = t.${TK_TicketDao.TICKET_CODE}
+                                and ts.${TK_Ticket_StepDao.STEP_ORDER} = t.${TK_TicketDao.CURRENT_STEP_ORDER}
+                                and ts.${TK_Ticket_StepDao.USER_FOCUS} = $userFocus
                     WHERE                     
                           t.${TK_TicketDao.CUSTOMER_CODE} = $customerCode
-                          $statusFilter
-                          
+                          $statusFilter                          
                           and ($calendarDate is null or strftime('%Y-%m-%d', t.${TK_TicketDao.FORECAST_DATE}, '$deviceGMT') = $calendarDate )                          
                           and ($byPassByOpenForm or ($tagOperCode is null or t.${TK_TicketDao.TAG_OPERATIONAL_CODE} = $tagOperCode))
                           and ($siteCode is null or t.${TK_TicketDao.OPEN_SITE_CODE}  = $siteCode)
