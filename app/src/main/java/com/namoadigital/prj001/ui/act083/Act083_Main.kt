@@ -202,7 +202,7 @@ class Act083_Main : Base_Activity() {
 
     override fun processCloseACT(mLink: String?, mRequired: String?) {
         super.processCloseACT(mLink, mRequired)
-        processCloseACT(mLink, mRequired,HMAux())
+        processCloseACT(mLink, mRequired, HMAux())
     }
 
     override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux) {
@@ -228,7 +228,7 @@ class Act083_Main : Base_Activity() {
                                 viewModel.getCacheTicketBundle(hmAux)
                         )
                     }
-                }else{
+                } else {
                     progressDialog.dismiss()
                     callAct070(
                             viewModel.getCacheTicketBundle(hmAux)
@@ -309,6 +309,11 @@ class Act083_Main : Base_Activity() {
         //LUCHE - 12/05/2021 - Comentaod pois nessa pagina o titulo será o tema escolhido
         //setTitleLanguage()
         setFooter()
+    }
+
+    override fun footerCreateDialog() {
+        //super.footerCreateDialog()
+        ToolBox_Inf.buildFooterDialog(context)
     }
 
     private fun initActions() {
