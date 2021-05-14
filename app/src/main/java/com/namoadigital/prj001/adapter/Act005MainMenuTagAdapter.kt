@@ -51,14 +51,12 @@ class Act005MainMenuTagAdapter(
                 val tagInfo: String = """${binding.tvTagQty.text} (${hmAux_Trans.get("tag_item_form_in_execution")})"""
                 val spannableString = SpannableString(tagInfo)
                 //
-                if (tagInfo != null ) {
-                    spannableString.setSpan(
-                            ForegroundColorSpan(context.getResources().getColor(R.color.namoa_amount_pipeline_background_btn)),
-                            tagInfo.indexOf("("+ hmAux_Trans.get("tag_item_form_in_execution") +")"),
-                            tagInfo.length,
-                            Spanned.SPAN_INCLUSIVE_INCLUSIVE
-                    )
-                }
+                spannableString.setSpan(
+                        ForegroundColorSpan(context.getResources().getColor(R.color.namoa_amount_pipeline_background_btn)),
+                        tagInfo.indexOf("("+ hmAux_Trans.get("tag_item_form_in_execution") +")"),
+                        tagInfo.length,
+                        Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                )
                 binding.tvTagQty.text = spannableString
             }
 

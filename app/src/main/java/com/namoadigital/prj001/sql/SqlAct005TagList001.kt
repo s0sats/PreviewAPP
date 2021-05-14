@@ -187,6 +187,7 @@ class SqlAct005TagList001(private val context: Context,
                                                                 s.${MD_Schedule_ExecDao.TICKET_TYPE},
                                                                 s.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},
                                                                 s.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE}
+                                                                )
                 )
         union
             select gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}, 
