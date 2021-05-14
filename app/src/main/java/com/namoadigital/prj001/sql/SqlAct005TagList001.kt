@@ -8,12 +8,12 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION
 
-class SqlAct005Ticket001(private val context: Context,
-                         private val customerCode: Int,
-                         deviceGMT: String,
-                         siteCode: Int,
-                         periodFilter: String,
-                         focusFilter: String
+class SqlAct005TagList001(private val context: Context,
+                          private val customerCode: Int,
+                          deviceGMT: String,
+                          siteCode: Int,
+                          periodFilter: String,
+                          focusFilter: String
 ) : Specification {
     var ticketFilter = ""
     var formApFilter = ""
@@ -45,15 +45,15 @@ class SqlAct005Ticket001(private val context: Context,
             else -> ""
         }
         scheduleNextFilter = when (periodFilter) {
-            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') > strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
-            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') > strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
-            else -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') >= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
+            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') > strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
+            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') > strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
+            else -> "\n and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') >= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
         }
 
         if (siteCode > 0) {
             ticketFilter += "\n and tk.${TK_TicketDao.OPEN_SITE_CODE} = $siteCode "
             scheduleFilter += "\n and mse.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode "
-            scheduleNextFilter += "\n and mse.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode "
+            scheduleNextFilter += "\n and s.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode "
             formFilter += "\n and gcdl.${GE_Custom_Form_LocalDao.SITE_CODE} = $siteCode "
         }
 
@@ -130,30 +130,64 @@ class SqlAct005Ticket001(private val context: Context,
              max(0) in_processing
               from ${MdTagDao.TABLE} mdt
             inner join ${MD_Schedule_ExecDao.TABLE} mse
-                    on  mdt.${MdTagDao.TAG_CODE} = mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}
+                    on  mdt.${MdTagDao.CUSTOMER_CODE} = mse.${MD_Schedule_ExecDao.CUSTOMER_CODE}
+                    and  mdt.${MdTagDao.TAG_CODE} = mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}
              where 
             mse.${MD_Schedule_ExecDao.CUSTOMER_CODE} = '$customerCode'
+            and mse.${MD_Schedule_ExecDao.CUSTOMER_CODE} = mdt.${MdTagDao.CUSTOMER_CODE}
             and mse.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_WAITING_SYNC}')
             $scheduleFilter
             group by mdt.${MdTagDao.TAG_CODE} 
         union 
-            select mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
-            mdt.${MdTagDao.TAG_DESC} tag_operational_desc, 
-            count(mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}) qty,
-            max((case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
+            select s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE} tag_operational_code, 
+            s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_DESC} tag_operational_desc, 
+            count(1) qty,
+            max((case when s2.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                   then 1
                   else 0
             end)) update_required,
-             max(0) sync_required,
-             max(0) in_processing
-              from ${MdTagDao.TABLE} mdt
-            inner join ${MD_Schedule_ExecDao.TABLE} mse
-                    on  mdt.${MdTagDao.TAG_CODE} = mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}
-             where 
-            mse.${MD_Schedule_ExecDao.CUSTOMER_CODE} = '$customerCode'
-            and mse.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_WAITING_SYNC}')
-            $scheduleNextFilter
-            group by mdt.${MdTagDao.TAG_CODE} 
+             0 sync_required,
+             0 in_processing
+              from ${MD_Schedule_ExecDao.TABLE} s2
+              WHERE  s2.${MD_Schedule_ExecDao.SCHEDULE_PREFIX} ||substr('0000000000'||s2.${MD_Schedule_ExecDao.SCHEDULE_CODE},-10)||substr('0000000000'||s2.${MD_Schedule_ExecDao.SCHEDULE_EXEC},-10)
+               IN ( 
+                SELECT  
+                    min(s1.${MD_Schedule_ExecDao.SCHEDULE_PREFIX} ||substr('0000000000'||s1.${MD_Schedule_ExecDao.SCHEDULE_CODE},-10)||substr('0000000000'||s1.${MD_Schedule_ExecDao.SCHEDULE_EXEC},-10)) schedule_pk
+              FROM  ${MD_Schedule_ExecDao.TABLE} s1
+                                  WHERE
+                                    (  s1.${MD_Schedule_ExecDao.PRODUCT_CODE},
+                                       s1.${MD_Schedule_ExecDao.SERIAL_ID},
+                                       s1.${MD_Schedule_ExecDao.SITE_CODE},
+                                       s1.${MD_Schedule_ExecDao.OPERATION_CODE},
+                                       s1.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
+                                       IFNULL(s1.${MD_Schedule_ExecDao.TICKET_TYPE},0) ,
+                                       IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0) ,
+                                       IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0) ,
+                                       s1.${MD_Schedule_ExecDao.DATE_START} ) in  (SELECT
+                                                             s.${MD_Schedule_ExecDao.PRODUCT_CODE},
+                                                             s.${MD_Schedule_ExecDao.SERIAL_ID},
+                                                             s.${MD_Schedule_ExecDao.SITE_CODE},
+                                                             s.${MD_Schedule_ExecDao.OPERATION_CODE},
+                                                             s.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
+                                                             IFNULL(s.${MD_Schedule_ExecDao.TICKET_TYPE},0) ${MD_Schedule_ExecDao.TICKET_TYPE},
+                                                             IFNULL(s.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0) ${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},
+                                                             IFNULL(s.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0) ${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},
+                                                             min(s.${MD_Schedule_ExecDao.DATE_START}) ${MD_Schedule_ExecDao.DATE_START}                           
+                                                            FROM
+                                                             ${MD_Schedule_ExecDao.TABLE} s
+                                                            WHERE  s.${MD_Schedule_ExecDao.CUSTOMER_CODE} = $customerCode
+                                                            $scheduleNextFilter
+                                                            and s.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_PENDING}','${Constant.SYS_STATUS_WAITING_SYNC}')                 
+                                                         GROUP BY
+                                                                s.${MD_Schedule_ExecDao.PRODUCT_CODE},
+                                                                s.${MD_Schedule_ExecDao.SERIAL_ID},
+                                                                s.${MD_Schedule_ExecDao.SITE_CODE},
+                                                                s.${MD_Schedule_ExecDao.OPERATION_CODE},
+                                                                s.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
+                                                                s.${MD_Schedule_ExecDao.TICKET_TYPE},
+                                                                s.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},
+                                                                s.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE}
+                )
         union
             select gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}, 
                    gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC}, 
@@ -181,7 +215,7 @@ class SqlAct005Ticket001(private val context: Context,
             $formFilter
             )  ticket 
    where  ticket.tag_operational_code is not null
-   group by ticket.tag_operational_code, ticket.tag_operational_desc;"""
+   group by ticket.tag_operational_code, ticket.tag_operational_desc"""
         ).toString()
     }
 }

@@ -50,7 +50,6 @@ import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
-import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
@@ -92,8 +91,7 @@ import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
-import com.namoadigital.prj001.sql.SqlAct005Schedule001;
-import com.namoadigital.prj001.sql.SqlAct005Ticket001;
+import com.namoadigital.prj001.sql.SqlAct005TagList001;
 import com.namoadigital.prj001.sql.Sql_Act005_001;
 import com.namoadigital.prj001.sql.Sql_Act005_002;
 import com.namoadigital.prj001.sql.Sql_Act005_003;
@@ -375,7 +373,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
             site_code = Integer.parseInt(ToolBox_Con.getPreference_Site_Code(context));
         }
         List<HMAux> queryResult = tk_ticketDao.query_HM(
-                new SqlAct005Ticket001(
+                new SqlAct005TagList001(
                         context,
                         (int) ToolBox_Con.getPreference_Customer_Code(context),
                         ToolBox.getDeviceGMT(false),
@@ -391,6 +389,115 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public boolean hasSOProfile() {
         return false;
+    }
+
+    @Override
+    public boolean hasUpdateRequired() {
+
+        String qty;
+        String qtySO = null;
+        String qtySO_Express = null;
+        String qtyAP;
+        String qtySerial;
+        try {
+            qty = customFormLocalDao.getByStringHM(
+                    new Sql_Act005_002(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                    ).toSqlQuery()
+            ).get(Sql_Act005_002.BADGE_WAITING_SYNC_QTY);
+        } catch (Exception e) {
+            qty = "0";
+        }
+
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
+
+            try {
+                qtySO = soDao.getByStringHM(
+                        new Sql_Act021_003(
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        ).toSqlQuery()
+                ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);
+            } catch (Exception e) {
+                qtySO = "0";
+            }
+
+
+            try {
+                qtySO_Express = soPackExpressLocalDao.getByStringHM(
+                        new SO_Pack_Express_Local_Sql_010(
+                                ToolBox_Con.getPreference_Customer_Code(context)
+                        ).toSqlQuery()
+                ).get(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY);
+            } catch (Exception e) {
+                qtySO_Express = "0";
+            }
+        }
+
+        try {
+            qtyAP = customFormApDao.getByStringHM(
+                    new Sql_Act005_007(
+                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                    ).toSqlQuery()
+            ).get(Sql_Act005_007.BADGE_TO_SEND_QTY);
+        } catch (Exception e) {
+            qtyAP = "0";
+        }
+
+        try {
+            qtySerial = mdProductDao.getByStringHM(
+                    new Sql_Act005_008(
+                            ToolBox_Con.getPreference_Customer_Code(context)
+                    ).toSqlQuery()
+            ).get(Sql_Act005_008.BADGE_TO_SEND_QTY);
+        } catch (Exception e) {
+            qtySerial = "0";
+        }
+
+        String qtyAssets = ToolBox_Inf.handleAssetsWaitingSync(context, ToolBox_Con.getPreference_Customer_Code(context));
+        String qtyTicket = ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context));
+
+        int totalPendency = ToolBox_Inf.convertStringToInt(qty);
+        totalPendency += ToolBox_Inf.convertStringToInt(qtyAP);
+        totalPendency += ToolBox_Inf.convertStringToInt(qtyAssets);
+        totalPendency += ToolBox_Inf.convertStringToInt(qtySerial);
+        totalPendency += ToolBox_Inf.convertStringToInt(qtySO);
+        totalPendency += ToolBox_Inf.convertStringToInt(qtySO_Express);
+        totalPendency += ToolBox_Inf.convertStringToInt(qtyTicket);
+        return totalPendency > 0;
+    }
+
+    @Override
+    public boolean hasSyncRequired() {
+        String qtyTicket;
+        try {
+            qtyTicket = String.valueOf(tk_ticketDao.getByStringHM(
+                    new Sql_Act005_009(
+                            ToolBox_Con.getPreference_Customer_Code(context),
+                            false,
+                            false,
+                            false,
+                            false,
+                            true,
+                            false,
+                            false).toSqlQuery()
+            ).get(PENDING_QTY));
+        } catch (Exception e) {
+            qtyTicket = "0";
+        }
+        String qtyFormAp;
+        try {
+            qtyFormAp = customFormApDao.getByStringHM(
+                    new GE_Custom_Form_Ap_Sql_002(
+                            ToolBox_Con.getPreference_Customer_Code(context)
+                    ).toSqlQuery()
+            ).get(GE_Custom_Form_Ap_Sql_002.BADGE_SYNC_REQUIRED_QTY);
+        } catch (Exception e) {
+            qtyFormAp = "0";
+        }
+        int totalSync = 0;
+        totalSync += ToolBox_Inf.convertStringToInt(qtyTicket);
+        totalSync += ToolBox_Inf.convertStringToInt(qtyFormAp);
+        return totalSync > 0;
     }
 
     @Deprecated
