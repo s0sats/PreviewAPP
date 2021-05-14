@@ -5,8 +5,11 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
+import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -1292,46 +1295,92 @@ public class TK_Ticket implements Cloneable, Serializable {
                 || isReadOnlyStatus();
     }
 
-    public MyActions toMyActionsObj(Context context){
+//    public MyActions toMyActionsObj(Context context){
+//        int rightIcon;
+//        if(update_required == 0 && sync_required == 0) {
+//            rightIcon = R.drawable.ic_baseline_cloud_done_24_blue;
+//        }else {
+//            if(update_required == 1 && sync_required == 1){
+//                rightIcon = R.drawable.ic_sync_main_menu_data;
+//            }else if(update_required == 1){
+//                rightIcon = R.drawable.ic_cloud_upload_24_red;
+//            }else{
+//                rightIcon = R.drawable.ic_baseline_cloud_download_24_gray;
+//            }
+//        }
+//
+//       return new MyActions(
+//                    MyActions.MY_ACTION_TYPE_TICKET,
+//                    ticket_prefix+"."+ticket_code,
+//                    ConstantBaseApp.HMAUX_TRANS_LIB.get(ticket_status),
+//                    null,
+//                    rightIcon,
+//                    ToolBox_Inf.getMyActionStartEndDateFormated(context,forecast_date,forecast_date),
+//                    tag_operational_desc,
+//                    open_product_desc,
+//                    open_serial_id,
+//                    origin_desc,
+//                    type_desc,
+//                    "Traze nome do step autal ou varias etapas",
+//                    ToolBox_Inf.equalsToLoggedSite(context,String.valueOf(open_site_code)) ? null : open_site_desc,
+//                    client_id != null ? client_id +" - "+ client_name: null,
+//                    contract_id != null ? contract_id +" - "+ contract_desc: null,
+//                    null,
+//                    null,
+//                    ToolBox_Inf.millisecondsToString(
+//                        ToolBox_Inf.dateToMilliseconds(this.getForecast_date()),
+//                        "yyyyMMddHHmm"
+//                    ),
+//                    origin_type,
+//           false,
+//                    ToolBox_Inf.isItemLate(forecast_date)
+//                );
+//    }
+
+    public static MyActions toMyActionsObj(Context context, HMAux hmAux){
         int rightIcon;
-        if(update_required == 0 && sync_required == 0) {
+        if("0".equals(hmAux.get(TK_TicketDao.UPDATE_REQUIRED)) && "0".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))) {
             rightIcon = R.drawable.ic_baseline_cloud_done_24_blue;
         }else {
-            if(update_required == 1 && sync_required == 1){
+            if("1".equals(hmAux.get(TK_TicketDao.UPDATE_REQUIRED)) && "1".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))){
                 rightIcon = R.drawable.ic_sync_main_menu_data;
-            }else if(update_required == 1){
+            }else if("1".equals(hmAux.get(TK_TicketDao.UPDATE_REQUIRED))){
                 rightIcon = R.drawable.ic_cloud_upload_24_red;
             }else{
                 rightIcon = R.drawable.ic_baseline_cloud_download_24_gray;
             }
         }
+        String clientInf = !hmAux.get(TK_TicketDao.CLIENT_ID).isEmpty() ? hmAux.get(TK_TicketDao.CLIENT_ID) +" - "+ hmAux.get(TK_TicketDao.CLIENT_NAME): null;
+        String contractInf = !hmAux.get(TK_TicketDao.CONTRACT_ID).isEmpty() ? hmAux.get(TK_TicketDao.CONTRACT_ID) +" - "+ hmAux.get(TK_TicketDao.CONTRACT_CODE): null;
 
-       return new MyActions(
-                    MyActions.MY_ACTION_TYPE_TICKET,
-                    ticket_prefix+"."+ticket_code,
-                    ConstantBaseApp.HMAUX_TRANS_LIB.get(ticket_status),
-                    null,
-                    rightIcon,
-                    ToolBox_Inf.getMyActionStartEndDateFormated(context,forecast_date,forecast_date),
-                    tag_operational_desc,
-                    open_product_desc,
-                    open_serial_id,
-                    origin_desc,
-                    type_desc,
-                    "Traze nome do step autal ou varias etapas",
-                    ToolBox_Inf.equalsToLoggedSite(context,String.valueOf(open_site_code)) ? null : open_site_desc,
-                    client_id != null ? client_id +" - "+ client_name: null,
-                    contract_id != null ? contract_id +" - "+ contract_desc: null,
-                    null,
-                    null,
-                    ToolBox_Inf.millisecondsToString(
-                        ToolBox_Inf.dateToMilliseconds(this.getForecast_date()),
-                        "yyyyMMddHHmm"
-                    ),
-                    origin_type,
-           false,
-           false
-                );
+        return new MyActions(
+            MyActions.MY_ACTION_TYPE_TICKET,
+            hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE),
+            hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE),
+            ConstantBaseApp.HMAUX_TRANS_LIB.get(hmAux.get(TK_TicketDao.TICKET_STATUS)),
+            null,
+            rightIcon,
+            ToolBox_Inf.getMyActionStartEndDateFormated(context,hmAux.get(TK_TicketDao.FORECAST_DATE),hmAux.get(TK_TicketDao.FORECAST_DATE)),
+            hmAux.get(TK_TicketDao.TAG_OPERATIONAL_DESC),
+            hmAux.get(TK_TicketDao.OPEN_PRODUCT_DESC),
+            hmAux.get(TK_TicketDao.OPEN_SERIAL_ID),
+            hmAux.get(TK_TicketDao.ORIGIN_DESC),
+            hmAux.get(TK_TicketDao.TYPE_DESC),
+            hmAux.get(TK_Ticket_StepDao.STEP_DESC),
+            ToolBox_Inf.equalsToLoggedSite(context,hmAux.get(TK_TicketDao.OPEN_SITE_CODE)) ? null : hmAux.get(TK_TicketDao.OPEN_SITE_DESC),
+            clientInf,
+            contractInf,
+            null,
+            null,
+            ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(hmAux.get(TK_TicketDao.FORECAST_DATE)),
+                "yyyyMMddHHmm"
+            ),
+            hmAux.get(TK_TicketDao.ORIGIN_TYPE),
+            !"0".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM)),
+            ToolBox_Inf.isItemLate(hmAux.get(TK_TicketDao.FORECAST_DATE)),
+            false
+        );
     }
 
 

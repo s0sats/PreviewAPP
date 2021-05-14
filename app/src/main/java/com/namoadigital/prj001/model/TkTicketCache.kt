@@ -46,6 +46,7 @@ class TkTicketCache(
         //
         return MyActions(
                 MyActions.MY_ACTION_TYPE_TICKET_CACHE,
+                "$ticket_prefix.$ticket_code",
                 ticket_id,
                 statusTrad,
                 null,
@@ -68,7 +69,8 @@ class TkTicketCache(
                 ),
                 origin_type,
                 false,
-                false
+                ToolBox_Inf.isItemLate(forecast_start),
+                ToolBox_Inf.isItemLate(forecast_end)
         )
     }
 }

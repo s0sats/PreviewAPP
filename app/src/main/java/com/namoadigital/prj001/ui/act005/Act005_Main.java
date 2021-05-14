@@ -55,6 +55,7 @@ import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.SV_LocationTracker;
@@ -1579,6 +1580,15 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         finish();
     }
 
+    private void callAct083(MainTagMenu mainTagMenu) {
+        Intent mIntent = new Intent(context, Act083_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = mPresenter.getAct083BundleParams(mainTagMenu);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
     @Override
     public void closeApp() {
 
@@ -2763,7 +2773,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void onSelectMenuTagItem(@NotNull MainTagMenu item) {
-        //todo call new act.
+        callAct083(item);
     }
 
     @Override

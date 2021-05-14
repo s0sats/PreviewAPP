@@ -524,6 +524,7 @@ public class GE_Custom_Form_Local {
         }
         MyActions myActions = new MyActions(
             MyActions.MY_ACTION_TYPE_FORM,
+            getFormatedPk(hmAux),
             null,
             hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS),
             null,
@@ -546,8 +547,22 @@ public class GE_Custom_Form_Local {
             ),
             null,
             true,
+            false,
             false
         );
+        myActions.setSiteCode(Integer.parseInt(hmAux.get(GE_Custom_Form_LocalDao.SITE_CODE)));
+        myActions.setProductCode(Integer.parseInt(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)));
+        myActions.setCustomFormTypeDesc(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
+        myActions.setCustomFormDesc(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
         return myActions;
+    }
+
+    private static String getFormatedPk(HMAux hmAux) {
+        return
+            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE) +"." +
+            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_CODE) +"." +
+            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_VERSION) +"." +
+            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA)
+            ;
     }
 }

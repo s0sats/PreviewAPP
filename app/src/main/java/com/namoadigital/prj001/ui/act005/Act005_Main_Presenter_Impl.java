@@ -51,6 +51,7 @@ import com.namoadigital.prj001.model.IO_Move;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MenuMainNamoa;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
@@ -2181,6 +2182,26 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                     String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
             ).toSqlQuery()
         );
+    }
+
+    @Override
+    public Bundle getAct083BundleParams(MainTagMenu mainTagMenu) {
+        MyActionFilterParam actionFilterParam = new MyActionFilterParam(
+            mainTagMenu.getTagCode(),
+            mainTagMenu.getTagName(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
+
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, actionFilterParam);
+        return bundle;
     }
 
     //endregion

@@ -558,6 +558,8 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                             default:
                                 break;
                         }
+                        //LUCHE -12/05/2021 - Seta infos da tag no obj agendamento.
+                        setTagInfos(scheduleExec);
                         //ATENÇÃO, COMO AGENDAMENTO NO STATUS SCHEDULE, O OBJETO VINDO DO SERVER É
                         //ATUALIZADO COM AS INFORMAÇÕES RELACIONAIS ENTÃO NÃO É NECESSARIO TROCAR O ITEM
                         //USADO NA LISTA COMO NO CASO DO ELSE ABAIXO.
