@@ -233,6 +233,8 @@ public class WS_Sync extends IntentService {
         Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         EV_ProfileDao evProfileDao = new EV_ProfileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
+        MdTagDao mdTagDao = new MdTagDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        boolean mdTagAlreadyProcess = false;
 
         Gson gson = new GsonBuilder().serializeNulls().create();
 
@@ -550,7 +552,6 @@ public class WS_Sync extends IntentService {
             MD_ClassDao classDao = new MD_ClassDao(getApplicationContext());
             IO_Move_ReasonDao io_move_reasonDao = new IO_Move_ReasonDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MD_PartnerDao partnerDao = new MD_PartnerDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
-            MdTagDao mdTagDao = new MdTagDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             TkTicketCacheDao tkTicketCacheDao = new TkTicketCacheDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
             //Apaga dados das tabelas
@@ -578,7 +579,6 @@ public class WS_Sync extends IntentService {
             classDao.remove(new MD_Class_Sql_Truncate().toSqlQuery());
             io_move_reasonDao.remove(new IO_Move_Reason_Sql_Truncate().toSqlQuery());
             partnerDao.remove(new MD_Partner_Sql_Truncate().toSqlQuery());
-            mdTagDao.remove(new MdTagSqlTruncate().toSqlQuery());
             tkTicketCacheDao.remove(new TkTicketCacheSqlTruncate().toSqlQuery());
             //
             // Processamento Operation
@@ -983,21 +983,26 @@ public class WS_Sync extends IntentService {
             /**
              * Processamento MD_TAG
              */
-            File[] files_tag = ToolBox_Inf.getListOfFiles_v2("md_tag-");
+            //O processamento MD_Tag pode acontecer em duas situações, foi adiciona var de controle
+            //Se foi processada uma vez, não é necessario processar a segunda
+            if(!mdTagAlreadyProcess) {
+                mdTagDao.remove(new MdTagSqlTruncate().toSqlQuery());
+                File[] files_tag = ToolBox_Inf.getListOfFiles_v2("md_tag-");
+                for (File _file : files_tag) {
+                    ArrayList<MdTag> tags = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MdTag>>() {
+                        }.getType()
+                    );
 
-            for (File _file : files_tag) {
-                ArrayList<MdTag> tags = gson.fromJson(
-                    ToolBox.jsonFromOracle(
-                        ToolBox_Inf.getContents(_file)
-                    ),
-                    new TypeToken<ArrayList<MdTag>>() {
-                    }.getType()
-                );
-
-                mdTagDao.addUpdate(tags, false);
+                    mdTagDao.addUpdate(tags, false);
+                }
+                //Libera pro GB
+                files_tag = null;
+                mdTagAlreadyProcess = true;
             }
-            //Libera pro GB
-            files_tag = null;
             //
             // Processamento Department
             //
@@ -1459,6 +1464,30 @@ public class WS_Sync extends IntentService {
             customFormOperationDao.remove(new GE_Custom_Form_Operation_Sql_Trucate().toSqlQuery());
             customFormBlobDao.remove(new GE_Custom_Form_Blob_Sql_Truncate().toSqlQuery());
             customFormSiteDao.remove(new GE_Custom_Form_Site_Sql_Trucate().toSqlQuery());
+
+            /**
+             * Processamento MD_TAG
+             */
+            //O processamento MD_Tag pode acontecer em duas situações, foi adiciona var de controle
+            //Se foi processada uma vez, não é necessario processar a segunda
+            if(!mdTagAlreadyProcess) {
+                mdTagDao.remove(new MdTagSqlTruncate().toSqlQuery());
+                File[] files_tag = ToolBox_Inf.getListOfFiles_v2("md_tag-");
+                for (File _file : files_tag) {
+                    ArrayList<MdTag> tags = gson.fromJson(
+                        ToolBox.jsonFromOracle(
+                            ToolBox_Inf.getContents(_file)
+                        ),
+                        new TypeToken<ArrayList<MdTag>>() {
+                        }.getType()
+                    );
+
+                    mdTagDao.addUpdate(tags, false);
+                }
+                //Libera pro GB
+                files_tag = null;
+                mdTagAlreadyProcess = true;
+            }
 
             //
             // Processamento Custom Form Product
