@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.R
@@ -15,6 +16,8 @@ import com.namoadigital.prj001.adapter.MyActionsAdapter
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act083MainBinding
 import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.service.WS_Sync
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act038.Act038_Main
@@ -28,6 +31,8 @@ class Act083_Main : Base_Activity() {
     private lateinit var binding: Act083MainBinding
     private lateinit var mAdapter: MyActionsAdapter
     private lateinit var bundle: Bundle
+    private var wsProcess =""
+    private var hmAuxTicketDownload: HMAux = HMAux()
 
     private val viewModel by lazy {
         val factory = Act083ViewModelFactory(
@@ -156,11 +161,31 @@ class Act083_Main : Base_Activity() {
     }
 
     private fun processCachedTicketClick(myAction: MyActions) {
-        ToolBox.toastMSG(context,"Em Dev")
+        if(ToolBox_Con.isOnline(context)){
+            wsProcess = WS_TK_Ticket_Download::class.java.name
+            showPD(
+                    hmAux_Trans["dialog_download_ticket_ttl"],
+                    hmAux_Trans["dialog_download_ticket_start"]
+            )
+            //
+            viewModel.prepareWsTicketDownload(myAction)
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context)
+        }
+    }
+
+
+    private fun showPD(ttl: String?, msg: String?) {
+        enableProgressDialog(
+                ttl,
+                msg,
+                hmAux_Trans["sys_alert_btn_cancel"],
+                hmAux_Trans["sys_alert_btn_ok"]
+        )
     }
 
     private fun processScheduleClick(myAction: MyActions) {
-        ToolBox.toastMSG(context,"Em Dev")
+        ToolBox.toastMSG(context, "Em Dev")
     }
 
     private fun processFormApClick(myAction: MyActions) {
@@ -174,6 +199,55 @@ class Act083_Main : Base_Activity() {
                 viewModel.getFormBundle(myAction)
         )
     }
+
+    override fun processCloseACT(mLink: String?, mRequired: String?) {
+        super.processCloseACT(mLink, mRequired)
+        processCloseACT(mLink, mRequired,HMAux())
+    }
+
+    override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux) {
+        super.processCloseACT(mLink, mRequired, hmAux)
+        when(wsProcess){
+            WS_TK_Ticket_Download::class.java.name -> {
+                wsProcess = ""
+                if (viewModel.verifyProductOutdateForForm(hmAux)) {
+                    progressDialog.dismiss()
+                    //
+                    if (ToolBox_Con.isOnline(context)) {
+                        hmAuxTicketDownload = hmAux
+                        wsProcess = WS_Sync::class.java.name
+                        showPD(
+                                hmAux_Trans["progress_sync_ttl"],
+                                hmAux_Trans["progress_sync_msg"]
+                        )
+                        //
+                        viewModel.prepareWsFormSync()
+                    } else {
+                        //
+                        callAct070(
+                                viewModel.getCacheTicketBundle(hmAux)
+                        )
+                    }
+                }else{
+                    progressDialog.dismiss()
+                    callAct070(
+                            viewModel.getCacheTicketBundle(hmAux)
+                    )
+                }
+            }
+            WS_Sync::class.java.name -> {
+                wsProcess = ""
+                progressDialog.dismiss()
+                //
+                callAct070(
+                        viewModel.getCacheTicketBundle(hmAuxTicketDownload)
+                )
+            }
+            else -> progressDialog?.dismiss()
+        }
+    }
+
+
 
     private fun callAct070(bundle: Bundle) {
         val mIntent = Intent(context, Act070_Main::class.java)
@@ -246,8 +320,7 @@ class Act083_Main : Base_Activity() {
                 applyTextFilter(text)
             }
         })
-        binding.act083MainContent.act083Tabs.setOnCheckedChangeListener {
-            _, checkedId ->
+        binding.act083MainContent.act083Tabs.setOnCheckedChangeListener { _, checkedId ->
             when(checkedId){
                 binding.act083MainContent.act083TabMyActions.id -> updateMyActionList(1)
                 else -> updateMyActionList(0)

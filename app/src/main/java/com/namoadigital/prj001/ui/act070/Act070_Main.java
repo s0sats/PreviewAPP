@@ -41,6 +41,7 @@ import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
@@ -69,6 +70,7 @@ import com.namoadigital.prj001.ui.act075.Act075_Main;
 import com.namoadigital.prj001.ui.act076.Act076_Main;
 import com.namoadigital.prj001.ui.act081.Act081_Main;
 import com.namoadigital.prj001.ui.act082.Act082_Main;
+import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -1236,6 +1238,24 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void callAct083() {
+        Intent intent = new Intent(context, Act083_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
+        bundle.putSerializable(
+            MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+            requestingBundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+        );
+        intent.putExtras(bundle);
+        //
+        startActivity(intent);
+        finish();
+
     }
 
     private void iniUIFooter() {

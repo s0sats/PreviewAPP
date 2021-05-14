@@ -72,6 +72,8 @@ public interface Act070_Main_Contract {
         void setBtnSaveEditState(boolean enableBtn);
 
         boolean isInWgEditMode();
+
+        void callAct083();
     }
 
     interface I_Presenter{

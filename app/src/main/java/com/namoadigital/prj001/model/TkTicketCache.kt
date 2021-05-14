@@ -46,7 +46,7 @@ class TkTicketCache(
         //
         return MyActions(
                 MyActions.MY_ACTION_TYPE_TICKET_CACHE,
-                "$ticket_prefix.$ticket_code",
+                "$ticket_prefix.$ticket_code.$scn",
                 ticket_id,
                 statusTrad,
                 null,

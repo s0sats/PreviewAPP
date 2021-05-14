@@ -1,12 +1,15 @@
 package com.namoadigital.prj001.ui.act083
 
 import android.app.Application
+import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.receiver.WBR_Sync
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -84,6 +87,10 @@ class Act083ViewModel(private val context: Application,
         transList.add("IN_PROCESSING")
         transList.add("no_record_lbl")
         transList.add("other_steps_available_lbl")
+        transList.add("dialog_download_ticket_ttl")
+        transList.add("dialog_download_ticket_start")
+        transList.add("progress_sync_ttl")
+        transList.add("progress_sync_msg")
         //
         return ToolBox_Inf.setLanguage(
                 context,
@@ -254,14 +261,6 @@ class Act083ViewModel(private val context: Application,
         generateMyActionList(userFocusFilter)
     }
 
-    private fun processCachedTicketClick(myAction: MyActions) {
-        //executeTicketDownload()
-    }
-
-    private fun processScheduleClick(myAction: MyActions) {
-        TODO("Not yet implemented")
-    }
-
     fun getFormBundle(myAction: MyActions): Bundle {
         val splippedPk = myAction.getSplippedPk()
         val bundle = Bundle()
@@ -279,13 +278,23 @@ class Act083ViewModel(private val context: Application,
         return bundle
     }
 
-
-
     fun getLocalTicket(myAction: MyActions): Bundle {
         val splippedPk = myAction.getSplippedPk()
+        return ticketBundle(splippedPk[0].toInt(), splippedPk[1].toInt())
+    }
+
+    fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle {
+        val ticketPrefix = hmAuxTicketDownloaded[TK_TicketDao.TICKET_PREFIX]?.let { Integer.valueOf(it) } ?: -1
+        val ticketCode = hmAuxTicketDownloaded[TK_TicketDao.TICKET_CODE]?.let { Integer.valueOf(it) } ?: -1
+        return ticketBundle(ticketPrefix, ticketCode)
+    }
+
+    private fun ticketBundle(ticketPrefix: Int, ticketCode: Int): Bundle {
         val bundle = Bundle()
-        bundle.putInt(TK_TicketDao.TICKET_PREFIX, splippedPk[0].toInt())
-        bundle.putInt(TK_TicketDao.TICKET_CODE, splippedPk[1].toInt())
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix)
+        bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode)
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         return bundle
     }
 
@@ -301,6 +310,41 @@ class Act083ViewModel(private val context: Application,
         bundle.putString(GE_Custom_Form_ApDao.AP_CODE, splippedPk[4])
         return bundle
     }
+
+    fun prepareWsTicketDownload(myAction: MyActions){
+            val mIntent = Intent(context, WBR_TK_Ticket_Download::class.java)
+            val bundle = Bundle()
+            bundle.putString(
+                    TK_TicketDao.TICKET_PREFIX,
+                    "${ToolBox_Con.getPreference_Customer_Code(context)}|${myAction.processPk.replace(".", "|")}"
+            )
+            mIntent.putExtras(bundle)
+            //
+            context.sendBroadcast(mIntent)
+    }
+
+    fun verifyProductOutdateForForm(hmAuxTicketDownloaded: HMAux): Boolean {
+        val ticketPrefix = hmAuxTicketDownloaded[TK_TicketDao.TICKET_PREFIX]?.let { Integer.valueOf(it) } ?: -1 
+        val ticketCode = hmAuxTicketDownloaded[TK_TicketDao.TICKET_CODE]?.let { Integer.valueOf(it) } ?: -1
+        //
+        return ToolBox_Inf.hasFormProductOutdate(context, ticketPrefix, ticketCode)
+    }
+
+    fun prepareWsFormSync() {
+        val data_package = arrayListOf(DataPackage.DATA_PACKAGE_CHECKLIST)
+        val mIntent = Intent(context, WBR_Sync::class.java)
+        val bundle = Bundle()
+        bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context))
+        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package)
+        bundle.putLong(Constant.GS_PRODUCT_CODE, 0)
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1)
+        bundle.putInt(Constant.GC_STATUS, 1)
+        //
+        mIntent.putExtras(bundle)
+        //
+        context.sendBroadcast(mIntent)
+    }
+
 
 }
 
