@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.MyActionsAdapter
@@ -155,11 +156,11 @@ class Act083_Main : Base_Activity() {
     }
 
     private fun processCachedTicketClick(myAction: MyActions) {
-        TODO("Not yet implemented")
+        ToolBox.toastMSG(context,"Em Dev")
     }
 
     private fun processScheduleClick(myAction: MyActions) {
-        TODO("Not yet implemented")
+        ToolBox.toastMSG(context,"Em Dev")
     }
 
     private fun processFormApClick(myAction: MyActions) {

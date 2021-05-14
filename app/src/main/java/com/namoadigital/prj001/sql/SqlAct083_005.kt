@@ -52,8 +52,7 @@ class SqlAct083_005(
 
     override fun toSqlQuery(): String {
         var s = """  SELECT
-                             s.*,
-                             1 line_number
+                             s.*
                             FROM
                              ${MD_Schedule_ExecDao.TABLE} s
                             WHERE
@@ -69,67 +68,65 @@ class SqlAct083_005(
                             UNION
                             
                             SELECT
-                                T.*
-                            FROM(                                  
-                                  SELECT 
-                                   s1.*,
-                                   row_number() over (PARTITION BY  
-                                                         s1.${MD_Schedule_ExecDao.PRODUCT_CODE},
-                                                         s1.${MD_Schedule_ExecDao.SERIAL_ID},
-                                                         s1.${MD_Schedule_ExecDao.SITE_CODE},
-                                                         s1.${MD_Schedule_ExecDao.OPERATION_CODE},
-                                                         s1.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
-                                                         IFNULL(s1.${MD_Schedule_ExecDao.TICKET_TYPE},0) ,
-                                                         IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0) ,
-                                                         IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0) 
-                                                     order by
-                                                               s1.${MD_Schedule_ExecDao.SCHEDULE_PREFIX},s1.${MD_Schedule_ExecDao.SCHEDULE_CODE}                      
-                                                       ) line_number
-                                  FROM
-                                   ${MD_Schedule_ExecDao.TABLE} s1
-                                  WHERE
-                                    (  s1.${MD_Schedule_ExecDao.PRODUCT_CODE},
-                                       s1.${MD_Schedule_ExecDao.SERIAL_ID},
-                                       s1.${MD_Schedule_ExecDao.SITE_CODE},
-                                       s1.${MD_Schedule_ExecDao.OPERATION_CODE},
-                                       s1.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
-                                       IFNULL(s1.${MD_Schedule_ExecDao.TICKET_TYPE},0) ,
-                                       IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0) ,
-                                       IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0) ,
-                                       s1.${MD_Schedule_ExecDao.DATE_START} ) in  (SELECT
-                                                             s.${MD_Schedule_ExecDao.PRODUCT_CODE},
-                                                             s.${MD_Schedule_ExecDao.SERIAL_ID},
-                                                             s.${MD_Schedule_ExecDao.SITE_CODE},
-                                                             s.${MD_Schedule_ExecDao.OPERATION_CODE},
-                                                             s.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
-                                                             IFNULL(s.${MD_Schedule_ExecDao.TICKET_TYPE},0) ${MD_Schedule_ExecDao.TICKET_TYPE},
-                                                             IFNULL(s.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0) ${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},
-                                                             IFNULL(s.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0) ${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},
-                                                             min(s.${MD_Schedule_ExecDao.DATE_START}) ${MD_Schedule_ExecDao.DATE_START}                           
-                                                            FROM
-                                                             ${MD_Schedule_ExecDao.TABLE} s
-                                                            WHERE
-                                                                 s.${MD_Schedule_ExecDao.CUSTOMER_CODE} = $customerCode
-                                                                 $statusFilter
-                                                                 and ($tagOperCode is null or s.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE} = $tagOperCode)
-                                                                 and ($siteCode is null or s.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode)
-                                                                 and ($productCode is null or s.${MD_Schedule_ExecDao.PRODUCT_CODE} = $productCode )
-                                                                 and ($serialId is null or s.${MD_Schedule_ExecDao.SERIAL_ID} = $serialId )
-                                                                 and (strftime('%s',s.${MD_Schedule_ExecDao.DATE_START}||' $customerGMT','$deviceGMT') * 1000) >= (strftime('%s','now','$deviceGMT') * 1000)
-                                                                 $periodDateFilter
-                                                            GROUP BY
+                                s2.*
+                            FROM
+                                ${MD_Schedule_ExecDao.TABLE} s2
+                            WHERE
+                              s2.${MD_Schedule_ExecDao.SCHEDULE_PREFIX} ||substr('0000000000'||s2.${MD_Schedule_ExecDao.SCHEDULE_CODE},-10)||substr('0000000000'||s2.${MD_Schedule_ExecDao.SCHEDULE_EXEC},-10)
+                              IN (    SELECT 
+                                        min(s1.${MD_Schedule_ExecDao.SCHEDULE_PREFIX} ||substr('0000000000'||s1.${MD_Schedule_ExecDao.SCHEDULE_CODE},-10)||substr('0000000000'||s1.${MD_Schedule_ExecDao.SCHEDULE_EXEC},-10)) schedule_pk
+                                      FROM
+                                       ${MD_Schedule_ExecDao.TABLE} s1
+                                      WHERE
+                                        (  s1.${MD_Schedule_ExecDao.PRODUCT_CODE},
+                                           s1.${MD_Schedule_ExecDao.SERIAL_ID},
+                                           s1.${MD_Schedule_ExecDao.SITE_CODE},
+                                           s1.${MD_Schedule_ExecDao.OPERATION_CODE},
+                                           s1.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
+                                           IFNULL(s1.${MD_Schedule_ExecDao.TICKET_TYPE},0) ,
+                                           IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0) ,
+                                           IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0) ,
+                                           s1.${MD_Schedule_ExecDao.DATE_START} ) in  (SELECT
                                                                  s.${MD_Schedule_ExecDao.PRODUCT_CODE},
                                                                  s.${MD_Schedule_ExecDao.SERIAL_ID},
                                                                  s.${MD_Schedule_ExecDao.SITE_CODE},
                                                                  s.${MD_Schedule_ExecDao.OPERATION_CODE},
                                                                  s.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
-                                                                 s.${MD_Schedule_ExecDao.TICKET_TYPE},
-                                                                 s.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},
-                                                                 s.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE}
-                                                     )
-                            ) T
-                            WHERE
-                             T.LINE_NUMBER = 1         
+                                                                 IFNULL(s.${MD_Schedule_ExecDao.TICKET_TYPE},0) ${MD_Schedule_ExecDao.TICKET_TYPE},
+                                                                 IFNULL(s.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0) ${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},
+                                                                 IFNULL(s.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0) ${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},
+                                                                 min(s.${MD_Schedule_ExecDao.DATE_START}) ${MD_Schedule_ExecDao.DATE_START}                           
+                                                                FROM
+                                                                 ${MD_Schedule_ExecDao.TABLE} s
+                                                                WHERE
+                                                                     s.${MD_Schedule_ExecDao.CUSTOMER_CODE} = $customerCode
+                                                                     $statusFilter
+                                                                     and ($tagOperCode is null or s.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE} = $tagOperCode)
+                                                                     and ($siteCode is null or s.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode)
+                                                                     and ($productCode is null or s.${MD_Schedule_ExecDao.PRODUCT_CODE} = $productCode )
+                                                                     and ($serialId is null or s.${MD_Schedule_ExecDao.SERIAL_ID} = $serialId )
+                                                                     and (strftime('%s',s.${MD_Schedule_ExecDao.DATE_START}||' $customerGMT','$deviceGMT') * 1000) >= (strftime('%s','now','$deviceGMT') * 1000)
+                                                                     $periodDateFilter
+                                                                GROUP BY
+                                                                     s.${MD_Schedule_ExecDao.PRODUCT_CODE},
+                                                                     s.${MD_Schedule_ExecDao.SERIAL_ID},
+                                                                     s.${MD_Schedule_ExecDao.SITE_CODE},
+                                                                     s.${MD_Schedule_ExecDao.OPERATION_CODE},
+                                                                     s.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
+                                                                     IFNULL(s.${MD_Schedule_ExecDao.TICKET_TYPE},0),
+                                                                     IFNULL(s.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0),
+                                                                     IFNULL(s.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0)
+                                                         )
+                                      GROUP BY
+                                         s1.${MD_Schedule_ExecDao.PRODUCT_CODE},
+                                         s1.${MD_Schedule_ExecDao.SERIAL_ID},
+                                         s1.${MD_Schedule_ExecDao.SITE_CODE},
+                                         s1.${MD_Schedule_ExecDao.OPERATION_CODE},
+                                         s1.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
+                                         IFNULL(s1.${MD_Schedule_ExecDao.TICKET_TYPE},0),
+                                         IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0),
+                                         IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0)                   
+                                )      
                       """
         return s
     }
