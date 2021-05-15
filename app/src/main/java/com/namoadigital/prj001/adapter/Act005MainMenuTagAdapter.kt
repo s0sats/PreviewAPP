@@ -19,12 +19,12 @@ import com.namoadigital.prj001.util.ConstantBaseApp.*
 import com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome
 
 class Act005MainMenuTagAdapter(
-        private val _mMainTagMenu: MutableList<MainTagMenu>,
+        var mMainTagMenu: MutableList<MainTagMenu>,
         private val hmAux_Trans: HMAux,
         val mListener: FrgMainHome.OnFrgMainHomeIteract?
 ): RecyclerView.Adapter<Act005MainMenuTagAdapter.MyTagVh>() {
 
-    public val mMainTagMenu get() = _mMainTagMenu
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyTagVh {
         return MyTagVh(Act005TagCellBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }

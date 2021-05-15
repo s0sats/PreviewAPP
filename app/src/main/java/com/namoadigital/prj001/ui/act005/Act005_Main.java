@@ -2652,7 +2652,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             icon = R.drawable.ic_baseline_cloud_download_24;
             iconColor = R.color.custom_yellow_sync;
         }else{
-            iconColor = android.R.color.white;
+            iconColor = R.color.namoa_color_pipeline_origin_icon;
             icon = R.drawable.ic_baseline_cloud_done_24;
         }
         //
@@ -2667,7 +2667,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //
         Drawable wrappedSyncIcon = DrawableCompat.wrap(context.getDrawable(R.drawable.ic_sync_black_24dp));
         if (wrappedSyncIcon != null) {
-            DrawableCompat.setTint(wrappedDrawable.mutate(), ContextCompat.getColor(context,  android.R.color.white));
+            DrawableCompat.setTint(wrappedSyncIcon.mutate(), ContextCompat.getColor(context,  android.R.color.white));
         }
 
         menu.add(0, TOOLBAR_ENABLE_NFC, Menu.FIRST + 1, hmAux_Trans.get("lbl_sync_data"));

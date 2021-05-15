@@ -218,7 +218,7 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
             adapter.mMainTagMenu.clear()
         } else {
             binding.tvListPlaceholder.visibility = View.GONE
-            binding.rvTags.visibility = View.GONE
+            binding.rvTags.visibility = View.VISIBLE
             val lastItem = tagList.size - 1
             tagList.get(lastItem).tagName = hmAux_Trans_Frag.get("all_tag_list_item")!!;
             if (adapter.mMainTagMenu != null && !adapter.mMainTagMenu.isEmpty()) {

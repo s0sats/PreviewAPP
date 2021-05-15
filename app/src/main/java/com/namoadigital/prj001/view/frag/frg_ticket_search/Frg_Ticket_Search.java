@@ -29,7 +29,7 @@ public class Frg_Ticket_Search extends Fragment {
     public static final String CLIENT_ID = "CLIENT_ID";
     public static final String TICKET_ID = "TICKET_ID";
     public static final String SYNCS_QTY = "SYNCS_QTY";
-    private Frg_Serial_Search.I_Frg_Serial_Search delegate;
+    private I_Frg_Ticket_Search delegate;
     private Frg_Serial_Search.I_Frg_Serial_Search_Load load_delegate;
 
     private HMAux hmAux_Trans;
@@ -48,13 +48,10 @@ public class Frg_Ticket_Search extends Fragment {
     private int syncs_qty = 0;
     private int myTicketQty = 0;
 
-    public void setOnSearchClickListener(Frg_Serial_Search.I_Frg_Serial_Search delegate) {
+    public void setOnSearchClickListener(I_Frg_Ticket_Search delegate) {
         this.delegate = delegate;
     }
 
-    public void setLoad_delegate(Frg_Serial_Search.I_Frg_Serial_Search_Load load_delegate) {
-        this.load_delegate = load_delegate;
-    }
 
     public Frg_Ticket_Search() {
         // Required empty public constructor
@@ -94,10 +91,6 @@ public class Frg_Ticket_Search extends Fragment {
 
         iniVar(view);
 
-        if(load_delegate != null){
-            load_delegate.onFragIsReady();
-        }
-
         iniAction();
 
         return view;
@@ -107,19 +100,19 @@ public class Frg_Ticket_Search extends Fragment {
         btn_option_01.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ToolBox_Con.isOnline(getActivity()) &&
-                    ToolBox_Inf.checkSerialTokenURStatus(getActivity())
-                ) {
-                    ToolBox.alertMSG(
-                        getActivity(),
-                        hmAux_Trans.get("alert_serial_pendencies_ttl"),
-                        hmAux_Trans.get("alert_serial_pendencies_msg"),
-                        null,
-                        0
-                    );
-                }else {
+//                if (ToolBox_Con.isOnline(getActivity()) &&
+//                    ToolBox_Inf.checkSerialTokenURStatus(getActivity())
+//                ) {
+//                    ToolBox.alertMSG(
+//                        getActivity(),
+//                        hmAux_Trans.get("alert_serial_pendencies_ttl"),
+//                        hmAux_Trans.get("alert_serial_pendencies_msg"),
+//                        null,
+//                        0
+//                    );
+//                }else {
                     delegate.onSearchClick(Frg_Serial_Search.BTN_OPTION_01, getHMAuxValues());
-                }
+//                }
             }
         });
         btn_option_02.setOnClickListener(new View.OnClickListener() {
@@ -154,16 +147,15 @@ public class Frg_Ticket_Search extends Fragment {
         apllyUserProfile();
         //
         mket_ticket.setHint(hmAux_Trans.get("ticket_hint"));
-
     }
 
     private void setupButton() {
         btn_option_01.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_3_states));
         btn_option_01.setText(hmAux_Trans.get("btn_check_exists"));
-        setupSyncButton();
-        setupMyTicketsButton();
-        btn_option_05.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
-        btn_option_05.setText(hmAux_Trans.get("btn_scheduled_tickets"));
+//        setupSyncButton();
+//        setupMyTicketsButton();
+//        btn_option_05.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));
+//        btn_option_05.setText(hmAux_Trans.get("btn_scheduled_tickets"));
     }
 
     private void setupMyTicketsButton() {
@@ -211,9 +203,9 @@ public class Frg_Ticket_Search extends Fragment {
         }else{
             btn_option_02.setVisibility(View.GONE);
         }
-        btn_option_03.setVisibility(View.VISIBLE);
+        btn_option_03.setVisibility(View.GONE);
         btn_option_04.setVisibility(View.GONE);
-        btn_option_05.setVisibility(View.VISIBLE);
+        btn_option_05.setVisibility(View.GONE);
     }
 
     private void bindViews(View view) {

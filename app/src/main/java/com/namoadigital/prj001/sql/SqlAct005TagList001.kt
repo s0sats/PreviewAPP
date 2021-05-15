@@ -16,6 +16,7 @@ class SqlAct005TagList001(private val context: Context,
                           focusFilter: String
 ) : Specification {
     var ticketFilter = ""
+    var ticketCacheFilter = ""
     var formApFilter = ""
     var scheduleFilter = ""
     var scheduleNextFilter = ""
@@ -24,6 +25,12 @@ class SqlAct005TagList001(private val context: Context,
         ticketFilter = when (periodFilter) {
             ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n and (strftime('%Y-%m-%d',s.${TK_Ticket_StepDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
             ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n and (strftime('%Y-%m-%d',s.${TK_Ticket_StepDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
+            else -> ""
+        }
+        //
+        ticketCacheFilter = when (periodFilter) {
+            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n and (strftime('%Y-%m-%d',tkc.${TK_Ticket_StepDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
+            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n and (strftime('%Y-%m-%d',tkc.${TK_Ticket_StepDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
             else -> ""
         }
         //
@@ -52,6 +59,7 @@ class SqlAct005TagList001(private val context: Context,
 
         if (siteCode > 0) {
             ticketFilter += "\n and tk.${TK_TicketDao.OPEN_SITE_CODE} = $siteCode "
+            ticketCacheFilter += "\n and tkc.${TK_TicketDao.OPEN_SITE_CODE} = $siteCode "
             scheduleFilter += "\n and mse.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode "
             scheduleNextFilter += "\n and s.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode "
             formFilter += "\n and gcdl.${GE_Custom_Form_LocalDao.SITE_CODE} = $siteCode "
@@ -105,6 +113,7 @@ class SqlAct005TagList001(private val context: Context,
                     and tk.ticket_code = tkc.ticket_code
                     and tk.ticket_id = tkc.ticket_id
                 where tk.ticket_code is null
+                $ticketCacheFilter
         union 
             select  mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
                     mdt.${MdTagDao.TAG_DESC} tag_operational_desc, 
