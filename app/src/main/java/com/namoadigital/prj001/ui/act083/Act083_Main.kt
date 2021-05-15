@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act083
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.ContextThemeWrapper
@@ -15,17 +16,23 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.MyActionsAdapter
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act083MainBinding
+import com.namoadigital.prj001.model.MD_Schedule_Exec
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
+import com.namoadigital.prj001.ui.act017.Act017_Main
+import com.namoadigital.prj001.ui.act033.Act033_Main
 import com.namoadigital.prj001.ui.act038.Act038_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog
+import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog.OnScheduleRequestSerialDialogListeners
+import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 
 class Act083_Main : Base_Activity() {
     private lateinit var binding: Act083MainBinding
@@ -33,6 +40,8 @@ class Act083_Main : Base_Activity() {
     private lateinit var bundle: Bundle
     private var wsProcess =""
     private var hmAuxTicketDownload: HMAux = HMAux()
+    private val CHANGE_ZONE_RESULT_CODE = 10
+    private var serialDialog: ScheduleRequestSerialDialog2? = null
 
     private val viewModel by lazy {
         val factory = Act083ViewModelFactory(
@@ -185,7 +194,208 @@ class Act083_Main : Base_Activity() {
     }
 
     private fun processScheduleClick(myAction: MyActions) {
-        ToolBox.toastMSG(context, "Em Dev")
+        if(viewModel.isScheduleStarted(myAction)){
+            if(viewModel.isScheduleStatusPossibleToOpen(myAction)){
+                if(viewModel.isScheduleFormType(myAction)){
+                    scheduleFormFlow(myAction)
+                }else{
+                    scheduleTicketFlow(myAction)
+                }
+            }else{
+                showAlert(
+                        hmAux_Trans["alert_schedule_status_prevents_to_open_ttl"],
+                        hmAux_Trans["alert_schedule_status_prevents_to_open_msg"]
+                )
+            }
+        }else{
+            if(ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)){
+                showAlert(
+                        hmAux_Trans["alert_free_execution_blocked_ttl"],
+                        hmAux_Trans["alert_free_execution_blocked_msg"]
+                )
+            }else{
+                if(ToolBox_Inf.equalsToLoggedSite(context, myAction.siteCode.toString())){
+                    if(viewModel.isScheduleFormType(myAction)){
+                        if(viewModel.isAnyFormInProcessing(myAction)){
+                            showAlert(
+                                    hmAux_Trans["alert_ttl_exists_in_processing"],
+                                    hmAux_Trans["alert_msg_exists_in_processing"]
+                            )
+                        }else{
+                            showAlert(
+                                    hmAux_Trans["alert_ticket_action_start_ttl"],
+                                    hmAux_Trans["alert_ticket_action_start_confirm"],
+                                    (DialogInterface.OnClickListener { _, _ ->
+                                        scheduleFormFlow(myAction)
+                                    }),
+                                    1
+                            )
+                        }
+                    }else{
+                        showAlert(
+                                hmAux_Trans["alert_ticket_action_start_ttl"],
+                                hmAux_Trans["alert_ticket_action_start_confirm"],
+                                (DialogInterface.OnClickListener { _, _ ->
+                                    scheduleTicketFlow(myAction)
+                                }),
+                                1
+                        )
+                    }
+                }else{
+                    startSiteChangeFlow(myAction)
+                }
+            }
+        }
+    }
+
+    private fun scheduleTicketFlow(myAction: MyActions) {
+        if(viewModel.isScheduleStatusPossibleToOpen(myAction)){
+            callAct070(viewModel.getScheduleTicketBundle(myAction))
+        }else{
+            prepareOpenTicket(myAction)
+        }
+    }
+
+    private fun prepareOpenTicket(myAction: MyActions) {
+        TODO("Not yet implemented")
+    }
+
+    private fun scheduleFormFlow(myAction: MyActions) {
+        when {
+            viewModel.isScheduleStatusPossibleToOpen(myAction) -> {
+                prepareOpenForm(myAction)
+            }
+            viewModel.hasSerialDefined(myAction) -> {
+                buildRequestSerialDialog(
+                        myAction,
+                        false
+                )
+                //
+                viewModel.executeSerialSearch(
+                        myAction.productCode,
+                        myAction.productId,
+                        myAction.serialId,
+                        true
+                )
+            }
+            else -> {
+                //Cria e exibe dialog que requer serial.
+                buildRequestSerialDialog(
+                        myAction,
+                        true
+                )
+            }
+        }
+    }
+
+    private fun prepareOpenForm(myAction: MyActions) {
+        callAct011(viewModel.getScheduleFormBundle(myAction))
+    }
+
+    private fun buildRequestSerialDialog(myAction: MyActions, showDialog: Boolean) {
+        val scheduleExec: MD_Schedule_Exec = viewModel.getMdSchedule(myAction)
+        val serialRule: String? = scheduleExec.serial_rule
+        val serialMinLength = scheduleExec.serial_min_length
+        val serialMaxLength = scheduleExec.serial_max_length
+        //
+        serialDialog = ScheduleRequestSerialDialog2(
+                context,
+                scheduleExec,
+                serialRule,
+                serialMinLength,
+                serialMaxLength,
+                object : ScheduleRequestSerialDialog2.OnScheduleRequestSerialDialogListeners {
+                    override fun processToForm() {
+                        val bundle = Bundle()
+                        if (createFormLocalForSchedule(myAction, bundle)) {
+                            //Atualiza fomr_data no item
+//                            item.put(
+//                                    GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
+//                                    bundle.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, "0")
+//                            )
+                            //
+                            prepareOpenForm(myAction)
+                        } else {
+                            showAlert(
+                                    hmAux_Trans["alert_error_on_create_form_ttl"],
+                                    hmAux_Trans["alert_error_on_create_form_msg"]
+                            )
+                        }
+                    }
+
+                    override fun processToSearchSerial(serialID: String) {
+                       viewModel.executeSerialSearch(
+                                myAction.productCode,
+                                myAction.productId,
+                                serialID,
+                                false)
+                    }
+
+                    override fun addMketControl(mketSerial: MKEditTextNM) {
+                        addControlToActivity(mketSerial)
+                    }
+
+                    override fun removeMketControl(mketSerial: MKEditTextNM) {
+                        removeControlFromActivity(mketSerial)
+                    }
+                }
+        )
+        //
+        if (showDialog) {
+            serialDialog?.show()
+        }
+    }
+
+    private fun createFormLocalForSchedule(myAction: MyActions, bundle: Bundle): Boolean {
+        TODO("Not yet implemented")
+    }
+
+
+    private fun addControlToActivity(mketSerial: MKEditTextNM) {
+        controls_sta.add(mketSerial)
+    }
+
+    private fun removeControlFromActivity(mketSerial: MKEditTextNM) {
+        controls_sta.remove(mketSerial)
+    }
+
+    private fun startSiteChangeFlow(myAction: MyActions) {
+        if(viewModel.hasScheduleSiteAccess(myAction.siteCode)){
+            ToolBox.alertMSG_YES_NO(
+                    context,
+                    hmAux_Trans["alert_form_site_restriction_ttl"],
+                    hmAux_Trans["alert_form_site_restriction_confirm"],
+                    { _, _ ->
+                        if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
+                                && !ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)) {
+                            ToolBox_Con.setPreference_Site_Code(context, myAction.siteCode.toString())
+                            ToolBox_Con.setPreference_Zone_Code(context, -1)
+                            //
+                            processScheduleClick(myAction)
+                        } else {
+                            ToolBox_Con.setPreference_Site_Code(context, myAction.siteCode.toString())
+                            ToolBox_Con.setPreference_Zone_Code(context, -1)
+                            callAct033()
+                        }
+                    },
+                    1
+            )
+        }else{
+            showAlert(
+                    hmAux_Trans["alert_form_site_restriction_ttl"],
+                    hmAux_Trans["alert_form_site_restriction_no_access_msg"]
+            )
+        }
+    }
+
+    private fun showAlert(ttl: String?, msg: String?, clickListner: DialogInterface.OnClickListener? = null, negativeBtn: Int = 0){
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                clickListner,
+                negativeBtn
+        )
     }
 
     private fun processFormApClick(myAction: MyActions) {
@@ -246,34 +456,6 @@ class Act083_Main : Base_Activity() {
             else -> progressDialog?.dismiss()
         }
     }
-
-
-
-    private fun callAct070(bundle: Bundle) {
-        val mIntent = Intent(context, Act070_Main::class.java)
-        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        mIntent.putExtras(bundle)
-        startActivity(mIntent)
-        finish()
-    }
-
-    private fun callAct038(bundle: Bundle) {
-        val mIntent = Intent(context, Act038_Main::class.java)
-        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        mIntent.putExtras(bundle)
-        startActivity(mIntent)
-        finish()
-    }
-
-    private fun callAct011(bundle: Bundle) {
-        val mIntent = Intent(context, Act011_Main::class.java)
-        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        mIntent.putExtras(bundle)
-        context.startActivity(mIntent)
-        finish()
-    }
-
-
 
     private fun createTvChip(chipLabel: String) : TextView {
         val tvChip = TextView(ContextThemeWrapper(context, R.style.TextViewChips))
@@ -350,6 +532,40 @@ class Act083_Main : Base_Activity() {
         startActivity(mIntent)
         finish()
     }
+
+    private fun callAct070(bundle: Bundle) {
+        val mIntent = Intent(context, Act070_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.putExtras(bundle)
+        startActivity(mIntent)
+        finish()
+    }
+
+    private fun callAct038(bundle: Bundle) {
+        val mIntent = Intent(context, Act038_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.putExtras(bundle)
+        startActivity(mIntent)
+        finish()
+    }
+
+    private fun callAct011(bundle: Bundle) {
+        val mIntent = Intent(context, Act011_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.putExtras(bundle)
+        context.startActivity(mIntent)
+        finish()
+    }
+
+    private fun callAct033() {
+        val mIntent = Intent(context, Act033_Main::class.java)
+        val bundle = Bundle()
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT017)
+        mIntent.putExtras(bundle)
+        startActivityForResult(mIntent, CHANGE_ZONE_RESULT_CODE)
+    }
+
+
 
 
     override fun onBackPressed() {

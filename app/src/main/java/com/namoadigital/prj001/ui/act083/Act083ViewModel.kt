@@ -345,6 +345,46 @@ class Act083ViewModel(private val context: Application,
         context.sendBroadcast(mIntent)
     }
 
+    fun isScheduleStarted(myAction: MyActions): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    fun isScheduleStatusPossibleToOpen(myAction: MyActions): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    fun isScheduleFormType(myAction: MyActions): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    fun getScheduleFormBundle(myAction: MyActions): Bundle {
+        TODO("Not yet implemented")
+    }
+
+    fun getScheduleTicketBundle(myAction: MyActions): Bundle {
+        TODO("Not yet implemented")
+    }
+
+    fun isAnyFormInProcessing(myAction: MyActions): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    fun hasScheduleSiteAccess(siteCode: Int?): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    fun hasSerialDefined(myActions: MyActions): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    fun executeSerialSearch(productCode: Int?, productId: Int?, serialId: String, b: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    fun getMdSchedule(myAction: MyActions): MD_Schedule_Exec {
+        TODO("Not yet implemented")
+    }
+
 
 }
 

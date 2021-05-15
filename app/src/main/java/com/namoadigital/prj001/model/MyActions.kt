@@ -36,6 +36,7 @@ data class MyActions(
     }
     var siteCode: Int? = null
     var productCode: Int? = null
+    var productId: Int? = null
     var customFormTypeDesc: String? = null
     var customFormDesc: String? = null
 
