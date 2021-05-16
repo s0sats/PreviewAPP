@@ -40,6 +40,7 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         transListFrag.add("tag_list_lbl")
         transListFrag.add("tag_item_qty")
         transListFrag.add("tag_item_form_in_execution")
+        transListFrag.add("all_tag_list_item")
         //
         val mResource_Code_Frag = ToolBox_Inf.getResourceCode(
                 context,
@@ -92,9 +93,12 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         if (tagList != null && !tagList.isEmpty()) {
             binding.rvTags.visibility = View.VISIBLE
             binding.tvListPlaceholder.visibility = View.GONE
+            val lastItem = tagList.size -1
+            tagList.get(lastItem).tagName = hmAux_Trans_Frag.get("all_tag_list_item")!!;
             if(mListener != null){
                 adapter = Act005MainMenuTagAdapter(tagList, hmAux_Trans_Frag, mListener)
             }
+
         }else{
             adapter = Act005MainMenuTagAdapter(mutableListOf(), hmAux_Trans_Frag, mListener)
             binding.rvTags.visibility = View.GONE
@@ -156,6 +160,11 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -195,20 +204,30 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
 
     override fun onApply(periodFilter: String, siteFilter: String, focusFilter: String) {
         mListener?.let {
-            val tagList = it.getTagList(periodFilter, siteFilter, focusFilter)
-            if(adapter.mMainTagMenu != null && !adapter.mMainTagMenu.isEmpty()) {
-                adapter.mMainTagMenu.clear()
+            if(adapter != null) {
+                refreshList(it.getTagList(periodFilter, siteFilter, focusFilter))
             }
-            adapter.mMainTagMenu.addAll(tagList)
-            adapter.notifyDataSetChanged()
-            //
-            if (tagList == null || tagList.isEmpty()){
-                binding.tvListPlaceholder.visibility = View.VISIBLE
-            }else{
-                binding.tvListPlaceholder.visibility = View.GONE
-            }
-            //
         }
+    }
+
+    fun refreshList(tagList: MutableList<MainTagMenu>) {
+        //
+        if (tagList == null || tagList.isEmpty()) {
+            binding.tvListPlaceholder.visibility = View.VISIBLE
+            binding.rvTags.visibility = View.GONE
+            adapter.mMainTagMenu.clear()
+        } else {
+            binding.tvListPlaceholder.visibility = View.GONE
+            binding.rvTags.visibility = View.VISIBLE
+            val lastItem = tagList.size - 1
+            tagList.get(lastItem).tagName = hmAux_Trans_Frag.get("all_tag_list_item")!!;
+            if (adapter.mMainTagMenu != null && !adapter.mMainTagMenu.isEmpty()) {
+                adapter.mMainTagMenu.clear()
+                adapter.mMainTagMenu.addAll(tagList)
+            }
+        }
+        //
+        adapter.notifyDataSetChanged()
     }
 
 }

@@ -174,4 +174,6 @@
     <color name="namoa_textview_chips_bg">#EBEBEB</color>
     <color name="namoa_cloud_red">#EF2043</color>
     <color name="namoa_cloud_download">@color/namoa_color_gray_9</color>
+
+    <color name="gre_text_placeholder">#88000000</color>
 </resources>

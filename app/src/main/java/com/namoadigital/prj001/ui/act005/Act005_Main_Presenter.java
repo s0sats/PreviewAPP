@@ -26,6 +26,10 @@ public interface Act005_Main_Presenter {
 
     boolean hasSOProfile();
 
+    boolean hasUpdateRequired();
+
+    boolean hasSyncRequired();
+
     void getMenuItensV2(HMAux hmAux_Trans);
 
     void executeSyncProcess(int jump_validation_UR);

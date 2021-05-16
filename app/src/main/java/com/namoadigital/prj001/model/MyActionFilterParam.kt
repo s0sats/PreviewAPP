@@ -28,14 +28,14 @@ class MyActionFilterParam(
         serialId?.let {
             filters.add(it)
         }
-        clientId?.let {
-            filters.add(it)
+        if(!clientId.isNullOrEmpty()) {
+            filters.add(clientId!!)
         }
-        contractId?.let {
-            filters.add(it)
+        if(!contractId.isNullOrEmpty()) {
+            filters.add(contractId!!)
         }
-        ticketId?.let {
-            filters.add(it)
+        if(!ticketId.isNullOrEmpty()) {
+            filters.add(ticketId!!)
         }
         calendarDate?.let {
             filters.add(it)

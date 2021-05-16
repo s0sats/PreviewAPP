@@ -108,6 +108,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER;
 import static com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome.OnFrgMainHomeIteract;
 
 /**
@@ -223,8 +229,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     int outboundItensTotal=0;
     ArrayList<HMAux> outbound_items;
     Toolbar toolbar;
-    private boolean hasUpdateRequired = false;
-    private boolean hasSyncRequired = false;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -289,6 +294,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             if(pendencies>0) {
                 retryGetLocation();
             }
+        }
+
+        if(mPresenter.hasSOProfile()){
+
+        }else {
+            initTagFragment();
         }
 
         ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
@@ -1323,6 +1334,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             desabilita acesso a modulos enquanto atuliza tela.
          */
 //        gv_menu.setClickable(false);
+        if(mPresenter.hasSOProfile()){
+
+        }else {
+            FrgMainHome currentFragment = (FrgMainHome) fm.findFragmentById(R.id.act005_frg_placeholder);
+            currentFragment.refreshList(getTagList( ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION),
+                    ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION),
+                    ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION)));
+        }
         mPresenter.getMenuItensV2(hmAux_Trans);
         iniUIFooter();
 //        gv_menu.setClickable(true);
@@ -2619,8 +2638,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         ToolBox_Con.getPreference_User_Code(getApplicationContext())
                 ).toSqlQuery()
         );
+
         int icon = 0;
         int iconColor = 0;
+        boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
+        boolean hasSyncRequired = mPresenter.hasSyncRequired();
         if(hasUpdateRequired && hasSyncRequired){
             icon = R.drawable.ic_sync_main_menu_data;
         }else if(hasUpdateRequired){
@@ -2630,7 +2652,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             icon = R.drawable.ic_baseline_cloud_download_24;
             iconColor = R.color.custom_yellow_sync;
         }else{
-            iconColor = android.R.color.white;
+            iconColor = R.color.namoa_color_pipeline_origin_icon;
             icon = R.drawable.ic_baseline_cloud_done_24;
         }
         //
@@ -2643,8 +2665,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setIcon(wrappedDrawable);
         menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         //
+        Drawable wrappedSyncIcon = DrawableCompat.wrap(context.getDrawable(R.drawable.ic_sync_black_24dp));
+        if (wrappedSyncIcon != null) {
+            DrawableCompat.setTint(wrappedSyncIcon.mutate(), ContextCompat.getColor(context,  android.R.color.white));
+        }
+
         menu.add(0, TOOLBAR_ENABLE_NFC, Menu.FIRST + 1, hmAux_Trans.get("lbl_sync_data"));
-        menu.findItem(TOOLBAR_ENABLE_NFC).setIcon(R.drawable.ic_sync_black_24dp);
+        menu.findItem(TOOLBAR_ENABLE_NFC).setIcon(wrappedSyncIcon);
         menu.findItem(TOOLBAR_ENABLE_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menu.findItem(TOOLBAR_ENABLE_NFC).setTitle(hmAux_Trans.get("lbl_sync_data"));
 
@@ -2721,11 +2748,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //abre uma noticação do app e é enviado para act019
         //Rever isso no momento propicio
 //        mPresenter.getMenuItensV2(hmAux_Trans);
-        if(mPresenter.hasSOProfile()){
 
-        }else {
-            initTagFragment();
-        }
     }
 
 
@@ -2780,22 +2803,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         List<HMAux> queryResult = mPresenter.getMenuItensV3(periodFilter, sitesFilter, focusFilter);
         //
         ArrayList<MainTagMenu> mainTagMenus = new ArrayList<>();
+        //
+        int tagListItemCount = 0;
         for(HMAux aux: queryResult){
             //
             int updateRequired = aux.hasConsistentValue("update_required")? Integer.parseInt(aux.get("update_required")) : 0;
             int syncRequired   = aux.hasConsistentValue("sync_required")? Integer.parseInt(aux.get("sync_required")) : 0;
             //
-            if(!hasUpdateRequired){
-                hasUpdateRequired = updateRequired > 0;
-            }
-            //
-            if(!hasSyncRequired) {
-                hasSyncRequired = syncRequired > 0;
-            }
-            //
+            tagListItemCount += aux.hasConsistentValue("qty")? Integer.parseInt(aux.get("qty")) : 0;
             mainTagMenus.add( new MainTagMenu(
                             aux.hasConsistentValue("tag_operational_code")? Integer.parseInt(aux.get("tag_operational_code")) : 0,
-                            aux.get("tag_operational_desc"),
+                            aux.hasConsistentValue("tag_operational_code")? aux.get("tag_operational_desc") : "null",
                             aux.hasConsistentValue("qty")? Integer.parseInt(aux.get("qty")) : 0,
                             aux.hasConsistentValue("in_processing")? Integer.parseInt(aux.get("in_processing")) : 0,
                             updateRequired,
@@ -2803,7 +2821,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     )
             );
         }
-
+        //
+        invalidateOptionsMenu();
+        //
+        if(mainTagMenus.size() > 0 ) {
+            mainTagMenus.add(new MainTagMenu(0,
+                    "",
+                    tagListItemCount,
+                    0,
+                    0,
+                    0)
+            );
+        }
         return mainTagMenus;
     }
 

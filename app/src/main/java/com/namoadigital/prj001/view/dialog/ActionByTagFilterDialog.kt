@@ -80,7 +80,12 @@ class ActionByTagFilterDialog(context: Context,
                 else -> PREFERENCE_HOME_ALL_ACTIONS_OPTION
             }
             //
-            listener.onApply(periodFilterPreference, siteFilterPreference, focusFilterPreference)
+            if(!periodFilterPreference.equals(ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION))
+                    || !siteFilterPreference.equals(ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION))
+                    || !focusFilterPreference.equals(ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION))
+            ){
+                listener.onApply(periodFilterPreference, siteFilterPreference, focusFilterPreference)
+            }
             dismiss();
         }
         //
@@ -138,6 +143,11 @@ class ActionByTagFilterDialog(context: Context,
         //
         binding.btnFilterSave.text = hmAux_trans.get("btn_save_lbl")
         binding.btnFilterCancel.text = hmAux_trans.get("sys_alert_btn_cancel")
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        _binding = null
     }
 
     interface OnApplyFilterListener {
