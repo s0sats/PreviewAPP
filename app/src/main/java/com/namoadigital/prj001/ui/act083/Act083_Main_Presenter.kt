@@ -75,6 +75,7 @@ class Act083_Main_Presenter(private val context: Application,
         transList.add("dialog_download_ticket_start")
         transList.add("progress_sync_ttl")
         transList.add("progress_sync_msg")
+        transList.add("site_desc_not_found_lbl")
         //
         return ToolBox_Inf.setLanguage(
                 context,
@@ -322,7 +323,8 @@ class Act083_Main_Presenter(private val context: Application,
     override fun getFormApBundle(myAction: MyActions): Bundle {
         val splippedPk = myAction.getSplippedPk()
         val bundle = Bundle()
-        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT037)
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putString(GE_Custom_Form_ApDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context).toString())
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, splippedPk[0])
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, splippedPk[1])
@@ -335,6 +337,8 @@ class Act083_Main_Presenter(private val context: Application,
     override fun getFormBundle(myAction: MyActions): Bundle {
         val splippedPk = myAction.getSplippedPk()
         val bundle = Bundle()
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putString(MD_ProductDao.PRODUCT_CODE, myAction.productCode.toString())
         bundle.putString(MD_ProductDao.PRODUCT_DESC, myAction.productDesc)
         //bundle.putString(MD_ProductDao.PRODUCT_ID, myAction.productDesc)

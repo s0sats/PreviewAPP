@@ -39,6 +39,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.model.MD_Department;
 import com.namoadigital.prj001.model.MD_User;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.service.WS_AP_Save;
 import com.namoadigital.prj001.service.WS_AP_Search;
 import com.namoadigital.prj001.service_chat.WS_Room_AP;
@@ -46,7 +47,9 @@ import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act037.Act037_Main;
 import com.namoadigital.prj001.ui.act039.Act039_Main;
+import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -1247,10 +1250,29 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             case Constant.ACT039:
                 callAct039(context);
                 break;
+            case ConstantBaseApp.ACT083:
+                callAct083();
+                break;
             default:
                 callAct037(context);
                 break;
         }
+    }
+
+    private void callAct083() {
+        Intent intent = new Intent(context, Act083_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle mBundle = new Bundle();
+        mBundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
+        mBundle.putSerializable(
+                MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+        );
+        intent.putExtras(mBundle);
+        //
+        startActivity(intent);
+        finish();
     }
 
     private void callAct039(Context context) {
