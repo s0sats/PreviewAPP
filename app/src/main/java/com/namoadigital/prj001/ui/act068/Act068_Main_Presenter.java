@@ -17,6 +17,7 @@ import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
@@ -253,31 +254,31 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
     @Override
     public void executeTicketSearch(String contract_id, String client_id, String ticket_id) {
 
-        if (ToolBox_Con.isOnline(context)) {
-            //
-            mView.setWsProcess(WS_TK_Ticket_Client_Contract_Search.class.getName());
-            //
-            mView.showPD(
-                    hmAux_Trans.get("dialog_ticket_search_ttl"),
-                    hmAux_Trans.get("dialog_ticket_search_start")
-            );
-            //
-            Intent mIntent = new Intent(context, WBR_TK_Ticket_Client_Contract_Search.class);
-            Bundle bundle = new Bundle();
-            bundle.putString(TK_TicketDao.CONTRACT_ID, contract_id);
-            bundle.putString(TK_TicketDao.CLIENT_ID, client_id);
-            bundle.putString(TK_TicketDao.TICKET_ID, ticket_id);
-            //
-            mIntent.putExtras(bundle);
-            //
-            context.sendBroadcast(mIntent);
+        if (hasOnlineProfile()) {
 
         } else {
-            mView.showMsg(
-                    hmAux_Trans.get("alert_no_conection_ttl"),//Title é recurso sys.(usado no metodo showNoConnectionDialog)
-                    hmAux_Trans.get("alert_no_connection_try_pendencies_msg")
+            MyActionFilterParam actionFilterParam = new MyActionFilterParam(
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    client_id,
+                    contract_id,
+                    ticket_id,
+                    null
             );
+            //
+            Bundle bundle = new Bundle();
+            bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT068);
+            bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, actionFilterParam);
+
+            mView.callAct083(bundle);
         }
+    }
+
+    private boolean hasOnlineProfile() {
+        return false;
     }
 
     @Override

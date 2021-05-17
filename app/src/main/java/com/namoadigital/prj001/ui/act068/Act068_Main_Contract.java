@@ -36,6 +36,7 @@ public interface Act068_Main_Contract {
 
        void callAct070(Bundle buildAct070Bundle);
 
+       void callAct083(Bundle bundle);
    }
 
    interface I_Presenter{

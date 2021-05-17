@@ -9,6 +9,9 @@ interface Act083_Main_Contract {
     interface I_View {
         fun showMsg(type: String, item: MyActions)
         fun showToast(msg: String)
+        fun callAct070(bundle: Bundle)
+        fun callAct071(bundle: Bundle)
+        fun callAct033()
     }
 
     interface I_Presenter {
@@ -16,16 +19,16 @@ interface Act083_Main_Contract {
         fun getChipList() : List<String>
         fun getActTitle(): String
         fun updateMyActionList(userFocusFilter: Int)
+        fun checkScheduleFlow(myAction: MyActions)
         fun getLocalTicket(myAction: MyActions): Bundle
         fun getFormApBundle(myAction: MyActions): Bundle
         fun getFormBundle(myAction: MyActions): Bundle
         fun getLocalTickets(userFocus: Int): MutableList<HMAux>
         fun prepareWsTicketDownload(myAction: MyActions)
         fun isScheduleStarted(myAction: MyActions): Boolean
-        fun isScheduleStatusPossibleToOpen(myAction: MyActions): Boolean
+        fun isScheduleStatusPossibleToOpen(scheduleExec: MD_Schedule_Exec): Boolean
         fun isScheduleFormType(myAction: MyActions): Boolean
         fun isAnyFormInProcessing(myAction: MyActions): Boolean
-        fun getScheduleTicketBundle(myAction: MyActions): Bundle
         fun hasSerialDefined(myActions: MyActions): Boolean
         fun executeSerialSearch(productCode: Int?, productId: Int?, serialId: String, b: Boolean)
         fun getScheduleFormBundle(myAction: MyActions): Bundle
@@ -33,7 +36,9 @@ interface Act083_Main_Contract {
         fun hasScheduleSiteAccess(siteCode: Int?): Boolean
         fun verifyProductOutdateForForm(hmAuxTicketDownloaded: HMAux): Boolean
         fun prepareWsFormSync()
+        fun getTicketFlowBundle(item: MyActions): Bundle
         fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle
+        fun processTicketFlow(item: MyActions)
     }
 
 }

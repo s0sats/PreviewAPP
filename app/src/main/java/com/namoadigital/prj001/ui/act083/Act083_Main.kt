@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
@@ -26,12 +25,11 @@ import com.namoadigital.prj001.ui.act017.Act017_Main
 import com.namoadigital.prj001.ui.act033.Act033_Main
 import com.namoadigital.prj001.ui.act038.Act038_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
+import com.namoadigital.prj001.ui.act071.Act071_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog
-import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog.OnScheduleRequestSerialDialogListeners
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 
 class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
@@ -74,6 +72,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         Constant.DB_VERSION_CUSTOM
                 ),
                 MD_SiteDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                TK_Ticket_CtrlDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
@@ -159,7 +162,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         when(myAction.actionType){
             MyActions.MY_ACTION_TYPE_TICKET -> processLocalTicketClick(myAction)
             MyActions.MY_ACTION_TYPE_TICKET_CACHE -> processCachedTicketClick(myAction)
-            MyActions.MY_ACTION_TYPE_SCHEDULE -> processScheduleClick(myAction)
+            MyActions.MY_ACTION_TYPE_SCHEDULE -> mPresenter.checkScheduleFlow(myAction)
             MyActions.MY_ACTION_TYPE_FORM_AP -> processFormApClick(myAction)
             MyActions.MY_ACTION_TYPE_FORM -> processFormClick(myAction)
         }
@@ -197,100 +200,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         )
     }
 
-    private fun processScheduleClick(myAction: MyActions) {
-        if(mPresenter.isScheduleStarted(myAction)){
-            if(mPresenter.isScheduleStatusPossibleToOpen(myAction)){
-                if(mPresenter.isScheduleFormType(myAction)){
-                    scheduleFormFlow(myAction)
-                }else{
-                    scheduleTicketFlow(myAction)
-                }
-            }else{
-                showAlert(
-                        hmAux_Trans["alert_schedule_status_prevents_to_open_ttl"],
-                        hmAux_Trans["alert_schedule_status_prevents_to_open_msg"]
-                )
-            }
-        }else{
-            if(ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)){
-                showAlert(
-                        hmAux_Trans["alert_free_execution_blocked_ttl"],
-                        hmAux_Trans["alert_free_execution_blocked_msg"]
-                )
-            }else{
-                if(ToolBox_Inf.equalsToLoggedSite(context, myAction.siteCode.toString())){
-                    if(mPresenter.isScheduleFormType(myAction)){
-                        if(mPresenter.isAnyFormInProcessing(myAction)){
-                            showAlert(
-                                    hmAux_Trans["alert_ttl_exists_in_processing"],
-                                    hmAux_Trans["alert_msg_exists_in_processing"]
-                            )
-                        }else{
-                            showAlert(
-                                    hmAux_Trans["alert_ticket_action_start_ttl"],
-                                    hmAux_Trans["alert_ticket_action_start_confirm"],
-                                    (DialogInterface.OnClickListener { _, _ ->
-                                        scheduleFormFlow(myAction)
-                                    }),
-                                    1
-                            )
-                        }
-                    }else{
-                        showAlert(
-                                hmAux_Trans["alert_ticket_action_start_ttl"],
-                                hmAux_Trans["alert_ticket_action_start_confirm"],
-                                (DialogInterface.OnClickListener { _, _ ->
-                                    scheduleTicketFlow(myAction)
-                                }),
-                                1
-                        )
-                    }
-                }else{
-                    startSiteChangeFlow(myAction)
-                }
-            }
-        }
-    }
-
-    private fun scheduleTicketFlow(myAction: MyActions) {
-        if(mPresenter.isScheduleStatusPossibleToOpen(myAction)){
-            callAct070(mPresenter.getScheduleTicketBundle(myAction))
-        }else{
-            prepareOpenTicket(myAction)
-        }
-    }
-
     private fun prepareOpenTicket(myAction: MyActions) {
         TODO("Not yet implemented")
     }
 
-    private fun scheduleFormFlow(myAction: MyActions) {
-        when {
-            mPresenter.isScheduleStatusPossibleToOpen(myAction) -> {
-                prepareOpenForm(myAction)
-            }
-            mPresenter.hasSerialDefined(myAction) -> {
-                buildRequestSerialDialog(
-                        myAction,
-                        false
-                )
-                //
-                mPresenter.executeSerialSearch(
-                        myAction.productCode,
-                        myAction.productId,
-                        myAction.serialId,
-                        true
-                )
-            }
-            else -> {
-                //Cria e exibe dialog que requer serial.
-                buildRequestSerialDialog(
-                        myAction,
-                        true
-                )
-            }
-        }
-    }
 
     private fun prepareOpenForm(myAction: MyActions) {
         callAct011(mPresenter.getScheduleFormBundle(myAction))
@@ -328,7 +241,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     }
 
                     override fun processToSearchSerial(serialID: String) {
-                       mPresenter.executeSerialSearch(
+                        mPresenter.executeSerialSearch(
                                 myAction.productCode,
                                 myAction.productId,
                                 serialID,
@@ -361,35 +274,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private fun removeControlFromActivity(mketSerial: MKEditTextNM) {
         controls_sta.remove(mketSerial)
-    }
-
-    private fun startSiteChangeFlow(myAction: MyActions) {
-        if(mPresenter.hasScheduleSiteAccess(myAction.siteCode)){
-            ToolBox.alertMSG_YES_NO(
-                    context,
-                    hmAux_Trans["alert_form_site_restriction_ttl"],
-                    hmAux_Trans["alert_form_site_restriction_confirm"],
-                    { _, _ ->
-                        if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
-                                && !ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)) {
-                            ToolBox_Con.setPreference_Site_Code(context, myAction.siteCode.toString())
-                            ToolBox_Con.setPreference_Zone_Code(context, -1)
-                            //
-                            processScheduleClick(myAction)
-                        } else {
-                            ToolBox_Con.setPreference_Site_Code(context, myAction.siteCode.toString())
-                            ToolBox_Con.setPreference_Zone_Code(context, -1)
-                            callAct033()
-                        }
-                    },
-                    1
-            )
-        }else{
-            showAlert(
-                    hmAux_Trans["alert_form_site_restriction_ttl"],
-                    hmAux_Trans["alert_form_site_restriction_no_access_msg"]
-            )
-        }
     }
 
     private fun showAlert(ttl: String?, msg: String?, clickListner: DialogInterface.OnClickListener? = null, negativeBtn: Int = 0){
@@ -537,10 +421,20 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         finish()
     }
 
-    private fun callAct070(bundle: Bundle) {
+    override fun callAct070(bundle: Bundle) {
         val mIntent = Intent(context, Act070_Main::class.java)
         mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         mIntent.putExtras(bundle)
+        startActivity(mIntent)
+        finish()
+    }
+
+    override fun callAct071(bundle: Bundle) {
+        val mIntent = Intent(context, Act071_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        if (bundle != null) {
+            mIntent.putExtras(bundle)
+        }
         startActivity(mIntent)
         finish()
     }
@@ -561,7 +455,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         finish()
     }
 
-    private fun callAct033() {
+    override fun callAct033() {
         val mIntent = Intent(context, Act033_Main::class.java)
         val bundle = Bundle()
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT017)
@@ -570,19 +464,93 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
 
-
-
     override fun onBackPressed() {
         //super.onBackPressed()
         callAct005()
     }
 
     override fun showMsg(type: String, item: MyActions) {
-        TODO("Not yet implemented")
+        var title: String? = ""
+        var msg: String? = ""
+        var listener: DialogInterface.OnClickListener? = null
+        var btnNegative: Int? = null
+
+        when (type) {
+            Act017_Main.MODULE_CHECKLIST_FORM_IN_PROCESSING -> {
+                title = hmAux_Trans["alert_ttl_exists_in_processing"]
+                msg = hmAux_Trans["alert_msg_exists_in_processing"]
+                btnNegative = 0
+            }
+            Act017_Main.MODULE_CHECKLIST_START_FORM -> {
+                title = hmAux_Trans["alert_ttl_start_new_processing"]
+                msg = hmAux_Trans["alert_msg_start_new_processing"]
+                btnNegative = 1
+                listener = DialogInterface.OnClickListener { dialogInterface, i ->
+//                    TODO chamar fluxo de form
+//                    mPresenter.checkFormFlow(item)
+                }
+            }
+            Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR -> {
+                title = hmAux_Trans["alert_error_on_create_form_ttl"]
+                msg = hmAux_Trans["alert_error_on_create_form_msg"]
+                btnNegative = 0
+            }
+            Act017_Main.EMPTY_SERIAL_SEARCH -> {
+                title = hmAux_Trans["alert_no_serial_found_ttl"]
+                msg = hmAux_Trans["alert_no_serial_found_msg"]
+                btnNegative = 0
+            }
+            Act017_Main.SERIAL_CREATION_DENIED -> {
+                title = hmAux_Trans["alert_no_serial_found_ttl"]
+                msg = hmAux_Trans["alert_product_no_allow_new_serial_msg"]
+                btnNegative = 0
+            }
+            Act017_Main.MODULE_TICKET_EXEC_CONFIRM -> {
+                title = hmAux_Trans["alert_ticket_action_start_ttl"]
+                msg = hmAux_Trans["alert_ticket_action_start_confirm"]
+                btnNegative = 1
+                listener = DialogInterface.OnClickListener { dialog, which -> mPresenter.checkTicketFlow(item) }
+            }
+            Act017_Main.MODULE_SCHEDULE_TICKET_CREATION_ERROR -> {
+                title = hmAux_Trans["alert_error_on_create_ticket_action_ttl"]
+                msg = hmAux_Trans["alert_error_on_create_ticket_action_msg"]
+                btnNegative = 0
+            }
+            Act017_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN -> {
+                title = hmAux_Trans["alert_schedule_status_prevents_to_open_ttl"]
+                msg = hmAux_Trans["alert_schedule_status_prevents_to_open_msg"]
+                btnNegative = 0
+            }
+            Act017_Main.PROFILE_PRJ001_AP_NOT_FOUND -> {
+                title = hmAux_Trans["alert_menu_app_profile_not_found_ttl"]
+                msg = hmAux_Trans["alert_form_ap_menu_profile_not_found_msg"]
+                btnNegative = 0
+            }
+            Act017_Main.PROFILE_MENU_TICKET_NOT_FOUND -> {
+                title = hmAux_Trans["alert_menu_app_profile_not_found_ttl"]
+                msg = hmAux_Trans["alert_ticket_menu_profile_not_found_msg"]
+                btnNegative = 0
+            }
+            Act017_Main.FREE_EXECUTION_BLOCKED -> {
+                title = hmAux_Trans["alert_free_execution_blocked_ttl"]
+                msg = hmAux_Trans["alert_free_execution_blocked_msg"]
+                btnNegative = 0
+            }
+        }
+
+        if (btnNegative != null) {
+            ToolBox.alertMSG(
+                    this,
+                    title,
+                    msg,
+                    listener,
+                    btnNegative
+            )
+        }
     }
 
     override fun showToast(msg: String) {
-        TODO("Not yet implemented")
+        ToolBox.toastMSG(context, msg)
     }
 
 

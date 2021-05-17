@@ -42,6 +42,7 @@ import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act072.Act072_Main;
 import com.namoadigital.prj001.ui.act074.Act074_Main;
 import com.namoadigital.prj001.ui.act076.Act076_Main;
+import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -49,6 +50,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
 import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 import com.namoadigital.prj001.view.frag.frg_ticket_search.Frg_Ticket_Search;
+import com.namoadigital.prj001.view.frag.frg_ticket_search.I_Frg_Ticket_Search;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +58,7 @@ import java.util.List;
 import static com.namoadigital.prj001.ui.act074.Act074_Main.ALL_TICKETS_UPDATED;
 import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
 
-public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_Main_Contract.I_View, On_Frg_Serial_Search, Frg_Serial_Search.I_Frg_Serial_Search {
+public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_Main_Contract.I_View, I_Frg_Ticket_Search {
 
     public static final String IS_SYNC_PROCESS = "IS_SYNC_PROCESS";
     //LUCHE - 26/10/2020 - eSSA CONSTANTES SÃO USADAS COMO VALOR DE UM PREFENCIA !!!
@@ -100,14 +102,6 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         iniUIFooter();
         //
         initAction();
-        //
-        setTabByPreference();
-    }
-
-    private void setTabByPreference() {
-        if(TAG_FRG_TICKET_SEARCH.equals(ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.ACT068_TAB_SELECTED,TAG_FRG_SERIAL_SEARCH))){
-            tab_ticket_search.performClick();
-        }
     }
 
     private void iniSetup() {
@@ -175,9 +169,6 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         transList.add("alert_form_location_pendency_ttl");
         transList.add("alert_form_location_pendency_msg");
         //
-        transList.add("serial_search_option_tab");
-        transList.add("ticket_search_option_tab");
-        //
         transList.add("contract_hint");
         transList.add("client_hint");
         transList.add("ticket_hint");
@@ -217,13 +208,6 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private void initVars() {
         recoverIntentsInfo();
         //
-        tabs = findViewById(R.id.act068_tabs);
-        tab_serial_search = findViewById(R.id.act068_tab_serial_search);
-        tab_ticket_search = findViewById(R.id.act068_tab_ticket_search);
-        //
-        tab_serial_search.setText(hmAux_Trans.get("serial_search_option_tab"));
-        tab_ticket_search.setText(hmAux_Trans.get("ticket_search_option_tab"));
-        //
         fm = getSupportFragmentManager();
         //
         mPresenter = new Act068_Main_Presenter(
@@ -233,63 +217,63 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         initFragment();
     }
 
-    private void setupFragSearch() {
-        //
-        applyBundleSearchParams();
-        //
-        mPresenter.getPendencies();
-        mPresenter.getMD_Products();
-        //
-    }
+//    private void setupFragSearch() {
+//        //
+//        applyBundleSearchParams();
+//        //
+//        mPresenter.getPendencies();
+//        mPresenter.getMD_Products();
+//        //
+//    }
 
-    private void setFrgSerialSearch() {
-        //        mFrgSerialSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.act068_frg_serial_search);
+//    private void setFrgSerialSearch() {
+//        //        mFrgSerialSearch = (Frg_Serial_Search) fm.findFragmentById(R.id.act068_frg_serial_search);
+//
+//        mFrgSerialSearch.setHmAux_Trans(hmAux_Trans_frg_serial_search);
+//        mFrgSerialSearch.setSupportNFC(supportNFC);
+//        controls_sta.clear();
+//        controls_sta.addAll(mFrgSerialSearch.getControlsSta());
+//        mFrgSerialSearch.setClickListener(actionBTN);
+//        mFrgSerialSearch.setOnSearchClickListener(this);
+//        //
+//        mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
+//        mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
+//        mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
+//        //
+//        mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
+//        mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
+//        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_sync_ticket"));
+//        //
+//        mFrgSerialSearch.setBtn_Option_03_BackGround(R.drawable.namoa_cell_2_states);
+//        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_my_tickets"));
+//        mFrgSerialSearch.setBtn_Option_03_Visibility(View.VISIBLE);
+//        //
+//        mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
+//        //
+//        mFrgSerialSearch.setBtn_Option_05_BackGround(R.drawable.namoa_cell_2_states);
+//        mFrgSerialSearch.setBtn_Option_05_Label(hmAux_Trans.get("btn_scheduled_tickets"));
+//        mFrgSerialSearch.setBtn_Option_05_Visibility(View.VISIBLE);
+//    }
 
-        mFrgSerialSearch.setHmAux_Trans(hmAux_Trans_frg_serial_search);
-        mFrgSerialSearch.setSupportNFC(supportNFC);
-        controls_sta.clear();
-        controls_sta.addAll(mFrgSerialSearch.getControlsSta());
-        mFrgSerialSearch.setClickListener(actionBTN);
-        mFrgSerialSearch.setOnSearchClickListener(this);
-        //
-        mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
-        mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
-        mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
-        //
-        mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
-        mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_sync_ticket"));
-        //
-        mFrgSerialSearch.setBtn_Option_03_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_03_Label(hmAux_Trans.get("btn_my_tickets"));
-        mFrgSerialSearch.setBtn_Option_03_Visibility(View.VISIBLE);
-        //
-        mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
-        //
-        mFrgSerialSearch.setBtn_Option_05_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_05_Label(hmAux_Trans.get("btn_scheduled_tickets"));
-        mFrgSerialSearch.setBtn_Option_05_Visibility(View.VISIBLE);
-    }
+//    private void processScheduledTickets() {
+//        Intent mIntent = new Intent(context, Act046_Main.class);
+//        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        Bundle bundle = new Bundle();
+//        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT068);
+//        mIntent.putExtras(bundle);
+//        startActivity(mIntent);
+//        finish();
+//    }
 
-    private void processScheduledTickets() {
-        Intent mIntent = new Intent(context, Act046_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Bundle bundle = new Bundle();
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,ConstantBaseApp.ACT068);
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
-        finish();
-    }
-
-    private void processNextTickets() {
-        if(mPresenter.hasItensToSend()){
-            nextTicketsFlow = true;
-            //mPresenter.executeWSTicketSave();
-            mPresenter.defineWsToCall();
-        }else{
-            callAct074();
-        }
-    }
+//    private void processNextTickets() {
+//        if(mPresenter.hasItensToSend()){
+//            nextTicketsFlow = true;
+//            //mPresenter.executeWSTicketSave();
+//            mPresenter.defineWsToCall();
+//        }else{
+//            callAct074();
+//        }
+//    }
 
     private void callAct074() {
         Intent intent = new Intent(context, Act074_Main.class);
@@ -305,6 +289,15 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         Intent intent = new Intent(context, Act070_Main.class);
         intent.putExtras(buildAct070Bundle);
         startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void callAct083(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act083_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
         finish();
     }
 
@@ -334,15 +327,15 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     private void checkFlow(HMAux optionsInfo) {
-        if(mPresenter.hasItensToSend()){
-            mPresenter.defineWsToCall();
-        }else{
-            if(isFragSerialSearch) {
-                processSerialSearch(optionsInfo);
-            }else{
+//        if(mPresenter.hasItensToSend()){
+//            mPresenter.defineWsToCall();
+//        }else{
+//            if(isFragSerialSearch) {
+//                processSerialSearch(optionsInfo);
+//            }else{
                 processTicketSearch(optionsInfo);
-            }
-        }
+//            }
+//        }
     }
 
     private void processTicketSearch(HMAux optionsInfo) {
@@ -383,9 +376,9 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         }
     }
 
-    private void processGraphics() {
-
-    }
+//    private void processGraphics() {
+//
+//    }
 
     private void recoverIntentsInfo() {
         Bundle bundle = getIntent().getExtras();
@@ -500,40 +493,40 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     private void initAction() {
-        tabs.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                //
-                switch (checkedId) {
-                    case R.id.act068_tab_serial_search:
-                        isFragSerialSearch = true;
-                        setFrag(mFrgSerialSearch, TAG_FRG_SERIAL_SEARCH);
-                        break;
-                    case R.id.act068_tab_ticket_search:
-                        isFragSerialSearch = false;
-                        if(mFrgTicketSearch == null) {
-                            mFrgTicketSearch = Frg_Ticket_Search.newInstance(hmAux_Trans);
-                        }
-                        mFrgTicketSearch.setOnSearchClickListener((Act068_Main)context);
-                        mFrgTicketSearch.setLoad_delegate(new Frg_Serial_Search.I_Frg_Serial_Search_Load() {
-                            @Override
-                            public void onFragIsReady() {
-                                mFrgTicketSearch.setSyncsQty(syncs_qty);
-                                mFrgTicketSearch.setMyTicketsQty(pendencies_qty);
-                            }
-                        });
-                        setFrag(mFrgTicketSearch, TAG_FRG_TICKET_SEARCH);
-                        break;
-                }
-            }
-        });
+//        tabs.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+//                //
+//                switch (checkedId) {
+//                    case R.id.act068_tab_serial_search:
+//                        isFragSerialSearch = true;
+//                        setFrag(mFrgSerialSearch, TAG_FRG_SERIAL_SEARCH);
+//                        break;
+//                    case R.id.act068_tab_ticket_search:
+//                        isFragSerialSearch = false;
+//                        if(mFrgTicketSearch == null) {
+//                            mFrgTicketSearch = Frg_Ticket_Search.newInstance(hmAux_Trans);
+//                        }
+//                        mFrgTicketSearch.setOnSearchClickListener((Act068_Main)context);
+//                        mFrgTicketSearch.setLoad_delegate(new Frg_Serial_Search.I_Frg_Serial_Search_Load() {
+//                            @Override
+//                            public void onFragIsReady() {
+//                                mFrgTicketSearch.setSyncsQty(syncs_qty);
+//                                mFrgTicketSearch.setMyTicketsQty(pendencies_qty);
+//                            }
+//                        });
+//                        setFrag(mFrgTicketSearch, TAG_FRG_TICKET_SEARCH);
+//                        break;
+//                }
+//            }
+//        });
     }
 
 
-    @Override
-    public boolean hasHideSerialInfoChk() {
-        return true ;
-    }
+//    @Override
+//    public boolean hasHideSerialInfoChk() {
+//        return true ;
+//    }
 
     @Override
     public void callAct076(){
@@ -890,17 +883,24 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
 
     private void initFragment() {
         FragmentTransaction transaction = fm.beginTransaction();
-        mFrgSerialSearch = new Frg_Serial_Search();
-        mFrgSerialSearch.setLoad_delegate(new Frg_Serial_Search.I_Frg_Serial_Search_Load() {
-            @Override
-            public void onFragIsReady() {
-                setFrgSerialSearch();
-                setupFragSearch();
-                mPresenter.getSync();
-            }
-        });
+
+        if(mFrgTicketSearch == null) {
+            mFrgTicketSearch = Frg_Ticket_Search.newInstance(hmAux_Trans);
+        }
+        //
+        mFrgTicketSearch.setOnSearchClickListener((Act068_Main)context);
+
+//        mFrgSerialSearch.setLoad_delegate(new Frg_Serial_Search.I_Frg_Serial_Search_Load() {
+//            @Override
+//            public void onFragIsReady() {
+//                setFrgSerialSearch();
+//                setupFragSearch();
+//                mPresenter.getSync();
+//            }
+//        });
+
         //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
-        transaction.add(R.id.act068_frg_placeholder, mFrgSerialSearch, "Frg_Serial_Search");
+        transaction.add(R.id.act068_frg_placeholder, mFrgTicketSearch, "mFrgTicketSearch");
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -908,7 +908,7 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     private <T extends Fragment> void setFrag(T type, String sTag) {
 //        if (fm.findFragmentByTag(sTag) == null) {
             //LUCHE - 26/10/2020 - atualzia preferencia de qual tab deve vir carregada.
-            mPresenter.updateTabPreference(sTag);
+//            mPresenter.updateTabPreference(sTag);
             //
             FragmentTransaction ft = fm.beginTransaction();
             ft.replace(R.id.act068_frg_placeholder, type, sTag);
@@ -925,29 +925,29 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             case Frg_Serial_Search.BTN_OPTION_01:
                 checkFlow(optionsInfo);
                 break;
-            case Frg_Serial_Search.BTN_OPTION_02:
-                mPresenter.executeWSTicketDownload();
-                break;
-            case Frg_Serial_Search.BTN_OPTION_03:
-                if(ToolBox_Con.isOnline(context)) {
-                    if(ToolBox_Inf.checkSerialTokenURStatus(context)){
-                        ToolBox.alertMSG(
-                            context,
-                            hmAux_Trans.get("alert_serial_pendencies_ttl"),
-                            hmAux_Trans.get("alert_serial_pendencies_msg"),
-                            null,
-                            0
-                        );
-                    }else{
-                        processNextTickets();
-                    }
-                }else{
-                    callAct074();
-                }
-                break;
-            case Frg_Serial_Search.BTN_OPTION_05:
-                processScheduledTickets();
-                break;
+//            case Frg_Serial_Search.BTN_OPTION_02:
+//                mPresenter.executeWSTicketDownload();
+//                break;
+//            case Frg_Serial_Search.BTN_OPTION_03:
+//                if(ToolBox_Con.isOnline(context)) {
+//                    if(ToolBox_Inf.checkSerialTokenURStatus(context)){
+//                        ToolBox.alertMSG(
+//                            context,
+//                            hmAux_Trans.get("alert_serial_pendencies_ttl"),
+//                            hmAux_Trans.get("alert_serial_pendencies_msg"),
+//                            null,
+//                            0
+//                        );
+//                    }else{
+//                        processNextTickets();
+//                    }
+//                }else{
+//                    callAct074();
+//                }
+//                break;
+//            case Frg_Serial_Search.BTN_OPTION_05:
+//                processScheduledTickets();
+//                break;
             default:
                 break;
         }

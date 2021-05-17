@@ -26,46 +26,6 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardElevation="8dp">
-
-            <RadioGroup
-                android:id="@+id/act068_tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/act068_tab_serial_search"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/act074_radio_states"
-                    android:button="@null"
-                    android:checked="true"
-                    android:gravity="center"
-                    android:textColor="@color/my_tickets_radio"
-                    tools:text="SERIAL" />
-
-                <View
-                    android:layout_width="2dp"
-                    android:layout_height="match_parent" />
-
-                <RadioButton
-                    android:id="@+id/act068_tab_ticket_search"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/act074_radio_states"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:textColor="@color/my_tickets_radio"
-                    tools:text="TICKET" />
-            </RadioGroup>
-        </androidx.cardview.widget.CardView>
-
         <FrameLayout
             android:id="@+id/act068_frg_placeholder"
             android:layout_width="match_parent"

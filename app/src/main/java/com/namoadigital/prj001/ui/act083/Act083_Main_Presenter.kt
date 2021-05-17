@@ -10,6 +10,8 @@ import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_Sync
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
 import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.ui.act017.Act017_Main
+import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -23,10 +25,12 @@ class Act083_Main_Presenter(private val context: Application,
                             private val scheduleDao: MD_Schedule_ExecDao,
                             private val formApDao: GE_Custom_Form_ApDao,
                             private val formLocalDao: GE_Custom_Form_LocalDao,
-                            private val  siteDao: MD_SiteDao,
+                            private val siteDao: MD_SiteDao,
+                            private val ticketCtrlDao: TK_Ticket_CtrlDao,
                             private val mModule_Code: String,
                             private val mResource_Code: String
 ) : Act083_Main_Contract.I_Presenter{
+
 
     private lateinit var myActionFilterParam : MyActionFilterParam
     private var tagFilter: Int? = null
@@ -110,6 +114,206 @@ class Act083_Main_Presenter(private val context: Application,
         generateMyActionList(userFocusFilter)
     }
 
+    override fun checkScheduleFlow(item: MyActions) {
+        val scheduleExec = getScheduleFromMyAction(item)
+        if(scheduleExec != null) {
+            when (scheduleExec.schedule_type) {
+                Constant.MD_SCHEDULE_TYPE_FORM -> {
+//                    processFormFlow(item, scheduleExec)
+                    mView.showToast("Em Dev")
+                }
+                else -> {
+                    if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, null)) {
+                        processTicketFlow(item)
+                    } else {
+                        mView.showMsg(
+                                Act017_Main.PROFILE_MENU_TICKET_NOT_FOUND,
+                                item
+                        )
+                    }
+                }
+            }
+        }
+    }
+    private fun processFormFlow(item: MyActions, scheduleExec: MD_Schedule_Exec) {
+        if (item.processStatus == Constant.SYS_STATUS_SCHEDULE) {
+            if (isScheduleSiteDifferentThanLogged(item)) {
+                startSiteChangeFlow(item)
+            } else if (isAnyFormInProcessing(item)) {
+                mView.showMsg(Act017_Main.MODULE_CHECKLIST_FORM_IN_PROCESSING, item)
+            } else {
+                //LUCHE - 14/01/2021
+                //Verifica se deve bloquear a execução e em caso posito, exibe msg informando do
+                // bloqueio
+                if (ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)) {
+                    mView.showMsg(Act017_Main.FREE_EXECUTION_BLOCKED, item)
+                } else {
+                    mView.showMsg(Act017_Main.MODULE_CHECKLIST_START_FORM, item)
+                }
+            }
+        } else {
+            if (isScheduleStatusPossibleToOpen(scheduleExec)) {
+                prepareOpenForm(item, scheduleExec)
+            } else {
+                mView.showMsg(
+                        Act017_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
+                        item
+                )
+            }
+        }
+    }
+
+    private fun prepareOpenForm(item: MyActions, scheduleExec: MD_Schedule_Exec) {
+//        val bundle: Bundle = getFormFlowBundle(item, scheduleExec)
+//        mView.callAct011(context, bundle)
+    }
+
+    private fun getFormFlowBundle(item: MyActions, scheduleExec: MD_Schedule_Exec): Bundle {
+        val bundle = Bundle()
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, scheduleExec.product_code.toString())
+        bundle.putString(MD_ProductDao.PRODUCT_DESC, scheduleExec.product_desc.toString())
+        bundle.putString(MD_ProductDao.PRODUCT_ID, scheduleExec.product_id.toString())
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, scheduleExec.serial_id.toString())
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, scheduleExec.custom_form_type.toString())
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, scheduleExec.custom_form_type_desc.toString())
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, scheduleExec.custom_form_code.toString())
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, scheduleExec.custom_form_version.toString())
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, scheduleExec.custom_form_desc.toString())
+        //todo tratar o custom_form_data
+//        bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, scheduleExec.custom_form_data.toString())
+        bundle.putString(Constant.ACT017_SCHEDULED_SITE, scheduleExec.site_code.toString())
+        return bundle
+    }
+
+    override fun processTicketFlow(item: MyActions) {
+        val scheduleExec = getScheduleFromMyAction(item)
+        if(scheduleExec != null) {
+            if (!ConstantBaseApp.SYS_STATUS_SCHEDULE.equals(item.processStatus)) {
+                if (isScheduleStatusPossibleToOpen(scheduleExec!!)) {
+                    prepareOpenTicket(item)
+                } else {
+                    mView.showMsg(
+                            Act017_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
+                            item
+                    )
+                }
+            } else {
+                if (isScheduleSiteDifferentThanLogged(item)) {
+                    startSiteChangeFlow(item)
+                } else {
+                    //LUCHE - 14/01/2021
+                    //Verifica se deve bloquear a execução e em caso posito, exibe msg informando do
+                    // bloqueio
+                    if (ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)) {
+                        mView.showMsg(Act017_Main.FREE_EXECUTION_BLOCKED, item)
+                    } else {
+                        mView.showMsg(
+                                Act017_Main.MODULE_TICKET_EXEC_CONFIRM,
+                                item
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun checkTicketFlow(item: MyActions) {
+        var ticket_prefix: Int = 0
+        var ticket_code: Int = 0
+        var result: Boolean = false
+
+        val splippedPk = item.getSplippedPk()
+        val scheduleTicket = getTicketBySchedule(splippedPk.get(0).toInt(), splippedPk.get(1).toInt(), splippedPk.get(2).toInt())
+        val scheduleExec = getScheduleFromMyAction(item)
+
+        if (scheduleTicket != null && TK_Ticket.isValidTkTicket(scheduleTicket)) {
+           result = true
+        }else{
+            val createTicketForSchedule = createTicketForSchedule(item, scheduleExec)
+            if(createTicketForSchedule != null){
+                ticket_prefix = createTicketForSchedule.ticket_prefix
+                ticket_code = createTicketForSchedule.ticket_code
+                result = true
+            }else{
+                result = false
+            }
+        }
+
+        if (result) {
+            mView.callAct071(getTicketActionFlowBundle(item, scheduleExec!!, ticket_prefix, ticket_code, 1)!!)
+        } else {
+            mView.showMsg(
+                    Act017_Main.MODULE_SCHEDULE_TICKET_CREATION_ERROR,
+                    item
+            )
+        }
+
+    }
+
+    private fun getTicketActionFlowBundle(item: MyActions, scheduleExec: MD_Schedule_Exec, ticket_prefix: Int, ticket_code: Int, ticket_seq: Int): Bundle {
+        val bundle = Bundle()
+        //
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017)
+
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017)
+        bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, scheduleExec.schedule_prefix)
+        bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_CODE, scheduleExec.schedule_code)
+        bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, scheduleExec.schedule_exec)
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticket_prefix)
+        bundle.putInt(TK_TicketDao.TICKET_CODE, ticket_code)
+        //16/03/2020 - foi convencionado que durante a criação da execução do ticket, o ticket id,
+        //será o igual ao do exibido nas celulas do agendamento.
+        bundle.putString(TK_TicketDao.TICKET_ID, ToolBox_Inf.getFormattedTicketSeqExec(
+                item.processPk,
+                ticket_prefix.toString(),
+                ticket_code.toString()
+        )
+        )
+        //bundle.putString(TK_TicketDao.TYPE_PATH, item.get(TK_TicketDao.TYPE_PATH));
+        bundle.putString(TK_TicketDao.TYPE_DESC, scheduleExec.ticket_type_desc)
+        bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN, false)
+        bundle.putString(Constant.ACT_SELECTED_DATE, item.plannedDate)
+        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.processPk)
+        //
+        //LUCHE - 14/08/2020 - Criação de action agendado v2
+        val ctrlItem = getScheduleCtrlIfExists(scheduleExec, ticket_prefix, ticket_code)
+        //Se encontrou o ctrl, é um waiting sync, seta dados para abertura o item
+        if (ctrlItem != null) {
+            bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ctrlItem.ticket_seq)
+            bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, ctrlItem.ticket_seq_tmp)
+            bundle.putInt(TK_Ticket_ActionDao.STEP_CODE, ctrlItem.step_code)
+            bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, false)
+            bundle.putBoolean(Act070_Main.PARAM_ACTION_CREATION, false)
+        } else {
+            bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, 0)
+            bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, 0)
+            bundle.putInt(TK_Ticket_ActionDao.STEP_CODE, 0)
+            bundle.putBoolean(Act070_Main.PARAM_CTRL_CREATION, true)
+            bundle.putBoolean(Act070_Main.PARAM_ACTION_CREATION, true)
+        }
+        //
+        return bundle
+    }
+
+    private fun getScheduleCtrlIfExists(item: MD_Schedule_Exec, ticket_prefix: Int, ticket_code: Int): TK_Ticket_Ctrl? {
+        return ticketCtrlDao.getByString(
+                Sql_Act017_005(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        item.schedule_prefix.toString(),
+                        item.schedule_code.toString(),
+                        item.schedule_exec.toString(),
+                        ticket_prefix.toString(),
+                        ticket_code.toString()
+                ).toSqlQuery()
+        )
+    }
+
+    private fun isScheduleSiteDifferentThanLogged(item: MyActions): Boolean {
+        return item.siteCode != null &&
+                !item.siteCode!!.equals("null") &&
+                !item.siteCode!!.equals(ToolBox_Con.getPreference_Site_Code(context))
+    }
+
     override fun getLocalTicket(myAction: MyActions): Bundle {
         val splippedPk = myAction.getSplippedPk()
         return ticketBundle(splippedPk[0].toInt(), splippedPk[1].toInt())
@@ -118,17 +322,13 @@ class Act083_Main_Presenter(private val context: Application,
     override fun getFormApBundle(myAction: MyActions): Bundle {
         val splippedPk = myAction.getSplippedPk()
         val bundle = Bundle()
-        bundle.putString(MD_ProductDao.PRODUCT_CODE, myAction.productCode.toString())
-        bundle.putString(MD_ProductDao.PRODUCT_DESC, myAction.productDesc)
-        //bundle.putString(MD_ProductDao.PRODUCT_ID, myAction.productDesc)
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID, myAction.serialId)
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, splippedPk[0])
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, myAction.customFormTypeDesc)
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, splippedPk[1])
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, splippedPk[2])
-        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, myAction.customFormDesc)
-        bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, splippedPk[3])
-        bundle.putString(Constant.ACT017_SCHEDULED_SITE, myAction.siteCode.toString())
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT037)
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context).toString())
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, splippedPk[0])
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, splippedPk[1])
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, splippedPk[2])
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, splippedPk[3])
+        bundle.putString(GE_Custom_Form_ApDao.AP_CODE, splippedPk[4])
         return bundle
     }
 
@@ -161,6 +361,68 @@ class Act083_Main_Presenter(private val context: Application,
         context.sendBroadcast(mIntent)
     }
 
+    private fun prepareOpenTicket(item: MyActions) {
+        val splippedPk = item.getSplippedPk()
+        val scheduleTicket = getTicketBySchedule(splippedPk.get(0).toInt(), splippedPk.get(1).toInt(), splippedPk.get(2).toInt())
+        val scheduleExec = getScheduleFromMyAction(item)
+        var ticket_prefix =0
+        var ticket_code =0
+        if (scheduleTicket!= null
+                && scheduleTicket.ticket_prefix > 0
+                && scheduleTicket.ticket_code > 0) {
+//            mView.callAct070(getTicketFlowBundle(item))
+            mView.showToast("Em Dev")
+        } else {
+            mView.callAct071(getTicketActionFlowBundle(item, scheduleExec!!, ticket_prefix, ticket_code, 1))
+        }
+    }
+
+    override fun getTicketFlowBundle(item: MyActions): Bundle {
+        val bundle = Bundle()
+//        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017)
+//        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_PREFIX)))
+//        bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_CODE)))
+//        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ToolBox_Inf.convertStringToInt(item.get(TK_Ticket_CtrlDao.TICKET_SEQ)))
+//        bundle.putString(Constant.ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF))
+//        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK))
+        return bundle
+    }
+
+    private fun startSiteChangeFlow(item: MyActions) {
+        //Verifica se o usuario possui acesso ao site do form com restrição
+        //Se possuir, da opção do usr alterar para o site se não, apenas informa
+        //sobre a restrição.
+        if (hasScheduleSiteAccess(item.siteCode)) {
+            ToolBox.alertMSG_YES_NO(
+                    context,
+                    hmAux_Trans!!["alert_form_site_restriction_ttl"],
+                    hmAux_Trans!!["alert_form_site_restriction_confirm"],
+                    { dialog, which ->
+                        if (!ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)
+                                && !ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)) {
+                            ToolBox_Con.setPreference_Site_Code(context, item.siteCode.toString())
+                            ToolBox_Con.setPreference_Zone_Code(context, -1)
+                            //
+                            checkScheduleFlow(item)
+                        } else {
+                            ToolBox_Con.setPreference_Site_Code(context, item.siteCode.toString())
+                            ToolBox_Con.setPreference_Zone_Code(context, -1)
+                            mView.callAct033()
+                        }
+                    },
+                    1
+            )
+        } else {
+            ToolBox.alertMSG(
+                    context,
+                    hmAux_Trans!!["alert_form_site_restriction_ttl"],
+                    hmAux_Trans!!["alert_form_site_restriction_no_access_msg"],
+                    null,
+                    0
+            )
+        }
+    }
+
     override fun isScheduleStarted(myAction: MyActions): Boolean {
         val scheduleExec = getScheduleFromMyAction(myAction)
         return scheduleExec != null && !scheduleExec.status.equals(ConstantBaseApp.SYS_STATUS_SCHEDULE)
@@ -185,8 +447,7 @@ class Act083_Main_Presenter(private val context: Application,
         return scheduleExec
     }
 
-    override fun isScheduleStatusPossibleToOpen(myAction: MyActions): Boolean {
-        val scheduleExec = getScheduleFromMyAction(myAction)
+    override fun isScheduleStatusPossibleToOpen(scheduleExec: MD_Schedule_Exec): Boolean {
         //
         return (scheduleExec != null
                 && !scheduleExec.status.equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
@@ -203,37 +464,6 @@ class Act083_Main_Presenter(private val context: Application,
 
     override fun isAnyFormInProcessing(myAction: MyActions): Boolean {
         TODO("Not yet implemented")
-    }
-
-    override fun getScheduleTicketBundle(myAction: MyActions): Bundle {
-        var ticket_prefix: Int = 0
-        var ticket_code: Int = 0
-
-        val splippedPk = myAction.getSplippedPk()
-        val scheduleTicket = getTicketBySchedule(splippedPk.get(0).toInt(), splippedPk.get(1).toInt(), splippedPk.get(2).toInt())
-
-        if (scheduleTicket != null && TK_Ticket.isValidTkTicket(scheduleTicket)) {
-            ticket_prefix = scheduleTicket.ticket_prefix
-            ticket_code = scheduleTicket.ticket_code
-        }else{
-            val scheduleExec = getScheduleFromMyAction(myAction)
-            val createTicketForSchedule = createTicketForSchedule(myAction, scheduleExec)
-            createTicketForSchedule?.let {
-                ticket_prefix = it.ticket_prefix
-                ticket_code = it.ticket_code
-            }
-        }
-        val bundle = Bundle()
-        if(ticket_prefix > 0 && ticket_code > 0) {
-
-            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017)
-            bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticket_prefix)
-            bundle.putInt(TK_TicketDao.TICKET_CODE, ticket_code)
-            bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, 1)
-            bundle.putString(Constant.ACT_SELECTED_DATE, myAction.plannedDate)
-            bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, myAction.processPk)
-        }
-        return bundle
     }
 
 
