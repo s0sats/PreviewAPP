@@ -43,7 +43,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private val mPresenter by lazy {
         Act083_Main_Presenter(
-                application,
+                context,
                 this,
                 bundle,
                 TK_TicketDao(
@@ -162,7 +162,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         when(myAction.actionType){
             MyActions.MY_ACTION_TYPE_TICKET -> processLocalTicketClick(myAction)
             MyActions.MY_ACTION_TYPE_TICKET_CACHE -> processCachedTicketClick(myAction)
-            MyActions.MY_ACTION_TYPE_SCHEDULE -> mPresenter.checkScheduleFlow(myAction)
+            MyActions.MY_ACTION_TYPE_SCHEDULE ->{
+//                mPresenter.checkScheduleFlow(myAction)
+                ToolBox.toastMSG(context, "EM dev")
+            }
             MyActions.MY_ACTION_TYPE_FORM_AP -> processFormApClick(myAction)
             MyActions.MY_ACTION_TYPE_FORM -> processFormClick(myAction)
         }
@@ -547,6 +550,16 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     btnNegative
             )
         }
+    }
+
+    override fun showAlertMsg(ttl: String, msg: String) {
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                null,
+                0
+        )
     }
 
     override fun showToast(msg: String) {

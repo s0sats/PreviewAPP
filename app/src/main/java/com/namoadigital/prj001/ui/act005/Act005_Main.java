@@ -1337,14 +1337,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         if(mPresenter.hasSOProfile()){
 
         }else {
-            FrgMainHome currentFragment = (FrgMainHome) fm.findFragmentById(R.id.act005_frg_placeholder);
-            currentFragment.refreshList(getTagList( ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION),
-                    ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION),
-                    ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION)));
+            refreshTagList();
         }
         mPresenter.getMenuItensV2(hmAux_Trans);
         iniUIFooter();
 //        gv_menu.setClickable(true);
+    }
+
+    private void refreshTagList() {
+        FrgMainHome currentFragment = (FrgMainHome) fm.findFragmentById(R.id.act005_frg_placeholder);
+        currentFragment.refreshList(getTagList( ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION),
+                ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION),
+                ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION)));
     }
 
     @Override
@@ -2576,12 +2580,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     sendResumeDialog.dismiss();
                 }
                 progressDialog.dismiss();
-
+                invalidateOptionsMenu();
+                refreshTagList();
                 if (wsResults.size() > 0) {
                     showResults(wsResults);
                 } else {
                     executeSync();
                 }
+
             }
         });
     }
@@ -2719,6 +2725,25 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         },
                         1
                 );
+                break;
+            case TOOLBAR_SYNC_DATA_STATUS:
+                boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
+                boolean hasSyncRequired = mPresenter.hasSyncRequired();
+                if(hasSyncRequired){
+                    mPresenter.syncFlow(mAdapter.getBadgeQty(MENU_ID_SEND_DATA));
+                }else if(hasUpdateRequired){
+                    if (ToolBox_Con.isOnline(context)) {
+                        setWsProcess(Act005_Main.WS_PROCESS_SEND);
+                        setWsSoProcess(WS_Serial_Save.class.getSimpleName());
+                        showPD();
+                        cleanUpResults();
+                        //executeSaveProcess();
+                        mPresenter.executeSerialSave();
+                        invalidateOptionsMenu();
+                    } else {
+                        showNoConnectionDialog();
+                    }
+                }
                 break;
             default:
                 return true;

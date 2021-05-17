@@ -8,6 +8,7 @@ import com.namoadigital.prj001.model.MyActions
 interface Act083_Main_Contract {
     interface I_View {
         fun showMsg(type: String, item: MyActions)
+        fun showAlertMsg(ttl: String, msg: String)
         fun showToast(msg: String)
         fun callAct070(bundle: Bundle)
         fun callAct071(bundle: Bundle)
@@ -39,6 +40,7 @@ interface Act083_Main_Contract {
         fun getTicketFlowBundle(item: MyActions): Bundle
         fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle
         fun processTicketFlow(item: MyActions)
+
     }
 
 }

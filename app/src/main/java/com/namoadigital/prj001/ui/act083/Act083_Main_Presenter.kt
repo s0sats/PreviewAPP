@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act083
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
@@ -17,7 +18,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class Act083_Main_Presenter(private val context: Application,
+class Act083_Main_Presenter(private val context: Context,
                             private val mView: Act083_Main_Contract.I_View,
                             private val bundle: Bundle,
                             private val ticketDao: TK_TicketDao,
@@ -135,33 +136,7 @@ class Act083_Main_Presenter(private val context: Application,
             }
         }
     }
-    private fun processFormFlow(item: MyActions, scheduleExec: MD_Schedule_Exec) {
-        if (item.processStatus == Constant.SYS_STATUS_SCHEDULE) {
-            if (isScheduleSiteDifferentThanLogged(item)) {
-                startSiteChangeFlow(item)
-            } else if (isAnyFormInProcessing(item)) {
-                mView.showMsg(Act017_Main.MODULE_CHECKLIST_FORM_IN_PROCESSING, item)
-            } else {
-                //LUCHE - 14/01/2021
-                //Verifica se deve bloquear a execução e em caso posito, exibe msg informando do
-                // bloqueio
-                if (ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)) {
-                    mView.showMsg(Act017_Main.FREE_EXECUTION_BLOCKED, item)
-                } else {
-                    mView.showMsg(Act017_Main.MODULE_CHECKLIST_START_FORM, item)
-                }
-            }
-        } else {
-            if (isScheduleStatusPossibleToOpen(scheduleExec)) {
-                prepareOpenForm(item, scheduleExec)
-            } else {
-                mView.showMsg(
-                        Act017_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
-                        item
-                )
-            }
-        }
-    }
+
 
     private fun prepareOpenForm(item: MyActions, scheduleExec: MD_Schedule_Exec) {
 //        val bundle: Bundle = getFormFlowBundle(item, scheduleExec)
@@ -188,7 +163,7 @@ class Act083_Main_Presenter(private val context: Application,
     override fun processTicketFlow(item: MyActions) {
         val scheduleExec = getScheduleFromMyAction(item)
         if(scheduleExec != null) {
-            if (!ConstantBaseApp.SYS_STATUS_SCHEDULE.equals(item.processStatus)) {
+            if (!ConstantBaseApp.SYS_STATUS_SCHEDULE.equals(scheduleExec.status)) {
                 if (isScheduleStatusPossibleToOpen(scheduleExec!!)) {
                     prepareOpenTicket(item)
                 } else {
@@ -253,7 +228,7 @@ class Act083_Main_Presenter(private val context: Application,
     private fun getTicketActionFlowBundle(item: MyActions, scheduleExec: MD_Schedule_Exec, ticket_prefix: Int, ticket_code: Int, ticket_seq: Int): Bundle {
         val bundle = Bundle()
         //
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017)
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
 
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, scheduleExec.schedule_prefix)
@@ -684,8 +659,17 @@ class Act083_Main_Presenter(private val context: Application,
         TODO("Not yet implemented")
     }
 
+
     override fun hasScheduleSiteAccess(siteCode: Int?): Boolean {
-        TODO("Not yet implemented")
+        var access = false
+        //
+        val formSite = getSiteObj(siteCode.toString())
+        //
+        if (formSite != null && formSite.site_code.equals(siteCode.toString())) {
+            access = true
+        }
+        //
+        return access
     }
 
     override fun verifyProductOutdateForForm(hmAuxTicketDownloaded: HMAux): Boolean {
@@ -779,7 +763,7 @@ class Act083_Main_Presenter(private val context: Application,
                         it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS] = _hmAux_Trans?.get(ConstantBaseApp.SYS_STATUS_PROCESS)
                     }
                     //
-                    GE_Custom_Form_Local.toMyActionsObj(context, it)
+                    GE_Custom_Form_Local.toMyActionsObj(context.applicationContext as Application?, it)
                 }
         )
         //
@@ -828,7 +812,7 @@ class Act083_Main_Presenter(private val context: Application,
         )
     }
 
-    private fun getSchedules(userFocus: Int): MutableList<MD_Schedule_Exec> {
+    fun getSchedules(userFocus: Int): MutableList<MD_Schedule_Exec> {
         return scheduleDao.query(
                 SqlAct083_005(
                         context,
