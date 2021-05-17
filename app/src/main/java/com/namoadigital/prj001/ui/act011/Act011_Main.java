@@ -86,6 +86,7 @@ import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
@@ -103,6 +104,7 @@ import com.namoadigital.prj001.ui.act015.Act015_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
+import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -1151,7 +1153,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         if(mPresenter.isaTicketFlowForm()){
             callAct070();
-        }else {
+        }else if(ConstantBaseApp.ACT083.equals(requestingAct)){
+            callAct083();
+        }else{
             callAct005(context);
         }
     }
@@ -2595,6 +2599,23 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     @Override
+    public void callAct083() {
+        Intent intent = new Intent(context, Act083_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle mBundle = new Bundle();
+        mBundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
+        mBundle.putSerializable(
+                MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+        );
+        intent.putExtras(mBundle);
+        //
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
     public boolean isOffHandForm() {
         return isOffHandForm;
     }
@@ -2622,7 +2643,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
      *
      */
     private void checkBackFlow() {
-        if(mPresenter.isaTicketFlowForm()){
+        if(ConstantBaseApp.ACT083.equals(requestingAct)) {
+            callAct083();
+        }else if(mPresenter.isaTicketFlowForm()){
             callAct070();
         }else {
             if (formData.getCustom_form_status().equals(Constant.SYS_STATUS_DONE)) {
@@ -2632,6 +2655,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             }
         }
     }
+
+
 
     @Override
     public void showSignature() {

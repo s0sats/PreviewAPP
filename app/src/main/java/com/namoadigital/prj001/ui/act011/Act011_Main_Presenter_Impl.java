@@ -1395,6 +1395,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     public void onBackPressedClicked() {
         if (isaTicketFlowForm()) {
             mView.callAct070();
+        }else if(ConstantBaseApp.ACT083.equals(mView.getRequestingAct())){
+            mView.callAct083();
         }else{
             mView.callAct005(context);
         }
