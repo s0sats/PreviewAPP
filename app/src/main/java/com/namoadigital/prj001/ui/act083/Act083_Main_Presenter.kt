@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.receiver.WBR_Sync
@@ -14,16 +15,17 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class Act083_Main_Presenter (private val context: Application,
-                             private val mView: Act083_Main_Contract.I_View,
-                             private val bundle: Bundle,
-                             private val ticketDao: TK_TicketDao,
-                             private val ticketCacheDao: TkTicketCacheDao,
-                             private val scheduleDao: MD_Schedule_ExecDao,
-                             private val formApDao: GE_Custom_Form_ApDao,
-                             private val formLocalDao: GE_Custom_Form_LocalDao,
-                             private val mModule_Code: String,
-                             private val mResource_Code: String
+class Act083_Main_Presenter(private val context: Application,
+                            private val mView: Act083_Main_Contract.I_View,
+                            private val bundle: Bundle,
+                            private val ticketDao: TK_TicketDao,
+                            private val ticketCacheDao: TkTicketCacheDao,
+                            private val scheduleDao: MD_Schedule_ExecDao,
+                            private val formApDao: GE_Custom_Form_ApDao,
+                            private val formLocalDao: GE_Custom_Form_LocalDao,
+                            private val  siteDao: MD_SiteDao,
+                            private val mModule_Code: String,
+                            private val mResource_Code: String
 ) : Act083_Main_Contract.I_Presenter{
 
     private lateinit var myActionFilterParam : MyActionFilterParam
@@ -160,15 +162,43 @@ class Act083_Main_Presenter (private val context: Application,
     }
 
     override fun isScheduleStarted(myAction: MyActions): Boolean {
-        TODO("Not yet implemented")
+        val scheduleExec = getScheduleFromMyAction(myAction)
+        return scheduleExec != null && !scheduleExec.status.equals(ConstantBaseApp.SYS_STATUS_SCHEDULE)
+    }
+
+    private fun getScheduleFromMyAction(myAction: MyActions): MD_Schedule_Exec? {
+        val splippedPk = myAction.getSplippedPk()
+        //
+        val schedule_prefix = splippedPk.get(0).toInt()
+        val schedule_code = splippedPk.get(1).toInt()
+        val schedule_exec = splippedPk.get(2).toInt()
+        //
+        val scheduleExec: MD_Schedule_Exec? = scheduleDao.getByString(
+                MD_Schedule_Exec_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        schedule_prefix,
+                        schedule_code,
+                        schedule_exec
+                ).toSqlQuery()
+        )
+        //
+        return scheduleExec
     }
 
     override fun isScheduleStatusPossibleToOpen(myAction: MyActions): Boolean {
-        TODO("Not yet implemented")
+        val scheduleExec = getScheduleFromMyAction(myAction)
+        //
+        return (scheduleExec != null
+                && !scheduleExec.status.equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
+                && !scheduleExec.status.equals(ConstantBaseApp.SYS_STATUS_REJECTED)
+                && !scheduleExec.status.equals(ConstantBaseApp.SYS_STATUS_IGNORED)
+                && !scheduleExec.status.equals(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED))
     }
 
     override fun isScheduleFormType(myAction: MyActions): Boolean {
-        TODO("Not yet implemented")
+        val scheduleExec = getScheduleFromMyAction(myAction)
+
+        return scheduleExec != null && scheduleExec.schedule_type.equals(scheduleExec.custom_form_type_desc)
     }
 
     override fun isAnyFormInProcessing(myAction: MyActions): Boolean {
@@ -176,8 +206,237 @@ class Act083_Main_Presenter (private val context: Application,
     }
 
     override fun getScheduleTicketBundle(myAction: MyActions): Bundle {
-        TODO("Not yet implemented")
+        var ticket_prefix: Int = 0
+        var ticket_code: Int = 0
+
+        val splippedPk = myAction.getSplippedPk()
+        val scheduleTicket = getTicketBySchedule(splippedPk.get(0).toInt(), splippedPk.get(1).toInt(), splippedPk.get(2).toInt())
+
+        if (scheduleTicket != null && TK_Ticket.isValidTkTicket(scheduleTicket)) {
+            ticket_prefix = scheduleTicket.ticket_prefix
+            ticket_code = scheduleTicket.ticket_code
+        }else{
+            val scheduleExec = getScheduleFromMyAction(myAction)
+            val createTicketForSchedule = createTicketForSchedule(myAction, scheduleExec)
+            createTicketForSchedule?.let {
+                ticket_prefix = it.ticket_prefix
+                ticket_code = it.ticket_code
+            }
+        }
+        val bundle = Bundle()
+        if(ticket_prefix > 0 && ticket_code > 0) {
+
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017)
+            bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticket_prefix)
+            bundle.putInt(TK_TicketDao.TICKET_CODE, ticket_code)
+            bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, 1)
+            bundle.putString(Constant.ACT_SELECTED_DATE, myAction.plannedDate)
+            bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, myAction.processPk)
+        }
+        return bundle
     }
+
+
+    private fun createTicketForSchedule(item: MyActions, scheduleExec: MD_Schedule_Exec?): TK_Ticket? {
+        val nextTicketCode: Int = getNextScheduleTicketCode()
+        val md_site = getSiteObj(ToolBox_Con.getPreference_Site_Code(context))
+        val mdOperation = getOperationObj(ToolBox_Con.getPreference_Operation_Code(context))
+        //
+        if (nextTicketCode > 0 && MD_Site.isValid(md_site) && MD_Operation.isValid(mdOperation)) {
+            //Cria ticket
+            val tkTicket = createTicket(item, scheduleExec!!, nextTicketCode, md_site!!, mdOperation!!)
+            //Add ctrl e action ao ticket
+            //TODO REVE COMO FAZER AGORA QUE CTRL É DO STEP
+            tkTicket?.let {
+                it.step?.add(
+                        createStep(it)
+                )
+                if (updateScheduleStatus(it.schedule_prefix!!, it.schedule_code!!, it.schedule_exec!!, ConstantBaseApp.SYS_STATUS_PROCESS)) {
+                    val daoObjReturn = ticketDao.addUpdate(tkTicket)
+                    //
+                    if (!daoObjReturn.hasError()) {
+                        //LUCHE - 18/01/2021 - Implementação de licença por site.
+                        //Caso o customer user licença por site, mas o site logado não controla licença,
+                        // o numero de execução deve ser controlado.
+                        if (ToolBox_Inf.isConcurrentBySiteLicense(context) && ToolBox_Inf.isSiteLicenseDisabled(context)) {
+                            incrementAppExecutionCount(md_site)
+                        }
+                        //
+                        return tkTicket
+                    } else {
+                        updateScheduleStatus(it.schedule_prefix!!, it.schedule_code!!, it.schedule_exec!!, ConstantBaseApp.SYS_STATUS_SCHEDULE)
+                    }
+                }
+            }
+
+        }
+        return null
+    }
+
+    private fun createTicket(item: MyActions, scheduleExec: MD_Schedule_Exec, nextTicketCode: Int, md_site: MD_Site, mdOperation: MD_Operation): TK_Ticket? {
+        val tkTicket = TK_Ticket()
+        //
+        tkTicket.customer_code = ToolBox_Con.getPreference_Customer_Code(context)
+        tkTicket.ticket_prefix = 0
+        tkTicket.ticket_code = nextTicketCode
+        tkTicket.scn = 0
+        tkTicket.ticket_id = """0.$nextTicketCode"""
+        tkTicket.type_code = scheduleExec.ticket_type!!
+        tkTicket.type_id = scheduleExec.ticket_type_id!!
+        tkTicket.type_desc = scheduleExec.ticket_type_desc!!
+        tkTicket.open_date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
+        tkTicket.open_user = ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context))
+        tkTicket.open_user_name = ToolBox_Inf.getFullNick(
+                ToolBox_Con.getPreference_User_Code_Nick(context),
+                ToolBox_Con.getPreference_User_Code(context)
+        )
+        tkTicket.open_site_code = ToolBox_Inf.convertStringToInt(md_site.site_code)
+        tkTicket.open_site_id = md_site.site_id
+        tkTicket.open_site_desc = md_site.site_desc
+        tkTicket.open_operation_code = mdOperation.operation_code.toInt()
+        tkTicket.open_operation_id = mdOperation.operation_id
+        tkTicket.open_operation_desc = mdOperation.operation_desc
+        tkTicket.open_product_code = scheduleExec.product_code
+        tkTicket.open_product_id = scheduleExec.product_id
+        tkTicket.open_product_desc = scheduleExec.product_desc
+        tkTicket.open_serial_code = scheduleExec.serial_code!!
+        tkTicket.open_serial_id = scheduleExec.serial_id
+        tkTicket.ticket_status = ConstantBaseApp.SYS_STATUS_PROCESS
+        //
+        tkTicket.origin_type = ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE
+        tkTicket.origin_desc = ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE
+        //
+        tkTicket.schedule_prefix = scheduleExec.schedule_prefix
+        tkTicket.schedule_code = scheduleExec.schedule_code
+        tkTicket.schedule_exec = scheduleExec.schedule_exec
+        //
+        tkTicket.tag_operational_code = scheduleExec.tag_operational_code
+        tkTicket.tag_operational_id = scheduleExec.tag_operational_id
+        tkTicket.tag_operational_desc = scheduleExec.tag_operational_desc
+        //
+        return tkTicket
+    }
+    private fun createStep(tkTicket: TK_Ticket): TK_Ticket_Step? {
+        val ticketStep = TK_Ticket_Step()
+        ticketStep.step_code = 0
+        ticketStep.step_order = 0
+        ticketStep.exec_type = ConstantBaseApp.TK_PIPELINE_STEP_TYPE_ONE_TOUCH
+        ticketStep.scan_serial = 0
+        ticketStep.allow_new_obj = 0
+        ticketStep.move_next_step = 1
+        ticketStep.step_start_date = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
+        ticketStep.step_start_user = ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_User_Code(context))
+        ticketStep.step_start_user_nick = ToolBox_Inf.getFullNick(
+                ToolBox_Con.getPreference_User_Code_Nick(context),
+                ToolBox_Con.getPreference_User_Code(context)
+        )
+        ticketStep.step_status = ConstantBaseApp.SYS_STATUS_PENDING
+        ticketStep.user_focus = 1
+        /**
+         * BARRIONUEVO 16-09-2020
+         * Criando com update_required =0 para evitar se enviado ao servidor quando user desiste de
+         * finalizar a action.
+         */
+        ticketStep.update_required = 0
+        ticketStep.setPK(tkTicket)
+        //        ticketStep.getCtrl().add(
+//            createTicketCtrl(item, tkTicket, md_site, mdOperation)
+//        );
+        return ticketStep
+    }
+
+    /**
+     * LUCHE - 14/02/2020
+     *
+     *
+     * Atualiza status da tabela de agendamentos.
+     *
+     * @param schedule_prefix
+     * @param schedule_code
+     * @param schedule_exec
+     * @param status
+     * @return
+     */
+    private fun updateScheduleStatus(schedule_prefix: Int, schedule_code: Int, schedule_exec: Int, status: String): Boolean {
+        val scheduleExec: MD_Schedule_Exec = scheduleDao.getByString(
+                MD_Schedule_Exec_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        schedule_prefix,
+                        schedule_code,
+                        schedule_exec
+                ).toSqlQuery()
+        )
+        //
+        if (MD_Schedule_Exec.isValidScheduleExec(scheduleExec)) {
+            scheduleExec.status = status
+            val daoObjReturn: DaoObjReturn = scheduleDao.addUpdate(scheduleExec)
+            //Retorna verdadeiro se não teve erro.
+            return !daoObjReturn.hasError()
+        }
+        //
+        return false
+    }
+
+    /**
+     * LUCHE - 18/01/2021
+     * Metodo que incrementa 1 no contador de execuções do app no registro do site.
+     * @param md_site
+     */
+    private fun incrementAppExecutionCount(md_site: MD_Site) {
+        md_site.app_executions_count = md_site.app_executions_count + 1
+        siteDao.addUpdate(md_site)
+    }
+
+    private fun getSiteObj(site_code: String): MD_Site? {
+        return siteDao.getByString(
+                MD_Site_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        site_code
+                ).toSqlQuery()
+        )
+    }
+
+
+    private fun getOperationObj(operationCode: Long): MD_Operation? {
+        val operationDao =  MD_OperationDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        )
+        //
+        return operationDao.getByString(
+                MD_Operation_Sql_004(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        operationCode
+                ).toSqlQuery()
+        )
+    }
+
+    /**
+     * LUCHE - 11/03/2020
+     *
+     *
+     * Metodo que pega o proximo ticketCode para tickets criados via agendamento.
+     * O tickets criados via agendamento, terão sempre o prefixo  = 0.
+     * @return - Proximo ticket code  ou -1 em caso de erro.
+     */
+    private fun getNextScheduleTicketCode(): Int {
+        val auxCode = ticketDao.getByStringHM(
+                TK_Ticket_Sql_010(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        )
+        //
+        if (auxCode != null && auxCode.size > 0 && auxCode.hasConsistentValue(TK_Ticket_Sql_010.NEXT_SCHEDULE_TICKET_CODE)) {
+            try {
+                return auxCode[TK_Ticket_Sql_010.NEXT_SCHEDULE_TICKET_CODE]!!.toInt()
+            } catch (e: Exception) {
+                ToolBox_Inf.registerException(javaClass.name, e)
+            }
+        }
+        return -1
+    }
+
 
     override fun hasSerialDefined(myActions: MyActions): Boolean {
         TODO("Not yet implemented")
@@ -383,6 +642,17 @@ class Act083_Main_Presenter (private val context: Application,
                         calendarDate,
                         lbl,
                         userFocus
+                ).toSqlQuery()
+        )
+    }
+
+    private fun getTicketBySchedule(schedule_prefix: Int, schedule_code: Int, schedule_exec: Int): TK_Ticket? {
+        return ticketDao.getByString(
+                TK_Ticket_Sql_009(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        schedule_prefix,
+                        schedule_code,
+                        schedule_exec
                 ).toSqlQuery()
         )
     }
