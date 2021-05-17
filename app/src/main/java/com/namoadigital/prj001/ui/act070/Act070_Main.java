@@ -468,7 +468,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         if(mFrgPipelineHeader == null) {
             mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForPipeline(
                 mTicket,
-                mTicket.getTicket_id(),
+                mTicket.getTicket_id() + " ",
                 ToolBox_Inf.millisecondsToString(
                     ToolBox_Inf.dateToMilliseconds(mTicket.getOpen_date()),
                     ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
@@ -490,7 +490,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             ft.addToBackStack(null);
             ft.commit();
         }else{
-            mFrgPipelineHeader.updateSyncRequired(mPresenter.getSyncStatusParam(mTicket));
+            mFrgPipelineHeader.updateSyncRequired(mPresenter.getSyncStatusParam(mTicket), mTicket);
             if(mTicket != null) {
                 mFrgPipelineHeader.updateTicketStatus(
                         hmAux_Trans.get(mTicket.getTicket_status()),
@@ -1058,7 +1058,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         mTicket.setSync_required(1);
         //
         if(mFrgPipelineHeader != null) {
-            mFrgPipelineHeader.updateSyncRequired(true);
+            mFrgPipelineHeader.updateSyncRequired(true, mTicket);
         }
     }
 
@@ -1066,7 +1066,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         mTicket.setUpdate_required(1);
         //
         if(mFrgPipelineHeader != null) {
-            mFrgPipelineHeader.updateSyncRequired(true);
+            mFrgPipelineHeader.updateSyncRequired(true, mTicket);
         }
     }
 
