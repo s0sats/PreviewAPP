@@ -2187,8 +2187,9 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public Bundle getAct083BundleParams(MainTagMenu mainTagMenu) {
+
         MyActionFilterParam actionFilterParam = new MyActionFilterParam(
-            mainTagMenu.getTagCode(),
+        mainTagMenu.getTagCode() > 0  ? mainTagMenu.getTagCode() : null,
             mainTagMenu.getTagName(),
             null,
             null,
