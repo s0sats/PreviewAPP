@@ -487,30 +487,33 @@ public class Frg_Pipeline_Header extends Fragment {
                 Drawable drawableEnd;
                 Drawable ticketIdBgDefault;
                 //Background TicketId
-                int color;
-                if(mTicket.getSync_required() == 1
-                && mTicket.getUpdate_required() == 1){
+                int color = -1;
+                if (mTicket.getSync_required() == 1
+                        && mTicket.getUpdate_required() == 1) {
                     ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_red_states);
                     drawableEnd = getContext().getDrawable(R.drawable.ic_sync_main_menu_data);
                     color = ContextCompat.getColor(getContext(), R.color.namoa_cancel_red);
-                }else if(mTicket.getSync_required() == 1){
-                    ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_yellow_states);
+                } else if (mTicket.getSync_required() == 1) {
+                    ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_yellow_tranparent_states);
                     color = ContextCompat.getColor(getContext(), R.color.namoa_color_yellow_2);
                     drawableEnd = getContext().getDrawable(R.drawable.ic_cloud_upload);
-                }else if(mTicket.getUpdate_required() == 1){
+                } else if (mTicket.getUpdate_required() == 1) {
                     ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_red_states);
                     color = ContextCompat.getColor(getContext(), R.color.namoa_cancel_red);
                     drawableEnd = getContext().getDrawable(R.drawable.ic_cloud_upload);
-                }else{
+                } else {
                     ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_blue_states);
                     color = ContextCompat.getColor(getContext(), R.color.namoa_light_blue);
                     drawableEnd = getContext().getDrawable(R.drawable.ic_baseline_cloud_done_24);
                 }
-                String marginText = tv_ticket_id.getText().toString()  + " ";
+                String marginText = tv_ticket_id.getText().toString().trim() + " ";
 
                 tv_ticket_id.setText(marginText);
                 tv_ticket_id.setTextColor(color);
-                drawableEnd.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+                if (mTicket.getSync_required() == 0
+                        || mTicket.getUpdate_required() == 0){
+                    drawableEnd.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+                }
                 tv_ticket_id.setPadding(8, 8, 8, 8);
                 tv_ticket_id.setCompoundDrawablesWithIntrinsicBounds(null, null, drawableEnd, null);
                 tv_ticket_id.setCompoundDrawablePadding(3);

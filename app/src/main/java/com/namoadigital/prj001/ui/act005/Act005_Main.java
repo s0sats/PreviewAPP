@@ -2663,7 +2663,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         }
         //
         Drawable wrappedDrawable = DrawableCompat.wrap(context.getDrawable(icon));
-        if (wrappedDrawable != null) {
+        if (wrappedDrawable != null && iconColor>0) {
             DrawableCompat.setTint(wrappedDrawable.mutate(), ContextCompat.getColor(context, iconColor));
         }
         //
