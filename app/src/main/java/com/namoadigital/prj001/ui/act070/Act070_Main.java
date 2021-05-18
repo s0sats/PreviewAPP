@@ -1247,10 +1247,23 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         Bundle bundle = new Bundle();
         bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
-        bundle.putSerializable(
-            MyActionFilterParam.MY_ACTION_FILTER_PARAM,
-            requestingBundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
-        );
+        //todo Tratar fluxos de action espontanea para n perder o param
+        MyActionFilterParam mActionFilterParam = (MyActionFilterParam) requestingBundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
+        if(mActionFilterParam == null){
+            mActionFilterParam = new MyActionFilterParam(
+                    null,
+                    "Todos - trad",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        }
+        //
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,mActionFilterParam);
         intent.putExtras(bundle);
         //
         startActivity(intent);
