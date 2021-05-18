@@ -29,11 +29,13 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.Chat_C_Remove_Room;
 import com.namoadigital.prj001.model.DaoObjReturn;
+import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.FCMMessage;
 import com.namoadigital.prj001.model.FCM_Schedule;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_002;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
@@ -235,6 +237,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             //LUCHE - 02/03/2021 - FCM disparado a cada 10 min se houver msg pendente
                             //no servidor. Deve subir o serviço para sincronizar as novas msg.
                             ToolBox_Inf.scheduleWorkQuarterChatRefresh(getApplicationContext());
+                            break;
+                        case ConstantBaseApp.FCM_ACTION_SYNC_REQUIRED_UPDATE:
+                            EV_User_CustomerDao ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+                            EV_User_Customer userCustomer = ev_user_customerDao.getByString(
+                                    new EV_User_Customer_Sql_002(
+                                            ToolBox_Con.getPreference_User_Code(getApplicationContext()),
+                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
+                                    ).toSqlQuery()
+                            );
+                            //
+                            userCustomer.setSync_required(1);
+                            ev_user_customerDao.addUpdate(userCustomer);
+                            //
+                            break;
+                        case ConstantBaseApp.FCM_ACTION_TICKET_FOCUS_UPDATE:
+                            break;
+                        case ConstantBaseApp.FCM_ACTION_TICKET_REMOVE_UPDATE:
                             break;
                         default:
                             ToolBox_Inf.showChatNotification(

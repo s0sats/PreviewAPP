@@ -622,6 +622,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FCM_ACTION_TK_TICKET_UPDATE = "<TK_TICKET_UPDATE>";
     public static final String FCM_ACTION_SCHEDULE_UPDATE = "<SCHEDULE_UPDATE>";
     public static final String FCM_ACTION_SCHEDULE_EXEC_UPDATE = "<SCHEDULE_EXEC_UPDATE>";
+    public static final String FCM_ACTION_SYNC_REQUIRED_UPDATE = "<SYNC_REQUIRED>";
+    public static final String FCM_ACTION_TICKET_FOCUS_UPDATE = "<TICKET_FOCUS>";
+    public static final String FCM_ACTION_TICKET_REMOVE_UPDATE = "<TICKET_REMOVE>";
+
     public static final String FCM_TYPE_WARNING = "WARNING";
     public static final String FCM_TYPE_SILENT = "SILENT";
 
