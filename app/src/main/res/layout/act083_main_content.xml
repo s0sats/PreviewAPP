@@ -143,16 +143,18 @@
             tools:listitem="@layout/my_actions_item" />
 
         <ProgressBar
-            android:id="@+id/progressBar"
+            android:id="@+id/act083_pb_load"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:indeterminateTint="@color/namoa_amount_pipeline_background_btn"
             android:indeterminateTintMode="src_in"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/act083_rv_actions_list"
             app:layout_constraintEnd_toEndOf="@+id/act083_rv_actions_list"
             app:layout_constraintStart_toStartOf="@+id/act083_rv_actions_list"
-            app:layout_constraintTop_toBottomOf="@+id/act083_cv_header" />
+            app:layout_constraintTop_toBottomOf="@+id/act083_cv_header"
+            app:layout_constraintVertical_bias="0.2"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

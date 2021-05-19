@@ -1352,6 +1352,21 @@ public class TK_Ticket implements Cloneable, Serializable {
         }
         String clientInf = !hmAux.get(TK_TicketDao.CLIENT_ID).isEmpty() ? hmAux.get(TK_TicketDao.CLIENT_ID) +" - "+ hmAux.get(TK_TicketDao.CLIENT_NAME): null;
         String contractInf = !hmAux.get(TK_TicketDao.CONTRACT_ID).isEmpty() ? hmAux.get(TK_TicketDao.CONTRACT_ID) +" - "+ hmAux.get(TK_TicketDao.CONTRACT_CODE): null;
+        String plannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(context,hmAux.get(TK_TicketDao.FORECAST_DATE),hmAux.get(TK_TicketDao.FORECAST_DATE));
+        String orderByDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
+        String periodStartDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
+        String lateDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
+        //
+        if(hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_START)
+           && hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_END)
+           && !hmAux.get(TK_Ticket_StepDao.FORECAST_START).isEmpty()
+           && !hmAux.get(TK_Ticket_StepDao.FORECAST_END).isEmpty()
+        ){
+            plannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(context,hmAux.get(TK_Ticket_StepDao.FORECAST_START),hmAux.get(TK_Ticket_StepDao.FORECAST_END));
+            orderByDate = hmAux.get(TK_Ticket_StepDao.FORECAST_START);
+            periodStartDate = hmAux.get(TK_Ticket_StepDao.FORECAST_START);
+            lateDate = hmAux.get(TK_Ticket_StepDao.FORECAST_END);
+        }
 
         return new MyActions(
             MyActions.MY_ACTION_TYPE_TICKET,
@@ -1360,7 +1375,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             ConstantBaseApp.HMAUX_TRANS_LIB.get(hmAux.get(TK_TicketDao.TICKET_STATUS)),
             null,
             rightIcon,
-            ToolBox_Inf.getMyActionStartEndDateFormated(context,hmAux.get(TK_TicketDao.FORECAST_DATE),hmAux.get(TK_TicketDao.FORECAST_DATE)),
+            plannedDate,
             hmAux.get(TK_TicketDao.TAG_OPERATIONAL_DESC),
             hmAux.get(TK_TicketDao.OPEN_PRODUCT_DESC),
             hmAux.get(TK_TicketDao.OPEN_SERIAL_ID),
@@ -1374,13 +1389,13 @@ public class TK_Ticket implements Cloneable, Serializable {
             null,
             null,
             ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(hmAux.get(TK_TicketDao.FORECAST_DATE)),
+                ToolBox_Inf.dateToMilliseconds(orderByDate),
                 "yyyyMMddHHmm"
             ),
             hmAux.get(TK_TicketDao.ORIGIN_TYPE),
             !"0".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM)),
-            ToolBox_Inf.isItemLate(hmAux.get(TK_TicketDao.FORECAST_DATE)),
-            false
+            ToolBox_Inf.isItemLate(periodStartDate),
+            ToolBox_Inf.isItemLate(lateDate)
         );
     }
 

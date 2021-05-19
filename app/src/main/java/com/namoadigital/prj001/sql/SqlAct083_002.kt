@@ -57,7 +57,8 @@ class SqlAct083_002(
                         and ($userFocus is null or t.${TK_TicketDao.USER_FOCUS} = $userFocus)
                  """
             else -> """    and (t.${TK_TicketDao.TICKET_STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
-                           OR ($userFocus is null or t.${TK_TicketDao.USER_FOCUS} = $userFocus))
+                                OR ($userFocus is null or t.${TK_TicketDao.USER_FOCUS} = $userFocus)
+                           )
                     """
         }
         byPassByOpenForm = """ EXISTS (  SELECT 1
@@ -93,7 +94,9 @@ class SqlAct083_002(
                            s.${TK_Ticket_StepDao.TICKET_CODE},
                            s.${TK_Ticket_StepDao.STEP_ORDER},
                            s.${TK_Ticket_StepDao.USER_FOCUS},
-                           (case when count(1) = 1
+                           (case when s.${TK_Ticket_StepDao.USER_FOCUS} = 0
+                                 then null   
+                                 when count(1) = 1
                                  then min(s.${TK_Ticket_StepDao.STEP_DESC})
                                  else '$multStepsLbl'
                            end) ${TK_Ticket_StepDao.STEP_DESC} ,
@@ -102,8 +105,8 @@ class SqlAct083_002(
                          FROM
                            ${TK_Ticket_StepDao.TABLE} s
                          WHERE  
-                           s.${TK_Ticket_StepDao.CUSTOMER_CODE} = ${customerCode}
-                           and s.${TK_Ticket_StepDao.USER_FOCUS} = 1
+                           s.${TK_Ticket_StepDao.CUSTOMER_CODE} = $customerCode
+                           and ($userFocus = 0 or s.${TK_Ticket_StepDao.USER_FOCUS} = 1)
                          GROUP BY  
                            s.${TK_Ticket_StepDao.CUSTOMER_CODE},
                            s.${TK_Ticket_StepDao.TICKET_PREFIX},
@@ -116,6 +119,7 @@ class SqlAct083_002(
                                 and ts.${TK_Ticket_StepDao.USER_FOCUS} = $userFocus
                     WHERE                     
                           t.${TK_TicketDao.CUSTOMER_CODE} = $customerCode
+                          and t.${TK_Ticket_StepDao.TICKET_PREFIX} > 0 
                           $statusFilter                          
                           and ($calendarDate is null or strftime('%Y-%m-%d', t.${TK_TicketDao.FORECAST_DATE}, '$deviceGMT') = $calendarDate )                          
                           and ($byPassByOpenForm or ($tagOperCode is null or t.${TK_TicketDao.TAG_OPERATIONAL_CODE} = $tagOperCode))

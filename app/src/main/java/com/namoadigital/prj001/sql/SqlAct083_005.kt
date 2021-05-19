@@ -44,7 +44,7 @@ class SqlAct083_005(
         serialId = null
         calendarDate = null
         statusFilter = when(userFocus){
-                        1 -> """    and     s.${MD_Schedule_ExecDao.STATUS} in('${ConstantBaseApp.SYS_STATUS_SCHEDULE}','${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}') """
+                        1 -> """    and     s.${MD_Schedule_ExecDao.STATUS} in('${ConstantBaseApp.SYS_STATUS_SCHEDULE}','${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}') """
                         else -> """    and     s.${MD_Schedule_ExecDao.STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'"""
         }
 
@@ -78,23 +78,23 @@ class SqlAct083_005(
                                       FROM
                                        ${MD_Schedule_ExecDao.TABLE} s1
                                       WHERE
-                                        (  s1.${MD_Schedule_ExecDao.PRODUCT_CODE},
-                                           s1.${MD_Schedule_ExecDao.SERIAL_ID},
-                                           s1.${MD_Schedule_ExecDao.SITE_CODE},
-                                           s1.${MD_Schedule_ExecDao.OPERATION_CODE},
-                                           s1.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
-                                           IFNULL(s1.${MD_Schedule_ExecDao.TICKET_TYPE},0) ,
-                                           IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0) ,
-                                           IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0) ,
+                                        (  s1.${MD_Schedule_ExecDao.PRODUCT_CODE}||'|'||
+                                           s1.${MD_Schedule_ExecDao.SERIAL_ID}||'|'||
+                                           s1.${MD_Schedule_ExecDao.SITE_CODE}||'|'||
+                                           s1.${MD_Schedule_ExecDao.OPERATION_CODE}||'|'||
+                                           s1.${MD_Schedule_ExecDao.SCHEDULE_TYPE}||'|'||
+                                           IFNULL(s1.${MD_Schedule_ExecDao.TICKET_TYPE},0)||'|'||
+                                           IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0)||'|'||
+                                           IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0)||'|'||
                                            s1.${MD_Schedule_ExecDao.DATE_START} ) in  (SELECT
-                                                                 s.${MD_Schedule_ExecDao.PRODUCT_CODE},
-                                                                 s.${MD_Schedule_ExecDao.SERIAL_ID},
-                                                                 s.${MD_Schedule_ExecDao.SITE_CODE},
-                                                                 s.${MD_Schedule_ExecDao.OPERATION_CODE},
-                                                                 s.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
-                                                                 IFNULL(s.${MD_Schedule_ExecDao.TICKET_TYPE},0) ${MD_Schedule_ExecDao.TICKET_TYPE},
-                                                                 IFNULL(s.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0) ${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},
-                                                                 IFNULL(s.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0) ${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},
+                                                                 s.${MD_Schedule_ExecDao.PRODUCT_CODE}||'|'||
+                                                                 s.${MD_Schedule_ExecDao.SERIAL_ID}||'|'||
+                                                                 s.${MD_Schedule_ExecDao.SITE_CODE}||'|'||
+                                                                 s.${MD_Schedule_ExecDao.OPERATION_CODE}||'|'||
+                                                                 s.${MD_Schedule_ExecDao.SCHEDULE_TYPE}||'|'||
+                                                                 IFNULL(s.${MD_Schedule_ExecDao.TICKET_TYPE},0)||'|'||
+                                                                 IFNULL(s.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0)||'|'||
+                                                                 IFNULL(s.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0)||'|'||
                                                                  min(s.${MD_Schedule_ExecDao.DATE_START}) ${MD_Schedule_ExecDao.DATE_START}                           
                                                                 FROM
                                                                  ${MD_Schedule_ExecDao.TABLE} s

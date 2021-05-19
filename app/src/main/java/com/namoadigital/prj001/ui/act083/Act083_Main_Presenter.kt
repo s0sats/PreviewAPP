@@ -252,6 +252,9 @@ class Act083_Main_Presenter(private val context: Context,
 
 
     private fun prepareOpenForm(item: MyActions, scheduleExec: MD_Schedule_Exec) {
+        //valida se form existe e ja add info de form_data
+        scheduleFormLocalExists(scheduleExec,item)
+        //
         val bundle: Bundle = getFormFlowBundle(item, scheduleExec)
         mView.callAct011(bundle)
     }
@@ -267,8 +270,10 @@ class Act083_Main_Presenter(private val context: Context,
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, scheduleExec.custom_form_code.toString())
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, scheduleExec.custom_form_version.toString())
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, scheduleExec.custom_form_desc.toString())
-        //todo tratar o custom_form_data
-//        bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, scheduleExec.custom_form_data.toString())
+        //
+        item.scheduleCustomFormData?.let{
+            bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, item.scheduleCustomFormData)
+        }
         bundle.putString(Constant.ACT017_SCHEDULED_SITE, scheduleExec.site_code.toString())
         return bundle
     }
@@ -688,12 +693,12 @@ class Act083_Main_Presenter(private val context: Context,
     private fun prepareOpenTicket(item: MyActions, scheduleExec: MD_Schedule_Exec) {
         val splippedPk = item.getSplippedPk()
         val scheduleTicket = getTicketBySchedule(splippedPk.get(0).toInt(), splippedPk.get(1).toInt(), splippedPk.get(2).toInt())
-        val ticketPrefix = 0
-        val ticketCode = 0
+        val ticketPrefix = scheduleTicket?.ticket_prefix?:0
+        val ticketCode = scheduleTicket?.ticket_code?:0
         if (scheduleTicket!= null
-                && scheduleTicket.ticket_prefix > 0
-                && scheduleTicket.ticket_code > 0) {
-            mView.callAct070(getTicketFlowBundle(item, scheduleTicket.ticket_prefix, scheduleTicket.ticket_code))
+                && ticketPrefix > 0
+                && ticketCode > 0) {
+            mView.callAct070(getTicketFlowBundle(item,ticketPrefix, ticketCode))
         } else {
             mView.callAct071(getTicketActionFlowBundle(item, scheduleExec!!, ticketPrefix, ticketCode, 1))
         }
@@ -1304,6 +1309,8 @@ class Act083_Main_Presenter(private val context: Context,
         _myActionsList.sortBy {
             it.orderBy
         }
+        //
+        mView.changeProgressBarVisility(false)
     }
 
     override fun getLocalTickets(userFocus: Int): MutableList<HMAux> {

@@ -520,13 +520,20 @@ public class MD_Schedule_Exec {
 
     public MyActions toMyActionsObj(Context context){
         String customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
+        String statusToUse = ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(status) ? ConstantBaseApp.SYS_STATUS_PROCESS : status;
+        int rightIcon =
+                !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(status)
+                ? R.drawable.ic_baseline_cloud_done_24_blue
+                : R.drawable.ic_cloud_upload_24_red;
+
+
         MyActions myActions = new MyActions(
             MyActions.MY_ACTION_TYPE_SCHEDULE,
             ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
             ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
-            ConstantBaseApp.HMAUX_TRANS_LIB.get(status),
+            ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
             null,
-            R.drawable.ic_baseline_cloud_done_24_blue,
+            rightIcon,
             //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
             ToolBox_Inf.getMyActionStartEndDateFormated(context, date_start + " " + customerGMT, date_end + " " + customerGMT),
             tag_operational_desc,

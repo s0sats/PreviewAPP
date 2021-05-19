@@ -309,9 +309,15 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     private fun updateMyActionList(userFocusFilter: Int) {
+        changeProgressBarVisility(true)
         mPresenter.updateMyActionList(userFocusFilter)
         iniRecycler()
+    }
 
+    override fun changeProgressBarVisility(show: Boolean) {
+        with(binding.act083MainContent.act083PbLoad){
+            visibility = if(show) View.VISIBLE else View.GONE
+        }
     }
 
     private fun callAct005() {
