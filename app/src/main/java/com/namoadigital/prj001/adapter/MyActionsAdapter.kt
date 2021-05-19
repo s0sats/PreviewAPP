@@ -19,6 +19,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.MyActionsItemBinding
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ToolBox_Inf
 
 class MyActionsAdapter(
         private val myActions: List<MyActions>,
@@ -43,7 +44,6 @@ class MyActionsAdapter(
     }
 
     inner class MyActionVh(private val binding: MyActionsItemBinding) : RecyclerView.ViewHolder(binding.root) {
-
         fun onBinding(myAction: MyActions) {
             binding.root.setOnClickListener {
                 myActionClickListener(myAction)
@@ -68,13 +68,30 @@ class MyActionsAdapter(
                     )
             )
             //
-            binding.myActionsItemTvSite.applyVisibilityIfTextExists(myAction.siteDesc)
+            configTvSite(myAction)
             binding.myActionsItemTvClient.applyVisibilityIfTextExists(myAction.clientInfo)
             binding.myActionsItemTvContract.applyVisibilityIfTextExists(myAction.contractInfo)
             binding.myActionsItemTvContract.applyVisibilityIfTextExists(myAction.contractInfo)
             binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
             binding.myActionsItemTvDoneDate.applyVisibilityIfTextExists(myAction.doneDate)
             applyBackgroundStrokeColor(myAction)
+        }
+
+        private fun configTvSite(myAction: MyActions) {
+            with(binding.myActionsItemTvSite){
+                 myAction.siteCode?.let {
+                    if(ToolBox_Inf.equalsToLoggedSite(context,it.toString())){
+                       visibility = View.GONE
+                       text = myAction.siteDesc
+                    }else{
+                        visibility = View.VISIBLE
+                        text = myAction.siteDesc
+                    }
+                 } ?: {
+                     visibility = View.GONE
+                     text = myAction.siteDesc
+                 }
+            }
         }
 
         private fun configPlannedDate(myAction: MyActions) {

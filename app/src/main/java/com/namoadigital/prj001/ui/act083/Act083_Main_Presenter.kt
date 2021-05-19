@@ -4,12 +4,17 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import com.google.gson.GsonBuilder
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
+import com.namoadigital.prj001.receiver.WBR_Serial_Search
 import com.namoadigital.prj001.receiver.WBR_Sync
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
+import com.namoadigital.prj001.service.WS_Serial_Search
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act017.Act017_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
@@ -17,6 +22,8 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
+import java.util.*
 
 class Act083_Main_Presenter(private val context: Context,
                             private val mView: Act083_Main_Contract.I_View,
@@ -48,13 +55,13 @@ class Act083_Main_Presenter(private val context: Context,
         get() {
             return _myActionsList
         }
-    private val _hmAux_Trans: HMAux? by lazy {
+    val hmAux_Trans: HMAux? by lazy {
         loadTranslation()
     }
-    var hmAux_Trans: HMAux? = HMAux()
-        get() {
-            return _hmAux_Trans
-        }
+    var siteCodeBack: String? = null
+    var zoneCodeBack = 0
+    var actionSelected : MyActions? = null
+    private var serialDialog : ScheduleRequestSerialDialog2? = null
 
     init {
         recoverIntentsInfo()
@@ -78,6 +85,33 @@ class Act083_Main_Presenter(private val context: Context,
         transList.add("progress_sync_msg")
         transList.add("site_desc_not_found_lbl")
         //
+        transList.add("alert_ttl_exists_in_processing")
+        transList.add("alert_msg_exists_in_processing")
+        transList.add("alert_ttl_start_new_processing")
+        transList.add("alert_msg_start_new_processing")
+        transList.add("alert_error_on_create_form_ttl")
+        transList.add("alert_error_on_create_form_msg")
+        transList.add("alert_no_serial_found_ttl")
+        transList.add("alert_no_serial_found_msg")
+        transList.add("alert_product_no_allow_new_serial_msg")
+        transList.add("alert_ticket_action_start_ttl")
+        transList.add("alert_ticket_action_start_confirm")
+        transList.add("alert_error_on_create_ticket_action_ttl")
+        transList.add("alert_error_on_create_ticket_action_msg")
+        transList.add("alert_schedule_status_prevents_to_open_ttl")
+        transList.add("alert_schedule_status_prevents_to_open_msg")
+        transList.add("alert_menu_app_profile_not_found_ttl")
+        transList.add("alert_form_ap_menu_profile_not_found_msg")
+        transList.add("alert_menu_app_profile_not_found_ttl")
+        transList.add("alert_ticket_menu_profile_not_found_msg")
+        transList.add("alert_free_execution_blocked_ttl")
+        transList.add("alert_free_execution_blocked_msg")
+        //
+        transList.add("alert_form_site_restriction_ttl")
+        transList.add("alert_form_site_restriction_confirm")
+        transList.add("dialog_serial_search_ttl")
+        transList.add("dialog_serial_search_start")
+        //
         return ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -94,12 +128,12 @@ class Act083_Main_Presenter(private val context: Context,
         )
         val timePrefence = ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)
         if( ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION != timePrefence){
-            _hmAux_Trans?.get(timePrefence)?.let {chipList.add(it) }
+            hmAux_Trans?.get(timePrefence)?.let {chipList.add(it) }
         }
         val sitePrefence = ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION)
         if(ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION != sitePrefence){
             val siteObjInfo = ToolBox_Inf.getSiteObjInfo(context, ToolBox_Con.getPreference_Site_Code(context))
-            chipList.add(siteObjInfo?.site_desc ?: _hmAux_Trans?.get("site_desc_not_found_lbl")
+            chipList.add(siteObjInfo?.site_desc ?: hmAux_Trans?.get("site_desc_not_found_lbl")
             ?: "SITE_DESC_NOT_FOUND")
         }
         return chipList
@@ -108,7 +142,7 @@ class Act083_Main_Presenter(private val context: Context,
     override fun getActTitle(): String {
         return when(originFlow){
             ConstantBaseApp.ACT005 -> myActionFilterParam.tagFilterDesc!!
-            else -> _hmAux_Trans!!["act083_title"]!!
+            else -> hmAux_Trans!!["act083_title"]!!
         }
     }
 
@@ -116,32 +150,110 @@ class Act083_Main_Presenter(private val context: Context,
         generateMyActionList(userFocusFilter)
     }
 
-    override fun checkScheduleFlow(item: MyActions) {
-        val scheduleExec = getScheduleFromMyAction(item)
+    override fun processActionClick(myAction: MyActions) {
+        when(myAction.actionType){
+            MyActions.MY_ACTION_TYPE_TICKET -> processLocalTicketClick(myAction)
+            MyActions.MY_ACTION_TYPE_TICKET_CACHE -> processCachedTicketClick(myAction)
+            MyActions.MY_ACTION_TYPE_SCHEDULE -> checkScheduleFlow(myAction)
+            MyActions.MY_ACTION_TYPE_FORM_AP -> processFormApClick(myAction)
+            MyActions.MY_ACTION_TYPE_FORM -> processFormClick(myAction)
+        }
+    }
+
+    private fun processLocalTicketClick(myAction: MyActions) {
+        mView.callAct070(
+                getLocalTicket(
+                        myAction
+                )
+        )
+    }
+
+    private fun processCachedTicketClick(myAction: MyActions) {
+        if(ToolBox_Con.isOnline(context)){
+            mView.setProcess(WS_TK_Ticket_Download::class.java.name)
+            mView.showPD(
+                    hmAux_Trans?.get("dialog_download_ticket_ttl"),
+                    hmAux_Trans?.get("dialog_download_ticket_start")
+            )
+            //
+            prepareWsTicketDownload(myAction)
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context)
+        }
+    }
+
+    private fun processFormApClick(myAction: MyActions) {
+        mView.callAct038(getFormApBundle(myAction))
+    }
+
+    private fun processFormClick(myAction: MyActions) {
+        mView.callAct011(getFormBundle(myAction))
+    }
+
+    override fun checkScheduleFlow(myAction: MyActions) {
+        actionSelected = myAction
+        //
+        val scheduleExec = getScheduleFromMyAction(myAction)
+        //
         if(scheduleExec != null) {
             when (scheduleExec.schedule_type) {
-                Constant.MD_SCHEDULE_TYPE_FORM -> {
-//                    processFormFlow(item, scheduleExec)
-                    mView.showToast("Em Dev")
-                }
-                else -> {
-                    if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, null)) {
-                        processTicketFlow(item)
-                    } else {
-                        mView.showMsg(
-                                Act017_Main.PROFILE_MENU_TICKET_NOT_FOUND,
-                                item
-                        )
-                    }
-                }
+                ConstantBaseApp.MD_SCHEDULE_TYPE_FORM -> processFormFlow(myAction, scheduleExec)
+                else -> iniProcessTicketFlow(myAction)
             }
         }
     }
 
+    private fun iniProcessTicketFlow(actions: MyActions) {
+        if (ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, null)) {
+            processTicketFlow(actions)
+        } else {
+            mView.showMsg(
+                    Act017_Main.PROFILE_MENU_TICKET_NOT_FOUND,
+                    actions
+            )
+        }
+    }
+
+    private fun processFormFlow(actions: MyActions, scheduleExec: MD_Schedule_Exec) {
+        if (Constant.SYS_STATUS_SCHEDULE == scheduleExec.status) {
+            if (isScheduleSiteDifferentThanLogged(actions)) {
+                startSiteChangeFlow(actions)
+            } else if (isAnyFormInProcessing(scheduleExec)) {
+                mView.showMsg(Act017_Main.MODULE_CHECKLIST_FORM_IN_PROCESSING, actions)
+            } else {
+                //LUCHE - 14/01/2021
+                //Verifica se deve bloquear a execução e em caso posito, exibe msg informando do
+                // bloqueio
+                if (ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)) {
+                    mView.showMsg(Act017_Main.FREE_EXECUTION_BLOCKED, actions)
+                } else {
+                    mView.showMsg(Act017_Main.MODULE_CHECKLIST_START_FORM, actions)
+                }
+            }
+        } else {
+            if (isStatusPossibleToOpen(scheduleExec)) {
+                prepareOpenForm(actions, scheduleExec)
+            } else {
+                mView.showMsg(
+                        Act017_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
+                        actions
+                )
+            }
+        }
+    }
+
+    private fun isStatusPossibleToOpen(scheduleExec: MD_Schedule_Exec): Boolean {
+        return (scheduleExec.status != null
+                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_CANCELLED
+                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_REJECTED
+                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_IGNORED
+                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_NOT_EXECUTED)
+    }
+
 
     private fun prepareOpenForm(item: MyActions, scheduleExec: MD_Schedule_Exec) {
-//        val bundle: Bundle = getFormFlowBundle(item, scheduleExec)
-//        mView.callAct011(context, bundle)
+        val bundle: Bundle = getFormFlowBundle(item, scheduleExec)
+        mView.callAct011(bundle)
     }
 
     private fun getFormFlowBundle(item: MyActions, scheduleExec: MD_Schedule_Exec): Bundle {
@@ -161,31 +273,264 @@ class Act083_Main_Presenter(private val context: Context,
         return bundle
     }
 
-    override fun processTicketFlow(item: MyActions) {
-        val scheduleExec = getScheduleFromMyAction(item)
+    override fun checkFormFlow(action: MyActions) {
+        val scheduleExec = getScheduleFromMyAction(action)
+        scheduleExec?.let {
+            if (Constant.SYS_STATUS_SCHEDULE != it.status) {
+                prepareOpenForm(action, it)
+            } else if (hasSerialDefined(it)) {
+                buildRequestSerialDialog(
+                        it,
+                        action,
+                        false
+                )
+                executeSerialSearch(
+                        action.productCode,
+                        action.productId,
+                        action.serialId,
+                        true
+                )
+            } else {
+                //Cria e exibe dialog que requer serial.
+                buildRequestSerialDialog(
+                        it,
+                        action,
+                        true
+                )
+            }
+        }
+    }
+
+    private fun buildRequestSerialDialog(scheduleExec: MD_Schedule_Exec, action: MyActions, showDialog: Boolean) {
+        //
+        serialDialog = ScheduleRequestSerialDialog2(
+                context,
+                scheduleExec,
+                object : ScheduleRequestSerialDialog2.OnScheduleRequestSerialDialogListeners {
+                    override fun processToForm() {
+                        val bundle = Bundle()
+                        if (createFormLocalForSchedule(action, scheduleExec)) {
+                            //Atualiza fomr_data no item
+                            action.scheduleCustomFormData =
+                                    bundle.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, "0")
+                            //
+                            prepareOpenForm(action, scheduleExec)
+                        } else {
+                            mView.showMsg(Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, action)
+                        }
+                    }
+
+                    override fun processToSearchSerial(serialID: String) {
+                        executeSerialSearch(
+                                action.productCode,
+                                action.productId,
+                                serialID,
+                                false)
+                    }
+
+                    override fun addMketControl(mketSerial: MKEditTextNM) {
+                        mView.addControlToActivity(mketSerial)
+                    }
+
+                    override fun removeMketControl(mketSerial: MKEditTextNM) {
+                        mView.removeControlFromActivity(mketSerial)
+                    }
+                }
+        )
+        //
+        if (showDialog) {
+            serialDialog?.show()
+        }
+    }
+
+    private fun createFormLocalForSchedule(action: MyActions, scheduleExec: MD_Schedule_Exec): Boolean {
+        var daoObjReturn = DaoObjReturn()
+        val custom_formDao = GE_Custom_FormDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        val custom_form_field_LocalDao = GE_Custom_Form_Field_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        val custom_form_fieldDao = GE_Custom_Form_FieldDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        val custom_form_blob_localDao = GE_Custom_Form_Blob_LocalDao(context, ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)), Constant.DB_VERSION_CUSTOM)
+        var creationOk = false
+        //
+        if (scheduleFormLocalExists(scheduleExec, action)) {
+            creationOk = true
+        } else {
+            //region Implementação2
+            val nextFormData = custom_formDao.getByStringHM(
+                    GE_Custom_Form_Local_Sql_002(
+                            scheduleExec.customer_code.toString(),
+                            scheduleExec.custom_form_type.toString(),
+                            scheduleExec.custom_form_code.toString(),
+                            scheduleExec.custom_form_version.toString()
+                    ).toSqlQuery().toLowerCase()
+            )
+            //
+            if (nextFormData != null && nextFormData.size > 0 && nextFormData.hasConsistentValue("id")) {
+                val customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context)
+                val customForm = custom_formDao.getByString(
+                        GE_Custom_Form_Sql_001_TT(
+                                scheduleExec.customer_code.toString(),
+                                scheduleExec.custom_form_type.toString(),
+                                scheduleExec.custom_form_code.toString(),
+                                scheduleExec.custom_form_version.toString()
+                        ).toSqlQuery().toLowerCase()
+                )
+                //LUCHE - 15/05/2020 - Comentado pois só era usado para definir url_locla o icone do produto.
+                //Add metodo que verifica se img existe local e definir valor.
+                //MD_Product productInfo = getProduct(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.PRODUCT_CODE)));
+                val customFormLocal = GE_Custom_Form_Local()
+                //
+                customFormLocal.customer_code = customForm.customer_code
+                customFormLocal.custom_form_type = customForm.custom_form_type
+                customFormLocal.custom_form_code = customForm.custom_form_code
+                customFormLocal.custom_form_version = customForm.custom_form_version
+                customFormLocal.custom_form_data = nextFormData["id"]!!.toLong()
+                customFormLocal.custom_form_pre = ToolBox_Inf.getPrefix(context)
+                customFormLocal.custom_form_status = ConstantBaseApp.SYS_STATUS_SCHEDULE
+                customFormLocal.custom_product_code = scheduleExec.product_code
+                customFormLocal.custom_product_desc = scheduleExec.product_desc
+                customFormLocal.custom_product_id = scheduleExec.product_id
+                customFormLocal.custom_form_type_desc = scheduleExec.custom_form_type_desc
+                customFormLocal.custom_form_desc = scheduleExec.custom_form_desc
+                customFormLocal.serial_id = scheduleExec.serial_id
+                customFormLocal.require_signature = customForm.require_signature
+                customFormLocal.automatic_fill = customForm.automatic_fill
+                customFormLocal.schedule_date_start_format = "${scheduleExec.date_start} $customerGMT"
+                customFormLocal.schedule_date_end_format = "${scheduleExec.date_end} $customerGMT"
+                customFormLocal.schedule_date_start_format_ms = ToolBox_Inf.dateToMilliseconds("${scheduleExec.date_start} $customerGMT")
+                customFormLocal.schedule_date_end_format_ms = ToolBox_Inf.dateToMilliseconds("${scheduleExec.date_end} $customerGMT")
+                customFormLocal.require_location = customForm.require_location
+                customFormLocal.require_serial_done = customForm.require_serial_done
+                customFormLocal.schedule_comments = scheduleExec.comments
+                customFormLocal.schedule_prefix = scheduleExec.schedule_prefix
+                customFormLocal.schedule_code = scheduleExec.schedule_code
+                customFormLocal.schedule_exec = scheduleExec.schedule_exec
+                customFormLocal.site_code = scheduleExec.site_code
+                customFormLocal.site_id = scheduleExec.site_id
+                customFormLocal.site_desc = scheduleExec.site_desc
+                //LUCHE - 29/04/2020
+                //Após alteração onde o servidor manda "tabelas" temporarias com as infos relacionais
+                //do agendamento, agora a informação DEVE ser setado na criação do form.
+                customFormLocal.allow_new_serial_cl = scheduleExec.allow_new_serial_cl
+                customFormLocal.require_serial = scheduleExec.require_serial
+                customFormLocal.serial_rule = scheduleExec.serial_rule
+                customFormLocal.serial_max_length = scheduleExec.serial_max_length
+                customFormLocal.serial_min_length = scheduleExec.serial_min_length
+                customFormLocal.local_control = scheduleExec.local_control
+                customFormLocal.product_io_control = scheduleExec.io_control
+                customFormLocal.site_restriction = scheduleExec.site_restriction
+                customFormLocal.custom_product_icon_name = scheduleExec.product_icon_name
+                customFormLocal.custom_product_icon_url = scheduleExec.product_icon_url
+                customFormLocal.custom_product_icon_url_local = getProductIconLocalPath(scheduleExec.product_icon_name?.toLowerCase(Locale.getDefault()))
+                customFormLocal.require_location = scheduleExec.require_location
+                //
+                customFormLocal.tag_operational_code = scheduleExec.tag_operational_code
+                customFormLocal.tag_operational_id = scheduleExec.tag_operational_id
+                customFormLocal.tag_operational_desc = scheduleExec.tag_operational_desc
+                //
+                //LUCHE -  14/03/2019
+                //Alteração Dao de insert com exception NOVO METODO DAO
+                //custom_form_LocalDao.addUpdate(customFormLocal);
+                daoObjReturn = formLocalDao.addUpdateThrowException(customFormLocal)
+                //
+                if (!daoObjReturn.hasError()) {
+                    //Seta form data na action que será enviado para as proximas acts
+                    action.scheduleCustomFormData = customFormLocal.custom_form_data.toString()
+                    //
+                    val items = custom_form_fieldDao.query_HM(
+                            Sql_Act011_002(
+                                    customFormLocal.customer_code.toString(),
+                                    customFormLocal.custom_form_type.toString(),
+                                    customFormLocal.custom_form_code.toString(),
+                                    customFormLocal.custom_form_version.toString(),
+                                    ToolBox_Con.getPreference_Translate_Code(context),
+                                    customFormLocal.custom_form_data.toString()
+                            ).toSqlQuery().toLowerCase(Locale.getDefault())
+                    ) as ArrayList<HMAux>
+                    //
+                    custom_form_field_LocalDao.addUpdate(items)
+                    //
+                    custom_form_blob_localDao.addUpdate(
+                            custom_form_blob_localDao.query(
+                                    GE_Custom_Form_Blob_Sql_001(
+                                            customFormLocal.customer_code.toString(),
+                                            customFormLocal.custom_form_type.toString(),
+                                            customFormLocal.custom_form_code.toString(),
+                                            customFormLocal.custom_form_version.toString()
+                                    ).toSqlQuery().toLowerCase(Locale.getDefault())
+                            ),
+                            false
+                    )
+                    creationOk = true
+                }
+            }
+        }
+        //
+        return creationOk
+    }
+
+    /**
+     * LUCHE - 03/03/2020
+     *
+     * Metodo que verifica se já existe form_local para o agendamento
+     * Se existir, atualiza form_data no bundle
+     * @param scheduleExec - Item selecionando
+     * @param actions - Bundle a ser enviado e que tera o custom_form_data setado se existir.
+     * @return - Verdadeiro se o form_locla ja existir
+     */
+    private fun scheduleFormLocalExists(scheduleExec: MD_Schedule_Exec, action: MyActions): Boolean {
+        val customFormLocal = formLocalDao.getByString(
+                MD_Schedule_Exec_Sql_006(
+                        scheduleExec.customer_code.toString(),
+                        scheduleExec.schedule_prefix.toString(),
+                        scheduleExec.schedule_code.toString(),
+                        scheduleExec.schedule_exec.toString()
+                ).toSqlQuery()
+        )
+        //
+        if (customFormLocal != null) {
+            action.scheduleCustomFormData = customFormLocal.custom_form_data.toString()
+            return true
+        }
+        return false
+    }
+
+    /**
+     * Metodo que verifica se o icone do produto existe e se sim retorno o url_local
+     * @param product_icon_name
+     * @return
+     */
+    private fun getProductIconLocalPath(productIconName: String?): String? {
+         if (productIconName != null && ToolBox_Inf.verifyDownloadFileInf(productIconName, Constant.CACHE_PATH)) {
+                return  productIconName
+            }
+        return null
+    }
+
+    private fun processTicketFlow(myAction: MyActions) {
+        val scheduleExec = getScheduleFromMyAction(myAction)
         if(scheduleExec != null) {
-            if (!ConstantBaseApp.SYS_STATUS_SCHEDULE.equals(scheduleExec.status)) {
+            if (ConstantBaseApp.SYS_STATUS_SCHEDULE != scheduleExec.status) {
                 if (isScheduleStatusPossibleToOpen(scheduleExec!!)) {
-                    prepareOpenTicket(item)
+                    prepareOpenTicket(myAction, scheduleExec)
                 } else {
                     mView.showMsg(
                             Act017_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
-                            item
+                            myAction
                     )
                 }
             } else {
-                if (isScheduleSiteDifferentThanLogged(item)) {
-                    startSiteChangeFlow(item)
+                if (isScheduleSiteDifferentThanLogged(myAction)) {
+                    startSiteChangeFlow(myAction)
                 } else {
                     //LUCHE - 14/01/2021
                     //Verifica se deve bloquear a execução e em caso posito, exibe msg informando do
                     // bloqueio
                     if (ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)) {
-                        mView.showMsg(Act017_Main.FREE_EXECUTION_BLOCKED, item)
+                        mView.showMsg(Act017_Main.FREE_EXECUTION_BLOCKED, myAction)
                     } else {
                         mView.showMsg(
                                 Act017_Main.MODULE_TICKET_EXEC_CONFIRM,
-                                item
+                                myAction
                         )
                     }
                 }
@@ -230,8 +575,7 @@ class Act083_Main_Presenter(private val context: Context,
         val bundle = Bundle()
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
-
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017)
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, scheduleExec.schedule_prefix)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_CODE, scheduleExec.schedule_code)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, scheduleExec.schedule_exec)
@@ -248,7 +592,7 @@ class Act083_Main_Presenter(private val context: Context,
         //bundle.putString(TK_TicketDao.TYPE_PATH, item.get(TK_TicketDao.TYPE_PATH));
         bundle.putString(TK_TicketDao.TYPE_DESC, scheduleExec.ticket_type_desc)
         bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN, false)
-        bundle.putString(Constant.ACT_SELECTED_DATE, item.plannedDate)
+        bundle.putString(Constant.ACT_SELECTED_DATE, calendarDate)
         bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.processPk)
         //
         //LUCHE - 14/08/2020 - Criação de action agendado v2
@@ -285,9 +629,10 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     private fun isScheduleSiteDifferentThanLogged(item: MyActions): Boolean {
-        return item.siteCode != null &&
-                !item.siteCode!!.equals("null") &&
-                !item.siteCode!!.equals(ToolBox_Con.getPreference_Site_Code(context))
+        item.siteCode?.let {
+            return it.toString() != ToolBox_Con.getPreference_Site_Code(context)
+        }
+        return false
     }
 
     override fun getLocalTicket(myAction: MyActions): Bundle {
@@ -340,30 +685,29 @@ class Act083_Main_Presenter(private val context: Context,
         context.sendBroadcast(mIntent)
     }
 
-    private fun prepareOpenTicket(item: MyActions) {
+    private fun prepareOpenTicket(item: MyActions, scheduleExec: MD_Schedule_Exec) {
         val splippedPk = item.getSplippedPk()
         val scheduleTicket = getTicketBySchedule(splippedPk.get(0).toInt(), splippedPk.get(1).toInt(), splippedPk.get(2).toInt())
-        val scheduleExec = getScheduleFromMyAction(item)
-        var ticket_prefix =0
-        var ticket_code =0
+        val ticketPrefix = 0
+        val ticketCode = 0
         if (scheduleTicket!= null
                 && scheduleTicket.ticket_prefix > 0
                 && scheduleTicket.ticket_code > 0) {
-//            mView.callAct070(getTicketFlowBundle(item))
-            mView.showToast("Em Dev")
+            mView.callAct070(getTicketFlowBundle(item, scheduleTicket.ticket_prefix, scheduleTicket.ticket_code))
         } else {
-            mView.callAct071(getTicketActionFlowBundle(item, scheduleExec!!, ticket_prefix, ticket_code, 1))
+            mView.callAct071(getTicketActionFlowBundle(item, scheduleExec!!, ticketPrefix, ticketCode, 1))
         }
     }
 
-    override fun getTicketFlowBundle(item: MyActions): Bundle {
+    private fun getTicketFlowBundle(item: MyActions, ticketPrefix: Int, ticketCode: Int): Bundle {
         val bundle = Bundle()
-//        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT017)
-//        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_PREFIX)))
-//        bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(item.get(TK_TicketDao.TICKET_CODE)))
-//        bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ToolBox_Inf.convertStringToInt(item.get(TK_Ticket_CtrlDao.TICKET_SEQ)))
-//        bundle.putString(Constant.ACT_SELECTED_DATE, item.get(Act017_Main.ACT017_ADAPTER_DATE_REF))
-//        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK))
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix)
+        bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode)
+        //bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ToolBox_Inf.convertStringToInt(item.get(TK_Ticket_CtrlDao.TICKET_SEQ)))
+        bundle.putString(Constant.ACT_SELECTED_DATE, calendarDate)
+        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.processPk)
         return bundle
     }
 
@@ -426,10 +770,9 @@ class Act083_Main_Presenter(private val context: Context,
         return scheduleExec
     }
 
-    override fun isScheduleStatusPossibleToOpen(scheduleExec: MD_Schedule_Exec): Boolean {
+    private fun isScheduleStatusPossibleToOpen(scheduleExec: MD_Schedule_Exec): Boolean {
         //
-        return (scheduleExec != null
-                && !scheduleExec.status.equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
+        return (!scheduleExec.status.equals(ConstantBaseApp.SYS_STATUS_CANCELLED)
                 && !scheduleExec.status.equals(ConstantBaseApp.SYS_STATUS_REJECTED)
                 && !scheduleExec.status.equals(ConstantBaseApp.SYS_STATUS_IGNORED)
                 && !scheduleExec.status.equals(ConstantBaseApp.SYS_STATUS_NOT_EXECUTED))
@@ -441,8 +784,19 @@ class Act083_Main_Presenter(private val context: Context,
         return scheduleExec != null && scheduleExec.schedule_type.equals(scheduleExec.custom_form_type_desc)
     }
 
-    override fun isAnyFormInProcessing(myAction: MyActions): Boolean {
-        TODO("Not yet implemented")
+    private fun isAnyFormInProcessing(scheduleExec: MD_Schedule_Exec): Boolean {
+        val customFormLocal = formLocalDao.getByString(
+                GE_Custom_Form_Local_Sql_003(
+                        scheduleExec.customer_code.toString(),
+                        scheduleExec.custom_form_type.toString(),
+                        scheduleExec.custom_form_code.toString(),
+                        scheduleExec.custom_form_version.toString(),
+                        "0",
+                        scheduleExec.product_code.toString(),
+                        scheduleExec.serial_id
+                ).toSqlQuery()
+        )
+        return customFormLocal != null
     }
 
 
@@ -647,19 +1001,193 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
 
-    override fun hasSerialDefined(myActions: MyActions): Boolean {
+    private fun hasSerialDefined(scheduleExec: MD_Schedule_Exec): Boolean {
+        return !scheduleExec.serial_id.isNullOrBlank()
+                && !scheduleExec.serial_id.isNullOrEmpty()
+    }
+
+    private fun executeSerialSearch(productCode: Int?, productId: String?, serialId: String, searchExact: Boolean) {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setProcess(WS_Serial_Search::class.java.name)
+            //
+            mView.showPD(
+                    hmAux_Trans!!["dialog_serial_search_ttl"],
+                    hmAux_Trans!!["dialog_serial_search_start"]
+            )
+            //
+            val mIntent = Intent(context, WBR_Serial_Search::class.java)
+            val bundle = Bundle()
+            //
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, productCode.toString())
+            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, productId.toString())
+            bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serialId)
+            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, if (searchExact) 1 else 0)
+            bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false)
+            //
+            mIntent.putExtras(bundle)
+            //
+            context.sendBroadcast(mIntent)
+        } else {
+            offlineSerialSearch()
+        }
+    }
+
+    override fun extractSearchResult(result: String?) {
+        val gson = GsonBuilder().serializeNulls().create()
+        val rec = gson.fromJson(
+                result,
+                TSerial_Search_Rec::class.java)
+        //
+        val serialList = rec.record
+        //
+        defineSearchResultFlow(serialList, rec.record_count, rec.record_page)
+    }
+
+    /**
+     * LUCHE - 02/03/2020
+     *
+     * Metodo que busca o serial offline
+     */
+    private fun offlineSerialSearch() {
+        val item: MD_Schedule_Exec = serialDialog!!.auxSchedule
+        val serialToUse = if (!item.serial_id.isNullOrEmpty()){
+                                item.serial_id
+                            } else{
+                                serialDialog?.serialId ?: ""
+                            }
+        val serialList: ArrayList<MD_Product_Serial> = hasLocalSerial(
+                item.product_id,
+                serialToUse!!
+        )
+        //
+        //
+        if (serialList.size > 0) {
+            defineSearchResultFlow(serialList, serialList.size.toLong(), serialList.size.toLong())
+        } else {
+            if (item.allow_new_serial_cl == 0 && item.require_serial == 1){
+                ToolBox_Inf.showNoConnectionDialog(context)
+            } else {
+                defineSearchResultFlow(serialList, serialList.size.toLong(), serialList.size.toLong())
+            }
+        }
+    }
+
+    private fun defineSearchResultFlow(serialList: ArrayList<MD_Product_Serial>, record_count: Long, record_page: Long) {
+        val scheduleExec: MD_Schedule_Exec = serialDialog!!.auxSchedule
+        //
+        if (ToolBox_Inf.productConfigPreventToProceed(scheduleExec) && (serialList == null || serialList.size == 0)) {
+            //Se serial não definido, significa que não avançou para proxima tela pois o produto não permite criação de serial.
+            mView.showMsg(
+                    if (!scheduleExec.serial_id.isNullOrEmpty()) Act017_Main.EMPTY_SERIAL_SEARCH else Act017_Main.SERIAL_CREATION_DENIED,
+                    actionSelected!!
+            )
+        } else {
+            val serialId =
+                    if (!scheduleExec.serial_id.isNullOrEmpty()){
+                        scheduleExec.serial_id?:""
+                    } else{
+                        serialDialog?.let{
+                            it.serialId?:""
+                        }?:""
+                    }
+            val idx: Int = getIdxIfEquals(
+                    serialList,
+                    scheduleExec.product_code,
+                    serialId
+            )
+            //
+            val bundle = Bundle()
+            bundle.putString(MD_ProductDao.PRODUCT_ID, scheduleExec.product_id)
+            if (idx >= 0) {
+                val serialArrayList = ArrayList<MD_Product_Serial>()
+                serialArrayList.add(serialList[idx])
+                //
+                bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true)
+                bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serialArrayList)
+            } else {
+                if (serialList.size == 1 && serialList[0].serial_id == serialDialog!!.serialId) {
+                    bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, true)
+                    bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serialList)
+                } else {
+                    bundle.putBoolean(Constant.MAIN_MD_PRODUCT_SERIAL_JUMP, false)
+                    bundle.putSerializable(Constant.MAIN_MD_PRODUCT_SERIAL, serialList)
+                }
+            }
+            //
+            bundle.putString(Constant.MAIN_MD_PRODUCT_SERIAL_ID, serialDialog!!.serialId)
+            bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_COUNT, record_count)
+            bundle.putLong(Constant.MAIN_MD_PRODUCT_SERIAL_RECORD_PAGE, record_page)
+            //bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, item[Act017_Main.ACT017_ADAPTER_DATE_REF])
+            bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, calendarDate)
+            bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, scheduleExec.custom_form_type.toString())
+            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE, scheduleExec.custom_form_code.toString())
+            bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION, scheduleExec.custom_form_version.toString())
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, scheduleExec.custom_form_type_desc)
+            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, scheduleExec.custom_form_desc)
+            bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, ToolBox_Inf.formatSchedulePk(scheduleExec.schedule_prefix, scheduleExec.schedule_code, scheduleExec.schedule_exec))
+            bundle.putString(Constant.ACT017_SCHEDULED_SITE, scheduleExec.site_code.toString())
+            //
+            //
+            if (createFormLocalForSchedule(actionSelected!!, scheduleExec)) {
+                /*
+                 * BARRIONUEVO 13-04-2020
+                 * Mudanca de ultima hora: adicionar flag para dar bypass em restricoes de serial.
+                 */
+
+                //Seta form data no bundle que será enviado para as proximas acts
+                bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, actionSelected!!.scheduleCustomFormData.toString())
+                bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false)
+                mView.callAct020(bundle)
+            } else {
+                mView.showMsg(Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, actionSelected!!)
+            }
+        }
+    }
+
+    /**
+     * LUCHE - 02/03/2020
+     *
+     * Metodo que retorna o indice do serial buscado.
+     * Faz loop na lista de seriais retornados e caso encontre o serial, retorna seu indice.
+     *
+     * @param serial_list - Lista de seriais encontradas
+     * @param productCode - Codigo do produto buscado
+     * @param serialId - Id do serial buscado
+     * @return - Retorna indice do serial buscado ou -1 se serial não encontrado.
+     */
+    private fun getIdxIfEquals(serialList: ArrayList<MD_Product_Serial>, productCode: Int, serialId: String): Int {
+        for (i in serialList.indices) {
+            val serial: MD_Product_Serial = serialList.get(i)
+            if (serial.product_code == productCode.toLong() && serial.serial_id.equals(serialId, true)) {
+                return i
+            }
+        }
+        //
+        return -1
+    }
+
+    private fun hasLocalSerial(product_id: String, serial_id: String): ArrayList<MD_Product_Serial> {
+        val serialDao = MD_Product_SerialDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        )
+        return serialDao.query(
+                Sql_Act020_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Con.getPreference_Site_Code(context),
+                        product_id,
+                        serial_id,
+                        ""
+                ).toSqlQuery()
+        ) as ArrayList<MD_Product_Serial>
+    }
+
+    private fun getScheduleFormBundle(myAction: MyActions): Bundle {
         TODO("Not yet implemented")
     }
 
-    override fun executeSerialSearch(productCode: Int?, productId: Int?, serialId: String, b: Boolean) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getScheduleFormBundle(myAction: MyActions): Bundle {
-        TODO("Not yet implemented")
-    }
-
-    override fun getMdSchedule(myAction: MyActions): MD_Schedule_Exec {
+    private fun getMdSchedule(myAction: MyActions): MD_Schedule_Exec {
         TODO("Not yet implemented")
     }
 
@@ -716,6 +1244,8 @@ class Act083_Main_Presenter(private val context: Context,
     private fun recoverIntentsInfo() {
         myActionFilterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM) as MyActionFilterParam
         originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
+        siteCodeBack = ToolBox_Con.getPreference_Site_Code(context)
+        zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context)
     }
 
     private fun loadFilters() {
@@ -764,7 +1294,7 @@ class Act083_Main_Presenter(private val context: Context,
                     if (it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
                             && ConstantBaseApp.SYS_STATUS_IN_PROCESSING == it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS]
                     ) {
-                        it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS] = _hmAux_Trans?.get(ConstantBaseApp.SYS_STATUS_PROCESS)
+                        it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS] = hmAux_Trans?.get(ConstantBaseApp.SYS_STATUS_PROCESS)
                     }
                     //
                     GE_Custom_Form_Local.toMyActionsObj(context.applicationContext as Application?, it)
@@ -792,7 +1322,7 @@ class Act083_Main_Presenter(private val context: Context,
                         ticketId,
                         calendarDate,
                         userFocus,
-                        _hmAux_Trans?.get("other_steps_available_lbl")
+                        hmAux_Trans?.get("other_steps_available_lbl")
                 ).toSqlQuery()
         )
     }
@@ -848,7 +1378,7 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     private fun getLocalForms(userFocus: Int): MutableList<HMAux> {
-        val lbl = _hmAux_Trans?.get("form_lbl") ?: "FORMULARIO"
+        val lbl = hmAux_Trans?.get("form_lbl") ?: "FORMULARIO"
 
         return formLocalDao.query_HM(
                 SqlAct083_004(

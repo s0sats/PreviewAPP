@@ -16,6 +16,7 @@ data class MyActions(
         val originDescriptor: String,
         val processDesc: String,
         val focusStepDesc: String?,
+        val siteCode: Int? = null,
         val siteDesc: String?,
         val clientInfo: String?,
         val contractInfo: String?,
@@ -34,11 +35,11 @@ data class MyActions(
         const val MY_ACTION_TYPE_FORM_AP = "FORM_AP"
         const val MY_ACTION_TYPE_FORM = "FORM"
     }
-    var siteCode: Int? = null
     var productCode: Int? = null
-    var productId: Int? = null
+    var productId: String? = null
     var customFormTypeDesc: String? = null
     var customFormDesc: String? = null
+    var scheduleCustomFormData: String? = null
 
     fun getSplippedPk(): List<String> {
         return processPk.split(".")

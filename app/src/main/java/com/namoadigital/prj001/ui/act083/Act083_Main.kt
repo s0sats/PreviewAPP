@@ -15,13 +15,14 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.MyActionsAdapter
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act083MainBinding
-import com.namoadigital.prj001.model.MD_Schedule_Exec
 import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act017.Act017_Main
+import com.namoadigital.prj001.ui.act020.Act020_Main
 import com.namoadigital.prj001.ui.act033.Act033_Main
 import com.namoadigital.prj001.ui.act038.Act038_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
@@ -158,43 +159,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     }
 
     fun onMyActionClick(myAction: MyActions): Unit{
-        //viewModel.processActionClick(myAction)
-        when(myAction.actionType){
-            MyActions.MY_ACTION_TYPE_TICKET -> processLocalTicketClick(myAction)
-            MyActions.MY_ACTION_TYPE_TICKET_CACHE -> processCachedTicketClick(myAction)
-            MyActions.MY_ACTION_TYPE_SCHEDULE ->{
-//                mPresenter.checkScheduleFlow(myAction)
-                ToolBox.toastMSG(context, "EM dev")
-            }
-            MyActions.MY_ACTION_TYPE_FORM_AP -> processFormApClick(myAction)
-            MyActions.MY_ACTION_TYPE_FORM -> processFormClick(myAction)
-        }
-    }
-
-    private fun processLocalTicketClick(myAction: MyActions) {
-        callAct070(
-                mPresenter.getLocalTicket(
-                        myAction
-                )
-        )
-    }
-
-    private fun processCachedTicketClick(myAction: MyActions) {
-        if(ToolBox_Con.isOnline(context)){
-            wsProcess = WS_TK_Ticket_Download::class.java.name
-            showPD(
-                    hmAux_Trans["dialog_download_ticket_ttl"],
-                    hmAux_Trans["dialog_download_ticket_start"]
-            )
-            //
-            mPresenter.prepareWsTicketDownload(myAction)
-        }else{
-            ToolBox_Inf.showNoConnectionDialog(context)
-        }
+        mPresenter.processActionClick(myAction)
     }
 
 
-    private fun showPD(ttl: String?, msg: String?) {
+    override fun showPD(ttl: String?, msg: String?) {
         enableProgressDialog(
                 ttl,
                 msg,
@@ -203,79 +172,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         )
     }
 
-    private fun prepareOpenTicket(myAction: MyActions) {
-        TODO("Not yet implemented")
-    }
-
-
-    private fun prepareOpenForm(myAction: MyActions) {
-        callAct011(mPresenter.getScheduleFormBundle(myAction))
-    }
-
-    private fun buildRequestSerialDialog(myAction: MyActions, showDialog: Boolean) {
-        val scheduleExec: MD_Schedule_Exec = mPresenter.getMdSchedule(myAction)
-        val serialRule: String? = scheduleExec.serial_rule
-        val serialMinLength = scheduleExec.serial_min_length
-        val serialMaxLength = scheduleExec.serial_max_length
-        //
-        serialDialog = ScheduleRequestSerialDialog2(
-                context,
-                scheduleExec,
-                serialRule,
-                serialMinLength,
-                serialMaxLength,
-                object : ScheduleRequestSerialDialog2.OnScheduleRequestSerialDialogListeners {
-                    override fun processToForm() {
-                        val bundle = Bundle()
-                        if (createFormLocalForSchedule(myAction, bundle)) {
-                            //Atualiza fomr_data no item
-//                            item.put(
-//                                    GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA,
-//                                    bundle.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, "0")
-//                            )
-                            //
-                            prepareOpenForm(myAction)
-                        } else {
-                            showAlert(
-                                    hmAux_Trans["alert_error_on_create_form_ttl"],
-                                    hmAux_Trans["alert_error_on_create_form_msg"]
-                            )
-                        }
-                    }
-
-                    override fun processToSearchSerial(serialID: String) {
-                        mPresenter.executeSerialSearch(
-                                myAction.productCode,
-                                myAction.productId,
-                                serialID,
-                                false)
-                    }
-
-                    override fun addMketControl(mketSerial: MKEditTextNM) {
-                        addControlToActivity(mketSerial)
-                    }
-
-                    override fun removeMketControl(mketSerial: MKEditTextNM) {
-                        removeControlFromActivity(mketSerial)
-                    }
-                }
-        )
-        //
-        if (showDialog) {
-            serialDialog?.show()
-        }
-    }
-
-    private fun createFormLocalForSchedule(myAction: MyActions, bundle: Bundle): Boolean {
-        TODO("Not yet implemented")
-    }
-
-
-    private fun addControlToActivity(mketSerial: MKEditTextNM) {
+    override fun addControlToActivity(mketSerial: MKEditTextNM) {
         controls_sta.add(mketSerial)
     }
 
-    private fun removeControlFromActivity(mketSerial: MKEditTextNM) {
+    override fun removeControlFromActivity(mketSerial: MKEditTextNM) {
         controls_sta.remove(mketSerial)
     }
 
@@ -289,16 +190,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         )
     }
 
-    private fun processFormApClick(myAction: MyActions) {
-        callAct038(
-                mPresenter.getFormApBundle(myAction)
-        )
-    }
-
-    private fun processFormClick(myAction: MyActions) {
-        callAct011(
-                mPresenter.getFormBundle(myAction)
-        )
+    override fun setProcess(wsProcess: String) {
+        this.wsProcess = wsProcess
     }
 
     override fun processCloseACT(mLink: String?, mRequired: String?) {
@@ -343,6 +236,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 callAct070(
                         mPresenter.getCacheTicketBundle(hmAuxTicketDownload)
                 )
+            }
+            WS_Serial_Search::class.java.name -> {
+                wsProcess = ""
+                progressDialog.dismiss()
+                mPresenter.extractSearchResult(mLink)
             }
             else -> progressDialog?.dismiss()
         }
@@ -442,7 +340,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         finish()
     }
 
-    private fun callAct038(bundle: Bundle) {
+    override fun callAct038(bundle: Bundle) {
         val mIntent = Intent(context, Act038_Main::class.java)
         mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         mIntent.putExtras(bundle)
@@ -450,7 +348,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         finish()
     }
 
-    private fun callAct011(bundle: Bundle) {
+    override fun callAct011(bundle: Bundle) {
         val mIntent = Intent(context, Act011_Main::class.java)
         mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         mIntent.putExtras(bundle)
@@ -466,6 +364,16 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         startActivityForResult(mIntent, CHANGE_ZONE_RESULT_CODE)
     }
 
+    override fun callAct020(bundle: Bundle) {
+        val mIntent = Intent(context, Act020_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        if (bundle != null) {
+            bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT017)
+            mIntent.putExtras(bundle)
+        }
+        startActivity(mIntent)
+        finish()
+    }
 
     override fun onBackPressed() {
         //super.onBackPressed()
@@ -489,8 +397,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 msg = hmAux_Trans["alert_msg_start_new_processing"]
                 btnNegative = 1
                 listener = DialogInterface.OnClickListener { dialogInterface, i ->
-//                    TODO chamar fluxo de form
-//                    mPresenter.checkFormFlow(item)
+                    mPresenter.checkFormFlow(item)
                 }
             }
             Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR -> {
@@ -566,6 +473,30 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         ToolBox.toastMSG(context, msg)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            CHANGE_ZONE_RESULT_CODE -> processChanceZoneResult(resultCode)
+            else -> {
+            }
+        }
+    }
 
+    private fun processChanceZoneResult(resultCode: Int) {
+        if (resultCode == RESULT_OK) {
+            //O unico efeito da troca na lista é visibilidade da informação de site
+            //sendo assim, somente o notify deve dar conta
+            mAdapter.notifyDataSetChanged()
+            //Atualiza dados no footer
+            iniUIFooter()
+            //Clica novamente no item
+            mPresenter.actionSelected?.let {
+                mPresenter.checkScheduleFlow(it)
+            }
+        } else {
+            ToolBox_Con.setPreference_Site_Code(context, mPresenter.siteCodeBack)
+            ToolBox_Con.setPreference_Zone_Code(context, mPresenter.zoneCodeBack)
+        }
+    }
 }
 

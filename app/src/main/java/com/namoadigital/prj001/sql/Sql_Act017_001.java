@@ -43,6 +43,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
  * LUCHE - 30/04/2021
  * - Corrigido a query, substituindo o segundo param customerGMT, pelo deviceGMT
  * - Corrigido query, add o customerGMT concatenado na data e tb o param do time zone do device para converter o resultado para o timezone correto
+ *
+ * LUCHE - 18/05/2021
+ * - Add campos do tag_operational
+ *
  */
 
 public class Sql_Act017_001 implements Specification {
@@ -116,7 +120,10 @@ public class Sql_Act017_001 implements Specification {
                         "  s.site_restriction,\n" +
                         "  s.product_icon_name,\n" +
                         "  s.product_icon_url,\n" +
-                        "  s.require_location\n" +
+                        "  s.require_location\n," +
+                        "  s.tag_operational_code,\n" +
+                        "  s.tag_operational_id,\n" +
+                        "  s.tag_operational_desc\n" +
                         " \n" +
                         "  FROM\n" +
                         "   " + MD_Schedule_ExecDao.TABLE+ " s\n" +

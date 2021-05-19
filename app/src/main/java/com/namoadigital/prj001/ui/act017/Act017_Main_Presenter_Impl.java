@@ -1209,6 +1209,10 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 );
                 customFormLocal.setRequire_location(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.REQUIRE_LOCATION)));
                 //
+                customFormLocal.setTag_operational_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE)));
+                customFormLocal.setTag_operational_id(item.get(MD_Schedule_ExecDao.TAG_OPERATIONAL_ID));
+                customFormLocal.setTag_operational_desc(item.get(MD_Schedule_ExecDao.TAG_OPERATIONAL_DESC));
+                //
                 //LUCHE -  14/03/2019
                 //Alteração Dao de insert com exception NOVO METODO DAO
                 //custom_form_LocalDao.addUpdate(customFormLocal);

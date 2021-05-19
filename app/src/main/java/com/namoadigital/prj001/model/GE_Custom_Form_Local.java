@@ -536,7 +536,8 @@ public class GE_Custom_Form_Local {
             hmAux.get(MyActions.MY_ACTION_TYPE_FORM),
             hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC),
             null,
-            ToolBox_Inf.equalsToLoggedSite(context, hmAux.get(GE_Custom_Form_LocalDao.SITE_CODE)) ? null : hmAux.get(GE_Custom_Form_LocalDao.SITE_DESC),
+            ToolBox_Inf.convertStringToInt(hmAux.get(GE_Custom_Form_LocalDao.SITE_CODE)),
+            hmAux.get(GE_Custom_Form_LocalDao.SITE_DESC),
             null,
             null,
             hmAux.get(GE_Custom_Form_DataDao.SO_CODE),
@@ -550,7 +551,6 @@ public class GE_Custom_Form_Local {
             false,
             false
         );
-        myActions.setSiteCode(Integer.parseInt(hmAux.get(GE_Custom_Form_LocalDao.SITE_CODE)));
         myActions.setProductCode(Integer.parseInt(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)));
         myActions.setCustomFormTypeDesc(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
         myActions.setCustomFormDesc(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));

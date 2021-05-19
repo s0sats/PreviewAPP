@@ -46,14 +46,14 @@ public class ScheduleRequestSerialDialog2 extends AlertDialog {
     private final Integer minSerialSize;
     private final Integer maxSerialSize;
 
-    public ScheduleRequestSerialDialog2(@NonNull Context context, MD_Schedule_Exec auxSchedule, String serial_rule, Integer minSerialSize, Integer maxSerialSize, OnScheduleRequestSerialDialogListeners listeners){
+    public ScheduleRequestSerialDialog2(@NonNull Context context, @NonNull MD_Schedule_Exec auxSchedule, OnScheduleRequestSerialDialogListeners listeners){
         super(context);
         this.context = context;
         this.auxSchedule = auxSchedule;
         this.listeners = listeners;
-        this.serial_rule = serial_rule;
-        this.minSerialSize = minSerialSize;
-        this.maxSerialSize = maxSerialSize;
+        this.serial_rule = auxSchedule.getSerial_rule();
+        this.minSerialSize = auxSchedule.getSerial_min_length();
+        this.maxSerialSize = auxSchedule.getSerial_max_length();
     }
 
     public interface OnScheduleRequestSerialDialogListeners{

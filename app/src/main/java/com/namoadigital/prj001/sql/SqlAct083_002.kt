@@ -80,7 +80,10 @@ class SqlAct083_002(
                                     and l.${GE_Custom_Form_LocalDao.TICKET_CODE} = t.${TK_TicketDao.TICKET_CODE}
                                     and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
                      ) ${MyActions.MY_ACTION_TYPE_FORM},
-                     ts.${TK_Ticket_StepDao.STEP_DESC}
+                     ts.${TK_Ticket_StepDao.STEP_DESC},                     
+                     ts.${TK_Ticket_StepDao.FORECAST_START},                     
+                     ts.${TK_Ticket_StepDao.FORECAST_END}                    
+
                     FROM
                         ${TK_TicketDao.TABLE} t
                     LEFT JOIN    
@@ -93,7 +96,9 @@ class SqlAct083_002(
                            (case when count(1) = 1
                                  then min(s.${TK_Ticket_StepDao.STEP_DESC})
                                  else '$multStepsLbl'
-                           end) ${TK_Ticket_StepDao.STEP_DESC}                           
+                           end) ${TK_Ticket_StepDao.STEP_DESC} ,
+                           min(s.forecast_start) ${TK_Ticket_StepDao.FORECAST_START},
+                           max(s.forecast_end) ${TK_Ticket_StepDao.FORECAST_END}   
                          FROM
                            ${TK_Ticket_StepDao.TABLE} s
                          WHERE  

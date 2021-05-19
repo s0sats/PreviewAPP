@@ -123,6 +123,7 @@ import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MD_Operation;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.MdTag;
@@ -7410,6 +7411,29 @@ public class ToolBox_Inf {
             boolean followToAct020 =
                  auxSchedule.get(MD_Schedule_ExecDao.SERIAL_ID).isEmpty()
                  && auxSchedule.get(MD_Schedule_ExecDao.ALLOW_NEW_SERIAL_CL).equalsIgnoreCase("1");
+            //
+            return !followToAct020;
+        }catch (Exception e){
+            e.printStackTrace();
+            registerException(CLASS_NAME,e);
+            return false;
+        }
+    }
+
+    /**
+     * LUCHE - 18/05/2021
+     *
+     * Metodo que verifica se a configuração do produto permite avançar para a criação a tela de
+     * seleção de serial.
+     *
+     * @param auxSchedule - Item regatado do dialog
+     * @return - Verdadeiro se se serial não foi informado e se produto permitie criação de serial
+     */
+
+    public static boolean productConfigPreventToProceed(MD_Schedule_Exec auxSchedule) {
+        try {
+            boolean followToAct020 =
+                    auxSchedule.getSerial_id().isEmpty() && auxSchedule.getAllow_new_serial_cl() == 1;
             //
             return !followToAct020;
         }catch (Exception e){

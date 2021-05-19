@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act083
 
 import android.os.Bundle
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.MD_Schedule_Exec
 import com.namoadigital.prj001.model.MyActions
@@ -13,6 +14,13 @@ interface Act083_Main_Contract {
         fun callAct070(bundle: Bundle)
         fun callAct071(bundle: Bundle)
         fun callAct033()
+        fun setProcess(wsProcess: String)
+        fun showPD(ttl: String?, msg: String?)
+        fun callAct038(formApBundle: Bundle)
+        fun callAct011(formBundle: Bundle)
+        fun addControlToActivity(mketSerial: MKEditTextNM)
+        fun removeControlFromActivity(mketSerial: MKEditTextNM)
+        fun callAct020(bundle: Bundle)
     }
 
     interface I_Presenter {
@@ -27,20 +35,14 @@ interface Act083_Main_Contract {
         fun getLocalTickets(userFocus: Int): MutableList<HMAux>
         fun prepareWsTicketDownload(myAction: MyActions)
         fun isScheduleStarted(myAction: MyActions): Boolean
-        fun isScheduleStatusPossibleToOpen(scheduleExec: MD_Schedule_Exec): Boolean
         fun isScheduleFormType(myAction: MyActions): Boolean
-        fun isAnyFormInProcessing(myAction: MyActions): Boolean
-        fun hasSerialDefined(myActions: MyActions): Boolean
-        fun executeSerialSearch(productCode: Int?, productId: Int?, serialId: String, b: Boolean)
-        fun getScheduleFormBundle(myAction: MyActions): Bundle
-        fun getMdSchedule(myAction: MyActions): MD_Schedule_Exec
         fun hasScheduleSiteAccess(siteCode: Int?): Boolean
         fun verifyProductOutdateForForm(hmAuxTicketDownloaded: HMAux): Boolean
         fun prepareWsFormSync()
-        fun getTicketFlowBundle(item: MyActions): Bundle
         fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle
-        fun processTicketFlow(item: MyActions)
-
+        fun processActionClick(myAction: MyActions)
+        fun checkFormFlow(action: MyActions)
+        fun extractSearchResult(result: String?)
     }
 
 }

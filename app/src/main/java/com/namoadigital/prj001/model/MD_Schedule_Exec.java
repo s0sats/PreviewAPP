@@ -535,7 +535,8 @@ public class MD_Schedule_Exec {
             schedule_desc,
             ConstantBaseApp.MD_SCHEDULE_TYPE_FORM.equals(schedule_type) ? custom_form_desc : ticket_type_desc,
             comments,
-            ToolBox_Inf.equalsToLoggedSite(context, String.valueOf(site_code)) ? null : site_desc,//so exibe se for diferente
+            site_code,
+            site_desc,
             null,
             null,
             null,
@@ -549,8 +550,8 @@ public class MD_Schedule_Exec {
             ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
             ToolBox_Inf.isItemLate(date_end + " " + customerGMT)
         );
-        myActions.setSiteCode(site_code);
         myActions.setProductCode(product_code);
+        myActions.setProductId(product_id);
         myActions.setCustomFormTypeDesc(custom_form_type_desc);
         myActions.setCustomFormTypeDesc(custom_form_desc);
         return myActions;
