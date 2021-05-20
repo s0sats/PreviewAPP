@@ -66,7 +66,7 @@ class SqlAct005TagList001(private val context: Context,
 
         if (siteCode > 0) {
             ticketFilter += "\n and tk.${TK_TicketDao.OPEN_SITE_CODE} = $siteCode "
-            ticketCacheFilter += "\n and tkc.${TK_TicketDao.OPEN_SITE_CODE} = $siteCode "
+            ticketCacheFilter += "\n and tkc.${TkTicketCacheDao.OPEN_SITE_CODE} = $siteCode "
             scheduleFilter += "\n and mse.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode "
             scheduleNextFilter += "\n and s.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode "
 //            formFilter += "\n and gcdl.${GE_Custom_Form_LocalDao.SITE_CODE} = $siteCode "
@@ -74,6 +74,7 @@ class SqlAct005TagList001(private val context: Context,
 
         if (PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION.equals(focusFilter)) {
             ticketFilter += "\n and tk.${TK_TicketDao.USER_FOCUS} = 1 "
+            ticketCacheFilter += "\n and tkc.${TkTicketCacheDao.USER_FOCUS} = 1 "
         }
     }
 
