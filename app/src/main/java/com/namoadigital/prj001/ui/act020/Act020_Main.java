@@ -33,6 +33,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
@@ -116,6 +117,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private boolean scheduled_profile_check;
     private boolean isOffHandForm;
     private boolean mtk_ticket_is_form_off_hand;
+    private Bundle act083Bundle = new Bundle();
 
 
     @Override
@@ -426,6 +428,14 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 act081Bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, fragSerial_ID);
                 act081Bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, fragTracking);
             }
+
+            if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)){
+                act083Bundle.putString(
+                        ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                        bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                );
+                act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(bundle));
+            }
         }
     }
 
@@ -668,6 +678,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         bundle.putAll(scheduleBundle);
         bundle.putAll(act013Bundle);
         bundle.putAll(act081Bundle);
+        bundle.putAll(act083Bundle);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, requestingAct);
         mIntent.putExtras(bundle);
         //
@@ -679,6 +690,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public void callAct009(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act009_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(bundle != null){
+            bundle.putAll(act083Bundle);
+        }
         mIntent.putExtras(bundle);
         //
         startActivity(mIntent);
@@ -689,6 +703,10 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     public void callAct011(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        if(bundle != null){
+            bundle.putAll(act083Bundle);
+        }
         mIntent.putExtras(bundle);
         //
         startActivity(mIntent);
@@ -724,6 +742,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         Intent mIntent = new Intent(context, Act081_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(act081Bundle);
+        mIntent.getExtras().putAll(act083Bundle);
         startActivity(mIntent);
         finish();
     }

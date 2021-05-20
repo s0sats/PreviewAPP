@@ -296,20 +296,27 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             }
         })
         binding.act083MainContent.act083Tabs.setOnCheckedChangeListener { _, checkedId ->
-            binding.act083MainContent.act083TvNoResult.visibility = View.GONE
-            //
-            when(checkedId){
-                binding.act083MainContent.act083TabMyActions.id -> updateMyActionList(1)
-                else -> updateMyActionList(0)
+            with(binding.act083MainContent){
+                when(checkedId){
+                    act083TabMyActions.id -> updateMyActionList(1)
+                    else -> updateMyActionList(0)
+                }
             }
         }
     }
 
     private fun applyTextFilter(text: String?) {
-        mAdapter.filter.filter(text)
+        if(::mAdapter.isInitialized){
+            mAdapter.filter.filter(text)
+        }
     }
 
     private fun updateMyActionList(userFocusFilter: Int) {
+        //Reseta visibilidade das views
+        with(binding.act083MainContent){
+            act083TvNoResult.visibility = View.GONE
+            act083RvActionsList.visibility = View.GONE
+        }
         changeProgressBarVisility(true)
         mPresenter.updateMyActionList(userFocusFilter)
     }

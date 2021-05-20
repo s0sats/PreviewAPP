@@ -23,6 +23,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.MD_Product;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
@@ -85,6 +86,7 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
     private String wsProcess;
     private boolean isForm;
     private String room_code;
+    private Bundle mBundle;
 
 
     @Override
@@ -207,24 +209,24 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
     }
 
     private void recoverIntentsInfo() {
-        Bundle bundle = getIntent().getExtras();
+        mBundle = getIntent().getExtras();
         //
-        if (bundle != null) {
-            fragProduct_ID = bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, "");
-            fragSerial_ID = bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
-            fragTracking = bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
-            room_code = bundle.getString(CH_RoomDao.ROOM_CODE);
-            productCode = bundle.getInt(MD_ProductDao.PRODUCT_CODE, -1);
-            productDesc = bundle.getString(MD_ProductDao.PRODUCT_DESC, "");
-            productId = bundle.getString(MD_ProductDao.PRODUCT_ID, "");
-            serialId = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
+        if (mBundle != null) {
+            fragProduct_ID = mBundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, "");
+            fragSerial_ID = mBundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, "");
+            fragTracking = mBundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
+            room_code = mBundle.getString(CH_RoomDao.ROOM_CODE);
+            productCode = mBundle.getInt(MD_ProductDao.PRODUCT_CODE, -1);
+            productDesc = mBundle.getString(MD_ProductDao.PRODUCT_DESC, "");
+            productId = mBundle.getString(MD_ProductDao.PRODUCT_ID, "");
+            serialId = mBundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
 
-            ticketPrefix = bundle.getInt(TK_TicketDao.TICKET_PREFIX,-1);
-            ticketCode = bundle.getInt(TK_TicketDao.TICKET_CODE, -1);
-            ticketId = bundle.getString(TK_TicketDao.TICKET_ID, "");
-            stepCode = bundle.getInt(TK_Ticket_StepDao.STEP_CODE, -1);
-            stepDesc = bundle.getString(TK_Ticket_StepDao.STEP_DESC, "");
-            mainRequestingAct = bundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT070);
+            ticketPrefix = mBundle.getInt(TK_TicketDao.TICKET_PREFIX,-1);
+            ticketCode = mBundle.getInt(TK_TicketDao.TICKET_CODE, -1);
+            ticketId = mBundle.getString(TK_TicketDao.TICKET_ID, "");
+            stepCode = mBundle.getInt(TK_Ticket_StepDao.STEP_CODE, -1);
+            stepDesc = mBundle.getString(TK_Ticket_StepDao.STEP_DESC, "");
+            mainRequestingAct = mBundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT070);
 
         } else {
             fragProduct_ID = "";
@@ -496,6 +498,12 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode);
         bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
         //
+        bundle.putString(
+                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                mBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+        );
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(mBundle));
+        //
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtras(bundle);
         //
@@ -592,6 +600,11 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
             bundle.putInt(TK_Ticket_StepDao.STEP_CODE, stepCode);
             bundle.putString(TK_Ticket_StepDao.STEP_DESC, stepDesc);
             bundle.putBoolean(Constant.TK_TICKET_IS_FORM_OFF_HAND, isForm);
+            bundle.putString(
+                    ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                    mBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+            );
+            bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(mBundle));
             mIntent.putExtras(bundle);
         }
         startActivity(mIntent);

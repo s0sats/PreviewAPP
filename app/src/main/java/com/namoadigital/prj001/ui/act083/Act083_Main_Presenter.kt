@@ -145,7 +145,7 @@ class Act083_Main_Presenter(private val context: Context,
 
     override fun getActTitle(): String {
         return when(originFlow){
-            ConstantBaseApp.ACT005 -> myActionFilterParam.tagFilterDesc!!
+            ConstantBaseApp.ACT005 -> myActionFilterParam.tagFilterDesc ?: hmAux_Trans!!["act083_title"]!!
             else -> hmAux_Trans!!["act083_title"]!!
         }
     }
@@ -1247,6 +1247,7 @@ class Act083_Main_Presenter(private val context: Context,
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix)
         bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
         return bundle
     }
 
@@ -1288,28 +1289,35 @@ class Act083_Main_Presenter(private val context: Context,
                     }
             )
             //
-            _myActionsList.addAll(
-                    getSchedules(tabUserFocusFilter).map {
-                        it.toMyActionsObj(context)
-                    }
-            )
-            //
-            _myActionsList.addAll(
-                    getFormAp(tabUserFocusFilter).map {
-                        it.toMyActionsObj(context)
-                    }
-            )
-            myActionsList.addAll(
-                    getLocalForms(tabUserFocusFilter).map {
-                        if (it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
-                                && ConstantBaseApp.SYS_STATUS_IN_PROCESSING == it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS]
-                        ) {
-                            it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS] = hmAux_Trans?.get(ConstantBaseApp.SYS_STATUS_PROCESS)
+            if(!ConstantBaseApp.ACT068.equals(originFlow,true)) {
+                _myActionsList.addAll(
+                        getSchedules(tabUserFocusFilter).map {
+                            it.toMyActionsObj(context)
                         }
-                        //
-                        GE_Custom_Form_Local.toMyActionsObj(context.applicationContext as Application?, it)
-                    }
-            )
+                )
+            }
+            //
+            if(!ConstantBaseApp.ACT068.equals(originFlow,true)) {
+                _myActionsList.addAll(
+                        getFormAp(tabUserFocusFilter).map {
+                            it.toMyActionsObj(context)
+                        }
+                )
+            }
+            //
+            if(!ConstantBaseApp.ACT068.equals(originFlow,true)) {
+                myActionsList.addAll(
+                        getLocalForms(tabUserFocusFilter).map {
+                            if (it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
+                                    && ConstantBaseApp.SYS_STATUS_IN_PROCESSING == it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS]
+                            ) {
+                                it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS] = hmAux_Trans?.get(ConstantBaseApp.SYS_STATUS_PROCESS)
+                            }
+                            //
+                            GE_Custom_Form_Local.toMyActionsObj(context.applicationContext as Application?, it)
+                        }
+                )
+            }
             //
             _myActionsList.sortBy {
                 it.orderBy
@@ -1322,7 +1330,7 @@ class Act083_Main_Presenter(private val context: Context,
         }
     }
 
-    override fun getLocalTickets(userFocus: Int): MutableList<HMAux> {
+    private fun getLocalTickets(userFocus: Int): MutableList<HMAux> {
         //
         return ticketDao.query_HM(
                 SqlAct083_002(

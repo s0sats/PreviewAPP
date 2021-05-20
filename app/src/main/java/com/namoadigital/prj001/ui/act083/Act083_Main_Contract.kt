@@ -34,7 +34,6 @@ interface Act083_Main_Contract {
         fun getLocalTicket(myAction: MyActions): Bundle
         fun getFormApBundle(myAction: MyActions): Bundle
         fun getFormBundle(myAction: MyActions): Bundle
-        fun getLocalTickets(userFocus: Int): MutableList<HMAux>
         fun prepareWsTicketDownload(myAction: MyActions)
         fun isScheduleStarted(myAction: MyActions): Boolean
         fun isScheduleFormType(myAction: MyActions): Boolean

@@ -77,6 +77,8 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -1176,19 +1178,28 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         if (ConstantBaseApp.ACT012.equals(requestingAct)
             || ConstantBaseApp.ACT014.equals(requestingAct)
             || ConstantBaseApp.ACT035.equals(requestingAct)
-            || ConstantBaseApp.ACT017.equals(requestingAct))
+            || ConstantBaseApp.ACT017.equals(requestingAct)
+            || ConstantBaseApp.ACT083.equals(requestingAct))
         {
             bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, requestingAct);
             if (ConstantBaseApp.ACT035.equals(requestingAct)) {
                 bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
             }
             //LUCHE - 18/03/2020 - Tratativa especifica do agendamento
-            if(ConstantBaseApp.ACT017.equals(requestingAct)){
+            if( ConstantBaseApp.ACT017.equals(requestingAct)
+                ||  ConstantBaseApp.ACT083.equals(requestingAct)
+            ){
                 bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, requestingBundle.getString(MD_Schedule_ExecDao.SCHEDULE_PK, null));
                 bundle.putString(ConstantBaseApp.ACT_SELECTED_DATE, requestingBundle.getString(ConstantBaseApp.ACT_SELECTED_DATE, null));
             }
         }
         bundle.putBoolean(PARAM_WORKGROUP_EDIT_MODE, inWgEditMode);
+        //Review 4.0
+        bundle.putString(
+                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+        );
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
         //
         intent.putExtras(bundle);
         //
@@ -1234,6 +1245,15 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         if (ConstantBaseApp.ACT035.equals(requestingAct)) {
             bundle.putString(CH_RoomDao.ROOM_CODE, room_code);
         }
+        //LUCHE - 20/05/2021
+        if (ConstantBaseApp.ACT083.equals(requestingAct)) {
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT070);
+        }
+        bundle.putString(
+                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+        );
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
         intent.putExtras(bundle);
         //
         startActivity(intent);
@@ -1246,30 +1266,19 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
-        //todo Tratar fluxos de action espontanea para n perder o param
-        MyActionFilterParam mActionFilterParam = (MyActionFilterParam) requestingBundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
-        if(mActionFilterParam == null){
-            mActionFilterParam = new MyActionFilterParam(
-                    null,
-                    "Todos - trad",
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-            );
-        }
-        //
-        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,mActionFilterParam);
+        bundle.putString(
+                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+        );
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
         intent.putExtras(bundle);
         //
         startActivity(intent);
         finish();
 
     }
+
+
 
     private void iniUIFooter() {
         iniFooter();
@@ -1370,6 +1379,11 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     public void callAct011(Bundle act011Bundle) {
         Intent intent = new Intent(context, Act011_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        act011Bundle.putString(
+                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+        );
+        act011Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
         intent.putExtras(act011Bundle);
         startActivity(intent);
         finish();

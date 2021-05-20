@@ -1187,7 +1187,8 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 //Modificado navegação pos save para sempre navegar para act070.
                 mView.callAct070();
             }else{
-                mView.callAct017();
+                //mView.callAct017();
+                mView.callAct083();
             }
         }
     }
@@ -1300,6 +1301,7 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
             case ConstantBaseApp.ACT014:
                 mView.callAct070();
                 break;
+            case ConstantBaseApp.ACT083:
             case ConstantBaseApp.ACT070:
             case ConstantBaseApp.ACT017:
             default:
@@ -1327,9 +1329,11 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
         checkActionPhotoToDel(mView.getAction());
         //
         switch (requestingAct){
+            case ConstantBaseApp.ACT083:
             case ConstantBaseApp.ACT017:
                 if(mView.isScheduledTicket()){
-                    mView.callAct017();
+                    //mView.callAct017();
+                    mView.callAct083();
                 }else{
                     mView.callAct070();
                 }
@@ -1348,7 +1352,6 @@ public class Act071_Main_Presenter implements Act071_Main_Contract.I_Presenter {
                 }
                 break;
             case ConstantBaseApp.ACT070:
-
             case ConstantBaseApp.ACT076:
             default:
                 mView.callAct070();

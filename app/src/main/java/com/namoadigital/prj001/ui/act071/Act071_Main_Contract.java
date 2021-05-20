@@ -61,6 +61,8 @@ public interface Act071_Main_Contract {
         boolean has_tk_ticket_is_form_off_hand();
 
         void callAct081();
+
+        void callAct083();
     }
 
     interface I_Presenter{

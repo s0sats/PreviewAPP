@@ -33,6 +33,7 @@ class SqlAct083_001(
     private fun setFiltersByOriginAndFocus() {
         when(originFlow){
             ConstantBaseApp.ACT005 -> setHomeFilterConfg()
+            ConstantBaseApp.ACT068 -> setMenuSearchFilterConfig()
         }
     }
 
@@ -47,9 +48,23 @@ class SqlAct083_001(
         clientId = null
         contractId = null
         calendarDate = null
-        statusFilter = when(userFocus){
-                        1 -> """    and c.${TkTicketCacheDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}') """
-                        else -> """    and c.${TkTicketCacheDao.TICKET_STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'"""
+        getStatusFilter()
+    }
+
+    private fun setMenuSearchFilterConfig() {
+        tagOperCode = null
+        periodDateFilter = ""
+        siteCode = null
+        productCode = null
+        serialId = null
+        calendarDate = null
+        getStatusFilter()
+    }
+
+    private fun getStatusFilter() {
+        statusFilter = when (userFocus) {
+            1 -> """    and c.${TkTicketCacheDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}') """
+            else -> """    and c.${TkTicketCacheDao.TICKET_STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'"""
         }
     }
 
@@ -65,11 +80,11 @@ class SqlAct083_001(
                      and ($tagOperCode is null or c.${TkTicketCacheDao.TAG_OPERATIONAL_CODE} = $tagOperCode)
                      and ($siteCode is null or c.${TkTicketCacheDao.OPEN_SITE_CODE}  = $siteCode)
                      and ($productCode is null or c.${TkTicketCacheDao.OPEN_PRODUCT_CODE} = $productCode )
-                     and ($serialId is null or c.${TkTicketCacheDao.OPEN_SERIAL_ID} = $serialId )
-                     and ($clientId is null or c.${TkTicketCacheDao.CLIENT_ID} = $clientId)
-                     and ($contractId is null or c.${TkTicketCacheDao.CONTRACT_ID} = $contractId)
-                     and ($ticketId is null or c.${TkTicketCacheDao.TICKET_ID} = $ticketId)
-                     and ($calendarDate is null or strftime('%Y-%m-%d',c.${TkTicketCacheDao.FORECAST_START},'$deviceGMT') = $calendarDate )
+                     and ('$serialId' is null or c.${TkTicketCacheDao.OPEN_SERIAL_ID} = '$serialId' )
+                     and ('$clientId' is null or c.${TkTicketCacheDao.CLIENT_ID} = '$clientId')
+                     and ('$contractId' is null or c.${TkTicketCacheDao.CONTRACT_ID} = '$contractId')
+                     and ('$ticketId' is null or c.${TkTicketCacheDao.TICKET_ID} = '$ticketId')
+                     and ('$calendarDate' is null or strftime('%Y-%m-%d',c.${TkTicketCacheDao.FORECAST_START},'$deviceGMT') = '$calendarDate')
                      $periodDateFilter
                      and NOT EXISTS(SELECT 1
                                     FROM ${TK_TicketDao.TABLE} t
@@ -77,7 +92,7 @@ class SqlAct083_001(
                                           and t.${TK_TicketDao.TICKET_PREFIX} = c.${TkTicketCacheDao.TICKET_PREFIX}
                                           and t.${TK_TicketDao.TICKET_CODE} = c.${TkTicketCacheDao.TICKET_CODE}
                                           )
-              """
+              """.replace("'null'","null")
         return s
     }
 }

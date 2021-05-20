@@ -58,11 +58,11 @@ class SqlAct083_005(
                             WHERE
                              s.${MD_Schedule_ExecDao.CUSTOMER_CODE} = $customerCode   
                              $statusFilter
-                             and ($calendarDate is null or (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT')) = $calendarDate)                             
+                             and ('$calendarDate' is null or (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT')) = '$calendarDate')                             
                              and ($tagOperCode is null or s.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE} = $tagOperCode)
                              and ($siteCode is null or s.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode)
                              and ($productCode is null or s.${MD_Schedule_ExecDao.PRODUCT_CODE} = $productCode )
-                             and ($serialId is null or s.${MD_Schedule_ExecDao.SERIAL_ID} = $serialId )
+                             and ('$serialId' is null or s.${MD_Schedule_ExecDao.SERIAL_ID} = '$serialId' )
                              and (strftime('%s',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') * 1000) < (strftime('%s','now','$deviceGMT')*1000)
                              
                             UNION
@@ -104,7 +104,7 @@ class SqlAct083_005(
                                                                      and ($tagOperCode is null or s.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE} = $tagOperCode)
                                                                      and ($siteCode is null or s.${MD_Schedule_ExecDao.SITE_CODE} = $siteCode)
                                                                      and ($productCode is null or s.${MD_Schedule_ExecDao.PRODUCT_CODE} = $productCode )
-                                                                     and ($serialId is null or s.${MD_Schedule_ExecDao.SERIAL_ID} = $serialId )
+                                                                     and ('$serialId' is null or s.${MD_Schedule_ExecDao.SERIAL_ID} = '$serialId')
                                                                      and (strftime('%s',s.${MD_Schedule_ExecDao.DATE_START}||' $customerGMT','$deviceGMT') * 1000) >= (strftime('%s','now','$deviceGMT') * 1000)
                                                                      $periodDateFilter
                                                                 GROUP BY
@@ -127,7 +127,7 @@ class SqlAct083_005(
                                          IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_TYPE},0),
                                          IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0)                   
                                 )      
-                      """
+                      """.replace("'null'","null")
         return s
     }
 }

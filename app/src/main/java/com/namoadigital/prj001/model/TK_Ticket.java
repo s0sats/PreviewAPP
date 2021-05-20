@@ -1347,7 +1347,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             }else if("1".equals(hmAux.get(TK_TicketDao.UPDATE_REQUIRED))){
                 rightIcon = R.drawable.ic_cloud_upload_24_red;
             }else{
-                rightIcon = R.drawable.ic_baseline_cloud_download_24_gray;
+                rightIcon = R.drawable.ic_baseline_cloud_download_24_yellow;
             }
         }
         String clientInf = !hmAux.get(TK_TicketDao.CLIENT_ID).isEmpty() ? hmAux.get(TK_TicketDao.CLIENT_ID) +" - "+ hmAux.get(TK_TicketDao.CLIENT_NAME): null;

@@ -84,10 +84,10 @@ class SqlAct083_004(
                      $statusFilter
                      and ($tagOperCode is null or l.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE} = $tagOperCode) 
                      and ($productCode is null or l.${GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE} = $productCode )
-                     and ($serialId is null or l.${GE_Custom_Form_LocalDao.SERIAL_ID} = $serialId )                    
-                     and ($calendarDate is null or strftime('%Y-%m-%d',d.${GE_Custom_Form_DataDao.DATE_START},'$deviceGMT') = $calendarDate)
+                     and ('$serialId' is null or l.${GE_Custom_Form_LocalDao.SERIAL_ID} = '$serialId')                    
+                     and ('$calendarDate' is null or strftime('%Y-%m-%d',d.${GE_Custom_Form_DataDao.DATE_START},'$deviceGMT') = '$calendarDate')
                                        
-              """
+              """.replace("'null'","null")
         return s
     }
 }

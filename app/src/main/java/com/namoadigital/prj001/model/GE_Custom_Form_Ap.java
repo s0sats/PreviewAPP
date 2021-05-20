@@ -408,7 +408,7 @@ public class GE_Custom_Form_Ap {
             }else if(upload_required == 1){
                 rightIcon = R.drawable.ic_cloud_upload_24_red;
             }else{
-                rightIcon = R.drawable.ic_baseline_cloud_download_24_gray;
+                rightIcon = R.drawable.ic_baseline_cloud_download_24_yellow;
             }
         }
         String dateToUse = ap_when != null ? ap_when : create_date;

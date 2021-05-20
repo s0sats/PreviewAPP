@@ -52,6 +52,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TK_Ticket_Action;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
@@ -63,6 +64,7 @@ import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act081.Act081_Main;
+import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -1427,6 +1429,36 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         act081Bundle.remove(MD_Product_SerialDao.SERIAL_ID);
         mIntent.putExtras(act081Bundle);
         startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct083() {
+        Intent intent = new Intent(context, Act083_Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
+        //todo Tratar fluxos de action espontanea para n perder o param
+        MyActionFilterParam mActionFilterParam = (MyActionFilterParam) requestingBundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
+        if(mActionFilterParam == null){
+            mActionFilterParam = new MyActionFilterParam(
+                    null,
+                    "Todos - trad",
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        }
+        //
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,mActionFilterParam);
+        intent.putExtras(bundle);
+        //
+        startActivity(intent);
         finish();
     }
 

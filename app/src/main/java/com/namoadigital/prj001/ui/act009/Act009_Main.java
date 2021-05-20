@@ -26,6 +26,7 @@ import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act010.Act010_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
@@ -62,6 +63,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private boolean has_tk_ticket_is_form_off_hand;
     private String mTkTicketId;
     private String mStepDesc;
+    private Bundle act083Bundle = new Bundle();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -148,6 +150,13 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
             if(has_tk_ticket_is_form_off_hand){
                 mTkTicketId  = bundle.getString(TK_TicketDao.TICKET_ID, "");
                 mStepDesc = bundle.getString(TK_Ticket_StepDao.STEP_DESC, "");
+            }
+            if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)){
+                act083Bundle.putString(
+                        ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                        bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                );
+                act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(bundle));
             }
         } else {
         }
@@ -272,6 +281,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     public void callAct010(Context context) {
         Intent mIntent = new Intent(context, Act010_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        bundle.putAll(act083Bundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -345,6 +355,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     public void callAct081(Context context) {
         Intent mIntent = new Intent(context, Act081_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        bundle.putAll(act083Bundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();

@@ -127,6 +127,7 @@ import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.MdTag;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.SM_SO;
 import com.namoadigital.prj001.model.SM_SO_Service;
 import com.namoadigital.prj001.model.Sync_Checklist;
@@ -233,6 +234,7 @@ import com.namoadigital.prj001.worker.Work_Upload_Img;
 import com.namoadigital.prj001.worker.Work_Upload_Img_Chat;
 import com.namoadigital.prj001.worker.Work_Upload_Other_User_Img;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -8597,5 +8599,25 @@ public class ToolBox_Inf {
         long nowMs = dateToMilliseconds(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
 
         return itemMill <= nowMs;
+    }
+
+    @NotNull
+    public static MyActionFilterParam getMyActionFilterParam(Bundle bundle) {
+        //TODO TRATAR CORRETAMENTE
+        MyActionFilterParam mActionFilterParam = (MyActionFilterParam) bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
+        if(mActionFilterParam == null){
+            mActionFilterParam = new MyActionFilterParam(
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        }
+        return mActionFilterParam;
     }
 }

@@ -237,6 +237,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private Bundle act081Bundle;
     private String room_code;
     private CustomFF.ICustomFFDotsDialogDismiss onBackFocusEvent;
+    private Bundle act083Bundle;
 
     public void setWsSoProcess(String wsSoProcess) {
         this.wsSoProcess = wsSoProcess;
@@ -1226,6 +1227,16 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 act081Bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, ""));
 
             }
+            //
+            if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)){
+                act083Bundle = new Bundle();
+                act083Bundle.putString(
+                        ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                        bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                );
+                act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(bundle));
+            }
+
         } else {
             mSo_Prefix = null;
             mSo_Code = null;
@@ -2592,6 +2603,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         if(mPresenter.setForceSentByForm(formData.getCustomer_code(),formData.getCustom_form_type(),formData.getCustom_form_code(),formData.getCustom_form_version(), (int) formData.getCustom_form_data())){
             bundle.putBoolean(Act070_Main.PARAM_FORCE_SEND_BY_FORM_EXEC,true);
         }
+        if(act083Bundle != null) {
+            bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083);
+            bundle.putAll(act083Bundle);
+        }
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -2643,10 +2658,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
      *
      */
     private void checkBackFlow() {
-        if(ConstantBaseApp.ACT083.equals(requestingAct)) {
-            callAct083();
-        }else if(mPresenter.isaTicketFlowForm()){
+        if(mPresenter.isaTicketFlowForm()) {
             callAct070();
+        }else if(ConstantBaseApp.ACT083.equals(requestingAct)){
+            callAct083();
         }else {
             if (formData.getCustom_form_status().equals(Constant.SYS_STATUS_DONE)) {
                 callAct015();

@@ -40,6 +40,7 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
@@ -110,10 +111,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private int mStepCode;
     private int mTkTicketPrefix;
     private int mTkTicketCode;
-
-
-
     private boolean has_tk_ticket_is_form_off_hand;
+    private Bundle act083Bundle = new Bundle();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -556,8 +555,13 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 act081Bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, ""));
                 act081Bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, ""));
             }
-
-
+            if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)){
+                act083Bundle.putString(
+                        ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                        bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                );
+                act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(bundle));
+            }
         } else {
             bundle_product_code = 0L;
         }
@@ -867,6 +871,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             //
 
             bundle.putAll(act081Bundle);
+            bundle.putAll(act083Bundle);
             mIntent.putExtras(bundle);
             //
             startActivity(mIntent);
@@ -893,9 +898,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, mdProductSerial.getSerial_id());
         //bundle.putString(Constant.ACT008_SERIAL_ID, mdProductSerial.getSerial_id());
-
+        bundle.putAll(act083Bundle);
         mIntent.putExtras(bundle);
-
         startActivity(mIntent);
         finish();
     }
@@ -977,6 +981,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         Intent mIntent = new Intent(context, Act081_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(act081Bundle);
+        mIntent.putExtras(act083Bundle);
         startActivity(mIntent);
         finish();
     }
@@ -1147,6 +1152,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         act081Bundle.putString(MD_ProductDao.PRODUCT_DESC, mdProductSerial.getProduct_desc());
         act081Bundle.putString(MD_ProductDao.PRODUCT_ID, mdProductSerial.getProduct_id());
         bundle.putAll(act081Bundle);
+        bundle.putAll(act083Bundle);
         bundle.putString(Constant.MAIN_REQUESTING_ACT, requesting_process);
         mIntent.putExtras(bundle);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
