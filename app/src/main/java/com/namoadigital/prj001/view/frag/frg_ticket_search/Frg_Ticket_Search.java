@@ -167,6 +167,28 @@ public class Frg_Ticket_Search extends Fragment {
     private void setupButton() {
         btn_option_01.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_3_states));
         btn_option_01.setText(hmAux_Trans.get("btn_check_exists"));
+        mket_ticket.setmBARCODE(
+                ToolBox_Inf.profileExists(
+                        getActivity(),
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+                )
+        );
+        mket_client.setmBARCODE(
+                ToolBox_Inf.profileExists(
+                        getActivity(),
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+                )
+        );
+        mket_contract.setmBARCODE(
+                ToolBox_Inf.profileExists(
+                        getActivity(),
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+                )
+        );
+
 //        setupSyncButton();
 //        setupMyTicketsButton();
 //        btn_option_05.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));

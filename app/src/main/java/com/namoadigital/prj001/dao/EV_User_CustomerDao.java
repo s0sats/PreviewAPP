@@ -9,6 +9,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.EV_User_Customer;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -37,6 +38,7 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     public static final String PENDING = "pending";
     public static final String LOGO_URL = "logo_url";
     public static final String TRACKING = "tracking";
+    public static final String SYNC_REQUIRED = "sync_required";
     public static final String TIMEZONE = "timezone";
     public static final String LICENSE_CONTROL_TYPE = "license_control_type";
     public static final String LICENSE_SITE_CODE =  "license_site_code";
@@ -50,7 +52,7 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
     public static final String LICENSE_CONTROL_TYPE_CONCURRENT_GLOBAL_LEVEL = "CONCURRENT_GLOBAL_LEVEL";
     public static final String LICENSE_CONTROL_TYPE_CONCURRENT_BY_SITE = "CONCURRENT_BY_SITE";
 
-    public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER, BLOCKED, SESSION_APP, PENDING, LOGO_URL, TRACKING,TIMEZONE, LICENSE_CONTROL_TYPE};
+    public static String[] columns = {USER_CODE, CUSTOMER_CODE, CUSTOMER_NAME, TRANSLATE_CODE, LANGUAGE_CODE, TRANSLATE_DESC, NLS_DATE_FORMAT, KEYUSER, BLOCKED, SESSION_APP, PENDING, LOGO_URL, TRACKING, SYNC_REQUIRED,TIMEZONE, LICENSE_CONTROL_TYPE};
 
     public EV_User_CustomerDao(Context context) {
         super(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE, Constant.DB_MODE_SINGLE);
@@ -246,6 +248,18 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
         return userCustomers;
     }
 
+    public void updateCustomerSync(String customerCode, String userCode, int sync_required) {
+        EV_User_Customer userCustomer = this.getByString(
+                new EV_User_Customer_Sql_002(
+                        userCode,
+                        customerCode
+                ).toSqlQuery()
+        );
+        //
+        userCustomer.setSync_required(sync_required);
+        this.addUpdate(userCustomer);
+    }
+
     private class EV_CustomerToContentValuesMapper implements Mapper<EV_User_Customer, ContentValues> {
         @Override
         public ContentValues map(EV_User_Customer ev_user_customer) {
@@ -290,6 +304,9 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             if (ev_user_customer.getTracking() > -1) {
                 contentValues.put(TRACKING, ev_user_customer.getTracking());
             }
+            if (ev_user_customer.getSync_required() > -1) {
+                contentValues.put(SYNC_REQUIRED, ev_user_customer.getSync_required());
+            }
             if (ev_user_customer.getTimezone() != null) {
                 contentValues.put(TIMEZONE, ev_user_customer.getTimezone());
             }
@@ -326,6 +343,7 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
             ev_user_customer.setPending(cursor.getInt(cursor.getColumnIndex(PENDING)));
             ev_user_customer.setLogo_url(cursor.getString(cursor.getColumnIndex(LOGO_URL)));
             ev_user_customer.setTracking(cursor.getInt(cursor.getColumnIndex(TRACKING)));
+            ev_user_customer.setSync_required(cursor.getInt(cursor.getColumnIndex(SYNC_REQUIRED)));
             ev_user_customer.setTimezone(cursor.getString(cursor.getColumnIndex(TIMEZONE)));
             ev_user_customer.setLicense_control_type(cursor.getString(cursor.getColumnIndex(LICENSE_CONTROL_TYPE)));
             //

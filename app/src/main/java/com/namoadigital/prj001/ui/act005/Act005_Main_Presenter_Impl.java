@@ -486,6 +486,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         } catch (Exception e) {
             qtyTicket = "0";
         }
+        //
         String qtyFormAp;
         try {
             qtyFormAp = customFormApDao.getByStringHM(
@@ -496,10 +497,18 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         } catch (Exception e) {
             qtyFormAp = "0";
         }
+        //
+        EV_User_Customer userCustomer = userCustomerDao.getByString(
+                new EV_User_Customer_Sql_002(
+                        ToolBox_Con.getPreference_User_Code(context),
+                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                ).toSqlQuery()
+        );
+        //
         int totalSync = 0;
         totalSync += ToolBox_Inf.convertStringToInt(qtyTicket);
         totalSync += ToolBox_Inf.convertStringToInt(qtyFormAp);
-        return totalSync > 0;
+        return totalSync > 0 || userCustomer.getSync_required() == 1;
     }
 
     @Deprecated

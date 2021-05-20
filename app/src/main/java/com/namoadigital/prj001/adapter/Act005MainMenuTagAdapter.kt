@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.adapter
 
 import android.graphics.PorterDuff
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.text.SpannableString
 import android.text.Spanned
@@ -43,6 +44,11 @@ class Act005MainMenuTagAdapter(
     class MyTagVh(private val binding: Act005TagCellBinding) : RecyclerView.ViewHolder(binding.root) {
         fun onBinding(mMainTagMenu: MainTagMenu, hmAux_Trans: HMAux) {
             val context = binding.root.context
+            //
+            if(mMainTagMenu.tagCode == 0){
+                binding.tvTagName.setTypeface(null, Typeface.BOLD)
+            }
+            //
             binding.tvTagName.text = mMainTagMenu.tagName
             //
             binding.tvTagQty.text = """${hmAux_Trans.get("tag_item_qty")} :  ${mMainTagMenu.tagQty} """

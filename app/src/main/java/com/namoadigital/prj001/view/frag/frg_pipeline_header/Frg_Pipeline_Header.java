@@ -496,7 +496,7 @@ public class Frg_Pipeline_Header extends Fragment {
                 } else if (mTicket.getSync_required() == 1) {
                     ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_yellow_tranparent_states);
                     color = ContextCompat.getColor(getContext(), R.color.namoa_color_yellow_2);
-                    drawableEnd = getContext().getDrawable(R.drawable.ic_cloud_upload);
+                    drawableEnd = getContext().getDrawable(R.drawable.ic_baseline_cloud_download_24);
                 } else if (mTicket.getUpdate_required() == 1) {
                     ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_red_states);
                     color = ContextCompat.getColor(getContext(), R.color.namoa_cancel_red);

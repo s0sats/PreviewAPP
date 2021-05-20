@@ -18,6 +18,7 @@ public class EV_User_Customer {
     private int pending;
     private String logo_url;
     private int tracking;
+    private int sync_required;
     private String timezone;
     private String license_control_type;
     //LUCHE - 07/01/2021 - Propriedades referente a licença
@@ -130,6 +131,14 @@ public class EV_User_Customer {
 
     public void setTracking(int tracking) {
         this.tracking = tracking;
+    }
+
+    public int getSync_required() {
+        return sync_required;
+    }
+
+    public void setSync_required(int sync_required) {
+        this.sync_required = sync_required;
     }
 
     public String getTimezone() {

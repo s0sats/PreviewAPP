@@ -127,7 +127,7 @@ public class AppBase extends Application {
         ConstantBaseApp.CAM_TEST_PATH = getApplicationContext().getExternalFilesDir(null) + "/camtest";
 
         DB_NAME_BASE = "namoa_sms.db3";
-        DB_VERSION_BASE = 11;
+        DB_VERSION_BASE = 12;
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
         DB_NAME_CUSTOM = "cc.db3";
