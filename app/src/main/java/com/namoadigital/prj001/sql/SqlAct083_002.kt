@@ -57,7 +57,10 @@ class SqlAct083_002(
                         and ($userFocus is null or t.${TK_TicketDao.USER_FOCUS} = $userFocus)
                  """
             else -> """    and (t.${TK_TicketDao.TICKET_STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
-                                OR ($userFocus is null or t.${TK_TicketDao.USER_FOCUS} = $userFocus)
+                                OR (
+                                    ($userFocus is null or t.${TK_TicketDao.USER_FOCUS} = $userFocus)
+                                    and t.${TK_TicketDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}', ${ConstantBaseApp.SYS_STATUS_WAITING_SYNC})
+                                )
                            )
                     """
         }
