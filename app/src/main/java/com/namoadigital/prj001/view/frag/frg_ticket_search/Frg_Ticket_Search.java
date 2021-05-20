@@ -12,9 +12,12 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
+
+import java.util.ArrayList;
 
 import static com.namoadigital.prj001.util.ConstantBaseApp.MAIN_HMAUX_TRANS_KEY;
 
@@ -47,6 +50,8 @@ public class Frg_Ticket_Search extends Fragment {
     private MKEditTextNM mket_ticket;
     private int syncs_qty = 0;
     private int myTicketQty = 0;
+    private ArrayList<MKEditTextNM> controls_sta = new ArrayList<>();
+
 
     public void setOnSearchClickListener(I_Frg_Ticket_Search delegate) {
         this.delegate = delegate;
@@ -134,6 +139,16 @@ public class Frg_Ticket_Search extends Fragment {
                 delegate.onSearchClick(Frg_Serial_Search.BTN_OPTION_05,null);
             }
         });
+        //LUCHE - 20/05/2021
+        MKEditTextNM.IMKEditTextTextBySpecialist barCodeCallback = new MKEditTextNM.IMKEditTextTextBySpecialist() {
+            @Override
+            public void reportTextBySpecialist(String s) {
+                btn_option_01.performClick();
+            }
+        };
+        mket_client.setDelegateTextBySpecialist(barCodeCallback);
+        mket_contract.setDelegateTextBySpecialist(barCodeCallback);
+        mket_ticket.setDelegateTextBySpecialist(barCodeCallback);
     }
 
     private void iniVar(View view) {
@@ -220,6 +235,30 @@ public class Frg_Ticket_Search extends Fragment {
         mket_client =  view.findViewById(R.id.frg_ticket_search_mket_client);
         ll_ticket =  view.findViewById(R.id.frg_ticket_search_ll_ticket);
         mket_ticket =  view.findViewById(R.id.frg_ticket_search_mket_ticket);
+        configMket();
+    }
+
+    private void configMket() {
+        boolean barcodeProfileExists = ToolBox_Inf.profileExists(
+                getActivity(),
+                Constant.PROFILE_MENU_PROFILE,
+                Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+        );
+        mket_contract.setmBARCODE(barcodeProfileExists);
+        mket_client.setmBARCODE(barcodeProfileExists);
+        mket_ticket.setmBARCODE(barcodeProfileExists);
+        reportCtrlStaReady();
+    }
+
+    private void reportCtrlStaReady() {
+        //Seta mket na lista de contrls para habilitar v
+        controls_sta.clear();
+        controls_sta.add(mket_contract);
+        controls_sta.add(mket_client);
+        controls_sta.add(mket_ticket);
+        if(delegate != null){
+            delegate.onControlStaListReady(controls_sta);
+        }
     }
 
     public HMAux getHMAuxValues() {

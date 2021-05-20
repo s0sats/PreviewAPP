@@ -23,6 +23,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag_NFC_Geral;
@@ -523,6 +524,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
 
+
+
 //    @Override
 //    public boolean hasHideSerialInfoChk() {
 //        return true ;
@@ -951,5 +954,11 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onControlStaListReady(ArrayList<MKEditTextNM> fragCtrlSta) {
+        controls_sta.clear();
+        controls_sta.addAll(fragCtrlSta);
     }
 }
