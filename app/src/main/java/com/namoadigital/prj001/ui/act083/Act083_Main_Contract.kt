@@ -22,6 +22,7 @@ interface Act083_Main_Contract {
         fun removeControlFromActivity(mketSerial: MKEditTextNM)
         fun callAct020(bundle: Bundle)
         fun changeProgressBarVisility(show: Boolean)
+        fun iniRecycler()
     }
 
     interface I_Presenter {

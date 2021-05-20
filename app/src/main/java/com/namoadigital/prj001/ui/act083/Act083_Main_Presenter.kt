@@ -23,6 +23,10 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class Act083_Main_Presenter(private val context: Context,
@@ -1271,46 +1275,51 @@ class Act083_Main_Presenter(private val context: Context,
     private fun generateMyActionList(tabUserFocusFilter: Int) {
         _myActionsList.clear()
         //
-        _myActionsList.addAll(
-                getLocalTickets(tabUserFocusFilter).map {
-                    TK_Ticket.toMyActionsObj(context, it)
-                }
-        )
-        //
-        _myActionsList.addAll(
-                getCachedTickets(tabUserFocusFilter).map {
-                    it.toMyActionsObj(context)
-                }
-        )
-        //
-        _myActionsList.addAll(
-                getSchedules(tabUserFocusFilter).map {
-                    it.toMyActionsObj(context)
-                }
-        )
-        //
-        _myActionsList.addAll(
-                getFormAp(tabUserFocusFilter).map {
-                    it.toMyActionsObj(context)
-                }
-        )
-        myActionsList.addAll(
-                getLocalForms(tabUserFocusFilter).map {
-                    if (it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
-                            && ConstantBaseApp.SYS_STATUS_IN_PROCESSING == it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS]
-                    ) {
-                        it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS] = hmAux_Trans?.get(ConstantBaseApp.SYS_STATUS_PROCESS)
+        CoroutineScope(Dispatchers.IO).launch {
+            _myActionsList.addAll(
+                    getLocalTickets(tabUserFocusFilter).map {
+                        TK_Ticket.toMyActionsObj(context, it)
                     }
-                    //
-                    GE_Custom_Form_Local.toMyActionsObj(context.applicationContext as Application?, it)
-                }
-        )
-        //
-        _myActionsList.sortBy {
-            it.orderBy
+            )
+            //
+            _myActionsList.addAll(
+                    getCachedTickets(tabUserFocusFilter).map {
+                        it.toMyActionsObj(context)
+                    }
+            )
+            //
+            _myActionsList.addAll(
+                    getSchedules(tabUserFocusFilter).map {
+                        it.toMyActionsObj(context)
+                    }
+            )
+            //
+            _myActionsList.addAll(
+                    getFormAp(tabUserFocusFilter).map {
+                        it.toMyActionsObj(context)
+                    }
+            )
+            myActionsList.addAll(
+                    getLocalForms(tabUserFocusFilter).map {
+                        if (it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
+                                && ConstantBaseApp.SYS_STATUS_IN_PROCESSING == it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS]
+                        ) {
+                            it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS] = hmAux_Trans?.get(ConstantBaseApp.SYS_STATUS_PROCESS)
+                        }
+                        //
+                        GE_Custom_Form_Local.toMyActionsObj(context.applicationContext as Application?, it)
+                    }
+            )
+            //
+            _myActionsList.sortBy {
+                it.orderBy
+            }
+            //
+            withContext(Dispatchers.Main){
+                mView.changeProgressBarVisility(false)
+                mView.iniRecycler()
+            }
         }
-        //
-        mView.changeProgressBarVisility(false)
     }
 
     override fun getLocalTickets(userFocus: Int): MutableList<HMAux> {

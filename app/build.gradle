@@ -109,6 +109,7 @@ dependencies {
     developmentImplementation namoaLibVersion
     productionImplementation namoaLibVersion
 
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.firebase:firebase-messaging:21.0.1'
     testImplementation 'junit:junit:4.12'

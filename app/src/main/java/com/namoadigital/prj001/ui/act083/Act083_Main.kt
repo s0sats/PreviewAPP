@@ -122,7 +122,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         supportActionBar?.title = mPresenter.getActTitle()
         setLabels()
         setChips()
-        iniRecycler()
     }
 
     private fun setChips() {
@@ -131,7 +130,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         }
     }
 
-    private fun iniRecycler() {
+    override fun iniRecycler() {
         val myActionsList = mPresenter.myActionsList
         if(myActionsList.size > 0) {
             binding.act083MainContent.act083TvNoResult.visibility = View.GONE
@@ -297,6 +296,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             }
         })
         binding.act083MainContent.act083Tabs.setOnCheckedChangeListener { _, checkedId ->
+            binding.act083MainContent.act083TvNoResult.visibility = View.GONE
+            //
             when(checkedId){
                 binding.act083MainContent.act083TabMyActions.id -> updateMyActionList(1)
                 else -> updateMyActionList(0)
@@ -311,7 +312,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     private fun updateMyActionList(userFocusFilter: Int) {
         changeProgressBarVisility(true)
         mPresenter.updateMyActionList(userFocusFilter)
-        iniRecycler()
     }
 
     override fun changeProgressBarVisility(show: Boolean) {
