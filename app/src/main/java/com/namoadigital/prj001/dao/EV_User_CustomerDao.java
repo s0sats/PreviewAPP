@@ -9,6 +9,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.EV_User_Customer;
+import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -245,6 +246,18 @@ public class EV_User_CustomerDao extends BaseDao implements Dao<EV_User_Customer
         closeDB();
 
         return userCustomers;
+    }
+
+    public void updateCustomerSync(String customerCode, String userCode, int sync_required) {
+        EV_User_Customer userCustomer = this.getByString(
+                new EV_User_Customer_Sql_002(
+                        userCode,
+                        customerCode
+                ).toSqlQuery()
+        );
+        //
+        userCustomer.setSync_required(sync_required);
+        this.addUpdate(userCustomer);
     }
 
     private class EV_CustomerToContentValuesMapper implements Mapper<EV_User_Customer, ContentValues> {

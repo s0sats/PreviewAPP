@@ -55,7 +55,6 @@ import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
-import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.SV_LocationTracker;
@@ -108,6 +107,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_TICKET;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
@@ -2137,6 +2138,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 sendResumeDialog.setBtnOKEnable(true);
             }
             setWsSoProcess("");
+            ToolBox_Inf.updateUserCustomerSync(getApplicationContext(), String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ToolBox_Con.getPreference_User_Code(getApplicationContext()),1);
             mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
         }
@@ -2649,6 +2651,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         int iconColor = 0;
         boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
         boolean hasSyncRequired = mPresenter.hasSyncRequired();
+        //
         if(hasUpdateRequired && hasSyncRequired){
             icon = R.drawable.ic_sync_main_menu_data;
         }else if(hasUpdateRequired){
@@ -2864,7 +2867,23 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private class FCMReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            mPresenter.getMenuItensV2(hmAux_Trans);
+//            mPresenter.getMenuItensV2(hmAux_Trans);
+
+            Bundle bundle = intent.getExtras();
+            if(bundle != null){
+                String fcmTitle = (String) bundle.get(ConstantBaseApp.SW_TYPE);
+                if(fcmTitle != null) {
+                    if (fcmTitle.equals(FCM_MODULE_SYNC)) {
+                        invalidateOptionsMenu();
+                    } else if (fcmTitle.equals(FCM_MODULE_TICKET)) {
+                        if (mPresenter.hasSOProfile()) {
+
+                        } else {
+                            refreshTagList();
+                        }
+                    }
+                }
+            }
         }
     }
 

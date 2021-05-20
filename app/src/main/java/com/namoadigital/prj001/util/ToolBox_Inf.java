@@ -5643,6 +5643,15 @@ public class ToolBox_Inf {
         return hmAuxInLine;
     }
 
+    public static void updateUserCustomerSync(Context context, String customer_code, String user_code, int sync_required) {
+        EV_User_CustomerDao ev_user_customerDao = new EV_User_CustomerDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
+        ev_user_customerDao.updateCustomerSync(
+                customer_code,
+                user_code,
+                sync_required
+        );
+    }
+
     public static JsonArray arrayListToJsonArray(ArrayList<?> arrayList) {
         Gson gson = new GsonBuilder().serializeNulls().create();
         JsonArray jsonArray = new JsonArray();

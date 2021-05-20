@@ -12,6 +12,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
@@ -152,6 +153,28 @@ public class Frg_Ticket_Search extends Fragment {
     private void setupButton() {
         btn_option_01.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_3_states));
         btn_option_01.setText(hmAux_Trans.get("btn_check_exists"));
+        mket_ticket.setmBARCODE(
+                ToolBox_Inf.profileExists(
+                        getActivity(),
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+                )
+        );
+        mket_client.setmBARCODE(
+                ToolBox_Inf.profileExists(
+                        getActivity(),
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+                )
+        );
+        mket_contract.setmBARCODE(
+                ToolBox_Inf.profileExists(
+                        getActivity(),
+                        Constant.PROFILE_MENU_PROFILE,
+                        Constant.PROFILE_MENU_PROFILE_SERIAL_BARCODE
+                )
+        );
+
 //        setupSyncButton();
 //        setupMyTicketsButton();
 //        btn_option_05.setBackground(getActivity().getDrawable(R.drawable.namoa_cell_2_states));

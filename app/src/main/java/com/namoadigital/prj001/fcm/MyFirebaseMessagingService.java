@@ -15,6 +15,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
@@ -27,15 +28,16 @@ import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.dao.TkTicketCacheDao;
 import com.namoadigital.prj001.model.Chat_C_Remove_Room;
 import com.namoadigital.prj001.model.DaoObjReturn;
-import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.FCMMessage;
 import com.namoadigital.prj001.model.FCM_Schedule;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TkTicketCache;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Message;
 import com.namoadigital.prj001.receiver_chat.WBR_C_Remove_Room;
-import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_007;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_002;
 import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
@@ -43,6 +45,9 @@ import com.namoadigital.prj001.sql.IO_Inbound_Sql_012;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_012;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
 import com.namoadigital.prj001.sql.Sql_Schedule_FCM_001;
+import com.namoadigital.prj001.sql.TKTicketCacheSql001;
+import com.namoadigital.prj001.sql.TKTicketCacheSql002;
+import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_003;
 import com.namoadigital.prj001.ui.act018.Act018_Main;
 import com.namoadigital.prj001.ui.act019.Act019_Main;
@@ -51,11 +56,13 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -238,23 +245,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             //no servidor. Deve subir o serviço para sincronizar as novas msg.
                             ToolBox_Inf.scheduleWorkQuarterChatRefresh(getApplicationContext());
                             break;
-                        case ConstantBaseApp.FCM_ACTION_SYNC_REQUIRED_UPDATE:
-                            EV_User_CustomerDao ev_user_customerDao = new EV_User_CustomerDao(getApplicationContext(), Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
-                            EV_User_Customer userCustomer = ev_user_customerDao.getByString(
-                                    new EV_User_Customer_Sql_002(
-                                            ToolBox_Con.getPreference_User_Code(getApplicationContext()),
-                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext()))
-                                    ).toSqlQuery()
-                            );
-                            //
-                            userCustomer.setSync_required(1);
-                            ev_user_customerDao.addUpdate(userCustomer);
-                            //
-                            break;
-                        case ConstantBaseApp.FCM_ACTION_TICKET_FOCUS_UPDATE:
-                            break;
-                        case ConstantBaseApp.FCM_ACTION_TICKET_REMOVE_UPDATE:
-                            break;
                         default:
                             ToolBox_Inf.showChatNotification(
                                     getApplicationContext(),
@@ -293,6 +283,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 if(fcmMessage.getType().equals(ConstantBaseApp.FCM_TYPE_SILENT)) {
                     handleScheduleFCM(fcmMessage);
                 }
+            } else if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_SYNC)) {
+                if(ConstantBaseApp.FCM_ACTION_SYNC_REQUIRED_UPDATE.equals(fcmMessage.getTitle())) {
+                    //
+                    ToolBox_Inf.updateUserCustomerSync(getApplicationContext(), fcmMessage.getCustomer(), ToolBox_Con.getPreference_User_Code(getApplicationContext()), Integer.parseInt(fcmMessage.getSync()));
+                    //
+                    sendFCMStatus(fcmMessage.getModule());
+                }
+
+            }if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_TICKET)) {
+                switch (fcmMessage.getTitle()){
+                    case ConstantBaseApp.FCM_ACTION_TICKET_FOCUS_UPDATE:
+                        handleTicketFocusUpdate(fcmMessage.getMsg_short(), fcmMessage.getMsg_long());
+                        break;
+                    case ConstantBaseApp.FCM_ACTION_TICKET_REMOVE_UPDATE:
+                        removeTicketCache(fcmMessage.getMsg_short());
+                        break;
+                }
+
+                sendFCMStatus(fcmMessage.getModule());
+
             } else {
                 //
                 //LUCHE - 07/08/2019
@@ -346,6 +356,102 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
+    }
+
+
+
+
+    private void removeTicketCache(String msg_short) {
+        String[] ticketPk = msg_short.split("\\.");
+        long customerCode = Long.parseLong(ticketPk[0]);
+        int ticketPrefix = Integer.parseInt(ticketPk[1]);
+        int ticketCode = Integer.parseInt(ticketPk[2]);
+        //
+        TkTicketCacheDao ticketCacheDao = new TkTicketCacheDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(customerCode),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        ticketCacheDao.remove( new TKTicketCacheSql002(
+                        customerCode,
+                        ticketPrefix,
+                        ticketCode
+                ).toSqlQuery()
+        );
+    }
+
+    private void handleTicketFocusUpdate(String msg_short, String msg_long) {
+        String[] ticketPk = msg_short.split("\\.");
+        long customerCode = Long.parseLong(ticketPk[0]);
+        int ticketPrefix = Integer.parseInt(ticketPk[1]);
+        int ticketCode = Integer.parseInt(ticketPk[2]);
+
+        TK_TicketDao ticketDao = new TK_TicketDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(customerCode),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        TK_Ticket ticket = ticketDao.getByString(new TK_Ticket_Sql_001(
+                customerCode,
+                ticketPrefix,
+                ticketCode).toSqlQuery()
+        );
+
+        TkTicketCacheDao ticketCacheDao = new TkTicketCacheDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(customerCode),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        if(ticket == null){
+            List<TkTicketCache> cache = new ArrayList<>();
+            try {
+                cache = getTicketCacheFromFCM(msg_long);
+                ticketCacheDao.addUpdate(cache, false);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }else{
+            ticket.setSync_required(1);
+            DaoObjReturn daoObjReturn = ticketDao.addUpdate(ticket);
+            if(!daoObjReturn.hasError()) {
+                TkTicketCache cache = ticketCacheDao.getByString(
+                        new TKTicketCacheSql001(
+                                customerCode,
+                                ticketPrefix,
+                                ticketCode
+                        ).toSqlQuery()
+                );
+                //
+                if (cache != null) {
+                    ticketCacheDao.remove(
+                            new TKTicketCacheSql002(customerCode,
+                                    ticketPrefix,
+                                    ticketCode
+                            ).toSqlQuery()
+                    );
+                }
+            }
+            //
+        }
+    }
+
+    private ArrayList<TkTicketCache> getTicketCacheFromFCM(String msg_long) throws JSONException {
+        //
+        JSONObject jsonObjectRoot = new JSONObject(msg_long);;
+        JSONArray jsonObject = jsonObjectRoot.getJSONArray("ticket");
+        //
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        //
+        ArrayList<TkTicketCache> tkTicketCache = gson.fromJson(
+                String.valueOf(jsonObject),
+                new TypeToken<ArrayList<TkTicketCache>>() {
+                }.getType()
+        );
+        //
+        return tkTicketCache;
     }
 
     private void handleScheduleFCM(FCMMessage fcmMessage) {
