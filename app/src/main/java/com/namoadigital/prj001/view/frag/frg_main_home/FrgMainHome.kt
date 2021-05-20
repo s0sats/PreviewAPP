@@ -93,8 +93,7 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         if (tagList != null && !tagList.isEmpty()) {
             binding.rvTags.visibility = View.VISIBLE
             binding.tvListPlaceholder.visibility = View.GONE
-            val lastItem = tagList.size -1
-            tagList.get(lastItem).tagName = hmAux_Trans_Frag.get("all_tag_list_item")!!;
+            handleAllTagItem(tagList)
             if(mListener != null){
                 adapter = Act005MainMenuTagAdapter(tagList, hmAux_Trans_Frag, mListener)
             }
@@ -217,10 +216,9 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
             binding.rvTags.visibility = View.GONE
             adapter.mMainTagMenu.clear()
         } else {
-            binding.tvListPlaceholder.visibility = View.GONE
             binding.rvTags.visibility = View.VISIBLE
-            val lastItem = tagList.size - 1
-            tagList.get(lastItem).tagName = hmAux_Trans_Frag.get("all_tag_list_item")!!;
+            binding.tvListPlaceholder.visibility = View.GONE
+            handleAllTagItem(tagList)
             if (adapter.mMainTagMenu != null && !adapter.mMainTagMenu.isEmpty()) {
                 adapter.mMainTagMenu.clear()
                 adapter.mMainTagMenu.addAll(tagList)
@@ -228,6 +226,13 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         }
         //
         adapter.notifyDataSetChanged()
+    }
+
+    private fun handleAllTagItem(tagList: MutableList<MainTagMenu>) {
+        if (tagList.size > 1) {
+            val lastItem = tagList.size - 1
+            tagList.get(lastItem).tagName = hmAux_Trans_Frag.get("all_tag_list_item")!!;
+        }
     }
 
 }
