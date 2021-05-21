@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.menu.MenuBuilder;
@@ -1289,7 +1290,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        //setTitleLanguage();
+        setTitleAsCustomerName();
+        //
         setFooter();
         //TRATATIVA ESPECIFICA DA ACT005
         if( mFooter.containsKey(Constant.FOOTER_SITE_NOT_FOUND)
@@ -1317,7 +1320,15 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     0
             );
         }
+    }
 
+    private void setTitleAsCustomerName() {
+        ActionBar supportActionBar = getSupportActionBar();
+        if(supportActionBar != null) {
+            supportActionBar.setTitle( ToolBox_Con.getPreference_Customer_Code_NAME(context));
+        }else{
+            setTitleLanguage();
+        }
     }
 
     @Override
