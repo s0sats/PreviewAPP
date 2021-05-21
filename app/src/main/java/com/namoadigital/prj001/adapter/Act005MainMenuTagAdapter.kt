@@ -47,6 +47,8 @@ class Act005MainMenuTagAdapter(
             //
             if(mMainTagMenu.tagCode == 0){
                 binding.tvTagName.setTypeface(null, Typeface.BOLD)
+            }else{
+                binding.tvTagName.setTypeface(null, Typeface.NORMAL)
             }
             //
             binding.tvTagName.text = mMainTagMenu.tagName

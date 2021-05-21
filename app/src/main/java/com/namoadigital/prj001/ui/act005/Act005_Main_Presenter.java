@@ -28,7 +28,7 @@ public interface Act005_Main_Presenter {
 
     boolean hasUpdateRequired();
 
-    boolean hasSyncRequired();
+    boolean hasTicketSyncRequired();
 
     void getMenuItensV2(HMAux hmAux_Trans);
 
@@ -130,4 +130,8 @@ public interface Act005_Main_Presenter {
     EV_User getEv_user();
 
     Bundle getAct083BundleParams(MainTagMenu mainTagMenu);
+
+    void executeWSTicketDownload();
+
+    boolean hasMasterDataSyncRequired();
 }

@@ -726,11 +726,13 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             }
 
             @Override
-            public boolean checkTicketProfile(String site_code, String operation_code, String product_code) {
-                return mPresenter.checkTicketMdProfile(
+            public boolean checkTicketProfile(String site_code, String operation_code, String product_code, String tag_operational_code) {
+                return ToolBox_Inf.checkTicketMdProfile(
+                        context,
                         site_code,
                         operation_code,
-                        product_code
+                        product_code,
+                        tag_operational_code
                 );
             }
 

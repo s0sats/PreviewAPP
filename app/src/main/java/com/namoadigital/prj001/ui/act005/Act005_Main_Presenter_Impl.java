@@ -68,6 +68,7 @@ import com.namoadigital.prj001.receiver.WBR_SO_Save;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.receiver.WBR_Upload_Support;
 import com.namoadigital.prj001.service.AppBackgroundService;
@@ -109,6 +110,8 @@ import com.namoadigital.prj001.sql.Sql_Act012_007;
 import com.namoadigital.prj001.sql.Sql_Act021_002;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act021_004;
+import com.namoadigital.prj001.sql.Sql_Act068_002;
+import com.namoadigital.prj001.sql.Sql_Act069_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -146,6 +149,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
      **/
     private static final int SECUNDARY_MENU_QTY = 6;
     public static final String SYNC_FOR_TICKETS_FORM = "SYNC_FOR_TICKETS_FORM";
+    public static final String SYNC_TICKETS = "SYNC_TICKETS";
 
     private Context context;
     private Act005_Main_View mView;
@@ -469,7 +473,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
-    public boolean hasSyncRequired() {
+    public boolean hasTicketSyncRequired() {
         String qtyTicket;
         try {
             qtyTicket = String.valueOf(tk_ticketDao.getByStringHM(
@@ -486,29 +490,24 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         } catch (Exception e) {
             qtyTicket = "0";
         }
+//        //
+//        String qtyFormAp;
+//        try {
+//            qtyFormAp = customFormApDao.getByStringHM(
+//                    new GE_Custom_Form_Ap_Sql_002(
+//                            ToolBox_Con.getPreference_Customer_Code(context)
+//                    ).toSqlQuery()
+//            ).get(GE_Custom_Form_Ap_Sql_002.BADGE_SYNC_REQUIRED_QTY);
+//        } catch (Exception e) {
+//            qtyFormAp = "0";
+//        }
         //
-        String qtyFormAp;
-        try {
-            qtyFormAp = customFormApDao.getByStringHM(
-                    new GE_Custom_Form_Ap_Sql_002(
-                            ToolBox_Con.getPreference_Customer_Code(context)
-                    ).toSqlQuery()
-            ).get(GE_Custom_Form_Ap_Sql_002.BADGE_SYNC_REQUIRED_QTY);
-        } catch (Exception e) {
-            qtyFormAp = "0";
-        }
-        //
-        EV_User_Customer userCustomer = userCustomerDao.getByString(
-                new EV_User_Customer_Sql_002(
-                        ToolBox_Con.getPreference_User_Code(context),
-                        String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
-                ).toSqlQuery()
-        );
+
         //
         int totalSync = 0;
         totalSync += ToolBox_Inf.convertStringToInt(qtyTicket);
-        totalSync += ToolBox_Inf.convertStringToInt(qtyFormAp);
-        return totalSync > 0 || userCustomer.getSync_required() == 1;
+//        totalSync += ToolBox_Inf.convertStringToInt(qtyFormAp);
+        return totalSync > 0;
     }
 
     @Deprecated
@@ -2216,6 +2215,56 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     //endregion
+
+    @Override
+    public void executeWSTicketDownload() {
+        if(ToolBox_Con.isOnline(context)){
+            mView.setWsSoProcess(SYNC_TICKETS);
+            mView.setWsProcess(SYNC_TICKETS);
+            //
+            mView.showPD();
+            //
+            Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(TK_TicketDao.TICKET_PREFIX, getTicketConcatList());
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context);
+        }
+    }
+
+    @Override
+    public boolean hasMasterDataSyncRequired() {
+        EV_User_Customer userCustomer = getEvUserCustomer();
+        return userCustomer != null && userCustomer.getSync_required() == 1;
+    }
+
+    private String getTicketConcatList() {
+        ArrayList<HMAux> auxTickets = getTicketToSync();
+        String ticketPKList = "";
+        for (HMAux aux : auxTickets) {
+            if(aux.hasConsistentValue(Sql_Act069_002.TICKET_PK)){
+                ticketPKList += ConstantBaseApp.MAIN_CONCAT_STRING + aux.get(Sql_Act069_002.TICKET_PK);
+            }
+        }
+        //
+        return ticketPKList.contains(ConstantBaseApp.MAIN_CONCAT_STRING) ? ticketPKList.substring(ConstantBaseApp.MAIN_CONCAT_STRING.length()) : "";
+    }
+
+    private ArrayList<HMAux> getTicketToSync() {
+        ArrayList<HMAux> auxTickets = new ArrayList<>();
+        //
+        auxTickets = (ArrayList<HMAux>) tk_ticketDao.query_HM(
+                new Sql_Act068_002(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return auxTickets;
+    }
 
 
 }

@@ -96,6 +96,7 @@ import com.namoadigital.prj001.dao.IO_InboundDao;
 import com.namoadigital.prj001.dao.IO_MoveDao;
 import com.namoadigital.prj001.dao.IO_OutboundDao;
 import com.namoadigital.prj001.dao.MD_OperationDao;
+import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
@@ -186,9 +187,11 @@ import com.namoadigital.prj001.sql.IO_Inbound_Sql_013;
 import com.namoadigital.prj001.sql.IO_Move_Order_Item_Sql_005;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_013;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_002;
+import com.namoadigital.prj001.sql.MD_Operation_Sql_003;
 import com.namoadigital.prj001.sql.MD_Operation_Sql_SS;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_015;
 import com.namoadigital.prj001.sql.MD_Product_Serial_x_TK_Ticket_Sql_001;
+import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Site_Sql_003;
 import com.namoadigital.prj001.sql.MD_Site_Sql_Footer;
 import com.namoadigital.prj001.sql.MD_Site_Sql_SS_002;
@@ -8628,5 +8631,86 @@ public class ToolBox_Inf {
             );
         }
         return mActionFilterParam;
+    }
+
+    public static boolean checkTicketMdProfile(Context context, String s_site_code, long operationCode, long productCode, int tagCode) {
+        long customerCode = ToolBox_Con.getPreference_Customer_Code(context);
+
+        try{
+            MD_SiteDao siteDao = new MD_SiteDao(
+                    context,
+                    ToolBox_Con.customDBPath(customerCode),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            MD_OperationDao operationDao = new MD_OperationDao(
+                    context,
+                    ToolBox_Con.customDBPath(customerCode),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            MD_ProductDao productDao = new MD_ProductDao(
+                    context,
+                    ToolBox_Con.customDBPath(customerCode),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            MdTagDao mdTagDao = new MdTagDao(
+                    context,
+                    ToolBox_Con.customDBPath(customerCode),
+                    Constant.DB_VERSION_CUSTOM
+            );
+            //
+            MD_Site site = siteDao.getByString(
+                    new MD_Site_Sql_003(
+                            customerCode,
+                            s_site_code
+                    ).toSqlQuery()
+            );
+            //
+            MD_Operation operation = operationDao.getByString(
+                    new MD_Operation_Sql_003(
+                            customerCode,
+                            operationCode
+                    ).toSqlQuery()
+            );
+            MD_Product product = productDao.getByString(
+                    new MD_Product_Sql_001(
+                            customerCode,
+                            productCode
+                    ).toSqlQuery()
+            );
+            //
+            MdTag tag = null;
+            if(tagCode > -1) {
+                tag = mdTagDao.getByString(
+                        new MdTagSql001(
+                                (int) customerCode,
+                                tagCode
+                        ).toSqlQuery()
+                );
+
+                //
+                return site != null && site.getCustomer_code() > -1
+                        && operation != null && operation.getCustomer_code() > -1
+                        && product != null && product.getCustomer_code() > -1
+                        && tag != null && tag.getCustomer_code() > -1;
+            }else{
+                return site != null && site.getCustomer_code() > -1
+                        && operation != null && operation.getCustomer_code() > -1
+                        && product != null && product.getCustomer_code() > -1;
+            }
+            //
+        }catch (Exception e){
+            ToolBox_Inf.registerException(context.getClass().getName(), e);
+            return false;
+        }
+    }
+    public static boolean checkTicketMdProfile(Context context, String s_site_code, String s_operation_code, String s_product_code, String s_tag_operational_code) {
+        //
+        long operationCode = Long.parseLong(s_operation_code);
+        long productCode = Long.parseLong(s_product_code);
+        int tagCode=-1;
+        if(!s_tag_operational_code.isEmpty()) {
+            tagCode = Integer.parseInt(s_tag_operational_code);
+        }
+        return checkTicketMdProfile(context, s_site_code, operationCode, productCode, tagCode);
     }
 }
