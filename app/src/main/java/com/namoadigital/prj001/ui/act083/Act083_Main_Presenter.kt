@@ -296,7 +296,7 @@ class Act083_Main_Presenter(private val context: Context,
                 executeSerialSearch(
                         action.productCode,
                         action.productId,
-                        action.serialId,
+                        action.serialId ?:"",
                         true
                 )
             } else {

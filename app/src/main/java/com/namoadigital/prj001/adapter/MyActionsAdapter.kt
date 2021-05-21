@@ -20,6 +20,7 @@ import com.namoadigital.prj001.databinding.MyActionsItemBinding
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.util.*
 
 class MyActionsAdapter(
         private val myActions: List<MyActions>,
@@ -56,7 +57,7 @@ class MyActionsAdapter(
             binding.myActionsItemIvIconLeft.applyVisibilityIfSourceExists(myAction.processLeftIcon)
             binding.myActionsItemIvIconRight.applyVisibilityIfSourceExists(myAction.processRightIcon)
             //
-            binding.myActionsItemTvTagDesc.text = myAction.tagOperationDesc.toUpperCase()
+            configTvTag(myAction)
             binding.myActionsItemTvProdDesc.text = myAction.productDesc
             binding.myActionsItemTvSerialId.text = myAction.serialId
             configTvOriginView(myAction)
@@ -75,6 +76,12 @@ class MyActionsAdapter(
             binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
             binding.myActionsItemTvDoneDate.applyVisibilityIfTextExists(myAction.doneDate)
             applyBackgroundStrokeColor(myAction)
+        }
+
+        private fun configTvTag(myAction: MyActions) {
+            with(binding.myActionsItemTvTagDesc) {
+                text = myAction.tagOperationDesc?.toUpperCase()?:null
+            }
         }
 
         private fun configTvSite(myAction: MyActions) {
