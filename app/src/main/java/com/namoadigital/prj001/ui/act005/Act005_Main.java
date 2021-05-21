@@ -186,6 +186,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private static final int TOOLBAR_CANCEL_NFC = 3;
     private static final int TOOLBAR_SUPPORT = 4;
     private static final int TOOLBAR_SYNC_DATA_STATUS = 5;
+    private static final int TOOLBAR_SEND_RECEIVE_DATA = 6;
     public static final int SETTINGS_FOR_DATETIME = 10001;
 
     private ArrayList<HMAux> wsResults = new ArrayList<>();
@@ -583,6 +584,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //Ws_Sync do Form de ticket
         transList.add("progress_sync_tickets_form_ttl");
         transList.add("progress_sync_tickets_form_msg");
+        //Ws_Sync do ticket
+        transList.add("progress_download_ticket_ttl");
+        transList.add("progress_download_ticket_start");
         //
         transList.add("lbl_invalid_datetime_warning");
         transList.add("alert_invalid_local_datetime_ttl");
@@ -1335,17 +1339,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             desabilita acesso a modulos enquanto atuliza tela.
          */
 //        gv_menu.setClickable(false);
-        if(mPresenter.hasSOProfile()){
-
-        }else {
-            refreshTagList();
-        }
+        refreshUiData();
         mPresenter.getMenuItensV2(hmAux_Trans);
         iniUIFooter();
 //        gv_menu.setClickable(true);
     }
 
     private void refreshTagList() {
+
         FrgMainHome currentFragment = (FrgMainHome) fm.findFragmentById(R.id.act005_frg_placeholder);
         currentFragment.refreshList(getTagList( ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION),
@@ -1386,6 +1387,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             case Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM:
                 alertTitle = hmAux_Trans.get("progress_sync_tickets_form_ttl");
                 alertMsg = hmAux_Trans.get("progress_sync_tickets_form_msg");
+                break;
+            case Act005_Main_Presenter_Impl.SYNC_TICKETS:
+                alertTitle =  hmAux_Trans.get("progress_download_ticket_ttl");
+                alertMsg = hmAux_Trans.get("progress_download_ticket_start");
                 break;
             default:
                 break;
@@ -1776,7 +1781,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     loadTranslation();
                     //Atualiza menu e os badges
                     //mPresenter.getMenuItens(hmAux_Trans);
-                    mPresenter.getMenuItensV2(hmAux_Trans);
+//                    mPresenter.getMenuItensV2(hmAux_Trans);
                     //Fecha Drawer
                     mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
@@ -2133,14 +2138,36 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         } else if (wsSoProcess.equalsIgnoreCase(Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM)) {
             progressDialog.dismiss();
             setWsSoProcess("");
+            refreshUiData();
+        }  else if (wsSoProcess.equalsIgnoreCase(Act005_Main_Presenter_Impl.SYNC_TICKETS)) {
+            progressDialog.dismiss();
+            wsProcess ="";
+            boolean productOutdate = false;
+            if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
+                productOutdate = ToolBox_Inf.hasFormProductOutdate(context);
+            }
+            if(productOutdate){
+                mPresenter.callWsSyncForTicketsForm();
+            }else{
+                refreshUiData();
+            }
         } else {
             if(sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
             }
             setWsSoProcess("");
-            ToolBox_Inf.updateUserCustomerSync(getApplicationContext(), String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ToolBox_Con.getPreference_User_Code(getApplicationContext()),1);
-            mPresenter.getMenuItensV2(hmAux_Trans);
+            refreshUiData();
+//            mPresenter.getMenuItensV2(hmAux_Trans);
             progressDialog.dismiss();
+        }
+    }
+
+    private void refreshUiData() {
+        invalidateOptionsMenu();
+        if (mPresenter.hasSOProfile()) {
+
+        } else {
+            refreshTagList();
         }
     }
 
@@ -2327,7 +2354,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     //
                 }
                 //
-                executeSync();
+                boolean hasSync_required = mPresenter.hasTicketSyncRequired();
+                if(hasSync_required) {
+                    executeSync();
+                }
             }
         });
     }
@@ -2482,6 +2512,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 //LUCHE - 30/06/2020
                 //Substituido o metodo antigo pelo metodo que agenda todos os workers.
                 ToolBox_Inf.scheduleAllDownloadWorkers(context);
+                ToolBox_Inf.updateUserCustomerSync(getApplicationContext(), String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ToolBox_Con.getPreference_User_Code(getApplicationContext()), 0);
+                refreshUiData();
                 //
                 break;
             case Act005_Main.WS_PROCESS_ENABLE_NFC:
@@ -2501,6 +2533,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 alertMsg = hmAux_Trans.get("alert_support_finish_msg");
                 break;
             case Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM:
+                alertTitle = hmAux_Trans.get("alert_sync_finish_ttl");
+                alertMsg = hmAux_Trans.get("alert_sync_finish_msg");
+                progressDialog.dismiss();
+                refreshUiData();
+                break;
+            case Act005_Main_Presenter_Impl.SYNC_TICKETS:
                 alertTitle = hmAux_Trans.get("alert_sync_finish_ttl");
                 alertMsg = hmAux_Trans.get("alert_sync_finish_msg");
                 break;
@@ -2583,7 +2621,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 }
                 progressDialog.dismiss();
                 invalidateOptionsMenu();
-                refreshTagList();
+                refreshUiData();
+
                 if (wsResults.size() > 0) {
                     showResults(wsResults);
                 } else {
@@ -2650,14 +2689,42 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         int icon = 0;
         int iconColor = 0;
         boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
-        boolean hasSyncRequired = mPresenter.hasSyncRequired();
+        boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
         //
-        if(hasUpdateRequired && hasSyncRequired){
+        Drawable wrappedDrawable = setSyncIcon(iconColor, hasUpdateRequired, hasTicketSyncRequired);
+        //
+        menu.add(0, TOOLBAR_SYNC_DATA_STATUS, Menu.FIRST + 0, hmAux_Trans.get("lbl_sync_data"));
+        menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setIcon(wrappedDrawable);
+        menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        //
+        Drawable wrappedSyncIcon = DrawableCompat.wrap(context.getDrawable(R.drawable.ic_sync_black_24dp));
+        if (wrappedSyncIcon != null) {
+            DrawableCompat.setTint(wrappedSyncIcon.mutate(), ContextCompat.getColor(context,  android.R.color.white));
+            if(mPresenter.hasMasterDataSyncRequired()){
+                DrawableCompat.setTint(wrappedSyncIcon.mutate(), ContextCompat.getColor(context,  android.R.color.holo_red_light));
+            }
+        }
+
+        menu.add(0, TOOLBAR_SEND_RECEIVE_DATA, Menu.FIRST + 1, hmAux_Trans.get("lbl_sync_data"));
+        menu.findItem(TOOLBAR_SEND_RECEIVE_DATA).setIcon(wrappedSyncIcon);
+        menu.findItem(TOOLBAR_SEND_RECEIVE_DATA).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.findItem(TOOLBAR_SEND_RECEIVE_DATA).setTitle(hmAux_Trans.get("lbl_sync_data"));
+
+
+//        menu.findItem(TOOLBAR_ENABLE_NFC).setTitle(hmAux_Trans.get("lbl_sync_data"));
+
+        return true;
+    }
+
+    @NotNull
+    private Drawable setSyncIcon(int iconColor, boolean hasUpdateRequired, boolean hasTicketSyncRequired) {
+        int icon;
+        if(hasUpdateRequired && hasTicketSyncRequired){
             icon = R.drawable.ic_sync_main_menu_data;
         }else if(hasUpdateRequired){
             icon = R.drawable.ic_cloud_upload;
             iconColor = R.color.namoa_cancel_red;
-        }else if(hasSyncRequired){
+        }else if(hasTicketSyncRequired){
             icon = R.drawable.ic_baseline_cloud_download_24;
             iconColor = R.color.custom_yellow_sync;
         }else{
@@ -2669,31 +2736,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         if (wrappedDrawable != null && iconColor>0) {
             DrawableCompat.setTint(wrappedDrawable.mutate(), ContextCompat.getColor(context, iconColor));
         }
-        //
-        menu.add(0, TOOLBAR_SYNC_DATA_STATUS, Menu.FIRST + 0, hmAux_Trans.get("lbl_sync_data"));
-        menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setIcon(wrappedDrawable);
-        menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        //
-        Drawable wrappedSyncIcon = DrawableCompat.wrap(context.getDrawable(R.drawable.ic_sync_black_24dp));
-        if (wrappedSyncIcon != null) {
-            DrawableCompat.setTint(wrappedSyncIcon.mutate(), ContextCompat.getColor(context,  android.R.color.white));
-        }
-
-        menu.add(0, TOOLBAR_ENABLE_NFC, Menu.FIRST + 1, hmAux_Trans.get("lbl_sync_data"));
-        menu.findItem(TOOLBAR_ENABLE_NFC).setIcon(wrappedSyncIcon);
-        menu.findItem(TOOLBAR_ENABLE_NFC).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.findItem(TOOLBAR_ENABLE_NFC).setTitle(hmAux_Trans.get("lbl_sync_data"));
-
-        //Menu Namoa logo
-        menu.add(0, TOOLBAR_NAMOA_LOGO, Menu.FIRST + 2, getResources().getString(R.string.app_name));
-        menu.findItem(TOOLBAR_NAMOA_LOGO).setIcon(getResources().getDrawable(R.mipmap.ic_namoa));
-        menu.findItem(TOOLBAR_NAMOA_LOGO).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.findItem(TOOLBAR_NAMOA_LOGO).setTitle(getResources().getString(R.string.app_name));
-
-
-//        menu.findItem(TOOLBAR_ENABLE_NFC).setTitle(hmAux_Trans.get("lbl_sync_data"));
-
-        return true;
+        return wrappedDrawable;
     }
 
     @Override
@@ -2708,13 +2751,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         }
 
         DialogInterface.OnClickListener listener = null;
-
+        boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
+        boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
         switch (id) {
             //TODO REVISAR AQUI, POIS FOI MODIFICADO APENAS PARA SYNC GAMBIS
             case TOOLBAR_NAMOA_LOGO:
                 return true;
 
-            case TOOLBAR_ENABLE_NFC:
+            case TOOLBAR_SEND_RECEIVE_DATA:
                 ToolBox.alertMSG(
                         Act005_Main.this,
                         hmAux_Trans.get("drawer_sync_alert_ttl"),
@@ -2730,10 +2774,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 );
                 break;
             case TOOLBAR_SYNC_DATA_STATUS:
-                boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
-                boolean hasSyncRequired = mPresenter.hasSyncRequired();
-                if(hasSyncRequired){
+                if(hasUpdateRequired && hasTicketSyncRequired){
+
                     mPresenter.syncFlow(mAdapter.getBadgeQty(MENU_ID_SEND_DATA));
+                }else if(hasTicketSyncRequired) {
+                    mPresenter.executeWSTicketDownload();
                 }else if(hasUpdateRequired){
                     if (ToolBox_Con.isOnline(context)) {
                         setWsProcess(Act005_Main.WS_PROCESS_SEND);
@@ -2850,8 +2895,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             );
         }
         //
-        invalidateOptionsMenu();
-        //
         if(mainTagMenus.size() > 1 ) {
             mainTagMenus.add(new MainTagMenu(0,
                     "",
@@ -2876,11 +2919,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     if (fcmTitle.equals(FCM_MODULE_SYNC)) {
                         invalidateOptionsMenu();
                     } else if (fcmTitle.equals(FCM_MODULE_TICKET)) {
-                        if (mPresenter.hasSOProfile()) {
-
-                        } else {
-                            refreshTagList();
-                        }
+                       refreshUiData();
                     }
                 }
             }
@@ -2930,9 +2969,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     private void initTagFragment() {
         FragmentTransaction transaction = fm.beginTransaction();
-        FrgMainHome frgMainHome = FrgMainHome.newInstance(mModule_Code);
+        FrgMainHome frgMainHome = (FrgMainHome) fm.findFragmentById(R.id.act005_frg_placeholder);
+        if(frgMainHome == null) {
+            frgMainHome = FrgMainHome.newInstance(mModule_Code);
+        }
         //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
-        transaction.add(R.id.act005_frg_placeholder, frgMainHome, frgMainHome.getTag());
+        transaction.replace(R.id.act005_frg_placeholder, frgMainHome, frgMainHome.getTag());
         transaction.addToBackStack(null);
         transaction.commit();
     }

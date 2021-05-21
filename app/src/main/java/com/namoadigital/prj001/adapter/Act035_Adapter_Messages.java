@@ -153,7 +153,7 @@ public class Act035_Adapter_Messages extends BaseAdapter {
 
         void join_AP(String pk);
 
-        boolean checkTicketProfile(String site_code, String operation_code, String product_code);
+        boolean checkTicketProfile(String site_code, String operation_code, String product_code, String tag_operational_code);
 
         void downloadTicket(String pk, String site_code, String operation_code, String product_code);
 
@@ -1184,10 +1184,21 @@ public class Act035_Adapter_Messages extends BaseAdapter {
                             && finalItem.hasConsistentValue("operation_code")
                             && finalItem.hasConsistentValue("product_code")
                         ) {
+                            /**
+                             * BARRIONUEVO 21-05-2021
+                             * Para as mensagens já criadas que não possui tag, foi decido nao validar
+                             * neste momento.
+                             */
+                            String tag_operational_code = finalItem.get("tag_operational_code");
+                            if(!finalItem.hasConsistentValue("tag_operational_code")){
+                                tag_operational_code = "";
+                            }
                             if (!delegate.checkTicketProfile(
                                 finalItem.get("site_code"),
                                 finalItem.get("operation_code"),
-                                finalItem.get("product_code"))
+                                finalItem.get("product_code"),
+                                    tag_operational_code
+                                    )
                             ) {
                                 tv_warning_msg.setVisibility(View.VISIBLE);
                                 tv_warning_msg.setText(hmAux_Trans.get("no_profile_msg"));

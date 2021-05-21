@@ -273,11 +273,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
             //LUCHE - 03/12/2019
             //ADD TRATATIVA MODULO Ticket
-            else if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_TICKET) &&
-                     fcmMessage.getTitle().trim().equalsIgnoreCase(ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE)
-            ) {
-                handleTkFMC(fcmMessage);
-
+            /**
+             * BARRIONUEVO 21-05-2021
+             * FCM de sincronismo de ticket.
+             * FCM_ACTION_TICKET_FOCUS_UPDATE
+             *     -  Verifica se o user possui ticket na maquina, caso positivo atualiza o ticket e remove ticket cache
+             *        caso negativo atualiza ou insere o ticket cache, acso n possuo acesso de perfil(produto, site, operação e tag operacional)
+             *        não insere o ticket e informa a necessidade de sincronismo.
+             */
+            else if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_TICKET)) {
+                switch (fcmMessage.getTitle()){
+                    case ConstantBaseApp.FCM_ACTION_TICKET_FOCUS_UPDATE:
+                        String module = getFcmModuleByTicketFocusUpdate(fcmMessage);
+                        sendFCMStatus(module);
+                        break;
+                    case ConstantBaseApp.FCM_ACTION_TICKET_REMOVE_UPDATE:
+                        removeTicketCache(fcmMessage.getMsg_short());
+                        sendFCMStatus(fcmMessage.getModule());
+                        break;
+                    case ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE:
+                        handleTkFMC(fcmMessage);
+                        break;
+                }
             } else if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_SCHEDULE)) {
                 //24/03/2020 - Todas as msg de scheduel, devem ser SILENT
                 if(fcmMessage.getType().equals(ConstantBaseApp.FCM_TYPE_SILENT)) {
@@ -290,19 +307,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     //
                     sendFCMStatus(fcmMessage.getModule());
                 }
-
-            }if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_TICKET)) {
-                switch (fcmMessage.getTitle()){
-                    case ConstantBaseApp.FCM_ACTION_TICKET_FOCUS_UPDATE:
-                        handleTicketFocusUpdate(fcmMessage.getMsg_short(), fcmMessage.getMsg_long());
-                        break;
-                    case ConstantBaseApp.FCM_ACTION_TICKET_REMOVE_UPDATE:
-                        removeTicketCache(fcmMessage.getMsg_short());
-                        break;
-                }
-
-                sendFCMStatus(fcmMessage.getModule());
-
             } else {
                 //
                 //LUCHE - 07/08/2019
@@ -379,10 +383,34 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         ticketCode
                 ).toSqlQuery()
         );
+
+        TK_TicketDao ticketDao = new TK_TicketDao(
+                getApplicationContext(),
+                ToolBox_Con.customDBPath(customerCode),
+                Constant.DB_VERSION_CUSTOM
+        );
+        //
+        TK_Ticket ticket = ticketDao.getByString(new TK_Ticket_Sql_001(
+                customerCode,
+                ticketPrefix,
+                ticketCode).toSqlQuery()
+        );
+        //
+        if(ticket != null) {
+            ticket.setUser_focus(0);
+            ticket.setSync_required(1);
+            ticketDao.addUpdate(ticket);
+        }
     }
 
-    private void handleTicketFocusUpdate(String msg_short, String msg_long) {
-        String[] ticketPk = msg_short.split("\\.");
+    /**
+     * BARRIONUEVO - 20-05-2021
+     * Define qual será o modulo utilizado para informar act005 que houve um fcm.
+     * @param fcmMessage
+     * @return
+     */
+    private String getFcmModuleByTicketFocusUpdate(FCMMessage fcmMessage) {
+        String[] ticketPk = fcmMessage.getMsg_short().split("\\.");
         long customerCode = Long.parseLong(ticketPk[0]);
         int ticketPrefix = Integer.parseInt(ticketPk[1]);
         int ticketCode = Integer.parseInt(ticketPk[2]);
@@ -406,15 +434,35 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         );
 
         if(ticket == null){
-            List<TkTicketCache> cache = new ArrayList<>();
+            List<TkTicketCache> caches = new ArrayList<>();
             try {
-                cache = getTicketCacheFromFCM(msg_long);
-                ticketCacheDao.addUpdate(cache, false);
+                caches = getTicketCacheFromFCM(fcmMessage.getMsg_long());
+                boolean sync_required = true;
+                for(TkTicketCache cache: caches) {
+                    if (ToolBox_Inf.checkTicketMdProfile(
+                            getApplicationContext(),
+                            String.valueOf(cache.getOpen_site_code()),
+                            cache.getOpen_operation_code(),
+                            cache.getOpen_product_code(),
+                            cache.getTag_operational_code()
+                        )
+                    ){
+                        sync_required = false;
+                    }
+                }
+                if(sync_required){
+                    ToolBox_Inf.updateUserCustomerSync(getApplicationContext(), fcmMessage.getCustomer(), ToolBox_Con.getPreference_User_Code(getApplicationContext()), Integer.parseInt(fcmMessage.getSync()));
+                    return ConstantBaseApp.FCM_MODULE_SYNC;
+                }else{
+                    ticketCacheDao.addUpdate(caches, false);
+                }
             } catch (JSONException e) {
+                ToolBox_Inf.registerException(getClass().getName(), e);
                 e.printStackTrace();
             }
         }else{
             ticket.setSync_required(1);
+            ticket.setUser_focus(1);
             DaoObjReturn daoObjReturn = ticketDao.addUpdate(ticket);
             if(!daoObjReturn.hasError()) {
                 TkTicketCache cache = ticketCacheDao.getByString(
@@ -436,6 +484,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
             //
         }
+        return fcmMessage.getModule();
     }
 
     private ArrayList<TkTicketCache> getTicketCacheFromFCM(String msg_long) throws JSONException {

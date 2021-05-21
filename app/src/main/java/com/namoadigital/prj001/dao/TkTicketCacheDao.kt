@@ -46,6 +46,8 @@ class TkTicketCacheDao(
         const val CONTRACT_DESC = "contract_desc"
         const val OPEN_SITE_CODE = "open_site_code"
         const val OPEN_SITE_DESC = "open_site_desc"
+        const val OPEN_OPERATION_CODE = "open_operation_code"
+        const val OPEN_OPERATION_DESC = "open_operation_desc"
         const val OPEN_PRODUCT_CODE = "open_product_code"
         const val OPEN_PRODUCT_DESC = "open_product_desc"
         const val OPEN_SERIAL_ID = "open_serial_id"
@@ -320,6 +322,10 @@ class TkTicketCacheDao(
                     if(ticketCache.open_site_code > -1){
                         put(OPEN_SITE_CODE,ticketCache.open_site_code)
                     }
+                     if(ticketCache.open_operation_code > -1){
+                        put(OPEN_OPERATION_CODE,ticketCache.open_operation_code)
+                    }
+                    put(OPEN_OPERATION_DESC, ticketCache.open_operation_desc)
                     put(CLIENT_CODE,ticketCache.client_code)
                     put(CLIENT_ID,ticketCache.client_id)
                     put(CLIENT_NAME, ticketCache.client_name)
@@ -377,6 +383,8 @@ class TkTicketCacheDao(
                             contract_desc = getString(getColumnIndex(CONTRACT_DESC)),
                             open_site_code = getInt(getColumnIndex(OPEN_SITE_CODE)),
                             open_site_desc = getString(getColumnIndex(OPEN_SITE_DESC)),
+                            open_operation_code = getInt(getColumnIndex(OPEN_OPERATION_CODE)),
+                            open_operation_desc = getString(getColumnIndex(OPEN_OPERATION_DESC)),
                             open_product_code = getInt(getColumnIndex(OPEN_PRODUCT_CODE)),
                             open_product_desc = getString(getColumnIndex(OPEN_PRODUCT_DESC)),
                             open_serial_id = getString(getColumnIndex(OPEN_SERIAL_ID)),

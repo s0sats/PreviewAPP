@@ -28,6 +28,8 @@ class TkTicketCache(
         var contract_desc: String?,
         var open_site_code: Int,
         var open_site_desc: String,
+        var open_operation_code: Int,
+        var open_operation_desc: String,
         var open_product_code: Int,
         var open_product_desc: String,
         var open_serial_id: String,
