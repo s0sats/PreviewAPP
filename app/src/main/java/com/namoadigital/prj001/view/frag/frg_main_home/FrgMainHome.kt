@@ -97,7 +97,6 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
             if(mListener != null){
                 adapter = Act005MainMenuTagAdapter(tagList, hmAux_Trans_Frag, mListener)
             }
-
         }else{
             adapter = Act005MainMenuTagAdapter(mutableListOf(), hmAux_Trans_Frag, mListener)
             binding.rvTags.visibility = View.GONE
@@ -219,7 +218,7 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
             binding.rvTags.visibility = View.VISIBLE
             binding.tvListPlaceholder.visibility = View.GONE
             handleAllTagItem(tagList)
-            if (adapter.mMainTagMenu != null && !adapter.mMainTagMenu.isEmpty()) {
+            if (adapter.mMainTagMenu != null) {
                 adapter.mMainTagMenu.clear()
                 adapter.mMainTagMenu.addAll(tagList)
             }

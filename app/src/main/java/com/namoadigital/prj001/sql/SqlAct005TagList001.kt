@@ -2,11 +2,11 @@ package com.namoadigital.prj001.sql
 
 import android.content.Context
 import com.namoadigital.prj001.dao.*
-import com.namoadigital.prj001.dao.TK_TicketDao.FORECAST_DATE
 import com.namoadigital.prj001.database.Specification
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION
+import com.namoadigital.prj001.util.ToolBox_Con
 
 /**
  * BARRIONUEVO 20-05-2021
@@ -16,17 +16,18 @@ import com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTI
  */
 class SqlAct005TagList001(private val context: Context,
                           private val customerCode: Int,
-                          deviceGMT: String,
+                          private val deviceGMT: String,
                           siteCode: Int,
                           periodFilter: String,
                           focusFilter: String
 ) : Specification {
+    val customerGMT: String = ToolBox_Con.getPreference_Customer_TMZ(context)
     var ticketFilter = ""
     var ticketCacheFilter = ""
     var formApFilter = ""
     var scheduleFilter = ""
     var scheduleNextFilter = ""
-//    var formFilter = ""
+    //    var formFilter = ""
     init{
         ticketFilter = when (periodFilter) {
             ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n and (strftime('%Y-%m-%d',s.${TK_Ticket_StepDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
@@ -52,16 +53,12 @@ class SqlAct005TagList001(private val context: Context,
             else -> ""
         }
         //
-        scheduleFilter = when (periodFilter) {
-            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
-            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n and (strftime('%Y-%m-%d',mse.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
-            else -> ""
-        }
+        scheduleFilter = "  and (strftime('%s',mse.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') * 1000) < (strftime('%s','now','$deviceGMT')*1000)"
         //
         scheduleNextFilter = when (periodFilter) {
-            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') > strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
-            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') > strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
-            else -> "\n and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START},'$deviceGMT') >= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
+            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "\n and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} ||  ' $customerGMT','$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
+            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "\n and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} ||  ' $customerGMT','$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
+            else -> ""
         }
 
         if (siteCode > 0) {
@@ -80,36 +77,53 @@ class SqlAct005TagList001(private val context: Context,
 
     override fun toSqlQuery(): String {
         val sb = StringBuilder()
-        return sb.append(
-    """select ticket.tag_operational_code tag_operational_code, 
+        val toString = sb.append(
+                """select ticket.tag_operational_code tag_operational_code, 
           ticket.tag_operational_desc tag_operational_desc, 
           sum(qty) qty, 
           max(ticket.update_required) update_required, 
           max(ticket.sync_required) sync_required,
           max(ticket.in_processing) in_processing
     from (
-        select tk.tag_operational_code, 
-               tk.tag_operational_desc , 
-               count(tk.tag_operational_code) qty, 
-               max( max(tk.update_required), max(tk.update_required_product)) update_required, 
-               max(tk.sync_required) sync_required,
-               max(0) in_processing 
-          from ${TK_TicketDao.TABLE} tk 
-            JOIN tk_ticket_step s ON 
-                   tk.customer_code = s.customer_code 
-                   AND tk.ticket_code = s.ticket_code 
-                   AND tk.ticket_prefix = s.ticket_prefix
-                 where   tk.customer_code = $customerCode 
-                         and s.step_status in ('${ConstantBaseApp.SYS_STATUS_PENDING}',  
-                         '${ConstantBaseApp.SYS_STATUS_PROCESS}' ) 
-                         and tk.ticket_status in ('${ConstantBaseApp.SYS_STATUS_PENDING}' , '${ConstantBaseApp.SYS_STATUS_PROCESS}' , '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')  
-                         and tk.current_step_order = s.step_order
-                         and tk.ticket_code = s.ticket_code 
-                         AND tk.ticket_prefix = s.ticket_prefix
-                        $ticketFilter
+            select tk.tag_operational_code, 
+                   tk.tag_operational_desc , 
+                   count(tk.tag_operational_code) qty, 
+                   max( max(tk.update_required), max(tk.update_required_product)) update_required, 
+                   max(tk.sync_required) sync_required,
+                   ifnull(max(has_in_processing),0) in_processing 
+            from ${TK_TicketDao.TABLE} tk, 
+                 ${TK_Ticket_StepDao.TABLE} s
+            left join (SELECT d.customer_code,
+                              d.ticket_prefix,
+                              d.ticket_code,
+                              COUNT(1) has_in_processing
+                      FROM ${GE_Custom_Form_DataDao.TABLE} d
+                      WHERE d.customer_code = $customerCode 
+                            and d.ticket_prefix is not null
+                            and d.ticket_code is not null
+                            and d.custom_form_status  = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
+                      GROUP BY
+                             d.customer_code,
+                             d.ticket_prefix,
+                             d.ticket_code                                         
+                     ) d on  tk.customer_code = d.customer_code
+                             and tk.ticket_prefix = d.ticket_prefix
+                             and tk.ticket_code = d.ticket_code 
+            where  
+                   tk.customer_code = s.customer_code
+                   and tk.ticket_prefix = s.ticket_prefix
+                   and tk.ticket_code = s.ticket_code 
+                   and tk.current_step_order = s.step_order              
+                   --
+                   AND tk.customer_code = $customerCode                      
+                   and tk.ticket_status in ('${ConstantBaseApp.SYS_STATUS_PENDING}' , '${ConstantBaseApp.SYS_STATUS_PROCESS}' , '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
+                   and s.step_status in ('${ConstantBaseApp.SYS_STATUS_PENDING}',  '${ConstantBaseApp.SYS_STATUS_PROCESS}' )
+                   $ticketFilter
         GROUP BY tk.tag_operational_code, 
-                 tk.tag_operational_desc
-        union 
+                 tk.tag_operational_desc                   
+        
+        --UNION TICKET CACHE
+        UNION 
             select tkc.tag_operational_code, 
                    tkc.tag_operational_desc, 
                    count(tkc.tag_operational_code) qty, 
@@ -120,27 +134,33 @@ class SqlAct005TagList001(private val context: Context,
              left join tk_ticket tk
                      on tk.customer_code = tkc.customer_code 
                     and tk.ticket_prefix = tkc.ticket_prefix 
-                    and tk.ticket_code = tkc.ticket_code
-                    and tk.ticket_id = tkc.ticket_id
-                where tk.ticket_code is null
+                    and tk.ticket_code = tkc.ticket_code                    
+            where tk.ticket_code is null
                 $ticketCacheFilter
             GROUP BY tkc.tag_operational_code, 
                    tkc.tag_operational_desc
-        union 
+        
+        --UNION FORM AP                              
+        UNION 
             select  mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
                     mdt.${MdTagDao.TAG_DESC} tag_operational_desc, 
                     count(geap.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE}) qty,
-                     max(0) update_required,
-                     max(0) sync_required,
-                     max(0) in_processing
-              from ${MdTagDao.TABLE} mdt
-             inner join ${GE_Custom_Form_ApDao.TABLE} geap
-                    on  mdt.${MdTagDao.TAG_CODE} = geap.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE}
-             where geap.${GE_Custom_Form_ApDao.CUSTOMER_CODE} = '$customerCode'
-               and geap.${GE_Custom_Form_ApDao.AP_STATUS} not in ('${Constant.SYS_STATUS_DONE}','${Constant.SYS_STATUS_CANCELLED}')
+                    max(geap.upload_required) update_required,
+                    max(geap.sync_required) sync_required,
+                    max(0) in_processing
+            from ${MdTagDao.TABLE} mdt,
+                 ${GE_Custom_Form_ApDao.TABLE} geap                    
+            where
+                 mdt.${MdTagDao.CUSTOMER_CODE} = geap.${GE_Custom_Form_ApDao.CUSTOMER_CODE}
+                 and mdt.${MdTagDao.TAG_CODE} = geap.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE}
+                 --
+                 and geap.${GE_Custom_Form_ApDao.CUSTOMER_CODE} = '$customerCode'
+                 and geap.${GE_Custom_Form_ApDao.AP_STATUS} not in ('${Constant.SYS_STATUS_DONE}','${Constant.SYS_STATUS_CANCELLED}')
+                 
             GROUP BY mdt.${MdTagDao.TAG_CODE},   
                      mdt.${MdTagDao.TAG_DESC}
-        union 
+        -- UNION Agendamento
+        UNION 
             select mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
             mdt.${MdTagDao.TAG_DESC} tag_operational_desc, 
             count(mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}) qty,
@@ -149,7 +169,10 @@ class SqlAct005TagList001(private val context: Context,
                   else 0
             end)) update_required,
              max(0) sync_required,
-             max(0) in_processing
+             max((case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
+                  then 1
+                  else 0
+            end)) in_processing
               from ${MdTagDao.TABLE} mdt
             inner join ${MD_Schedule_ExecDao.TABLE} mse
                     on  mdt.${MdTagDao.CUSTOMER_CODE} = mse.${MD_Schedule_ExecDao.CUSTOMER_CODE}
@@ -157,7 +180,7 @@ class SqlAct005TagList001(private val context: Context,
              where 
             mse.${MD_Schedule_ExecDao.CUSTOMER_CODE} = '$customerCode'
             and mse.${MD_Schedule_ExecDao.CUSTOMER_CODE} = mdt.${MdTagDao.CUSTOMER_CODE}
-            and mse.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_WAITING_SYNC}')
+            and mse.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_IN_PROCESSING}','${Constant.SYS_STATUS_WAITING_SYNC}')
             $scheduleFilter
              GROUP BY mdt.${MdTagDao.TAG_CODE},   
                      mdt.${MdTagDao.TAG_DESC}
@@ -171,11 +194,15 @@ class SqlAct005TagList001(private val context: Context,
                       else 0
                 end)) update_required,
                  0 sync_required,
-                 0 in_processing
+                 max((case when s2.${MD_Schedule_ExecDao.STATUS}  = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
+                      then 1
+                      else 0
+                end))  in_processing
                   from ${MD_Schedule_ExecDao.TABLE} s2
-                  WHERE  s2.${MD_Schedule_ExecDao.SCHEDULE_PREFIX}||s2.${MD_Schedule_ExecDao.SCHEDULE_CODE}||s2.${MD_Schedule_ExecDao.SCHEDULE_EXEC}
+                  WHERE                   
+                   s2.${MD_Schedule_ExecDao.SCHEDULE_PREFIX} ||substr('0000000000'||s2.${MD_Schedule_ExecDao.SCHEDULE_CODE},-10)||substr('0000000000'||s2.${MD_Schedule_ExecDao.SCHEDULE_EXEC},-10)
                    IN ( 
-                        SELECT min(s1.${MD_Schedule_ExecDao.SCHEDULE_PREFIX}||s1.${MD_Schedule_ExecDao.SCHEDULE_CODE}||s1.${MD_Schedule_ExecDao.SCHEDULE_EXEC}) schedule_pk
+                        SELECT min(s1.${MD_Schedule_ExecDao.SCHEDULE_PREFIX} ||substr('0000000000'||s1.${MD_Schedule_ExecDao.SCHEDULE_CODE},-10)||substr('0000000000'||s1.${MD_Schedule_ExecDao.SCHEDULE_EXEC},-10)) schedule_pk                        
                           FROM  ${MD_Schedule_ExecDao.TABLE} s1
                          WHERE s1.${MD_Schedule_ExecDao.PRODUCT_CODE}||'_'||
                            s1.${MD_Schedule_ExecDao.SERIAL_ID}||'_'||
@@ -200,8 +227,9 @@ class SqlAct005TagList001(private val context: Context,
                                                                 FROM
                                                                  ${MD_Schedule_ExecDao.TABLE} s
                                                                 WHERE  s.${MD_Schedule_ExecDao.CUSTOMER_CODE} = $customerCode
+                                                                and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') >= strftime('%Y-%m-%d','now','" + deviceGMT + "'))                                                                
                                                                 $scheduleNextFilter
-                                                                and s.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_PENDING}','${Constant.SYS_STATUS_WAITING_SYNC}')                 
+                                                                and s.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_IN_PROCESSING}','${Constant.SYS_STATUS_PENDING}','${Constant.SYS_STATUS_WAITING_SYNC}')                 
                                                              GROUP BY
                                                                  s.${MD_Schedule_ExecDao.PRODUCT_CODE},
                                                                  s.${MD_Schedule_ExecDao.SERIAL_ID},
@@ -224,7 +252,8 @@ class SqlAct005TagList001(private val context: Context,
                    )   
             GROUP BY s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE},   
                      s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_DESC}
-         union
+         --UNION FORM AVULSO                     
+        UNION
             select gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}, 
                    gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC}, 
                    count(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}), 
@@ -255,5 +284,6 @@ class SqlAct005TagList001(private val context: Context,
    group by ticket.tag_operational_code, ticket.tag_operational_desc
                                                                 """
         ).toString()
+        return toString
     }
 }
