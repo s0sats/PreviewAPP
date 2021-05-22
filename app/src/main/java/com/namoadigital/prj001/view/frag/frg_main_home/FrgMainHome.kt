@@ -2,7 +2,9 @@ package com.namoadigital.prj001.view.frag.frg_main_home
 
 import android.content.Context
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -107,6 +109,12 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         binding.rvTags.layoutManager = layoutManager
         binding.rvTags.addItemDecoration(DividerItemDecoration(context,
                 DividerItemDecoration.VERTICAL))
+        //
+        if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
+            binding.cvInvalidDatetimeCard.setVisibility(View.VISIBLE)
+        } else {
+            binding.cvInvalidDatetimeCard.setVisibility(View.GONE)
+        }
     }
 
     private fun setLabels() {
@@ -115,6 +123,7 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         binding.tvMessenger.text = hmAux_Trans_Frag.get("messenger_lbl")
         binding.tvSearch.text = hmAux_Trans_Frag.get("search_lbl")
         binding.tvListTagLbl.text = hmAux_Trans_Frag.get("tag_list_lbl")
+        binding.tvDatetimeWarning.text = hmAux_Trans_Frag.get("lbl_invalid_datetime_warning")
     }
 
     private fun setActions() {

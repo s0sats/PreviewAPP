@@ -195,12 +195,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     private Context context;
 
-    private CardView cv_invalid_datetime_card;
-    private ImageView iv_datetime_warning;
-    private TextView tv_datetime_warning;
-    private FrameLayout flTagMenu;
-
-
     private Act005_Main_Presenter mPresenter;
     private Act005_Adapter mAdapter;
 
@@ -629,8 +623,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         wsProcess = "";
         wsSoProcess = "";
 
-        initializeInvalidDatetimeViews();
-
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act005_drawer);
 
@@ -671,8 +663,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 ),
                 new CH_MessageDao(context)
         );
-        //
-        flTagMenu =  findViewById(R.id.act005_frg_placeholder);
         //
         ToolBox_Inf.mkDirectory();
         ToolBox_Inf.cleanUpApproval(
@@ -1142,13 +1132,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         );
     }
 
-    private void initializeInvalidDatetimeViews() {
-        cv_invalid_datetime_card = findViewById(R.id.act005_cv_invalid_datetime_card);
-        iv_datetime_warning = findViewById(R.id.act005_iv_datetime_warning);
-        tv_datetime_warning = findViewById(R.id.act005_tv_datetime_warning);
-        tv_datetime_warning.setText(hmAux_Trans.get("lbl_invalid_datetime_warning"));
-    }
-
     @Override
     public boolean getPendingForms() {
 
@@ -1272,11 +1255,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //
 //        gv_menu.setAdapter(mAdapter);
         //
-        if(!ToolBox_Inf.isLocalDatetimeOk(context)){
-            cv_invalid_datetime_card.setVisibility(View.VISIBLE);
-        }else{
-            cv_invalid_datetime_card.setVisibility(View.GONE);
-        }
     }
 
     private void iniUIFooter() {
@@ -2856,27 +2834,47 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void onSelectMenuTagItem(@NotNull MainTagMenu item) {
-        callAct083(item);
+        if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct083(item);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @Override
     public void onSelectHeaderCalendar() {
-        callAct046(context);
+        if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct046(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @Override
     public void onSelectHeadeSearch() {
-        callAct068(context);
+        if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct068(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @Override
     public void onSelectHeaderMessenger() {
-        callAct034(context);
+        if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct034(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @Override
     public void onSelectFABAssetLocal() {
-        callAct006(context);
+        if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct006(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @NotNull
