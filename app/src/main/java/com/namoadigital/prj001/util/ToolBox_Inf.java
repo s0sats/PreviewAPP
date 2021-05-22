@@ -291,6 +291,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_SERVICE_MODE_ACT
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_CANCEL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_IMEI;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_OK;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_PRESENTED_BY_NAMOA;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_USER_LEVEL_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FOOTER_VERSION_LBL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
@@ -2110,7 +2111,7 @@ public class ToolBox_Inf {
         View customView = inflater.inflate(R.layout.footer_dialog_info_app, null);
         LinearLayout ll_footer_close = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll);
 
-        ImageView iv_customer = (ImageView) customView.findViewById(R.id.footer_dialog_app_iv_customer);
+//        ImageView iv_customer = (ImageView) customView.findViewById(R.id.footer_dialog_app_iv_customer);
         //
         TextView tv_offline_lbl = (TextView) customView.findViewById(R.id.footer_dialog_tv_offline_lbl);
         Switch sw_offline = (Switch) customView.findViewById(R.id.footer_dialog_sw_offline);
@@ -2142,9 +2143,11 @@ public class ToolBox_Inf {
         TextView tv_operation_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_operation_value);
         final SearchableSpinner ss_operation = customView.findViewById(R.id.footer_dialog_app_ss_operation);
         //
-        LinearLayout ll_imei = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_imei);
-        TextView tv_imei_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_imei_lbl);
-        TextView tv_imei_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_imei_value);
+//        LinearLayout ll_imei = (LinearLayout) customView.findViewById(R.id.footer_dialog_app_ll_imei);
+//        TextView tv_imei_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_imei_lbl);
+//        TextView tv_imei_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_imei_value);
+        //
+        TextView tv_namoa_presented = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_namoa_presented);
         //
         TextView tv_version_lbl = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_version_lbl);
         TextView tv_version_value = (TextView) customView.findViewById(R.id.footer_dialog_app_tv_version_number);
@@ -2255,12 +2258,12 @@ public class ToolBox_Inf {
             ss_operation.setVisibility(View.GONE);
         }
 
-        if (customer_img != null) {
-            iv_customer.setImageBitmap(customer_img);
-        } else {
-            iv_customer.setImageBitmap(null);
-            // Fazer Analise
-        }
+//        if (customer_img != null) {
+//            iv_customer.setImageBitmap(customer_img);
+//        } else {
+//            iv_customer.setImageBitmap(null);
+//            // Fazer Analise
+//        }
         //
         tv_offline_lbl.setText(hmDialogInfo.get(Constant.FOOTER_OFFLINE_MODE_LBL));
 
@@ -2309,10 +2312,10 @@ public class ToolBox_Inf {
             setDisableUserInfo(hmDialogInfo, ll_site, tv_site_lbl, tv_site_value, ll_zone, tv_zone_lbl, tv_zone_value, ll_operation, tv_operation_lbl, tv_operation_value);
         }
 
-        tv_imei_lbl.setText(hmDialogInfo.get(Constant.FOOTER_IMEI_LBL));
-        tv_imei_value.setText(hmDialogInfo.get(FOOTER_IMEI));
-        ll_imei.setVisibility(hmDialogInfo.get(FOOTER_IMEI) == null || hmDialogInfo.get(FOOTER_IMEI).length() <= 0 ? View.GONE : View.VISIBLE);
-
+//        tv_imei_lbl.setText(hmDialogInfo.get(Constant.FOOTER_IMEI_LBL));
+//        tv_imei_value.setText(hmDialogInfo.get(FOOTER_IMEI));
+//        ll_imei.setVisibility(hmDialogInfo.get(FOOTER_IMEI) == null || hmDialogInfo.get(FOOTER_IMEI).length() <= 0 ? View.GONE : View.VISIBLE);
+        tv_namoa_presented.setText(hmDialogInfo.get(FOOTER_PRESENTED_BY_NAMOA) + " " + Calendar.getInstance().get(Calendar.YEAR));
         tv_version_lbl.setText(hmDialogInfo.get(FOOTER_VERSION_LBL));
         tv_version_value.setText(Constant.PRJ001_VERSION);
         tv_version_code_value.setText("(" + Constant.PRJ001_VERSION_CODE + ")");
@@ -2589,6 +2592,7 @@ public class ToolBox_Inf {
         transList.add("footer_dialog_user_level");
         transList.add("sys_not_found_lbl");
         transList.add("sys_site_or_operation_not_found_error");
+        transList.add("sys_presented_by_namoa");
         //
         HMAux HmTrans = setLanguage(
                 context,
@@ -2670,6 +2674,7 @@ public class ToolBox_Inf {
         hmAux.put(FOOTER_IMEI, ToolBox_Inf.uniqueID(context));
         hmAux.put(FOOTER_OK, HmTrans.get("sys_alert_btn_ok"));
         hmAux.put(FOOTER_CANCEL, HmTrans.get("sys_alert_btn_cancel"));
+        hmAux.put(FOOTER_PRESENTED_BY_NAMOA, HmTrans.get("sys_presented_by_namoa"));
         //
         hmAux.put(Constant.FOOTER_ZONE_LBL, "");
         hmAux.put(Constant.FOOTER_ZONE, "");
