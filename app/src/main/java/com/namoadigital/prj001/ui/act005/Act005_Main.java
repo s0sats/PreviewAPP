@@ -108,6 +108,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_TICKET;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
@@ -232,6 +233,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     int outboundItensTotal=0;
     ArrayList<HMAux> outbound_items;
     Toolbar toolbar;
+    private boolean masterDataSyncFlow = false;
 
 
     @Override
@@ -1395,7 +1397,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 alertTitle = hmAux_Trans.get("progress_support_ttl");
                 alertMsg = hmAux_Trans.get("progress_support_msg");
                 break;
-            case Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM:
+            case SYNC_FOR_TICKETS_FORM:
                 alertTitle = hmAux_Trans.get("progress_sync_tickets_form_ttl");
                 alertMsg = hmAux_Trans.get("progress_sync_tickets_form_msg");
                 break;
@@ -1785,7 +1787,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 } else {
                 }
             } else {
-                if (!wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
+                if (!wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
+                && !wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)) {
                     progressDialog.dismiss();
                     showSuccessDialog();
                     //Atualiza traduções
@@ -2146,11 +2149,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             if(sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
             }
-        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM)) {
-            progressDialog.dismiss();
-            setWsSoProcess("");
-            refreshUiData();
-        }  else if (wsSoProcess.equalsIgnoreCase(Act005_Main_Presenter_Impl.SYNC_TICKETS)) {
+        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main_Presenter_Impl.SYNC_TICKETS)) {
             progressDialog.dismiss();
             wsProcess ="";
             boolean productOutdate = false;
@@ -2162,7 +2161,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             }else{
                 refreshUiData();
             }
-        } else {
+        } else if (wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)) {
+            progressDialog.dismiss();
+            setWsSoProcess("");
+            setWsProcess("");
+            refreshUiData();
+        }  else {
             if(sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
             }
@@ -2365,10 +2369,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     //
                 }
                 //
-                boolean hasSync_required = mPresenter.hasTicketSyncRequired();
-                if(hasSync_required) {
+                if(masterDataSyncFlow){
                     executeSync();
+                }else {
+                    if(mPresenter.hasTicketSyncRequired()) {
+                        mPresenter.executeWSTicketDownload();
+                    }
                 }
+
             }
         });
     }
@@ -2543,7 +2551,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 alertTitle = hmAux_Trans.get("alert_support_finish_ttl");
                 alertMsg = hmAux_Trans.get("alert_support_finish_msg");
                 break;
-            case Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM:
+            case SYNC_FOR_TICKETS_FORM:
                 alertTitle = hmAux_Trans.get("alert_sync_finish_ttl");
                 alertMsg = hmAux_Trans.get("alert_sync_finish_msg");
                 progressDialog.dismiss();
@@ -2637,7 +2645,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 if (wsResults.size() > 0) {
                     showResults(wsResults);
                 } else {
-                    executeSync();
+                    if(masterDataSyncFlow){
+                        mPresenter.executeWSTicketDownload();
+                    }else {
+                        executeSync();
+                    }
                 }
 
             }
@@ -2686,18 +2698,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (menu instanceof MenuBuilder) {
-            ((MenuBuilder) menu).setOptionalIconsVisible(true);
-        }
 
-        EV_UserDao userDao = new EV_UserDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
-        EV_User user = userDao.getByString(
-                new EV_User_Sql_001(
-                        ToolBox_Con.getPreference_User_Code(getApplicationContext())
-                ).toSqlQuery()
-        );
-
-        int icon = 0;
         int iconColor = 0;
         boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
         boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
@@ -2778,6 +2779,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
+                                masterDataSyncFlow = true;
                                 mPresenter.syncFlow(mAdapter.getBadgeQty(MENU_ID_SEND_DATA));
                             }
                         },
@@ -2785,12 +2787,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 );
                 break;
             case TOOLBAR_SYNC_DATA_STATUS:
-                if(hasUpdateRequired && hasTicketSyncRequired){
-
-                    mPresenter.syncFlow(mAdapter.getBadgeQty(MENU_ID_SEND_DATA));
-                }else if(hasTicketSyncRequired) {
+                masterDataSyncFlow = false;
+                if(!hasUpdateRequired && hasTicketSyncRequired){
                     mPresenter.executeWSTicketDownload();
-                }else if(hasUpdateRequired){
+                } else if (hasUpdateRequired) {
                     if (ToolBox_Con.isOnline(context)) {
                         setWsProcess(Act005_Main.WS_PROCESS_SEND);
                         setWsSoProcess(WS_Serial_Save.class.getSimpleName());
@@ -2798,7 +2798,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         cleanUpResults();
                         //executeSaveProcess();
                         mPresenter.executeSerialSave();
-                        invalidateOptionsMenu();
                     } else {
                         showNoConnectionDialog();
                     }
