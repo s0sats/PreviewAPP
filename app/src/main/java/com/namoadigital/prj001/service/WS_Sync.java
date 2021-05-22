@@ -54,8 +54,10 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.MD_UserDao;
 import com.namoadigital.prj001.dao.MdTagDao;
+import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TkTicketCacheDao;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.DataPackage;
@@ -106,6 +108,8 @@ import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSearch_Ap_Env;
 import com.namoadigital.prj001.model.TSync_Env;
 import com.namoadigital.prj001.model.TSync_Rec;
+import com.namoadigital.prj001.model.T_DataPackage_SM_SO_Env;
+import com.namoadigital.prj001.model.T_DataPackage_TK_Ticket_Env;
 import com.namoadigital.prj001.model.TkTicketCache;
 import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.sql.EV_Profile_Sql_Truncate;
@@ -145,12 +149,16 @@ import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_User_Sql_Truncate;
 import com.namoadigital.prj001.sql.MdTagSqlTruncate;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_Truncate;
+import com.namoadigital.prj001.sql.Sql_WS_Sync_Datapackage_So_001;
+import com.namoadigital.prj001.sql.Sql_WS_Sync_Datapackage_Ticket_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_001;
 import com.namoadigital.prj001.sql.TkTicketCacheSqlTruncate;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -234,6 +242,8 @@ public class WS_Sync extends IntentService {
         EV_ProfileDao evProfileDao = new EV_ProfileDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(getApplicationContext());
         MdTagDao mdTagDao = new MdTagDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        SM_SODao soDao = new SM_SODao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+        TK_TicketDao ticketDao = new TK_TicketDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
         boolean mdTagAlreadyProcess = false;
 
         Gson gson = new GsonBuilder().serializeNulls().create();
@@ -296,8 +306,8 @@ public class WS_Sync extends IntentService {
         //Verifica se customer possui acesso ao SO
         //adiciona parametro no sincronismo.
         if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
-            //Assim como o Main, o array list é vazio.
-            ArrayList<String> SO = new ArrayList<>();
+            //LUCHE - 22/05/2021 - Implementado envio do "inventario" local de so.
+            ArrayList<T_DataPackage_SM_SO_Env> SO = getDatapackageSoObjList(soDao);
             dataPackage.setSO(SO);
         }
         //Adiciona form_aps no data_package
@@ -329,6 +339,15 @@ public class WS_Sync extends IntentService {
             }
 
         }
+        //TODO CONFIRMAR SE PRECISA VERIFICA PROFILE, POIS NO CASO DA SO VALIDA PARAM DA EV_USR_CUSTOMER_PARAM
+        //TODO CONFIRMAR SE CHAMAR SEMPRE OU SOMENTE COM DATA PACKAGE_MAIN
+        //LUCHE - 22/05/2021 - Implmentado inventario do ticket
+        //if(ToolBox_Inf.profileExists(getApplicationContext(), ConstantBaseApp.PROFILE_MENU_TICKET,null){
+        if (dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)) {
+            ArrayList<T_DataPackage_TK_Ticket_Env> TICKET = getDatapackageTicketObjList(ticketDao);
+            dataPackage.setTICKET(TICKET);
+        }
+        //}
 
         TSync_Env env = new TSync_Env();
 
@@ -1057,12 +1076,6 @@ public class WS_Sync extends IntentService {
                 //
                 for (GE_Custom_Form_Ap formAp : action_plans) {
                     formAp.setLast_update(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
-                    //LUCHE - 10/05/2021 - Add infos da tag ja que o server não manda.
-                    MdTag mdTagInfo = ToolBox_Inf.getMdTagInfo(getApplicationContext(), formAp.getTag_operational_code());
-                    if(mdTagInfo != null){
-                        formAp.setTag_operational_id(mdTagInfo.getTag_id());
-                        formAp.setTag_operational_desc(mdTagInfo.getTag_desc());
-                    }
                 }
                 //
                 geCustomFormApDao.addUpdate(action_plans, false);
@@ -1815,6 +1828,78 @@ public class WS_Sync extends IntentService {
         }
         ToolBox_Inf.deleteAllFOD(Constant.ZIP_PATH);
     }
+
+    private ArrayList<T_DataPackage_SM_SO_Env> getDatapackageSoObjList(SM_SODao soDao) {
+        List<HMAux> soPkAuxList = soDao.query_HM(new Sql_WS_Sync_Datapackage_So_001(
+            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+        ).toSqlQuery());
+        //
+        if(soPkAuxList != null && soPkAuxList.size() > 0){
+          return convertHmAuxSoPkToDataPkgSoObj(soPkAuxList);
+        }
+        //
+        return new ArrayList<>();
+
+    }
+
+    private ArrayList<T_DataPackage_SM_SO_Env> convertHmAuxSoPkToDataPkgSoObj(@NotNull List<HMAux> soPkAuxList) {
+        ArrayList<T_DataPackage_SM_SO_Env> soDataPkgList = new ArrayList<>();
+        for (HMAux auxPk : soPkAuxList) {
+            if(auxPk.hasConsistentValue(SM_SODao.CUSTOMER_CODE)
+               && auxPk.hasConsistentValue(SM_SODao.SO_PREFIX)
+               && auxPk.hasConsistentValue(SM_SODao.SO_CODE)
+               && auxPk.hasConsistentValue(SM_SODao.SO_SCN)
+            ){
+                T_DataPackage_SM_SO_Env dtPkSo = new T_DataPackage_SM_SO_Env();
+                //
+                dtPkSo.setCustomer_code(auxPk.get(SM_SODao.CUSTOMER_CODE));
+                dtPkSo.setSo_prefix(auxPk.get(SM_SODao.SO_PREFIX));
+                dtPkSo.setSo_code(auxPk.get(SM_SODao.SO_CODE));
+                dtPkSo.setSo_scn(auxPk.get(SM_SODao.SO_SCN));
+                //
+                soDataPkgList.add(dtPkSo);
+            }
+        }
+        //
+        return soDataPkgList;
+    }
+
+
+    private ArrayList<T_DataPackage_TK_Ticket_Env> getDatapackageTicketObjList(TK_TicketDao ticketDao) {
+        List<HMAux> ticketPkAuxList = ticketDao.query_HM(new Sql_WS_Sync_Datapackage_Ticket_001(
+            ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+        ).toSqlQuery());
+        //
+        if(ticketPkAuxList != null && ticketPkAuxList.size() > 0){
+            return convertHmAuxTicketPkToDataPkgSoObj(ticketPkAuxList);
+        }
+        //
+        return new ArrayList<>();
+
+    }
+
+    private ArrayList<T_DataPackage_TK_Ticket_Env> convertHmAuxTicketPkToDataPkgSoObj(@NotNull List<HMAux> ticketPkAuxList) {
+        ArrayList<T_DataPackage_TK_Ticket_Env> ticketDataPkgList = new ArrayList<>();
+        for (HMAux auxPk : ticketPkAuxList) {
+            if(auxPk.hasConsistentValue(TK_TicketDao.CUSTOMER_CODE)
+                && auxPk.hasConsistentValue(TK_TicketDao.TICKET_PREFIX)
+                && auxPk.hasConsistentValue(TK_TicketDao.TICKET_CODE)
+                && auxPk.hasConsistentValue(TK_TicketDao.SCN)
+            ){
+                T_DataPackage_TK_Ticket_Env dtPkTk = new T_DataPackage_TK_Ticket_Env();
+                //
+                dtPkTk.setCustomer_code(auxPk.get(TK_TicketDao.CUSTOMER_CODE));
+                dtPkTk.setTicket_prefix(auxPk.get(TK_TicketDao.TICKET_PREFIX));
+                dtPkTk.setTicket_code(auxPk.get(TK_TicketDao.TICKET_CODE));
+                dtPkTk.setScn(auxPk.get(TK_TicketDao.SCN));
+                //
+                ticketDataPkgList.add(dtPkTk);
+            }
+        }
+        //
+        return ticketDataPkgList;
+    }
+
 
     private boolean isInvalidCurrentTime(int valid_time) {
         return valid_time != 1;
