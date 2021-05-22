@@ -51,6 +51,9 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
 
 /**
  * Created by neomatrix on 09/01/17.
@@ -1247,10 +1250,25 @@ public class ToolBox_Con {
                 Constant.PREFERENCE_HIDE_SERIAL_INFO,
                 false
         ).apply();
-
+        //
          sharedPreferences.edit().putBoolean(
                 Constant.HAS_PENDING_LOCATION,
                 false
+        ).apply();
+        //
+         sharedPreferences.edit().putString(
+                Constant.PREFERENCE_HOME_PERIOD_FILTER,
+                 PREFERENCE_HOME_ALL_TIME_OPTION
+        ).apply();
+        //
+         sharedPreferences.edit().putString(
+                Constant.PREFERENCE_HOME_SITES_FILTER,
+                 PREFERENCE_HOME_ALL_SITE_OPTION
+        ).apply();
+        //
+         sharedPreferences.edit().putString(
+                Constant.PREFERENCE_HOME_FOCUS_FILTER,
+                 PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION
         ).apply();
         //Adicionar reset das preferencias da act054?
         //
