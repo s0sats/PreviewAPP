@@ -2355,13 +2355,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 }
                 //
                 if(masterDataSyncFlow){
+                    ToolBox_Inf.hasFormProductOutdate(context);
                     executeSync();
                 }else {
                     if(mPresenter.hasTicketSyncRequired()) {
                         mPresenter.executeWSTicketDownload();
                     }
                 }
-
             }
         });
     }
@@ -2631,9 +2631,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     showResults(wsResults);
                 } else {
                     if(masterDataSyncFlow){
-                        mPresenter.executeWSTicketDownload();
-                    }else {
+                        ToolBox_Inf.hasFormProductOutdate(context);
                         executeSync();
+                    }else {
+                        if(mPresenter.hasTicketSyncRequired()) {
+                            mPresenter.executeWSTicketDownload();
+                        }
                     }
                 }
 
