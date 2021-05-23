@@ -129,19 +129,19 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
     private fun setActions() {
         binding.llCalendar.setOnClickListener {
             mListener?.let {
-                it.onSelectHeaderCalendar()
+                it.onSelectCalendar()
             }
         }
         //
         binding.llSearch.setOnClickListener {
             mListener?.let {
-                it.onSelectHeadeSearch()
+                it.onSelectSearch()
             }
         }
         //
         binding.llMessenger.setOnClickListener {
             mListener?.let {
-                it.onSelectHeaderMessenger()
+                it.onSelectMessenger()
             }
         }
         //
@@ -197,13 +197,13 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         fun onSelectFABAssetLocal()
 
         //
-        fun onSelectHeaderCalendar()
+        fun onSelectCalendar()
 
         //
-        fun onSelectHeadeSearch()
+        fun onSelectSearch()
 
         //
-        fun onSelectHeaderMessenger()
+        fun onSelectMessenger()
 
         //
         fun getTagList(periodFilter: String, sitesFilter: String, focusFilter: String): MutableList<MainTagMenu>

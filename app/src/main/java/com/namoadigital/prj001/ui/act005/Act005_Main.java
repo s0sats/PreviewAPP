@@ -14,8 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,9 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
@@ -43,7 +39,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
-import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
@@ -52,7 +47,6 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
-import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
@@ -69,7 +63,6 @@ import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
-import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_015;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
@@ -80,6 +73,7 @@ import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act026.Act026_Main;
 import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
@@ -87,6 +81,7 @@ import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act036.Act036_Main;
 import com.namoadigital.prj001.ui.act040.Act040_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
+import com.namoadigital.prj001.ui.act047.Act047_Main;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
@@ -97,6 +92,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.dialog.SendResumeDialog;
 import com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome;
+import com.namoadigital.prj001.view.frag.frg_main_home_alt.FrgMainHomeAlt;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -123,7 +119,7 @@ import static com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome.OnFrgM
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View, Act005Opc.Act005DrawerInteraction,  OnFrgMainHomeIteract {
+public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View, Act005Opc.Act005DrawerInteraction,  OnFrgMainHomeIteract, FrgMainHomeAlt.OnFrgMainHomeAltInteract {
 
     public static final String MENU_ID = "menu_id";
     public static final String MENU_ICON = "menu_icon";
@@ -1199,6 +1195,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     public void callAct040(Context context) {
         Intent mIntent = new Intent(context, Act040_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+
+    public void callAct026(Context context) {
+        Intent mIntent = new Intent(context, Act026_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
@@ -2842,7 +2849,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     @Override
-    public void onSelectHeaderCalendar() {
+    public void onSelectCalendar() {
         if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct046(context);
         }else{
@@ -2851,7 +2858,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     @Override
-    public void onSelectHeadeSearch() {
+    public void onSelectSearch() {
         if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct068(context);
         }else{
@@ -2860,7 +2867,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     @Override
-    public void onSelectHeaderMessenger() {
+    public void onSelectMessenger() {
         if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct034(context);
         }else{
@@ -2913,6 +2920,58 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             );
         }
         return mainTagMenus;
+    }
+
+    @Override
+    public void onSelectAsset() {
+        callAct051(context);
+    }
+
+    @Override
+    public void onSelectTags() {
+        //Força a chamada de todas as tags.
+        callAct083(new MainTagMenu(0,
+                "",
+                0,
+                0,
+                0,
+                0));
+    }
+
+    @Override
+    public void onSelectTagsBySerialSearch() {
+        callAct006(context);
+    }
+
+    @Override
+    public void onSelectOS() {
+        callAct026(context);
+    }
+
+    @Override
+    public void onSelectOSVinSearch() {
+        callAct021(context);
+    }
+
+    @Override
+    public void onSelectOSExpress() {
+        callAct040(context);
+    }
+
+    @Override
+    public void onSelectOSNext() {
+        callAct047(context);
+    }
+
+
+    private void callAct047(Context context) {
+        Intent mIntent = new Intent(context, Act047_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
     }
 
     private class FCMReceiver extends BroadcastReceiver {
