@@ -125,4 +125,5 @@
     <string name="lib_alert_rationale_barcode_camera_permission_msg">To read a barcode, access to the cell phone\'s camera is required.\nDo you want to allow access?</string>
     <!--Text Helpers -->
     <string name="unicode_bullet">"\u2022"</string>
+    <string name="unicode_copyright">©</string>
 </resources>

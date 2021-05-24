@@ -2315,7 +2315,11 @@ public class ToolBox_Inf {
 //        tv_imei_lbl.setText(hmDialogInfo.get(Constant.FOOTER_IMEI_LBL));
 //        tv_imei_value.setText(hmDialogInfo.get(FOOTER_IMEI));
 //        ll_imei.setVisibility(hmDialogInfo.get(FOOTER_IMEI) == null || hmDialogInfo.get(FOOTER_IMEI).length() <= 0 ? View.GONE : View.VISIBLE);
-        tv_namoa_presented.setText(hmDialogInfo.get(FOOTER_PRESENTED_BY_NAMOA) + " " + Calendar.getInstance().get(Calendar.YEAR));
+        tv_namoa_presented.setText(
+                hmDialogInfo.get(FOOTER_PRESENTED_BY_NAMOA)
+                        + " " + context.getString(R.string.unicode_copyright) +" "+
+                        + Calendar.getInstance().get(Calendar.YEAR)
+        );
         tv_version_lbl.setText(hmDialogInfo.get(FOOTER_VERSION_LBL));
         tv_version_value.setText(Constant.PRJ001_VERSION);
         tv_version_code_value.setText("(" + Constant.PRJ001_VERSION_CODE + ")");
