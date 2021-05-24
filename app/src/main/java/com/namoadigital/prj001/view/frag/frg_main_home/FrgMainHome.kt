@@ -110,6 +110,13 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         binding.rvTags.addItemDecoration(DividerItemDecoration(context,
                 DividerItemDecoration.VERTICAL))
         //
+        setDatetimeVisibility()
+    }
+    /**
+     *  BARRIONUEVO 23-05-2021
+     *  Metodo que verifica o aviso de horario errado.
+     */
+    fun setDatetimeVisibility() {
         if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
             binding.cvInvalidDatetimeCard.setVisibility(View.VISIBLE)
         } else {
@@ -123,7 +130,8 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         binding.tvMessenger.text = hmAux_Trans_Frag.get("messenger_lbl")
         binding.tvSearch.text = hmAux_Trans_Frag.get("search_lbl")
         binding.tvListTagLbl.text = hmAux_Trans_Frag.get("tag_list_lbl")
-        binding.tvDatetimeWarning.text = hmAux_Trans_Frag.get("lbl_invalid_datetime_warning")
+
+        binding.tvDatetimeWarning.text = mListener?.getDatetimeWarning()
     }
 
     private fun setActions() {
@@ -207,6 +215,7 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
 
         //
         fun getTagList(periodFilter: String, sitesFilter: String, focusFilter: String): MutableList<MainTagMenu>
+        fun getDatetimeWarning(): String
     }
 
     override fun onApply(periodFilter: String, siteFilter: String, focusFilter: String) {

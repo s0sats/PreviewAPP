@@ -1349,6 +1349,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         currentFragment.refreshList(getTagList( ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION)));
+        currentFragment.setDatetimeVisibility();
     }
 
     @Override
@@ -2822,8 +2823,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     }
 
-
-
     @Override
     protected void processCloseAPP(String mLink, String mRequired) {
         super.processCloseAPP(mLink, mRequired);
@@ -2844,7 +2843,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void onSelectMenuTagItem(@NotNull MainTagMenu item) {
-        if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct083(item);
         }else{
             handleInvalidLocalDatetime();
@@ -2853,7 +2852,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void onSelectCalendar() {
-        if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct046(context);
         }else{
             handleInvalidLocalDatetime();
@@ -2862,7 +2861,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void onSelectSearch() {
-        if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct068(context);
         }else{
             handleInvalidLocalDatetime();
@@ -2871,7 +2870,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void onSelectMessenger() {
-        if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct034(context);
         }else{
             handleInvalidLocalDatetime();
@@ -2880,7 +2879,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void onSelectFABAssetLocal() {
-        if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
             callAct006(context);
         }else{
             handleInvalidLocalDatetime();
@@ -2975,6 +2974,15 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
+    }
+    /**
+     *  BARRIONUEVO 23-05-2021
+     *  Metodo que aproveita a variavel de tradução.
+     */
+    @NotNull
+    @Override
+    public String getDatetimeWarning() {
+        return hmAux_Trans.get("lbl_invalid_datetime_warning");
     }
 
     private class FCMReceiver extends BroadcastReceiver {
