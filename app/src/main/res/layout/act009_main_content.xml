@@ -24,15 +24,31 @@
         android:orientation="vertical"
         >
 
+        <TextView
+            android:id="@+id/act009_tv_tag_ttl"
+            android:layout_marginTop="16dp"
+            android:paddingStart="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Seleção de tema"
+            android:textStyle="bold"
+            />
+
         <ListView
-            android:id="@+id/act009_lv_form_types"
+            android:id="@+id/act009_lv_tags"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
-            android:padding="5dp"
-            android:divider="@color/padrao_TRANSPARENT"/>
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:divider="@color/padrao_TRANSPARENT"
+            android:dividerHeight="10dp"
+            tools:listitem="@layout/act009_cell"
+            />
         <!--android:background="@drawable/border_back"-->
 
     </LinearLayout>

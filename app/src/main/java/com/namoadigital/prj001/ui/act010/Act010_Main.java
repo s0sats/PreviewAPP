@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -25,9 +26,14 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.databinding.Act010MainBinding;
+import com.namoadigital.prj001.databinding.Act010MainContentBinding;
+import com.namoadigital.prj001.model.GE_Custom_Form;
+import com.namoadigital.prj001.sql.Sql_Act010_001;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.util.Constant;
@@ -46,19 +52,9 @@ import java.util.List;
 public class Act010_Main extends Base_Activity implements Act010_Main_View {
 
     private Act010_Main_Presenter mPresenter;
-    private ListView lv_forms;
-    private TextView tv_form_ttl;
-    private TextView tv_form_type_label;
-    private TextView tv_form_type_val;
-    private TextView tv_form_type_desc_label;
-    private TextView tv_form_type_desc_val;
-
-    private Lib_Custom_Cell_Adapter mAdapter;
     private Bundle bundle;
     private long product_code;
     private String serial_id;
-    private int custom_form_type;
-    private String custom_form_type_desc;
     //
     private String so_prefix;
     private String so_code;
@@ -69,11 +65,17 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     private String mTkTicketId;
     private String mStepDesc;
     private View vStepSelected;
+    private Act010MainContentBinding binding;
+    private int tagCode;
+    private String tagDesc;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act010_main);
-
+        Act010MainBinding mainBinding = Act010MainBinding.inflate(getLayoutInflater());
+        setContentView(mainBinding.getRoot());
+        //
+        binding = mainBinding.act010MainContent;
+        //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
@@ -108,13 +110,16 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         transList.add("alert_form_exits_with_so_ttl");
         transList.add("alert_form_exits_with_so_msg");
         transList.add("alert_so_lbl");
-
-
+        //
+        transList.add("tag_lbl");
+        transList.add("form_selection_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
                 mResource_Code,
-                ToolBox_Con.getPreference_Translate_Code(context)
+                ToolBox_Con.getPreference_Translate_Code(context),
+                transList
         );
     }
 
@@ -134,26 +139,10 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 site_code_form_param,
                 hmAux_Trans
         );
-
-        tv_form_ttl = (TextView) findViewById(R.id.act010_tv_form_lbl);
-        tv_form_ttl.setTag("lbl_form_ttl");
-        views.add(tv_form_ttl);
         //
-        tv_form_type_label = (TextView) findViewById(R.id.act010_tv_form_type_lbl);
-        tv_form_type_label.setTag("lbl_form_type_label");
-        views.add(tv_form_type_label);
+        setLabels();
         //
-        tv_form_type_val = (TextView) findViewById(R.id.act010_tv_form_type_val);
-        //
-        tv_form_type_desc_label = (TextView) findViewById(R.id.act010_tv_form_desc_lbl);
-        tv_form_type_desc_label.setTag("lbl_form_type_desc_label");
-        views.add(tv_form_type_desc_label);
-        //
-        tv_form_type_desc_val = (TextView) findViewById(R.id.act010_tv_form_desc_val);
-        //
-        lv_forms = (ListView) findViewById(R.id.act010_lv_form);
-        //
-        mPresenter.setAdapterData(product_code, custom_form_type, "");
+        mPresenter.setAdapterData(product_code, tagCode, "");
         //
         if(has_tk_ticket_is_form_off_hand){
             vStepSelected = findViewById(R.id.act010_process_in_progress);
@@ -165,32 +154,35 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         }
     }
 
+    private void setLabels() {
+        binding.act010TvTagTtl.setText(mPresenter.getTagLblText(hmAux_Trans.get("tag_lbl"),tagDesc));
+        binding.act010TvFormTtl.setText(hmAux_Trans.get("form_selection_lbl") + ":");
+    }
+
     private void recoverIntentsInfo() {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE));
             //product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
             serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
-            //serial_id = bundle.getString(Constant.ACT008_SERIAL_ID,"");
-            custom_form_type = Integer.parseInt(bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_TYPE));
-            //custom_form_type = Integer.parseInt(bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE));
-            custom_form_type_desc = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC);
-            //custom_form_type_desc = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
             so_prefix = bundle.getString(SM_SODao.SO_PREFIX, "");
             so_code = bundle.getString(SM_SODao.SO_CODE, "");
             //Novo fluxo N-Form 06/06/2018
             site_code_form_param = bundle.getString(MD_SiteDao.SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
-            //site_code_form_param = bundle.getString(Constant.ACT008_SITE_CODE, ToolBox_Con.getPreference_Site_Code(context));
-
             has_tk_ticket_is_form_off_hand = bundle.containsKey(ConstantBaseApp.TK_TICKET_IS_FORM_OFF_HAND);
-
             if(has_tk_ticket_is_form_off_hand){
                 mTkTicketId  = bundle.getString(TK_TicketDao.TICKET_ID, "");
                 mStepDesc = bundle.getString(TK_Ticket_StepDao.STEP_DESC, "");
             }
+            //
+            tagCode = bundle.getInt(MdTagDao.TAG_CODE,-1);
+            tagDesc = bundle.getString(MdTagDao.TAG_DESC,"");
+
         } else {
             so_prefix = "";
             so_code = "";
+            tagCode = -1 ;
+            tagDesc = "";
         }
     }
 
@@ -218,10 +210,7 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     }
 
     private void initActions() {
-        tv_form_type_val.setText(String.valueOf(custom_form_type));
-        tv_form_type_desc_val.setText(custom_form_type_desc);
-        //
-        lv_forms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        binding.act010LvForm.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
@@ -229,51 +218,41 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
                 mPresenter.validateOpenForm(item);
             }
         });
-
     }
 
     @Override
     public void loadForms(List<HMAux> forms) {
-        mAdapter =
-                new Lib_Custom_Cell_Adapter(
+        String[] from = {GE_Custom_FormDao.CUSTOM_FORM_DESC, Sql_Act010_001.CUSTOM_FORM_PK};
+        int[] to = {R.id.act010_cell_tv_desc,R.id.act010_cell_tv_id};
+        binding.act010LvForm.setAdapter(
+                new SimpleAdapter(
                         context,
-                        R.layout.lib_custom_cell,
                         forms,
-                        Lib_Custom_Cell_Adapter.CFG_ID_CODE_DESC,
-                        GE_Custom_FormDao.CUSTOM_FORM_CODE,
-                        GE_Custom_FormDao.CUSTOM_FORM_VERSION,
-                        GE_Custom_FormDao.CUSTOM_FORM_DESC,
-                        "",
-                        hmAux_Trans.get("lbl_version"),
-                        ""
-                );
-        lv_forms.setAdapter(mAdapter);
-        //
-//        if(forms.size() == 1 ){
-//            new Handler().post(new Runnable(){
-//                @Override
-//                public void run() {
-//                    lv_forms.performItemClick(
-//                            lv_forms.getAdapter().getView(0, null, null),
-//                            0,
-//                            lv_forms.getAdapter().getItemId(0)
-//                    );
-//                }
-//            });
-//        }
-
+                        R.layout.act010_cell,
+                        from,
+                        to
+                )
+        );
     }
 
     @Override
     public void addFormInfoToBundle(HMAux item) {
         bundle.putString(
-                //Constant.ACT010_CUSTOM_FORM_CODE,
+                GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE,
+                item.get(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE)
+        );
+        //
+        bundle.putString(
+                GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,
+                item.get(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)
+        );
+        //
+        bundle.putString(
                 GE_Custom_FormDao.CUSTOM_FORM_CODE,
                 item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE)
         );
         //
         bundle.putString(
-                //Constant.ACT010_CUSTOM_FORM_VERSION,
                 GE_Custom_FormDao.CUSTOM_FORM_VERSION,
                 item.get(GE_Custom_FormDao.CUSTOM_FORM_VERSION)
         );

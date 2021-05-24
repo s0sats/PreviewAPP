@@ -5,7 +5,7 @@ import android.content.Context;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Type_Sql_001;
+import com.namoadigital.prj001.sql.Sql_Act009_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
@@ -41,7 +41,7 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
     public void setAdapterData(long product_code, String filter, String serial_id) {
         List<HMAux> data =
         custom_form_typeDao.query_HM(
-                new GE_Custom_Form_Type_Sql_001(
+                new Sql_Act009_001(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         product_code,
                         ToolBox_Con.getPreference_Translate_Code(context),
@@ -60,10 +60,8 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
                 mView.callAct010(context);
             }
         }else{
-            mView.loadForm_Types(data);
+            mView.loadTagList(data);
         }
-
-
     }
 
     @Override

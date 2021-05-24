@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -24,8 +25,11 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.dao.MD_SiteDao;
+import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.databinding.Act009MainBinding;
+import com.namoadigital.prj001.databinding.Act009MainContentBinding;
 import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act010.Act010_Main;
@@ -47,11 +51,9 @@ import java.util.List;
 public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
     private Act009_Main_Presenter mPresenter;
-    private ListView lv_form_types;
     private long product_code;
     private String serial_id;
     private Bundle bundle;
-    private Lib_Custom_Cell_Adapter mAdapter;
     //private boolean back_act020 = false;
     private View vStepSelected;
     private int back_action;
@@ -64,12 +66,16 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private String mTkTicketId;
     private String mStepDesc;
     private Bundle act083Bundle = new Bundle();
+    private Act009MainContentBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act009_main);
-
+        Act009MainBinding mainBinding = Act009MainBinding.inflate(getLayoutInflater());
+        binding = mainBinding.act009MainContent;
+        setContentView(mainBinding.getRoot());
+        //
+        //
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //
@@ -95,7 +101,10 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private void loadTranslation() {
         List<String> transList = new ArrayList<String>();
         transList.add("lbl_type");
-
+        transList.add("tag_selection_ttl");
+        transList.add("alert_ttl_no_form_found");
+        transList.add("alert_msg_no_form_found");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -117,8 +126,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                 back_action,
                 site_code_form_param
         );
-
-        lv_form_types = (ListView) findViewById(R.id.act009_lv_form_types);
+        //
+        setLabels();
         //
         mPresenter.setAdapterData(product_code, "", serial_id );
         if(has_tk_ticket_is_form_off_hand){
@@ -129,6 +138,10 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
             tvNFormSelected.setText( mTkTicketId + " - " + mStepDesc);
             vStepSelected.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void setLabels() {
+        binding.act009TvTagTtl.setText(hmAux_Trans.get("tag_selection_ttl") + ":");
     }
 
     private void recoverIntentsInfo() {
@@ -187,7 +200,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
     private void initActions() {
         //
-        lv_form_types.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        binding.act009LvTags.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HMAux item = (HMAux) parent.getItemAtPosition(position);
@@ -195,57 +208,43 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                 addFormTypeInfoToBundle(item);
                 //
                 callAct010(context);
-
             }
         });
     }
 
     @Override
     public void addFormTypeInfoToBundle(HMAux item) {
-        bundle.putString(
-                GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE,
-                //Constant.ACT009_CUSTOM_FORM_TYPE,
-                item.get(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE)
+        bundle.putInt(
+                MdTagDao.TAG_CODE,
+               ToolBox_Inf.convertStringToInt(item.get(MdTagDao.TAG_CODE))
         );
         //
         bundle.putString(
-                GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,
-                //Constant.ACT009_CUSTOM_FORM_TYPE_DESC,
-                item.get(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)
+                MdTagDao.TAG_DESC,
+                item.get(MdTagDao.TAG_DESC)
         );
     }
 
     @Override
-    public void loadForm_Types(List<HMAux> form_types) {
-
-        if (form_types.size() > 0) {
-            //
-            mAdapter = new Lib_Custom_Cell_Adapter(
-                    context,
-                    R.layout.lib_custom_cell,
-                    form_types,
-                    Lib_Custom_Cell_Adapter.CFG_ID_CODE_DESC,
-                    GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE,
-                    "",
-                    GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,
-                    hmAux_Trans.get("lbl_type"),
-                    "",
-                    ""
+    public void loadTagList(List<HMAux> tagList) {
+        if (tagList.size() > 0) {
+            String[] from = {MdTagDao.TAG_DESC};
+            int[] to = {R.id.act009_cell_tv_desc};
+            binding.act009LvTags.setAdapter(
+                    new SimpleAdapter(
+                            context,
+                            tagList,
+                            R.layout.act009_cell,
+                            from,
+                            to
+                    )
             );
-            //
-            lv_form_types.setAdapter(mAdapter);
-
         } else {
             //Se lista vazia exibe alert e volta pra tela anterior
-            List<String> transList = new ArrayList<>();
-            transList.add("alert_ttl_no_form_found");
-            transList.add("alert_msg_no_form_found");
-
-            HMAux alertTrans = ToolBox_Inf.getTranslationList(hmAux_Trans, mModule_Code, mResource_Code, transList);
             ToolBox.alertMSG(
                     Act009_Main.this,
-                    alertTrans.get("alert_ttl_no_form_found"),
-                    alertTrans.get("alert_msg_no_form_found"),
+                    hmAux_Trans.get("alert_ttl_no_form_found"),
+                    hmAux_Trans.get("alert_msg_no_form_found"),
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
