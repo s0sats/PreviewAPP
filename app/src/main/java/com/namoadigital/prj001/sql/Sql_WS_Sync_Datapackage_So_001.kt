@@ -17,7 +17,7 @@ class Sql_WS_Sync_Datapackage_So_001(
                      ${SM_SODao.TABLE} s
                     WHERE
                      s.${SM_SODao.CUSTOMER_CODE} = $customerCode
-                     AND s.${SM_SODao.STATUS} NOT IN ('${ConstantBaseApp.SYS_STATUS_REJECTED}','${ConstantBaseApp.SYS_STATUS_DONE}','${ConstantBaseApp.SYS_STATUS_CANCELLED}')             
+                     AND s.${SM_SODao.STATUS} NOT IN ('${ConstantBaseApp.SYS_STATUS_DONE}','${ConstantBaseApp.SYS_STATUS_CANCELLED}')             
                 """
         return s.trimIndent()
     }

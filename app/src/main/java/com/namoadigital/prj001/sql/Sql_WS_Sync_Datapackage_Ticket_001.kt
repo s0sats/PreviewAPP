@@ -19,10 +19,9 @@ class Sql_WS_Sync_Datapackage_Ticket_001(
                      ${TK_TicketDao.TABLE} t
                     WHERE                    
                      t.${TK_TicketDao.CUSTOMER_CODE} = $customerCode
-                     AND t.${TK_TicketDao.TICKET_STATUS} NOT IN ('${ConstantBaseApp.SYS_STATUS_REJECTED}',
-                                                                  '${ConstantBaseApp.SYS_STATUS_NOT_EXECUTED}',
-                                                                  '${ConstantBaseApp.SYS_STATUS_DONE}',
-                                                                  '${ConstantBaseApp.SYS_STATUS_CANCELLED}'
+                     AND t.${TK_TicketDao.TICKET_STATUS} IN ('${ConstantBaseApp.SYS_STATUS_PENDING}',
+                                                                  '${ConstantBaseApp.SYS_STATUS_PROCESS}',
+                                                                  '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                                                                 )                                                
                 """
         return s.trimIndent()

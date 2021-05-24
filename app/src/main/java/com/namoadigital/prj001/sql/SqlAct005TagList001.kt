@@ -227,7 +227,7 @@ class SqlAct005TagList001(private val context: Context,
                                                                 FROM
                                                                  ${MD_Schedule_ExecDao.TABLE} s
                                                                 WHERE  s.${MD_Schedule_ExecDao.CUSTOMER_CODE} = $customerCode
-                                                                and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') >= strftime('%Y-%m-%d','now','" + deviceGMT + "'))                                                                
+                                                                and (strftime('%s',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') * 1000) >= (strftime('%s','now','$deviceGMT')*1000)                                                                
                                                                 $scheduleNextFilter
                                                                 and s.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_IN_PROCESSING}','${Constant.SYS_STATUS_PENDING}','${Constant.SYS_STATUS_WAITING_SYNC}')                 
                                                              GROUP BY
