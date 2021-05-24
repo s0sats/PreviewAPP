@@ -2,7 +2,9 @@ package com.namoadigital.prj001.view.frag.frg_main_home
 
 import android.content.Context
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -107,6 +109,19 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         binding.rvTags.layoutManager = layoutManager
         binding.rvTags.addItemDecoration(DividerItemDecoration(context,
                 DividerItemDecoration.VERTICAL))
+        //
+        setDatetimeVisibility()
+    }
+    /**
+     *  BARRIONUEVO 23-05-2021
+     *  Metodo que verifica o aviso de horario errado.
+     */
+    fun setDatetimeVisibility() {
+        if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
+            binding.cvInvalidDatetimeCard.setVisibility(View.VISIBLE)
+        } else {
+            binding.cvInvalidDatetimeCard.setVisibility(View.GONE)
+        }
     }
 
     private fun setLabels() {
@@ -115,24 +130,26 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         binding.tvMessenger.text = hmAux_Trans_Frag.get("messenger_lbl")
         binding.tvSearch.text = hmAux_Trans_Frag.get("search_lbl")
         binding.tvListTagLbl.text = hmAux_Trans_Frag.get("tag_list_lbl")
+
+        binding.tvDatetimeWarning.text = mListener?.getDatetimeWarning()
     }
 
     private fun setActions() {
         binding.llCalendar.setOnClickListener {
             mListener?.let {
-                it.onSelectHeaderCalendar()
+                it.onSelectCalendar()
             }
         }
         //
         binding.llSearch.setOnClickListener {
             mListener?.let {
-                it.onSelectHeadeSearch()
+                it.onSelectSearch()
             }
         }
         //
         binding.llMessenger.setOnClickListener {
             mListener?.let {
-                it.onSelectHeaderMessenger()
+                it.onSelectMessenger()
             }
         }
         //
@@ -188,16 +205,17 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         fun onSelectFABAssetLocal()
 
         //
-        fun onSelectHeaderCalendar()
+        fun onSelectCalendar()
 
         //
-        fun onSelectHeadeSearch()
+        fun onSelectSearch()
 
         //
-        fun onSelectHeaderMessenger()
+        fun onSelectMessenger()
 
         //
         fun getTagList(periodFilter: String, sitesFilter: String, focusFilter: String): MutableList<MainTagMenu>
+        fun getDatetimeWarning(): String
     }
 
     override fun onApply(periodFilter: String, siteFilter: String, focusFilter: String) {

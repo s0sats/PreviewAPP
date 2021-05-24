@@ -10,13 +10,6 @@
     android:orientation="vertical"
     android:padding="20dp">
 
-
-    <ImageView
-        android:id="@+id/footer_dialog_app_iv_customer"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:src="@drawable/namoa_logo_2" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -88,6 +81,7 @@
                 android:id="@+id/footer_dialog_app_ll_site_license"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:orientation="vertical">
 
                 <TextView
@@ -104,6 +98,7 @@
                 android:id="@+id/footer_dialog_app_ll_global_level"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:orientation="vertical">
 
                 <TextView
@@ -219,109 +214,96 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"/>
 
+
             <LinearLayout
-                android:id="@+id/footer_dialog_app_ll_imei"
+                android:id="@+id/footer_dialog_app_action"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginTop="8dp"
+                android:gravity="right"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/footer_dialog_app_tv_imei_lbl"
+                <Button
+                    android:id="@+id/footer_dialog_app_action_cancel"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="IMEI"
-                    android:gravity="center"
-                    android:textColor="@color/namoa_color_dark_blue_lib"
-                    android:textSize="@dimen/font_size_item_md_lib"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/footer_dialog_app_tv_imei_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="5dp"
-                    android:text="123987651"
-                    android:gravity="center"
-                    android:textColor="@color/namoa_color_light_blue_lib"
-                    android:textSize="@dimen/font_size_item_md_lib" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="left|bottom"
-                android:orientation="horizontal"
-                >
-
-                <LinearLayout
-                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="left|bottom"
-                    android:orientation="horizontal">
+                    tools:text="CANCEL"
+                    android:layout_marginRight="4dp"
+                    android:textColor="@color/namoa_color_red"
+                    android:background="@drawable/namoa_icon_bg_states" />
 
-                    <TextView
-                        android:id="@+id/footer_dialog_app_tv_version_lbl"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Versao"
-                        android:textColor="@color/namoa_color_dark_blue_lib"
-                        android:textSize="@dimen/font_size_title_md_lib"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/footer_dialog_app_tv_version_number"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:text="1"
-                        android:textColor="@color/namoa_color_light_blue_lib"
-                        android:textSize="@dimen/font_size_item_md_lib" />
-
-                    <TextView
-                        android:id="@+id/footer_dialog_app_tv_version_number_code"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:text="1"
-                        android:textColor="@color/namoa_color_light_blue_lib"
-                        android:textSize="@dimen/font_size_item_md_lib" />
-                </LinearLayout>
+                <Button
+                    android:id="@+id/footer_dialog_app_action_ok"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="OK"
+                    android:textColor="@color/namoa_color_green_2"
+                    android:background="@drawable/namoa_icon_bg_states" />
 
             </LinearLayout>
+
+
         </LinearLayout>
 
     </ScrollView>
 
-
-
-
     <LinearLayout
-        android:id="@+id/footer_dialog_app_action"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="right"
-        android:orientation="horizontal">
+        android:gravity="left|bottom"
+        android:orientation="vertical"
+        >
 
-        <Button
-            android:id="@+id/footer_dialog_app_action_cancel"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="CANCEL"
-            android:layout_marginRight="4dp"
-            android:textColor="@color/namoa_color_red"
-            android:background="@drawable/namoa_icon_bg_states" />
+            android:gravity="left|bottom"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/footer_dialog_app_action_ok"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/footer_dialog_app_tv_version_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Versao"
+                android:textColor="@color/namoa_color_light_blue_lib"
+                android:textSize="@dimen/font_size_item_md_lib"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/footer_dialog_app_tv_version_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="1"
+                android:textColor="@color/namoa_color_light_blue_lib"
+                android:textSize="@dimen/font_size_item_md_lib" />
+
+            <TextView
+                android:id="@+id/footer_dialog_app_tv_version_number_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="1"
+                android:textColor="@color/namoa_color_light_blue_lib"
+                android:textSize="@dimen/font_size_item_md_lib" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="OK"
-            android:textColor="@color/namoa_color_green_2"
-            android:background="@drawable/namoa_icon_bg_states" />
+            android:gravity="left|bottom"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/footer_dialog_app_tv_namoa_presented"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Versao"
+                android:textColor="@color/namoa_color_light_blue_lib"
+                android:textSize="@dimen/font_size_item_md_lib"
+                android:textStyle="bold" />
+
+        </LinearLayout>
 
     </LinearLayout>
-
 </LinearLayout>

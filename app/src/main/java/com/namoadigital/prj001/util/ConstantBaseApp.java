@@ -306,6 +306,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FOOTER_OFFLINE_MODE_LBL = "footer_offline_mode_lbl";
     public static final String FOOTER_OK = "footer_ok";
     public static final String FOOTER_CANCEL = "footer_cancel";
+    public static final String FOOTER_PRESENTED_BY_NAMOA = "footer_presented_by_namoa";
     /**
      * Sync WS
      */

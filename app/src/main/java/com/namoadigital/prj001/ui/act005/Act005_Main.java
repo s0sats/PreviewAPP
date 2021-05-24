@@ -14,8 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,9 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
@@ -43,7 +39,6 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act005_Adapter;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.CH_MessageDao;
-import com.namoadigital.prj001.dao.EV_UserDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.FCMMessageDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
@@ -52,7 +47,6 @@ import com.namoadigital.prj001.dao.GE_FileDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_Express_LocalDao;
-import com.namoadigital.prj001.model.EV_User;
 import com.namoadigital.prj001.model.GE_File;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
@@ -69,7 +63,6 @@ import com.namoadigital.prj001.service.WS_SO_Save;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
-import com.namoadigital.prj001.sql.EV_User_Sql_001;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_015;
 import com.namoadigital.prj001.sql.GE_File_Sql_001;
 import com.namoadigital.prj001.ui.act002.Act002_Main;
@@ -80,6 +73,7 @@ import com.namoadigital.prj001.ui.act012.Act012_Main;
 import com.namoadigital.prj001.ui.act014.Act014_Main;
 import com.namoadigital.prj001.ui.act016.Act016_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act026.Act026_Main;
 import com.namoadigital.prj001.ui.act030.Act030_Main;
 import com.namoadigital.prj001.ui.act033.Act033_Main;
 import com.namoadigital.prj001.ui.act034.Act034_Main;
@@ -87,6 +81,7 @@ import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act036.Act036_Main;
 import com.namoadigital.prj001.ui.act040.Act040_Main;
 import com.namoadigital.prj001.ui.act046.Act046_Main;
+import com.namoadigital.prj001.ui.act047.Act047_Main;
 import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
@@ -97,6 +92,7 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.dialog.SendResumeDialog;
 import com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome;
+import com.namoadigital.prj001.view.frag.frg_main_home_alt.FrgMainHomeAlt;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -108,6 +104,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_TICKET;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
@@ -122,7 +119,7 @@ import static com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome.OnFrgM
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View, Act005Opc.Act005DrawerInteraction,  OnFrgMainHomeIteract {
+public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View, Act005Opc.Act005DrawerInteraction,  OnFrgMainHomeIteract, FrgMainHomeAlt.OnFrgMainHomeAltInteract {
 
     public static final String MENU_ID = "menu_id";
     public static final String MENU_ICON = "menu_icon";
@@ -194,12 +191,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     private Context context;
 
-    private CardView cv_invalid_datetime_card;
-    private ImageView iv_datetime_warning;
-    private TextView tv_datetime_warning;
-    private FrameLayout flTagMenu;
-
-
     private Act005_Main_Presenter mPresenter;
     private Act005_Adapter mAdapter;
 
@@ -232,6 +223,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     int outboundItensTotal=0;
     ArrayList<HMAux> outbound_items;
     Toolbar toolbar;
+    private boolean masterDataSyncFlow = false;
 
 
     @Override
@@ -627,8 +619,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         wsProcess = "";
         wsSoProcess = "";
 
-        initializeInvalidDatetimeViews();
-
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act005_drawer);
 
@@ -669,8 +659,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 ),
                 new CH_MessageDao(context)
         );
-        //
-        flTagMenu =  findViewById(R.id.act005_frg_placeholder);
         //
         ToolBox_Inf.mkDirectory();
         ToolBox_Inf.cleanUpApproval(
@@ -1140,13 +1128,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         );
     }
 
-    private void initializeInvalidDatetimeViews() {
-        cv_invalid_datetime_card = findViewById(R.id.act005_cv_invalid_datetime_card);
-        iv_datetime_warning = findViewById(R.id.act005_iv_datetime_warning);
-        tv_datetime_warning = findViewById(R.id.act005_tv_datetime_warning);
-        tv_datetime_warning.setText(hmAux_Trans.get("lbl_invalid_datetime_warning"));
-    }
-
     @Override
     public boolean getPendingForms() {
 
@@ -1222,6 +1203,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         finish();
     }
 
+
+    public void callAct026(Context context) {
+        Intent mIntent = new Intent(context, Act026_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
     @Override
     public void callAct068(Context context) {
         Intent mIntent = new Intent(context, Act068_Main.class);
@@ -1270,11 +1262,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //
 //        gv_menu.setAdapter(mAdapter);
         //
-        if(!ToolBox_Inf.isLocalDatetimeOk(context)){
-            cv_invalid_datetime_card.setVisibility(View.VISIBLE);
-        }else{
-            cv_invalid_datetime_card.setVisibility(View.GONE);
-        }
     }
 
     private void iniUIFooter() {
@@ -1362,6 +1349,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         currentFragment.refreshList(getTagList( ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION)));
+        currentFragment.setDatetimeVisibility();
     }
 
     @Override
@@ -1395,7 +1383,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 alertTitle = hmAux_Trans.get("progress_support_ttl");
                 alertMsg = hmAux_Trans.get("progress_support_msg");
                 break;
-            case Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM:
+            case SYNC_FOR_TICKETS_FORM:
                 alertTitle = hmAux_Trans.get("progress_sync_tickets_form_ttl");
                 alertMsg = hmAux_Trans.get("progress_sync_tickets_form_msg");
                 break;
@@ -1785,7 +1773,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 } else {
                 }
             } else {
-                if (!wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())) {
+                if (!wsSoProcess.equalsIgnoreCase(WS_Save.class.getSimpleName())
+                && !wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)) {
                     progressDialog.dismiss();
                     showSuccessDialog();
                     //Atualiza traduções
@@ -2146,11 +2135,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             if(sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
             }
-        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM)) {
-            progressDialog.dismiss();
-            setWsSoProcess("");
-            refreshUiData();
-        }  else if (wsSoProcess.equalsIgnoreCase(Act005_Main_Presenter_Impl.SYNC_TICKETS)) {
+        } else if (wsSoProcess.equalsIgnoreCase(Act005_Main_Presenter_Impl.SYNC_TICKETS)) {
             progressDialog.dismiss();
             wsProcess ="";
             boolean productOutdate = false;
@@ -2162,7 +2147,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             }else{
                 refreshUiData();
             }
-        } else {
+        } else if (wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)) {
+            progressDialog.dismiss();
+            setWsSoProcess("");
+            setWsProcess("");
+            refreshUiData();
+        }  else {
             if(sendResumeDialog != null) {
                 sendResumeDialog.setBtnOKEnable(true);
             }
@@ -2365,9 +2355,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     //
                 }
                 //
-                boolean hasSync_required = mPresenter.hasTicketSyncRequired();
-                if(hasSync_required) {
+                if(masterDataSyncFlow){
+                    ToolBox_Inf.hasFormProductOutdate(context);
                     executeSync();
+                }else {
+                    if(mPresenter.hasTicketSyncRequired()) {
+                        mPresenter.executeWSTicketDownload();
+                    }
                 }
             }
         });
@@ -2543,7 +2537,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 alertTitle = hmAux_Trans.get("alert_support_finish_ttl");
                 alertMsg = hmAux_Trans.get("alert_support_finish_msg");
                 break;
-            case Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM:
+            case SYNC_FOR_TICKETS_FORM:
                 alertTitle = hmAux_Trans.get("alert_sync_finish_ttl");
                 alertMsg = hmAux_Trans.get("alert_sync_finish_msg");
                 progressDialog.dismiss();
@@ -2637,7 +2631,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 if (wsResults.size() > 0) {
                     showResults(wsResults);
                 } else {
-                    executeSync();
+                    if(masterDataSyncFlow){
+                        ToolBox_Inf.hasFormProductOutdate(context);
+                        executeSync();
+                    }else {
+                        if(mPresenter.hasTicketSyncRequired()) {
+                            mPresenter.executeWSTicketDownload();
+                        }
+                    }
                 }
 
             }
@@ -2686,18 +2687,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (menu instanceof MenuBuilder) {
-            ((MenuBuilder) menu).setOptionalIconsVisible(true);
-        }
 
-        EV_UserDao userDao = new EV_UserDao(context, Constant.DB_FULL_BASE, Constant.DB_VERSION_BASE);
-        EV_User user = userDao.getByString(
-                new EV_User_Sql_001(
-                        ToolBox_Con.getPreference_User_Code(getApplicationContext())
-                ).toSqlQuery()
-        );
-
-        int icon = 0;
         int iconColor = 0;
         boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
         boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
@@ -2778,6 +2768,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
+                                masterDataSyncFlow = true;
                                 mPresenter.syncFlow(mAdapter.getBadgeQty(MENU_ID_SEND_DATA));
                             }
                         },
@@ -2785,12 +2776,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 );
                 break;
             case TOOLBAR_SYNC_DATA_STATUS:
-                if(hasUpdateRequired && hasTicketSyncRequired){
-
-                    mPresenter.syncFlow(mAdapter.getBadgeQty(MENU_ID_SEND_DATA));
-                }else if(hasTicketSyncRequired) {
+                masterDataSyncFlow = false;
+                if(!hasUpdateRequired && hasTicketSyncRequired){
                     mPresenter.executeWSTicketDownload();
-                }else if(hasUpdateRequired){
+                } else if (hasUpdateRequired) {
                     if (ToolBox_Con.isOnline(context)) {
                         setWsProcess(Act005_Main.WS_PROCESS_SEND);
                         setWsSoProcess(WS_Serial_Save.class.getSimpleName());
@@ -2798,7 +2787,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                         cleanUpResults();
                         //executeSaveProcess();
                         mPresenter.executeSerialSave();
-                        invalidateOptionsMenu();
                     } else {
                         showNoConnectionDialog();
                     }
@@ -2835,8 +2823,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     }
 
-
-
     @Override
     protected void processCloseAPP(String mLink, String mRequired) {
         super.processCloseAPP(mLink, mRequired);
@@ -2857,27 +2843,47 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void onSelectMenuTagItem(@NotNull MainTagMenu item) {
-        callAct083(item);
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct083(item);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @Override
-    public void onSelectHeaderCalendar() {
-        callAct046(context);
+    public void onSelectCalendar() {
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct046(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @Override
-    public void onSelectHeadeSearch() {
-        callAct068(context);
+    public void onSelectSearch() {
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct068(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @Override
-    public void onSelectHeaderMessenger() {
-        callAct034(context);
+    public void onSelectMessenger() {
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct034(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @Override
     public void onSelectFABAssetLocal() {
-        callAct006(context);
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct006(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @NotNull
@@ -2916,6 +2922,67 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             );
         }
         return mainTagMenus;
+    }
+
+    @Override
+    public void onSelectAsset() {
+        callAct051(context);
+    }
+
+    @Override
+    public void onSelectTags() {
+        //Força a chamada de todas as tags.
+        callAct083(new MainTagMenu(0,
+                "",
+                0,
+                0,
+                0,
+                0));
+    }
+
+    @Override
+    public void onSelectTagsBySerialSearch() {
+        callAct006(context);
+    }
+
+    @Override
+    public void onSelectOS() {
+        callAct026(context);
+    }
+
+    @Override
+    public void onSelectOSVinSearch() {
+        callAct021(context);
+    }
+
+    @Override
+    public void onSelectOSExpress() {
+        callAct040(context);
+    }
+
+    @Override
+    public void onSelectOSNext() {
+        callAct047(context);
+    }
+
+
+    private void callAct047(Context context) {
+        Intent mIntent = new Intent(context, Act047_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+    /**
+     *  BARRIONUEVO 23-05-2021
+     *  Metodo que aproveita a variavel de tradução.
+     */
+    @NotNull
+    @Override
+    public String getDatetimeWarning() {
+        return hmAux_Trans.get("lbl_invalid_datetime_warning");
     }
 
     private class FCMReceiver extends BroadcastReceiver {
