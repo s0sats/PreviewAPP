@@ -7,8 +7,6 @@ import java.util.ArrayList;
  */
 
 public class DataPackage {
-
-
     public static final String DATA_PACKAGE_MAIN = "MAIN";
     public static final String DATA_PACKAGE_CHECKLIST = "CHECKLIST";
     public static final String DATA_PACKAGE_SO = "SO";
@@ -17,9 +15,10 @@ public class DataPackage {
 
     private ArrayList<String> MAIN;
     private ArrayList<Long> CHECKLIST;
-    private ArrayList<String> SO;
+    private ArrayList<T_DataPackage_SM_SO_Env> SO;
     private ArrayList<String> SCHEDULE;
     private ArrayList<TSearch_Ap_Env.ObjAp> AP;
+    private ArrayList<T_DataPackage_TK_Ticket_Env> TICKET;
 
     public DataPackage() {
     }
@@ -40,11 +39,11 @@ public class DataPackage {
         this.CHECKLIST = CHECKLIST;
     }
 
-    public ArrayList<String> getSO() {
+    public ArrayList<T_DataPackage_SM_SO_Env> getSO() {
         return SO;
     }
 
-    public void setSO(ArrayList<String> SO) {
+    public void setSO(ArrayList<T_DataPackage_SM_SO_Env> SO) {
         this.SO = SO;
     }
 
@@ -62,5 +61,13 @@ public class DataPackage {
 
     public void setAP(ArrayList<TSearch_Ap_Env.ObjAp> AP) {
         this.AP = AP;
+    }
+
+    public ArrayList<T_DataPackage_TK_Ticket_Env> getTICKET() {
+        return TICKET;
+    }
+
+    public void setTICKET(ArrayList<T_DataPackage_TK_Ticket_Env> TICKET) {
+        this.TICKET = TICKET;
     }
 }

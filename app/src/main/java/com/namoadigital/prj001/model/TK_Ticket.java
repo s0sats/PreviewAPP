@@ -10,6 +10,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.sql.SqlAct083_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -1339,12 +1340,12 @@ public class TK_Ticket implements Cloneable, Serializable {
 
     public static MyActions toMyActionsObj(Context context, HMAux hmAux){
         int rightIcon;
-        if("0".equals(hmAux.get(TK_TicketDao.UPDATE_REQUIRED)) && "0".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))) {
+        if("0".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED)) && "0".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))) {
             rightIcon = R.drawable.ic_baseline_cloud_done_24_blue;
         }else {
-            if("1".equals(hmAux.get(TK_TicketDao.UPDATE_REQUIRED)) && "1".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))){
+            if("1".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED)) && "1".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))){
                 rightIcon = R.drawable.ic_sync_main_menu_data;
-            }else if("1".equals(hmAux.get(TK_TicketDao.UPDATE_REQUIRED))){
+            }else if("1".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED))){
                 rightIcon = R.drawable.ic_cloud_upload_24_red;
             }else{
                 rightIcon = R.drawable.ic_baseline_cloud_download_24_yellow;

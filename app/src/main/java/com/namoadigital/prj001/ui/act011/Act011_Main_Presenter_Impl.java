@@ -257,6 +257,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             MD_Product productInfo = getProduct(Integer.parseInt(product_code));
             //
             MdTag tagInfo = getTag(customForm.getTag_operational_code());
+            //Resgata dados do site. O site usado pode ser o logado ou do serial, caso existe e esteja alocado
+            MD_Site siteInfo = getSiteInfo(customForm.getCustomer_code(),Integer.parseInt(product_code),serial_id);
             //
             customFormLocal = new GE_Custom_Form_Local();
 
@@ -294,6 +296,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setTicket_seq(mTicket_seq);
             customFormLocal.setTicket_seq_tmp(mTicket_seq_tmp);
             customFormLocal.setStep_code(mStep_code);
+            //LUCHE - 25/05/2021
+            customFormLocal.setSite_code(siteInfo != null ? ToolBox_Inf.convertStringToInt(siteInfo.getSite_code()) : 0);
+            customFormLocal.setSite_id(siteInfo != null ? siteInfo.getSite_id() : "");
+            customFormLocal.setSite_desc(siteInfo != null ? siteInfo.getSite_desc() : "");
             //LUCHE -  14/03/2019
             //Alteração Dao de insert com exception NOVO METODO DAO
             //custom_form_LocalDao.addUpdate(customFormLocal);
@@ -475,6 +481,8 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             }
         }
     }
+
+
 
     @Deprecated
     private boolean ticketCtrlExist(GE_Custom_Form_Local customFormLocal, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code) {
@@ -1041,6 +1049,37 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //
         return form_data;
     }
+
+    /**
+     * LUCHE - 26/05/2021
+     * Metodo que resgata infos do site a serem usados.
+     * Os dados de site so estavam sendo prenchidos quando criados via agendamento
+     * e agora precisamos a info no myActions
+     * @param customer_code
+     * @param productCode
+     * @param serial_id
+     * @return
+     */
+    private MD_Site getSiteInfo(long customer_code, int productCode, String serial_id) {
+        String siteCode = ToolBox_Con.getPreference_Site_Code(context);
+        if (serial_id != null && !serial_id.isEmpty()) {
+            MD_Product_Serial md_product_serialAux = md_product_serialDao.getByString(
+                new MD_Product_Serial_Sql_002(
+                    customer_code,
+                    productCode,
+                    serial_id
+                ).toSqlQuery()
+            );
+            //
+            if (md_product_serialAux != null) {
+                siteCode = md_product_serialAux.getSite_code() != null ? String.valueOf(md_product_serialAux.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context);
+            }
+        }
+        MD_Site siteObjInfo = ToolBox_Inf.getSiteObjInfo(context, siteCode);
+        //
+        return siteObjInfo;
+    }
+
 
     /**
      * LUCHE - 18/01/2021

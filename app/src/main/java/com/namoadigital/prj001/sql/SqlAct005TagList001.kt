@@ -123,7 +123,7 @@ class SqlAct005TagList001(private val context: Context,
                  tk.tag_operational_desc                   
         
         --UNION TICKET CACHE
-        UNION 
+        UNION ALL 
             select tkc.tag_operational_code, 
                    tkc.tag_operational_desc, 
                    count(tkc.tag_operational_code) qty, 
@@ -141,7 +141,7 @@ class SqlAct005TagList001(private val context: Context,
                    tkc.tag_operational_desc
         
         --UNION FORM AP                              
-        UNION 
+        UNION ALL 
             select  mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
                     mdt.${MdTagDao.TAG_DESC} tag_operational_desc, 
                     count(geap.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE}) qty,
@@ -160,7 +160,7 @@ class SqlAct005TagList001(private val context: Context,
             GROUP BY mdt.${MdTagDao.TAG_CODE},   
                      mdt.${MdTagDao.TAG_DESC}
         -- UNION Agendamento
-        UNION 
+        UNION ALL 
             select mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
             mdt.${MdTagDao.TAG_DESC} tag_operational_desc, 
             count(mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}) qty,
@@ -184,7 +184,7 @@ class SqlAct005TagList001(private val context: Context,
             $scheduleFilter
              GROUP BY mdt.${MdTagDao.TAG_CODE},   
                      mdt.${MdTagDao.TAG_DESC}
-        union 
+        UNION ALL 
             select 
                 s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE} tag_operational_code, 
                 s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_DESC} tag_operational_desc, 
@@ -227,7 +227,7 @@ class SqlAct005TagList001(private val context: Context,
                                                                 FROM
                                                                  ${MD_Schedule_ExecDao.TABLE} s
                                                                 WHERE  s.${MD_Schedule_ExecDao.CUSTOMER_CODE} = $customerCode
-                                                                and (strftime('%Y-%m-%d',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') >= strftime('%Y-%m-%d','now','" + deviceGMT + "'))                                                                
+                                                                and (strftime('%s',s.${MD_Schedule_ExecDao.DATE_START} || ' $customerGMT','$deviceGMT') * 1000) >= (strftime('%s','now','$deviceGMT')*1000)                                                                
                                                                 $scheduleNextFilter
                                                                 and s.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_IN_PROCESSING}','${Constant.SYS_STATUS_PENDING}','${Constant.SYS_STATUS_WAITING_SYNC}')                 
                                                              GROUP BY
@@ -253,7 +253,7 @@ class SqlAct005TagList001(private val context: Context,
             GROUP BY s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE},   
                      s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_DESC}
          --UNION FORM AVULSO                     
-        UNION
+        UNION ALL
             select gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}, 
                    gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC}, 
                    count(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}), 

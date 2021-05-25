@@ -1,14 +1,19 @@
 package com.namoadigital.prj001.ui.act010;
 
 import android.content.Context;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_004;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_002;
+import com.namoadigital.prj001.sql.Sql_Act010_001;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -45,13 +50,13 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     }
 
     @Override
-    public void setAdapterData(long product_code, int custom_form_type, String filter) {
+    public void setAdapterData(long product_code, int tagCode, String filter) {
 
         List<HMAux> data =
                 custom_formDao.query_HM(
-                        new GE_Custom_Form_Sql_002(
+                        new Sql_Act010_001(
                                 ToolBox_Con.getPreference_Customer_Code(context),
-                                custom_form_type,
+                                tagCode,
                                 ToolBox_Con.getPreference_Translate_Code(context),
                                 String.valueOf(this.product_code),
                                 ToolBox_Con.getPreference_Operation_Code(context),
@@ -185,6 +190,23 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
             }
         }
         return false;
+    }
+
+    @Override
+    public SpannableString getTagLblText(String tag_lbl, String tag_desc) {
+        String label = tag_lbl + ": ";
+        String finalText = label + tag_desc.toUpperCase();
+        //
+        SpannableString spannableString = new SpannableString(finalText);
+        spannableString.setSpan(
+                new ForegroundColorSpan(
+                        context.getResources().getColor(R.color.namoa_color_pipeline_origin_icon)),
+                label.length(),
+                finalText.length(),
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE
+        );
+        //
+        return spannableString;
     }
 
     @Override

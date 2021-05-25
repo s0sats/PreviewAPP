@@ -5,110 +5,59 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:baselineAligned="false"
     android:gravity="center_vertical"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.act010.Act010_Main"
-    tools:showIn="@layout/act010_main"
-    android:baselineAligned="false">
+    tools:showIn="@layout/act010_main">
+
     <include
         android:id="@+id/act010_process_in_progress"
         layout="@layout/process_in_progress"
-        android:visibility="gone"/>
-    <LinearLayout
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/act010_tv_tag_ttl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:layout_marginTop="12dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textStyle="bold"
+        tools:text="Tema: TEMA ESCOLHIDO" />
 
-        <ImageView
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_formulario"
-            android:padding="2dp"
-            />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="5"
-            android:orientation="vertical"
-            android:paddingLeft="0dp"
-            android:paddingTop="10dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="10dp">
-
-            <TextView
-                android:id="@+id/act010_tv_form_lbl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Form Type:"
-                android:textSize="@dimen/font_size_title_md"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/act010_tv_form_type_lbl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Type:"
-                android:textSize="@dimen/font_size_title"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/act010_tv_form_type_val"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:text="22"
-                android:textSize="@dimen/font_size_item_md"
-
-                />
-
-            <TextView
-                android:id="@+id/act010_tv_form_desc_lbl"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Desc:"
-                android:textSize="@dimen/font_size_title"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/act010_tv_form_desc_val"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:text="huehue br"
-                android:textSize="@dimen/font_size_title_md" />
-
-        </LinearLayout>
-
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/act010_tv_form_ttl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textStyle="bold"
+        tools:text="Seleção de form" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="5dp">
+        android:orientation="vertical">
 
         <ListView
             android:id="@+id/act010_lv_form"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
             android:layout_weight="1"
             android:divider="@color/padrao_TRANSPARENT"
-            android:padding="5dp" />
+            android:dividerHeight="10dp"
+            android:padding="16dp"
+            tools:listitem="@layout/act010_cell"
+            />
 
     </LinearLayout>
-
 
     <include layout="@layout/footer_base" />
 

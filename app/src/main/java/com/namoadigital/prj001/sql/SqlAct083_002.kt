@@ -2,10 +2,7 @@ package com.namoadigital.prj001.sql
 
 import android.content.Context
 import com.namoa_digital.namoa_library.util.ToolBox
-import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao
-import com.namoadigital.prj001.dao.TK_TicketDao
-import com.namoadigital.prj001.dao.TK_Ticket_StepDao
-import com.namoadigital.prj001.dao.TkTicketCacheDao
+import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.database.Specification
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -26,10 +23,16 @@ class SqlAct083_002(
         private var userFocus: Int?,
         private val multStepsLbl: String?
 ) : Specification {
+
+    private val INNER_UPDATE_REQUIRED = "INNER_UPDATE_REQUIRED"
     private val deviceGMT = ToolBox.getDeviceGMT(false)
     private var periodDateFilter: String = ""
     private var statusFilter = ""
     private var byPassByOpenForm = " 1 = 1"
+
+    companion object{
+        const val TOTAL_UPDATE_REQUIRED = "TOTAL_UPDATE_REQUIRED"
+    }
 
     init {
         setFiltersByOriginAndFocus()
@@ -101,8 +104,12 @@ class SqlAct083_002(
                      ) ${MyActions.MY_ACTION_TYPE_FORM},
                      ts.${TK_Ticket_StepDao.STEP_DESC},                     
                      ts.${TK_Ticket_StepDao.FORECAST_START},                     
-                     ts.${TK_Ticket_StepDao.FORECAST_END}                    
-
+                     ts.${TK_Ticket_StepDao.FORECAST_END},
+                     max(
+                            t.${TK_TicketDao.UPDATE_REQUIRED},
+                            t.${TK_TicketDao.UPDATE_REQUIRED_PRODUCT},
+                            ifnull(ts.$INNER_UPDATE_REQUIRED,0)
+                     ) $TOTAL_UPDATE_REQUIRED                                           
                     FROM
                         ${TK_TicketDao.TABLE} t
                     LEFT JOIN    
@@ -119,12 +126,21 @@ class SqlAct083_002(
                                  else '$multStepsLbl'
                            end) ${TK_Ticket_StepDao.STEP_DESC} ,
                            min(s.forecast_start) ${TK_Ticket_StepDao.FORECAST_START},
-                           max(s.forecast_end) ${TK_Ticket_StepDao.FORECAST_END}   
+                           max(s.forecast_end) ${TK_Ticket_StepDao.FORECAST_END},
+                           ifnull(
+                                    max(s.${TK_Ticket_StepDao.UPDATE_REQUIRED},
+                                        c.${TK_Ticket_CtrlDao.UPDATE_REQUIRED}
+                                    ),0) $INNER_UPDATE_REQUIRED  
                          FROM
-                           ${TK_Ticket_StepDao.TABLE} s
+                           ${TK_Ticket_StepDao.TABLE} s,
+                           ${TK_Ticket_CtrlDao.TABLE} c
                          WHERE  
-                           s.${TK_Ticket_StepDao.CUSTOMER_CODE} = $customerCode
-                           and ($userFocus = 0 or s.${TK_Ticket_StepDao.USER_FOCUS} = 1)
+                            s.${TK_Ticket_StepDao.CUSTOMER_CODE} = c.${TK_Ticket_CtrlDao.CUSTOMER_CODE}
+                            and s.${TK_Ticket_StepDao.TICKET_PREFIX} = c.${TK_Ticket_CtrlDao.TICKET_PREFIX}
+                            and s.${TK_Ticket_StepDao.TICKET_CODE} = c.${TK_Ticket_CtrlDao.TICKET_CODE}
+                            and s.${TK_Ticket_StepDao.STEP_CODE} = c.${TK_Ticket_CtrlDao.STEP_CODE}
+                            and s.${TK_Ticket_StepDao.CUSTOMER_CODE} = $customerCode
+                            and ($userFocus = 0 or s.${TK_Ticket_StepDao.USER_FOCUS} = 1)
                          GROUP BY  
                            s.${TK_Ticket_StepDao.CUSTOMER_CODE},
                            s.${TK_Ticket_StepDao.TICKET_PREFIX},

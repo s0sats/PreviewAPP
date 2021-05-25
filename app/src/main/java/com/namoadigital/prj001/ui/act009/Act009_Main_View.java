@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface Act009_Main_View {
 
-    void loadForm_Types(List<HMAux> form_types);
+    void loadTagList(List<HMAux> form_types);
 
     void addFormTypeInfoToBundle(HMAux item);
 
