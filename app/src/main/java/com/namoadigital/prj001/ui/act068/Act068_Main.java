@@ -4,12 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +17,12 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -31,14 +31,10 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.receiver.WBR_Logout;
-import com.namoadigital.prj001.service.WS_Save;
-import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Sync;
-import com.namoadigital.prj001.service.WS_TK_Ticket_Client_Contract_Search;
-import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Search_Not_Focus;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
-import com.namoadigital.prj001.ui.act046.Act046_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act072.Act072_Main;
 import com.namoadigital.prj001.ui.act074.Act074_Main;
@@ -49,12 +45,12 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
-import com.namoadigital.prj001.view.frag.frg_serial_search.On_Frg_Serial_Search;
 import com.namoadigital.prj001.view.frag.frg_ticket_search.Frg_Ticket_Search;
 import com.namoadigital.prj001.view.frag.frg_ticket_search.I_Frg_Ticket_Search;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.namoadigital.prj001.ui.act074.Act074_Main.ALL_TICKETS_UPDATED;
 import static com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search.PRODUCT_ID;
@@ -186,6 +182,9 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         //
         transList.add("alert_serial_pendencies_ttl");
         transList.add("alert_serial_pendencies_msg");
+        //
+         transList.add("progress_unfocus_ticket_download_ttl");
+        transList.add("progress_unfocus_ticket_download_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
             context,
@@ -494,42 +493,8 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     }
 
     private void initAction() {
-//        tabs.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-//                //
-//                switch (checkedId) {
-//                    case R.id.act068_tab_serial_search:
-//                        isFragSerialSearch = true;
-//                        setFrag(mFrgSerialSearch, TAG_FRG_SERIAL_SEARCH);
-//                        break;
-//                    case R.id.act068_tab_ticket_search:
-//                        isFragSerialSearch = false;
-//                        if(mFrgTicketSearch == null) {
-//                            mFrgTicketSearch = Frg_Ticket_Search.newInstance(hmAux_Trans);
-//                        }
-//                        mFrgTicketSearch.setOnSearchClickListener((Act068_Main)context);
-//                        mFrgTicketSearch.setLoad_delegate(new Frg_Serial_Search.I_Frg_Serial_Search_Load() {
-//                            @Override
-//                            public void onFragIsReady() {
-//                                mFrgTicketSearch.setSyncsQty(syncs_qty);
-//                                mFrgTicketSearch.setMyTicketsQty(pendencies_qty);
-//                            }
-//                        });
-//                        setFrag(mFrgTicketSearch, TAG_FRG_TICKET_SEARCH);
-//                        break;
-//                }
-//            }
-//        });
     }
 
-
-
-
-//    @Override
-//    public boolean hasHideSerialInfoChk() {
-//        return true ;
-//    }
 
     @Override
     public void callAct076(){
@@ -623,59 +588,24 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
     protected void processCloseACT(String result, String mRequired, HMAux hmAux) {
         super.processCloseACT(result, mRequired, hmAux);
 
-        if (wsProcess.equalsIgnoreCase(WS_Serial_Search.class.getName())) {
-            wsProcess = "";
+        if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Search_Not_Focus.class.getName())) {
             progressDialog.dismiss();
-            mPresenter.extractSearchResult(result);
-        } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Save.class.getName())) {
-            progressDialog.dismiss();
-            if(mPresenter.verifyProductForForm()){
-                resultFromTicketSave = result;
+            if(ToolBox_Inf.hasFormProductOutdate(context)){
+                mPresenter.executeWSProductSync(mFrgTicketSearch.getHMAuxValues());
             }else {
-                mPresenter.processSaveReturn(result);
-            }
-        } else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Download.class.getName())) {
-            progressDialog.dismiss();
-            if(mPresenter.verifyProductForForm()){
-                resultFromTicketSave = IS_SYNC_PROCESS;
-            }else {
-                showMsg(
-                        hmAux_Trans.get("alert_ticket_syncronized_ttl"),
-                        hmAux_Trans.get("alert_ticket_syncronized_msg")
+                mPresenter.searchOffline(
+                        Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.CONTRACT_ID)),
+                        Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.CLIENT_ID )),
+                        Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.TICKET_ID ))
                 );
-                mPresenter.getSync();
             }
         } else if (wsProcess.equalsIgnoreCase(WS_Sync.class.getName())) {
             progressDialog.dismiss();
-            if(IS_SYNC_PROCESS.equalsIgnoreCase(resultFromTicketSave)){
-                showMsg(
-                        hmAux_Trans.get("alert_ticket_syncronized_ttl"),
-                        hmAux_Trans.get("alert_ticket_syncronized_msg")
-                );
-                mPresenter.getSync();
-            }else {
-                if(hmAuxFragTicketSearch != null && hmAuxFragTicketSearch.size() > 0){
-                    mPresenter.processSearchByTicketTab(hmAuxFragTicketSearch);
-                    hmAuxFragTicketSearch = null;
-                }else {
-                    mPresenter.processSaveReturn(resultFromTicketSave);
-                }
-            }
-        } else if (wsProcess.equalsIgnoreCase(WS_Save.class.getName())) {
-            wsProcess = "";
-            progressDialog.dismiss();
-            mPresenter.processWS_SaveReturn(result);
-            mPresenter.executeWSTicketSave();
-        }  else if (wsProcess.equalsIgnoreCase(WS_TK_Ticket_Client_Contract_Search.class.getName())) {
-            wsProcess = "";
-            hmAuxFragTicketSearch = null;
-            progressDialog.dismiss();
-            //
-            if(mPresenter.verifyProductForForm()){
-                hmAuxFragTicketSearch = hmAux;
-            }else{
-                mPresenter.processSearchByTicketTab(hmAux);
-            }
+            mPresenter.searchOffline(
+                    Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.CONTRACT_ID)),
+                    Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.CLIENT_ID)),
+                    Objects.requireNonNull(mFrgTicketSearch.getHMAuxValues().get(Frg_Ticket_Search.TICKET_ID))
+            );
         } else{
             //
             progressDialog.dismiss();

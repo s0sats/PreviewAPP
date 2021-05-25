@@ -27,12 +27,14 @@ import com.namoadigital.prj001.receiver.WBR_Sync;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Client_Contract_Search;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Search_Not_Focus;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Client_Contract_Search;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Search_Not_Focus;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act068_001;
@@ -181,17 +183,6 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
             );
         }
     }
-
-    @Override
-    public void defineWsToCall() {
-        if(hasFormWaitingSyncWithinAnyTicket(context)){
-            //callWsSave();
-            defineFormWaitingSyncFlow();
-        }else {
-            executeWSTicketSave();
-        }
-    }
-
     /**
      * LUCHE - 10/09/2020
      * DEVE SEMPRE SER PRECEDIDO DA CHAMADA DO hasFormWaitingSyncWithinAnyTicket
@@ -255,76 +246,55 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
     public void executeTicketSearch(String contract_id, String client_id, String ticket_id) {
 
         if (hasOnlineProfile()) {
-
+            if (ToolBox_Con.isOnline(context)) {
+                mView.setWsProcess(WS_TK_Ticket_Search_Not_Focus.class.getName());
+                //
+                mView.showPD(
+                        hmAux_Trans.get("progress_unfocus_ticket_download_ttl"),
+                        hmAux_Trans.get("progress_unfocus_ticket_download_msg")
+                );
+                //
+                Intent mIntent = new Intent(context, WBR_TK_Ticket_Search_Not_Focus.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(TK_TicketDao.CONTRACT_ID, contract_id);
+                bundle.putString(TK_TicketDao.CLIENT_ID, client_id);
+                bundle.putString(TK_TicketDao.TICKET_ID, ticket_id);
+                mIntent.putExtras(bundle);
+                //
+                context.sendBroadcast(mIntent);
+            } else {
+//                ToolBox_Inf.showNoConnectionDialog(context);
+                searchOffline(contract_id, client_id, ticket_id);
+            }
         } else {
-            MyActionFilterParam actionFilterParam = new MyActionFilterParam(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    !client_id.isEmpty() ? client_id : null,
-                    !contract_id.isEmpty() ? contract_id : null,
-                    !ticket_id.isEmpty() ? ticket_id : null ,
-                    null
-            );
-            //
-            Bundle bundle = new Bundle();
-            bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT068);
-            bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, actionFilterParam);
-
-            mView.callAct083(bundle);
+            searchOffline(contract_id, client_id, ticket_id);
         }
+    }
+    @Override
+    public void searchOffline(String contract_id, String client_id, String ticket_id) {
+        MyActionFilterParam actionFilterParam = new MyActionFilterParam(
+                null,
+                null,
+                null,
+                null,
+                null,
+                !client_id.isEmpty() ? client_id : null,
+                !contract_id.isEmpty() ? contract_id : null,
+                !ticket_id.isEmpty() ? ticket_id : null ,
+                null
+        );
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT068);
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, actionFilterParam);
+
+        mView.callAct083(bundle);
     }
 
     private boolean hasOnlineProfile() {
-        return false;
+        return ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION);
     }
 
-    @Override
-    public void processSearchByTicketTab(HMAux hmAux) {
-        if(hmAux != null && hmAux.size() > 0 ){
-            int qtyReturned =
-                hmAux.hasConsistentValue(WS_TK_Ticket_Client_Contract_Search.RETURNED_TICKET_QTY)
-                    ? ToolBox_Inf.convertStringToInt(hmAux.get(WS_TK_Ticket_Client_Contract_Search.RETURNED_TICKET_QTY))
-                    : 0 ;
-            if(qtyReturned == 0){
-                mView.showMsg(
-                    hmAux_Trans.get("alert_no_ticket_found_ttl"),
-                    hmAux_Trans.get("alert_no_ticket_found_msg")
-                );
-            }else if(qtyReturned == 1){
-                if(hmAux.hasConsistentValue(TK_TicketDao.TICKET_PREFIX)
-                    && hmAux.hasConsistentValue(TK_TicketDao.TICKET_CODE)
-                ) {
-                    //Chama Act com a pk do ticket.
-                    mView.callAct070(
-                        buildAct070Bundle(hmAux)
-                    );
-                }else{
-                    mView.showMsg(
-                        hmAux_Trans.get("alert_ticket_params_not_found_ttl"),
-                        hmAux_Trans.get("alert_ticket_params_not_found_msg")
-                    );
-                }
-            }else{
-                mView.callAct076();
-            }
-        }else{
-            mView.showMsg(
-                hmAux_Trans.get("alert_invalid_ticket_return_ttl"),
-                hmAux_Trans.get("alert_invalid_ticket_return_msg")
-            );
-        }
-    }
-
-    private Bundle buildAct070Bundle(HMAux hmAux) {
-        Bundle bundle = new Bundle();
-        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT073);
-        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.TICKET_PREFIX)));
-        bundle.putInt(TK_TicketDao.TICKET_CODE, ToolBox_Inf.convertStringToInt(hmAux.get(TK_TicketDao.TICKET_CODE)));
-        return bundle;
-    }
 
     private boolean hasFormWaitingSyncWithinAnyTicket(Context context) {
         GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(
@@ -577,57 +547,35 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
     }
 
     @Override
-    public boolean verifyProductForForm() {
-        if(ToolBox_Inf.hasFormProductOutdate(context)){
-            if (ToolBox_Con.isOnline(context)) {
-                mView.setWsProcess(WS_Sync.class.getName());
-                //
-                mView.showPD(
-                        hmAux_Trans.get("progress_sync_ttl"),
-                        hmAux_Trans.get("progress_sync_msg")
-                );
-                //
-                ArrayList<String> data_package = new ArrayList<>();
-                data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
-                //
-                Intent mIntent = new Intent(context, WBR_Sync.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
-                bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
-                bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
-                bundle.putInt(Constant.GC_STATUS_JUMP, 1);
-                bundle.putInt(Constant.GC_STATUS, 1);
-                //
-                mIntent.putExtras(bundle);
-                //
-                context.sendBroadcast(mIntent);
-                return true;
-            }
-            return false;
-        }else{
-            return false;
-        }
-    }
-
-    @Override
-    public void executeWSTicketDownload() {
-        if(ToolBox_Con.isOnline(context)){
-            mView.setWsProcess(WS_TK_Ticket_Download.class.getName());
+    public void executeWSProductSync(HMAux searchFilter) {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Sync.class.getName());
             //
             mView.showPD(
-                    hmAux_Trans.get("dialog_download_ticket_ttl"),
-                    hmAux_Trans.get("dialog_download_ticket_start")
+                    hmAux_Trans.get("progress_sync_ttl"),
+                    hmAux_Trans.get("progress_sync_msg")
             );
             //
-            Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
+            ArrayList<String> data_package = new ArrayList<>();
+            data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST);
+            //
+            Intent mIntent = new Intent(context, WBR_Sync.class);
             Bundle bundle = new Bundle();
-            bundle.putString(TK_TicketDao.TICKET_PREFIX, getTicketConcatList());
+            bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context));
+            bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package);
+            bundle.putLong(Constant.GS_PRODUCT_CODE, 0);
+            bundle.putInt(Constant.GC_STATUS_JUMP, 1);
+            bundle.putInt(Constant.GC_STATUS, 1);
+            //
             mIntent.putExtras(bundle);
             //
             context.sendBroadcast(mIntent);
-
         }else{
-            ToolBox_Inf.showNoConnectionDialog(context);
+            searchOffline(
+                    searchFilter.get(Frg_Ticket_Search.CONTRACT_ID),
+                    searchFilter.get(Frg_Ticket_Search.CLIENT_ID ),
+                    searchFilter.get(Frg_Ticket_Search.TICKET_ID)
+            );
         }
     }
 
@@ -673,11 +621,6 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
        );
        //
        return md_product;
-    }
-
-    @Override
-    public void updateTabPreference(String sTag) {
-        ToolBox_Con.setStringPreference(context,ConstantBaseApp.ACT068_TAB_SELECTED,sTag);
     }
 
     @Override

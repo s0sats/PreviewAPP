@@ -56,23 +56,17 @@ public interface Act068_Main_Contract {
 
        boolean hasItensToSend();
 
+       void searchOffline(String contract_id, String client_id, String ticket_id);
+
        void executeWSTicketSave();
 
        void processSaveReturn(String jsonResult);
 
-       boolean verifyProductForForm();
-
-       void executeWSTicketDownload();
-
-       void defineWsToCall();
+       void executeWSProductSync(HMAux searchFilter);
 
        void processWS_SaveReturn(String result);
 
        void executeTicketSearch(String contract_id, String client_id, String ticket_id);
-
-       void updateTabPreference(String sTag);
-
-       void processSearchByTicketTab(HMAux hmAux);
 
        void setFragTicketSearchParamsIntoBundle(Bundle bundle, HMAux hmAuxValues);
    }

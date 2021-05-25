@@ -58,7 +58,7 @@ class TkTicketCache(
                 open_product_desc,
                 open_serial_id,
                 origin_desc,
-                processDesc = type_desc,
+                type_desc,
                 step_desc,
                 open_site_code,
                 open_site_desc,

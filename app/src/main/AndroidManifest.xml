@@ -900,6 +900,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_TK_Get_Workgroup_List" />
         <receiver android:name=".receiver.WBR_TK_Main_User_List" />
         <receiver android:name=".receiver.WBR_Get_Customer_Site_License" />
+        <receiver android:name=".receiver.WBR_TK_Ticket_Search_Not_Focus" />
 
         <service android:name=".service.WS_SO_Create_Room" />
         <service android:name=".service.WS_TK_Next_Ticket" />
@@ -908,6 +909,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WS_TK_Get_Workgroup_List" />
         <service android:name=".service.WS_TK_Main_User_List" />
         <service android:name=".service.WS_Get_Customer_Site_License" />
+        <service android:name=".service.WS_TK_Ticket_Search_Not_Focus" />
     </application>
 
 </manifest>
