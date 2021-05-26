@@ -2,12 +2,8 @@ package com.namoadigital.prj001.sql;
 
 import android.content.Context;
 
-import com.namoa_digital.namoa_library.ctls.CalendarView;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
-import com.namoadigital.prj001.dao.MD_Schedule_ExecDao;
 import com.namoadigital.prj001.database.Specification;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 /**
@@ -69,109 +65,109 @@ public class Sql_Act016_001 implements Specification {
         this.site_logged = filter_site ? ToolBox_Con.getPreference_Site_Code(context) : null;
         this.customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
         //
-        buildFinalSql(filter_form,filter_form_ap,filter_ticket);
+ //       buildFinalSql(filter_form,filter_form_ap,filter_ticket);
     }
 
-    private void buildFinalSql(boolean filter_form, boolean filter_form_ap, boolean filter_ticket) {
-        sql_form =  UNION_ALL +
-                    "   \nSELECT\n" +
-                    "      strftime('%Y-%m-%d',s.date_start||' "+customerGMT+"','"+deviceGMT+"') schedule_date_start,\n" +
-                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+deviceGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) "+CalendarView.DELAYED_COUNT+ ",\n" +
-                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"') "+CalendarView.INPROCESSING_COUNT+ ",\n" +
-                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+deviceGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') "+CalendarView.SCHEDULED_COUNT+ ",    \n" +
-                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
-                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') "+CalendarView.DONE_COUNT+", \n" +
-                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"') "+CalendarView.NOT_EXECUTED_COUNT+"\n" +
-                    "     \n" +
-                    "  FROM "+ MD_Schedule_ExecDao.TABLE+" s\n" +
-                    "  \n" +
-                    "  WHERE \n" +
-                    "        s.customer_code= '"+customer_code+"'     \n" +
-                    "        AND s.schedule_type = '"+ConstantBaseApp.MD_SCHEDULE_TYPE_FORM+"'\n" +
-                    "        AND s.status in(" +
-                    "                       '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"',\n" +
-                    "                       '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"',\n" +
-                    "                       '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"',\n" +
-                    "                       '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"',\n" +
-                    "                       '"+ ConstantBaseApp.SYS_STATUS_DONE+"',\n" +
-                    "                       '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"'\n" +
-                    "                      )\n " +
-                    "        AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') ";
-        //Remove , caso exista, o text 'null'
-        sql_form = sql_form.replace("'null'","null");
-        //
-        sql_form_ap =
-                    UNION_ALL +
-                    "\nSELECT\n" +
-                    "      strftime('%Y-%m-%d',a.ap_when,'"+deviceGMT+"') schedule_date_start,\n" +
-                    "      ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+ConstantBaseApp.SYS_STATUS_DONE+"','"+ConstantBaseApp.SYS_STATUS_CANCELLED+"') ) "+CalendarView.DELAYED_COUNT+ ",\n" +
-                    "      0 "+CalendarView.INPROCESSING_COUNT+ ",\n" +
-                    "      ((strftime('%s',a.ap_when) * 1000)  >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+ConstantBaseApp.SYS_STATUS_DONE+"','"+ConstantBaseApp.SYS_STATUS_CANCELLED+"')) "+CalendarView.SCHEDULED_COUNT+ ",\n" +
-                    "      0 "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
-                    "      (a.ap_status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') "+CalendarView.DONE_COUNT+ ",\n" +
-                    "      0 "+CalendarView.NOT_EXECUTED_COUNT+"\n" +
-                    "  FROM "+ GE_Custom_Form_ApDao.TABLE+" a  \n" +
-                    "  WHERE \n" +
-                    "        a.customer_code= '"+customer_code+"'     \n" +
-                    "        AND a.ap_when is not null \n ";
-        //
-        sql_ticket =
-                UNION_ALL +
-                "   \nSELECT\n" +
-                "      strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+deviceGMT+"') schedule_date_start,\n" +
-                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+deviceGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) "+CalendarView.DELAYED_COUNT+ ",\n" +
-                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"') "+CalendarView.INPROCESSING_COUNT+ ",\n" +
-                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+deviceGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') "+CalendarView.SCHEDULED_COUNT+ ",    \n" +
-                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
-                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') "+CalendarView.DONE_COUNT+", \n" +
-                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"') "+CalendarView.NOT_EXECUTED_COUNT+"\n" +
-                "     \n" +
-                "  FROM "+ MD_Schedule_ExecDao.TABLE+" s\n" +
-                "  \n" +
-                "  WHERE \n" +
-                "        s.customer_code= '"+customer_code+"'     \n" +
-                "        AND s.schedule_type = '"+ ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET +"' \n" +
-                "        AND s.status in(" +
-                "                       '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"',\n" +
-                "                       '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"',\n" +
-                "                       '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"',\n" +
-                "                       '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"',\n" +
-                "                       '"+ ConstantBaseApp.SYS_STATUS_DONE+"',\n" +
-                "                       '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"'\n" +
-                "                      )\n " +
-                "        AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') ";
-        //Remove , caso exista, o text 'null'
-        sql_ticket = sql_ticket.replace("'null'","null");
-        //
-        sql_sub_query += filter_form ? sql_form : "";
-        sql_sub_query += filter_form_ap ? sql_form_ap :"";
-        sql_sub_query += filter_ticket ? sql_ticket :"";
-        //
-        sql_sub_query = sql_sub_query.substring(UNION_ALL.length(), sql_sub_query.length());
-
-    }
-
+ //   private void buildFinalSql(boolean filter_form, boolean filter_form_ap, boolean filter_ticket) {
+//        sql_form =  UNION_ALL +
+//                    "   \nSELECT\n" +
+//                    "      strftime('%Y-%m-%d',s.date_start||' "+customerGMT+"','"+deviceGMT+"') schedule_date_start,\n" +
+//                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+deviceGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) "+CalendarView.DELAYED_COUNT+ ",\n" +
+//                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"') "+CalendarView.INPROCESSING_COUNT+ ",\n" +
+//                    "      ((strftime('%s',s.date_start||' "+customerGMT+"','"+deviceGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') "+CalendarView.SCHEDULED_COUNT+ ",    \n" +
+//                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
+//                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') "+CalendarView.DONE_COUNT+", \n" +
+//                    "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"') "+CalendarView.NOT_EXECUTED_COUNT+"\n" +
+//                    "     \n" +
+//                    "  FROM "+ MD_Schedule_ExecDao.TABLE+" s\n" +
+//                    "  \n" +
+//                    "  WHERE \n" +
+//                    "        s.customer_code= '"+customer_code+"'     \n" +
+//                    "        AND s.schedule_type = '"+ConstantBaseApp.MD_SCHEDULE_TYPE_FORM+"'\n" +
+//                    "        AND s.status in(" +
+//                    "                       '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"',\n" +
+//                    "                       '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"',\n" +
+//                    "                       '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"',\n" +
+//                    "                       '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"',\n" +
+//                    "                       '"+ ConstantBaseApp.SYS_STATUS_DONE+"',\n" +
+//                    "                       '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"'\n" +
+//                    "                      )\n " +
+//                    "        AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') ";
+//        //Remove , caso exista, o text 'null'
+//        sql_form = sql_form.replace("'null'","null");
+//        //
+//        sql_form_ap =
+//                    UNION_ALL +
+//                    "\nSELECT\n" +
+//                    "      strftime('%Y-%m-%d',a.ap_when,'"+deviceGMT+"') schedule_date_start,\n" +
+//                    "      ((strftime('%s',a.ap_when) * 1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+ConstantBaseApp.SYS_STATUS_DONE+"','"+ConstantBaseApp.SYS_STATUS_CANCELLED+"') ) "+CalendarView.DELAYED_COUNT+ ",\n" +
+//                    "      0 "+CalendarView.INPROCESSING_COUNT+ ",\n" +
+//                    "      ((strftime('%s',a.ap_when) * 1000)  >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and a.ap_status not in('"+ConstantBaseApp.SYS_STATUS_DONE+"','"+ConstantBaseApp.SYS_STATUS_CANCELLED+"')) "+CalendarView.SCHEDULED_COUNT+ ",\n" +
+//                    "      0 "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
+//                    "      (a.ap_status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') "+CalendarView.DONE_COUNT+ ",\n" +
+//                    "      0 "+CalendarView.NOT_EXECUTED_COUNT+"\n" +
+//                    "  FROM "+ GE_Custom_Form_ApDao.TABLE+" a  \n" +
+//                    "  WHERE \n" +
+//                    "        a.customer_code= '"+customer_code+"'     \n" +
+//                    "        AND a.ap_when is not null \n ";
+//        //
+//        sql_ticket =
+//                UNION_ALL +
+//                "   \nSELECT\n" +
+//                "      strftime('%Y-%m-%d',s.date_start ||' "+customerGMT+"','"+deviceGMT+"') schedule_date_start,\n" +
+//                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+deviceGMT+"') *1000) < (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) and s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"' ) "+CalendarView.DELAYED_COUNT+ ",\n" +
+//                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"') "+CalendarView.INPROCESSING_COUNT+ ",\n" +
+//                "      ((strftime('%s',s.date_start ||' "+customerGMT+"','"+deviceGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND s.status = '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"') "+CalendarView.SCHEDULED_COUNT+ ",    \n" +
+//                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
+//                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_DONE+"') "+CalendarView.DONE_COUNT+", \n" +
+//                "      (s.status = '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"') "+CalendarView.NOT_EXECUTED_COUNT+"\n" +
+//                "     \n" +
+//                "  FROM "+ MD_Schedule_ExecDao.TABLE+" s\n" +
+//                "  \n" +
+//                "  WHERE \n" +
+//                "        s.customer_code= '"+customer_code+"'     \n" +
+//                "        AND s.schedule_type = '"+ ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET +"' \n" +
+//                "        AND s.status in(" +
+//                "                       '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING+"',\n" +
+//                "                       '"+ ConstantBaseApp.SYS_STATUS_PROCESS+"',\n" +
+//                "                       '"+ ConstantBaseApp.SYS_STATUS_SCHEDULE+"',\n" +
+//                "                       '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"',\n" +
+//                "                       '"+ ConstantBaseApp.SYS_STATUS_DONE+"',\n" +
+//                "                       '"+ ConstantBaseApp.SYS_STATUS_NOT_EXECUTED+"'\n" +
+//                "                      )\n " +
+//                "        AND ('"+site_logged+"' is null or s.site_code = '"+site_logged+"') ";
+//        //Remove , caso exista, o text 'null'
+//        sql_ticket = sql_ticket.replace("'null'","null");
+//        //
+//        sql_sub_query += filter_form ? sql_form : "";
+//        sql_sub_query += filter_form_ap ? sql_form_ap :"";
+//        sql_sub_query += filter_ticket ? sql_ticket :"";
+//        //
+//        sql_sub_query = sql_sub_query.substring(UNION_ALL.length(), sql_sub_query.length());
+//
+//    }
+//
     @Override
     public String toSqlQuery() {
         StringBuilder sb = new StringBuilder();
 
         return sb
-                .append(" SELECT\n" +
-                        "  t.schedule_date_start "+CalendarView.DT+" ,\n" +
-                        "  sum(t."+CalendarView.DELAYED_COUNT+ ") "+CalendarView.DELAYED_COUNT+ ",\n" +
-                        "  sum(t."+CalendarView.INPROCESSING_COUNT+ ") "+CalendarView.INPROCESSING_COUNT+ ",\n" +
-                        "  sum(t."+CalendarView.SCHEDULED_COUNT+ ") "+CalendarView.SCHEDULED_COUNT+ ",\n" +
-                        "  sum(t."+CalendarView.WAITING_SYNC_COUNT+ ") "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
-                        "  sum(t."+CalendarView.DONE_COUNT+") "+CalendarView.DONE_COUNT+",\n " +
-                        "  sum(t."+CalendarView.NOT_EXECUTED_COUNT+") "+CalendarView.NOT_EXECUTED_COUNT+ "\n " +
-                        " FROM(\n" +
-                        sql_sub_query +
-                        "   ) T\n" +
-                        "      \n" +
-                        " GROUP BY\n" +
-                        "  schedule_date_start;"
+                .append(" SELECT\n"
+                        //+
+//                        "  t.schedule_date_start "+CalendarView.DT+" ,\n" +
+//                        "  sum(t."+CalendarView.DELAYED_COUNT+ ") "+CalendarView.DELAYED_COUNT+ ",\n" +
+//                        "  sum(t."+CalendarView.INPROCESSING_COUNT+ ") "+CalendarView.INPROCESSING_COUNT+ ",\n" +
+//                        "  sum(t."+CalendarView.SCHEDULED_COUNT+ ") "+CalendarView.SCHEDULED_COUNT+ ",\n" +
+//                        "  sum(t."+CalendarView.WAITING_SYNC_COUNT+ ") "+CalendarView.WAITING_SYNC_COUNT+ ",\n" +
+//                        "  sum(t."+CalendarView.DONE_COUNT+") "+CalendarView.DONE_COUNT+",\n " +
+//                        "  sum(t."+CalendarView.NOT_EXECUTED_COUNT+") "+CalendarView.NOT_EXECUTED_COUNT+ "\n " +
+//                        " FROM(\n" +
+//                        sql_sub_query +
+//                        "   ) T\n" +
+//                        "      \n" +
+//                        " GROUP BY\n" +
+//                        "  schedule_date_start;"
                 )
                 .toString();
-
     }
 }

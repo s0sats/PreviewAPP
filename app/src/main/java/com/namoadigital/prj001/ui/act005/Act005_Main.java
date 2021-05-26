@@ -1344,7 +1344,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     private void refreshTagList() {
-
         FrgMainHome currentFragment = (FrgMainHome) fm.findFragmentById(R.id.act005_frg_placeholder);
         currentFragment.refreshList(getTagList( ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION),
@@ -2853,7 +2852,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     public void onSelectCalendar() {
         if (ToolBox_Inf.isLocalDatetimeOk(context)) {
-            callAct046(context);
+            callAct016(context);
         }else{
             handleInvalidLocalDatetime();
         }

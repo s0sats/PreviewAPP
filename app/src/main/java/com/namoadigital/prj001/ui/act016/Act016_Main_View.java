@@ -16,5 +16,7 @@ public interface Act016_Main_View {
 
     void callAct017(Bundle bundle);
 
-    void callAct046();
+    void callAct005();
+
+    void callAct083(Bundle bundle);
 }

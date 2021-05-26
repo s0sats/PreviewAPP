@@ -2,15 +2,11 @@ package com.namoadigital.prj001.ui.act016;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.namoa_digital.namoa_library.ctls.CalendarView;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -18,13 +14,12 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
-import com.namoadigital.prj001.ui.act046.Act046_Main;
+import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
-import com.namoadigital.prj001.view.dialog.ModuleFilterDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,14 +42,6 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     private Act016_Main_Presenter_Impl mPresenter;
     private Bundle bundle;
     private Date selected_date;
-    //Implementação AP
-    private LinearLayout ll_filter;
-    private TextView tv_filter;
-    private ImageView iv_filter;
-    private boolean filter_form;
-    private boolean filter_form_ap;
-    private boolean filter_site;
-    private boolean filter_ticket;
     private boolean noDateSelected;
 
     private HMAux hmAux_Trans_Extra = new HMAux();
@@ -63,10 +50,8 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.act016_main);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         //
         iniSetup();
         //
@@ -155,90 +140,22 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
                         hmAux_Trans
                 );
         //
-        ll_filter = (LinearLayout) findViewById(R.id.act016_ll_filter);
-        //
-        tv_filter = (TextView) findViewById(R.id.act016_tv_filter_lbl);
-        tv_filter.setText(hmAux_Trans.get("filter_lbl"));
-        //
-        iv_filter = (ImageView) findViewById(R.id.act016_iv_filter);
-        //
         lv_schedules = (ListView) findViewById(R.id.act016_lv_schedules);
         //
         cv_schedules = (CalendarView) findViewById(R.id.act016_cv_schedules);
         //
         events = new HashSet<>();
-
-        //LUCHE - 21/02/2020
-        //Aplicação dos filtros via preferencia
-        loadFilterPreferences();
-        //mPresenter.getSchedule(filter_form, filter_form_ap);
-        applyModuleFilter();
-    }
-
-    private void loadFilterPreferences() {
-        filter_site = mPresenter.loadCheckboxStatusFromPreferencie(ConstantBaseApp.SCHEDULE_SITE_LOGGED_FILTER_PREFERENCE,false);
-        filter_form = mPresenter.loadCheckboxStatusFromPreferencie(ConstantBaseApp.SCHEDULE_N_FORM_FILTER_PREFERENCE,true);
-        filter_form_ap = mPresenter.loadCheckboxStatusFromPreferencie(ConstantBaseApp.SCHEDULE_N_FORM_AP_FILTER_PREFERENCE,true);
-        filter_ticket = mPresenter.loadCheckboxStatusFromPreferencie(ConstantBaseApp.SCHEDULE_N_TICKET_FILTER_PREFERENCE,true);
+        //
+        mPresenter.getSchedule();
     }
 
     private void initActions() {
-        iv_filter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Chamar dialog de filter
-                showFilterDialog();
-            }
-        });
-        //
         cv_schedules.setEventHandler(new CalendarView.EventHandler() {
             @Override
             public void onDayPress(Date date) {
-                /*Toast.makeText(
-                        getBaseContext(),
-                        date.toString(),
-                        Toast.LENGTH_SHORT
-                ).show();*/
                 mPresenter.formatDate(date);
             }
         });
-    }
-
-    private void showFilterDialog() {
-        ModuleFilterDialog alert = new ModuleFilterDialog(
-            context,
-            hmAux_Trans,
-            hmAux_Trans_Extra,
-            new ModuleFilterDialog.OnPositiveClickListener() {
-                @Override
-                public void onPositiveClick(CheckBox chk_site, CheckBox chk_form, CheckBox chk_form_ap, CheckBox chk_ticket) {
-                    filter_site = chk_site.isChecked();
-                    filter_form = chk_form.isChecked();
-                    filter_form_ap = chk_form_ap.isChecked();
-                    filter_ticket = chk_ticket.isChecked();
-                    //LUCHE - 21/02/2020
-                    //Salva alterações na preferencias.Como esse dialog, só aplica os filtros se usr der ok
-                    //não foi possivel colocar o save no listener de troca de dados.
-                    mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_site.getTag()),chk_site.isChecked());
-                    mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_form.getTag()),chk_form.isChecked());
-                    mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_form_ap.getTag()),chk_form_ap.isChecked());
-                    mPresenter.saveCheckBoxStatusIntoPreference(String.valueOf(chk_ticket.getTag()),chk_ticket.isChecked());
-                    //
-                    applyModuleFilter();
-                }
-            });
-
-        alert.show();
-    }
-
-    private void applyModuleFilter() {
-        mPresenter.getSchedule(filter_form, filter_form_ap, filter_site, filter_ticket);
-        //
-        if (filter_form || filter_form_ap || filter_site || filter_ticket) {
-            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_success_green));
-        } else {
-            iv_filter.setColorFilter(getResources().getColor(R.color.namoa_color_gray_4));
-        }
     }
 
     private void iniUIFooter() {
@@ -305,9 +222,19 @@ public class Act016_Main extends Base_Activity implements Act016_Main_View {
     }
 
     @Override
-    public void callAct046() {
-        Intent mIntent = new Intent(context, Act046_Main.class);
+    public void callAct005() {
+        Intent mIntent = new Intent(context, Act005_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct083(Bundle bundle) {
+        Intent mIntent = new Intent(context, Act083_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT016);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }

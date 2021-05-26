@@ -6,10 +6,10 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
-import com.namoadigital.prj001.sql.Sql_Act016_001;
+import com.namoadigital.prj001.model.MyActionFilterParam;
+import com.namoadigital.prj001.sql.Sql_Act016_002;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,34 +39,15 @@ public class Act016_Main_Presenter_Impl implements Act016_Main_Presenter {
     }
 
     @Override
-    public void getSchedule(boolean filter_form, boolean filter_form_ap, boolean filter_site, boolean filter_ticket) {
+    public void getSchedule() {
         ArrayList<HMAux> schedules = new ArrayList<>();
-        if (filter_form || filter_form_ap || filter_ticket) {
-            schedules =
-                    (ArrayList<HMAux>) formLocalDao.query_HM(
-                            new Sql_Act016_001(
-                                    context,
-                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                    filter_form,
-                                    filter_form_ap,
-                                    filter_site,
-                                    filter_ticket
-                            ).toSqlQuery()
-                    );
-        }else{
-            //SE todos falso, chama query com os parametro true
-            schedules =
-                    (ArrayList<HMAux>) formLocalDao.query_HM(
-                            new Sql_Act016_001(
-                                    context,
-                                    String.valueOf(ToolBox_Con.getPreference_Customer_Code(context)),
-                                    true,
-                                    ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_PRJ001_AP,null),//true,
-                                    filter_site,
-                                    ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET,null)//true
-                            ).toSqlQuery()
-                    );
-        }
+        schedules =
+                (ArrayList<HMAux>) formLocalDao.query_HM(
+                        new Sql_Act016_002(
+                                context,
+                                String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                        ).toSqlQuery()
+                );
         //
         mView.loadSchedule(schedules);
     }
@@ -74,43 +55,32 @@ public class Act016_Main_Presenter_Impl implements Act016_Main_Presenter {
     @Override
     public void formatDate(Date date) {
         SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
-        // String selected_date = (String) android.text.format.DateFormat.format("yyyy-MM-dd",date);
         String selected_date = formater.format(date);
-
         Bundle bundle = new Bundle();
-
         bundle.putString(ACT_SELECTED_DATE, selected_date);
-
-        mView.callAct017(bundle);
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,getMyActionFilterParam(selected_date));
+        bundle.putSerializable(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT016);
+        //mView.callAct017(bundle);
+        mView.callAct083(bundle);
     }
 
-    /**
-     * LUCHE - 21/02/2020
-     * Metodo que salva na preferencia o valor do checkbox
-     *
-     * @param checkboxConstant - Constante da preferecia do checkbox.
-     * @param isChecked - Valor do checkbox.
-     */
-    @Override
-    public void saveCheckBoxStatusIntoPreference(String checkboxConstant, boolean isChecked) {
-        ToolBox_Con.setBooleanPreference(context,checkboxConstant,isChecked);
+    private MyActionFilterParam getMyActionFilterParam(String selected_date) {
+        return new MyActionFilterParam(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            selected_date
+        );
     }
 
-    /**
-     * LUCHE - 21/02/2020
-     * Metodo que resgata da preferencia o valor do checkbox
-     *
-     * @param checkboxConstant - Constante da preferecia do checkbox.
-     * @param defaultValue - Caso a preferencia não exista, retorna o valor definido via codigo.
-     * @return
-     */
-    @Override
-    public boolean loadCheckboxStatusFromPreferencie(String checkboxConstant, boolean defaultValue) {
-        return ToolBox_Con.getBooleanPreferencesByKey(context, checkboxConstant, defaultValue);
-    }
 
     @Override
     public void onBackPressedClicked() {
-        mView.callAct046();
+        mView.callAct005();
     }
 }

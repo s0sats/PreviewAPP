@@ -14,40 +14,6 @@
     >
 
     <LinearLayout
-        android:id="@+id/act016_ll_filter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingBottom="2dp"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:paddingTop="2dp"
-        android:background="@color/padrao_WHITE">
-
-        <TextView
-            android:id="@+id/act016_tv_filter_lbl"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="2dp"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="Filtros - trad" />
-
-        <ImageView
-            android:id="@+id/act016_iv_filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/namoa_icon_bg_states"
-            android:paddingTop="5dp"
-            android:paddingLeft="10dp"
-            android:paddingBottom="5dp"
-            android:paddingRight="10dp"
-            android:src="@drawable/ic_filter_black_24px"
-            android:tint="@color/namoa_color_gray_4" />
-    </LinearLayout>
-
-    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
