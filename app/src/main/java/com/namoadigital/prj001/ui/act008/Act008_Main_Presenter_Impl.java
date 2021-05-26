@@ -1,7 +1,7 @@
+
 package com.namoadigital.prj001.ui.act008;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -32,10 +32,12 @@ import com.namoadigital.prj001.receiver.WBR_Serial_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Serial_Tracking_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Search_Not_Focus;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
 import com.namoadigital.prj001.service.WS_Sync;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Search_Not_Focus;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Tracking_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
@@ -612,6 +614,24 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     @Override
+    public void executeUnfocusTicketDownload(int productCode, int serialCode) {
+        mView.setWsProcess(WS_TK_Ticket_Search_Not_Focus.class.getName());
+        //
+        mView.showPD(
+                hmAux_Trans.get("progress_unfocus_ticket_download_ttl"),
+                hmAux_Trans.get("progress_unfocus_ticket_download_msg")
+        );
+        //
+        Intent mIntent = new Intent(context, WBR_TK_Ticket_Search_Not_Focus.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt(MD_Product_SerialDao.PRODUCT_CODE, productCode);
+        bundle.putInt(MD_Product_SerialDao.SERIAL_CODE, serialCode);
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    }
+
+    @Override
     public void processSerialSaveResult(long product_code, String serial_id, HMAux hmSaveResult) {
         if (hmSaveResult.size() > 0) {
             ArrayList<HMAux> returnList = new ArrayList<>();
@@ -723,7 +743,11 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                         mView.callAct071(context, getAct071Bundle());
                     }
                 } else {
-                    mView.callAct009(context);
+                    if(mView.isNewSerial()){
+                        mView.callAct009(context);
+                    }else {
+                        mView.callAct083(context);
+                    }
                 }
             }
         }
