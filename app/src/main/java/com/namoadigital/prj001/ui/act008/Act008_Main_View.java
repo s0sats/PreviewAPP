@@ -41,6 +41,9 @@ public interface Act008_Main_View {
 
     void refreshUI();
 
+    void callAct083(Context context);
+
+
     void reApplySerialIdToFrag();
 
     void applyReceivedSerialToFrag(MD_Product_Serial serial_returned);
@@ -60,4 +63,6 @@ public interface Act008_Main_View {
     boolean isHas_tk_ticket_is_form_off_hand();
 
     String getmdProductSerialSiteCode();
+
+    boolean isNewSerial();
 }

@@ -35,6 +35,8 @@ public interface Act008_Main_Presenter {
 
     void executeSerialSave();
 
+    void executeUnfocusTicketDownload(int productCode, int serialCode);
+
     void processSerialSaveResult(long product_code, String serial_id, HMAux hmSaveResult);
 
     void updateSerialData(MD_Product_Serial mdProductSerial);

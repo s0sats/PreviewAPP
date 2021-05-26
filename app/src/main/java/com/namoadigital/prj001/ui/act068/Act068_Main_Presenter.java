@@ -245,7 +245,7 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
     @Override
     public void executeTicketSearch(String contract_id, String client_id, String ticket_id) {
 
-        if (hasOnlineProfile()) {
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)) {
             if (ToolBox_Con.isOnline(context)) {
                 mView.setWsProcess(WS_TK_Ticket_Search_Not_Focus.class.getName());
                 //
@@ -290,11 +290,6 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
 
         mView.callAct083(bundle);
     }
-
-    private boolean hasOnlineProfile() {
-        return ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION);
-    }
-
 
     private boolean hasFormWaitingSyncWithinAnyTicket(Context context) {
         GE_Custom_Form_DataDao formDataDao = new GE_Custom_Form_DataDao(

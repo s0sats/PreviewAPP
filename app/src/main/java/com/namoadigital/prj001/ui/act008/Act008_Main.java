@@ -45,6 +45,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Search_Not_Focus;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
@@ -52,6 +53,7 @@ import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act071.Act071_Main;
 import com.namoadigital.prj001.ui.act081.Act081_Main;
+import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -113,6 +115,11 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private int mTkTicketCode;
     private boolean has_tk_ticket_is_form_off_hand;
     private Bundle act083Bundle = new Bundle();
+    /**
+     * BARRIONUEVO 26-05-2021
+     * Flag inserida para controlar se houve edicao de serial_id no fluxo de criacao de serial
+     */
+    private boolean isSerialExists = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -201,6 +208,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         transList.add("alert_serial_site_out_of_license_tll");
         transList.add("alert_serial_site_out_of_license_msg");
 
+        transList.add("progress_unfocus_ticket_download_ttl");
+        transList.add("progress_unfocus_ticket_download_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -350,7 +359,17 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                     //Salva os dados do serial no banco local.
                     mPresenter.updateSerialData(mdProductSerial);
                     //
-                    mPresenter.checkFlow();
+                    if (ToolBox_Con.isOnline(context)
+                    && !bundle_from_offline_source
+                    && !isNewSerial()
+                    && ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
+                    && !has_tk_ticket_is_form_off_hand) {
+                        int productCode = (int) mdProductSerial.getProduct_code();
+                        int serialCode = (int) mdProductSerial.getSerial_code();
+                        mPresenter.executeUnfocusTicketDownload(productCode, serialCode);
+                    }else {
+                        mPresenter.checkFlow();
+                    }
                 }
 
             @Override
@@ -986,6 +1005,29 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         finish();
     }
 
+
+    @Override
+    public void callAct083(Context context) {
+        Intent mIntent = new Intent(context, Act083_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if(!act083Bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)) {
+            MyActionFilterParam myActionFilterParam = new MyActionFilterParam(null,
+                    null,
+                    (int) mdProductSerial.getProduct_code(),
+                    mdProductSerial.getProduct_desc(),
+                    mdProductSerial.getSerial_id(),
+                    null,
+                    null,
+                    null,
+                    null);
+            bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
+            bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT006);
+        }
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
     /**
      * Nota: 08/08/2018
      * No retorno do WS_Serial_Save, INDEPENDENTEMENTE de haver ou não
@@ -1013,6 +1055,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             }
         } else if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
             frgSerialEdit.processTrackingResult(hmAux);
+        }else if (ws_process.equals(WS_TK_Ticket_Search_Not_Focus.class.getName())) {
+            mPresenter.checkFlow();
         }
         //
         disableProgressDialog();
@@ -1041,6 +1085,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         super.processError_1(mLink, mRequired);
         if(contentMain.getVisibility() == View.INVISIBLE){
             mPresenter.onBackPressedClicked();
+        }else{
+            if (ws_process.equals(WS_TK_Ticket_Search_Not_Focus.class.getName())) {
+                mPresenter.checkFlow();
+            }
         }
         //
         disableProgressDialog();
@@ -1072,6 +1120,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
      */
     @Override
     public void applyReceivedSerialToFrag(MD_Product_Serial serial_returned) {
+        isSerialExists = true;
         mdProductSerial = serial_returned;
         frgSerialEdit.applyReceivedSerial(serial_returned);
     }
@@ -1176,6 +1225,16 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             return mdProductSerial.getSite_code() == null ? null : String.valueOf(mdProductSerial.getSite_code());
         }
         return null;
+    }
+
+    /**
+     * BARRIONUEVO 26-05-2020
+     * Metodo que verifica se o serial escolhido é novo
+     * @return
+     */
+    @Override
+    public boolean isNewSerial() {
+        return !isSerialExists && bundle_new_serial;
     }
 
 }
