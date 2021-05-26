@@ -39,6 +39,8 @@ class Act083_Main_Presenter(private val context: Context,
                             private val formLocalDao: GE_Custom_Form_LocalDao,
                             private val siteDao: MD_SiteDao,
                             private val ticketCtrlDao: TK_Ticket_CtrlDao,
+                            private val serialDao: MD_Product_SerialDao,
+                            private val productDao: MD_ProductDao,
                             private val mModule_Code: String,
                             private val mResource_Code: String
 ) : Act083_Main_Contract.I_Presenter{
@@ -54,8 +56,8 @@ class Act083_Main_Presenter(private val context: Context,
     private var contractId: String? = null
     private var calendarDate: String? = null
     private lateinit var originFlow: String
-    private var _myActionsList = mutableListOf<MyActions>()
-    var myActionsList = mutableListOf<MyActions>()
+    private var _myActionsList = mutableListOf<MyActionsBase>()
+    var myActionsList = mutableListOf<MyActionsBase>()
         get() {
             return _myActionsList
         }
@@ -116,6 +118,19 @@ class Act083_Main_Presenter(private val context: Context,
         transList.add("dialog_serial_search_ttl")
         transList.add("dialog_serial_search_start")
         //
+        transList.add("sys_main_menu_assets_local_lbl")
+        transList.add("sys_main_menu_calendar_lbl")
+        transList.add("sys_main_menu_search_lbl")
+        //
+        transList.add("new_form_lbl")
+        transList.add("alert_no_form_lbl");
+        transList.add("alert_no_form_for_product_msg");
+        transList.add("alert_no_form_for_operation_msg");
+        transList.add("alert_no_form_for_site_msg");
+        transList.add("alert_no_form_ttl");
+        transList.add("alert_product_or_serial_not_found_ttl");
+        transList.add("alert_product_or_serial_not_found_msg");
+        //
         return ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -128,30 +143,127 @@ class Act083_Main_Presenter(private val context: Context,
     override fun getChipList(): List<String> {
         val chipList = mutableListOf<String>()
         chipList.addAll(
-                myActionFilterParam.getFilledFilters()
+                myActionFilterParam.getFilledFilters(context)
         )
+        when(originFlow){
+            ConstantBaseApp.ACT005 -> setPreferenceChips(chipList)
+        }
+
+        return chipList
+    }
+
+    private fun setPreferenceChips(chipList: MutableList<String>) {
         val timePrefence = ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)
-        if( ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION != timePrefence){
-            hmAux_Trans?.get(timePrefence)?.let {chipList.add(it) }
+        if (ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION != timePrefence) {
+            hmAux_Trans?.get(timePrefence)?.let { chipList.add(it) }
         }
         val sitePrefence = ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION)
-        if(ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION != sitePrefence){
+        if (ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION != sitePrefence) {
             val siteObjInfo = ToolBox_Inf.getSiteObjInfo(context, ToolBox_Con.getPreference_Site_Code(context))
             chipList.add(siteObjInfo?.site_desc ?: hmAux_Trans?.get("site_desc_not_found_lbl")
             ?: "SITE_DESC_NOT_FOUND")
         }
-        return chipList
     }
 
     override fun getActTitle(): String {
         return when(originFlow){
-            ConstantBaseApp.ACT005 -> myActionFilterParam.tagFilterDesc ?: hmAux_Trans!!["act083_title"]!!
+            ConstantBaseApp.ACT005 -> myActionFilterParam.tagFilterDesc
+                    ?: hmAux_Trans!!["act083_title"]!!
+            ConstantBaseApp.ACT006 -> hmAux_Trans!!["sys_main_menu_assets_local_lbl"]!!
+            ConstantBaseApp.ACT016 -> hmAux_Trans!!["sys_main_menu_calendar_lbl"]!!
+            ConstantBaseApp.ACT068 -> hmAux_Trans!!["sys_main_menu_search_lbl"]!!
             else -> hmAux_Trans!!["act083_title"]!!
         }
     }
 
     override fun updateMyActionList(userFocusFilter: Int) {
         generateMyActionList(userFocusFilter)
+    }
+
+    override fun processActionFormButtonClick(myActionsFormButton: MyActionsFormButton) {
+        if(ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)){
+            mView.showAlertMsg(
+                    hmAux_Trans!!["alert_free_execution_blocked_ttl"]!!,
+                    hmAux_Trans!!["alert_free_execution_blocked_msg"]!!
+            )
+        }else{
+           validadeCreateNewForm(myActionsFormButton)
+        }
+    }
+
+    private fun validadeCreateNewForm(myActionsFormButton: MyActionsFormButton) {
+        val mdProductSerial : MD_Product_Serial? = getSerial(myActionsFormButton.productCode,myActionsFormButton.serialId)
+        val mdProduct : MD_Product? = getProductInfo(myActionsFormButton.productCode)
+        //
+        if(mdProductSerial != null && mdProduct != null){
+            //
+            val formXProductExist = ToolBox_Inf.checkFormXProductExists(context, ToolBox_Con.getPreference_Customer_Code(context), myActionsFormButton.productCode.toLong())
+            val formXOperationExists = ToolBox_Inf.checkFormXOperationExists(context, ToolBox_Con.getPreference_Customer_Code(context), ToolBox_Con.getPreference_Operation_Code(context))
+            val formXSiteExists = ToolBox_Inf.checkFormXSiteExists(
+                    context,
+                    ToolBox_Con.getPreference_Customer_Code(context),
+                    if (mdProductSerial.site_code != null) mdProductSerial.site_code.toString() else ToolBox_Con.getPreference_Site_Code(context)
+            )
+            var producSiteRestXSite = false
+            if (mdProduct.site_restriction == 1) {
+                if (mdProductSerial.site_code != null
+                        && ToolBox_Con.getPreference_Site_Code(context) == mdProductSerial.site_code.toString()) {
+                    producSiteRestXSite = true
+                }
+            } else {
+                producSiteRestXSite = true
+            }
+            //Se existir form para o produto,site e operação e a regra de restrição de site respeitada,
+            //avança para o form
+            //Se existir form para o produto,site e operação e a regra de restrição de site respeitada,
+            //avança para o form
+            if (formXProductExist && formXOperationExists && formXSiteExists && producSiteRestXSite) {
+                bundle.putString(MD_ProductDao.PRODUCT_CODE, mdProductSerial.product_code.toString())
+                bundle.putString(MD_Product_SerialDao.SERIAL_ID, ToolBox_Inf.removeAllLineBreaks(mdProductSerial.serial_id))
+                bundle.putString(MD_ProductDao.PRODUCT_DESC, mdProductSerial.product_desc.trim())
+                bundle.putString(MD_ProductDao.PRODUCT_ID, mdProductSerial.product_id.trim())
+                bundle.putString(MD_SiteDao.SITE_CODE, if (mdProductSerial.site_code != null) mdProductSerial.site_code.toString() else ToolBox_Con.getPreference_Site_Code(context))
+//            bundle.putAll(act081Bundle)
+                mView.callAct009(bundle)
+            } else {
+                var msg = hmAux_Trans!!["alert_no_form_lbl"]
+                msg += "\n"
+                msg = if (!formXProductExist) "$msg${hmAux_Trans!!["alert_no_form_for_product_msg"]}\n" else msg
+                msg = if (!formXOperationExists) "$msg${hmAux_Trans!!["alert_no_form_for_operation_msg"]}\n" else msg
+                msg = if (!formXSiteExists) "$msg${hmAux_Trans!!["alert_no_form_for_site_msg"]}\n" else msg
+                msg = if (!producSiteRestXSite) "$msg${hmAux_Trans!!["alert_site_restriction_violation_msg"]}\n" else msg
+                //
+                mView.showAlertMsg(
+                        hmAux_Trans!!["alert_no_form_ttl"]!!,
+                        msg?:""
+                )
+            }
+        }else{
+            mView.showAlertMsg(
+                    hmAux_Trans!!["alert_product_or_serial_not_found_ttl"]!!,
+                    hmAux_Trans!!["alert_product_or_serial_not_found_msg"]!!
+            )
+        }
+
+    }
+
+    private fun getProductInfo(productCode: Int): MD_Product? {
+        return productDao.getByString(
+                MD_Product_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        productCode.toLong()
+                ).toSqlQuery()
+        );
+    }
+
+    private fun getSerial(productCode: Int, serialId: String): MD_Product_Serial {
+        return serialDao.getByString(
+                MD_Product_Serial_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        productCode.toLong(),
+                        serialId
+                ).toSqlQuery()
+        )
     }
 
     override fun processActionClick(myAction: MyActions) {
@@ -229,9 +341,9 @@ class Act083_Main_Presenter(private val context: Context,
                 //Verifica se deve bloquear a execução e em caso posito, exibe msg informando do
                 // bloqueio
                 if (ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)) {
-                    mView.showMsg(Act017_Main.FREE_EXECUTION_BLOCKED, actions)
+                    mView.showMsg(Act083_Main.FREE_EXECUTION_BLOCKED, actions)
                 } else {
-                    mView.showMsg(Act017_Main.MODULE_CHECKLIST_START_FORM, actions)
+                    mView.showMsg(Act083_Main.MODULE_CHECKLIST_START_FORM, actions)
                 }
             }
         } else {
@@ -239,7 +351,7 @@ class Act083_Main_Presenter(private val context: Context,
                 prepareOpenForm(actions, scheduleExec)
             } else {
                 mView.showMsg(
-                        Act017_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
+                        Act083_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
                         actions
                 )
             }
@@ -257,7 +369,7 @@ class Act083_Main_Presenter(private val context: Context,
 
     private fun prepareOpenForm(item: MyActions, scheduleExec: MD_Schedule_Exec) {
         //valida se form existe e ja add info de form_data
-        scheduleFormLocalExists(scheduleExec,item)
+        scheduleFormLocalExists(scheduleExec, item)
         //
         val bundle: Bundle = getFormFlowBundle(item, scheduleExec)
         mView.callAct011(bundle)
@@ -296,7 +408,7 @@ class Act083_Main_Presenter(private val context: Context,
                 executeSerialSearch(
                         action.productCode,
                         action.productId,
-                        action.serialId ?:"",
+                        action.serialId ?: "",
                         true
                 )
             } else {
@@ -325,7 +437,7 @@ class Act083_Main_Presenter(private val context: Context,
                             //
                             prepareOpenForm(action, scheduleExec)
                         } else {
-                            mView.showMsg(Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, action)
+                            mView.showMsg(Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, action)
                         }
                     }
 
@@ -523,7 +635,7 @@ class Act083_Main_Presenter(private val context: Context,
                     prepareOpenTicket(myAction, scheduleExec)
                 } else {
                     mView.showMsg(
-                            Act017_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
+                            Act083_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN,
                             myAction
                     )
                 }
@@ -535,10 +647,10 @@ class Act083_Main_Presenter(private val context: Context,
                     //Verifica se deve bloquear a execução e em caso posito, exibe msg informando do
                     // bloqueio
                     if (ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context)) {
-                        mView.showMsg(Act017_Main.FREE_EXECUTION_BLOCKED, myAction)
+                        mView.showMsg(Act083_Main.FREE_EXECUTION_BLOCKED, myAction)
                     } else {
                         mView.showMsg(
-                                Act017_Main.MODULE_TICKET_EXEC_CONFIRM,
+                                Act083_Main.MODULE_TICKET_EXEC_CONFIRM,
                                 myAction
                         )
                     }
@@ -573,7 +685,7 @@ class Act083_Main_Presenter(private val context: Context,
             mView.callAct071(getTicketActionFlowBundle(item, scheduleExec!!, ticket_prefix, ticket_code, 1)!!)
         } else {
             mView.showMsg(
-                    Act017_Main.MODULE_SCHEDULE_TICKET_CREATION_ERROR,
+                    Act083_Main.MODULE_SCHEDULE_TICKET_CREATION_ERROR,
                     item
             )
         }
@@ -702,7 +814,7 @@ class Act083_Main_Presenter(private val context: Context,
         if (scheduleTicket!= null
                 && ticketPrefix > 0
                 && ticketCode > 0) {
-            mView.callAct070(getTicketFlowBundle(item,ticketPrefix, ticketCode))
+            mView.callAct070(getTicketFlowBundle(item, ticketPrefix, ticketCode))
         } else {
             mView.callAct071(getTicketActionFlowBundle(item, scheduleExec!!, ticketPrefix, ticketCode, 1))
         }
@@ -1087,7 +1199,7 @@ class Act083_Main_Presenter(private val context: Context,
         if (ToolBox_Inf.productConfigPreventToProceed(scheduleExec) && (serialList == null || serialList.size == 0)) {
             //Se serial não definido, significa que não avançou para proxima tela pois o produto não permite criação de serial.
             mView.showMsg(
-                    if (!scheduleExec.serial_id.isNullOrEmpty()) Act017_Main.EMPTY_SERIAL_SEARCH else Act017_Main.SERIAL_CREATION_DENIED,
+                    if (!scheduleExec.serial_id.isNullOrEmpty()) Act083_Main.EMPTY_SERIAL_SEARCH else Act083_Main.SERIAL_CREATION_DENIED,
                     actionSelected!!
             )
         } else {
@@ -1148,7 +1260,7 @@ class Act083_Main_Presenter(private val context: Context,
                 bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false)
                 mView.callAct020(bundle)
             } else {
-                mView.showMsg(Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, actionSelected!!)
+                mView.showMsg(Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, actionSelected!!)
             }
         }
     }
@@ -1191,15 +1303,6 @@ class Act083_Main_Presenter(private val context: Context,
                 ).toSqlQuery()
         ) as ArrayList<MD_Product_Serial>
     }
-
-    private fun getScheduleFormBundle(myAction: MyActions): Bundle {
-        TODO("Not yet implemented")
-    }
-
-    private fun getMdSchedule(myAction: MyActions): MD_Schedule_Exec {
-        TODO("Not yet implemented")
-    }
-
 
     override fun hasScheduleSiteAccess(siteCode: Int?): Boolean {
         var access = false
@@ -1289,7 +1392,7 @@ class Act083_Main_Presenter(private val context: Context,
                     }
             )
             //
-            if(!ConstantBaseApp.ACT068.equals(originFlow,true)) {
+            if(!ConstantBaseApp.ACT068.equals(originFlow, true)) {
                 _myActionsList.addAll(
                         getSchedules(tabUserFocusFilter).map {
                             it.toMyActionsObj(context)
@@ -1297,7 +1400,7 @@ class Act083_Main_Presenter(private val context: Context,
                 )
             }
             //
-            if(!ConstantBaseApp.ACT068.equals(originFlow,true)) {
+            if(!ConstantBaseApp.ACT068.equals(originFlow, true)) {
                 _myActionsList.addAll(
                         getFormAp(tabUserFocusFilter).map {
                             it.toMyActionsObj(context)
@@ -1305,7 +1408,7 @@ class Act083_Main_Presenter(private val context: Context,
                 )
             }
             //
-            if(!ConstantBaseApp.ACT068.equals(originFlow,true)) {
+            if(!ConstantBaseApp.ACT068.equals(originFlow, true)) {
                 myActionsList.addAll(
                         getLocalForms(tabUserFocusFilter).map {
                             if (it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
@@ -1319,8 +1422,18 @@ class Act083_Main_Presenter(private val context: Context,
                 )
             }
             //
+            if(ConstantBaseApp.ACT006.equals(originFlow, true) && tabUserFocusFilter == 1 && ::myActionFilterParam.isInitialized) {
+                _myActionsList.add(
+                        createMyActionFormCreation()
+                )
+            }
+            //
             _myActionsList.sortBy {
-                it.orderBy
+                when(it){
+                    is MyActions -> it.orderBy
+                    is MyActionsFormButton -> it.orderBy
+                    else -> "190001010000"
+                }
             }
             //
             withContext(Dispatchers.Main){
@@ -1328,6 +1441,15 @@ class Act083_Main_Presenter(private val context: Context,
                 mView.iniRecycler()
             }
         }
+    }
+
+    private fun createMyActionFormCreation(): MyActionsFormButton {
+            return MyActionsFormButton(
+                    productCode!!,
+                    myActionFilterParam.productDesc!!,
+                    serialId!!,
+                    hmAux_Trans!!["new_form_lbl"]!!
+            )
     }
 
     private fun getLocalTickets(userFocus: Int): MutableList<HMAux> {

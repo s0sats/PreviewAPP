@@ -35,10 +35,10 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
     private val hmAux_Trans_Frag: HMAux by lazy {
         var transListFrag = ArrayList<String>()
         //
-        transListFrag.add("calendar_lbl")
+        transListFrag.add("sys_main_menu_calendar_lbl")
         transListFrag.add("empty_list_lbl")
         transListFrag.add("messenger_lbl")
-        transListFrag.add("search_lbl")
+        transListFrag.add("sys_main_menu_search_lbl")
         transListFrag.add("tag_list_lbl")
         transListFrag.add("tag_item_qty")
         transListFrag.add("tag_item_form_in_execution")
@@ -125,10 +125,10 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
     }
 
     private fun setLabels() {
-        binding.tvCalendar.text = hmAux_Trans_Frag.get("calendar_lbl")
+        binding.tvCalendar.text = hmAux_Trans_Frag.get("sys_main_menu_calendar_lbl")
         binding.tvListPlaceholder.text = hmAux_Trans_Frag.get("empty_list_lbl")
         binding.tvMessenger.text = hmAux_Trans_Frag.get("messenger_lbl")
-        binding.tvSearch.text = hmAux_Trans_Frag.get("search_lbl")
+        binding.tvSearch.text = hmAux_Trans_Frag.get("sys_main_menu_search_lbl")
         binding.tvListTagLbl.text = hmAux_Trans_Frag.get("tag_list_lbl")
 
         binding.tvDatetimeWarning.text = mListener?.getDatetimeWarning()

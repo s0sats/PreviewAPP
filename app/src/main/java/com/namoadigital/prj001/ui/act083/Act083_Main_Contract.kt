@@ -5,6 +5,7 @@ import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.model.MD_Schedule_Exec
 import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.MyActionsFormButton
 
 interface Act083_Main_Contract {
     interface I_View {
@@ -23,6 +24,7 @@ interface Act083_Main_Contract {
         fun callAct020(bundle: Bundle)
         fun changeProgressBarVisility(show: Boolean)
         fun iniRecycler()
+        fun callAct009(bundle: Bundle)
     }
 
     interface I_Presenter {
@@ -44,6 +46,7 @@ interface Act083_Main_Contract {
         fun processActionClick(myAction: MyActions)
         fun checkFormFlow(action: MyActions)
         fun extractSearchResult(result: String?)
+        fun processActionFormButtonClick(myActionsFormButton: MyActionsFormButton)
     }
 
 }

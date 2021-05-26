@@ -33,9 +33,12 @@ class SqlAct083_001(
     private fun setFiltersByOriginAndFocus() {
         when(originFlow){
             ConstantBaseApp.ACT005 -> setHomeFilterConfg()
+            ConstantBaseApp.ACT006 -> setSerialFilterConfg()
+            ConstantBaseApp.ACT016 -> setCalendarFilterConfg()
             ConstantBaseApp.ACT068 -> setMenuSearchFilterConfig()
         }
     }
+
 
     private fun setHomeFilterConfg() {
         periodDateFilter = when (ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)) {
@@ -50,6 +53,28 @@ class SqlAct083_001(
         calendarDate = null
         getStatusFilter()
     }
+
+    private fun setSerialFilterConfg() {
+        tagOperCode = null
+        periodDateFilter = ""
+        siteCode = null
+        clientId = null
+        contractId = null
+        calendarDate = null
+        getStatusFilter()
+    }
+
+    private fun setCalendarFilterConfg() {
+        tagOperCode = null
+        periodDateFilter = ""
+        siteCode = null
+        productCode = null
+        serialId = null
+        clientId = null
+        contractId = null
+        getStatusFilter()
+    }
+
 
     private fun setMenuSearchFilterConfig() {
         tagOperCode = null
