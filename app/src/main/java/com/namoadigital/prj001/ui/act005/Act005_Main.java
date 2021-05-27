@@ -292,7 +292,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         }
 
         if(mPresenter.hasSOProfile()){
-
+            initAltFragment();
         }else {
             initTagFragment();
         }
@@ -671,7 +671,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         );
         //
         //mPresenter.getMenuItens(hmAux_Trans);
-        mPresenter.getMenuItensV2(hmAux_Trans);
+//        mPresenter.getMenuItensV2(hmAux_Trans);
         //
         syncAfterSave = false;
         //
@@ -1348,6 +1348,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         currentFragment.refreshList(getTagList( ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_PERIOD_FILTER, PREFERENCE_HOME_ALL_TIME_OPTION),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_SITES_FILTER, PREFERENCE_HOME_ALL_SITE_OPTION),
                 ToolBox_Con.getStringPreferencesByKey(context, PREFERENCE_HOME_FOCUS_FILTER, PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION)));
+        currentFragment.setDatetimeVisibility();
+    }
+
+    private void refreshModuleList() {
+        FrgMainHomeAlt currentFragment = (FrgMainHomeAlt) fm.findFragmentById(R.id.act005_frg_placeholder);
+        currentFragment.refreshModuleList();
         currentFragment.setDatetimeVisibility();
     }
 
@@ -2165,7 +2171,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     private void refreshUiData() {
         invalidateOptionsMenu();
         if (mPresenter.hasSOProfile()) {
-
+            refreshModuleList();
         } else {
             refreshTagList();
         }
@@ -3052,6 +3058,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         }
         //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
         transaction.replace(R.id.act005_frg_placeholder, frgMainHome, frgMainHome.getTag());
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    private void initAltFragment() {
+        FragmentTransaction transaction = fm.beginTransaction();
+        FrgMainHomeAlt frgMainHomeAlt = (FrgMainHomeAlt) fm.findFragmentById(R.id.act005_frg_placeholder);
+        if(frgMainHomeAlt == null) {
+            frgMainHomeAlt = FrgMainHomeAlt.newInstance();
+        }
+        //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
+        transaction.replace(R.id.act005_frg_placeholder, frgMainHomeAlt, frgMainHomeAlt.getTag());
         transaction.addToBackStack(null);
         transaction.commit();
     }

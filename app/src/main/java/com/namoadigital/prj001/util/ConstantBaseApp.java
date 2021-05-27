@@ -533,6 +533,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER = "DIRECT_EXPRESS_ORDER";
     public static final String PROFILE_MENU_SO_PARAM_PRODUCT_EVENT_CANCEL = "PRODUCT_EVENT_CANCEL";
     public static final String PROFILE_MENU_SO_PARAM_BYPASS_SERIAL_VERIFICATION = "BYPASS_SERIAL_VERIFICATION";
+    public static final String PROFILE_MENU_SO_SHOW_ACTIONS = "SHOW_ACTIONS";
 
     public static final String SO_ORIGIN_CHANGE_APP = "APP";
     public static final String PROFILE_MENU_AP = "PRJ001_AP";
@@ -567,6 +568,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_IO_PARAM_OUTBOUND = "OUTBOUND";
     public static final String PROFILE_MENU_IO_PARAM_OUTBOUND_NEW = "OUTBOUND_NEW";
     public static final String PROFILE_MENU_IO_PARAM_BYPASS_CONFIRM_SERIAL = "BYPASS_CONFIRM_SERIAL";
+    public static final String PROFILE_MENU_IO_SHOW_ACTIONS = "SHOW_ACTIONS";
 
     //Profile Ticket
     public static final String PROFILE_MENU_TICKET = "PRJ001_TICKET";

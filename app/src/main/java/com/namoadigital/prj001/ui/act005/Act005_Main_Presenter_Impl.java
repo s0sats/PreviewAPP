@@ -394,7 +394,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public boolean hasSOProfile() {
-        return false;
+        return  ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
+                || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null);
     }
 
     @Override
