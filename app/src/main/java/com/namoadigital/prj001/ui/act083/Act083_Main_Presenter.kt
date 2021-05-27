@@ -23,10 +23,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.util.*
 
 class Act083_Main_Presenter(private val context: Context,
@@ -68,6 +65,7 @@ class Act083_Main_Presenter(private val context: Context,
     var zoneCodeBack = 0
     var actionSelected : MyActions? = null
     private var serialDialog : ScheduleRequestSerialDialog2? = null
+    private var launch : Job? = null
 
     init {
         recoverIntentsInfo()
@@ -1378,8 +1376,14 @@ class Act083_Main_Presenter(private val context: Context,
 
     private fun generateMyActionList(tabUserFocusFilter: Int) {
         _myActionsList.clear()
+        //Cancela a coroutine em execução caso ainda exista.
+        launch?.let {
+            if(it.isActive){
+                it.cancel()
+            }
+        }
         //
-        CoroutineScope(Dispatchers.IO).launch {
+        launch = CoroutineScope(Dispatchers.IO).launch {
             _myActionsList.addAll(
                     getLocalTickets(tabUserFocusFilter).map {
                         TK_Ticket.toMyActionsObj(context, it)
@@ -1392,7 +1396,7 @@ class Act083_Main_Presenter(private val context: Context,
                     }
             )
             //
-            if(!ConstantBaseApp.ACT068.equals(originFlow, true)) {
+            if (!ConstantBaseApp.ACT068.equals(originFlow, true)) {
                 _myActionsList.addAll(
                         getSchedules(tabUserFocusFilter).map {
                             it.toMyActionsObj(context)
@@ -1400,7 +1404,7 @@ class Act083_Main_Presenter(private val context: Context,
                 )
             }
             //
-            if(!ConstantBaseApp.ACT068.equals(originFlow, true)) {
+            if (!ConstantBaseApp.ACT068.equals(originFlow, true)) {
                 _myActionsList.addAll(
                         getFormAp(tabUserFocusFilter).map {
                             it.toMyActionsObj(context)
@@ -1408,7 +1412,7 @@ class Act083_Main_Presenter(private val context: Context,
                 )
             }
             //
-            if(!ConstantBaseApp.ACT068.equals(originFlow, true)) {
+            if (!ConstantBaseApp.ACT068.equals(originFlow, true)) {
                 myActionsList.addAll(
                         getLocalForms(tabUserFocusFilter).map {
                             if (it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
@@ -1422,21 +1426,21 @@ class Act083_Main_Presenter(private val context: Context,
                 )
             }
             //
-            if(ConstantBaseApp.ACT006.equals(originFlow, true) && tabUserFocusFilter == 1 && ::myActionFilterParam.isInitialized) {
+            if (ConstantBaseApp.ACT006.equals(originFlow, true) && tabUserFocusFilter == 1 && ::myActionFilterParam.isInitialized) {
                 _myActionsList.add(
                         createMyActionFormCreation()
                 )
             }
             //
             _myActionsList.sortBy {
-                when(it){
+                when (it) {
                     is MyActions -> it.orderBy
                     is MyActionsFormButton -> it.orderBy
                     else -> "190001010000"
                 }
             }
             //
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 mView.changeProgressBarVisility(false)
                 mView.iniRecycler()
             }
