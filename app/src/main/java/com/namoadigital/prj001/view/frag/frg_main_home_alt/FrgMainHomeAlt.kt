@@ -1,11 +1,11 @@
 package com.namoadigital.prj001.view.frag.frg_main_home_alt
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.adapter.Act005MainMenuModuleAdapter
@@ -30,7 +30,7 @@ class FrgMainHomeAlt : Fragment(),  FrgMainHomeAltContract.View{
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private var mListener: FrgMainHomeAlt.OnFrgMainHomeAltInteract? = null
+    private var mListener: OnFrgMainHomeAltInteract? = null
     private var mModule_Code: String? = null
     //
     private val mPresenter by lazy {
@@ -92,7 +92,7 @@ class FrgMainHomeAlt : Fragment(),  FrgMainHomeAltContract.View{
 
     //
     private val hmAux_Trans_Frag: HMAux by lazy {
-        var transListFrag = ArrayList<String>()
+        val transListFrag = ArrayList<String>()
         //
         transListFrag.add("module_os_downloaded_lbl")
         transListFrag.add("module_os_downloaded_detail")
@@ -145,6 +145,26 @@ class FrgMainHomeAlt : Fragment(),  FrgMainHomeAltContract.View{
         return view
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnFrgMainHomeAltInteract) {
+            mListener = context
+        } else {
+            throw RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener")
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+         setDatetimeVisibility()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
     private fun setActions() {
         binding.fabMessenger.setOnClickListener(){
             mListener?.onSelectMessenger()
@@ -162,9 +182,15 @@ class FrgMainHomeAlt : Fragment(),  FrgMainHomeAltContract.View{
         binding.rvModules.adapter = adapter
         val layoutManager = LinearLayoutManager(context)
         binding.rvModules.layoutManager = layoutManager
-        binding.rvModules.addItemDecoration(DividerItemDecoration(context,
-                DividerItemDecoration.VERTICAL))
         //
+        setDatetimeVisibility()
+    }
+
+    fun refreshModuleList() {
+        setList()
+    }
+
+    fun setDatetimeVisibility() {
         if (!ToolBox_Inf.isLocalDatetimeOk(context)) {
             binding.cvInvalidDatetimeCard.setVisibility(View.VISIBLE)
         } else {
@@ -200,8 +226,6 @@ class FrgMainHomeAlt : Fragment(),  FrgMainHomeAltContract.View{
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
          * @return A new instance of fragment FrgMainHomeAlt.
          */
         // TODO: Rename and change types and number of parameters

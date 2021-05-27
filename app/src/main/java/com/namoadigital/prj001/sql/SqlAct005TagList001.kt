@@ -282,6 +282,7 @@ class SqlAct005TagList001(private val context: Context,
                          )  ticket 
    where  ticket.tag_operational_code is not null
    group by ticket.tag_operational_code, ticket.tag_operational_desc
+   order by ticket.tag_operational_desc
                                                                 """
         ).toString()
         return toString

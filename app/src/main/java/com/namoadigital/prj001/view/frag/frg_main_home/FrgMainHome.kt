@@ -175,6 +175,11 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        setDatetimeVisibility()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
