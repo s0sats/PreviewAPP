@@ -5,6 +5,7 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.MainModuleMenu
+import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_ASSETS
 import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_OS
 import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_OS_EXPRESS
 import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_OS_NEXT
@@ -45,8 +46,8 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                         MainModuleMenu(
                                 ID_MODULE_OS_NEXT,
                                 R.drawable.ic_baseline_read_more_24,
-                                hmauxTransFrag.get("module_os_express_lbl")!!,
-                                hmauxTransFrag.get("module_os_express_detail")!!,
+                                hmauxTransFrag.get("sys_main_menu_os_next_lbl")!!,
+                                hmauxTransFrag.get("sys_main_menu_os_next_detail")!!,
                                 0,
                                 0
                         )
@@ -55,8 +56,8 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                         MainModuleMenu(
                                 ID_MODULE_OS_VIN_SEARCH,
                                 R.drawable.ic_baseline_qr_code_24,
-                                hmauxTransFrag.get("module_os_express_lbl")!!,
-                                hmauxTransFrag.get("module_os_express_detail")!!,
+                                hmauxTransFrag.get("sys_main_menu_os_by_vin_search_lbl")!!,
+                                hmauxTransFrag.get("sys_main_menu_os_by_vin_search_detail")!!,
                                 0,
                                 0
                         )
@@ -74,8 +75,8 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                         MainModuleMenu(
                                 ID_MODULE_OS,
                                 R.drawable.ic_baseline_mobile_friendly_24,
-                                hmauxTransFrag.get("module_os_express_lbl")!!,
-                                hmauxTransFrag.get("module_os_express_detail")!!,
+                                hmauxTransFrag.get("sys_main_menu_os_downloaded_lbl")!!,
+                                hmauxTransFrag.get("sys_main_menu_os_downloaded_detail")!!,
                                 isSoUpdateRequired ,
                                 0
                         )
@@ -105,8 +106,8 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                 MainModuleMenu(
                         ID_MODULE_OS_EXPRESS,
                         R.drawable.ic_baseline_flash_on_24,
-                        hmauxTransFrag.get("module_os_express_lbl")!!,
-                        hmauxTransFrag.get("module_os_express_detail")!!,
+                        hmauxTransFrag.get("sys_main_menu_os_express_lbl")!!,
+                        hmauxTransFrag.get("sys_main_menu_os_express_detail")!!,
                         isSoExpressUpdateRequired,
                         0
                 )
@@ -122,10 +123,10 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                 0
             }
             modules.add(MainModuleMenu(
-                    ID_MODULE_OS,
+                    ID_MODULE_ASSETS,
                     R.drawable.ic_baseline_directions_car_24,
-                    hmauxTransFrag.get("module_os_express_lbl")!!,
-                    hmauxTransFrag.get("module_os_express_detail")!!,
+                    hmauxTransFrag.get("sys_main_menu_assets_lbl")!!,
+                    hmauxTransFrag.get("sys_main_menu_assets_detail")!!,
                     isIoUpdateRequired,
                     0
             ))
@@ -140,8 +141,8 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                     MainModuleMenu(
                             ID_MODULE_TAGS,
                             R.drawable.ic_baseline_qr_code_24,
-                            hmauxTransFrag.get("module_os_express_lbl")!!,
-                            hmauxTransFrag.get("module_os_express_detail")!!,
+                            hmauxTransFrag.get("sys_main_menu_tag_lbl")!!,
+                            hmauxTransFrag.get("sys_main_menu_tag_detail")!!,
                             0,
                             0
                     )
@@ -151,8 +152,8 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                     MainModuleMenu(
                             ID_MODULE_TAGS_BY_SERIAL_SEARCH,
                             R.drawable.ic_outline_assignment_24,
-                            hmauxTransFrag.get("module_os_express_lbl")!!,
-                            hmauxTransFrag.get("module_os_express_detail")!!,
+                            hmauxTransFrag.get("sys_main_menu_tag_by_serial_search_lbl")!!,
+                            hmauxTransFrag.get("sys_main_menu_tag_by_serial_search_detail")!!,
                             0,
                             0
                     )
