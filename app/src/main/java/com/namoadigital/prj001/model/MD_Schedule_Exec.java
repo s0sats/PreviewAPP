@@ -526,41 +526,87 @@ public class MD_Schedule_Exec {
                 ? R.drawable.ic_baseline_cloud_done_24_blue
                 : R.drawable.ic_cloud_upload_24_red;
 
+        try {
+            MyActions myActions = new MyActions(
+                MyActions.MY_ACTION_TYPE_SCHEDULE,
+                ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
+                ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
+                ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
+                null,
+                rightIcon,
+                //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
+                ToolBox_Inf.getMyActionStartEndDateFormated(context, date_start + " " + customerGMT, date_end + " " + customerGMT),
+                tag_operational_desc,
+                product_desc,
+                serial_id == null ? "" : serial_id,
+                schedule_desc,
+                ConstantBaseApp.MD_SCHEDULE_TYPE_FORM.equals(schedule_type) ? custom_form_desc : ticket_type_desc,
+                comments,
+                site_code,
+                site_desc,
+                null,
+                null,
+                null,
+                close_date,
+                ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(date_start + " " + customerGMT),
+                    "yyyyMMddHHmm"
+                ),
+                null,
+                ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
+                ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
+                ToolBox_Inf.isItemLate(date_end + " " + customerGMT)
+            );
+            myActions.setProductCode(product_code);
+            myActions.setProductId(product_id);
+            myActions.setCustomFormTypeDesc(custom_form_type_desc);
+            myActions.setCustomFormTypeDesc(custom_form_desc);
+            return myActions;
+        }catch (Exception e){
+            /**
+             * Bug muito estranho acontece somente de vez em nunca geralmente quand volta do ticket
+             * e não espera carregar a lista de ações.
+             * Apesar do apontar processStatus null, o status existe e tem tradução maior hipotese é a
+             * var static dar algum pipoco e ser null...
+             */
+            ToolBox_Inf.registerException(getClass().getName(), new Exception(status +"\n"+ e.getMessage() ));
+            //
+            MyActions myActions = new MyActions(
+                MyActions.MY_ACTION_TYPE_SCHEDULE,
+                ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
+                ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
+                statusToUse,
+                null,
+                rightIcon,
+                //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
+                ToolBox_Inf.getMyActionStartEndDateFormated(context, date_start + " " + customerGMT, date_end + " " + customerGMT),
+                tag_operational_desc,
+                product_desc,
+                serial_id == null ? "" : serial_id,
+                schedule_desc,
+                ConstantBaseApp.MD_SCHEDULE_TYPE_FORM.equals(schedule_type) ? custom_form_desc : ticket_type_desc,
+                comments,
+                site_code,
+                site_desc,
+                null,
+                null,
+                null,
+                close_date,
+                ToolBox_Inf.millisecondsToString(
+                    ToolBox_Inf.dateToMilliseconds(date_start + " " + customerGMT),
+                    "yyyyMMddHHmm"
+                ),
+                null,
+                ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
+                ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
+                ToolBox_Inf.isItemLate(date_end + " " + customerGMT)
+            );
+            myActions.setProductCode(product_code);
+            myActions.setProductId(product_id);
+            myActions.setCustomFormTypeDesc(custom_form_type_desc);
+            myActions.setCustomFormTypeDesc(custom_form_desc);
+            return myActions;
+        }
 
-        MyActions myActions = new MyActions(
-            MyActions.MY_ACTION_TYPE_SCHEDULE,
-            ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
-            ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
-            ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
-            null,
-            rightIcon,
-            //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
-            ToolBox_Inf.getMyActionStartEndDateFormated(context, date_start + " " + customerGMT, date_end + " " + customerGMT),
-            tag_operational_desc,
-            product_desc,
-            serial_id == null ? "" : serial_id,
-            schedule_desc,
-            ConstantBaseApp.MD_SCHEDULE_TYPE_FORM.equals(schedule_type) ? custom_form_desc : ticket_type_desc,
-            comments,
-            site_code,
-            site_desc,
-            null,
-            null,
-            null,
-            close_date,
-            ToolBox_Inf.millisecondsToString(
-                ToolBox_Inf.dateToMilliseconds(date_start + " " + customerGMT),
-                "yyyyMMddHHmm"
-            ),
-            null,
-            ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
-            ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
-            ToolBox_Inf.isItemLate(date_end + " " + customerGMT)
-        );
-        myActions.setProductCode(product_code);
-        myActions.setProductId(product_id);
-        myActions.setCustomFormTypeDesc(custom_form_type_desc);
-        myActions.setCustomFormTypeDesc(custom_form_desc);
-        return myActions;
     }
 }
