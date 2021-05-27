@@ -12,12 +12,12 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
  * Modificado query para excluir os ticket com form pendente de GPS, pois não podem ser sincronizados.
  */
 
-public class Sql_Act068_001 implements Specification {
+public class Sql_Act005_011 implements Specification {
     public static final String UPDATE_SYNC_REQUIRED_QTY = "update_sync_required_qty";
 
     private long customer_code;
 
-    public Sql_Act068_001(long customer_code) {
+    public Sql_Act005_011(long customer_code) {
         this.customer_code = customer_code;
     }
 

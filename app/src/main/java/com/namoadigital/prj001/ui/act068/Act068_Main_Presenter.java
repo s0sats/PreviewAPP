@@ -24,20 +24,15 @@ import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Save;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.receiver.WBR_Sync;
-import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Client_Contract_Search;
-import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Save;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Search_Not_Focus;
 import com.namoadigital.prj001.service.WS_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Sync;
-import com.namoadigital.prj001.service.WS_TK_Ticket_Client_Contract_Search;
-import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Save;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Search_Not_Focus;
 import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
-import com.namoadigital.prj001.sql.Sql_Act068_001;
 import com.namoadigital.prj001.sql.Sql_Act068_002;
 import com.namoadigital.prj001.sql.Sql_Act068_003;
 import com.namoadigital.prj001.sql.Sql_Act068_004;
@@ -96,15 +91,15 @@ public class Act068_Main_Presenter implements Act068_Main_Contract.I_Presenter {
     @Override
     public void getSync() {
         //
-        List<TK_Ticket> tickets = ticketDao.query(
-                new Sql_Act068_001(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ).toSqlQuery()
-        );
-        //
-        int qty = tickets.size();
-        //
-        mView.setSync(qty);
+//        List<TK_Ticket> tickets = ticketDao.query(
+//                new Sql_Act005_011(
+//                        ToolBox_Con.getPreference_Customer_Code(context)
+//                ).toSqlQuery()
+//        );
+//        //
+//        int qty = tickets.size();
+//        //
+//        mView.setSync(qty);
 
     }
 
