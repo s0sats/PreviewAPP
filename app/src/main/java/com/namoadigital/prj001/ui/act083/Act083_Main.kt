@@ -325,10 +325,12 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             }
 
             override fun reportTextChange(text: String?, p1: Boolean) {
+                binding.act083MainContent.act083RvActionsList.stopScroll()
                 applyTextFilter(text)
             }
         })
         binding.act083MainContent.act083Tabs.setOnCheckedChangeListener { _, checkedId ->
+            binding.act083MainContent.act083RvActionsList.stopScroll();
             with(binding.act083MainContent){
                 when(checkedId){
                     act083TabMyActions.id -> updateMyActionList(1)
