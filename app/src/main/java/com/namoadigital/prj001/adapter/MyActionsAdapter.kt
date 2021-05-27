@@ -16,32 +16,57 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
+import com.namoadigital.prj001.databinding.MyActionsFormButtonItemBinding
 import com.namoadigital.prj001.databinding.MyActionsItemBinding
 import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.MyActionsBase
+import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.*
 
 class MyActionsAdapter(
-        private val myActions: List<MyActions>,
-        private val myActionClickListener: (myAction: MyActions) -> Unit
-) : RecyclerView.Adapter<MyActionsAdapter.MyActionVh>(), Filterable {
-    private var myFilteredAction: MutableList<MyActions>
+        private val myActions: List<MyActionsBase>,
+        private val myActionClickListener: (myAction: MyActions) -> Unit,
+        private val myActionFormButtonClickListener: (myActionFormButton: MyActionsFormButton) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
+    private val VIEW_TYPE_MY_ACTION = 0
+    private val VIEW_TYPE_MY_ACTION_FORM_BUTTON = 1
+
+    private var myFilteredAction: MutableList<MyActionsBase>
     private val mFilter = MyActionFilter()
     init{
-        myFilteredAction = myActions as MutableList<MyActions>
+        myFilteredAction = myActions as MutableList<MyActionsBase>
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyActionVh {
-        return MyActionVh(MyActionsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when(viewType){
+            VIEW_TYPE_MY_ACTION -> MyActionVh(MyActionsItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            else -> MyActionFormButtonVh(MyActionsFormButtonItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        }
     }
 
-    override fun onBindViewHolder(holder: MyActionVh, position: Int) {
-        return holder.onBinding(myFilteredAction[position])
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when(getItemViewType(position)){
+            VIEW_TYPE_MY_ACTION -> with(holder as MyActionsAdapter.MyActionVh){
+                onBinding(myFilteredAction[position] as MyActions)
+            }
+            else -> with(holder as MyActionsAdapter.MyActionFormButtonVh){
+                onBinding(myFilteredAction[position] as MyActionsFormButton)
+            }
+        }
     }
 
     override fun getItemCount(): Int {
         return myFilteredAction.size
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        val baseAction = myFilteredAction[position]
+        if(baseAction is MyActions){
+            return VIEW_TYPE_MY_ACTION
+        }
+        return VIEW_TYPE_MY_ACTION_FORM_BUTTON
     }
 
     inner class MyActionVh(private val binding: MyActionsItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -162,7 +187,14 @@ class MyActionsAdapter(
         }
     }
 
-
+    inner class MyActionFormButtonVh(private val binding: MyActionsFormButtonItemBinding): RecyclerView.ViewHolder(binding.root){
+        fun onBinding(myActionFormButton: MyActionsFormButton) {
+            binding.root.setOnClickListener {
+                myActionFormButtonClickListener(myActionFormButton)
+            }
+            binding.myActionsFormButtonItemTvLbl.text = myActionFormButton.label
+        }
+    }
 
     /**
      * Kotlin extension para TextView e filhos para setar visibilidade apenas se o text existir
@@ -195,15 +227,21 @@ class MyActionsAdapter(
     inner class MyActionFilter() : Filter(){
 
         override fun performFiltering(constraint: CharSequence?): FilterResults {
-            var temp = mutableListOf<MyActions>()
+            var temp = mutableListOf<MyActionsBase>()
             var charFilter = ToolBox.AccentMapper(constraint.toString().toLowerCase())
             if(charFilter.isNullOrEmpty()){
-                temp = myActions as MutableList<MyActions>
+                temp = myActions as MutableList<MyActionsBase>
             }else{
                 temp.addAll(
                         myActions.filter {
-                            val allFields = ToolBox.AccentMapper(it.getAllFieldForFilter().toLowerCase())
-                            allFields.contains(charFilter)
+                            when(it){
+                                is MyActions ->{
+                                    val allFields = ToolBox.AccentMapper(it.getAllFieldForFilter().toLowerCase())
+                                    allFields.contains(charFilter)
+                                }
+                                //se for o botão, sempre exibe
+                                else -> true
+                            }
                         }
                 )
             }
@@ -215,7 +253,7 @@ class MyActionsAdapter(
 
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
             results?.let {
-                myFilteredAction = results.values as MutableList<MyActions>
+                myFilteredAction = results.values as MutableList<MyActionsBase>
                 notifyDataSetChanged()
             }
         }

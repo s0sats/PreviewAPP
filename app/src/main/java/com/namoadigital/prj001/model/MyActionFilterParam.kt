@@ -1,6 +1,9 @@
 package com.namoadigital.prj001.model
 
+import android.content.Context
+import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.Serializable
+import java.text.SimpleDateFormat
 
 class MyActionFilterParam(
         var tagFilterCode: Int? = null,
@@ -17,7 +20,7 @@ class MyActionFilterParam(
         const val  MY_ACTION_FILTER_PARAM = "MY_ACTION_FILTER_PARAM"
     }
 
-    fun getFilledFilters() : List<String>{
+    fun getFilledFilters(context: Context): List<String>{
         val filters = mutableListOf<String>()
 //        tagFilterDesc?.let {
 //            filters.add(it)
@@ -38,9 +41,26 @@ class MyActionFilterParam(
             filters.add(ticketId!!)
         }
         calendarDate?.let {
-            filters.add(it)
+            filters.add(getCalendarDateFormatted(context,it))
         }
 
         return filters
+    }
+
+    private fun getCalendarDateFormatted(context: Context,calendarDate: String): String {
+        val dateFormatIn = SimpleDateFormat("yyyy-MM-dd")
+        val dateFormatOut: SimpleDateFormat
+        var format = ToolBox_Inf.nlsDateFormat(context)
+        return try {
+            if (format == null || format.equals("", ignoreCase = true)) {
+                format = "dd-MM-yyyy"
+            }
+            dateFormatOut = SimpleDateFormat(format)
+            //
+            dateFormatOut.format(dateFormatIn.parse(calendarDate))
+        } catch (e: Exception) {
+            ToolBox_Inf.registerException(MyActionFilterParam::class.java.name, e)
+            "01-01-1900"
+        }
     }
 }

@@ -3030,13 +3030,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 case Constant.CHAT_BR_TYPE_MSG:
                 case Constant.CHAT_EVENT_C_MESSAGE_FCM:
 
-                    if (mAdapter != null) {
-                        mAdapter.updateMenuItemBadge(
-                                MENU_ID_CHAT,
-                                1,
-                                mPresenter.getChatBadgeQty()
-                        );
-                    }
+//                    if (mAdapter != null) {
+//                        mAdapter.updateMenuItemBadge(
+//                                MENU_ID_CHAT,
+//                                1,
+//                                mPresenter.getChatBadgeQty()
+//                        );
+//                    }
                     //
                     break;
 

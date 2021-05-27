@@ -63,6 +63,7 @@ import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT006;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SCHEDULED_PROFILE_CHECK;
@@ -363,7 +364,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                     && !bundle_from_offline_source
                     && !isNewSerial()
                     && ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
-                    && !has_tk_ticket_is_form_off_hand) {
+                    && !has_tk_ticket_is_form_off_hand
+                    && ACT006.equals(requesting_process)) {
                         int productCode = (int) mdProductSerial.getProduct_code();
                         int serialCode = (int) mdProductSerial.getSerial_code();
                         mPresenter.executeUnfocusTicketDownload(productCode, serialCode);
@@ -1056,6 +1058,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         } else if (ws_process.equals(WS_Serial_Tracking_Search.class.getName())) {
             frgSerialEdit.processTrackingResult(hmAux);
         }else if (ws_process.equals(WS_TK_Ticket_Search_Not_Focus.class.getName())) {
+            disableProgressDialog();
             mPresenter.checkFlow();
         }
         //

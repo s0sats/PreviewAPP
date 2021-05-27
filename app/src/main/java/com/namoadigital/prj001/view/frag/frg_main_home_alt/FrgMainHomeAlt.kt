@@ -155,6 +155,16 @@ class FrgMainHomeAlt : Fragment(),  FrgMainHomeAltContract.View{
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+         setDatetimeVisibility()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
     private fun setActions() {
         binding.fabMessenger.setOnClickListener(){
             mListener?.onSelectMessenger()

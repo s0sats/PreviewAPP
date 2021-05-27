@@ -53,6 +53,7 @@ import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MainTagMenu;
 import com.namoadigital.prj001.model.MenuMainNamoa;
 import com.namoadigital.prj001.model.MyActionFilterParam;
+import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_AP_Save;
 import com.namoadigital.prj001.receiver.WBR_Cancel_NFC;
@@ -110,6 +111,7 @@ import com.namoadigital.prj001.sql.Sql_Act012_007;
 import com.namoadigital.prj001.sql.Sql_Act021_002;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.sql.Sql_Act021_004;
+import com.namoadigital.prj001.sql.Sql_Act005_011;
 import com.namoadigital.prj001.sql.Sql_Act068_002;
 import com.namoadigital.prj001.sql.Sql_Act069_002;
 import com.namoadigital.prj001.util.Constant;
@@ -475,40 +477,19 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public boolean hasTicketSyncRequired() {
-        String qtyTicket;
-        try {
-            qtyTicket = String.valueOf(tk_ticketDao.getByStringHM(
-                    new Sql_Act005_009(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            false,
-                            false,
-                            false,
-                            false,
-                            true,
-                            false,
-                            false).toSqlQuery()
-            ).get(PENDING_QTY));
-        } catch (Exception e) {
-            qtyTicket = "0";
+        //
+        List<TK_Ticket> tickets = tk_ticketDao.query(
+                new Sql_Act005_011(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        int qty =0;
+        if (tickets != null) {
+            qty = tickets.size();
         }
-//        //
-//        String qtyFormAp;
-//        try {
-//            qtyFormAp = customFormApDao.getByStringHM(
-//                    new GE_Custom_Form_Ap_Sql_002(
-//                            ToolBox_Con.getPreference_Customer_Code(context)
-//                    ).toSqlQuery()
-//            ).get(GE_Custom_Form_Ap_Sql_002.BADGE_SYNC_REQUIRED_QTY);
-//        } catch (Exception e) {
-//            qtyFormAp = "0";
-//        }
         //
-
-        //
-        int totalSync = 0;
-        totalSync += ToolBox_Inf.convertStringToInt(qtyTicket);
-//        totalSync += ToolBox_Inf.convertStringToInt(qtyFormAp);
-        return totalSync > 0;
+        return qty > 0;
     }
 
     @Deprecated

@@ -15,11 +15,14 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.MyActionsAdapter
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act083MainBinding
+import com.namoadigital.prj001.model.MD_Product
 import com.namoadigital.prj001.model.MyActions
+import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.ui.act005.Act005_Main
+import com.namoadigital.prj001.ui.act009.Act009_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
 import com.namoadigital.prj001.ui.act017.Act017_Main
 import com.namoadigital.prj001.ui.act020.Act020_Main
@@ -34,6 +37,21 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 
 class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
+    companion object{
+        const val MODULE_CHECKLIST_FORM_IN_PROCESSING = "checklist_form_in_processing"
+        const val MODULE_CHECKLIST_START_FORM = "checklist_start_form"
+        const val MODULE_SCHEDULE_DATE_REF = "module_schedule_date_ref"
+        const val MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR = "module_schedule_form_data_creation_error"
+        const val EMPTY_SERIAL_SEARCH = "empty_serial_search"
+        const val SERIAL_CREATION_DENIED = "serial_creation_denied"
+        const val MODULE_TICKET_EXEC_CONFIRM = "module_ticket_exec_confirm"
+        const val MODULE_SCHEDULE_TICKET_CREATION_ERROR = "module_schedule_ticket_creation_error"
+        const val MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN = "module_schedule_status_prevent_to_open"
+        const val PROFILE_PRJ001_AP_NOT_FOUND = "profile_prj001_ap_not_found"
+        const val PROFILE_MENU_TICKET_NOT_FOUND = "profile_menu_ticket_not_found"
+        const val FREE_EXECUTION_BLOCKED = "free_execution_blocked"
+    }
+
     private lateinit var binding: Act083MainBinding
     private lateinit var mAdapter: MyActionsAdapter
     private lateinit var bundle: Bundle
@@ -78,6 +96,16 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         Constant.DB_VERSION_CUSTOM
                 ),
                 TK_Ticket_CtrlDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                MD_Product_SerialDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
+                MD_ProductDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
@@ -137,7 +165,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             //
             mAdapter = MyActionsAdapter(
                     myActionsList,
-                    this::onMyActionClick
+                    this::onMyActionClick,
+                    this::onFormButtonClick
             )
             //
             with(binding.act083MainContent.act083RvActionsList) {
@@ -155,6 +184,10 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 act083RvActionsList.visibility = View.INVISIBLE
             }
         }
+    }
+
+    private fun onFormButtonClick(myActionsFormButton: MyActionsFormButton) {
+        mPresenter.processActionFormButtonClick(myActionsFormButton)
     }
 
     fun onMyActionClick(myAction: MyActions): Unit{
@@ -388,6 +421,14 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         finish()
     }
 
+    override fun callAct009(bundle: Bundle) {
+        val mIntent = Intent(context, Act009_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.putExtras(bundle)
+        startActivity(mIntent)
+        finish()
+    }
+
     override fun onBackPressed() {
         //super.onBackPressed()
         callAct005()
@@ -400,12 +441,12 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         var btnNegative: Int? = null
 
         when (type) {
-            Act017_Main.MODULE_CHECKLIST_FORM_IN_PROCESSING -> {
+            MODULE_CHECKLIST_FORM_IN_PROCESSING -> {
                 title = hmAux_Trans["alert_ttl_exists_in_processing"]
                 msg = hmAux_Trans["alert_msg_exists_in_processing"]
                 btnNegative = 0
             }
-            Act017_Main.MODULE_CHECKLIST_START_FORM -> {
+            MODULE_CHECKLIST_START_FORM -> {
                 title = hmAux_Trans["alert_ttl_start_new_processing"]
                 msg = hmAux_Trans["alert_msg_start_new_processing"]
                 btnNegative = 1
@@ -413,48 +454,48 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     mPresenter.checkFormFlow(item)
                 }
             }
-            Act017_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR -> {
+            MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR -> {
                 title = hmAux_Trans["alert_error_on_create_form_ttl"]
                 msg = hmAux_Trans["alert_error_on_create_form_msg"]
                 btnNegative = 0
             }
-            Act017_Main.EMPTY_SERIAL_SEARCH -> {
+            EMPTY_SERIAL_SEARCH -> {
                 title = hmAux_Trans["alert_no_serial_found_ttl"]
                 msg = hmAux_Trans["alert_no_serial_found_msg"]
                 btnNegative = 0
             }
-            Act017_Main.SERIAL_CREATION_DENIED -> {
+            SERIAL_CREATION_DENIED -> {
                 title = hmAux_Trans["alert_no_serial_found_ttl"]
                 msg = hmAux_Trans["alert_product_no_allow_new_serial_msg"]
                 btnNegative = 0
             }
-            Act017_Main.MODULE_TICKET_EXEC_CONFIRM -> {
+            MODULE_TICKET_EXEC_CONFIRM -> {
                 title = hmAux_Trans["alert_ticket_action_start_ttl"]
                 msg = hmAux_Trans["alert_ticket_action_start_confirm"]
                 btnNegative = 1
                 listener = DialogInterface.OnClickListener { dialog, which -> mPresenter.checkTicketFlow(item) }
             }
-            Act017_Main.MODULE_SCHEDULE_TICKET_CREATION_ERROR -> {
+            MODULE_SCHEDULE_TICKET_CREATION_ERROR -> {
                 title = hmAux_Trans["alert_error_on_create_ticket_action_ttl"]
                 msg = hmAux_Trans["alert_error_on_create_ticket_action_msg"]
                 btnNegative = 0
             }
-            Act017_Main.MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN -> {
+            MODULE_SCHEDULE_STATUS_PREVENTS_TO_OPEN -> {
                 title = hmAux_Trans["alert_schedule_status_prevents_to_open_ttl"]
                 msg = hmAux_Trans["alert_schedule_status_prevents_to_open_msg"]
                 btnNegative = 0
             }
-            Act017_Main.PROFILE_PRJ001_AP_NOT_FOUND -> {
+            PROFILE_PRJ001_AP_NOT_FOUND -> {
                 title = hmAux_Trans["alert_menu_app_profile_not_found_ttl"]
                 msg = hmAux_Trans["alert_form_ap_menu_profile_not_found_msg"]
                 btnNegative = 0
             }
-            Act017_Main.PROFILE_MENU_TICKET_NOT_FOUND -> {
+            PROFILE_MENU_TICKET_NOT_FOUND -> {
                 title = hmAux_Trans["alert_menu_app_profile_not_found_ttl"]
                 msg = hmAux_Trans["alert_ticket_menu_profile_not_found_msg"]
                 btnNegative = 0
             }
-            Act017_Main.FREE_EXECUTION_BLOCKED -> {
+            FREE_EXECUTION_BLOCKED -> {
                 title = hmAux_Trans["alert_free_execution_blocked_ttl"]
                 msg = hmAux_Trans["alert_free_execution_blocked_msg"]
                 btnNegative = 0

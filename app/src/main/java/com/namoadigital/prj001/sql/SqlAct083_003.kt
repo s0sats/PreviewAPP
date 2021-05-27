@@ -29,6 +29,8 @@ class SqlAct083_003(
     private fun setFiltersByOriginAndFocus() {
         when(originFlow){
             ConstantBaseApp.ACT005 -> setHomeFilterConfg()
+            ConstantBaseApp.ACT006 -> setSerialFilterConfg()
+            ConstantBaseApp.ACT016 -> setCalendarFilterConfg()
         }
     }
 
@@ -41,13 +43,32 @@ class SqlAct083_003(
         productCode = null
         serialId = null
         calendarDate = null
-        statusFilter = when(userFocus){
-            1 ->    """   and    a.${GE_Custom_Form_ApDao.AP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_EDIT}',
-                                                                 '${ConstantBaseApp.SYS_STATUS_PENDING}',
-                                                                 '${ConstantBaseApp.SYS_STATUS_PROCESS}',                                                                 
-                                                                 '${ConstantBaseApp.SYS_STATUS_WAITING_ACTION}'
-                                                                 ) 
-                                                                 """
+        getStatusFilter()
+    }
+
+    private fun setSerialFilterConfg() {
+        tagOperCode = null
+        periodDateFilter = ""
+        calendarDate = null
+        getStatusFilter()
+    }
+
+    private fun setCalendarFilterConfg() {
+        tagOperCode = null
+        periodDateFilter = ""
+        productCode = null
+        serialId = null
+        getStatusFilter()
+    }
+
+    private fun getStatusFilter() {
+        statusFilter = when (userFocus) {
+            1 -> """   and    a.${GE_Custom_Form_ApDao.AP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_EDIT}',
+                                                                     '${ConstantBaseApp.SYS_STATUS_PENDING}',
+                                                                     '${ConstantBaseApp.SYS_STATUS_PROCESS}',                                                                 
+                                                                     '${ConstantBaseApp.SYS_STATUS_WAITING_ACTION}'
+                                                                     ) 
+                                                                     """
             else -> """    and     a.${GE_Custom_Form_ApDao.AP_STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'"""
         }
     }
@@ -63,7 +84,7 @@ class SqlAct083_003(
                      and ($tagOperCode is null or a.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE} = $tagOperCode) 
                      and ($productCode is null or a.${GE_Custom_Form_ApDao.PRODUCT_CODE} = $productCode )
                      and ('$serialId' is null or a.${GE_Custom_Form_ApDao.SERIAL_ID} = '$serialId' ) 
-                     and ('$calendarDate' is null or strftime('%Y-%m-%d',a.${GE_Custom_Form_ApDao.AP_WHEN},'$deviceGMT') = '$calendarDate' )
+                     and ('$calendarDate' is null or strftime('%Y-%m-%d',IFNULL(a.${GE_Custom_Form_ApDao.AP_WHEN},A.${GE_Custom_Form_ApDao.CREATE_DATE}),'$deviceGMT') = '$calendarDate' )
                      $periodDateFilter
               """.replace("'null'","null")
         return s

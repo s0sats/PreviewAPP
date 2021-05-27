@@ -4,6 +4,10 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
+/**
+ * BARRIONUEVO
+ * Contador de tickets por status.
+ */
 public class Sql_Act005_009 implements Specification{
     public static final String PENDING_QTY = "pending_qty";
     private String status_filtered;
