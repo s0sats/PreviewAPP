@@ -10,6 +10,8 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 /**
  * LUCHE - 11/09/2020
  * Modificado query para excluir os ticket com form pendente de GPS, pois não podem ser sincronizados.
+ * BARRIONUEVO 27-05-2021
+ * MOdificado para pegar sync_required indenpendente do updaterequired.
  */
 
 public class Sql_Act005_011 implements Specification {
@@ -40,10 +42,6 @@ public class Sql_Act005_011 implements Specification {
                                 "  and s.ticket_prefix = c.ticket_prefix\n" +
                                 "  and s.ticket_code = c.ticket_code\n" +
                                 "  and t.sync_required = 1\n" +
-                                "  and t.update_required_product = 0\n" +
-                                "  and t.update_required = 0\n" +
-                                "  and s.update_required = 0\n" +
-                                "  and c.update_required = 0\n" +
                                 "  and NOT EXISTS(SELECT 1\n" +
                                 "                      FROM "+ GE_Custom_Form_DataDao.TABLE +" g \n"+
                                 "                      WHERE g.customer_code = t.customer_code\n" +
