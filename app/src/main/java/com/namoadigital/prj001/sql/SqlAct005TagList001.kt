@@ -84,7 +84,11 @@ class SqlAct005TagList001(private val context: Context,
             select tk.tag_operational_code, 
                    tk.tag_operational_desc , 
                    count(tk.tag_operational_code) qty, 
-                   max( max(tk.update_required), max(tk.update_required_product)) update_required, 
+                    max(case when ifnull(d.has_in_processing,0) > 0
+                        then 0
+                        else max(tk.update_required, tk.update_required_product)
+                   end) update_required,
+                   --max( max(tk.update_required), max(tk.update_required_product)) update_required, 
                    max(tk.sync_required) sync_required,
                    ifnull(max(has_in_processing),0) in_processing 
             from ${TK_TicketDao.TABLE} tk, 
