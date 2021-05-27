@@ -42,14 +42,10 @@ class SqlAct005TagList001(private val context: Context,
         }
         //
         formApFilter = when (periodFilter) {
-            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> """ and ( (case when gcdl.${GE_Custom_Form_ApDao.AP_WHEN} is null or gcdl.${GE_Custom_Form_ApDao.AP_WHEN} = "" 
-                      then strftime('%Y-%m-%d',geap.${GE_Custom_Form_ApDao.AP_WHEN},'$deviceGMT') <= strftime('%Y-%m-%d','now','$deviceGMT'))
-                      else strftime('%Y-%m-%d',geap.${GE_Custom_Form_ApDao.CREATE_DATE},'$deviceGMT') <= strftime('%Y-%m-%d','now','$deviceGMT'))
-                 end)"""
-            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION ->""" and ( (case when gcdl.${GE_Custom_Form_ApDao.AP_WHEN} is null or gcdl.${GE_Custom_Form_ApDao.AP_WHEN} = "" 
-                      then strftime('%Y-%m-%d',geap.${GE_Custom_Form_ApDao.AP_WHEN},'$deviceGMT') <= strftime('%Y-%m-%d','now','$deviceGMT'))
-                      else strftime('%Y-%m-%d',geap.${GE_Custom_Form_ApDao.CREATE_DATE},'$deviceGMT') <= strftime('%Y-%m-%d','now','$deviceGMT', '+7 days'))
-                 end)"""
+            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION ->
+                """ and (strftime('%Y-%m-%d',ifnull(geap.${GE_Custom_Form_ApDao.AP_WHEN},geap.${GE_Custom_Form_ApDao.CREATE_DATE}),'$deviceGMT') <= strftime('%Y-%m-%d','now','$deviceGMT'))"""
+            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION ->
+                """ and (strftime('%Y-%m-%d',ifnull(geap.${GE_Custom_Form_ApDao.AP_WHEN},geap.${GE_Custom_Form_ApDao.CREATE_DATE}),'$deviceGMT') <= strftime('%Y-%m-%d','now','$deviceGMT', '+7 days'))"""
             else -> ""
         }
         //
@@ -156,7 +152,7 @@ class SqlAct005TagList001(private val context: Context,
                  --
                  and geap.${GE_Custom_Form_ApDao.CUSTOMER_CODE} = '$customerCode'
                  and geap.${GE_Custom_Form_ApDao.AP_STATUS} not in ('${Constant.SYS_STATUS_DONE}','${Constant.SYS_STATUS_CANCELLED}')
-                 
+                 $formApFilter
             GROUP BY mdt.${MdTagDao.TAG_CODE},   
                      mdt.${MdTagDao.TAG_DESC}
         -- UNION Agendamento
@@ -253,36 +249,36 @@ class SqlAct005TagList001(private val context: Context,
             GROUP BY s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE},   
                      s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_DESC}
          --UNION FORM AVULSO                     
-        UNION ALL
-            select gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}, 
-                   gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC}, 
-                   count(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}), 
-            max((case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
-                  then 1
-                  else 0
-            end)) update_required,
-            max(0) sync_required,
-            max((case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} =  '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
-                  then 1
-                  else 0
-            end)) in_processing
-            from   ${GE_Custom_Form_LocalDao.TABLE} gcdl   
-            where  gcdl.${GE_Custom_Form_LocalDao.CUSTOMER_CODE} = '$customerCode'
-              and gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} in ('${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}', '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
-              and gcdl.schedule_prefix is null
-              and gcdl.schedule_code is null
-              and gcdl.schedule_exec is null
-              and gcdl.ticket_prefix is null
-              and gcdl.ticket_code is null
-              and gcdl.ticket_seq is null
-              and gcdl.ticket_seq_tmp is null
-              and gcdl.step_code is null 
-            GROUP BY gcdl.tag_operational_code, 
-                   gcdl.tag_operational_desc                  
-                         )  ticket 
-   where  ticket.tag_operational_code is not null
-   group by ticket.tag_operational_code, ticket.tag_operational_desc
-   order by ticket.tag_operational_desc
+            UNION ALL
+                select gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}, 
+                       gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC}, 
+                       count(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}), 
+                max((case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
+                      then 1
+                      else 0
+                end)) update_required,
+                max(0) sync_required,
+                max((case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} =  '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
+                      then 1
+                      else 0
+                end)) in_processing
+                from   ${GE_Custom_Form_LocalDao.TABLE} gcdl   
+                where  gcdl.${GE_Custom_Form_LocalDao.CUSTOMER_CODE} = '$customerCode'
+                  and gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} in ('${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}', '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
+                  and gcdl.schedule_prefix is null
+                  and gcdl.schedule_code is null
+                  and gcdl.schedule_exec is null
+                  and gcdl.ticket_prefix is null
+                  and gcdl.ticket_code is null
+                  and gcdl.ticket_seq is null
+                  and gcdl.ticket_seq_tmp is null
+                  and gcdl.step_code is null 
+                GROUP BY gcdl.tag_operational_code, 
+                       gcdl.tag_operational_desc                  
+                             )  ticket 
+       where  ticket.tag_operational_code is not null
+       group by ticket.tag_operational_code, ticket.tag_operational_desc
+       order by ticket.tag_operational_desc
                                                                 """
         ).toString()
         return toString
