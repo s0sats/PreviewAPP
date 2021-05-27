@@ -522,13 +522,18 @@ public class GE_Custom_Form_Local {
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
         }
+        int rightIcon =
+            !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
+            ? R.drawable.ic_baseline_cloud_done_24_blue
+            : R.drawable.ic_cloud_upload_24_red;
+
         MyActions myActions = new MyActions(
             MyActions.MY_ACTION_TYPE_FORM,
             getFormatedPk(hmAux),
             null,
             hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS),
             null,
-            R.drawable.ic_baseline_cloud_done_24_blue,
+            rightIcon,
             ToolBox_Inf.getMyActionStartEndDateFormated(context, hmAux.get(GE_Custom_Form_DataDao.DATE_START), hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
             hmAux.get(GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC),
             hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC),
