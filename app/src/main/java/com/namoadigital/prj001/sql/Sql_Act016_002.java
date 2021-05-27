@@ -67,8 +67,8 @@ public class Sql_Act016_002 implements Specification {
                     "\nSELECT\n" +
                     "      strftime('%Y-%m-%d',IFNULL(a.ap_when,a.create_date),'"+deviceGMT+"') schedule_date_start,\n" +
                     "      0 "+CalendarView.OPENED_COUNT+","+
-                    "      ((strftime('%s',IFNULL(a.ap_when,a.create_date),'"+deviceGMT+"') * 1000) <=(strftime('%s', 'now','"+deviceGMT+"')  * 1000 )) "+CalendarView.DELAYED_COUNT+ ",\n" +
-                    "      ((strftime('%s',IFNULL(a.ap_when,a.create_date),'"+deviceGMT+"') * 1000)  > (strftime('%s', 'now','"+deviceGMT+"')  * 1000 )) "+CalendarView.PLANNED_COUNT+ ",\n " +
+                    "      a.ap_when IS NOT NULL AND ((strftime('%s',a.ap_when,'"+deviceGMT+"') * 1000) <=(strftime('%s', 'now','"+deviceGMT+"')  * 1000 )) "+CalendarView.DELAYED_COUNT+ ",\n" +
+                    "      a.ap_when IS NULL OR ((strftime('%s',IFNULL(a.ap_when,a.create_date),'"+deviceGMT+"') * 1000) > (strftime('%s', 'now','"+deviceGMT+"')  * 1000 )) "+CalendarView.PLANNED_COUNT+ ",\n " +
                     "       0 "+CalendarView.NOT_FOCUS_COUNT+"\n" +
                     "  FROM "+ GE_Custom_Form_ApDao.TABLE+" a  \n" +
                     "  WHERE \n" +

@@ -28,6 +28,8 @@ class SqlAct083_004(
     private fun setFiltersByOriginAndFocus() {
         when(originFlow){
             ConstantBaseApp.ACT005 -> setHomeFilterConfg()
+            ConstantBaseApp.ACT006 -> setSerialFilterConfg()
+            ConstantBaseApp.ACT016 -> setCalendarFilterConfg()
         }
     }
 
@@ -35,10 +37,27 @@ class SqlAct083_004(
         productCode = null
         serialId = null
         calendarDate = null
-        statusFilter = when(userFocus){
-                 1 -> """    and     l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}' """
-                 else -> """    and     l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'"""
+        getStatusFilter()
+    }
+
+    private fun getStatusFilter() {
+        statusFilter = when (userFocus) {
+            1 -> """ and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}' """
+            else -> """    and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'"""
         }
+    }
+
+    private fun setSerialFilterConfg() {
+        tagOperCode = null
+        calendarDate = null
+        getStatusFilter()
+    }
+
+    private fun setCalendarFilterConfg() {
+        tagOperCode = null
+        productCode = null
+        serialId = null
+        getStatusFilter()
     }
 
     override fun toSqlQuery(): String {

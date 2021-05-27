@@ -235,7 +235,7 @@ class Act083ViewModel(private val context: Application,
     fun getChipList() : List<String>{
         val chipList = mutableListOf<String>()
         chipList.addAll(
-                myActionFilterParam.getFilledFilters()
+                myActionFilterParam.getFilledFilters(context)
         )
         val timePrefence = ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)
         if( ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION != timePrefence){

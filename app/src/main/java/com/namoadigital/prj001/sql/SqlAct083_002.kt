@@ -41,18 +41,10 @@ class SqlAct083_002(
     private fun setFiltersByOriginAndFocus() {
         when(originFlow){
             ConstantBaseApp.ACT005 -> setHomeFilterConfg()
+            ConstantBaseApp.ACT006 -> setSerialFilterConfg()
+            ConstantBaseApp.ACT016 -> setCalendarFilterConfg()
             ConstantBaseApp.ACT068 -> setMenuSearchFilterConfig()
         }
-    }
-
-    private fun setMenuSearchFilterConfig() {
-        tagOperCode = null
-        periodDateFilter = ""
-        siteCode = null
-        productCode = null
-        serialId = null
-        calendarDate = null
-        getStatusFilter()
     }
 
     private fun setHomeFilterConfg() {
@@ -75,6 +67,37 @@ class SqlAct083_002(
                                 and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
                                 )
                                 """
+    }
+
+    private fun setSerialFilterConfg() {
+        tagOperCode = null
+        periodDateFilter = ""
+        siteCode = null
+        clientId = null
+        contractId = null
+        calendarDate = null
+        getStatusFilter()
+    }
+
+    private fun setCalendarFilterConfg() {
+        tagOperCode = null
+        periodDateFilter = ""
+        siteCode = null
+        productCode = null
+        serialId = null
+        clientId = null
+        contractId = null
+        getStatusFilter()
+    }
+
+    private fun setMenuSearchFilterConfig() {
+        tagOperCode = null
+        periodDateFilter = ""
+        siteCode = null
+        productCode = null
+        serialId = null
+        calendarDate = null
+        getStatusFilter()
     }
 
     private fun getStatusFilter() {

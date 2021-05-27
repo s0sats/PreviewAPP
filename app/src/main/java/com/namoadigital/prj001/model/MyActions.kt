@@ -27,7 +27,7 @@ data class MyActions(
         val highlightItem: Boolean,
         val periodStarted: Boolean,
         val lateItem: Boolean
-){
+): MyActionsBase() {
     companion object{
         const val MY_ACTION_TYPE_TICKET = "TICKET"
         const val MY_ACTION_TYPE_TICKET_CACHE = "TICKET_CACHE"
