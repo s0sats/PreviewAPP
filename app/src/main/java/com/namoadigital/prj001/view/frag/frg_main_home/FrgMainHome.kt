@@ -110,7 +110,6 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         binding.rvTags.addItemDecoration(DividerItemDecoration(context,
                 DividerItemDecoration.VERTICAL))
         //
-        setDatetimeVisibility()
     }
     /**
      *  BARRIONUEVO 23-05-2021
