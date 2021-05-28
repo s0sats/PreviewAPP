@@ -43,9 +43,9 @@ import com.namoadigital.prj001.sql.SM_SO_Service_Exec_Task_File_Sql_005;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_006;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_013;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_005;
+import com.namoadigital.prj001.sql.Sql_Act012_004;
 import com.namoadigital.prj001.sql.Sql_Act040_001;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -458,6 +458,28 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                 }
             }
         }
+    }
+
+    @Override
+    public int getExpressSoPendency(HMAux hmAux_Trans) {
+        SO_Pack_Express_LocalDao expressLocalDao = new SO_Pack_Express_LocalDao(
+                context,
+                ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                Constant.DB_VERSION_CUSTOM
+        );
+
+        HMAux soExpressPendencies =
+                expressLocalDao.getByStringHM(
+                        new Sql_Act012_004(
+                                ToolBox_Con.getPreference_Customer_Code(context),
+                                hmAux_Trans
+                        ).toSqlQuery()
+                );
+        //
+        if(soExpressPendencies.hasConsistentValue(Sql_Act012_004.PENDING_QTY)){
+            return  Integer.parseInt(soExpressPendencies.get(Sql_Act012_004.PENDING_QTY));
+        }
+        return 0;
     }
 
     public void defineSearchResultFlow(MD_Product mdProduct, String serial_id, String tracking, ArrayList<MD_Product_Serial> serial_list, long record_count, long record_page) {
