@@ -66,7 +66,7 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
     }
 
     private fun initBundle(savedInstanceState: Bundle?) {
-        bundle = (savedInstanceState?: intent.extras) as Bundle
+        bundle = (savedInstanceState?: intent.extras?: Bundle()) as Bundle
     }
 
     private fun iniSetup() {
