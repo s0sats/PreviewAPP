@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act084
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,6 +12,7 @@ import com.namoadigital.prj001.databinding.Act084MainBinding
 import com.namoadigital.prj001.databinding.Act084MainContentBinding
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsFormButton
+import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -198,5 +200,18 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
         with(binding.act084PbLoad){
             visibility = if(show) View.VISIBLE else View.GONE
         }
+    }
+
+    override fun onBackPressed() {
+        //super.onBackPressed()
+        callAct005()
+    }
+
+    private fun callAct005() {
+        val mIntent = Intent(context, Act005_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.flags = Intent.FLAG_ACTIVITY_NO_ANIMATION
+        startActivity(mIntent)
+        finish()
     }
 }

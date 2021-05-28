@@ -80,47 +80,58 @@ class SqlAct005TagList001(private val context: Context,
           max(ticket.update_required) update_required, 
           max(ticket.sync_required) sync_required,
           max(ticket.in_processing) in_processing
-    from (
-            select tk.tag_operational_code, 
-                   tk.tag_operational_desc , 
-                   count(tk.tag_operational_code) qty, 
-                    max(case when ifnull(d.has_in_processing,0) > 0
-                        then 0
-                        else max(tk.update_required, tk.update_required_product)
-                   end) update_required,
-                   --max( max(tk.update_required), max(tk.update_required_product)) update_required, 
-                   max(tk.sync_required) sync_required,
-                   ifnull(max(has_in_processing),0) in_processing 
-            from ${TK_TicketDao.TABLE} tk, 
-                 ${TK_Ticket_StepDao.TABLE} s
-            left join (SELECT d.customer_code,
-                              d.ticket_prefix,
-                              d.ticket_code,
-                              COUNT(1) has_in_processing
-                      FROM ${GE_Custom_Form_DataDao.TABLE} d
-                      WHERE d.customer_code = $customerCode 
-                            and d.ticket_prefix is not null
-                            and d.ticket_code is not null
-                            and d.custom_form_status  = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
-                      GROUP BY
-                             d.customer_code,
-                             d.ticket_prefix,
-                             d.ticket_code                                         
-                     ) d on  tk.customer_code = d.customer_code
-                             and tk.ticket_prefix = d.ticket_prefix
-                             and tk.ticket_code = d.ticket_code 
-            where  
-                   tk.customer_code = s.customer_code
-                   and tk.ticket_prefix = s.ticket_prefix
-                   and tk.ticket_code = s.ticket_code 
-                   and tk.current_step_order = s.step_order              
-                   --
-                   AND tk.customer_code = $customerCode                      
-                   and tk.ticket_status in ('${ConstantBaseApp.SYS_STATUS_PENDING}' , '${ConstantBaseApp.SYS_STATUS_PROCESS}' , '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
-                   and s.step_status in ('${ConstantBaseApp.SYS_STATUS_PENDING}',  '${ConstantBaseApp.SYS_STATUS_PROCESS}' )
-                   $ticketFilter
-        GROUP BY tk.tag_operational_code, 
-                 tk.tag_operational_desc                   
+    from (select            
+                t.tag_operational_code, 
+                t.tag_operational_desc ,
+                count(t.tag_operational_code) qty,
+                max(case when ifnull(t.has_in_processing,0) > 0
+                            then 0
+                            else max(t.update_required, t.update_required_product)
+                end) update_required,             
+                max(t.sync_required) sync_required,
+                ifnull(max(t.has_in_processing),0) in_processing 
+           from(
+                   select tk.tag_operational_code, 
+                       tk.tag_operational_desc ,                    
+                       tk.update_required,
+                       tk.update_required_product, 
+                       tk.sync_required sync_required,
+                       has_in_processing 
+                   from ${TK_TicketDao.TABLE} tk, 
+                         ${TK_Ticket_StepDao.TABLE} s
+                   left join (SELECT d.customer_code,
+                                      d.ticket_prefix,
+                                      d.ticket_code,
+                                      COUNT(1) has_in_processing
+                              FROM ${GE_Custom_Form_DataDao.TABLE} d
+                              WHERE d.customer_code = $customerCode 
+                                    and d.ticket_prefix is not null
+                                    and d.ticket_code is not null
+                                    and d.custom_form_status  = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
+                              GROUP BY
+                                     d.customer_code,
+                                     d.ticket_prefix,
+                                     d.ticket_code                                         
+                             ) d on  tk.customer_code = d.customer_code
+                                     and tk.ticket_prefix = d.ticket_prefix
+                                     and tk.ticket_code = d.ticket_code 
+                   where  
+                           tk.customer_code = s.customer_code
+                           and tk.ticket_prefix = s.ticket_prefix
+                           and tk.ticket_code = s.ticket_code 
+                           and tk.current_step_order = s.step_order              
+                           --
+                           AND tk.customer_code = $customerCode                      
+                           and tk.ticket_status in ('${ConstantBaseApp.SYS_STATUS_PENDING}' , '${ConstantBaseApp.SYS_STATUS_PROCESS}' , '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
+                           and s.step_status in ('${ConstantBaseApp.SYS_STATUS_PENDING}',  '${ConstantBaseApp.SYS_STATUS_PROCESS}' )
+                           $ticketFilter
+                   GROUP BY         
+                         tk.customer_code,
+                         tk.ticket_prefix,
+                         tk.ticket_code
+         ) t            
+        GROUP BY t.tag_operational_code, 
+                 t.tag_operational_desc                   
         
         --UNION TICKET CACHE
         UNION ALL 
