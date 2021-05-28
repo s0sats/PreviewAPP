@@ -108,7 +108,7 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
             with(binding.act084RvActionsList) {
                 layoutManager = LinearLayoutManager(context)
                 adapter = mAdapter
-                visibility = android.view.View.VISIBLE
+                visibility = View.VISIBLE
             }
             //
             if(!binding.act084MketFilter.text.isNullOrEmpty()){
@@ -116,8 +116,8 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
             }
         }else{
             with(binding){
-                act084TvNoResult.visibility = android.view.View.VISIBLE
-                act084RvActionsList.visibility = android.view.View.INVISIBLE
+                act084TvNoResult.visibility = View.VISIBLE
+                act084RvActionsList.visibility = View.INVISIBLE
             }
         }
     }
@@ -173,12 +173,22 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
                 }
             }
         }
+        binding.act084ChkNcFilter.setOnCheckedChangeListener{
+            _, isChecked ->
+            val doneTab = if(binding.act084Tabs.checkedRadioButtonId == binding.act084TabMyActions.id){
+                1
+            }else{
+                0
+            }
+            updateMyActionList(doneTab,isChecked)
+        }
+
     }
     private fun updateMyActionList(userFocusFilter: Int, ncFilterOn:Boolean) {
         //Reseta visibilidade das views
         with(binding){
-            act084TvNoResult.visibility = android.view.View.GONE
-            act084RvActionsList.visibility = android.view.View.GONE
+            act084TvNoResult.visibility = View.GONE
+            act084RvActionsList.visibility = View.GONE
         }
         changeProgressBarVisility(true)
         mPresenter.updateMyActionList(userFocusFilter, ncFilterOn)
@@ -186,7 +196,7 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
 
     override fun changeProgressBarVisility(show: Boolean) {
         with(binding.act084PbLoad){
-            visibility = if(show) android.view.View.VISIBLE else android.view.View.GONE
+            visibility = if(show) View.VISIBLE else View.GONE
         }
     }
 }

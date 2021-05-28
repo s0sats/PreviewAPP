@@ -82,6 +82,8 @@ public class MD_Schedule_Exec {
     private int tag_operational_code;
     private String tag_operational_id;
     private String tag_operational_desc;
+    @Nullable
+    private Integer has_Nc;
 
     /**
      * LUCHE - 14/02/2020
@@ -518,6 +520,14 @@ public class MD_Schedule_Exec {
         this.tag_operational_desc = tag_operational_desc;
     }
 
+    public Integer getHas_Nc() {
+        return has_Nc;
+    }
+
+    public void setHas_Nc(Integer has_Nc) {
+        this.has_Nc = has_Nc;
+    }
+
     public MyActions toMyActionsObj(Context context){
         String customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
         String statusToUse = ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(status) ? ConstantBaseApp.SYS_STATUS_PROCESS : status;
@@ -525,6 +535,18 @@ public class MD_Schedule_Exec {
                 !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(status)
                 ? R.drawable.ic_baseline_cloud_done_24_blue
                 : R.drawable.ic_cloud_upload_24_red;
+        Integer leftIcon =
+            has_Nc != null && has_Nc.equals(1)
+            ? R.drawable.ic_alert_nc_on
+            : null;
+        String doneDate = close_date;
+        if(close_date != null){
+            close_date = ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(close_date),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            );
+        }
+
 
         try {
             MyActions myActions = new MyActions(
@@ -532,7 +554,7 @@ public class MD_Schedule_Exec {
                 ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
                 ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
                 ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
-                null,
+                leftIcon,
                 rightIcon,
                 //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
                 ToolBox_Inf.getMyActionStartEndDateFormated(context, date_start + " " + customerGMT, date_end + " " + customerGMT),
@@ -547,7 +569,7 @@ public class MD_Schedule_Exec {
                 null,
                 null,
                 null,
-                close_date,
+                doneDate,
                 ToolBox_Inf.millisecondsToString(
                     ToolBox_Inf.dateToMilliseconds(date_start + " " + customerGMT),
                     "yyyyMMddHHmm"

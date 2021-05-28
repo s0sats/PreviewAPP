@@ -91,10 +91,12 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     //NÃO SÃO CAMPOS DA TABELA, mas são usados em queries
     public static final String SCHEDULE_DATE_START_FORMAT = "schedule_date_start_format";
     public static final String SCHEDULE_DATE_END_FORMAT = "schedule_date_end_format";
-
     //LUCHE - 17/03/2020
     //Constante não usada no banco, mas usada por varias telas.
     public static final String SCHEDULE_PK = "schedule_pk";
+    //LUCHE - 28/05/2021
+    //Constante não usada no banco, mas usada por varias telas.
+    public static final String HAS_NC = "HAS_NC";
 
 
     public MD_Schedule_ExecDao(Context context, String mDB_NAME, int mDB_VERSION) {
@@ -1181,7 +1183,6 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                 md_schedule_exec.setTicket_type_desc(cursor.getString(cursor.getColumnIndex(TICKET_TYPE_DESC)));
             }
 
-
             //region new fields
             md_schedule_exec.setLocal_control(cursor.getInt(cursor.getColumnIndex(LOCAL_CONTROL)));
             md_schedule_exec.setIo_control(cursor.getInt(cursor.getColumnIndex(IO_CONTROL)));
@@ -1255,7 +1256,12 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             }else{
                 md_schedule_exec.setClose_date(cursor.getString(cursor.getColumnIndex(CLOSE_DATE)));
             }
-
+            //LUCHE - 28/05/2021 - Só vem em uma query da lista de actions done NÃO SALVA NO BANCO
+            if(cursor.isNull(cursor.getColumnIndex(HAS_NC))){
+                md_schedule_exec.setHas_Nc(null);
+            }else{
+                md_schedule_exec.setHas_Nc(cursor.getInt(cursor.getColumnIndex(HAS_NC)));
+            }
             //
             return md_schedule_exec;
         }

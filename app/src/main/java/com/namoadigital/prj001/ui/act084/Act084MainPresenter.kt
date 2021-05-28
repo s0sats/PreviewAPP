@@ -23,6 +23,7 @@ class Act084MainPresenter(
         private val formApDao: GE_Custom_Form_ApDao,
         private val formLocalDao: GE_Custom_Form_LocalDao
 ) : Act084MainContract.I_Presenter {
+    private var myActionFilterParam: MyActionFilterParam? = null
     private var launch : Job? = null
     private var _myActionsList = mutableListOf<MyActionsBase>()
     val myActionsList : MutableList<MyActionsBase>
@@ -33,6 +34,15 @@ class Act084MainPresenter(
         loadTranslation()
     }
 
+    init {
+        recoverIntentsInfo()
+        generateMyActionList(1,false)
+    }
+
+    private fun recoverIntentsInfo() {
+        myActionFilterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM) as MyActionFilterParam?
+       // originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
+    }
 
     private fun loadTranslation(): HMAux? {
         val transList: MutableList<String> = mutableListOf()
@@ -42,6 +52,7 @@ class Act084MainPresenter(
         transList.add("tab_discard_lbl")
         transList.add("no_record_lbl")
         transList.add("form_lbl")
+        transList.add("other_steps_available_lbl")
         //
         return ToolBox_Inf.setLanguage(
                 context,
@@ -86,13 +97,8 @@ class Act084MainPresenter(
 
             myActionsList.addAll(
                     getLocalForms(tabDone,ncFilterOn).map {
-                        if (it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
-                                && ConstantBaseApp.SYS_STATUS_IN_PROCESSING == it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS]
-                        ) {
-                            it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS] = hmAuxTrans?.get(ConstantBaseApp.SYS_STATUS_PROCESS)
-                        }
                         //
-                        GE_Custom_Form_Local.toMyActionsObj(context.applicationContext as Application?, it)
+                        GE_Custom_Form_Local.toMyActionsObj(context, it)
                     }
             )
             //
@@ -115,7 +121,8 @@ class Act084MainPresenter(
         return ticketDao.query_HM(
                 SqlAct084_001(
                         ToolBox_Con.getPreference_Customer_Code(context),
-                        tabDone
+                        tabDone,
+                        hmAuxTrans?.get("other_steps_available_lbl")
                 ).toSqlQuery()
         )
     }

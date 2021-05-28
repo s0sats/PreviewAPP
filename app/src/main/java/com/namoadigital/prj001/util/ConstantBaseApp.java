@@ -504,6 +504,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_RESULT_OK_DUP = "OK_DUP";
     public static final String MAIN_RESULT_UPDATE_REQUIRED = "UPDATE_REQUIRED";
     public static final String MAIN_RESULT_UPDATE_REQUIRED_WARNING = "UPDATE_REQUIRED_WARNING";
+    public static final String CONST_NONCONFORMITY_INSTR_SEARCH = "\",\"AP\":1,\"";
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";

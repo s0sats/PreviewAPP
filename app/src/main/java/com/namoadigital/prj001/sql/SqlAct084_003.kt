@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.sql
 
+import com.namoadigital.prj001.dao.GE_Custom_Form_ApDao
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.dao.TK_TicketDao
 import com.namoadigital.prj001.dao.TkTicketCacheDao
 import com.namoadigital.prj001.database.Specification
@@ -7,33 +9,25 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 
 class SqlAct084_003(
         private val customerCode: Long,
-        private val userFocus: Int
+        private val doneTab: Int
 ) : Specification {
-    private var periodDateFilter: String = ""
-    private var statusFilter: String =""
+    private var statusFilter = getStatusFilter()
 
-    private fun getStatusFilter() {
-        statusFilter = when (userFocus) {
-            1 -> """    and c.${TkTicketCacheDao.TICKET_STATUS} in('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}') """
-            else -> """    and c.${TkTicketCacheDao.TICKET_STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'"""
+    private fun getStatusFilter(): String {
+        return  when (doneTab) {
+            1 ->    """    and a.${GE_Custom_Form_ApDao.AP_STATUS} = '${ConstantBaseApp.SYS_STATUS_DONE}'"""
+            else -> """    and a.${GE_Custom_Form_ApDao.AP_STATUS} ='${ConstantBaseApp.SYS_STATUS_ERROR}'"""
         }
     }
 
     override fun toSqlQuery(): String {
         var s = """ SELECT
-                     c.*
-                    FROM
-                     ${TkTicketCacheDao.TABLE} c 
+                     a.*
+                    FROM 
+                     ${GE_Custom_Form_ApDao.TABLE} a
                     WHERE
-                     c.${TkTicketCacheDao.CUSTOMER_CODE} = $customerCode
-                     $statusFilter
-                     and ($userFocus is null or c.${TkTicketCacheDao.USER_FOCUS} = $userFocus)                                         
-                     and NOT EXISTS(SELECT 1
-                                    FROM ${TK_TicketDao.TABLE} t
-                                    WHERE t.${TK_TicketDao.CUSTOMER_CODE} = c.${TkTicketCacheDao.CUSTOMER_CODE}
-                                          and t.${TK_TicketDao.TICKET_PREFIX} = c.${TkTicketCacheDao.TICKET_PREFIX}
-                                          and t.${TK_TicketDao.TICKET_CODE} = c.${TkTicketCacheDao.TICKET_CODE}
-                                          )
+                     a.${GE_Custom_Form_ApDao.CUSTOMER_CODE} = $customerCode
+                     $statusFilter                                        
               """.replace("'null'","null")
         return s
     }

@@ -1415,13 +1415,7 @@ class Act083_Main_Presenter(private val context: Context,
             if (!ConstantBaseApp.ACT068.equals(originFlow, true)) {
                 myActionsList.addAll(
                         getLocalForms(tabUserFocusFilter).map {
-                            if (it.hasConsistentValue(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)
-                                    && ConstantBaseApp.SYS_STATUS_IN_PROCESSING == it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS]
-                            ) {
-                                it[GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS] = hmAux_Trans?.get(ConstantBaseApp.SYS_STATUS_PROCESS)
-                            }
-                            //
-                            GE_Custom_Form_Local.toMyActionsObj(context.applicationContext as Application?, it)
+                            GE_Custom_Form_Local.toMyActionsObj(context, it)
                         }
                 )
             }

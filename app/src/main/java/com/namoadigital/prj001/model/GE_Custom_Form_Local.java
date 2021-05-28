@@ -1,11 +1,12 @@
 package com.namoadigital.prj001.model;
 
-import android.app.Application;
+import android.content.Context;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.sql.SqlAct084_004;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -514,25 +515,34 @@ public class GE_Custom_Form_Local {
         this.tag_operational_desc = tag_operational_desc;
     }
 
-    public static MyActions toMyActionsObj(Application context, HMAux hmAux){
+    public static MyActions toMyActionsObj(Context context, HMAux hmAux){
         String endDate = null;
+        Integer leftIcon = null;
+        String statusToUse = ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)) ? ConstantBaseApp.SYS_STATUS_PROCESS : hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS);
         if(ConstantBaseApp.SYS_STATUS_DONE.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))){
             endDate = ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(hmAux.get(GE_Custom_Form_DataDao.DATE_END)),
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
+            //
+            leftIcon =
+                hmAux.hasConsistentValue(SqlAct084_004.FIELD_NC) && "1".equals(hmAux.get(SqlAct084_004.FIELD_NC))
+                ? R.drawable.ic_alert_nc_on
+                : null;
         }
+
         int rightIcon =
             !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
             ? R.drawable.ic_baseline_cloud_done_24_blue
             : R.drawable.ic_cloud_upload_24_red;
 
+
         MyActions myActions = new MyActions(
             MyActions.MY_ACTION_TYPE_FORM,
             getFormatedPk(hmAux),
             null,
-            hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS),
-            null,
+            ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
+            leftIcon,
             rightIcon,
             ToolBox_Inf.getMyActionStartEndDateFormated(context, hmAux.get(GE_Custom_Form_DataDao.DATE_START), hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
             hmAux.get(GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC),
