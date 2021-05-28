@@ -86,6 +86,7 @@ import com.namoadigital.prj001.ui.act051.Act051_Main;
 import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
+import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -1019,7 +1020,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void onHistoricClick() {
-        callAct014(context);
+        //callAct014(context);
+        callAct084();
     }
 
     @Override
@@ -1593,6 +1595,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = mPresenter.getAct083BundleParams(mainTagMenu);
         mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    private void callAct084() {
+        Intent mIntent = new Intent(context, Act084Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
     }

@@ -19,7 +19,6 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -542,6 +541,11 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ui.act084.Act084Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.act.product_selection.Act_Product_Selection"
             android:label="@string/app_name"
@@ -605,12 +609,6 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_Logout" />
 
         <service android:name=".service.WS_Logout" />
-
-        <receiver android:name=".receiver.WBR_Cleanning" />
-
-        <service
-            android:name=".service.WS_Cleanning"
-            android:enabled="true" />
 
         <receiver android:name=".receiver.WBR_Connections_Change">
             <intent-filter>
