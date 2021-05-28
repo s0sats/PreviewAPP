@@ -1993,8 +1993,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
-    public void syncFlow(int to_send_qty) {
-        if (to_send_qty > 0) {
+    public void syncFlow(boolean to_send) {
+        if (to_send) {
             mView.setSyncAfterSave(true);
             //
             accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);

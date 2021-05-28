@@ -207,8 +207,9 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
         mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
-        mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies"));
+//        mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
+//        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies"));
+        mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_03_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);

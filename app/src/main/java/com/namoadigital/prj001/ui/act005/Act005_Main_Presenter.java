@@ -70,7 +70,7 @@ public interface Act005_Main_Presenter {
 
     String getProductInfo(Long product_code);
 
-    void syncFlow(int to_send_qty);
+    void syncFlow(boolean to_send);
 
     boolean existOthersSession();
 

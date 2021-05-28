@@ -195,7 +195,7 @@ public class Act026_Main extends Base_Activity_Frag implements Act026_Main_View 
 
         if (bundle != null) {
             if (bundle.containsKey(Constant.MAIN_REQUESTING_ACT)) {
-                requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT023);
+                requesting_act = bundle.getString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
                 product_code = bundle.getString(MD_ProductDao.PRODUCT_CODE, null);
                 serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, null);
                 mdProductSerial = (MD_Product_Serial) bundle.getSerializable(Constant.MAIN_MD_PRODUCT_SERIAL);

@@ -607,11 +607,11 @@ public class Act040_Main_Presenter_Impl implements Act040_Main_Presenter {
                     serial_id
             );
         }else {
-            if(ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER)){
+//            if(ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, ConstantBaseApp.PROFILE_MENU_SO_PARAM_DIRECT_EXPRESS_ORDER)){
                 mView.callAct005(context);
-            }else {
-                mView.callAct021(context);
-            }
+//            }else {
+//                mView.callAct021(context);
+//            }
         }
 
     }

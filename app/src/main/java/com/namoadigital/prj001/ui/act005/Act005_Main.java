@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -291,11 +292,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             }
         }
 
-        if(mPresenter.hasSOProfile()){
-            initAltFragment();
-        }else {
-            initTagFragment();
-        }
+        setFragments();
 
         ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
 
@@ -1188,6 +1185,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void callAct051(Context context) {
         Intent mIntent = new Intent(context, Act051_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }
@@ -1218,6 +1218,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void callAct068(Context context) {
         Intent mIntent = new Intent(context, Act068_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT005);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
     }
@@ -1338,7 +1341,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
          */
 //        gv_menu.setClickable(false);
         refreshUiData();
-        mPresenter.getMenuItensV2(hmAux_Trans);
+//        mPresenter.getMenuItensV2(hmAux_Trans);
         iniUIFooter();
 //        gv_menu.setClickable(true);
     }
@@ -1436,7 +1439,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public int getSendBadgeQty() {
-        return mAdapter.getBadgeQty(MENU_ID_SEND_DATA);
+        return mPresenter.hasUpdateRequired() ? 1 : 0;
     }
 
     @Override
@@ -2130,7 +2133,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
             }
 
-            mPresenter.getMenuItensV2(hmAux_Trans);
+//            mPresenter.getMenuItensV2(hmAux_Trans);
+            refreshUiData();
             progressDialog.dismiss();
             try {
                 sendResumeDialog.updateResumeStatus(R.id.act005_send_resume_ticket, isDone, total_tickets_amount - ticket_errors, total_tickets_amount);
@@ -2408,7 +2412,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             sendResumeDialog.dismiss();
         }
         setSyncAfterSave(false);
-        mPresenter.getMenuItensV2(hmAux_Trans);
+//        mPresenter.getMenuItensV2(hmAux_Trans);
+        refreshUiData();
 //        if (wsSoProcess.equalsIgnoreCase(WS_Serial_Save.class.getSimpleName())) {
 //            setRes(WS_RESULT_TYPE_SERIAL,hmAux_Trans.get("lbl_serial_data"), hmAux_Trans.get("alert_ws_serial_error_msg"), "");
 //            setSyncAfterSave(false);
@@ -2523,6 +2528,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 //Substituido o metodo antigo pelo metodo que agenda todos os workers.
                 ToolBox_Inf.scheduleAllDownloadWorkers(context);
                 ToolBox_Inf.updateUserCustomerSync(getApplicationContext(), String.valueOf(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), ToolBox_Con.getPreference_User_Code(getApplicationContext()), 0);
+                setFragments();
                 refreshUiData();
                 //
                 break;
@@ -2566,6 +2572,14 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                 0
         );
 
+    }
+
+    private void setFragments() {
+        if (mPresenter.hasSOProfile()) {
+            initAltFragment();
+        } else {
+            initTagFragment();
+        }
     }
 
     /**
@@ -2751,11 +2765,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        //
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
+        //
         DialogInterface.OnClickListener listener = null;
         boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
         boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
@@ -2774,7 +2788,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
                                 masterDataSyncFlow = true;
-                                mPresenter.syncFlow(mAdapter.getBadgeQty(MENU_ID_SEND_DATA));
+                                mPresenter.syncFlow(mPresenter.hasUpdateRequired());
                             }
                         },
                         1
@@ -2935,10 +2949,10 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     @Override
-    public void onSelectTags() {
+    public void onSelectTags(String tagName) {
         //Força a chamada de todas as tags.
         callAct083(new MainTagMenu(0,
-                "",
+                tagName,
                 0,
                 0,
                 0,
@@ -3052,24 +3066,26 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     private void initTagFragment() {
         FragmentTransaction transaction = fm.beginTransaction();
-        FrgMainHome frgMainHome = (FrgMainHome) fm.findFragmentById(R.id.act005_frg_placeholder);
-        if(frgMainHome == null) {
-            frgMainHome = FrgMainHome.newInstance(mModule_Code);
+        Fragment fragment =  fm.findFragmentById(R.id.act005_frg_placeholder);
+        if(fragment == null
+                || !(fragment instanceof FrgMainHome)) {
+            fragment = FrgMainHome.newInstance(mModule_Code);
         }
         //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
-        transaction.replace(R.id.act005_frg_placeholder, frgMainHome, frgMainHome.getTag());
+        transaction.replace(R.id.act005_frg_placeholder, fragment, fragment.getTag());
         transaction.addToBackStack(null);
         transaction.commit();
     }
 
     private void initAltFragment() {
         FragmentTransaction transaction = fm.beginTransaction();
-        FrgMainHomeAlt frgMainHomeAlt = (FrgMainHomeAlt) fm.findFragmentById(R.id.act005_frg_placeholder);
-        if(frgMainHomeAlt == null) {
-            frgMainHomeAlt = FrgMainHomeAlt.newInstance();
+        Fragment fragment =  fm.findFragmentById(R.id.act005_frg_placeholder);
+        if(fragment == null
+        || !(fragment instanceof FrgMainHomeAlt)) {
+            fragment = FrgMainHomeAlt.newInstance();
         }
         //act050_favorite_fragment.setHmAux_Trans(hmAux_Trans);
-        transaction.replace(R.id.act005_frg_placeholder, frgMainHomeAlt, frgMainHomeAlt.getTag());
+        transaction.replace(R.id.act005_frg_placeholder, fragment, fragment.getTag());
         transaction.addToBackStack(null);
         transaction.commit();
     }

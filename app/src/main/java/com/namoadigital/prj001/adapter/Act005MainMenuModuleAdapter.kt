@@ -40,7 +40,7 @@ class Act005MainMenuModuleAdapter(
                 MainModuleMenu.ID_MODULE_OS_NEXT -> mListener?.onSelectOSNext()
                 MainModuleMenu.ID_MODULE_OS_VIN_SEARCH -> mListener?.onSelectOSVinSearch()
                 MainModuleMenu.ID_MODULE_ASSETS -> mListener?.onSelectAsset()
-                MainModuleMenu.ID_MODULE_TAGS -> mListener?.onSelectTags()
+                MainModuleMenu.ID_MODULE_TAGS -> mListener?.onSelectTags(hmAux_Trans.get("all_tag_list_item")!!)
                 MainModuleMenu.ID_MODULE_TAGS_BY_SERIAL_SEARCH -> mListener?.onSelectTagsBySerialSearch()
             }
         }

@@ -28,10 +28,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class FrgMainHomeAlt : Fragment(),  FrgMainHomeAltContract.View{
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private var mListener: OnFrgMainHomeAltInteract? = null
-    private var mModule_Code: String? = null
     //
     private val mPresenter by lazy {
         FrgMainHomeAltPresenter(
@@ -203,7 +200,7 @@ class FrgMainHomeAlt : Fragment(),  FrgMainHomeAltContract.View{
         //
         fun onSelectAsset()
         //
-        fun onSelectTags()
+        fun onSelectTags(tagName: String)
         //
         fun onSelectTagsBySerialSearch()
         //
