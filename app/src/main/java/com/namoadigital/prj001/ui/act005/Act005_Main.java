@@ -2952,7 +2952,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     public void onSelectTags(String tagName) {
         //Força a chamada de todas as tags.
         callAct083(new MainTagMenu(0,
-                tagName,
+                null,
                 0,
                 0,
                 0,
