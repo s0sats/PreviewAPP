@@ -190,7 +190,7 @@ class Act083_Main_Presenter(private val context: Context,
     }
 
     private fun validadeCreateNewForm(myActionsFormButton: MyActionsFormButton) {
-        val mdProductSerial : MD_Product_Serial? = getSerial(myActionsFormButton.productCode,myActionsFormButton.serialId)
+        val mdProductSerial : MD_Product_Serial? = getSerial(myActionsFormButton.productCode, myActionsFormButton.serialId)
         val mdProduct : MD_Product? = getProductInfo(myActionsFormButton.productCode)
         //
         if(mdProductSerial != null && mdProduct != null){
@@ -233,7 +233,7 @@ class Act083_Main_Presenter(private val context: Context,
                 //
                 mView.showAlertMsg(
                         hmAux_Trans!!["alert_no_form_ttl"]!!,
-                        msg?:""
+                        msg ?: ""
                 )
             }
         }else{
@@ -1553,6 +1553,34 @@ class Act083_Main_Presenter(private val context: Context,
                         schedule_exec
                 ).toSqlQuery()
         )
+    }
+
+    override fun onBackPressedClicked() {
+        when(originFlow){
+            ConstantBaseApp.ACT006 -> mView.callAct006(getBundleToAssetsAndLocalOrigin())
+            ConstantBaseApp.ACT016 -> mView.callAct016(getBundleToCalendarOrigin())
+            ConstantBaseApp.ACT068 -> mView.callAct068(getBundleToSearchOrigin())
+            else ->  mView.callAct005()
+        }
+
+    }
+
+
+    private fun getBundleToAssetsAndLocalOrigin(): Bundle {
+        return Bundle().apply {
+            putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, myActionFilterParam.productId)
+            putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, serialId)
+        }
+    }
+
+    private fun getBundleToCalendarOrigin(): Bundle {
+        return Bundle().apply {
+            putString(ConstantBaseApp.ACT_SELECTED_DATE, calendarDate)
+        }
+    }
+
+    private fun getBundleToSearchOrigin(): Bundle {
+        return Bundle()
     }
 
 

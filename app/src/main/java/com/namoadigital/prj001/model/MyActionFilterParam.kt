@@ -9,6 +9,7 @@ class MyActionFilterParam(
         var tagFilterCode: Int? = null,
         var tagFilterDesc: String? = null,
         var productCode: Int? = null,
+        var productId: String? = null,
         var productDesc: String? = null,
         var serialId: String? = null,
         var clientId: String? = null,

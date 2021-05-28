@@ -25,6 +25,10 @@ interface Act083_Main_Contract {
         fun changeProgressBarVisility(show: Boolean)
         fun iniRecycler()
         fun callAct009(bundle: Bundle)
+        fun callAct005()
+        fun callAct006(bundle: Bundle)
+        fun callAct016(bundle: Bundle)
+        fun callAct068(bundle: Bundle)
     }
 
     interface I_Presenter {
@@ -47,6 +51,7 @@ interface Act083_Main_Contract {
         fun checkFormFlow(action: MyActions)
         fun extractSearchResult(result: String?)
         fun processActionFormButtonClick(myActionsFormButton: MyActionsFormButton)
+        fun onBackPressedClicked()
     }
 
 }

@@ -74,6 +74,7 @@ public class Act016_Main_Presenter_Impl implements Act016_Main_Presenter {
             null,
             null,
             null,
+            null,
             selected_date
         );
     }

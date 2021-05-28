@@ -4,10 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +14,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -1016,6 +1017,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             MyActionFilterParam myActionFilterParam = new MyActionFilterParam(null,
                     null,
                     (int) mdProductSerial.getProduct_code(),
+                    mdProductSerial.getProduct_id(),
                     mdProductSerial.getProduct_desc(),
                     mdProductSerial.getSerial_id(),
                     null,

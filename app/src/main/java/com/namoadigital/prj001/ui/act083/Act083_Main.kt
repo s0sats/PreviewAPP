@@ -15,19 +15,20 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.adapter.MyActionsAdapter
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.Act083MainBinding
-import com.namoadigital.prj001.model.MD_Product
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.ui.act005.Act005_Main
+import com.namoadigital.prj001.ui.act006.Act006_Main
 import com.namoadigital.prj001.ui.act009.Act009_Main
 import com.namoadigital.prj001.ui.act011.Act011_Main
-import com.namoadigital.prj001.ui.act017.Act017_Main
+import com.namoadigital.prj001.ui.act016.Act016_Main
 import com.namoadigital.prj001.ui.act020.Act020_Main
 import com.namoadigital.prj001.ui.act033.Act033_Main
 import com.namoadigital.prj001.ui.act038.Act038_Main
+import com.namoadigital.prj001.ui.act068.Act068_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.ui.act071.Act071_Main
 import com.namoadigital.prj001.util.Constant
@@ -362,7 +363,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         }
     }
 
-    private fun callAct005() {
+    override fun callAct005() {
         val mIntent = Intent(context, Act005_Main::class.java)
         mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         mIntent.flags = Intent.FLAG_ACTIVITY_NO_ANIMATION
@@ -431,9 +432,33 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         finish()
     }
 
+    override fun callAct006(bundle: Bundle) {
+        val mIntent = Intent(context, Act006_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.putExtras(bundle)
+        startActivity(mIntent)
+        finish()
+    }
+
+    override fun callAct016(bundle: Bundle) {
+        val mIntent = Intent(context, Act016_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.putExtras(bundle)
+        startActivity(mIntent)
+        finish()
+    }
+
+    override fun callAct068(bundle: Bundle) {
+        val mIntent = Intent(context, Act068_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.putExtras(bundle)
+        startActivity(mIntent)
+        finish()
+    }
+
     override fun onBackPressed() {
         //super.onBackPressed()
-        callAct005()
+        mPresenter.onBackPressedClicked()
     }
 
     override fun showMsg(type: String, item: MyActions) {
