@@ -323,14 +323,6 @@ public class Act021_Main_Presenter_Impl implements Act021_Main_Presenter {
         }
     }
 
-    @Override
-    public void checkSOExpressProfile() {
-        boolean hasExpressProfile;
-        //
-        hasExpressProfile = ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_EXPRESS);
-        //
-        mView.setSoExpressVisibility(hasExpressProfile);
-    }
 
     @Override
     public String searchProductInfo(String product_code, String product_id) {

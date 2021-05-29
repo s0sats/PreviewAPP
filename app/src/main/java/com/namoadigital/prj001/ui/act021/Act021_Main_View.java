@@ -37,6 +37,4 @@ public interface Act021_Main_View {
 
     void showNoCoPendencies();
 
-    void setSoExpressVisibility(boolean isVisible);
-
 }
