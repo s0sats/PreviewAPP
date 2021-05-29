@@ -5,6 +5,7 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.dao.*
+import com.namoadigital.prj001.model.MD_Site_Zone
 import com.namoadigital.prj001.model.MainModuleMenu
 import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_ASSETS
 import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_OS
@@ -13,6 +14,7 @@ import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_OS_NEXT
 import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_OS_VIN_SEARCH
 import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_TAGS
 import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_TAGS_BY_SERIAL_SEARCH
+import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003
 import com.namoadigital.prj001.sql.SM_SO_Sql_004
 import com.namoadigital.prj001.sql.SqlAct005TagList002
 import com.namoadigital.prj001.util.Constant
@@ -20,7 +22,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, val tkTicketdao: TK_TicketDao, val tkTicketCacheDao: TkTicketCacheDao, val mdScheduleExecdao: MD_Schedule_ExecDao, val geCustomFormApdao: GE_Custom_Form_ApDao, val geCustomFormLocaldao: GE_Custom_Form_LocalDao, val smSodao: SM_SODao, val ioInbounddao: IO_InboundDao, val ioOutbounddao: IO_OutboundDao, val ioMovedao: IO_MoveDao, val ioBlindMovedao: IO_Blind_MoveDao
+class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, val tkTicketdao: TK_TicketDao, val tkTicketCacheDao: TkTicketCacheDao, val mdScheduleExecdao: MD_Schedule_ExecDao, val geCustomFormApdao: GE_Custom_Form_ApDao, val geCustomFormLocaldao: GE_Custom_Form_LocalDao, val smSodao: SM_SODao, val ioInbounddao: IO_InboundDao, val ioOutbounddao: IO_OutboundDao, val ioMovedao: IO_MoveDao, val ioBlindMovedao: IO_Blind_MoveDao, val zoneDao: MD_Site_ZoneDao
 ) : FrgMainHomeAltContract.Presenter {
     //
     override fun getModules(): MutableList<MainModuleMenu> {
@@ -45,12 +47,13 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
             return osModule
         }else{
             if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
+                val currentZone = getCurrentZone()
                 osModule.add(
                         MainModuleMenu(
                                 ID_MODULE_OS_NEXT,
                                 R.drawable.ic_baseline_read_more_24,
                                 hmauxTransFrag.get("sys_main_menu_os_next_lbl")!!,
-                                hmauxTransFrag.get("sys_main_menu_os_next_detail")!!,
+                                currentZone,
                                 0,
                                 0
                         )
@@ -60,7 +63,7 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                                 ID_MODULE_OS_VIN_SEARCH,
                                 R.drawable.ic_baseline_qr_code_24,
                                 hmauxTransFrag.get("sys_main_menu_os_by_vin_search_lbl")!!,
-                                hmauxTransFrag.get("sys_main_menu_os_by_vin_search_detail")!!,
+                                hmauxTransFrag.get("main_menu_os_by_vin_search_detail")!!,
                                 0,
                                 0
                         )
@@ -86,13 +89,13 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                 if(hmAux.hasConsistentValue(SM_SO_Sql_004.PENDING_QTY)) {
                     qty = hmAux[SM_SO_Sql_004.PENDING_QTY]!!.toInt()
                 }
-//                hmauxTransFrag.get("sys_main_menu_os_downloaded_detail")!!
+//
                 osModule.add(
                         MainModuleMenu(
                                 ID_MODULE_OS,
                                 R.drawable.ic_baseline_mobile_friendly_24,
                                 hmauxTransFrag.get("sys_main_menu_os_downloaded_lbl")!!,
-                                "trad - Item: " + qty,
+                                hmauxTransFrag.get("main_menu_item_lbl")!! + ": " + qty,
                                 isSoUpdateRequired ,
                                 0
                         )
@@ -103,6 +106,19 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
         //
 
         return  modules
+    }
+
+    private fun getCurrentZone(): String {
+        var md_site_zone: MD_Site_Zone? = null
+        //
+        md_site_zone = zoneDao.getByString(
+                MD_Site_Zone_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        ToolBox_Inf.convertStringToInt(ToolBox_Con.getPreference_Site_Code(context)),
+                        ToolBox_Con.getPreference_Zone_Code(context)
+                ).toSqlQuery()
+        )
+        return md_site_zone.zone_desc
     }
 
     private fun getExpOsItem(osModule: MutableList<MainModuleMenu>) {
@@ -123,7 +139,7 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                         ID_MODULE_OS_EXPRESS,
                         R.drawable.ic_baseline_flash_on_24,
                         hmauxTransFrag.get("sys_main_menu_os_express_lbl")!!,
-                        hmauxTransFrag.get("sys_main_menu_os_express_detail")!!,
+                        hmauxTransFrag.get("main_menu_os_express_detail")!!,
                         isSoExpressUpdateRequired,
                         0
                 )
@@ -141,7 +157,7 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                     ID_MODULE_ASSETS,
                     R.drawable.ic_baseline_directions_car_24,
                     hmauxTransFrag.get("sys_main_menu_assets_lbl")!!,
-                    hmauxTransFrag.get("sys_main_menu_assets_detail")!!,
+                    hmauxTransFrag.get("main_menu_assets_detail")!!,
                     isIoUpdateRequired,
                     0
             ))
@@ -169,7 +185,7 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                             ID_MODULE_TAGS,
                             R.drawable.ic_outline_assignment_24,
                             hmauxTransFrag.get("sys_main_menu_tag_lbl")!!,
-                            "trad - Item: " + qty,
+                            hmauxTransFrag.get("main_menu_item_lbl")!! + ": " + qty,
                             update_required,
                             0
                     )
@@ -180,7 +196,7 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                             ID_MODULE_TAGS_BY_SERIAL_SEARCH,
                             R.drawable.ic_baseline_qr_code_24,
                             hmauxTransFrag.get("sys_main_menu_tag_by_serial_search_lbl")!!,
-                            hmauxTransFrag.get("sys_main_menu_tag_by_serial_search_detail")!!,
+                            hmauxTransFrag.get("main_menu_tag_by_serial_search_detail")!!,
                             0,
                             0
                     )
@@ -196,7 +212,7 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
                         ToolBox.getDeviceGMT(false),
                         -1,
                         ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION,
-                        ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION
+                        ConstantBaseApp.PREFERENCE_HOME_ALL_ACTIONS_OPTION
                 ).toSqlQuery()
         )
         //
