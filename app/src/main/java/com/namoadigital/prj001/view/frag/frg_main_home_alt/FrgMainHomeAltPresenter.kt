@@ -207,12 +207,7 @@ class FrgMainHomeAltPresenter(val context: Context?,val  hmauxTransFrag: HMAux, 
     private fun getTagModuleInfo(): HMAux {
         val queryResult: HMAux = tkTicketdao.getByStringHM(
                 SqlAct005TagList002(
-                        context!!,
-                        ToolBox_Con.getPreference_Customer_Code(context).toInt(),
-                        ToolBox.getDeviceGMT(false),
-                        -1,
-                        ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION,
-                        ConstantBaseApp.PREFERENCE_HOME_ALL_ACTIONS_OPTION
+                        ToolBox_Con.getPreference_Customer_Code(context).toInt()
                 ).toSqlQuery()
         )
         //
