@@ -722,19 +722,21 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     @Override
     public void defineFlow() {
-        if(ToolBox_Inf.isConcurrentBySiteLicense(context)
-                && isOutOfLicense()
-                && !mView.isHas_tk_ticket_is_form_off_hand()){
-                ToolBox.alertMSG(
-                        context,
-                        hmAux_Trans.get("alert_serial_site_out_of_license_tll"),
-                        hmAux_Trans.get("alert_serial_site_out_of_license_msg"),
-                        null,
-                        0
-                );
-        }else {
+
             if (isSchedule || isFinishPlusNew) {
-                mView.callAct011(context);
+                if(ToolBox_Inf.isConcurrentBySiteLicense(context)
+                        && isOutOfLicense()
+                        && !mView.isHas_tk_ticket_is_form_off_hand()){
+                    ToolBox.alertMSG(
+                            context,
+                            hmAux_Trans.get("alert_serial_site_out_of_license_tll"),
+                            hmAux_Trans.get("alert_serial_site_out_of_license_msg"),
+                            null,
+                            0
+                    );
+                }else {
+                    mView.callAct011(context);
+                }
             } else {
                 if (mView.isHas_tk_ticket_is_form_off_hand()) {
                     if (mView.isOffHandForm()) {
@@ -744,13 +746,24 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                     }
                 } else {
                     if(mView.isNewSerial()){
-                        mView.callAct009(context);
+                        if(ToolBox_Inf.isConcurrentBySiteLicense(context)
+                                && isOutOfLicense()
+                                && !mView.isHas_tk_ticket_is_form_off_hand()){
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_serial_site_out_of_license_tll"),
+                                    hmAux_Trans.get("alert_serial_site_out_of_license_msg"),
+                                    null,
+                                    0
+                            );
+                        }else {
+                            mView.callAct009(context);
+                        }
                     }else {
                         mView.callAct083(context);
                     }
                 }
             }
-        }
     }
     /**
      * BARRIONUEVO - 19-01-2021
