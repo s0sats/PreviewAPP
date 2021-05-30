@@ -50,6 +50,7 @@ class TkTicketCache(
                 MyActions.MY_ACTION_TYPE_TICKET_CACHE,
                 "$ticket_prefix.$ticket_code.$scn",
                 ticket_id,
+                ticket_status,
                 statusTrad,
                 null,
                 R.drawable.ic_baseline_cloud_download_24_gray,

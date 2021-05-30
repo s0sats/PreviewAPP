@@ -417,6 +417,7 @@ public class GE_Custom_Form_Ap {
             MyActions.MY_ACTION_TYPE_FORM_AP,
             getFormatedPk(),
             getFormatedPk(),
+            ap_status,
             ConstantBaseApp.HMAUX_TRANS_LIB.get(ap_status),
             null,
             rightIcon,

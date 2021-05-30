@@ -1373,6 +1373,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             MyActions.MY_ACTION_TYPE_TICKET,
             hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE),
             hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE),
+            hmAux.get(TK_TicketDao.TICKET_STATUS),
             ConstantBaseApp.HMAUX_TRANS_LIB.get(hmAux.get(TK_TicketDao.TICKET_STATUS)),
             null,
             rightIcon,

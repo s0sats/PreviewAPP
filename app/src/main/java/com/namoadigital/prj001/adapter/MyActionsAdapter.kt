@@ -76,7 +76,7 @@ class MyActionsAdapter(
             }
             //
             binding.myActionsItemTvCode.text = myAction.processId
-            binding.myActionsItemTvStatus.text = myAction.processStatus
+            binding.myActionsItemTvStatus.text = myAction.processStatusTrans
             configPlannedDate(myAction)
             //
             binding.myActionsItemIvIconLeft.applyVisibilityIfSourceExists(myAction.processLeftIcon)
@@ -149,7 +149,7 @@ class MyActionsAdapter(
 
         private fun applyBackgroundStrokeColor(myAction: MyActions) {
              binding.myActionsItemClInfos.apply {
-                 background = if(!myAction.doneDate.isNullOrEmpty()) {
+                 background = if(!myAction.doneDate.isNullOrEmpty() && ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)) {
                      ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_stroke_green_states)
                  }else if(myAction.highlightItem) {
                      ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_stroke_orange_states)

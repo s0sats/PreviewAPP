@@ -541,6 +541,7 @@ public class GE_Custom_Form_Local {
             MyActions.MY_ACTION_TYPE_FORM,
             getFormatedPk(hmAux),
             null,
+            statusToUse,
             ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
             leftIcon,
             rightIcon,

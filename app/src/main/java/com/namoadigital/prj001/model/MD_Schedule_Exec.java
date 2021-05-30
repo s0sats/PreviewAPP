@@ -541,7 +541,7 @@ public class MD_Schedule_Exec {
             : null;
         String doneDate = close_date;
         if(close_date != null){
-            close_date = ToolBox_Inf.millisecondsToString(
+            doneDate = ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(close_date),
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
@@ -553,6 +553,7 @@ public class MD_Schedule_Exec {
                 MyActions.MY_ACTION_TYPE_SCHEDULE,
                 ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
                 ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
+                statusToUse,
                 ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
                 leftIcon,
                 rightIcon,
@@ -598,6 +599,7 @@ public class MD_Schedule_Exec {
                 ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
                 ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
                 statusToUse,
+                ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
                 null,
                 rightIcon,
                 //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição

@@ -7,6 +7,7 @@ data class MyActions(
         val processPk: String,
         val processId: String?,
         val processStatus: String,
+        val processStatusTrans: String?,
         @DrawableRes val processLeftIcon: Int?,
         @DrawableRes val processRightIcon: Int?,
         val plannedDate: String,
