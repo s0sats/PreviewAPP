@@ -173,8 +173,14 @@ class FrgMainHomeAltPresenter(val context: Context?, private val  hmauxTransFrag
             val tagModuleInfo = getTagModuleInfo()
             var qty =  0
             var updateRequired =  0
+            var tagDetail=""
             if(tagModuleInfo.hasConsistentValue("qty")) {
                 qty = Integer.parseInt(tagModuleInfo["qty"]!!)
+                if(qty >0 ){
+                    tagDetail = hmauxTransFrag["main_menu_tag_has_pendency_detail"]!!
+                }else{
+                    tagDetail = hmauxTransFrag["main_menu_tag_no_pendency_detail"]!!
+                }
             }
             //
             if(tagModuleInfo.hasConsistentValue(TK_TicketDao.UPDATE_REQUIRED)) {
@@ -186,7 +192,7 @@ class FrgMainHomeAltPresenter(val context: Context?, private val  hmauxTransFrag
                             ID_MODULE_TAGS,
                             R.drawable.ic_outline_assignment_24,
                             hmauxTransFrag["sys_main_menu_tag_lbl"]!!,
-                            hmauxTransFrag["main_menu_item_lbl"]!! + ": " + qty,
+                            tagDetail,
                             updateRequired,
                             0
                     )

@@ -109,6 +109,8 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
         transListFrag.add("main_menu_assets_detail")
         transListFrag.add("sys_main_menu_tag_lbl")
         transListFrag.add("main_menu_item_lbl")
+        transListFrag.add("main_menu_tag_has_pendency_detail")
+        transListFrag.add("main_menu_tag_no_pendency_detail")
         transListFrag.add("sys_main_menu_tag_by_serial_search_lbl")
         transListFrag.add("main_menu_tag_by_serial_search_detail")
         //
