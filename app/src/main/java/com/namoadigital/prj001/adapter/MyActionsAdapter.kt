@@ -1,8 +1,6 @@
 package com.namoadigital.prj001.adapter
 
 import android.content.Context
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -23,12 +21,12 @@ import com.namoadigital.prj001.model.MyActionsBase
 import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.*
 
 class MyActionsAdapter(
         private val myActions: List<MyActionsBase>,
         private val myActionClickListener: (myAction: MyActions) -> Unit,
-        private val myActionFormButtonClickListener: (myActionFormButton: MyActionsFormButton) -> Unit
+        private val myActionFormButtonClickListener: (myActionFormButton: MyActionsFormButton) -> Unit,
+        private val notifyFilterApplied: (qtyItensFiltered: Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private val VIEW_TYPE_MY_ACTION = 0
     private val VIEW_TYPE_MY_ACTION_FORM_BUTTON = 1
@@ -149,13 +147,27 @@ class MyActionsAdapter(
 
         private fun applyBackgroundStrokeColor(myAction: MyActions) {
              binding.myActionsItemClInfos.apply {
-                 background = if(!myAction.doneDate.isNullOrEmpty() && ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)) {
-                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_stroke_green_states)
-                 }else if(myAction.highlightItem) {
-                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_stroke_orange_states)
-                 }else {
-                    ContextCompat.getDrawable(context,R.drawable.namoa_cell_default_gray_states)
-                 }
+                 background =
+                             if(!myAction.doneDate.isNullOrEmpty() && ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)) {
+                                 if(myAction.isLastSelectedItem){
+                                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_blue_stroke_green_states)
+                                 }else {
+                                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_stroke_green_states)
+                                 }
+                             }else if(myAction.highlightItem) {
+                                 if(myAction.isLastSelectedItem){
+                                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_blue_stroke_orange_states)
+                                 }else {
+                                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_stroke_orange_states)
+                                 }
+                             }else {
+                                 if(myAction.isLastSelectedItem){
+                                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_blue_states)
+                                 }else {
+                                     ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_gray_states)
+                                 }
+                             }
+
              }
         }
 
@@ -220,6 +232,29 @@ class MyActionsAdapter(
         }
     }
 
+    /**
+     * Busca o item do qual o usr acabou de voltar na lista.
+     * Se dados null ou não encontrar retorna -1
+     */
+    fun getActionPkPosition(processType: String?, processPk: String?): Int{
+        if(processType.isNullOrEmpty() || processPk.isNullOrEmpty() ){
+            return -1
+        }
+        //
+        myFilteredAction.forEachIndexed {
+            index, myActionsBase ->
+            if(myActionsBase is MyActions){
+                if( myActionsBase.actionType == processType
+                        && myActionsBase.processPk == processPk
+                ){
+                    return index
+                }
+            }
+        }
+        //Se não encontrar 0
+        return -1
+    }
+
     override fun getFilter(): Filter {
         return mFilter
     }
@@ -255,8 +290,8 @@ class MyActionsAdapter(
             results?.let {
                 myFilteredAction = results.values as MutableList<MyActionsBase>
                 notifyDataSetChanged()
+                notifyFilterApplied(myFilteredAction.size)
             }
         }
-
     }
 }

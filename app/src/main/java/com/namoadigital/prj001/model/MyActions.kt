@@ -27,7 +27,8 @@ data class MyActions(
         val ticketOriginType: String?,
         val highlightItem: Boolean,
         val periodStarted: Boolean,
-        val lateItem: Boolean
+        val lateItem: Boolean,
+        val isLastSelectedItem: Boolean
 ): MyActionsBase() {
     companion object{
         const val MY_ACTION_TYPE_TICKET = "TICKET"

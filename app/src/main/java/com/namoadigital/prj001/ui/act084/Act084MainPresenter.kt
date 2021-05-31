@@ -79,26 +79,26 @@ class Act084MainPresenter(
         launch = CoroutineScope(Dispatchers.IO).launch {
             _myActionsList.addAll(
                     getLocalTickets(tabDone).map {
-                        TK_Ticket.toMyActionsObj(context, it)
+                        TK_Ticket.toMyActionsObj(context, it,null)
                     }
             )
             //
             _myActionsList.addAll(
                     getSchedules(tabDone, ncFilterOn).map {
-                        it.toMyActionsObj(context)
+                        it.toMyActionsObj(context,null)
                     }
             )
             //
             _myActionsList.addAll(
                     getFormAp(tabDone).map {
-                        it.toMyActionsObj(context)
+                        it.toMyActionsObj(context,null)
                     }
             )
 
             myActionsList.addAll(
                     getLocalForms(tabDone,ncFilterOn).map {
                         //
-                        GE_Custom_Form_Local.toMyActionsObj(context, it)
+                        GE_Custom_Form_Local.toMyActionsObj(context, it,null)
                     }
             )
             //

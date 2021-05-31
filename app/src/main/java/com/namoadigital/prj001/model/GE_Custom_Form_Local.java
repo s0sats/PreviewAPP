@@ -2,6 +2,8 @@ package com.namoadigital.prj001.model;
 
 import android.content.Context;
 
+import androidx.annotation.Nullable;
+
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
@@ -515,7 +517,7 @@ public class GE_Custom_Form_Local {
         this.tag_operational_desc = tag_operational_desc;
     }
 
-    public static MyActions toMyActionsObj(Context context, HMAux hmAux){
+    public static MyActions toMyActionsObj(Context context, HMAux hmAux, @Nullable String lastFormSelectedPk){
         String endDate = null;
         Integer leftIcon = null;
         String statusToUse = ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS)) ? ConstantBaseApp.SYS_STATUS_PROCESS : hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS);
@@ -530,16 +532,17 @@ public class GE_Custom_Form_Local {
                 ? R.drawable.ic_alert_nc_on
                 : null;
         }
-
         int rightIcon =
             !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS))
             ? R.drawable.ic_baseline_cloud_done_24_blue
             : R.drawable.ic_cloud_upload_24_red;
-
-
+        //
+        String processPk = getFormatedPk(hmAux);
+        boolean isSelectedItem = processPk.equals(lastFormSelectedPk);
+        //
         MyActions myActions = new MyActions(
             MyActions.MY_ACTION_TYPE_FORM,
-            getFormatedPk(hmAux),
+            processPk,
             null,
             statusToUse,
             ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
@@ -563,9 +566,10 @@ public class GE_Custom_Form_Local {
                 "yyyyMMddHHmm"
             ),
             null,
-            true,
+            ConstantBaseApp.SYS_STATUS_PROCESS.equals(statusToUse),
             false,
-            false
+            false,
+            isSelectedItem
         );
         myActions.setProductCode(Integer.parseInt(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)));
         myActions.setCustomFormTypeDesc(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
