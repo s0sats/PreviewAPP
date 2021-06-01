@@ -7,6 +7,8 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.model.*
 import com.namoadigital.prj001.sql.*
+import com.namoadigital.prj001.ui.act083.Act083_Main
+import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -30,9 +32,10 @@ class Act084MainPresenter(
         get() {
             return _myActionsList
         }
-    val hmAuxTrans: HMAux? by lazy {
+    val hmAuxTrans: HMAux by lazy {
         loadTranslation()
     }
+    private val originFlow = ConstantBaseApp.ACT084
 
     init {
         recoverIntentsInfo()
@@ -40,11 +43,13 @@ class Act084MainPresenter(
     }
 
     private fun recoverIntentsInfo() {
-        myActionFilterParam = bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM) as MyActionFilterParam?
+        myActionFilterParam =
+                (bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM) as MyActionFilterParam?)
+                ?: MyActionFilterParam()
        // originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
     }
 
-    private fun loadTranslation(): HMAux? {
+    private fun loadTranslation(): HMAux {
         val transList: MutableList<String> = mutableListOf()
         transList.add("act084_title")
         transList.add("filter_hint")
@@ -122,7 +127,7 @@ class Act084MainPresenter(
                 SqlAct084_001(
                         ToolBox_Con.getPreference_Customer_Code(context),
                         tabDone,
-                        hmAuxTrans?.get("other_steps_available_lbl")
+                        hmAuxTrans["other_steps_available_lbl"]
                 ).toSqlQuery()
         )
     }
@@ -147,7 +152,7 @@ class Act084MainPresenter(
     }
 
     private fun getLocalForms(tabDone: Int, ncFilterOn: Boolean): MutableList<HMAux> {
-        val lbl = hmAuxTrans?.get("form_lbl") ?: "FORMULARIO"
+        val lbl = hmAuxTrans.get("form_lbl") ?: "FORMULARIO"
 
         return formLocalDao.query_HM(
                 SqlAct084_004(
@@ -157,5 +162,197 @@ class Act084MainPresenter(
                         tabDone
                 ).toSqlQuery()
         )
+    }
+
+    override fun processActionClick(myAction: MyActions) {
+        when(myAction.actionType){
+            MyActions.MY_ACTION_TYPE_TICKET -> processLocalTicketClick(myAction)
+            MyActions.MY_ACTION_TYPE_SCHEDULE -> checkScheduleFlow(myAction)
+            MyActions.MY_ACTION_TYPE_FORM_AP -> processFormApClick(myAction)
+            MyActions.MY_ACTION_TYPE_FORM -> processFormClick(myAction)
+        }
+    }
+
+    private fun processLocalTicketClick(myAction: MyActions) {
+        mView.callAct070(
+                getLocalTicket(
+                        myAction
+                )
+        )
+    }
+
+    private fun getLocalTicket(myAction: MyActions): Bundle {
+        val splippedPk = myAction.getSplippedPk()
+        //Seta dados da action selecionado no filterParam
+        setSeletedActionInfosIntoFilterParam(myAction)
+        //
+        return ticketBundle(splippedPk[0].toInt(), splippedPk[1].toInt())
+    }
+
+    private fun ticketBundle(ticketPrefix: Int, ticketCode: Int): Bundle {
+        val bundle = Bundle()
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
+        bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix)
+        bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode)
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        return bundle
+    }
+
+    private fun checkScheduleFlow(myAction: MyActions) {
+        val scheduleExec = getScheduleFromMyAction(myAction)
+        //
+        if(scheduleExec != null) {
+            when (scheduleExec.schedule_type) {
+                ConstantBaseApp.MD_SCHEDULE_TYPE_FORM -> processScheduleTypeForm(myAction, scheduleExec)
+                else -> processScheduleTypeTicket(myAction)
+            }
+        }
+    }
+
+    private fun processScheduleTypeForm(myAction: MyActions, scheduleExec: MD_Schedule_Exec) {
+        if (isStatusPossibleToOpen(scheduleExec)) {
+            prepareOpenForm(myAction,scheduleExec)
+        } else {
+            mView.showMsg(
+                    ttl = hmAuxTrans["alert_schedule_status_prevents_to_open_ttl"],
+                    msg = hmAuxTrans["alert_schedule_status_prevents_to_open_msg"]
+            )
+        }
+    }
+
+    private fun prepareOpenForm(myAction: MyActions, scheduleExec: MD_Schedule_Exec) {
+        val formLocal = getFormLocalInfo(scheduleExec)
+        //
+        if(formLocal != null){
+            //Seta dados da action selecionado no filterParam
+            setSeletedActionInfosIntoFilterParam(myAction)
+            mView.callAct011(getFormBundle(formLocal))
+        }else{
+            mView.showMsg(
+                    ttl = hmAuxTrans["alert_schedule_form_not_found_ttl"],
+                    msg = hmAuxTrans["alert_schedule_form_not_found_msg"]
+            )
+        }
+
+    }
+
+    private fun getFormLocalInfo(scheduleExec: MD_Schedule_Exec): GE_Custom_Form_Local? {
+        return formLocalDao.getByString(
+                MD_Schedule_Exec_Sql_006(
+                        scheduleExec.customer_code.toString(),
+                        scheduleExec.schedule_prefix.toString(),
+                        scheduleExec.schedule_code.toString(),
+                        scheduleExec.schedule_exec.toString()
+                ).toSqlQuery()
+        )
+    }
+
+    private fun isStatusPossibleToOpen(scheduleExec: MD_Schedule_Exec): Boolean {
+        return (scheduleExec.status != null
+                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_CANCELLED
+                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_REJECTED
+                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_IGNORED
+                && scheduleExec.status != ConstantBaseApp.SYS_STATUS_NOT_EXECUTED)
+    }
+
+    private fun processScheduleTypeTicket(myAction: MyActions) {
+
+    }
+
+    private fun getScheduleFromMyAction(myAction: MyActions):  MD_Schedule_Exec? {
+        val splippedPk = myAction.getSplippedPk()
+        //
+        val schedule_prefix = splippedPk.get(0).toInt()
+        val schedule_code = splippedPk.get(1).toInt()
+        val schedule_exec = splippedPk.get(2).toInt()
+        //
+        val scheduleExec: MD_Schedule_Exec? = scheduleDao.getByString(
+                MD_Schedule_Exec_Sql_001(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        schedule_prefix,
+                        schedule_code,
+                        schedule_exec
+                ).toSqlQuery()
+        )
+        //
+        return scheduleExec
+    }
+
+    private fun processFormApClick(myAction: MyActions) {
+        mView.callAct038(getFormApBundle(myAction))
+    }
+
+    private fun getFormApBundle(myAction: MyActions): Bundle {
+        val splippedPk = myAction.getSplippedPk()
+        val bundle = Bundle()
+        //Seta dados da action selecionado no filterParam
+        setSeletedActionInfosIntoFilterParam(myAction)
+        //
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT084)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context).toString())
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, splippedPk[0])
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, splippedPk[1])
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_VERSION, splippedPk[2])
+        bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_DATA, splippedPk[3])
+        bundle.putString(GE_Custom_Form_ApDao.AP_CODE, splippedPk[4])
+        return bundle
+    }
+
+    private fun processFormClick(myAction: MyActions) {
+        mView.callAct011(getFormBundle(myAction))
+    }
+
+    private fun getFormBundle(myAction: MyActions): Bundle {
+        val splippedPk = myAction.getSplippedPk()
+        val bundle = Bundle()
+        //Seta dados da action selecionado no filterParam
+        setSeletedActionInfosIntoFilterParam(myAction)
+        //
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT084)
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, myAction.productCode.toString())
+        bundle.putString(MD_ProductDao.PRODUCT_DESC, myAction.productDesc)
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, myAction.serialId)
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, splippedPk[0])
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, myAction.customFormTypeDesc)
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, splippedPk[1])
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, splippedPk[2])
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, myAction.customFormDesc)
+        bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, splippedPk[3])
+        bundle.putString(Constant.ACT017_SCHEDULED_SITE, myAction.siteCode.toString())
+        return bundle
+    }
+
+    private fun getFormBundle(formLocal: GE_Custom_Form_Local): Bundle {
+        val bundle = Bundle()
+        //
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT084)
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putString(MD_ProductDao.PRODUCT_CODE, formLocal.custom_product_code.toString())
+        bundle.putString(MD_ProductDao.PRODUCT_DESC, formLocal.custom_product_desc)
+        bundle.putString(MD_Product_SerialDao.SERIAL_ID, formLocal.serial_id)
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, formLocal.custom_form_type.toString())
+        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, formLocal.custom_form_type_desc)
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, formLocal.custom_form_code.toString())
+        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, formLocal.custom_form_version.toString())
+        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formLocal.custom_form_desc)
+        bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, formLocal.custom_form_data.toString())
+        //
+        return bundle
+    }
+
+    fun setSeletedActionInfosIntoFilterParam(myAction: MyActions){
+        if(myActionFilterParam != null){
+            myActionFilterParam?.setSelectedItemParams(
+                    mView.getMketFilter(),
+                    mView.getCurrentTab(),
+                    myAction.actionType,
+                    myAction.processPk
+            )
+        }
     }
 }

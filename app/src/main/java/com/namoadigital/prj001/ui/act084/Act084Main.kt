@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoadigital.prj001.adapter.MyActionsAdapter
 import com.namoadigital.prj001.dao.*
@@ -13,6 +14,9 @@ import com.namoadigital.prj001.databinding.Act084MainContentBinding
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsFormButton
 import com.namoadigital.prj001.ui.act005.Act005_Main
+import com.namoadigital.prj001.ui.act011.Act011_Main
+import com.namoadigital.prj001.ui.act038.Act038_Main
+import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -126,8 +130,8 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
     }
 
 
-    fun onMyActionClick(myAction: MyActions): Unit{
-       // mPresenter.processActionClick(myAction)
+    fun onMyActionClick(myAction: MyActions){
+        mPresenter.processActionClick(myAction)
     }
     private fun onFormButtonClick(myActionsFormButton: MyActionsFormButton) {
      //   mPresenter.processActionFormButtonClick(myActionsFormButton)
@@ -206,6 +210,33 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
         }
     }
 
+    override fun getMketFilter(): String? {
+        val textFilter = binding.act084MketFilter.text.toString()
+        //
+        return if(textFilter.isBlank() || textFilter.isEmpty()){
+            null
+        }else{
+            textFilter
+        }
+    }
+
+    override fun getCurrentTab(): Int {
+        return when (binding.act084Tabs.checkedRadioButtonId){
+            binding.act084TabMyActions.id -> 1
+            else -> 0
+        }
+    }
+
+    override fun showMsg(ttl: String?, msg: String?) {
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                null,
+                0
+        )
+    }
+
     override fun onBackPressed() {
         //super.onBackPressed()
         callAct005()
@@ -215,6 +246,30 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
         val mIntent = Intent(context, Act005_Main::class.java)
         mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         mIntent.flags = Intent.FLAG_ACTIVITY_NO_ANIMATION
+        startActivity(mIntent)
+        finish()
+    }
+
+    override fun callAct011(bundle: Bundle) {
+        val mIntent = Intent(context, Act011_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.putExtras(bundle)
+        context.startActivity(mIntent)
+        finish()
+    }
+
+    override fun callAct070(bundle: Bundle) {
+        val mIntent = Intent(context, Act070_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.putExtras(bundle)
+        startActivity(mIntent)
+        finish()
+    }
+
+    override fun callAct038(bundle: Bundle) {
+        val mIntent = Intent(context, Act038_Main::class.java)
+        mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        mIntent.putExtras(bundle)
         startActivity(mIntent)
         finish()
     }

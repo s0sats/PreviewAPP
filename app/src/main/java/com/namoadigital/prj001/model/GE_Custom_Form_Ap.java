@@ -416,6 +416,14 @@ public class GE_Custom_Form_Ap {
         String dateToUse = ap_when != null ? ap_when : create_date;
         String processPk = getFormatedPk();
         boolean isSelectedItem = processPk.equals(lastFormApSelected);
+        String doneDate = null;
+        if(ConstantBaseApp.SYS_STATUS_DONE.equals(ap_status)){
+            doneDate = ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(last_update),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            );
+        }
+        //
         return new MyActions(
             MyActions.MY_ACTION_TYPE_FORM_AP,
             processPk,
@@ -436,7 +444,7 @@ public class GE_Custom_Form_Ap {
             null,
             null,
             null,
-            null,
+            doneDate,
             ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(dateToUse),
                 "yyyyMMddHHmm"
