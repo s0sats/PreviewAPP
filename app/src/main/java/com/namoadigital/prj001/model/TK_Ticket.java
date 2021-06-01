@@ -1358,6 +1358,15 @@ public class TK_Ticket implements Cloneable, Serializable {
         String orderByDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
         String periodStartDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
         String lateDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
+        String doneDate = null;
+        if( hmAux.hasConsistentValue(TK_TicketDao.CLOSE_DATE)
+            && !hmAux.get(TK_TicketDao.CLOSE_DATE).isEmpty()
+        ){
+            doneDate = ToolBox_Inf.millisecondsToString(
+                ToolBox_Inf.dateToMilliseconds(hmAux.get(TK_TicketDao.CLOSE_DATE)),
+                ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+            );
+        }
         //
         if(hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_START)
            && hmAux.hasConsistentValue(TK_Ticket_StepDao.FORECAST_END)
@@ -1390,7 +1399,7 @@ public class TK_Ticket implements Cloneable, Serializable {
             clientInf,
             contractInf,
             null,
-            null,
+            doneDate,
             ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(orderByDate),
                 "yyyyMMddHHmm"
