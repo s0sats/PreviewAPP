@@ -1019,7 +1019,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     public void onHistoricClick() {
         //callAct014(context);
-        callAct084();
+        if(mPresenter.hasSOProfile()){
+            callAct014(context);
+        }else {
+            callAct084();
+        }
     }
 
     @Override
