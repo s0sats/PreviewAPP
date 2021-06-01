@@ -106,6 +106,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_TICKET;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
@@ -2148,13 +2149,20 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             progressDialog.dismiss();
             wsProcess ="";
             boolean productOutdate = false;
-            if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
-                productOutdate = ToolBox_Inf.hasFormProductOutdate(context);
-            }
-            if(productOutdate){
-                mPresenter.callWsSyncForTicketsForm();
-            }else{
-                refreshUiData();
+
+            if(masterDataSyncFlow){
+                syncAfterSave = true;
+                executeSync();
+            }else {
+                if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
+                    productOutdate = ToolBox_Inf.hasFormProductOutdate(context);
+                }
+                //
+                if(productOutdate){
+                    mPresenter.callWsSyncForTicketsForm();
+                }else{
+                    refreshUiData();
+                }
             }
         } else if (wsSoProcess.equalsIgnoreCase(SYNC_FOR_TICKETS_FORM)) {
             progressDialog.dismiss();
@@ -2364,12 +2372,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     //
                 }
                 //
-                if(masterDataSyncFlow){
-                    ToolBox_Inf.hasFormProductOutdate(context);
-                    executeSync();
-                }else {
-                    if(mPresenter.hasTicketSyncRequired()) {
-                        mPresenter.executeWSTicketDownload();
+                if(mPresenter.hasTicketSyncRequired()) {
+                    mPresenter.executeWSTicketDownload();
+                }else{
+                    if(masterDataSyncFlow){
+                        ToolBox_Inf.hasFormProductOutdate(context);
+                        executeSync();
                     }
                 }
             }
@@ -2788,7 +2796,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 //mPresenter.accessMenuItem(MENU_ID_SYNC_DATA, 0);
                                 masterDataSyncFlow = true;
-                                mPresenter.syncFlow(mPresenter.hasUpdateRequired());
+                                if(hasTicketSyncRequired){
+                                    mPresenter.executeWSTicketDownload();
+                                }else {
+                                    mPresenter.syncFlow(mPresenter.hasUpdateRequired());
+                                }
                             }
                         },
                         1
@@ -2949,7 +2961,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     @Override
-    public void onSelectTags(String tagName) {
+    public void onSelectTags() {
         //Força a chamada de todas as tags.
         callAct083(new MainTagMenu(0,
                 null,
@@ -3013,7 +3025,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             if(bundle != null){
                 String fcmTitle = (String) bundle.get(ConstantBaseApp.SW_TYPE);
                 if(fcmTitle != null) {
-                    if (fcmTitle.equals(FCM_MODULE_SYNC)) {
+                    if (fcmTitle.equals(FCM_MODULE_SYNC)
+                    || fcmTitle.equals(FCM_ACTION_TK_TICKET_UPDATE)) {
                         invalidateOptionsMenu();
                     } else if (fcmTitle.equals(FCM_MODULE_TICKET)) {
                        refreshUiData();

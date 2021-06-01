@@ -771,11 +771,10 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     */
     private boolean isOutOfLicense() {
         String serial_site_code = mView.getmdProductSerialSiteCode();
-        if(serial_site_code != null
-        && serial_site_code.equals(ToolBox_Con.getPreference_Site_Code(context)) ){
-            return false;
-        }else{
+        if(serial_site_code != null){
             return ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context, serial_site_code);
+        }else{
+            return ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context, ToolBox_Con.getPreference_Site_Code(context));
         }
     }
 

@@ -208,7 +208,7 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
         //
         fun onSelectAsset()
         //
-        fun onSelectTags(tagName: String)
+        fun onSelectTags()
         //
         fun onSelectTagsBySerialSearch()
         //

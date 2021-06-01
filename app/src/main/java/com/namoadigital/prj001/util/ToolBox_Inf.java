@@ -2276,10 +2276,10 @@ public class ToolBox_Inf {
         ll_global_level.setVisibility(View.GONE);
         if(evUsrCustomer != null){
           if (evUsrCustomer.getLicense_site_code() != null && evUsrCustomer.getLicense_site_code() > 0){
-                ll_site_license.setVisibility(View.VISIBLE);
-                tv_site_license_desc.setText(
-                        getSiteLicenseDescFormmated(context,evUsrCustomer.getLicense_site_desc(),evUsrCustomer.getLicense_user_level_id(),evUsrCustomer.getLicense_user_level_changed())
-                );
+//                ll_site_license.setVisibility(View.VISIBLE);
+//                tv_site_license_desc.setText(
+//                        getSiteLicenseDescFormmated(context,evUsrCustomer.getLicense_site_desc(),evUsrCustomer.getLicense_user_level_id(),evUsrCustomer.getLicense_user_level_changed())
+//                );
           }
         //endregion
             //region  Global por nivel
