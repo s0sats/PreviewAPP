@@ -85,44 +85,43 @@ public class Sql_Act016_002 implements Specification {
                 "      ((strftime('%s',t.date_start,'"+deviceGMT+"') *1000) >= (strftime('%s', 'now','"+deviceGMT+"')  * 1000 ) AND t.ticket_status <> '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"'  and t.user_focus = 1) "+CalendarView.PLANNED_COUNT+ ",          \n" +
                 "      (t.ticket_status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"' OR t.user_focus = 0) "+CalendarView.NOT_FOCUS_COUNT+"      \n" +
                 "     \n" +
-                "  FROM (\n" +
+                "  FROM ( \n"+
                 "        SELECT\n" +
-                "         t.ticket_status,  \n" +
-                "         ifnull(ts.forecast_start,t.forecast_date) date_start,\n" +
-                "         ifnull(ts.forecast_end,t.forecast_date) date_end,\n" +
-                "         t.user_focus                      \n" +
-                "      FROM\n" +
-                "          "+ TK_TicketDao.TABLE +" t\n" +
-                "      LEFT JOIN    \n" +
-                "          (SELECT\n" +
-                "             s.customer_code,\n" +
-                "             s.ticket_prefix,\n" +
-                "             s.ticket_code,\n" +
-                "             s.step_order,\n" +
-                "             s.user_focus,\n" +
-                "             min(s.forecast_start) forecast_start,\n" +
-                "             max(s.forecast_end) forecast_end \n" +
-                "           FROM\n" +
-                "             "+ TK_Ticket_StepDao.TABLE +" s\n" +
-                "           WHERE  \n" +
-                "              s.customer_code = "+customer_code+"\n" +
-                "              and s.user_focus = 1\n" +
-                "           GROUP BY  \n" +
-                "             s.customer_code,\n" +
-                "             s.ticket_prefix,\n" +
-                "             s.ticket_code,\n" +
-                "             s.step_order     \n" +
-                "          ) ts ON  ts.customer_code = t.customer_code\n" +
-                "                  and ts.ticket_prefix = t.ticket_prefix\n" +
-                "                  and ts.ticket_code = t.ticket_code\n" +
-                "                  and ts.step_order = t.current_step_order\n" +
-                "                  and ts.user_focus = 1\n" +
+                "                 MAX(t.ticket_status) ticket_status ,  \n" +
+                "                 IFNULL(MIN(CASE WHEN t.user_focus = 1\n" +
+                "                          THEN (CASE WHEN ts.user_focus = 1\n" +
+                "                                     THEN ts.forecast_start\n" +
+                "                                     ELSE null\n" +
+                "                                END)\n" +
+                "                          ELSE \n" +
+                "                               ts.forecast_start\n" +
+                "                          END),t.forecast_date) date_start,\n" +
+                "                 IFNULL(MAX(CASE WHEN t.user_focus = 1\n" +
+                "                          THEN (CASE WHEN ts.user_focus = 1\n" +
+                "                                     THEN ts.forecast_end\n" +
+                "                                     ELSE null\n" +
+                "                                END)\n" +
+                "                          ELSE \n" +
+                "                               ts.forecast_end\n" +
+                "                          END),t.forecast_date) date_end,\n" +
+                "                 MAX(t.user_focus) user_focus \n" +
+                "              FROM\n" +
+                "                  "+TK_TicketDao.TABLE+" t\n" +
+                "              LEFT JOIN  \n" +
+                "                  "+ TK_Ticket_StepDao.TABLE+" ts on ts.customer_code = t.customer_code\n" +
+                "                                      and ts.ticket_prefix = t.ticket_prefix\n" +
+                "                                      and ts.ticket_code = t.ticket_code\n" +
+                "                                      and ts.step_order = t.current_step_order    \n" +
+                "                                                  "+
                 "      WHERE                     \n" +
                 "            t.customer_code = '"+customer_code+"'\n" +
                 "            and t.ticket_prefix > 0 \n" +
                 "            and ( (t.ticket_status in('"+ ConstantBaseApp.SYS_STATUS_PENDING+"','"+ ConstantBaseApp.SYS_STATUS_PROCESS+"') and t.user_focus = 1) \n" +
                 "                  or (t.user_focus = 0 or t.ticket_status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"')\n" +
-                "                )                            \n" +
+                "                )   \n" +
+                "      GROUP BY\n" +
+                "            t.ticket_prefix,\n" +
+                "            t.ticket_code \n " +
                 "  ) t ";
 
         sql_ticket_cache =

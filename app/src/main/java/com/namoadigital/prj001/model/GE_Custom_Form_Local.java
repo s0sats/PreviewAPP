@@ -539,6 +539,14 @@ public class GE_Custom_Form_Local {
         //
         String processPk = getFormatedPk(hmAux);
         boolean isSelectedItem = processPk.equals(lastFormSelectedPk);
+        String soInfo = null;
+        if( hmAux.hasConsistentValue(GE_Custom_Form_DataDao.SO_PREFIX)
+            && hmAux.hasConsistentValue(GE_Custom_Form_DataDao.SO_CODE)
+            && !hmAux.get(GE_Custom_Form_DataDao.SO_PREFIX).isEmpty()
+            && !hmAux.get(GE_Custom_Form_DataDao.SO_CODE).isEmpty()
+        ){
+            soInfo = hmAux.get(GE_Custom_Form_DataDao.SO_PREFIX)  +"."+ hmAux.get(GE_Custom_Form_DataDao.SO_CODE);
+        }
         //
         MyActions myActions = new MyActions(
             MyActions.MY_ACTION_TYPE_FORM,
@@ -559,7 +567,7 @@ public class GE_Custom_Form_Local {
             hmAux.get(GE_Custom_Form_LocalDao.SITE_DESC),
             null,
             null,
-            hmAux.get(GE_Custom_Form_DataDao.SO_CODE),
+            soInfo,
             endDate,
             ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(hmAux.get(GE_Custom_Form_DataDao.DATE_START)),
