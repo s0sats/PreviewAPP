@@ -49,8 +49,8 @@ class SqlAct083_002(
 
     private fun setHomeFilterConfg() {
         periodDateFilter = when(ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)){
-            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> " and  (strftime('%Y-%m-%d',t.${TK_TicketDao.FORECAST_DATE},'$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))"
-            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> " and  (strftime('%Y-%m-%d',t.${TK_TicketDao.FORECAST_DATE},'$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"','+7 days'))"
+            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> " and  (strftime('%Y-%m-%d', ifnull(ts.${TK_Ticket_StepDao.FORECAST_START}, t.${TK_TicketDao.FORECAST_DATE}),'$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))"
+            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> " and  (strftime('%Y-%m-%d', ifnull(ts.${TK_Ticket_StepDao.FORECAST_START}, t.${TK_TicketDao.FORECAST_DATE}),'$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"','+7 days'))"
             else -> ""
         }
         productCode = null
@@ -178,7 +178,7 @@ class SqlAct083_002(
                           t.${TK_TicketDao.CUSTOMER_CODE} = $customerCode
                           and t.${TK_Ticket_StepDao.TICKET_PREFIX} > 0 
                           $statusFilter                          
-                          and ('$calendarDate' is null or strftime('%Y-%m-%d', t.${TK_TicketDao.FORECAST_DATE}, '$deviceGMT') = '$calendarDate' )                          
+                          and ('$calendarDate' is null or strftime('%Y-%m-%d',ifnull(ts.${TK_Ticket_StepDao.FORECAST_START}, t.${TK_TicketDao.FORECAST_DATE}), '$deviceGMT') = '$calendarDate' )                          
                           and ($byPassByOpenForm or ($tagOperCode is null or t.${TK_TicketDao.TAG_OPERATIONAL_CODE} = $tagOperCode))
                           and ($siteCode is null or t.${TK_TicketDao.OPEN_SITE_CODE}  = $siteCode)
                           and ($productCode is null or t.${TK_TicketDao.OPEN_PRODUCT_CODE}  = $productCode )
