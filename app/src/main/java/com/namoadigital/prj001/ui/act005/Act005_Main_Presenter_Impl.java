@@ -396,7 +396,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
 
     @Override
     public boolean hasSOProfile() {
-        return false;
+        return  ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
+                || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null);
     }
 
     @Override
@@ -460,6 +461,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         } catch (Exception e) {
             qtySerial = "0";
         }
+        qtySerial =  String.valueOf(Integer.valueOf(qtySerial)  + ToolBox_Inf.isSerialWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context)));
 
         String qtyAssets = ToolBox_Inf.handleAssetsWaitingSync(context, ToolBox_Con.getPreference_Customer_Code(context));
         String qtyTicket = ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context));
@@ -1992,8 +1994,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
-    public void syncFlow(int to_send_qty) {
-        if (to_send_qty > 0) {
+    public void syncFlow(boolean to_send) {
+        if (to_send) {
             mView.setSyncAfterSave(true);
             //
             accessMenuItem(Act005_Main.MENU_ID_SEND_DATA, 0);

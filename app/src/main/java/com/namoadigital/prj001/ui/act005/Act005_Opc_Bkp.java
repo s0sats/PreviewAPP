@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -14,7 +13,6 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.namoa_digital.namoa_library.util.HMAux;
-import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.databinding.Act005OpcContentBinding;
 import com.namoadigital.prj001.util.Constant;

@@ -193,6 +193,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         transList.add("alert_no_form_for_product_msg");
         transList.add("alert_no_form_for_operation_msg");
         transList.add("alert_no_form_for_site_msg");
+        //
+        transList.add("alert_serial_site_out_of_license_tll");
+        transList.add("alert_serial_site_out_of_license_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

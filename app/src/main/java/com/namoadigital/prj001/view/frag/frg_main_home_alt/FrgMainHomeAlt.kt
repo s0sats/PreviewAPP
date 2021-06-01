@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.adapter.Act005MainMenuModuleAdapter
 import com.namoadigital.prj001.dao.*
 import com.namoadigital.prj001.databinding.FrgMainHomeAltBinding
@@ -26,12 +27,9 @@ private const val ARG_PARAM2 = "param2"
  * Use the [FrgMainHomeAlt.newInstance] factory method to
  * create an instance of this fragment.
  */
-class FrgMainHomeAlt : Fragment(),  FrgMainHomeAltContract.View{
+class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     private var mListener: OnFrgMainHomeAltInteract? = null
-    private var mModule_Code: String? = null
     //
     private val mPresenter by lazy {
         FrgMainHomeAltPresenter(
@@ -86,6 +84,11 @@ class FrgMainHomeAlt : Fragment(),  FrgMainHomeAltContract.View{
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
+                ),
+                MD_Site_ZoneDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
                 )
         )
     }
@@ -94,20 +97,22 @@ class FrgMainHomeAlt : Fragment(),  FrgMainHomeAltContract.View{
     private val hmAux_Trans_Frag: HMAux by lazy {
         val transListFrag = ArrayList<String>()
         //
-        transListFrag.add("module_os_downloaded_lbl")
-        transListFrag.add("module_os_downloaded_detail")
-        transListFrag.add("module_os_next_lbl")
-        transListFrag.add("module_os_next_detail")
-        transListFrag.add("module_os_express_lbl")
-        transListFrag.add("module_os_express_detail")
-        transListFrag.add("module_os_by_vin_search_lbl")
-        transListFrag.add("module_os_by_vin_search_detail")
-        transListFrag.add("module_assets_lbl")
-        transListFrag.add("module_assets_detail")
-        transListFrag.add("module_tag_lbl")
-        transListFrag.add("module_tag_detail")
-        transListFrag.add("module_tag_by_serial_search_lbl")
-        transListFrag.add("module_tag_by_serial_search_detail")
+        transListFrag.add("sys_main_menu_os_downloaded_lbl")
+//        transListFrag.add("main_menu_os_downloaded_detail")
+        transListFrag.add("sys_main_menu_os_next_lbl")
+        transListFrag.add("main_menu_os_next_detail")
+        transListFrag.add("sys_main_menu_os_express_lbl")
+        transListFrag.add("main_menu_os_express_detail")
+        transListFrag.add("sys_main_menu_os_by_vin_search_lbl")
+        transListFrag.add("main_menu_os_by_vin_search_detail")
+        transListFrag.add("sys_main_menu_assets_lbl")
+        transListFrag.add("main_menu_assets_detail")
+        transListFrag.add("sys_main_menu_tag_lbl")
+        transListFrag.add("main_menu_item_lbl")
+        transListFrag.add("main_menu_tag_has_pendency_detail")
+        transListFrag.add("main_menu_tag_no_pendency_detail")
+        transListFrag.add("sys_main_menu_tag_by_serial_search_lbl")
+        transListFrag.add("main_menu_tag_by_serial_search_detail")
         //
         val mResource_Code_Frag = ToolBox_Inf.getResourceCode(
                 context,

@@ -52,6 +52,7 @@
     <color name="namoa_color_gray">#FFEDEDEE</color>
     <color name="namoa_color_gray2">#FFE6E6E6</color>
     <color name="namoa_color_gray3">#FFD6D6D6</color>
+    <color name="namoa_color_gray_divider">#14212121</color>
     <color name="namoa_color_purple">#FFEED1F3</color>
     <color name="namoa_color_purple2">#FFE7BFEE</color>
 

@@ -4,36 +4,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/iv_module_item"
         android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:src="@drawable/ic_qrcode_black_24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_module_detail"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/tv_module_title" />
 
     <TextView
         android:id="@+id/tv_module_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="TextView"
+        tools:text="TextView"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:textSize="16sp"
+        android:paddingVertical="8dp"
         app:layout_constraintEnd_toStartOf="@+id/iv_module_status"
         app:layout_constraintStart_toEndOf="@+id/iv_module_item"
-        app:layout_constraintTop_toTopOf="@+id/iv_module_item" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_module_detail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        tools:text="TextView"
         android:textColor="@color/gre_text_placeholder"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_module_item"
+        android:textSize="12sp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/tv_module_title"
         app:layout_constraintStart_toStartOf="@+id/tv_module_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_module_title"
@@ -48,6 +57,15 @@
         app:layout_constraintBottom_toBottomOf="@+id/tv_module_detail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_module_title" />
+
+    <View
+        android:id="@+id/iv_divider"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/namoa_color_gray_divider"
+        app:layout_constraintStart_toStartOf="@+id/tv_module_detail"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -52,7 +52,7 @@ class Act005MainMenuModuleAdapter(
             val context = binding.root.context
             //
             binding.tvModuleTitle.text = item.moduleTitle
-            binding.tvModuleTitle.text = item.moduleDetail
+            binding.tvModuleDetail.text = item.moduleDetail
             binding.ivModuleItem.setImageDrawable(context.getDrawable(item.moduleIcon))
             //
             binding.ivModuleStatus.visibility = View.GONE

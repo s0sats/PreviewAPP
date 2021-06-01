@@ -41,6 +41,7 @@ import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act021.Act021_Main;
+import com.namoadigital.prj001.ui.act042.Act042_Main;
 import com.namoadigital.prj001.ui.act048.Act048_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -78,6 +79,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private TextView tv_prod_desc;
     private SearchableSpinner ss_partner;
     private Button btn_create_so;
+    private Button btn_express_so;
     private String wsProcess = "";
     private String requestingAct = "";
     private String bundle_express_pack_code = "";
@@ -85,6 +87,8 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private String bundle_serial_id = "";
     private ArrayList<HMAux> wsAuxResult = new ArrayList<>();
     private boolean exitProcess = false;
+    public static final String LABEL_TRANS_OS_EXPRESS= "lbl_type_service_order_express";
+    private int expressSoPendency=0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -134,6 +138,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("tv_serial_hint");
         transList.add("tv_barcode_hint");
         transList.add("btn_create_so");
+        transList.add("btn_pendency_so");
         transList.add("express_desc");
         transList.add("express_status");
         transList.add("express_label");
@@ -166,6 +171,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         transList.add("alert_data_success_sent_msg");
         transList.add("alert_data_not_sent_ttl");
         transList.add("alert_data_not_sent_msg");
+        transList.add(LABEL_TRANS_OS_EXPRESS);
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -250,6 +256,10 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         btn_create_so = (Button) findViewById(R.id.act040_btn_create_so);
         btn_create_so.setText(hmAux_Trans.get("btn_create_so"));
         //
+        btn_express_so = (Button) findViewById(R.id.act040_btn_express_so_pendency);
+
+        setExpressSOPendency();
+        //
         tv_status = (TextView) findViewById(R.id.act040_tv_status);
         tv_prod_desc = (TextView) findViewById(R.id.act040_tv_prod_desc);
         //
@@ -266,6 +276,17 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         mPresenter.loadPartners(bundle_partner_code);
         //
         connectionStatusAlter = false;
+    }
+
+    private void setExpressSOPendency() {
+        expressSoPendency = mPresenter.getExpressSoPendency(hmAux_Trans);
+        if(expressSoPendency >0) {
+            String btn_pendency_so_lbl = hmAux_Trans.get("btn_pendency_so") + "(" + expressSoPendency + ")";
+            btn_express_so.setText(btn_pendency_so_lbl);
+            btn_express_so.setVisibility(View.VISIBLE);
+        }else{
+            btn_express_so.setVisibility(View.GONE);
+        }
     }
 
     private void recoverIntentsInfo() {
@@ -548,6 +569,15 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
 
             }
         });
+        //
+
+        btn_express_so.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callAct042(context);
+            }
+        });
+
         //08/10/2018 - Busca de serial
         iv_search_serial.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -632,6 +662,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
         mket_barcode.requestFocus();
         wsAuxResult.clear();
         exitProcess = false;
+        setExpressSOPendency();
     }
 
     @Override
@@ -912,4 +943,18 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     public boolean isConnectionStatusAlter() {
         return connectionStatusAlter;
     }
+
+
+    public void callAct042(Context context) {
+        Intent mIntent = new Intent(context, Act042_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+
+        bundle.putString(Constant.MAIN_REQUESTING_ACT,Constant.ACT040);
+
+        mIntent.putExtras(bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
 }

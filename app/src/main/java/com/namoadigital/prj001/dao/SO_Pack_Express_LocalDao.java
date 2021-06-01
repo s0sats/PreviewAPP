@@ -8,6 +8,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.database.CursorToHMAuxMapper;
 import com.namoadigital.prj001.database.Mapper;
 import com.namoadigital.prj001.model.SO_Pack_Express_Local;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -531,5 +532,19 @@ public class SO_Pack_Express_LocalDao extends BaseDao implements Dao<SO_Pack_Exp
             //
             return contentValues;
         }
+    }
+
+    public boolean isExpressSoUpdateRequired(Context context) {
+        String qtySO_Express;
+        try {
+            qtySO_Express = this.getByStringHM(
+                    new SO_Pack_Express_Local_Sql_010(
+                            ToolBox_Con.getPreference_Customer_Code(context)
+                    ).toSqlQuery()
+            ).get(SO_Pack_Express_Local_Sql_010.BADGE_IN_NEW_QTY);
+        }catch (Exception e ){
+            qtySO_Express = "0";
+        }
+        return qtySO_Express != null && Integer.parseInt(qtySO_Express) > 0;
     }
 }

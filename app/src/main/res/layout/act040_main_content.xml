@@ -167,12 +167,32 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                android:background="@drawable/namoa_cell_2_states"
+                android:background="@drawable/namoa_cell_3_states"
                 android:gravity="center"
-                android:text="Criar S.O."
+                tools:text="Criar S.O."
                 android:textColor="@color/padrao_WHITE" />
 
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/act040_btn_express_so_pendency"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/namoa_cell_2_states"
+                android:gravity="center"
+                tools:text="Pendentes de Envio (0)"
+                android:textColor="@color/padrao_WHITE" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <include layout="@layout/footer_base" />

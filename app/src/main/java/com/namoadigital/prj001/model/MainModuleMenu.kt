@@ -3,7 +3,13 @@ package com.namoadigital.prj001.model
 import androidx.annotation.DrawableRes
 import com.namoadigital.prj001.util.ConstantBaseApp
 
-class MainModuleMenu(val moduleId: Int, val moduleIcon: Int, val moduleTitle: String, val moduleDetail: String, private val updateRequired: Int, private val syncRequired: Int) {
+class MainModuleMenu(val moduleId: Int,
+                     val moduleIcon: Int,
+                     val moduleTitle: String,
+                     val moduleDetail: String,
+                     updateRequired: Int,
+                     syncRequired: Int)
+{
     var status: String? = null
     //
     init {

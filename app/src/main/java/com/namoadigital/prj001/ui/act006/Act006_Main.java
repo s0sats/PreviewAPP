@@ -74,7 +74,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     private String customFormCode;
     private String customFormVersion;
     private String customFormCodeDesc;
-    private boolean blockedByExecutionLimitReach;
+    private boolean blockedByExecutionLimitReach =false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -187,11 +187,11 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             public void onSearchClick(String btn_Action, HMAux optionsInfo) {
                 switch (btn_Action) {
                     case Frg_Serial_Search.BTN_OPTION_01:
-                        if(blockedByExecutionLimitReach) {
-                            showExecutionBlockMsg();
-                        }else{
+//                        if(blockedByExecutionLimitReach) {
+//                            showExecutionBlockMsg();
+//                        }else{
                             processSerialSearch(optionsInfo);
-                        }
+//                        }
                         break;
                     case Frg_Serial_Search.BTN_OPTION_02:
                             processPendencies(optionsInfo);
@@ -207,8 +207,9 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
         mFrgSerialSearch.setBtn_Option_01_Label(hmAux_Trans.get("btn_check_exists"));
-        mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
-        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies"));
+//        mFrgSerialSearch.setBtn_Option_02_BackGround(R.drawable.namoa_cell_2_states);
+//        mFrgSerialSearch.setBtn_Option_02_Label(hmAux_Trans.get("btn_pendencies"));
+        mFrgSerialSearch.setBtn_Option_02_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_03_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
@@ -261,7 +262,7 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
             vNFormSelected.setVisibility(View.VISIBLE);
         }
         //
-        checkSiteAvailablity();
+//        checkSiteAvailablity();
     }
 
     private void checkSiteAvailablity() {
@@ -689,6 +690,6 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     protected void processRefreshMessage(String mType, String mValue, String mActivity) {
         super.processRefreshMessage(mType, mValue, mActivity);
         iniUIFooter();
-        checkSiteAvailablity();
+//        checkSiteAvailablity();
     }
 }

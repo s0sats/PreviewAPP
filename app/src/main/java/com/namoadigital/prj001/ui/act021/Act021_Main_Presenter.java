@@ -31,8 +31,6 @@ public interface Act021_Main_Presenter {
 
     void onBackPressedClicked();
 
-    void checkSOExpressProfile();
-
     String searchProductInfo(String product_code, String product_id);
 
     MD_Product searchProduct(String product_id);

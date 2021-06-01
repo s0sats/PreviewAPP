@@ -234,7 +234,23 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
                 } else {
                     //Se for um criação sem serial, chama metodo que encaminha para lista de tipo de formulários.
                     if (no_serial) {
-                        prepareAct009();
+                        if(ToolBox_Inf.isConcurrentBySiteLicense(context)
+                                && ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context, ToolBox_Con.getPreference_Site_Code(context))) {
+                            ToolBox.alertMSG(
+                                    context,
+                                    hmAux_Trans.get("alert_serial_site_out_of_license_tll"),
+                                    hmAux_Trans.get("alert_serial_site_out_of_license_msg"),
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    },
+                                    1
+                            );
+                        }else {
+                            prepareAct009();
+                        }
                     } else {
                         prepareAct008();
                     }

@@ -10,5 +10,5 @@ public interface Act042_Main_View {
 
     void loadSoExpress(ArrayList<HMAux> so_express_list);
 
-    void callAct012(Context context);
+    void callAct040(Context context);
 }

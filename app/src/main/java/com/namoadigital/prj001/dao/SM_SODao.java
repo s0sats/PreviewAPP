@@ -14,6 +14,8 @@ import com.namoadigital.prj001.model.SM_SO_Product_Event;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Pack_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_001;
+import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
+import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -1121,4 +1123,20 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             return contentValues;
         }
     }
+
+    public boolean isSoUpdateRequired(Context context) {
+        String qtySO;
+        try{
+            qtySO = this.getByStringHM( new Sql_Act021_003(
+                            ToolBox_Con.getPreference_Customer_Code(context)
+                    ).toSqlQuery()
+            ).get(Sql_Act021_003.UPDATE_APPROVAL_REQUIRED_QTY);
+        }catch (Exception e ){
+            qtySO = "0";
+        }
+
+        int count = Integer.valueOf(qtySO) + ToolBox_Inf.isSoWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context));
+        return count > 0;
+    }
+
 }
