@@ -21,17 +21,17 @@ class SqlAct005TagList002 (private val customerCode: Int) : Specification {
 
     select 
           sum(ticket.qty) qty, 
-          max(ticket.update_required) update_required
+          IFNULL(max(ticket.update_required),0) update_required
     from (
             select count(1) qty, 
-            max( max(tk.update_required), max(tk.update_required_product)) update_required
+            max( IFNULL(max(tk.update_required),0), IFNULL(max(tk.update_required_product),0)) update_required
             from ${TK_TicketDao.TABLE} tk 
             where  tk.customer_code = $customerCode                      
                    and tk.ticket_status in ('${ConstantBaseApp.SYS_STATUS_PENDING}' , '${ConstantBaseApp.SYS_STATUS_PROCESS}' , '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')                 
         --UNION TICKET CACHE
         UNION ALL 
             select count(1) qty, 
-                   max(0) update_required 
+                   IFNULL(max(0),0) update_required 
              from ${TkTicketCacheDao.TABLE} tkc
              left join tk_ticket tk
                      on tk.customer_code = tkc.customer_code 
@@ -41,26 +41,28 @@ class SqlAct005TagList002 (private val customerCode: Int) : Specification {
         --UNION FORM AP                              
         UNION ALL 
             select  count(1) qty,
-                    max(geap.upload_required) update_required                  
+                    IFNULL(max(geap.upload_required),0) update_required                  
             from ${GE_Custom_Form_ApDao.TABLE} geap                    
             where geap.${GE_Custom_Form_ApDao.CUSTOMER_CODE} = '$customerCode'
               and geap.${GE_Custom_Form_ApDao.AP_STATUS} not in ('${Constant.SYS_STATUS_DONE}','${Constant.SYS_STATUS_CANCELLED}')
         -- UNION Agendamento
         UNION ALL 
             select  count(1) qty,
-                    max((case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
-                          then 1
-                          else 0
-                    end)) update_required
+                    IFNULL(max(
+                            (case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
+                                then 1
+                                else 0
+                            end)
+                        ),0) update_required
               from ${MD_Schedule_ExecDao.TABLE} mse
              where  mse.${MD_Schedule_ExecDao.CUSTOMER_CODE} = '$customerCode'
                 and mse.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_IN_PROCESSING}','${Constant.SYS_STATUS_WAITING_SYNC}')                   
         UNION ALL
             select count(1) qty, 
-            max((case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
+            IFNULL(max((case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                   then 1
                   else 0
-            end)) update_required
+            end)),0) update_required
             from   ${GE_Custom_Form_LocalDao.TABLE} gcdl   
             where  gcdl.${GE_Custom_Form_LocalDao.CUSTOMER_CODE} = '$customerCode'
               and gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} in ('${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}', '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')

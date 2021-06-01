@@ -417,7 +417,7 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         } catch (Exception e) {
             qty = "0";
         }
-
+        customFormPendentAmount = Integer.parseInt(qty);
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null)) {
 
             try {
