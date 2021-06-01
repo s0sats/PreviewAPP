@@ -28,7 +28,7 @@ class SqlAct083_002(
     private val deviceGMT = ToolBox.getDeviceGMT(false)
     private var periodDateFilter: String = ""
     private var statusFilter = ""
-    private var byPassByOpenForm = " 1 = 1"
+    private var byPassByOpenForm = ""
 
     companion object{
         const val TOTAL_UPDATE_REQUIRED = "TOTAL_UPDATE_REQUIRED"
@@ -49,8 +49,8 @@ class SqlAct083_002(
 
     private fun setHomeFilterConfg() {
         periodDateFilter = when(ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)){
-            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> " and  (strftime('%Y-%m-%d',t.${TK_TicketDao.FORECAST_DATE},'$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))"
-            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> " and  (strftime('%Y-%m-%d',t.${TK_TicketDao.FORECAST_DATE},'$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"','+7 days'))"
+            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> " and  (strftime('%Y-%m-%d', ifnull(ts.${TK_Ticket_StepDao.FORECAST_START}, t.${TK_TicketDao.FORECAST_DATE}),'$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))"
+            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> " and  (strftime('%Y-%m-%d', ifnull(ts.${TK_Ticket_StepDao.FORECAST_START}, t.${TK_TicketDao.FORECAST_DATE}),'$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"','+7 days'))"
             else -> ""
         }
         productCode = null
@@ -59,13 +59,15 @@ class SqlAct083_002(
         contractId = null
         calendarDate = null
         getStatusFilter()
-        byPassByOpenForm = """ EXISTS (  SELECT 1
-                                        FROM ${GE_Custom_Form_LocalDao.TABLE} l
-                                        WHERE l.${GE_Custom_Form_LocalDao.CUSTOMER_CODE} = t.${TK_TicketDao.CUSTOMER_CODE}
-                                and l.${GE_Custom_Form_LocalDao.TICKET_PREFIX} = t.${TK_TicketDao.TICKET_PREFIX}
-                                and l.${GE_Custom_Form_LocalDao.TICKET_CODE} = t.${TK_TicketDao.TICKET_CODE}
-                                and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
-                                )
+        byPassByOpenForm = """ or ( EXISTS (SELECT 1
+                                            FROM ${GE_Custom_Form_LocalDao.TABLE} l
+                                            WHERE   l.${GE_Custom_Form_LocalDao.CUSTOMER_CODE} = t.${TK_TicketDao.CUSTOMER_CODE}
+                                                    and l.${GE_Custom_Form_LocalDao.TICKET_PREFIX} = t.${TK_TicketDao.TICKET_PREFIX}
+                                                    and l.${GE_Custom_Form_LocalDao.TICKET_CODE} = t.${TK_TicketDao.TICKET_CODE}
+                                                    and t.${TK_TicketDao.TAG_OPERATIONAL_CODE} = $tagOperCode
+                                                    and l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
+                                           )
+                                    )        
                                 """
     }
 
@@ -178,15 +180,19 @@ class SqlAct083_002(
                           t.${TK_TicketDao.CUSTOMER_CODE} = $customerCode
                           and t.${TK_Ticket_StepDao.TICKET_PREFIX} > 0 
                           $statusFilter                          
-                          and ('$calendarDate' is null or strftime('%Y-%m-%d', t.${TK_TicketDao.FORECAST_DATE}, '$deviceGMT') = '$calendarDate' )                          
-                          and ($byPassByOpenForm or ($tagOperCode is null or t.${TK_TicketDao.TAG_OPERATIONAL_CODE} = $tagOperCode))
-                          and ($siteCode is null or t.${TK_TicketDao.OPEN_SITE_CODE}  = $siteCode)
-                          and ($productCode is null or t.${TK_TicketDao.OPEN_PRODUCT_CODE}  = $productCode )
-                          and ('$serialId' is null or t.${TK_TicketDao.OPEN_SERIAL_ID}  = '$serialId' )
-                          and ('$clientId' is null or t.${TK_TicketDao.CLIENT_ID}  = '$clientId')
-                          and ('$contractId' is null or t.${TK_TicketDao.CONTRACT_ID}  = '$contractId')
-                          and ('$ticketId' is null or t.${TK_TicketDao.TICKET_ID}  = '$ticketId')                         
-                          $periodDateFilter                                    
+                          and ('$calendarDate' is null or strftime('%Y-%m-%d',ifnull(ts.${TK_Ticket_StepDao.FORECAST_START}, t.${TK_TicketDao.FORECAST_DATE}), '$deviceGMT') = '$calendarDate' )                          
+                          and ($tagOperCode is null or t.${TK_TicketDao.TAG_OPERATIONAL_CODE} = $tagOperCode)
+                          and (
+                                (
+                                    ($siteCode is null or t.${TK_TicketDao.OPEN_SITE_CODE}  = $siteCode)
+                                    and ($productCode is null or t.${TK_TicketDao.OPEN_PRODUCT_CODE}  = $productCode )
+                                    and ('$serialId' is null or t.${TK_TicketDao.OPEN_SERIAL_ID}  = '$serialId' )
+                                    and ('$clientId' is null or t.${TK_TicketDao.CLIENT_ID}  = '$clientId')
+                                    and ('$contractId' is null or t.${TK_TicketDao.CONTRACT_ID}  = '$contractId')
+                                    and ('$ticketId' is null or t.${TK_TicketDao.TICKET_ID}  = '$ticketId')                         
+                                    $periodDateFilter 
+                                ) $byPassByOpenForm
+                              )
               """.replace("'null'","null")
         return s
     }

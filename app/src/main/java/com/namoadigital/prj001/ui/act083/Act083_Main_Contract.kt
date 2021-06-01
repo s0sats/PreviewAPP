@@ -3,7 +3,6 @@ package com.namoadigital.prj001.ui.act083
 import android.os.Bundle
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
-import com.namoadigital.prj001.model.MD_Schedule_Exec
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.model.MyActionsFormButton
 
@@ -29,6 +28,9 @@ interface Act083_Main_Contract {
         fun callAct006(bundle: Bundle)
         fun callAct016(bundle: Bundle)
         fun callAct068(bundle: Bundle)
+        fun getCurrentTab(): Int
+        fun getMketFilter(): String?
+        fun setViewFiltersParam(textFilter: String?, initialTabToLoad: Int)
     }
 
     interface I_Presenter {

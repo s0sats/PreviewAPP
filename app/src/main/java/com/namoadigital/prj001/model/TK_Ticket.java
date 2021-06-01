@@ -1338,7 +1338,7 @@ public class TK_Ticket implements Cloneable, Serializable {
 //                );
 //    }
 
-    public static MyActions toMyActionsObj(Context context, HMAux hmAux){
+    public static MyActions toMyActionsObj(Context context, HMAux hmAux, String lastSelectedActionPk){
         int rightIcon;
         if("0".equals(hmAux.get(SqlAct083_002.TOTAL_UPDATE_REQUIRED)) && "0".equals(hmAux.get(TK_TicketDao.SYNC_REQUIRED))) {
             rightIcon = R.drawable.ic_baseline_cloud_done_24_blue;
@@ -1351,6 +1351,7 @@ public class TK_Ticket implements Cloneable, Serializable {
                 rightIcon = R.drawable.ic_baseline_cloud_download_24_yellow;
             }
         }
+        String processPk = hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE);
         String clientInf = !hmAux.get(TK_TicketDao.CLIENT_ID).isEmpty() ? hmAux.get(TK_TicketDao.CLIENT_ID) +" - "+ hmAux.get(TK_TicketDao.CLIENT_NAME): null;
         String contractInf = !hmAux.get(TK_TicketDao.CONTRACT_ID).isEmpty() ? hmAux.get(TK_TicketDao.CONTRACT_ID) +" - "+ hmAux.get(TK_TicketDao.CONTRACT_CODE): null;
         String plannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(context,hmAux.get(TK_TicketDao.FORECAST_DATE),hmAux.get(TK_TicketDao.FORECAST_DATE));
@@ -1371,8 +1372,9 @@ public class TK_Ticket implements Cloneable, Serializable {
 
         return new MyActions(
             MyActions.MY_ACTION_TYPE_TICKET,
+            processPk,
             hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE),
-            hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE),
+            hmAux.get(TK_TicketDao.TICKET_STATUS),
             ConstantBaseApp.HMAUX_TRANS_LIB.get(hmAux.get(TK_TicketDao.TICKET_STATUS)),
             null,
             rightIcon,
@@ -1396,7 +1398,8 @@ public class TK_Ticket implements Cloneable, Serializable {
             hmAux.get(TK_TicketDao.ORIGIN_TYPE),
             !"0".equals(hmAux.get(MyActions.MY_ACTION_TYPE_FORM)),
             ToolBox_Inf.isItemLate(periodStartDate),
-            ToolBox_Inf.isItemLate(lateDate)
+            ToolBox_Inf.isItemLate(lateDate),
+            processPk.equals(lastSelectedActionPk)
         );
     }
 

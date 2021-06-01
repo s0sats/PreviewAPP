@@ -104,7 +104,8 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
             mAdapter = MyActionsAdapter(
                     myActionsList,
                     this::onMyActionClick,
-                    this::onFormButtonClick
+                    this::onFormButtonClick,
+                    this::onAdapterFilterApplied
             )
             //
             with(binding.act084RvActionsList) {
@@ -130,6 +131,9 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
     }
     private fun onFormButtonClick(myActionsFormButton: MyActionsFormButton) {
      //   mPresenter.processActionFormButtonClick(myActionsFormButton)
+    }
+    private fun onAdapterFilterApplied(qtyItensFiltered: Int){
+        //
     }
 
     private fun applyTextFilter(text: String?) {

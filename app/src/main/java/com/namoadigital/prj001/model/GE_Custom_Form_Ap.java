@@ -2,6 +2,8 @@ package com.namoadigital.prj001.model;
 
 import android.content.Context;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.Expose;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -398,7 +400,7 @@ public class GE_Custom_Form_Ap {
             ap_code;
     }
 
-    public MyActions toMyActionsObj(Context context){
+    public MyActions toMyActionsObj(Context context, @Nullable String lastFormApSelected){
         int rightIcon;
         if(upload_required == 0 && sync_required == 0) {
             rightIcon = R.drawable.ic_baseline_cloud_done_24_blue;
@@ -412,11 +414,13 @@ public class GE_Custom_Form_Ap {
             }
         }
         String dateToUse = ap_when != null ? ap_when : create_date;
-
+        String processPk = getFormatedPk();
+        boolean isSelectedItem = processPk.equals(lastFormApSelected);
         return new MyActions(
             MyActions.MY_ACTION_TYPE_FORM_AP,
-            getFormatedPk(),
-            getFormatedPk(),
+            processPk,
+            processPk,
+            ap_status,
             ConstantBaseApp.HMAUX_TRANS_LIB.get(ap_status),
             null,
             rightIcon,
@@ -441,7 +445,8 @@ public class GE_Custom_Form_Ap {
             false,
             false,
             //Se a data usada for o when, entao valida atraso, se não, não é atrasado
-            ap_when != null ? ToolBox_Inf.isItemLate(dateToUse) : false
+            ap_when != null ? ToolBox_Inf.isItemLate(dateToUse) : false,
+            isSelectedItem
         );
     }
 

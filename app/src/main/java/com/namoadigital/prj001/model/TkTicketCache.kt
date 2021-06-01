@@ -43,13 +43,15 @@ class TkTicketCache(
         var step_count: Int,
         var step_order_seq: Int?
 ){
-    fun toMyActionsObj(context: Context): MyActions{
+    fun toMyActionsObj(context: Context, lastSelectedActionPk: String?): MyActions{
         val statusTrad = ConstantBaseApp.HMAUX_TRANS_LIB?.get(ticket_status) ?: ticket_status
         //
+        val processPk = "$ticket_prefix.$ticket_code.$scn"
         return MyActions(
                 MyActions.MY_ACTION_TYPE_TICKET_CACHE,
-                "$ticket_prefix.$ticket_code.$scn",
+                processPk,
                 ticket_id,
+                ticket_status,
                 statusTrad,
                 null,
                 R.drawable.ic_baseline_cloud_download_24_gray,
@@ -73,7 +75,8 @@ class TkTicketCache(
                 origin_type,
                 false,
                 ToolBox_Inf.isItemLate(forecast_start),
-                ToolBox_Inf.isItemLate(forecast_end)
+                ToolBox_Inf.isItemLate(forecast_end),
+                processPk == lastSelectedActionPk
         )
     }
 }

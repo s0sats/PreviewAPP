@@ -36,6 +36,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
+import java.lang.Exception
 
 class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     companion object{
@@ -60,6 +61,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     private var hmAuxTicketDownload: HMAux = HMAux()
     private val CHANGE_ZONE_RESULT_CODE = 10
     private var serialDialog: ScheduleRequestSerialDialog2? = null
+    private var firstScroll = true;
 
     private val mPresenter by lazy {
         Act083_Main_Presenter(
@@ -167,7 +169,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             mAdapter = MyActionsAdapter(
                     myActionsList,
                     this::onMyActionClick,
-                    this::onFormButtonClick
+                    this::onFormButtonClick,
+                    this::onAdapterFilterApplied
             )
             //
             with(binding.act083MainContent.act083RvActionsList) {
@@ -178,6 +181,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             //
             if(!binding.act083MainContent.act083MketFilter.text.isNullOrEmpty()){
                 applyTextFilter(binding.act083MainContent.act083MketFilter.text.toString())
+            }else{
+                scrollToLastSelectedItem()
             }
         }else{
             with(binding.act083MainContent){
@@ -191,10 +196,45 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         mPresenter.processActionFormButtonClick(myActionsFormButton)
     }
 
-    fun onMyActionClick(myAction: MyActions): Unit{
+    private fun onMyActionClick(myAction: MyActions){
         mPresenter.processActionClick(myAction)
     }
 
+    /**
+     * Fun acionada pelo adapter como callback após finalizar a filtragem
+     */
+    private fun onAdapterFilterApplied(qtyItensFiltered: Int){
+        if(qtyItensFiltered > 0){
+            scrollToLastSelectedItem()
+        }
+    }
+
+    /**
+     * Fun que faz o scroll para o item navegado anterormente, caso exista
+     * Só executa o scroll uma vez ao carregara tela.
+     * Tenta o scroll com offset, como envolve um cast, no catch faz o scroll padrao
+     */
+    private fun scrollToLastSelectedItem() {
+        if (firstScroll) {
+            firstScroll = false
+            val actionPkPosition = mAdapter.getActionPkPosition(
+                    mPresenter.lastSelectedActionType,
+                    mPresenter.lastSelectedActionPk
+            )
+            if (actionPkPosition >= 0) {
+                //Tenta fazer scroll com offset, se crashar, tenta scroll sem offset
+                try {
+                    val linearLayoutManager = binding.act083MainContent.act083RvActionsList.layoutManager as LinearLayoutManager
+                    val offset = ToolBox.dbToPixel(context,50)
+                    linearLayoutManager.scrollToPositionWithOffset(actionPkPosition,offset)
+                }catch (e:Exception){
+                    binding.act083MainContent.act083RvActionsList.scrollToPosition(
+                            actionPkPosition
+                    )
+                }
+            }
+        }
+    }
 
     override fun showPD(ttl: String?, msg: String?) {
         enableProgressDialog(
@@ -225,6 +265,42 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     override fun setProcess(wsProcess: String) {
         this.wsProcess = wsProcess
+    }
+
+    /**
+     * Fun que retorna a qual aba esta sendo usada no momento que o item e selecionado
+     */
+    override fun getCurrentTab(): Int {
+        with(binding.act083MainContent) {
+            return when (act083Tabs.checkedRadioButtonId){
+                act083TabMyActions.id -> 1
+                else -> 0
+            }
+        }
+    }
+
+    /**
+     * Fun que retorna o filtro digitado no mket
+     * Null se vazio
+     */
+    override fun getMketFilter(): String? {
+        val textFilter = binding.act083MainContent.act083MketFilter.text.toString()
+        //
+        return if(textFilter.isBlank() || textFilter.isEmpty()){
+            null
+        }else{
+            textFilter
+        }
+    }
+
+    /**
+     * Fun que seta os params de filtro texto e aba recuperados do bundle
+     */
+    override fun setViewFiltersParam(textFilter: String?, initialTabToLoad: Int) {
+        binding.act083MainContent.act083MketFilter.setText(textFilter)
+        if(initialTabToLoad == 0){
+            binding.act083MainContent.act083TabOtherActions.performClick()
+        }
     }
 
     override fun processCloseACT(mLink: String?, mRequired: String?) {

@@ -528,7 +528,7 @@ public class MD_Schedule_Exec {
         this.has_Nc = has_Nc;
     }
 
-    public MyActions toMyActionsObj(Context context){
+    public MyActions toMyActionsObj(Context context, @Nullable String lastScheduleSelected){
         String customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
         String statusToUse = ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(status) ? ConstantBaseApp.SYS_STATUS_PROCESS : status;
         int rightIcon =
@@ -541,18 +541,20 @@ public class MD_Schedule_Exec {
             : null;
         String doneDate = close_date;
         if(close_date != null){
-            close_date = ToolBox_Inf.millisecondsToString(
+            doneDate = ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(close_date),
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
         }
-
-
+        String processPk = ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec);
+        boolean isLastSelectedItem = processPk.equals(lastScheduleSelected);
+        //
         try {
             MyActions myActions = new MyActions(
                 MyActions.MY_ACTION_TYPE_SCHEDULE,
-                ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
-                ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
+                processPk,
+                processPk,
+                statusToUse,
                 ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
                 leftIcon,
                 rightIcon,
@@ -577,7 +579,8 @@ public class MD_Schedule_Exec {
                 null,
                 ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
                 ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
-                ToolBox_Inf.isItemLate(date_end + " " + customerGMT)
+                ToolBox_Inf.isItemLate(date_end + " " + customerGMT),
+                isLastSelectedItem
             );
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);
@@ -595,9 +598,10 @@ public class MD_Schedule_Exec {
             //
             MyActions myActions = new MyActions(
                 MyActions.MY_ACTION_TYPE_SCHEDULE,
-                ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
-                ToolBox_Inf.formatSchedulePk(schedule_prefix, schedule_code, schedule_exec),
+                processPk,
+                processPk,
                 statusToUse,
+                ConstantBaseApp.HMAUX_TRANS_LIB.get(statusToUse),
                 null,
                 rightIcon,
                 //LUCHE - getStepStartEndDateFormated ao inves do metodo scheduled, pois la espera da formtada igual exibição
@@ -621,7 +625,8 @@ public class MD_Schedule_Exec {
                 null,
                 ConstantBaseApp.SYS_STATUS_IN_PROCESSING.contentEquals(status),
                 ToolBox_Inf.isItemLate(date_start + " " + customerGMT),
-                ToolBox_Inf.isItemLate(date_end + " " + customerGMT)
+                ToolBox_Inf.isItemLate(date_end + " " + customerGMT),
+                isLastSelectedItem
             );
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);

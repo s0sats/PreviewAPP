@@ -21,6 +21,18 @@ class MyActionFilterParam(
         const val  MY_ACTION_FILTER_PARAM = "MY_ACTION_FILTER_PARAM"
     }
 
+    var paramTextFilter: String? = null
+    var paramItemSelectedTab: Int? = null
+    var paramItemSelectedType: String? = null
+    var paramItemSelectedPk: String? = null
+
+    fun setSelectedItemParams(textFilter: String? = null, selectedTab: Int, selectedType: String, selectedPk: String){
+        paramTextFilter = textFilter
+        paramItemSelectedTab = selectedTab
+        paramItemSelectedType = selectedType
+        paramItemSelectedPk = selectedPk
+    }
+
     fun getFilledFilters(context: Context): List<String>{
         val filters = mutableListOf<String>()
 //        tagFilterDesc?.let {

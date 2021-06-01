@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act083
 
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -66,11 +65,27 @@ class Act083_Main_Presenter(private val context: Context,
     var actionSelected : MyActions? = null
     private var serialDialog : ScheduleRequestSerialDialog2? = null
     private var launch : Job? = null
+    private var initialTabToLoad : Int = 1
+    private var initialTextFilter : String? = null
+    private var _lastSelectedActionPk : String? = null
+    private var _lastSelectedActionType : String? = null
+    val lastSelectedActionPk :String?
+        get() = _lastSelectedActionPk
+    val lastSelectedActionType :String?
+        get() = _lastSelectedActionType
 
     init {
         recoverIntentsInfo()
         loadFilters()
-        generateMyActionList(1)
+        setViewFiltersParam()
+        generateMyActionList(initialTabToLoad)
+    }
+
+    private fun setViewFiltersParam() {
+        mView.setViewFiltersParam(
+                initialTextFilter,
+                initialTabToLoad
+        )
     }
 
     override fun loadTranslation(): HMAux? {
@@ -692,6 +707,8 @@ class Act083_Main_Presenter(private val context: Context,
 
     private fun getTicketActionFlowBundle(item: MyActions, scheduleExec: MD_Schedule_Exec, ticket_prefix: Int, ticket_code: Int, ticket_seq: Int): Bundle {
         val bundle = Bundle()
+        //Seta dados da action selecionado no filterParam
+        setSeletedActionInfosIntoFilterParam(item)
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
@@ -754,14 +771,31 @@ class Act083_Main_Presenter(private val context: Context,
         return false
     }
 
+    fun setSeletedActionInfosIntoFilterParam(myAction: MyActions){
+        if(::myActionFilterParam.isInitialized){
+            myActionFilterParam.setSelectedItemParams(
+                    mView.getMketFilter(),
+                    mView.getCurrentTab(),
+                    myAction.actionType,
+                    myAction.processPk
+            )
+        }
+    }
+
     override fun getLocalTicket(myAction: MyActions): Bundle {
         val splippedPk = myAction.getSplippedPk()
+        //Seta dados da action selecionado no filterParam
+        setSeletedActionInfosIntoFilterParam(myAction)
+        //
         return ticketBundle(splippedPk[0].toInt(), splippedPk[1].toInt())
     }
 
     override fun getFormApBundle(myAction: MyActions): Bundle {
         val splippedPk = myAction.getSplippedPk()
         val bundle = Bundle()
+        //Seta dados da action selecionado no filterParam
+        setSeletedActionInfosIntoFilterParam(myAction)
+        //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putString(GE_Custom_Form_ApDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context).toString())
@@ -776,6 +810,9 @@ class Act083_Main_Presenter(private val context: Context,
     override fun getFormBundle(myAction: MyActions): Bundle {
         val splippedPk = myAction.getSplippedPk()
         val bundle = Bundle()
+        //Seta dados da action selecionado no filterParam
+        setSeletedActionInfosIntoFilterParam(myAction)
+        //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putString(MD_ProductDao.PRODUCT_CODE, myAction.productCode.toString())
@@ -820,6 +857,9 @@ class Act083_Main_Presenter(private val context: Context,
 
     private fun getTicketFlowBundle(item: MyActions, ticketPrefix: Int, ticketCode: Int): Bundle {
         val bundle = Bundle()
+        //Seta dados da action selecionado no filterParam
+        setSeletedActionInfosIntoFilterParam(item)
+        //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix)
@@ -1357,6 +1397,10 @@ class Act083_Main_Presenter(private val context: Context,
         originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005)
         siteCodeBack = ToolBox_Con.getPreference_Site_Code(context)
         zoneCodeBack = ToolBox_Con.getPreference_Zone_Code(context)
+        initialTextFilter = myActionFilterParam.paramTextFilter
+        initialTabToLoad = myActionFilterParam.paramItemSelectedTab ?: 1
+        _lastSelectedActionPk = myActionFilterParam.paramItemSelectedPk
+        _lastSelectedActionType = myActionFilterParam.paramItemSelectedType
     }
 
     private fun loadFilters() {
@@ -1386,20 +1430,23 @@ class Act083_Main_Presenter(private val context: Context,
         launch = CoroutineScope(Dispatchers.IO).launch {
             _myActionsList.addAll(
                     getLocalTickets(tabUserFocusFilter).map {
-                        TK_Ticket.toMyActionsObj(context, it)
+                        val lastTicketSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET)
+                        TK_Ticket.toMyActionsObj(context, it,lastTicketSelected)
                     }
             )
             //
             _myActionsList.addAll(
                     getCachedTickets(tabUserFocusFilter).map {
-                        it.toMyActionsObj(context)
+                        val lastTicketCacheSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET_CACHE)
+                        it.toMyActionsObj(context, lastTicketCacheSelected)
                     }
             )
             //
             if (!ConstantBaseApp.ACT068.equals(originFlow, true)) {
                 _myActionsList.addAll(
                         getSchedules(tabUserFocusFilter).map {
-                            it.toMyActionsObj(context)
+                            val lastScheduleSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_SCHEDULE)
+                            it.toMyActionsObj(context,lastScheduleSelected)
                         }
                 )
             }
@@ -1407,7 +1454,8 @@ class Act083_Main_Presenter(private val context: Context,
             if (!ConstantBaseApp.ACT068.equals(originFlow, true)) {
                 _myActionsList.addAll(
                         getFormAp(tabUserFocusFilter).map {
-                            it.toMyActionsObj(context)
+                            val lastFormApSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM_AP)
+                            it.toMyActionsObj(context,lastFormApSelected)
                         }
                 )
             }
@@ -1415,7 +1463,8 @@ class Act083_Main_Presenter(private val context: Context,
             if (!ConstantBaseApp.ACT068.equals(originFlow, true)) {
                 myActionsList.addAll(
                         getLocalForms(tabUserFocusFilter).map {
-                            GE_Custom_Form_Local.toMyActionsObj(context, it)
+                            val lastFormSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM)
+                            GE_Custom_Form_Local.toMyActionsObj(context, it, lastFormSelected)
                         }
                 )
             }
@@ -1440,6 +1489,18 @@ class Act083_Main_Presenter(private val context: Context,
             }
         }
     }
+
+    /**
+     * Fun que retrona pk do item navegado caso seja do mesmo tipo da action
+     * passada. Caso contario null.
+     * Usado para passar a pk somente para a lista de acton do memso tipo da navegada
+     */
+    private fun getLastSelectedPk(myActionType: String) =
+            if (_lastSelectedActionType == myActionType) {
+                _lastSelectedActionPk
+            } else {
+                null
+            }
 
     private fun createMyActionFormCreation(): MyActionsFormButton {
             return MyActionsFormButton(
