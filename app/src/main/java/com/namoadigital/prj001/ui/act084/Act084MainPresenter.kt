@@ -82,11 +82,17 @@ class Act084MainPresenter(
         }
         //
         launch = CoroutineScope(Dispatchers.IO).launch {
-            _myActionsList.addAll(
-                    getLocalTickets(tabDone).map {
-                        TK_Ticket.toMyActionsObj(context, it,null)
-                    }
-            )
+            /*
+            * Como somente agendamento de form e form possuem nc, somente busca ticket e form ap se
+            * filtro ncFilterOn desativado
+            * */
+            if(!ncFilterOn) {
+                _myActionsList.addAll(
+                        getLocalTickets(tabDone).map {
+                            TK_Ticket.toMyActionsObj(context, it, null)
+                        }
+                )
+            }
             //
             _myActionsList.addAll(
                     getSchedules(tabDone, ncFilterOn).map {
@@ -94,11 +100,13 @@ class Act084MainPresenter(
                     }
             )
             //
-            _myActionsList.addAll(
-                    getFormAp(tabDone).map {
-                        it.toMyActionsObj(context,null)
-                    }
-            )
+            if(!ncFilterOn) {
+                _myActionsList.addAll(
+                        getFormAp(tabDone).map {
+                            it.toMyActionsObj(context, null)
+                        }
+                )
+            }
 
             myActionsList.addAll(
                     getLocalForms(tabDone,ncFilterOn).map {
