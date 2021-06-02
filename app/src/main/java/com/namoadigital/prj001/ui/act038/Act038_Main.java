@@ -48,6 +48,7 @@ import com.namoadigital.prj001.ui.act035.Act035_Main;
 import com.namoadigital.prj001.ui.act037.Act037_Main;
 import com.namoadigital.prj001.ui.act039.Act039_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
+import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -1253,6 +1254,9 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             case ConstantBaseApp.ACT083:
                 callAct083();
                 break;
+            case ConstantBaseApp.ACT084:
+                callAct084();
+                break;
             default:
                 callAct037(context);
                 break;
@@ -1268,6 +1272,22 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         mBundle.putSerializable(
                 MyActionFilterParam.MY_ACTION_FILTER_PARAM,
                 bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+        );
+        intent.putExtras(mBundle);
+        //
+        startActivity(intent);
+        finish();
+    }
+
+    private void callAct084() {
+        Intent intent = new Intent(context, Act084Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle mBundle = new Bundle();
+        mBundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
+        mBundle.putSerializable(
+            MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+            bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
         );
         intent.putExtras(mBundle);
         //

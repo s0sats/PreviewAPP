@@ -50,4 +50,6 @@ public interface Act011_Main_View {
     boolean isOffHandForm();
 
     void callAct083();
+
+    void callAct084();
 }

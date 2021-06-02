@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -404,9 +405,12 @@ public class Act034_Room extends BaseFragment {
      * Metodo enxuto responsável por atualizar as mensagens.
      */
     public void updateRoomListAndOtherMsgInfo() {
-        loadRoomList();
-        //
-        updateOtherMsgInfo();
+        //LUCHE - 02/06/2021 - HotFix para evitar crash ao baixar e fazer join na sala do form ap
+        if(mMain != null) {
+            loadRoomList();
+            //
+            updateOtherMsgInfo();
+        }
         //
         ToolBox_Inf.cancelChatNotification(context);
         //

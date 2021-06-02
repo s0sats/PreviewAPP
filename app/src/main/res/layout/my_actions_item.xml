@@ -229,7 +229,8 @@
             app:layout_constraintStart_toStartOf="@id/my_actions_item_tv_os_code"
             app:layout_constraintTop_toBottomOf="@id/my_actions_item_tv_os_code"
             android:visibility="gone"
-
+            android:textColor="@color/namoa_status_done"
+            android:textStyle="bold"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

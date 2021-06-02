@@ -25,12 +25,14 @@ class MyActionFilterParam(
     var paramItemSelectedTab: Int? = null
     var paramItemSelectedType: String? = null
     var paramItemSelectedPk: String? = null
+    var paramNcFilter: Boolean? = null
 
-    fun setSelectedItemParams(textFilter: String? = null, selectedTab: Int, selectedType: String, selectedPk: String){
+    fun setSelectedItemParams(textFilter: String? = null, selectedTab: Int, selectedType: String, selectedPk: String,ncFilterOn: Boolean? = null){
         paramTextFilter = textFilter
         paramItemSelectedTab = selectedTab
         paramItemSelectedType = selectedType
         paramItemSelectedPk = selectedPk
+        paramNcFilter = ncFilterOn
     }
 
     fun getFilledFilters(context: Context): List<String>{

@@ -28,6 +28,9 @@ public class Chat_Message_Obj_Form_Ap {
     private String ap_product_id;
     private String ap_product_desc;
     private String ap_serial_id;
+    private Integer tag_operational_code;
+    private String tag_operational_id;
+    private String tag_operational_desc;
 
     public String getPk() {
         return pk;
@@ -189,6 +192,30 @@ public class Chat_Message_Obj_Form_Ap {
         this.ap_serial_id = ap_serial_id;
     }
 
+    public Integer getTag_operational_code() {
+        return tag_operational_code;
+    }
+
+    public void setTag_operational_code(Integer tag_operational_code) {
+        this.tag_operational_code = tag_operational_code;
+    }
+
+    public String getTag_operational_id() {
+        return tag_operational_id;
+    }
+
+    public void setTag_operational_id(String tag_operational_id) {
+        this.tag_operational_id = tag_operational_id;
+    }
+
+    public String getTag_operational_desc() {
+        return tag_operational_desc;
+    }
+
+    public void setTag_operational_desc(String tag_operational_desc) {
+        this.tag_operational_desc = tag_operational_desc;
+    }
+
     public GE_Custom_Form_Ap toGeCustomFormAp(){
         GE_Custom_Form_Ap formAp = new GE_Custom_Form_Ap();
         try {
@@ -212,12 +239,14 @@ public class Chat_Message_Obj_Form_Ap {
             formAp.setAp_who_nick(this.ap_who_name);
             formAp.setAp_when(this.ap_when);
             formAp.setSerial_id(this.ap_serial_id);
+            formAp.setTag_operational_code(this.tag_operational_code);
+            formAp.setTag_operational_id(this.tag_operational_id);
+            formAp.setTag_operational_desc(this.tag_operational_desc);
         }catch (Exception e){
             formAp = null;
             ToolBox_Inf.registerException(getClass().getName(),e);
         }
         //
         return formAp;
-
     }
 }

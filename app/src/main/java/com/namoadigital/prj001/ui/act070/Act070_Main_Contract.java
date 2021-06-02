@@ -74,6 +74,8 @@ public interface Act070_Main_Contract {
         boolean isInWgEditMode();
 
         void callAct083();
+
+        void callAct084();
     }
 
     interface I_Presenter{

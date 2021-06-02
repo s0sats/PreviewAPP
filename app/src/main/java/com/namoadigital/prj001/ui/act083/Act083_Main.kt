@@ -60,8 +60,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     private var wsProcess =""
     private var hmAuxTicketDownload: HMAux = HMAux()
     private val CHANGE_ZONE_RESULT_CODE = 10
-    private var serialDialog: ScheduleRequestSerialDialog2? = null
-    private var firstScroll = true;
+    private var firstScroll = true
 
     private val mPresenter by lazy {
         Act083_Main_Presenter(
