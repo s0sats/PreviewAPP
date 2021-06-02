@@ -49,7 +49,7 @@ data class MyActions(
 
     fun getAllFieldForFilter() : String{
         return  "$processId|" +
-                "$processStatus|" +
+                "$processStatusTrans|" +
                 "$plannedDate|" +
                 "$tagOperationDesc|" +
                 "$productDesc|" +

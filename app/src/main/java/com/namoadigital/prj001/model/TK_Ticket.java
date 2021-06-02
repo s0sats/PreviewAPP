@@ -1372,14 +1372,20 @@ public class TK_Ticket implements Cloneable, Serializable {
         }
 
         String doneDate = null;
+        /*
+        * Quando o ticket for finalizado, as datas planejadas e de ordenação devem ser as mesmas que
+        * a data de finalização.
+        */
         if( hmAux.hasConsistentValue(TK_TicketDao.CLOSE_DATE)
             && !hmAux.get(TK_TicketDao.CLOSE_DATE).isEmpty()
         ){
-            plannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(context,hmAux.get(TK_TicketDao.FORECAST_DATE),hmAux.get(TK_TicketDao.FORECAST_DATE));
             doneDate = ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(hmAux.get(TK_TicketDao.CLOSE_DATE)),
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
             );
+            //
+            plannedDate = doneDate;
+            orderByDate = hmAux.get(TK_TicketDao.CLOSE_DATE);
         }
 
         return new MyActions(
@@ -1414,6 +1420,4 @@ public class TK_Ticket implements Cloneable, Serializable {
             processPk.equals(lastSelectedActionPk)
         );
     }
-
-
 }

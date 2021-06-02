@@ -71,13 +71,12 @@ import com.namoadigital.prj001.ui.act076.Act076_Main;
 import com.namoadigital.prj001.ui.act081.Act081_Main;
 import com.namoadigital.prj001.ui.act082.Act082_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
+import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1275,10 +1274,24 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         //
         startActivity(intent);
         finish();
-
     }
 
-
+    @Override
+    public void callAct084() {
+        Intent intent = new Intent(context, Act084Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle bundle = new Bundle();
+        bundle.putString(
+            ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+            requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+        );
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
+        intent.putExtras(bundle);
+        //
+        startActivity(intent);
+        finish();
+    }
 
     private void iniUIFooter() {
         iniFooter();

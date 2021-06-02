@@ -21,11 +21,13 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.lang.Exception
 
 class Act084Main : Base_Activity(), Act084MainContract.I_View {
     private lateinit var binding: Act084MainContentBinding
     private lateinit var mAdapter: MyActionsAdapter
     private lateinit var bundle: Bundle
+    private var firstScroll = true
     private val mPresenter by lazy {
         Act084MainPresenter(
                 context,
@@ -120,6 +122,8 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
             //
             if(!binding.act084MketFilter.text.isNullOrEmpty()){
                 applyTextFilter(binding.act084MketFilter.text.toString())
+            }else{
+                scrollToLastSelectedItem()
             }
         }else{
             with(binding){
@@ -136,8 +140,41 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
     private fun onFormButtonClick(myActionsFormButton: MyActionsFormButton) {
      //   mPresenter.processActionFormButtonClick(myActionsFormButton)
     }
+
+    /**
+     * Fun acionada pelo adapter como callback após finalizar a filtragem
+     */
     private fun onAdapterFilterApplied(qtyItensFiltered: Int){
-        //
+        if(qtyItensFiltered > 0){
+            scrollToLastSelectedItem()
+        }
+    }
+
+    /**
+     * Fun que faz o scroll para o item navegado anterormente, caso exista
+     * Só executa o scroll uma vez ao carregara tela.
+     * Tenta o scroll com offset, como envolve um cast, no catch faz o scroll padrao
+     */
+    private fun scrollToLastSelectedItem() {
+        if (firstScroll) {
+            firstScroll = false
+            val actionPkPosition = mAdapter.getActionPkPosition(
+                    mPresenter.lastSelectedActionType,
+                    mPresenter.lastSelectedActionPk
+            )
+            if (actionPkPosition >= 0) {
+                //Tenta fazer scroll com offset, se crashar, tenta scroll sem offset
+                try {
+                    val linearLayoutManager = binding.act084RvActionsList.layoutManager as LinearLayoutManager
+                    val offset = ToolBox.dbToPixel(context,50)
+                    linearLayoutManager.scrollToPositionWithOffset(actionPkPosition,offset)
+                }catch (e: Exception){
+                    binding.act084RvActionsList.scrollToPosition(
+                            actionPkPosition
+                    )
+                }
+            }
+        }
     }
 
     private fun applyTextFilter(text: String?) {
@@ -226,6 +263,26 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
             else -> 0
         }
     }
+
+    override fun getNcFilterStatus() : Boolean{
+        return binding.act084ChkNcFilter.isChecked
+    }
+
+    /**
+     * Fun que seta os params de filtro texto e aba recuperados do bundle
+     */
+
+    override fun setViewFiltersParam(mketFilter: String?, tabToLoad: Int, ncFilter: Boolean) {
+        binding.act084MketFilter.setText(mketFilter)
+        if(tabToLoad == 0){
+            binding.act084TabOtherActions.performClick()
+        }
+        //
+        if(ncFilter){
+            binding.act084ChkNcFilter.isChecked = ncFilter
+        }
+    }
+
 
     override fun showMsg(ttl: String?, msg: String?) {
         ToolBox.alertMSG(
