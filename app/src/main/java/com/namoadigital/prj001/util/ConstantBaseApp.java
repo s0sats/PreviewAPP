@@ -622,6 +622,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FCM_MODULE_TICKET = "TK_";
     public static final String FCM_MODULE_SCHEDULE = "SCHEDULE";
     public static final String FCM_MODULE_CHECKLIST = "CHECKLIST";
+    public static final String FCM_MODULE_FORM_AP = "FORM_AP";
     public static final String FCM_MODULE_SYNC = "SYNC";
     public static final String FCM_ACTION_IO_INBOUND_UPDATE = "<IO_INBOUND_UPDATE>";
     public static final String FCM_ACTION_IO_OUTBOUND_UPDATE = "<IO_OUTBOUND_UPDATE>";
