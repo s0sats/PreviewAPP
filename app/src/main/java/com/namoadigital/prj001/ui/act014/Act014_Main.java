@@ -28,6 +28,7 @@ import com.namoadigital.prj001.ui.act055.Act055_Main;
 import com.namoadigital.prj001.ui.act057.Act057_Main;
 import com.namoadigital.prj001.ui.act066.Act066_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
+import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -47,6 +48,7 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
     public static final String LABEL_TRANS_IO_MOVE = "lbl_type_io_move";
     public static final String LABEL_TRANS_IO_OUTBOUND = "lbl_type_io_outbound";
     public static final String LABEL_TRANS_TK_TICKET = "lbl_type_tk_ticket";
+    public static final String LABEL_TRANS_MY_ACTION = "lbl_type_my_action";
     private ListView lv_sent;
     private Act014_Main_Presenter mPresenter;
     private Namoa_Custom_Cell_2_Adapter mAdapter;
@@ -89,6 +91,7 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
         translateList.add(LABEL_TRANS_IO_MOVE);
         translateList.add(LABEL_TRANS_IO_OUTBOUND);
         translateList.add(LABEL_TRANS_TK_TICKET);
+        translateList.add(LABEL_TRANS_MY_ACTION);
         translateList.add("alert_no_sent_data_title");
         translateList.add("alert_no_sent_data_msg");
 
@@ -311,7 +314,15 @@ public class Act014_Main extends Base_Activity implements Act014_Main_View {
         startActivity(mIntent);
         finish();
     }
-
+    //
+    @Override
+    public void callAct084(Context context) {
+        Intent mIntent = new Intent(this.context, Act084Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+    //
     @Override
     public void onBackPressed() {
         //super.onBackPressed();

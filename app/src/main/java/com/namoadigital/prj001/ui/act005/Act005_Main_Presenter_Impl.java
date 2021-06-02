@@ -479,18 +479,22 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public boolean hasTicketSyncRequired() {
         //
-        List<TK_Ticket> tickets = tk_ticketDao.query(
-                new Sql_Act005_011(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ).toSqlQuery()
-        );
-        //
-        int qty =0;
-        if (tickets != null) {
-            qty = tickets.size();
+        if(hasSOProfile()){
+            return false;
+        }else {
+            List<TK_Ticket> tickets = tk_ticketDao.query(
+                    new Sql_Act005_011(
+                            ToolBox_Con.getPreference_Customer_Code(context)
+                    ).toSqlQuery()
+            );
+            //
+            int qty = 0;
+            if (tickets != null) {
+                qty = tickets.size();
+            }
+            //
+            return qty > 0;
         }
-        //
-        return qty > 0;
     }
 
     @Deprecated

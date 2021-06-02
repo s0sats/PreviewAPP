@@ -22,6 +22,7 @@ import com.namoadigital.prj001.sql.Sql_Act014_004;
 import com.namoadigital.prj001.sql.Sql_Act014_005;
 import com.namoadigital.prj001.sql.Sql_Act014_006;
 import com.namoadigital.prj001.sql.Sql_Act014_007;
+import com.namoadigital.prj001.sql.Sql_Act014_008;
 import com.namoadigital.prj001.sql.Sql_Act058_007;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -57,33 +58,40 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
 
     @Override
     public void getSentData() {
-        ArrayList<HMAux> senListF =
-                (ArrayList<HMAux>) customFormLocalDao.query_HM(
-                        new Sql_Act014_001(
-                                ToolBox_Con.getPreference_Customer_Code(context),
-                                hmAux_Trans
-                        ).toSqlQuery()
-                );
+
         ArrayList<HMAux> senList = new ArrayList<>();
 
-        senList.addAll(senListF);
+        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, Constant.PROFILE_MENU_IO_SHOW_ACTIONS)
+                || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_SHOW_ACTIONS)) {
+            ArrayList<HMAux> senListF =
+                    (ArrayList<HMAux>) customFormLocalDao.query_HM(
+                            new Sql_Act014_008(
+                                    ToolBox_Con.getPreference_Customer_Code(context),
+                                    hmAux_Trans
+                            ).toSqlQuery()
+                    );
+
+            senList.addAll(senListF);
+        }
+
+
         //
         //FINALIZADOS FORM AP
         /**
          *   BARRIONUEVO 07-04-2020
          *   Verifica perfil para form-ap
          */
-        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_AP, null)) {
-            GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
-            List<HMAux> NFormAPHistoric = formApDao.query_HM(
-                    new Sql_Act014_003(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            hmAux_Trans
-                    ).toSqlQuery()
-            );
-            //
-            senList.addAll(NFormAPHistoric);
-        }
+//        if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_AP, null)) {
+//            GE_Custom_Form_ApDao formApDao = new GE_Custom_Form_ApDao(context);
+//            List<HMAux> NFormAPHistoric = formApDao.query_HM(
+//                    new Sql_Act014_003(
+//                            ToolBox_Con.getPreference_Customer_Code(context),
+//                            hmAux_Trans
+//                    ).toSqlQuery()
+//            );
+//            //
+//            senList.addAll(NFormAPHistoric);
+//        }
         //
         //if (ToolBox_Inf.parameterExists(context, new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO,null)) {
@@ -175,22 +183,22 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
             //
             senList.addAll(outboundHistoric);
         }
-        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
-            TK_TicketDao tk_ticketDao = new TK_TicketDao(
-                    context,
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                    Constant.DB_VERSION_CUSTOM
-            );
-
-            List<HMAux> ticketHistoric = tk_ticketDao.query_HM(
-                    new Sql_Act014_007(
-                            ToolBox_Con.getPreference_Customer_Code(context),
-                            hmAux_Trans
-                    ).toSqlQuery()
-            );
-            //
-            senList.addAll(ticketHistoric);
-        }
+//        if(ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET ,null)){
+//            TK_TicketDao tk_ticketDao = new TK_TicketDao(
+//                    context,
+//                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                    Constant.DB_VERSION_CUSTOM
+//            );
+//
+//            List<HMAux> ticketHistoric = tk_ticketDao.query_HM(
+//                    new Sql_Act014_007(
+//                            ToolBox_Con.getPreference_Customer_Code(context),
+//                            hmAux_Trans
+//                    ).toSqlQuery()
+//            );
+//            //
+//            senList.addAll(ticketHistoric);
+//        }
 
 
         //
@@ -202,17 +210,21 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
 
         if (!item.get(Sql_Act014_001.SENT_QTY).equalsIgnoreCase("0")) {
 
-            if (item.get(Sql_Act014_001.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_CHECKLIST))) {
-                mView.callAct015(context);
+            if (item.get(Sql_Act014_001.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_MY_ACTION))) {
+                mView.callAct084(context);
             }
+
+//            if (item.get(Sql_Act014_001.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_CHECKLIST))) {
+//                mView.callAct015(context);
+//            }
 
             if (item.get(Sql_Act014_001.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_OS))) {
                 mView.callAct032(context);
             }
 
-            if (item.get(Sql_Act014_003.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_FORM_AP))) {
-                mView.callAct039(context);
-            }
+//            if (item.get(Sql_Act014_003.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_FORM_AP))) {
+//                mView.callAct039(context);
+//            }
 
             if (item.get(Sql_Act014_003.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_IO_INBOUND))) {
                 mView.callAct057(context);
@@ -234,9 +246,9 @@ public class Act014_Main_Presenter_Impl implements Act014_Main_Presenter {
 
             }
 
-            if (item.get(Sql_Act014_007.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_TK_TICKET))) {
-                mView.callAct069(context);
-            }
+//            if (item.get(Sql_Act014_007.TYPE).equalsIgnoreCase(hmAux_Trans.get(Act014_Main.LABEL_TRANS_TK_TICKET))) {
+//                mView.callAct069(context);
+//            }
 
         } else {
             mView.showMsg();
