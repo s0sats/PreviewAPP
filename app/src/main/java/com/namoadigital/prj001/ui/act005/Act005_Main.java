@@ -3029,6 +3029,16 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         return hmAux_Trans.get("lbl_invalid_datetime_warning");
     }
 
+    /**
+     * BARRIONUEVO 02-06-2021
+     * Metodo que calcula mensagens do chat para fragmento de lista de acoes.
+     * @return
+     */
+    @Override
+    public int getChatBadgeQty() {
+        return mPresenter.getChatBadgeQty();
+    }
+
     private class FCMReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -3069,7 +3079,17 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             switch (type) {
                 case Constant.CHAT_BR_TYPE_MSG:
                 case Constant.CHAT_EVENT_C_MESSAGE_FCM:
-
+                    //Refresh apos receber mensagem de chat.
+                    if(mPresenter.hasSOProfile()){
+                        FrgMainHomeAlt currentFragment = (FrgMainHomeAlt) fm.findFragmentById(R.id.act005_frg_placeholder);
+                        if(currentFragment != null) {
+                            currentFragment.refreshChatBadge();
+                        }
+                    }else{
+                        FrgMainHome currentFragment = (FrgMainHome) fm.findFragmentById(R.id.act005_frg_placeholder);
+                        int chatBadgeQty = mPresenter.getChatBadgeQty();
+                        currentFragment.refreshChatBadge(chatBadgeQty);
+                    }
 //                    if (mAdapter != null) {
 //                        mAdapter.updateMenuItemBadge(
 //                                MENU_ID_CHAT,

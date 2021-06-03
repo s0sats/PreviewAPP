@@ -89,7 +89,8 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
-                )
+                ),
+                CH_MessageDao(context)
         )
     }
 
@@ -189,6 +190,18 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
         binding.rvModules.layoutManager = layoutManager
         //
         setDatetimeVisibility()
+        //
+        refreshChatBadge()
+    }
+
+    fun refreshChatBadge() {
+        var chatMessageBadge = mPresenter.getChatMessageBadge()
+        val messageQty = Integer.parseInt(chatMessageBadge)
+        binding.tvMessengerBadge.visibility = View.GONE
+        if(messageQty > 0) {
+            binding.tvMessengerBadge.text = chatMessageBadge
+            binding.tvMessengerBadge.visibility = View.VISIBLE
+        }
     }
 
     fun refreshModuleList() {

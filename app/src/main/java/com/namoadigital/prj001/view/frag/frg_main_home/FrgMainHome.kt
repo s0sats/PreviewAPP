@@ -32,32 +32,7 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
     private var mListener: FrgMainHome.OnFrgMainHomeIteract? = null
     private var mModule_Code: String? = null
 
-    private val hmAux_Trans_Frag: HMAux by lazy {
-        var transListFrag = ArrayList<String>()
-        //
-        transListFrag.add("sys_main_menu_calendar_lbl")
-        transListFrag.add("empty_list_lbl")
-        transListFrag.add("messenger_lbl")
-        transListFrag.add("sys_main_menu_search_lbl")
-        transListFrag.add("tag_list_lbl")
-        transListFrag.add("tag_item_qty")
-        transListFrag.add("tag_item_form_in_execution")
-        transListFrag.add("all_tag_list_item")
-        //
-        val mResource_Code_Frag = ToolBox_Inf.getResourceCode(
-                context,
-                APP_MODULE,
-                FRG_MAIN_HOME
-        )
-        //
-        ToolBox_Inf.setLanguage(
-                context,
-                mModule_Code,
-                mResource_Code_Frag,
-                ToolBox_Con.getPreference_Translate_Code(context),  //transListFrag
-                transListFrag
-        )
-    }
+    private lateinit var hmAux_Trans_Frag: HMAux
 
     private var _binding: FrgMainHomeBinding? = null
     private val binding get() = _binding!!
@@ -75,6 +50,8 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         // Inflate the layout for this fragment
         _binding = FrgMainHomeBinding.inflate(inflater, container, false)
         //
+        loadTranslation()
+        //
         initializeLayoutVisibility()
         //
         setLabels()
@@ -83,6 +60,35 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         //
         val view = binding.root
         return view
+    }
+
+    private fun loadTranslation() {
+
+            var transListFrag = ArrayList<String>()
+            //
+            transListFrag.add("sys_main_menu_calendar_lbl")
+            transListFrag.add("empty_list_lbl")
+            transListFrag.add("messenger_lbl")
+            transListFrag.add("sys_main_menu_search_lbl")
+            transListFrag.add("tag_list_lbl")
+            transListFrag.add("tag_item_qty")
+            transListFrag.add("tag_item_form_in_execution")
+            transListFrag.add("all_tag_list_item")
+            //
+            val mResource_Code_Frag = ToolBox_Inf.getResourceCode(
+                    context,
+                    APP_MODULE,
+                    FRG_MAIN_HOME
+            )
+            //
+        hmAux_Trans_Frag = ToolBox_Inf.setLanguage(
+                    context,
+                    mModule_Code,
+                    mResource_Code_Frag,
+                    ToolBox_Con.getPreference_Translate_Code(context),  //transListFrag
+                    transListFrag
+            )
+
     }
 
     private fun initializeLayoutVisibility() {
@@ -110,6 +116,7 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         binding.rvTags.addItemDecoration(DividerItemDecoration(context,
                 DividerItemDecoration.VERTICAL))
         //
+        mListener?.let { refreshChatBadge(it.getChatBadgeQty()) }
     }
     /**
      *  BARRIONUEVO 23-05-2021
@@ -220,6 +227,7 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         //
         fun getTagList(periodFilter: String, sitesFilter: String, focusFilter: String): MutableList<MainTagMenu>
         fun getDatetimeWarning(): String
+        fun getChatBadgeQty(): Int
     }
 
     override fun onApply(periodFilter: String, siteFilter: String, focusFilter: String) {
@@ -233,7 +241,10 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
     fun refreshList(tagList: MutableList<MainTagMenu>) {
         //
         if (tagList == null || tagList.isEmpty()) {
+            //DEvido placeholder de lista vazia, se faz necessario reloadar a tradução.
+            loadTranslation()
             binding.tvListPlaceholder.visibility = View.VISIBLE
+            binding.tvListPlaceholder.text = hmAux_Trans_Frag["empty_list_lbl"]
             binding.rvTags.visibility = View.GONE
             adapter.mMainTagMenu.clear()
         } else {
@@ -253,6 +264,14 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
         if (tagList.size > 1) {
             val lastItem = tagList.size - 1
             tagList.get(lastItem).tagName = hmAux_Trans_Frag.get("all_tag_list_item")!!;
+        }
+    }
+
+    fun refreshChatBadge(chatBadgeQty: Int) {
+        binding.tvMessengerBadge.visibility = View.GONE
+        if(chatBadgeQty >0) {
+            binding.tvMessengerBadge.text = chatBadgeQty.toString()
+            binding.tvMessengerBadge.visibility = View.VISIBLE
         }
     }
 

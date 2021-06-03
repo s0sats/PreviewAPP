@@ -13,15 +13,13 @@ import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_OS_NEXT
 import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_OS_VIN_SEARCH
 import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_TAGS
 import com.namoadigital.prj001.model.MainModuleMenu.Companion.ID_MODULE_TAGS_BY_SERIAL_SEARCH
-import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_003
-import com.namoadigital.prj001.sql.SM_SO_Sql_004
-import com.namoadigital.prj001.sql.SqlAct005TagList002
+import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class FrgMainHomeAltPresenter(val context: Context?, private val  hmauxTransFrag: HMAux, val tkTicketdao: TK_TicketDao, val tkTicketCacheDao: TkTicketCacheDao, val mdScheduleExecdao: MD_Schedule_ExecDao, val geCustomFormApdao: GE_Custom_Form_ApDao, val geCustomFormLocaldao: GE_Custom_Form_LocalDao, val smSodao: SM_SODao, val ioInbounddao: IO_InboundDao, val ioOutbounddao: IO_OutboundDao, val ioMovedao: IO_MoveDao, val ioBlindMovedao: IO_Blind_MoveDao, private val zoneDao: MD_Site_ZoneDao
+class FrgMainHomeAltPresenter(val context: Context?, private val  hmauxTransFrag: HMAux, val tkTicketdao: TK_TicketDao, val tkTicketCacheDao: TkTicketCacheDao, val mdScheduleExecdao: MD_Schedule_ExecDao, val geCustomFormApdao: GE_Custom_Form_ApDao, val geCustomFormLocaldao: GE_Custom_Form_LocalDao, val smSodao: SM_SODao, val ioInbounddao: IO_InboundDao, val ioOutbounddao: IO_OutboundDao, val ioMovedao: IO_MoveDao, val ioBlindMovedao: IO_Blind_MoveDao, private val zoneDao: MD_Site_ZoneDao, private val chMessageDao: CH_MessageDao
 ) : FrgMainHomeAltContract.Presenter {
     //
     override fun getModules(): MutableList<MainModuleMenu> {
@@ -223,5 +221,19 @@ class FrgMainHomeAltPresenter(val context: Context?, private val  hmauxTransFrag
         }
         //
         return HMAux()
+    }
+
+    override fun getChatMessageBadge(): String{
+        var qty = "0"
+        try {
+            qty = chMessageDao.getByStringHM(
+                    CH_Message_Sql_025(
+                            ToolBox_Con.getPreference_User_Code(context)
+                    ).toSqlQuery()
+            ).get(CH_Message_Sql_025.BADGE_MESSAGES_QTY)!!
+        } catch (e: Exception) {
+            qty = "0"
+        }
+        return qty
     }
 }

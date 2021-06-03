@@ -67,12 +67,30 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        android:clickable="true"
         android:backgroundTint="@color/namoa_color_light_blue"
+        android:clickable="true"
+        android:focusable="true"
         android:src="@drawable/ic_forum_black_24dp"
-        app:tint="@color/padrao_WHITE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:focusable="true" />
+        app:tint="@color/padrao_WHITE" />
+
+    <TextView
+        android:id="@+id/tv_messenger_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/main_menu_chat_badge"
+        android:elevation="10dp"
+        android:gravity="center"
+        android:textColor="@color/padrao_WHITE"
+        android:textSize="14dp"
+        app:layout_constraintBottom_toTopOf="@+id/fab_messenger"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.85"
+        app:layout_constraintStart_toStartOf="@+id/fab_messenger"
+        app:layout_constraintTop_toTopOf="@+id/fab_messenger"
+        tools:text="1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
