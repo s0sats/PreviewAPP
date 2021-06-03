@@ -102,6 +102,7 @@
                         android:textColor="@color/my_tickets_radio"
                         tools:text="concluidos"
                         android:textAllCaps="true"
+                        android:textStyle="bold"
                         />
 
                     <View
@@ -118,7 +119,9 @@
                         android:gravity="center"
                         android:textColor="@color/my_tickets_radio"
                         tools:text="descartados"
-                        android:textAllCaps="true"/>
+                        android:textAllCaps="true"
+                        android:textStyle="bold"
+                        />
 
                 </RadioGroup>
 

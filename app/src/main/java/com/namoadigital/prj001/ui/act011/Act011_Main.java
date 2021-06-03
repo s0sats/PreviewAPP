@@ -105,6 +105,7 @@ import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
+import com.namoadigital.prj001.ui.act084.Act084Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -1156,6 +1157,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             callAct070();
         }else if(ConstantBaseApp.ACT083.equals(requestingAct)){
             callAct083();
+        }else if(ConstantBaseApp.ACT084.equals(requestingAct)){
+            callAct084();
         }else{
             callAct005(context);
         }
@@ -2631,6 +2634,23 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     @Override
+    public void callAct084() {
+        Intent intent = new Intent(context, Act084Main.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
+        Bundle mBundle = new Bundle();
+        mBundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
+        mBundle.putSerializable(
+            MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+            bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+        );
+        intent.putExtras(mBundle);
+        //
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
     public boolean isOffHandForm() {
         return isOffHandForm;
     }
@@ -2662,6 +2682,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             callAct070();
         }else if(ConstantBaseApp.ACT083.equals(requestingAct)){
             callAct083();
+        }else if(ConstantBaseApp.ACT084.equals(requestingAct)){
+            callAct084();
         }else {
             if (formData.getCustom_form_status().equals(Constant.SYS_STATUS_DONE)) {
                 callAct015();

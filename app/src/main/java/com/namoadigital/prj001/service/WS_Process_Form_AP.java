@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -17,6 +19,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Ap;
 import com.namoadigital.prj001.receiver.WBR_Process_Form_Ap;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Ap_Sql_005;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -58,6 +61,15 @@ public class WS_Process_Form_AP extends IntentService {
         }
     }
 
+    private void sendFCMStatus() {
+        Intent mIntent = new Intent();
+        mIntent.setAction(Constant.WS_FCM);
+        mIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        mIntent.putExtra(ConstantBaseApp.SW_TYPE,ConstantBaseApp.FCM_MODULE_FORM_AP);
+        //
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(mIntent);
+    }
+
     private void processFormAp() throws Exception {
         File[] formApFiles = ToolBox_Inf.getListOfFiles_v5(Constant.CHAT_PATH,Constant.CHAT_PREFIX + Constant.CHAT_MESSAGE_TYPE_FORM_AP);
         //ArrayList<GE_Custom_Form_Ap> formApList = new ArrayList<>();
@@ -70,7 +82,6 @@ public class WS_Process_Form_AP extends IntentService {
         );
         //
         if(formApFiles.length > 0) {
-
             for (File file : formApFiles) {
                 GE_Custom_Form_Ap auxAp = null;
                 Chat_Message_Obj_Form_Ap msgObjFormAp = gson.fromJson(
@@ -110,6 +121,7 @@ public class WS_Process_Form_AP extends IntentService {
                     //Insere formAp
                     formApDao.addUpdate(auxAp);
                     //
+                    sendFCMStatus();
                     Log.d("FormAP", msgObjFormAp.getPk());
                 }
                 //SEMPRE ADICIONA O ARQUIVO NA LISTA DE DELETE

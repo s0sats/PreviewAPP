@@ -1436,7 +1436,9 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             mView.callAct070();
         }else if(ConstantBaseApp.ACT083.equals(mView.getRequestingAct())){
             mView.callAct083();
-        }else{
+        } else if(ConstantBaseApp.ACT084.equals(mView.getRequestingAct())){
+            mView.callAct084();
+        } else {
             mView.callAct005(context);
         }
     }

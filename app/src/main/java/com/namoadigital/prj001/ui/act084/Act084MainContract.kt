@@ -13,6 +13,8 @@ interface Act084MainContract {
         fun callAct070(bundle: Bundle)
         fun callAct038(bundle: Bundle)
         fun showMsg(ttl: String?, msg: String?)
+        fun setViewFiltersParam(mketFilter: String?, tabToLoad: Int,ncFilter: Boolean)
+        fun getNcFilterStatus() : Boolean
     }
 
     interface I_Presenter {

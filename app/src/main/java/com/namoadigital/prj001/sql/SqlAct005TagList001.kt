@@ -157,7 +157,7 @@ class SqlAct005TagList001(private val context: Context,
                     mdt.${MdTagDao.TAG_DESC} tag_operational_desc, 
                     count(geap.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE}) qty,
                     max(geap.upload_required) update_required,
-                    max(geap.sync_required) sync_required,
+                    max(0) sync_required,
                     max(0) in_processing
             from ${MdTagDao.TABLE} mdt,
                  ${GE_Custom_Form_ApDao.TABLE} geap                    

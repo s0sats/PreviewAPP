@@ -705,10 +705,10 @@ class Act083_Main_Presenter(private val context: Context,
 
     }
 
-    private fun getTicketActionFlowBundle(item: MyActions, scheduleExec: MD_Schedule_Exec, ticket_prefix: Int, ticket_code: Int, ticket_seq: Int): Bundle {
+    private fun getTicketActionFlowBundle(myAction: MyActions, scheduleExec: MD_Schedule_Exec, ticket_prefix: Int, ticket_code: Int, ticket_seq: Int): Bundle {
         val bundle = Bundle()
         //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(item)
+        setSeletedActionInfosIntoFilterParam(myAction.actionType,myAction.processPk)
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
@@ -720,7 +720,7 @@ class Act083_Main_Presenter(private val context: Context,
         //16/03/2020 - foi convencionado que durante a criação da execução do ticket, o ticket id,
         //será o igual ao do exibido nas celulas do agendamento.
         bundle.putString(TK_TicketDao.TICKET_ID, ToolBox_Inf.getFormattedTicketSeqExec(
-                item.processPk,
+                myAction.processPk,
                 ticket_prefix.toString(),
                 ticket_code.toString()
         )
@@ -729,7 +729,7 @@ class Act083_Main_Presenter(private val context: Context,
         bundle.putString(TK_TicketDao.TYPE_DESC, scheduleExec.ticket_type_desc)
         bundle.putBoolean(Act070_Main.PARAM_DENIED_BY_CHECKIN, false)
         bundle.putString(Constant.ACT_SELECTED_DATE, calendarDate)
-        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.processPk)
+        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, myAction.processPk)
         //
         //LUCHE - 14/08/2020 - Criação de action agendado v2
         val ctrlItem = getScheduleCtrlIfExists(scheduleExec, ticket_prefix, ticket_code)
@@ -771,13 +771,13 @@ class Act083_Main_Presenter(private val context: Context,
         return false
     }
 
-    fun setSeletedActionInfosIntoFilterParam(myAction: MyActions){
+    fun setSeletedActionInfosIntoFilterParam(myActionType: String,myActionPk: String){
         if(::myActionFilterParam.isInitialized){
             myActionFilterParam.setSelectedItemParams(
                     mView.getMketFilter(),
                     mView.getCurrentTab(),
-                    myAction.actionType,
-                    myAction.processPk
+                    myActionType,
+                    myActionPk
             )
         }
     }
@@ -785,7 +785,7 @@ class Act083_Main_Presenter(private val context: Context,
     override fun getLocalTicket(myAction: MyActions): Bundle {
         val splippedPk = myAction.getSplippedPk()
         //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(myAction)
+        setSeletedActionInfosIntoFilterParam(myAction.actionType,myAction.processPk)
         //
         return ticketBundle(splippedPk[0].toInt(), splippedPk[1].toInt())
     }
@@ -794,7 +794,7 @@ class Act083_Main_Presenter(private val context: Context,
         val splippedPk = myAction.getSplippedPk()
         val bundle = Bundle()
         //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(myAction)
+        setSeletedActionInfosIntoFilterParam(myAction.actionType,myAction.processPk)
         //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
@@ -811,7 +811,7 @@ class Act083_Main_Presenter(private val context: Context,
         val splippedPk = myAction.getSplippedPk()
         val bundle = Bundle()
         //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(myAction)
+        setSeletedActionInfosIntoFilterParam(myAction.actionType,myAction.processPk)
         //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
@@ -855,10 +855,10 @@ class Act083_Main_Presenter(private val context: Context,
         }
     }
 
-    private fun getTicketFlowBundle(item: MyActions, ticketPrefix: Int, ticketCode: Int): Bundle {
+    private fun getTicketFlowBundle(myAction: MyActions, ticketPrefix: Int, ticketCode: Int): Bundle {
         val bundle = Bundle()
         //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(item)
+        setSeletedActionInfosIntoFilterParam(myAction.actionType,myAction.processPk)
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
@@ -866,7 +866,7 @@ class Act083_Main_Presenter(private val context: Context,
         bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode)
         //bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ToolBox_Inf.convertStringToInt(item.get(TK_Ticket_CtrlDao.TICKET_SEQ)))
         bundle.putString(Constant.ACT_SELECTED_DATE, calendarDate)
-        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.processPk)
+        bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, myAction.processPk)
         return bundle
     }
 
@@ -1379,6 +1379,9 @@ class Act083_Main_Presenter(private val context: Context,
     override fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle {
         val ticketPrefix = hmAuxTicketDownloaded[TK_TicketDao.TICKET_PREFIX]?.let { Integer.valueOf(it) } ?: -1
         val ticketCode = hmAuxTicketDownloaded[TK_TicketDao.TICKET_CODE]?.let { Integer.valueOf(it) } ?: -1
+        //Seta dados da action selecionado no filterParam
+        setSeletedActionInfosIntoFilterParam(MyActions.MY_ACTION_TYPE_TICKET,"$ticketPrefix.$ticketCode")
+        //
         return ticketBundle(ticketPrefix, ticketCode)
     }
 
