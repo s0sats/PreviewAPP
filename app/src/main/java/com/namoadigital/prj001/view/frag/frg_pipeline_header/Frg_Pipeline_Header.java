@@ -489,8 +489,7 @@ public class Frg_Pipeline_Header extends Fragment {
                 //Background TicketId
                 int color = -1;
                 if (mTicket.getSync_required() == 1
-                    && (mTicket.getUpdate_required() == 1
-                        || mTicket.getUpdate_required_product() == 1)
+                    && (mTicket.isUpdateRequired())
                 ) {
                     ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_red_states);
                     drawableEnd = getContext().getDrawable(R.drawable.ic_sync_main_menu_data);
@@ -499,8 +498,7 @@ public class Frg_Pipeline_Header extends Fragment {
                     ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_yellow_tranparent_states);
                     color = ContextCompat.getColor(getContext(), R.color.namoa_color_yellow_2);
                     drawableEnd = getContext().getDrawable(R.drawable.ic_baseline_cloud_download_24);
-                } else if (mTicket.getUpdate_required() == 1
-                        || mTicket.getUpdate_required_product() == 1) {
+                } else if (mTicket.isUpdateRequired()) {
                     ticketIdBgDefault = getContext().getDrawable(R.drawable.stroke_red_states);
                     color = ContextCompat.getColor(getContext(), R.color.namoa_cancel_red);
                     drawableEnd = getContext().getDrawable(R.drawable.ic_cloud_upload);
@@ -514,8 +512,7 @@ public class Frg_Pipeline_Header extends Fragment {
                 tv_ticket_id.setText(marginText);
                 tv_ticket_id.setTextColor(color);
                 if (mTicket.getSync_required() == 0
-                        || (mTicket.getUpdate_required() == 0
-                        && mTicket.getUpdate_required_product() == 0)){
+                        || (!mTicket.isUpdateRequired())){
                     drawableEnd.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
                 }
                 tv_ticket_id.setPadding(8, 8, 8, 8);

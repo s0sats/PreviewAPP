@@ -1296,6 +1296,34 @@ public class TK_Ticket implements Cloneable, Serializable {
                 || isReadOnlyStatus();
     }
 
+    /**
+     * BARRIONUEVO 04-06-2021
+     * Metodo que condensa o update required do ticket e seus steps de ordem atual.
+     * @return
+     */
+    public boolean isUpdateRequired() {
+        return update_required >0
+                || update_required_product >0
+                || isCurrentStepUpdateRequired();
+    }
+
+    private boolean isCurrentStepUpdateRequired() {
+        ArrayList<TK_Ticket_Step> steps = getStep();
+        //
+        if(steps != null) {
+            for (TK_Ticket_Step step : steps) {
+                if (step.getStep_order() == current_step_order) {
+                    if (step.getUpdate_required() == 1) {
+                        return true;
+                    }
+                }
+            }
+        }
+        //
+        return false;
+    }
+
+
 //    public MyActions toMyActionsObj(Context context){
 //        int rightIcon;
 //        if(update_required == 0 && sync_required == 0) {
