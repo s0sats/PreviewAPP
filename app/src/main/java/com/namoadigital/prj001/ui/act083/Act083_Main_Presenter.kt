@@ -157,10 +157,11 @@ class Act083_Main_Presenter(private val context: Context,
         chipList.addAll(
                 myActionFilterParam.getFilledFilters(context)
         )
-        when(originFlow){
-            ConstantBaseApp.ACT005 -> setPreferenceChips(chipList)
+        if(!ToolBox_Inf.usesSoMainActivity(context)) {
+            when (originFlow) {
+                ConstantBaseApp.ACT005 -> setPreferenceChips(chipList)
+            }
         }
-
         return chipList
     }
 
@@ -1437,12 +1438,19 @@ class Act083_Main_Presenter(private val context: Context,
         clientId = myActionFilterParam.clientId
         contractId = myActionFilterParam.contractId
         calendarDate = myActionFilterParam.calendarDate
-        siteCode = if(ConstantBaseApp.PREFERENCE_HOME_CURRENT_SITE_OPTION == ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION)){
+        siteCode =
+        if(setSiteFilter()){
             ToolBox_Con.getPreference_Site_Code(context)
         }else{
             null
         }
     }
+
+    private fun setSiteFilter(): Boolean {
+        return  ConstantBaseApp.PREFERENCE_HOME_CURRENT_SITE_OPTION == ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION)
+                && !ToolBox_Inf.usesSoMainActivity(context)
+    }
+
 
     private fun generateMyActionList(tabUserFocusFilter: Int) {
         _myActionsList.clear()
