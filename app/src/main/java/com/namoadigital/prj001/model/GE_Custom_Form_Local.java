@@ -593,4 +593,13 @@ public class GE_Custom_Form_Local {
             hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA)
             ;
     }
+
+    public String getFormatedPk() {
+        return
+            custom_form_type +"." +
+            custom_form_code +"." +
+            custom_form_version +"." +
+            custom_form_data
+            ;
+    }
 }

@@ -6,7 +6,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.sql.Sql_Act009_001;
-import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.List;
@@ -66,24 +66,22 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
 
     @Override
     public void onBackPressedClicked(String actResqueting) {
-
         switch (actResqueting){
-            case Constant.ACT070:
-            case Constant.ACT068:
-            case Constant.ACT073:
-            case Constant.ACT074:
+            case ConstantBaseApp.ACT070:
+            case ConstantBaseApp.ACT068:
+            case ConstantBaseApp.ACT073:
+            case ConstantBaseApp.ACT074:
                 mView.callAct081(context);
                 break;
-            case Constant.ACT020:
+            case ConstantBaseApp.ACT020:
                 mView.callAct006(context);
                 break;
-            case Constant.ACT027:
+            case ConstantBaseApp.ACT027:
                 mView.callAct027(context);
                 break;
-            case Constant.ACT028:
+            case ConstantBaseApp.ACT028:
                 mView.callAct028(context);
                 break;
-            case Constant.ACT012:
             default:
                 if(mView.isHas_tk_ticket_is_form_off_hand()){
                     mView.callAct081(context);

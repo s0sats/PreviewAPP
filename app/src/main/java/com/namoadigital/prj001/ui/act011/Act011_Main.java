@@ -87,6 +87,7 @@ import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Product_Serial_Tracking;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
 import com.namoadigital.prj001.model.MyActionFilterParam;
+import com.namoadigital.prj001.model.MyActions;
 import com.namoadigital.prj001.model.TSave_Rec;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Save;
@@ -1155,12 +1156,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         //
         if(mPresenter.isaTicketFlowForm()){
             callAct070();
-        }else if(ConstantBaseApp.ACT083.equals(requestingAct)){
-            callAct083();
         }else if(ConstantBaseApp.ACT084.equals(requestingAct)){
             callAct084();
         }else{
-            callAct005(context);
+            if(serial_id != null && !serial_id.isEmpty()){
+                callAct083();
+            }else{
+                callAct005(context);
+            }
         }
     }
 
@@ -1231,7 +1234,9 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
             }
             //
-            if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)){
+            if( bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
+                || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+            ){
                 act083Bundle = new Bundle();
                 act083Bundle.putString(
                         ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
@@ -2432,7 +2437,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         }
         if (finalizeNewFlow) {
             if (mPresenter.checkNFormExists(formLocal)) {
-                callAct006(context);
+                callAct006(context,finalizeNewFlow);
             } else {
                 finalizeNewFlow = false;
                 //
@@ -2443,43 +2448,15 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            callAct005(context);
+                            callAct006(context,finalizeNewFlow);
                         }
                     },
                     0
                 );
             }
         } else {
-            callAct005(context);
+            mPresenter.checkOriginDoneFlow(act083Bundle);
         }
-        //
-//        if (mSo_Prefix == null || mSo_Code == null) {
-//            if (finalizeNewFlow) {
-//                if (mPresenter.checkNFormExists(formLocal)) {
-//                    callAct006(context);
-//                } else {
-//                    finalizeNewFlow = false;
-//                    //
-//                    ToolBox.alertMSG(
-//                        Act011_Main.this,
-//                        hmAux_Trans.get("alert_nform_expired_ttl"),
-//                        hmAux_Trans.get("alert_nform_expired_msg"),
-//                        new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                callAct005(context);
-//                            }
-//                        },
-//                        0
-//                    );
-//                }
-//            } else {
-//                callAct005(context);
-//            }
-//        } else {
-//            nservCall();
-//        }
-
     }
 
     public void exitAlert() {
@@ -2554,20 +2531,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     }
 
     @Override
-    public void callAct006(Context context) {
+    public void callAct006(Context context, boolean finalizeNewFlow) {
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle bundle = new Bundle();
-        bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(formLocal.getCustom_product_code()));
-        bundle.putString(MD_ProductDao.PRODUCT_DESC, formLocal.getCustom_product_desc());
-        bundle.putString(MD_ProductDao.PRODUCT_ID, formLocal.getCustom_product_id());
-        bundle.putString(MD_Product_SerialDao.SERIAL_ID, formLocal.getSerial_id()  );
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(formLocal.getCustom_form_type()));
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, formLocal.getCustom_form_type_desc());
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(formLocal.getCustom_form_code()));
-        bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(formLocal.getCustom_form_version()));
-        bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formLocal.getCustom_form_desc());
+        if(finalizeNewFlow) {
+            bundle.putString(MD_ProductDao.PRODUCT_CODE, String.valueOf(formLocal.getCustom_product_code()));
+            bundle.putString(MD_ProductDao.PRODUCT_DESC, formLocal.getCustom_product_desc());
+            bundle.putString(MD_ProductDao.PRODUCT_ID, formLocal.getCustom_product_id());
+            bundle.putString(MD_Product_SerialDao.SERIAL_ID, formLocal.getSerial_id());
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(formLocal.getCustom_form_type()));
+            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, formLocal.getCustom_form_type_desc());
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(formLocal.getCustom_form_code()));
+            bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(formLocal.getCustom_form_version()));
+            bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formLocal.getCustom_form_desc());
+        }else{
+            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, formLocal.getCustom_product_id());
+            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, formLocal.getSerial_id());
+        }
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -2622,15 +2604,25 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle mBundle = new Bundle();
-        mBundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
-        mBundle.putSerializable(
-                MyActionFilterParam.MY_ACTION_FILTER_PARAM,
-                bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
-        );
+        getMyActionsParam(mBundle);
         intent.putExtras(mBundle);
         //
         startActivity(intent);
         finish();
+    }
+
+    private void getMyActionsParam(Bundle mBundle) {
+        if(act083Bundle != null) {
+            mBundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083);
+            MyActionFilterParam myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(act083Bundle);
+            //Se não tinha dados é pq é um novo form, seta então a nova pk
+            if(myActionFilterParam.getParamItemSelectedPk() == null || myActionFilterParam.getParamItemSelectedPk().isEmpty() ){
+                myActionFilterParam.setParamItemSelectedPk(formLocal.getFormatedPk());
+                myActionFilterParam.setParamItemSelectedType(MyActions.MY_ACTION_TYPE_FORM);
+                act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,myActionFilterParam);
+            }
+            mBundle.putAll(act083Bundle);
+        }
     }
 
     @Override
@@ -2680,20 +2672,13 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private void checkBackFlow() {
         if(mPresenter.isaTicketFlowForm()) {
             callAct070();
-        }else if(ConstantBaseApp.ACT083.equals(requestingAct)){
-            callAct083();
-        }else if(ConstantBaseApp.ACT084.equals(requestingAct)){
+        }else if(ConstantBaseApp.ACT084.equals(requestingAct)
+            || ConstantBaseApp.SYS_STATUS_DONE.equals(formData.getCustom_form_status())){
             callAct084();
         }else {
-            if (formData.getCustom_form_status().equals(Constant.SYS_STATUS_DONE)) {
-                callAct015();
-            } else {
-                callAct005(Act011_Main.this);
-            }
+            callAct083();
         }
     }
-
-
 
     @Override
     public void showSignature() {
@@ -3670,7 +3655,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        callAct005(Act011_Main.this);
+                                        callAct083();
                                     }
                                 }
                         );
@@ -3693,7 +3678,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        callAct005(Act011_Main.this);
+                                        callAct083();
                                     }
                                 }
                         );
@@ -3709,7 +3694,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
-                                        callAct005(Act011_Main.this);
+                                        callAct083();
                                     }
                                 }
                         );

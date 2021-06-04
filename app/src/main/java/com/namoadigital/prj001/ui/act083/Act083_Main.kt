@@ -491,10 +491,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     override fun callAct020(bundle: Bundle) {
         val mIntent = Intent(context, Act020_Main::class.java)
         mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        if (bundle != null) {
-            bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT017)
-            mIntent.putExtras(bundle)
-        }
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
+        mIntent.putExtras(bundle)
         startActivity(mIntent)
         finish()
     }

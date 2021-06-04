@@ -15,7 +15,6 @@ import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
 import com.namoadigital.prj001.service.WS_Serial_Search
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.sql.*
-import com.namoadigital.prj001.ui.act017.Act017_Main
 import com.namoadigital.prj001.ui.act070.Act070_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -237,6 +236,11 @@ class Act083_Main_Presenter(private val context: Context,
                 bundle.putString(MD_ProductDao.PRODUCT_ID, mdProductSerial.product_id.trim())
                 bundle.putString(MD_SiteDao.SITE_CODE, if (mdProductSerial.site_code != null) mdProductSerial.site_code.toString() else ToolBox_Con.getPreference_Site_Code(context))
 //            bundle.putAll(act081Bundle)
+                myActionFilterParam.paramTextFilter = mView.getMketFilter()
+                myActionFilterParam.paramItemSelectedTab = mView.getCurrentTab()
+                myActionFilterParam.paramItemSelectedPk = null
+                myActionFilterParam.paramItemSelectedType = null
+                //
                 mView.callAct009(bundle)
             } else {
                 var msg = hmAux_Trans!!["alert_no_form_lbl"]
@@ -337,7 +341,7 @@ class Act083_Main_Presenter(private val context: Context,
             processTicketFlow(actions)
         } else {
             mView.showMsg(
-                    Act017_Main.PROFILE_MENU_TICKET_NOT_FOUND,
+                    Act083_Main.PROFILE_MENU_TICKET_NOT_FOUND,
                     actions
             )
         }
@@ -348,7 +352,7 @@ class Act083_Main_Presenter(private val context: Context,
             if (isScheduleSiteDifferentThanLogged(actions)) {
                 startSiteChangeFlow(actions)
             } else if (isAnyFormInProcessing(scheduleExec)) {
-                mView.showMsg(Act017_Main.MODULE_CHECKLIST_FORM_IN_PROCESSING, actions)
+                mView.showMsg(Act083_Main.MODULE_CHECKLIST_FORM_IN_PROCESSING, actions)
             } else {
                 //LUCHE - 14/01/2021
                 //Verifica se deve bloquear a execução e em caso posito, exibe msg informando do
@@ -388,7 +392,7 @@ class Act083_Main_Presenter(private val context: Context,
         mView.callAct011(bundle)
     }
 
-    private fun getFormFlowBundle(item: MyActions, scheduleExec: MD_Schedule_Exec): Bundle {
+    private fun getFormFlowBundle(myAction: MyActions, scheduleExec: MD_Schedule_Exec): Bundle {
         val bundle = Bundle()
         bundle.putString(MD_ProductDao.PRODUCT_CODE, scheduleExec.product_code.toString())
         bundle.putString(MD_ProductDao.PRODUCT_DESC, scheduleExec.product_desc.toString())
@@ -400,10 +404,16 @@ class Act083_Main_Presenter(private val context: Context,
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, scheduleExec.custom_form_version.toString())
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, scheduleExec.custom_form_desc.toString())
         //
-        item.scheduleCustomFormData?.let{
-            bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, item.scheduleCustomFormData)
+        myAction.scheduleCustomFormData?.let{
+            bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, myAction.scheduleCustomFormData)
         }
         bundle.putString(Constant.ACT017_SCHEDULED_SITE, scheduleExec.site_code.toString())
+        //Seta dados da action selecionado no filterParam
+        setSeletedActionInfosIntoFilterParam(myAction.actionType,myAction.processPk)
+        //
+        bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,originFlow)
         return bundle
     }
 
@@ -712,6 +722,7 @@ class Act083_Main_Presenter(private val context: Context,
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,originFlow)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, scheduleExec.schedule_prefix)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_CODE, scheduleExec.schedule_code)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, scheduleExec.schedule_exec)
@@ -773,6 +784,7 @@ class Act083_Main_Presenter(private val context: Context,
 
     fun setSeletedActionInfosIntoFilterParam(myActionType: String,myActionPk: String){
         if(::myActionFilterParam.isInitialized){
+            myActionFilterParam.originFlow = originFlow
             myActionFilterParam.setSelectedItemParams(
                     mView.getMketFilter(),
                     mView.getCurrentTab(),
@@ -798,6 +810,8 @@ class Act083_Main_Presenter(private val context: Context,
         //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,originFlow)
+        //
         bundle.putString(GE_Custom_Form_ApDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context).toString())
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, splippedPk[0])
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_CODE, splippedPk[1])
@@ -815,6 +829,8 @@ class Act083_Main_Presenter(private val context: Context,
         //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,originFlow)
+        //
         bundle.putString(MD_ProductDao.PRODUCT_CODE, myAction.productCode.toString())
         bundle.putString(MD_ProductDao.PRODUCT_DESC, myAction.productDesc)
         //bundle.putString(MD_ProductDao.PRODUCT_ID, myAction.productDesc)
@@ -862,6 +878,8 @@ class Act083_Main_Presenter(private val context: Context,
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,originFlow)
+        //
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix)
         bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode)
         //bundle.putInt(TK_Ticket_CtrlDao.TICKET_SEQ, ToolBox_Inf.convertStringToInt(item.get(TK_Ticket_CtrlDao.TICKET_SEQ)))
@@ -1296,6 +1314,11 @@ class Act083_Main_Presenter(private val context: Context,
                 //Seta form data no bundle que será enviado para as proximas acts
                 bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, actionSelected!!.scheduleCustomFormData.toString())
                 bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false)
+                //
+                setSeletedActionInfosIntoFilterParam(MyActions.MY_ACTION_TYPE_SCHEDULE,actionSelected!!.processPk)
+                bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
+                bundle.putSerializable(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
+                //
                 mView.callAct020(bundle)
             } else {
                 mView.showMsg(Act083_Main.MODULE_SCHEDULE_FORM_DATA_CREATION_ERROR, actionSelected!!)

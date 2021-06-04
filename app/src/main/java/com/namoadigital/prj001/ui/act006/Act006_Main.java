@@ -3,9 +3,6 @@ package com.namoadigital.prj001.ui.act006;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +10,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -488,12 +489,13 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     @Override
     public void callAct020(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act020_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
         if(!customFormCodeDesc.isEmpty()){
             buildBundleFOrNforFinishPlusNew(bundle);
-
         }
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {
+
             mIntent.putExtras(bundle);
         }
         startActivity(mIntent);

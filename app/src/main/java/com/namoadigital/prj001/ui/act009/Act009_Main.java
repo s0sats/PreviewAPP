@@ -4,22 +4,21 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -164,7 +163,8 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
                 mTkTicketId  = bundle.getString(TK_TicketDao.TICKET_ID, "");
                 mStepDesc = bundle.getString(TK_Ticket_StepDao.STEP_DESC, "");
             }
-            if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)){
+            if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
+                || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)){
                 act083Bundle.putString(
                         ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
                         bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
@@ -305,13 +305,18 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
 
         Intent mIntent = new Intent(context, Act006_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        bundle.removeFull(Constant.ACT007_PRODUCT_CODE);
-//        bundle.removeFull(Constant.ACT008_SERIAL_ID);
-//        bundle.removeFull(Constant.ACT008_PRODUCT_DESC);
-//        bundle.removeFull(Constant.BACK_ACTION);
-//        mIntent.putExtras(bundle);
+        mIntent.putExtras(getSearchedFilter());
         startActivity(mIntent);
         finish();
+    }
+
+    private Bundle getSearchedFilter() {
+        MyActionFilterParam myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(bundle);
+        Bundle mBundle = new Bundle();
+        mBundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, myActionFilterParam.getProductId() != null ? myActionFilterParam.getProductId(): "");
+        mBundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, myActionFilterParam.getSerialId() != null ? myActionFilterParam.getSerialId(): "");
+        mBundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
+        return mBundle;
     }
 
     @Override

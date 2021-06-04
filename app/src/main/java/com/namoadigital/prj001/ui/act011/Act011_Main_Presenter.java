@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -57,4 +58,6 @@ public interface Act011_Main_Presenter {
     String getDialogTicketInfo(Integer ticket_prefix, Integer ticket_code, Integer step_code);
 
     void checkAppExecutionDecrementUpdateNeeds(Integer mSo_prefix, Integer mSo_code, GE_Custom_Form_Data formData);
+
+    void checkOriginDoneFlow(Bundle act083Bundle);
 }

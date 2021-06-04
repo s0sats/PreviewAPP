@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model
 
 import android.content.Context
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.io.Serializable
 import java.text.SimpleDateFormat
@@ -26,6 +27,7 @@ class MyActionFilterParam(
     var paramItemSelectedType: String? = null
     var paramItemSelectedPk: String? = null
     var paramNcFilter: Boolean? = null
+    var originFlow: String = ConstantBaseApp.ACT005
 
     fun setSelectedItemParams(textFilter: String? = null, selectedTab: Int, selectedType: String, selectedPk: String,ncFilterOn: Boolean? = null){
         paramTextFilter = textFilter

@@ -13,6 +13,7 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
 import com.namoadigital.prj001.receiver.WBR_Serial_Search;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Local_Sql_008;
@@ -21,6 +22,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_002;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 
 import java.util.ArrayList;
@@ -239,9 +241,33 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
             bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, mProduct_id); //mdProduct != null ? mdProduct.getProduct_id() : "");
             bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, mSerial_id != null ? mSerial_id : "");
             bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, mTracking != null ? mTracking : "");
-
+            //LUCHE - 04/06/2021 - Dados fluxo myActions
+            setActionFlowParams(bundle);
+            //
             mView.callAct020(context, bundle);
         }
+    }
+
+    private void setActionFlowParams(Bundle bundle) {
+        MyActionFilterParam myActionFilterParam = new MyActionFilterParam(
+            null,
+            null,
+            (int) mdProduct.getProduct_code(),
+            mProduct_id,
+            mdProduct.getProduct_desc(),
+            mSerial_id,
+            null,
+            null,
+            null,
+            null);
+        //
+        myActionFilterParam.setOriginFlow(ConstantBaseApp.ACT006);
+        //
+        bundle.putSerializable(
+            MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+            myActionFilterParam
+            );
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT006);
     }
 
     private ArrayList<MD_Product_Serial> processEqualCheck(ArrayList<MD_Product_Serial> serial_list) {

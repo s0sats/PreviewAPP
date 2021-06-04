@@ -3984,6 +3984,18 @@ public class ToolBox_Inf {
         return query != null && query.size() > 0 ;
     }
 
+    /**
+     * LUCHE - 04/06/2021
+     * Metodo que analisa se os profiles de O.S ou I.O existem.
+     * Metodo usado para saber qual layout o menu principal deve usar
+     * @param context
+     * @return
+     */
+    public static boolean usesSoMainActivity(Context context) {
+        return ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
+                || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null);
+    }
+
     private static class GenericExtFilter implements FilenameFilter {
         private String[] exts;
 
@@ -8623,22 +8635,28 @@ public class ToolBox_Inf {
 
     @NotNull
     public static MyActionFilterParam getMyActionFilterParam(Bundle bundle) {
-        //TODO TRATAR CORRETAMENTE
-        MyActionFilterParam mActionFilterParam = (MyActionFilterParam) bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
-        if(mActionFilterParam == null){
+        MyActionFilterParam mActionFilterParam = null;
+        try {
+            mActionFilterParam = (MyActionFilterParam) bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
+        }catch (Exception e){
+            ToolBox_Inf.registerException(CLASS_NAME,e);
+        }
+        if (mActionFilterParam == null) {
             mActionFilterParam = new MyActionFilterParam(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
             );
         }
+        mActionFilterParam.setOriginFlow(bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005));
+        //
         return mActionFilterParam;
     }
 

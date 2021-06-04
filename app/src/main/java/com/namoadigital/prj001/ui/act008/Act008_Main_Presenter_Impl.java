@@ -25,6 +25,7 @@ import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MD_Schedule_Exec;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
@@ -722,7 +723,6 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
 
     @Override
     public void defineFlow() {
-
             if (isSchedule || isFinishPlusNew) {
                 if(ToolBox_Inf.isConcurrentBySiteLicense(context)
                         && isOutOfLicense()
@@ -781,19 +781,30 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     @Override
     public void onBackPressedClicked() {
         if (isSchedule) {
-            if(requesting_process.equals(Constant.ACT013)){
-                mView.callAct013(context);
-            }else {
-                mView.callAct017(context);
-            }
+            mView.callAct083(context);
         } else {
             if(mView.isHas_tk_ticket_is_form_off_hand()) {
                 mView.callAct081(context);
             }else {
-                mView.callAct006(context);
+              processOriginFlowBackFlow();
             }
         }
     }
+
+    private void processOriginFlowBackFlow() {
+        MyActionFilterParam actionParamFlows = mView.getActionParamFlows();
+        switch (actionParamFlows.getOriginFlow()){
+            case ConstantBaseApp.ACT006:
+                mView.callAct006(context);
+                break;
+            case ConstantBaseApp.ACT005:
+            case ConstantBaseApp.ACT016:
+            case ConstantBaseApp.ACT068:
+                mView.callAct083(context);
+                break;
+        }
+    }
+
     private Bundle getAct071Bundle() {
         Bundle bundle = new Bundle();
         TK_Ticket mTicket = getTicketObj();
