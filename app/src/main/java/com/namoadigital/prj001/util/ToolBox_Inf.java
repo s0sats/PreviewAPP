@@ -8740,4 +8740,29 @@ public class ToolBox_Inf {
         }
         return checkTicketMdProfile(context, s_site_code, operationCode, productCode, tagCode);
     }
+
+    /**
+     * Metodo que retorno o nome da origem como titulo da tela.
+     * NÃO DEVE SER USADO NA LISTA DE ACTION , POIS A REGRA LA É OUTRA.
+     * @param context
+     * @param originFlow - Fluxo e origem resgatado via bundle
+     * @param hmAuxTrans - HmAux com trad da tela e do sys
+     * @param defaultActTitleKey - Chave para a tradução original da tela.Ex,: act082_title
+     * @return
+     */
+    public static String getActTitleByOrigin(Context context, String originFlow,HMAux hmAuxTrans,String defaultActTitleKey){
+        if(originFlow == null || ToolBox_Inf.usesSoMainActivity(context)){
+            return hmAuxTrans.get(defaultActTitleKey);
+        }
+        switch (originFlow){
+            case ConstantBaseApp.ACT006 :
+                return hmAuxTrans.get("sys_main_menu_assets_local_lbl");
+            case ConstantBaseApp.ACT016 :
+                return hmAuxTrans.get("sys_main_menu_calendar_lbl");
+            case ConstantBaseApp.ACT068 :
+                return hmAuxTrans.get("sys_main_menu_search_lbl");
+            default:
+                return hmAuxTrans.get(defaultActTitleKey);
+        }
+    }
 }

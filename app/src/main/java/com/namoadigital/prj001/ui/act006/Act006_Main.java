@@ -29,6 +29,7 @@ import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
@@ -266,6 +267,10 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
 //        checkSiteAvailablity();
     }
 
+    private void setActBarTitle() {
+        getSupportActionBar().setTitle(ToolBox_Inf.getActTitleByOrigin(context, ConstantBaseApp.ACT006,hmAux_Trans,mAct_Title));
+    }
+
     private void checkSiteAvailablity() {
         blockedByExecutionLimitReach = ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context);
         //
@@ -373,7 +378,9 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        //setTitleLanguage();
+        //Metodo que seta o titulo da tela baseado na origem
+        setActBarTitle();
         setFooter();
     }
 

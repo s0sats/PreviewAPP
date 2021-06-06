@@ -120,6 +120,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private boolean isOffHandForm;
     private boolean mtk_ticket_is_form_off_hand;
     private Bundle act083Bundle = new Bundle();
+    private String originFlow = null;
 
 
     @Override
@@ -211,7 +212,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
     private void initVars() {
         recoverIntentsInfo();
-
         mPresenter = new Act020_Main_Presenter_Impl(
                 context,
                 this,
@@ -309,6 +309,10 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 btn_no_serial.setVisibility(View.GONE);
             }
         }
+    }
+
+    private void setActBarTitle() {
+        getSupportActionBar().setTitle(ToolBox_Inf.getActTitleByOrigin(context,originFlow,hmAux_Trans,mAct_Title));
     }
 
     private Bundle getBundleForNFormFinishPlusNew() {
@@ -435,6 +439,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             }
 
             if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)){
+                originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,null);
                 act083Bundle.putString(
                         ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
                         bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
@@ -462,7 +467,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        //setTitleLanguage();
+        //Metodo que seta o titulo da tela baseado na origem
+        setActBarTitle();
         setFooter();
     }
 

@@ -4,22 +4,21 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.adapter.Lib_Custom_Cell_Adapter;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
@@ -32,7 +31,6 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.databinding.Act010MainBinding;
 import com.namoadigital.prj001.databinding.Act010MainContentBinding;
-import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.sql.Sql_Act010_001;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
 import com.namoadigital.prj001.ui.act011.Act011_Main;
@@ -68,6 +66,8 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     private Act010MainContentBinding binding;
     private int tagCode;
     private String tagDesc;
+    private String originFlow = null;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,7 +124,6 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
     }
 
     private void initVars() {
-
         recoverIntentsInfo();
 
         mPresenter = new Act010_Main_Presenter_Impl(
@@ -154,6 +153,10 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         }
     }
 
+    private void setActBarTitle() {
+        getSupportActionBar().setTitle(ToolBox_Inf.getActTitleByOrigin(context,originFlow,hmAux_Trans,mAct_Title));
+    }
+
     private void setLabels() {
         binding.act010TvTagTtl.setText(mPresenter.getTagLblText(hmAux_Trans.get("tag_lbl"),tagDesc));
         binding.act010TvFormTtl.setText(hmAux_Trans.get("form_selection_lbl") + ":");
@@ -177,12 +180,15 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
             //
             tagCode = bundle.getInt(MdTagDao.TAG_CODE,-1);
             tagDesc = bundle.getString(MdTagDao.TAG_DESC,"");
-
+            if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)){
+                originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,null);
+            }
         } else {
             so_prefix = "";
             so_code = "";
             tagCode = -1 ;
             tagDesc = "";
+            originFlow = null;
         }
     }
 
@@ -199,7 +205,10 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        //setTitleLanguage();
+        //Metodo que seta o titulo da tela baseado na origem
+        setActBarTitle();
+
         setFooter();
     }
 

@@ -119,6 +119,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private int mTkTicketCode;
     private boolean has_tk_ticket_is_form_off_hand;
     private Bundle act083Bundle = new Bundle();
+    private String originFlow = null;
     /**
      * BARRIONUEVO 26-05-2021
      * Flag inserida para controlar se houve edicao de serial_id no fluxo de criacao de serial
@@ -285,6 +286,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         if(hasNFormSelected()){
             vNFormSelected.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void setActBarTitle() {
+        getSupportActionBar().setTitle(ToolBox_Inf.getActTitleByOrigin(context,originFlow,hmAux_Trans,mAct_Title));
     }
 
     /**
@@ -523,6 +528,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             if( bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
                 || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
             ){
+                originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,null);
                 act083Bundle.putString(
                     ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
                     bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
@@ -620,7 +626,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        //setTitleLanguage();
+        //Metodo que seta o titulo da tela baseado na origem
+        setActBarTitle();
         setFooter();
 
     }

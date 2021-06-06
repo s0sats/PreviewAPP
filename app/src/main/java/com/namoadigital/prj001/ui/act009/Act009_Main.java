@@ -66,6 +66,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
     private String mStepDesc;
     private Bundle act083Bundle = new Bundle();
     private Act009MainContentBinding binding;
+    private String originFlow = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -139,6 +140,10 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         }
     }
 
+    private void setActBarTitle() {
+        getSupportActionBar().setTitle(ToolBox_Inf.getActTitleByOrigin(context,originFlow,hmAux_Trans,mAct_Title));
+    }
+
     private void setLabels() {
         binding.act009TvTagTtl.setText(hmAux_Trans.get("tag_selection_ttl") + ":");
     }
@@ -165,6 +170,7 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
             }
             if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
                 || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)){
+                originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,null);
                 act083Bundle.putString(
                         ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
                         bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
@@ -188,7 +194,9 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        //setTitleLanguage();
+        //Metodo que seta o titulo da tela baseado na origem
+        setActBarTitle();
         setFooter();
     }
 

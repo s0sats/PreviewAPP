@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -35,8 +36,6 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
-import java.lang.Exception
 
 class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     companion object{
@@ -146,6 +145,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 mModule_Code,
                 ConstantBaseApp.ACT083
         )
+        //06/06/2021 - Add recolhimento do teclado
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+                or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
     private fun initVars() {
@@ -224,9 +226,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 //Tenta fazer scroll com offset, se crashar, tenta scroll sem offset
                 try {
                     val linearLayoutManager = binding.act083MainContent.act083RvActionsList.layoutManager as LinearLayoutManager
-                    val offset = ToolBox.dbToPixel(context,50)
-                    linearLayoutManager.scrollToPositionWithOffset(actionPkPosition,offset)
-                }catch (e:Exception){
+                    val offset = ToolBox.dbToPixel(context, 50)
+                    linearLayoutManager.scrollToPositionWithOffset(actionPkPosition, offset)
+                }catch (e: Exception){
                     binding.act083MainContent.act083RvActionsList.scrollToPosition(
                             actionPkPosition
                     )
