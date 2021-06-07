@@ -201,6 +201,11 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
         setFooter()
     }
 
+    override fun footerCreateDialog() {
+        //super.footerCreateDialog()
+        ToolBox_Inf.buildFooterDialog(context)
+    }
+
     private fun initActions() {
         binding.act084MketFilter.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText {
             override fun reportTextChange(text: String?) {
