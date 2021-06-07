@@ -22,7 +22,8 @@ class SqlAct084_002(
             1 ->    """    and s.${MD_Schedule_ExecDao.STATUS}  = '${ConstantBaseApp.SYS_STATUS_DONE}'"""
             else -> """    and s.${MD_Schedule_ExecDao.STATUS} in('${ConstantBaseApp.SYS_STATUS_NOT_EXECUTED}',
                                                                    '${ConstantBaseApp.SYS_STATUS_CANCELLED}',
-                                                                   '${ConstantBaseApp.SYS_STATUS_ERROR}'                
+                                                                   '${ConstantBaseApp.SYS_STATUS_ERROR}',          
+                                                                   '${ConstantBaseApp.SYS_STATUS_IGNORED}'          
                                                                   ) """.trimMargin()
         }
     }
