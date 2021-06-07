@@ -157,8 +157,14 @@ class SqlAct083_002(
                                  then min(s.${TK_Ticket_StepDao.STEP_DESC})
                                  else '$multStepsLbl'
                            end) ${TK_Ticket_StepDao.STEP_DESC} ,
-                           min(s.forecast_start) ${TK_Ticket_StepDao.FORECAST_START},
-                           max(s.forecast_end) ${TK_Ticket_StepDao.FORECAST_END},
+                           MIN(CASE WHEN s.${TK_Ticket_StepDao.STEP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
+                                    THEN s.forecast_start
+                                    else null
+                               END) ${TK_Ticket_StepDao.FORECAST_START},
+                           MAX(CASE WHEN s.${TK_Ticket_StepDao.STEP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
+                                    THEN  s.forecast_end
+                                    else null
+                               END) ${TK_Ticket_StepDao.FORECAST_END},
                            ifnull(
                                     max(s.${TK_Ticket_StepDao.UPDATE_REQUIRED},
                                         c.${TK_Ticket_CtrlDao.UPDATE_REQUIRED}
@@ -172,7 +178,7 @@ class SqlAct083_002(
                             and s.${TK_Ticket_StepDao.TICKET_CODE} = c.${TK_Ticket_CtrlDao.TICKET_CODE}
                             and s.${TK_Ticket_StepDao.STEP_CODE} = c.${TK_Ticket_CtrlDao.STEP_CODE}
                             and s.${TK_Ticket_StepDao.CUSTOMER_CODE} = $customerCode
-                            and ($userFocus = 0 or s.${TK_Ticket_StepDao.USER_FOCUS} = 1)
+                            and ($userFocus = 0 or s.${TK_Ticket_StepDao.USER_FOCUS} = 1)                            
                          GROUP BY  
                            s.${TK_Ticket_StepDao.CUSTOMER_CODE},
                            s.${TK_Ticket_StepDao.TICKET_PREFIX},
