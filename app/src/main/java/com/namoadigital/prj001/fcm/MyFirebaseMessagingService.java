@@ -603,16 +603,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                             scheduleExec.getSchedule_type().equals(ConstantBaseApp.MD_SCHEDULE_TYPE_FORM)
                                 ? scheduleExec.getCustom_form_desc()
                                 : scheduleExec.getTicket_type_desc();
-                        //
                         //Chama notificação.
-                        ToolBox_Inf.showScheduleNotification(
-                            getApplicationContext(),
-                            scheduleExec.getDate_start(),
-                            notificationDesc,
-                            scheduleExec.getStatus(),
-                            scheduleExec.getFcm_new_status(),
-                            scheduleExec.getFcm_user_nick()
-                        );
+                        //LUCHE - 07/06/2021 - Com o review 4.0, essa notificação foi apontada como
+                        //BÄG então foi removida kkkk
+//                        ToolBox_Inf.showScheduleNotification(
+//                            getApplicationContext(),
+//                            scheduleExec.getDate_start(),
+//                            notificationDesc,
+//                            scheduleExec.getStatus(),
+//                            scheduleExec.getFcm_new_status(),
+//                            scheduleExec.getFcm_user_nick()
+//                        );
                     }
                 }
                 //
