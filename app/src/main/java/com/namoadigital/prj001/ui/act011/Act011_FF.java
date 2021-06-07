@@ -4,10 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.cardview.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +12,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
 
 import com.namoa_digital.namoa_library.ctls.CustomFF;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -28,7 +29,6 @@ import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -269,7 +269,7 @@ public class Act011_FF extends Fragment {
         go_to_history.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAct.callAct015();
+                mAct.callAct084();
             }
         });
         //
