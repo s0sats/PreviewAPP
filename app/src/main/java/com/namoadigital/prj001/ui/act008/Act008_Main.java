@@ -1035,14 +1035,18 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         Intent mIntent = new Intent(context, Act083_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         MyActionFilterParam myActionFilterParam = null;
+        Integer productCode = ACT006.equals(originFlow) ? (int) mdProductSerial.getProduct_code() : null;
+        String productId = ACT006.equals(originFlow) ? mdProductSerial.getProduct_id() : null;
+        String productDesc = ACT006.equals(originFlow) ? mdProductSerial.getProduct_desc() : null;
+        String serialId = ACT006.equals(originFlow) ? mdProductSerial.getSerial_id() : null;
         //
         if(!act083Bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)) {
             myActionFilterParam = new MyActionFilterParam(null,
                     null,
-                    (int) mdProductSerial.getProduct_code(),
-                    mdProductSerial.getProduct_id(),
-                    mdProductSerial.getProduct_desc(),
-                    mdProductSerial.getSerial_id(),
+                    productCode,
+                    productId,
+                    productDesc,
+                    serialId,
                     null,
                     null,
                     null,
@@ -1050,10 +1054,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         }else{
             myActionFilterParam = getMyActionFilterParam(bundle);
             //
-            myActionFilterParam.setProductCode((int) mdProductSerial.getProduct_code());
-            myActionFilterParam.setProductId(mdProductSerial.getProduct_id());
-            myActionFilterParam.setProductDesc(mdProductSerial.getProduct_desc());
-            myActionFilterParam.setSerialId(mdProductSerial.getSerial_id());
+            myActionFilterParam.setProductCode(productCode);
+            myActionFilterParam.setProductId(productId);
+            myActionFilterParam.setProductDesc(productDesc);
+            myActionFilterParam.setSerialId(serialId);
         }
         //
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
