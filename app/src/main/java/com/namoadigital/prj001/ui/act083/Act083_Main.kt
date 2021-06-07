@@ -654,5 +654,33 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             ToolBox_Con.setPreference_Zone_Code(context, mPresenter.zoneCodeBack)
         }
     }
+
+    //TRATA MSG SESSION NOT FOUND
+    override fun processLogin() {
+        super.processLogin()
+        //
+        ToolBox_Con.cleanPreferences(context)
+        //
+        ToolBox_Inf.call_Act001_Main(context)
+        //
+        finish()
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    override fun processUpdateSoftware(mLink: String?, mRequired: String?) {
+        super.processUpdateSoftware(mLink, mRequired)
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired)
+    }
+
+
+    override fun processError_1(mLink: String?, mRequired: String?) {
+        super.processError_1(mLink, mRequired)
+        progressDialog.dismiss()
+    }
+
+    override fun processCustom_error(mLink: String?, mRequired: String?) {
+        super.processCustom_error(mLink, mRequired)
+        progressDialog.dismiss()
+    }
 }
 
