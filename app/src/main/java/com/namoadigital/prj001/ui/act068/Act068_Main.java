@@ -481,10 +481,15 @@ public class Act068_Main extends Base_Activity_Frag_NFC_Geral implements Act068_
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        //setTitleLanguage();
+        //Metodo que seta o titulo da tela baseado na origem
+        setActBarTitle();
         setFooter();
     }
 
+    private void setActBarTitle() {
+        getSupportActionBar().setTitle(ToolBox_Inf.getActTitleByOrigin(context, ConstantBaseApp.ACT068,hmAux_Trans,mAct_Title));
+    }
 
     @Override
     protected void footerCreateDialog() {
