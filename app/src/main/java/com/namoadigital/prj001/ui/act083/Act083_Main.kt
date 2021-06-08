@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.ContextThemeWrapper
 import android.view.View
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -35,8 +36,6 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
-import java.lang.Exception
 
 class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     companion object{
@@ -146,6 +145,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 mModule_Code,
                 ConstantBaseApp.ACT083
         )
+        //
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
     }
 
     private fun initVars() {

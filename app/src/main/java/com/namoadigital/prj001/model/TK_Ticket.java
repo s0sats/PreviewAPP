@@ -1290,10 +1290,33 @@ public class TK_Ticket implements Cloneable, Serializable {
         }
         return evUserCustomer.getLicense_user_level_value() < user_level_min;
     }
-
-    public boolean isReadOnly(Context context) {
+    /**
+     * BARRIONUEVO 07-06-2021
+     * Controle de acesso do produto n deve levar o foco do step.
+     * @return
+     */
+    public boolean isProductReadOnly(Context context) {
         return isReadOnlyUserLevel(context)
                 || isReadOnlyStatus();
+    }
+    //
+    /**
+     * BARRIONUEVO 07-06-2021
+     * Controle de acesso por foco do step.
+     * @return
+     */
+    public boolean isReadOnly(Context context) {
+        return isReadOnlyUserLevel(context)
+                || isReadOnlyStatus()
+                || isReadOnlyDueFocus(context);
+    }
+
+    private boolean isReadOnlyDueFocus(Context context) {
+        if(!ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
+            && !isCurrentStepFocused()){
+         return true;
+        }
+        return false;
     }
 
     /**
@@ -1314,6 +1337,22 @@ public class TK_Ticket implements Cloneable, Serializable {
             for (TK_Ticket_Step step : steps) {
                 if (step.getStep_order() == current_step_order) {
                     if (step.getUpdate_required() == 1) {
+                        return true;
+                    }
+                }
+            }
+        }
+        //
+        return false;
+    }
+
+    private boolean isCurrentStepFocused() {
+        ArrayList<TK_Ticket_Step> steps = getStep();
+        //
+        if(steps != null) {
+            for (TK_Ticket_Step step : steps) {
+                if (step.getStep_order() == current_step_order) {
+                    if (step.getUser_focus() == 1) {
                         return true;
                     }
                 }

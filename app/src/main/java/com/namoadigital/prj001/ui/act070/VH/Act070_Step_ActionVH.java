@@ -1,11 +1,12 @@
 package com.namoadigital.prj001.ui.act070.VH;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act070_Steps_Adapter;
@@ -30,7 +31,7 @@ public class Act070_Step_ActionVH extends Act070_Step_Abstract_ProcessVH {
     private ImageView ivProcessAction;
     private TextView tvProcessAction;
     private Act070_Steps_Adapter.OnActionClickListener actionClickListener;
-    private boolean inReadOnlyMode = false;
+//    private boolean inReadOnlyMode = false;
 
     public Act070_Step_ActionVH(Context context, @NonNull View itemView, Act070_Steps_Adapter.OnActionClickListener actionClickListener, String transStartProcess, String transReviewProcess, String transContinueProcess, String transWaitingSync, boolean isInWgEditMode, boolean inReadOnlyMode) {
         super(context,itemView,transStartProcess,transReviewProcess,transContinueProcess,transWaitingSync,isInWgEditMode,inReadOnlyMode);
@@ -66,6 +67,8 @@ public class Act070_Step_ActionVH extends Act070_Step_Abstract_ProcessVH {
     }
 
     public void bindData(StepAction stepAction){
+        applyStepReadOnly(stepAction.isUserFocus());
+        //
         resetVisibility();
         //
         tvActionDesc.setText(stepAction.getStepDescription());

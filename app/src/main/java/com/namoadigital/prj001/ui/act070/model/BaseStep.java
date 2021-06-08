@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act070.model;
 public class BaseStep {
     protected int stepCode;
     protected String stepDescription;
+    protected boolean userFocus;
 
     public int getStepCode() {
         return stepCode;
@@ -17,5 +18,13 @@ public class BaseStep {
     }
     public void setStepDescription(String stepDescription) {
         this.stepDescription = stepDescription;
+    }
+
+    public boolean isUserFocus() {
+        return userFocus;
+    }
+
+    public void setUserFocus(boolean userFocus) {
+        this.userFocus = userFocus;
     }
 }
