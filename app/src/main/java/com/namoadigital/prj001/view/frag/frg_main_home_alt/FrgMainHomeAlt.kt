@@ -143,12 +143,18 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
         // Inflate the layout for this fragment
         _binding = FrgMainHomeAltBinding.inflate(inflater, container, false)
         //
+        setLabel()
+        //
         setList()
         //
         setActions()
         //
         val view = binding.root
         return view
+    }
+
+    private fun setLabel() {
+        binding.tvDatetimeWarning.text = mListener?.getDatetimeWarning()
     }
 
     override fun onAttach(context: Context) {
@@ -237,6 +243,7 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
         //
         fun onSelectMessenger()
         //
+        fun getDatetimeWarning(): String
     }
 
     companion object {
