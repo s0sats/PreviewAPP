@@ -132,6 +132,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     private Button btnCancelEdit;
     private Button btnSaveEdit;
     private boolean forceWgEditMode = false;
+    //LUCHE - 08/06/2021 - Fluxo de voltar para lista de action
+    private String originFlow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -580,6 +582,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mNavTicketSeqTmp = requestingBundle.getInt(TK_Ticket_CtrlDao.TICKET_SEQ_TMP, -1);
             inWgEditMode =  requestingBundle.getBoolean(PARAM_WORKGROUP_EDIT_MODE, false);
             forceWgEditMode =  requestingBundle.getBoolean(PARAM_FORCE_WORKGROUP_EDIT_MODE, false);
+            originFlow = requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005);
             //
         } else {
             requestingAct = ConstantBaseApp.ACT069;
@@ -592,6 +595,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             mNavTicketSeqTmp = -1;
             inWgEditMode = false;
             forceWgEditMode = false;
+            originFlow = ConstantBaseApp.ACT005;
         }
     }
 
@@ -1150,9 +1154,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }
     }
 
-    @Override
-    public String getRequestingAct() {
-        return requestingAct;
+    public String getOriginFlow() {
+        return originFlow;
     }
 
     @Override
@@ -1700,7 +1703,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
             fabMenu.animateFAB();
         }else {
             if(!inWgEditMode) {
-                mPresenter.onBackPressedClicked(requestingAct);
+                mPresenter.onBackPressedClicked(originFlow);
             }else{
                 confirmEditModeExit();
             }

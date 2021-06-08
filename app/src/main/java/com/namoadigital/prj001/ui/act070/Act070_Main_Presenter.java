@@ -1800,7 +1800,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        onBackPressedClicked(mView.getRequestingAct());
+                        onBackPressedClicked(mView.getOriginFlow());
                     }
                 },
                 false
@@ -1927,7 +1927,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        onBackPressedClicked(mView.getRequestingAct());
+                        onBackPressedClicked(mView.getOriginFlow());
                     }
                 },
                 false
@@ -1977,7 +1977,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        onBackPressedClicked(mView.getRequestingAct());
+                        onBackPressedClicked(mView.getOriginFlow());
                     }
                 },
                 false
@@ -2221,7 +2221,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        onBackPressedClicked(mView.getRequestingAct());
+                        onBackPressedClicked(mView.getOriginFlow());
                     }
                 },
                 false
@@ -2843,35 +2843,14 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
     //endregion
 
     @Override
-    public void onBackPressedClicked(String requestingAct) {
-        switch (requestingAct) {
-            case ConstantBaseApp.ACT017:
-                mView.callAct017();
-                break;
-            case ConstantBaseApp.ACT035:
-                mView.callAct035();
-                break;
-            case ConstantBaseApp.ACT014:
-            case ConstantBaseApp.ACT069:
-                mView.callAct069();
-                break;
-            /**
-             * BARRIONUEVO - 26-10-2020
-             * Mudança feita para direcionar o onbackpressed na tela act070
-             * No Fluxo de Pesquisa de Serial deve retornar para tela principal do Ticket
-             * No Fluxo de Pendentes volta para a tela de lista de pendentes.
-             */
-            case ConstantBaseApp.ACT012:
-                mView.callAct076();
-                break;
-            case ConstantBaseApp.ACT083:
-                mView.callAct083();
-                break;
+    public void onBackPressedClicked(String originFlow) {
+        switch (originFlow) {
             case ConstantBaseApp.ACT084:
                 mView.callAct084();
                 break;
+            case ConstantBaseApp.ACT083:
             default:
-                mView.callAct068();
+                mView.callAct083();
         }
     }
 

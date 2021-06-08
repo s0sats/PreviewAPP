@@ -47,7 +47,7 @@ public interface Act070_Main_Contract {
 
         void showAlert(String ttl, String msg, DialogInterface.OnClickListener listenerOk, boolean showNegative);
 
-        public String getRequestingAct();
+        String getOriginFlow();
 
         void setCurrentStepFirstPosition(int currentStepFirstPosition);
 
@@ -84,7 +84,7 @@ public interface Act070_Main_Contract {
 
         boolean validateBundleParams(int mTkPrefix, int mTkCode);
 
-        void onBackPressedClicked(String requestingAct);
+        void onBackPressedClicked(String originFlow);
 
         boolean getReadOnlyDefinition(TK_Ticket mTicket);
 
