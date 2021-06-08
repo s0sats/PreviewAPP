@@ -150,6 +150,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
     private int mNavTicketSeq;
     private int mNavTicketSeqTmp;
     private CtrlFromToReceiver ctrlFromToReceiver;
+    private Bundle act083Bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -346,6 +347,17 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
                 act081Bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, requestingBundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, ""));
                 act081Bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, requestingBundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, ""));
                 act081Bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT,requestingBundle.getString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT070));
+            }
+
+            if( requestingBundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
+                || requestingBundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+            ){
+                act083Bundle = new Bundle();
+                act083Bundle.putString(
+                    ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                    requestingBundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                );
+                act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(requestingBundle));
             }
 
         } else {
@@ -1437,27 +1449,7 @@ public class Act071_Main extends Base_Activity implements Act071_Main_Contract.I
         Intent intent = new Intent(context, Act083_Main.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
-        Bundle bundle = new Bundle();
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
-        //todo Tratar fluxos de action espontanea para n perder o param
-        MyActionFilterParam mActionFilterParam = (MyActionFilterParam) requestingBundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
-        if(mActionFilterParam == null){
-            mActionFilterParam = new MyActionFilterParam(
-                    null,
-                    "Todos - trad",
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-            );
-        }
-        //
-        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,mActionFilterParam);
-        intent.putExtras(bundle);
+        intent.putExtras(act083Bundle);
         //
         startActivity(intent);
         finish();

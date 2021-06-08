@@ -3984,6 +3984,18 @@ public class ToolBox_Inf {
         return query != null && query.size() > 0 ;
     }
 
+    /**
+     * LUCHE - 04/06/2021
+     * Metodo que analisa se os profiles de O.S ou I.O existem.
+     * Metodo usado para saber qual layout o menu principal deve usar
+     * @param context
+     * @return
+     */
+    public static boolean usesSoMainActivity(Context context) {
+        return ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, null)
+                || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, null);
+    }
+
     private static class GenericExtFilter implements FilenameFilter {
         private String[] exts;
 
@@ -8623,22 +8635,28 @@ public class ToolBox_Inf {
 
     @NotNull
     public static MyActionFilterParam getMyActionFilterParam(Bundle bundle) {
-        //TODO TRATAR CORRETAMENTE
-        MyActionFilterParam mActionFilterParam = (MyActionFilterParam) bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
-        if(mActionFilterParam == null){
+        MyActionFilterParam mActionFilterParam = null;
+        try {
+            mActionFilterParam = (MyActionFilterParam) bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM);
+        }catch (Exception e){
+            ToolBox_Inf.registerException(CLASS_NAME,e);
+        }
+        if (mActionFilterParam == null) {
             mActionFilterParam = new MyActionFilterParam(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
             );
         }
+        mActionFilterParam.setOriginFlow(bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT005));
+        //
         return mActionFilterParam;
     }
 
@@ -8721,5 +8739,30 @@ public class ToolBox_Inf {
             tagCode = Integer.parseInt(s_tag_operational_code);
         }
         return checkTicketMdProfile(context, s_site_code, operationCode, productCode, tagCode);
+    }
+
+    /**
+     * Metodo que retorno o nome da origem como titulo da tela.
+     * NÃO DEVE SER USADO NA LISTA DE ACTION , POIS A REGRA LA É OUTRA.
+     * @param context
+     * @param originFlow - Fluxo e origem resgatado via bundle
+     * @param hmAuxTrans - HmAux com trad da tela e do sys
+     * @param defaultActTitleKey - Chave para a tradução original da tela.Ex,: act082_title
+     * @return
+     */
+    public static String getActTitleByOrigin(Context context, String originFlow,HMAux hmAuxTrans,String defaultActTitleKey){
+        if(originFlow == null || ToolBox_Inf.usesSoMainActivity(context)){
+            return hmAuxTrans.get(defaultActTitleKey);
+        }
+        switch (originFlow){
+            case ConstantBaseApp.ACT006 :
+                return hmAuxTrans.get("sys_main_menu_assets_local_lbl");
+            case ConstantBaseApp.ACT016 :
+                return hmAuxTrans.get("sys_main_menu_calendar_lbl");
+            case ConstantBaseApp.ACT068 :
+                return hmAuxTrans.get("sys_main_menu_search_lbl");
+            default:
+                return hmAuxTrans.get(defaultActTitleKey);
+        }
     }
 }

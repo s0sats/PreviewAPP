@@ -3,9 +3,6 @@ package com.namoadigital.prj001.ui.act006;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +10,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -28,6 +29,7 @@ import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act020.Act020_Main;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_serial_search.Frg_Serial_Search;
@@ -265,6 +267,10 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
 //        checkSiteAvailablity();
     }
 
+    private void setActBarTitle() {
+        getSupportActionBar().setTitle(ToolBox_Inf.getActTitleByOrigin(context, ConstantBaseApp.ACT006,hmAux_Trans,mAct_Title));
+    }
+
     private void checkSiteAvailablity() {
         blockedByExecutionLimitReach = ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context);
         //
@@ -372,7 +378,9 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        //setTitleLanguage();
+        //Metodo que seta o titulo da tela baseado na origem
+        setActBarTitle();
         setFooter();
     }
 
@@ -488,12 +496,13 @@ public class Act006_Main extends Base_Activity_Frag_NFC_Geral implements Act006_
     @Override
     public void callAct020(Context context, Bundle bundle) {
         Intent mIntent = new Intent(context, Act020_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //
         if(!customFormCodeDesc.isEmpty()){
             buildBundleFOrNforFinishPlusNew(bundle);
-
         }
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (bundle != null) {
+
             mIntent.putExtras(bundle);
         }
         startActivity(mIntent);

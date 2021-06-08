@@ -7,6 +7,7 @@ import com.namoadigital.prj001.database.Specification
 import com.namoadigital.prj001.model.MyActions
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 
 class SqlAct083_002(
         private val context: Context,
@@ -48,11 +49,7 @@ class SqlAct083_002(
     }
 
     private fun setHomeFilterConfg() {
-        periodDateFilter = when(ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)){
-            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> " and  (strftime('%Y-%m-%d', ifnull(ts.${TK_Ticket_StepDao.FORECAST_START}, t.${TK_TicketDao.FORECAST_DATE}),'$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"'))"
-            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> " and  (strftime('%Y-%m-%d', ifnull(ts.${TK_Ticket_StepDao.FORECAST_START}, t.${TK_TicketDao.FORECAST_DATE}),'$deviceGMT') <= strftime('%Y-%m-%d','now','"+deviceGMT+"','+7 days'))"
-            else -> ""
-        }
+        periodDateFilter = getPeriodFilter()
         productCode = null
         serialId = null
         clientId = null
@@ -69,6 +66,16 @@ class SqlAct083_002(
                                            )
                                     )        
                                 """
+    }
+
+    private fun getPeriodFilter() = if (!ToolBox_Inf.usesSoMainActivity(context)) {
+        when (ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)) {
+            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> " and  (strftime('%Y-%m-%d', ifnull(ts.${TK_Ticket_StepDao.FORECAST_START}, t.${TK_TicketDao.FORECAST_DATE}),'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
+            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> " and  (strftime('%Y-%m-%d', ifnull(ts.${TK_Ticket_StepDao.FORECAST_START}, t.${TK_TicketDao.FORECAST_DATE}),'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
+            else -> ""
+        }
+    } else {
+        ""
     }
 
     private fun setSerialFilterConfg() {
@@ -150,8 +157,14 @@ class SqlAct083_002(
                                  then min(s.${TK_Ticket_StepDao.STEP_DESC})
                                  else '$multStepsLbl'
                            end) ${TK_Ticket_StepDao.STEP_DESC} ,
-                           min(s.forecast_start) ${TK_Ticket_StepDao.FORECAST_START},
-                           max(s.forecast_end) ${TK_Ticket_StepDao.FORECAST_END},
+                           MIN(CASE WHEN s.${TK_Ticket_StepDao.STEP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
+                                    THEN s.forecast_start
+                                    else null
+                               END) ${TK_Ticket_StepDao.FORECAST_START},
+                           MAX(CASE WHEN s.${TK_Ticket_StepDao.STEP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
+                                    THEN  s.forecast_end
+                                    else null
+                               END) ${TK_Ticket_StepDao.FORECAST_END},
                            ifnull(
                                     max(s.${TK_Ticket_StepDao.UPDATE_REQUIRED},
                                         c.${TK_Ticket_CtrlDao.UPDATE_REQUIRED}
@@ -165,7 +178,7 @@ class SqlAct083_002(
                             and s.${TK_Ticket_StepDao.TICKET_CODE} = c.${TK_Ticket_CtrlDao.TICKET_CODE}
                             and s.${TK_Ticket_StepDao.STEP_CODE} = c.${TK_Ticket_CtrlDao.STEP_CODE}
                             and s.${TK_Ticket_StepDao.CUSTOMER_CODE} = $customerCode
-                            and ($userFocus = 0 or s.${TK_Ticket_StepDao.USER_FOCUS} = 1)
+                            and ($userFocus = 0 or s.${TK_Ticket_StepDao.USER_FOCUS} = 1)                            
                          GROUP BY  
                            s.${TK_Ticket_StepDao.CUSTOMER_CODE},
                            s.${TK_Ticket_StepDao.TICKET_PREFIX},

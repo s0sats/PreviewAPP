@@ -145,8 +145,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 mModule_Code,
                 ConstantBaseApp.ACT083
         )
-        //
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+        //06/06/2021 - Add recolhimento do teclado
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+                or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
     private fun initVars() {
@@ -225,9 +226,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 //Tenta fazer scroll com offset, se crashar, tenta scroll sem offset
                 try {
                     val linearLayoutManager = binding.act083MainContent.act083RvActionsList.layoutManager as LinearLayoutManager
-                    val offset = ToolBox.dbToPixel(context,50)
-                    linearLayoutManager.scrollToPositionWithOffset(actionPkPosition,offset)
-                }catch (e:Exception){
+                    val offset = ToolBox.dbToPixel(context, 50)
+                    linearLayoutManager.scrollToPositionWithOffset(actionPkPosition, offset)
+                }catch (e: Exception){
                     binding.act083MainContent.act083RvActionsList.scrollToPosition(
                             actionPkPosition
                     )
@@ -492,10 +493,8 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
     override fun callAct020(bundle: Bundle) {
         val mIntent = Intent(context, Act020_Main::class.java)
         mIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        if (bundle != null) {
-            bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT017)
-            mIntent.putExtras(bundle)
-        }
+        bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
+        mIntent.putExtras(bundle)
         startActivity(mIntent)
         finish()
     }

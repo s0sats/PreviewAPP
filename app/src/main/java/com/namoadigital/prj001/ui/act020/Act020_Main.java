@@ -3,8 +3,6 @@ package com.namoadigital.prj001.ui.act020;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +12,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -43,6 +44,7 @@ import com.namoadigital.prj001.ui.act011.Act011_Main;
 import com.namoadigital.prj001.ui.act013.Act013_Main;
 import com.namoadigital.prj001.ui.act017.Act017_Main;
 import com.namoadigital.prj001.ui.act081.Act081_Main;
+import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -118,6 +120,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private boolean isOffHandForm;
     private boolean mtk_ticket_is_form_off_hand;
     private Bundle act083Bundle = new Bundle();
+    private String originFlow = null;
 
 
     @Override
@@ -209,7 +212,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
 
     private void initVars() {
         recoverIntentsInfo();
-
         mPresenter = new Act020_Main_Presenter_Impl(
                 context,
                 this,
@@ -307,6 +309,10 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 btn_no_serial.setVisibility(View.GONE);
             }
         }
+    }
+
+    private void setActBarTitle() {
+        getSupportActionBar().setTitle(ToolBox_Inf.getActTitleByOrigin(context,originFlow,hmAux_Trans,mAct_Title));
     }
 
     private Bundle getBundleForNFormFinishPlusNew() {
@@ -433,6 +439,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             }
 
             if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)){
+                originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,null);
                 act083Bundle.putString(
                         ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
                         bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
@@ -460,7 +467,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        //setTitleLanguage();
+        //Metodo que seta o titulo da tela baseado na origem
+        setActBarTitle();
         setFooter();
     }
 
@@ -745,6 +754,15 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         Intent mIntent = new Intent(context, Act081_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.putExtras(act081Bundle);
+        mIntent.getExtras().putAll(act083Bundle);
+        startActivity(mIntent);
+        finish();
+    }
+
+    @Override
+    public void callAct083(Context context) {
+        Intent mIntent = new Intent(context, Act083_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mIntent.getExtras().putAll(act083Bundle);
         startActivity(mIntent);
         finish();

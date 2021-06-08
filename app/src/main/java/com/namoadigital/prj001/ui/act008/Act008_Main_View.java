@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 
 import java.util.ArrayList;
 
@@ -65,4 +66,6 @@ public interface Act008_Main_View {
     String getmdProductSerialSiteCode();
 
     boolean isNewSerial();
+
+    MyActionFilterParam getActionParamFlows();
 }

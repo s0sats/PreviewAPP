@@ -31,7 +31,7 @@ public interface Act011_Main_View {
 
     void showSignature();
 
-    void callAct006(Context context);
+    void callAct006(Context context, boolean finalizeNewFlow);
 
     boolean allowFinalizeWithNewBtn();
 

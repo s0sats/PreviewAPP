@@ -42,6 +42,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MyActionFilterParam;
+import com.namoadigital.prj001.model.MyActions;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
@@ -68,6 +69,7 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.ACT006;
 import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SCHEDULED_PROFILE_CHECK;
+import static com.namoadigital.prj001.util.ToolBox_Inf.getMyActionFilterParam;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -117,6 +119,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private int mTkTicketCode;
     private boolean has_tk_ticket_is_form_off_hand;
     private Bundle act083Bundle = new Bundle();
+    private String originFlow = null;
     /**
      * BARRIONUEVO 26-05-2021
      * Flag inserida para controlar se houve edicao de serial_id no fluxo de criacao de serial
@@ -283,6 +286,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         if(hasNFormSelected()){
             vNFormSelected.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void setActBarTitle() {
+        getSupportActionBar().setTitle(ToolBox_Inf.getActTitleByOrigin(context,originFlow,hmAux_Trans,mAct_Title));
     }
 
     /**
@@ -517,22 +524,30 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             ) {
                 isSchedule = true;
             }
+            //LUCHE - 04/06/2021 - Fluxo vinddo do myaction se for schedule, seta var isSchedule
+            if( bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)
+                || bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+            ){
+                originFlow = bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,null);
+                act083Bundle.putString(
+                    ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                    bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+                );
+                MyActionFilterParam myActionFilterParam = getMyActionFilterParam(bundle);
+                if(MyActions.MY_ACTION_TYPE_SCHEDULE.equals(myActionFilterParam.getParamItemSelectedType())){
+                    isSchedule = true;
+                }
+                act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
+            }
             //
             bundle_from_offline_source = bundle.getBoolean(FROM_OFFLINE_SOURCE, false);
             if (isSchedule) {
                 bundle_product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE));
-                //bundle_product_code = Long.parseLong(bundle.getString(Constant.ACT007_PRODUCT_CODE));
                 bundle_serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
-                //bundle_serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
-                //batatinha
                 scheduled_site = bundle.getString(Constant.ACT017_SCHEDULED_SITE,"");
-                //Se agendado e existe serial preenchido, seta variavel forceCheckSerial para true.
-                //forceCheckSerial = !bundle_serial_id.equals("");
             } else {
                 bundle_product_code = Long.parseLong(bundle.getString(MD_ProductDao.PRODUCT_CODE));
-                //bundle_product_code = Long.parseLong(bundle.getString(Constant.MAIN_PRODUCT_CODE));
                 bundle_serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
-                //bundle_serial_id = bundle.getString(Constant.MAIN_SERIAL_ID, "");
             }
 
             bundle_new_serial = bundle.getBoolean(Constant.MAIN_SERIAL_CREATION, false);
@@ -545,7 +560,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             }
 
             if(bundle.containsKey(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)){
-
                 productCode = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
                 productDesc = bundle.getString(MD_ProductDao.PRODUCT_DESC, "");
                 productId = bundle.getString(MD_ProductDao.PRODUCT_ID, "");
@@ -576,13 +590,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
                 act081Bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, ""));
                 act081Bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, ""));
                 act081Bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, bundle.getString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, ""));
-            }
-            if(bundle.containsKey(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW)){
-                act083Bundle.putString(
-                        ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
-                        bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
-                );
-                act083Bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM,ToolBox_Inf.getMyActionFilterParam(bundle));
             }
         } else {
             bundle_product_code = 0L;
@@ -619,7 +626,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         //
         setUILanguage(hmAux_Trans);
         setMenuLanguage(hmAux_Trans);
-        setTitleLanguage();
+        //setTitleLanguage();
+        //Metodo que seta o titulo da tela baseado na origem
+        setActBarTitle();
         setFooter();
 
     }
@@ -919,7 +928,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         Intent mIntent = new Intent(context, Act011_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, mdProductSerial.getSerial_id());
-        //bundle.putString(Constant.ACT008_SERIAL_ID, mdProductSerial.getSerial_id());
         bundle.putAll(act083Bundle);
         mIntent.putExtras(bundle);
         startActivity(mIntent);
@@ -959,13 +967,26 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     @Override
     public void callAct006(Context context) {
         Intent mIntent = new Intent(context, Act006_Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if(!customFormCodeDesc.isEmpty()){
             buildBundleFOrNforFinishPlusNew(bundle);
-            mIntent.putExtras(bundle);
         }
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        setSearchedFieldsIntoBundle(bundle);
+        mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
+    }
+
+    private void setSearchedFieldsIntoBundle(Bundle bundle) {
+        if(mdProductSerial != null) {
+            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, mdProductSerial.getProduct_id());
+            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, bundle_serial_id);
+            bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
+        }else{
+            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, bundle.getString(MD_ProductDao.PRODUCT_CODE));
+            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER,bundle.getString(MD_Product_SerialDao.SERIAL_ID));
+            bundle.putString(Constant.FRAG_SEARCH_TRACKING_ID_RECOVER, "");
+        }
     }
 
     private void buildBundleFOrNforFinishPlusNew(Bundle bundle) {
@@ -1013,20 +1034,35 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     public void callAct083(Context context) {
         Intent mIntent = new Intent(context, Act083_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        MyActionFilterParam myActionFilterParam = null;
+        Integer productCode = ACT006.equals(originFlow) ? (int) mdProductSerial.getProduct_code() : null;
+        String productId = ACT006.equals(originFlow) ? mdProductSerial.getProduct_id() : null;
+        String productDesc = ACT006.equals(originFlow) ? mdProductSerial.getProduct_desc() : null;
+        String serialId = ACT006.equals(originFlow) ? mdProductSerial.getSerial_id() : null;
+        //
         if(!act083Bundle.containsKey(MyActionFilterParam.MY_ACTION_FILTER_PARAM)) {
-            MyActionFilterParam myActionFilterParam = new MyActionFilterParam(null,
+            myActionFilterParam = new MyActionFilterParam(null,
                     null,
-                    (int) mdProductSerial.getProduct_code(),
-                    mdProductSerial.getProduct_id(),
-                    mdProductSerial.getProduct_desc(),
-                    mdProductSerial.getSerial_id(),
+                    productCode,
+                    productId,
+                    productDesc,
+                    serialId,
                     null,
                     null,
                     null,
                     null);
-            bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
-            bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, ConstantBaseApp.ACT006);
+        }else{
+            myActionFilterParam = getMyActionFilterParam(bundle);
+            //
+            myActionFilterParam.setProductCode(productCode);
+            myActionFilterParam.setProductId(productId);
+            myActionFilterParam.setProductDesc(productDesc);
+            myActionFilterParam.setSerialId(serialId);
         }
+        //
+        bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam);
+        bundle.putString( act083Bundle.getString( ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW), ConstantBaseApp.ACT006);
+        //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
         finish();
@@ -1242,4 +1278,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         return !isSerialExists && bundle_new_serial;
     }
 
+    @Override
+    public MyActionFilterParam getActionParamFlows() {
+        return getMyActionFilterParam(act083Bundle);
+    }
 }

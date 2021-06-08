@@ -32,7 +32,6 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -516,11 +515,7 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
     @Override
     public void onBackPressedClicked() {
         if(mView.isScheduleFlow()){
-            if(requestingAct.equalsIgnoreCase(ConstantBaseApp.ACT017)) {
-                mView.callAct017(context);
-            }else{
-                mView.callAct013(context);
-            }
+            mView.callAct083(context);
         }else {
             if(mView.hasTk_ticket_is_form_off_hand()) {
                 mView.callAct081(context);

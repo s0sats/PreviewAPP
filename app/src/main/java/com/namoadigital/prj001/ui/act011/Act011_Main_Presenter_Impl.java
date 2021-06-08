@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 
@@ -1434,12 +1435,10 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     public void onBackPressedClicked() {
         if (isaTicketFlowForm()) {
             mView.callAct070();
-        }else if(ConstantBaseApp.ACT083.equals(mView.getRequestingAct())){
-            mView.callAct083();
         } else if(ConstantBaseApp.ACT084.equals(mView.getRequestingAct())){
             mView.callAct084();
         } else {
-            mView.callAct005(context);
+            mView.callAct083();
         }
     }
 
@@ -1793,5 +1792,20 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                 Constant.DB_VERSION_CUSTOM
         );
+    }
+
+    @Override
+    public void checkOriginDoneFlow(Bundle act083Bundle) {
+        if(act083Bundle == null){
+            mView.callAct006(context,false);
+        }else{
+            //FLUXO DO TICKET ESTA EM OUTRO LUGAR.
+            String origin = act083Bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, "");
+            if(bAgendado || !ConstantBaseApp.ACT006.equals(origin)){
+                mView.callAct083();
+            }else{
+                mView.callAct006(context,false);
+            }
+        }
     }
 }

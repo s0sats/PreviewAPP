@@ -7,6 +7,7 @@ import com.namoadigital.prj001.dao.TkTicketCacheDao
 import com.namoadigital.prj001.database.Specification
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
+import com.namoadigital.prj001.util.ToolBox_Inf
 
 class SqlAct083_001(
         private val context: Context,
@@ -41,17 +42,25 @@ class SqlAct083_001(
 
 
     private fun setHomeFilterConfg() {
-        periodDateFilter = when (ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)) {
-            ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "  and   (strftime('%Y-%m-%d',c.${TkTicketCacheDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
-            ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "  and   (strftime('%Y-%m-%d',c.${TkTicketCacheDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
-            else -> ""
-        }
+        periodDateFilter = getPeriodFilter()
         productCode = null
         serialId = null
         clientId = null
         contractId = null
         calendarDate = null
         getStatusFilter()
+    }
+
+    private fun getPeriodFilter(): String {
+        return if (!ToolBox_Inf.usesSoMainActivity(context)) {
+            when (ToolBox_Con.getStringPreferencesByKey(context, ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER, ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION)) {
+                ConstantBaseApp.PREFERENCE_HOME_UNTIL_TODAY_OPTION -> "  and   (strftime('%Y-%m-%d',c.${TkTicketCacheDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "'))"
+                ConstantBaseApp.PREFERENCE_HOME_NEXT_WEEK_OPTION -> "  and   (strftime('%Y-%m-%d',c.${TkTicketCacheDao.FORECAST_START},'$deviceGMT') <= strftime('%Y-%m-%d','now','" + deviceGMT + "','+7 days'))"
+                else -> ""
+            }
+        }else{
+            ""
+        }
     }
 
     private fun setSerialFilterConfg() {

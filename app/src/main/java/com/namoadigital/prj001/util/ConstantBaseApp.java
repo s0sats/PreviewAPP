@@ -898,6 +898,10 @@ public class ConstantBaseApp extends ConstantBase {
      */
 
     public static final String MY_ACTIONS_ORIGIN_FLOW = "MY_ACTIONS_ORIGIN_FLOW";
+    public static final String MY_ACTIONS_ORIGIN_FLOW_TAG = "ORIGIN_TAG";
+    public static final String MY_ACTIONS_ORIGIN_FLOW_SERIAL_OR_LOCAL = "ORIGIN_SERIAL_OR_LOCAL";
+    public static final String MY_ACTIONS_ORIGIN_FLOW_SEARCH = "ORIGIN_SEARCH";
+    public static final String MY_ACTIONS_ORIGIN_FLOW_CALENDAR = "ORIGIN_CALENDAR";
 
 
 }
