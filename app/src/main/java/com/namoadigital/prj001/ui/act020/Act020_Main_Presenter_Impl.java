@@ -214,19 +214,26 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
                                     null,
                                     0
                             );
-                        } else {
-                            ToolBox.alertMSG(
-                                    context,
-                                    hmAux_Trans.get("alert_no_form_found_ttl"),
-                                    hmAux_Trans.get("alert_no_form_but_go_to_serial_msg"),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            prepareAct008();
-                                        }
-                                    },
-                                    1
-                            );
+                        }
+
+                        else {
+                            //LUCHE - 07/06/2021
+                            //A validação será feita na act083, pois como ele pode ter outras ações vinculados ao
+                            //serial, não poderemos bloquear aqui. OBS:No caso do sem serial a validação continua aqui
+                            //pois a unica coisa que pode ser feita sem serial é um novo form.
+//                            ToolBox.alertMSG(
+//                                    context,
+//                                    hmAux_Trans.get("alert_no_form_found_ttl"),
+//                                    hmAux_Trans.get("alert_no_form_but_go_to_serial_msg"),
+//                                    new DialogInterface.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(DialogInterface dialog, int which) {
+//                                            prepareAct008();
+//                                        }
+//                                    },
+//                                    1
+//                            );
+                            prepareAct008();
                         }
 
                     }
@@ -242,7 +249,9 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-
+                                            //TODO ESTAVA AQUI A SECULOS SEM NADA KKK TESTARAM BEM
+                                            //VERIFICAR O QUE FAZER.
+                                            onBackPressedClicked();
                                         }
                                     },
                                     1

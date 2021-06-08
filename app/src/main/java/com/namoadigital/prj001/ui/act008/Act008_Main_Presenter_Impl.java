@@ -269,10 +269,14 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                 if (ToolBox_Con.isOnline(context)) {
                     executeSyncProcess();
                 }else {
-                    mView.showAlertDialog(
+                    if(mView.isNewSerial()) {
+                        mView.showAlertDialog(
                             hmAux_Trans.get("alert_no_form_found_ttl"),
                             hmAux_Trans.get("alert_no_form_found_msg")
-                    );
+                        );
+                    }else{
+                        defineFlow();
+                    }
                 }
             }
         }

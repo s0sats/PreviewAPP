@@ -111,6 +111,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ),
+                Sync_ChecklistDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
                 mModule_Code,
                 mResource_Code
         )

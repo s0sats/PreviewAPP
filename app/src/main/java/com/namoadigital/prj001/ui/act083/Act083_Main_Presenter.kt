@@ -13,6 +13,7 @@ import com.namoadigital.prj001.receiver.WBR_Serial_Search
 import com.namoadigital.prj001.receiver.WBR_Sync
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download
 import com.namoadigital.prj001.service.WS_Serial_Search
+import com.namoadigital.prj001.service.WS_Sync
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download
 import com.namoadigital.prj001.sql.*
 import com.namoadigital.prj001.ui.act070.Act070_Main
@@ -36,6 +37,7 @@ class Act083_Main_Presenter(private val context: Context,
                             private val ticketCtrlDao: TK_Ticket_CtrlDao,
                             private val serialDao: MD_Product_SerialDao,
                             private val productDao: MD_ProductDao,
+                            private val syncChecklistDao: Sync_ChecklistDao,
                             private val mModule_Code: String,
                             private val mResource_Code: String
 ) : Act083_Main_Contract.I_Presenter{
@@ -200,8 +202,55 @@ class Act083_Main_Presenter(private val context: Context,
                     hmAux_Trans!!["alert_free_execution_blocked_msg"]!!
             )
         }else{
-           validadeCreateNewForm(myActionsFormButton)
+            checkFormCreationFlow(myActionsFormButton)
+
         }
+    }
+
+    private fun checkFormCreationFlow(myActionsFormButton: MyActionsFormButton) {
+        if(checkSyncChecklistV2(myActionsFormButton.productCode)){
+            validadeCreateNewForm(myActionsFormButton)
+        }else{
+            if(ToolBox_Con.isOnline(context)){
+                executeSyncProcess(myActionsFormButton.productCode.toLong())
+            }else{
+                validadeCreateNewForm(myActionsFormButton)
+            }
+        }
+    }
+
+    private fun executeSyncProcess(productCode: Long) {
+        mView.setProcess(WS_Sync::class.java.name)
+        //
+        mView.showPD(
+                hmAux_Trans!!["alert_start_sync_title"],
+                hmAux_Trans!!["alert_start_sync_msg"]
+        )
+        //
+        val data_package = ArrayList<String>()
+        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST)
+        //
+        val mIntent = Intent(context, WBR_Sync::class.java)
+        val bundle = Bundle()
+        bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context))
+        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package)
+        bundle.putLong(Constant.GS_PRODUCT_CODE, productCode)
+        bundle.putInt(Constant.GC_STATUS_JUMP, 1)
+        bundle.putInt(Constant.GC_STATUS, 1)
+        mIntent.putExtras(bundle)
+        //
+        context.sendBroadcast(mIntent)
+    }
+
+    private fun checkSyncChecklistV2(productCode: Int): Boolean {
+        val hmAuxList: List<HMAux> = syncChecklistDao.query_HM(
+                Sync_Checklist_Sql_002(
+                        ToolBox_Con.getPreference_Customer_Code(context),
+                        productCode.toLong()
+                ).toSqlQuery()
+        )
+        //
+        return hmAuxList.isNotEmpty()
     }
 
     private fun validadeCreateNewForm(myActionsFormButton: MyActionsFormButton) {
@@ -410,11 +459,11 @@ class Act083_Main_Presenter(private val context: Context,
         }
         bundle.putString(Constant.ACT017_SCHEDULED_SITE, scheduleExec.site_code.toString())
         //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(myAction.actionType,myAction.processPk)
+        setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,originFlow)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
         return bundle
     }
 
@@ -719,11 +768,11 @@ class Act083_Main_Presenter(private val context: Context,
     private fun getTicketActionFlowBundle(myAction: MyActions, scheduleExec: MD_Schedule_Exec, ticket_prefix: Int, ticket_code: Int, ticket_seq: Int): Bundle {
         val bundle = Bundle()
         //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(myAction.actionType,myAction.processPk)
+        setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,originFlow)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_PREFIX, scheduleExec.schedule_prefix)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_CODE, scheduleExec.schedule_code)
         bundle.putInt(MD_Schedule_ExecDao.SCHEDULE_EXEC, scheduleExec.schedule_exec)
@@ -783,7 +832,7 @@ class Act083_Main_Presenter(private val context: Context,
         return false
     }
 
-    fun setSeletedActionInfosIntoFilterParam(myActionType: String,myActionPk: String){
+    fun setSeletedActionInfosIntoFilterParam(myActionType: String, myActionPk: String){
         if(::myActionFilterParam.isInitialized){
             myActionFilterParam.originFlow = originFlow
             myActionFilterParam.setSelectedItemParams(
@@ -798,7 +847,7 @@ class Act083_Main_Presenter(private val context: Context,
     override fun getLocalTicket(myAction: MyActions): Bundle {
         val splippedPk = myAction.getSplippedPk()
         //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(myAction.actionType,myAction.processPk)
+        setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
         //
         return ticketBundle(splippedPk[0].toInt(), splippedPk[1].toInt())
     }
@@ -807,11 +856,11 @@ class Act083_Main_Presenter(private val context: Context,
         val splippedPk = myAction.getSplippedPk()
         val bundle = Bundle()
         //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(myAction.actionType,myAction.processPk)
+        setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
         //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,originFlow)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
         //
         bundle.putString(GE_Custom_Form_ApDao.CUSTOMER_CODE, ToolBox_Con.getPreference_Customer_Code(context).toString())
         bundle.putString(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE, splippedPk[0])
@@ -826,11 +875,11 @@ class Act083_Main_Presenter(private val context: Context,
         val splippedPk = myAction.getSplippedPk()
         val bundle = Bundle()
         //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(myAction.actionType,myAction.processPk)
+        setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
         //
         bundle.putString(Constant.MAIN_REQUESTING_ACT, Constant.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,originFlow)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
         //
         bundle.putString(MD_ProductDao.PRODUCT_CODE, myAction.productCode.toString())
         bundle.putString(MD_ProductDao.PRODUCT_DESC, myAction.productDesc)
@@ -875,11 +924,11 @@ class Act083_Main_Presenter(private val context: Context,
     private fun getTicketFlowBundle(myAction: MyActions, ticketPrefix: Int, ticketCode: Int): Bundle {
         val bundle = Bundle()
         //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(myAction.actionType,myAction.processPk)
+        setSeletedActionInfosIntoFilterParam(myAction.actionType, myAction.processPk)
         //
         bundle.putString(ConstantBaseApp.MAIN_REQUESTING_ACT, ConstantBaseApp.ACT083)
         bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
-        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,originFlow)
+        bundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
         //
         bundle.putInt(TK_TicketDao.TICKET_PREFIX, ticketPrefix)
         bundle.putInt(TK_TicketDao.TICKET_CODE, ticketCode)
@@ -1316,7 +1365,7 @@ class Act083_Main_Presenter(private val context: Context,
                 bundle.putString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, actionSelected!!.scheduleCustomFormData.toString())
                 bundle.putBoolean(ConstantBaseApp.SCHEDULED_PROFILE_CHECK, false)
                 //
-                setSeletedActionInfosIntoFilterParam(MyActions.MY_ACTION_TYPE_SCHEDULE,actionSelected!!.processPk)
+                setSeletedActionInfosIntoFilterParam(MyActions.MY_ACTION_TYPE_SCHEDULE, actionSelected!!.processPk)
                 bundle.putSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM, myActionFilterParam)
                 bundle.putSerializable(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, originFlow)
                 //
@@ -1404,7 +1453,7 @@ class Act083_Main_Presenter(private val context: Context,
         val ticketPrefix = hmAuxTicketDownloaded[TK_TicketDao.TICKET_PREFIX]?.let { Integer.valueOf(it) } ?: -1
         val ticketCode = hmAuxTicketDownloaded[TK_TicketDao.TICKET_CODE]?.let { Integer.valueOf(it) } ?: -1
         //Seta dados da action selecionado no filterParam
-        setSeletedActionInfosIntoFilterParam(MyActions.MY_ACTION_TYPE_TICKET,"$ticketPrefix.$ticketCode")
+        setSeletedActionInfosIntoFilterParam(MyActions.MY_ACTION_TYPE_TICKET, "$ticketPrefix.$ticketCode")
         //
         return ticketBundle(ticketPrefix, ticketCode)
     }
@@ -1465,7 +1514,7 @@ class Act083_Main_Presenter(private val context: Context,
             _myActionsList.addAll(
                     getLocalTickets(tabUserFocusFilter).map {
                         val lastTicketSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET)
-                        TK_Ticket.toMyActionsObj(context, it,lastTicketSelected)
+                        TK_Ticket.toMyActionsObj(context, it, lastTicketSelected)
                     }
             )
             //
@@ -1480,7 +1529,7 @@ class Act083_Main_Presenter(private val context: Context,
                 _myActionsList.addAll(
                         getSchedules(tabUserFocusFilter).map {
                             val lastScheduleSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_SCHEDULE)
-                            it.toMyActionsObj(context,lastScheduleSelected)
+                            it.toMyActionsObj(context, lastScheduleSelected)
                         }
                 )
             }
@@ -1489,7 +1538,7 @@ class Act083_Main_Presenter(private val context: Context,
                 _myActionsList.addAll(
                         getFormAp(tabUserFocusFilter).map {
                             val lastFormApSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_FORM_AP)
-                            it.toMyActionsObj(context,lastFormApSelected)
+                            it.toMyActionsObj(context, lastFormApSelected)
                         }
                 )
             }
