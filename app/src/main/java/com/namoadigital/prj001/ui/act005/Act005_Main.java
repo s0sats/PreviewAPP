@@ -3048,11 +3048,12 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
             if(bundle != null){
                 String fcmTitle = (String) bundle.get(ConstantBaseApp.SW_TYPE);
                 if(fcmTitle != null) {
-                    if (fcmTitle.equals(FCM_MODULE_SYNC)
-                    || fcmTitle.equals(FCM_ACTION_TK_TICKET_UPDATE)) {
+//                    Log.d("FCM", "fcmTitle: " + fcmTitle);
+                    if (fcmTitle.equals(FCM_MODULE_SYNC)) {
                         invalidateOptionsMenu();
-                    } else if (fcmTitle.equals(FCM_MODULE_TICKET) || fcmTitle.equals(ConstantBaseApp.FCM_MODULE_FORM_AP)) {
-                       refreshUiData();
+                    } else if (fcmTitle.equals(FCM_MODULE_TICKET) || fcmTitle.equals(ConstantBaseApp.FCM_MODULE_FORM_AP)|| fcmTitle.equals(FCM_ACTION_TK_TICKET_UPDATE)) {
+                        invalidateOptionsMenu();
+                        refreshUiData();
                     }
                 }
             }
