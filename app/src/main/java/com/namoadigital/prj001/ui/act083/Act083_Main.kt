@@ -111,6 +111,11 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 ),
+                Sync_ChecklistDao(
+                        context,
+                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                        Constant.DB_VERSION_CUSTOM
+                ),
                 mModule_Code,
                 mResource_Code
         )
@@ -319,11 +324,6 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                     //
                     if (ToolBox_Con.isOnline(context)) {
                         hmAuxTicketDownload = hmAux
-                        wsProcess = WS_Sync::class.java.name
-                        showPD(
-                                hmAux_Trans["progress_sync_ttl"],
-                                hmAux_Trans["progress_sync_msg"]
-                        )
                         //
                         mPresenter.prepareWsFormSync()
                     } else {
@@ -343,9 +343,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
                 wsProcess = ""
                 progressDialog.dismiss()
                 //
-                callAct070(
-                        mPresenter.getCacheTicketBundle(hmAuxTicketDownload)
-                )
+                mPresenter.processWsSyncReturn(hmAuxTicketDownload)
             }
             WS_Serial_Search::class.java.name -> {
                 wsProcess = ""
@@ -653,6 +651,36 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             ToolBox_Con.setPreference_Site_Code(context, mPresenter.siteCodeBack)
             ToolBox_Con.setPreference_Zone_Code(context, mPresenter.zoneCodeBack)
         }
+    }
+
+    //TRATA MSG SESSION NOT FOUND
+    override fun processLogin() {
+        super.processLogin()
+        //
+        ToolBox_Con.cleanPreferences(context)
+        //
+        ToolBox_Inf.call_Act001_Main(context)
+        //
+        finish()
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED OU VERSÃO INVALIDA
+    override fun processUpdateSoftware(mLink: String?, mRequired: String?) {
+        super.processUpdateSoftware(mLink, mRequired)
+        ToolBox_Inf.executeUpdSW(context, mLink, mRequired)
+    }
+
+
+    override fun processError_1(mLink: String?, mRequired: String?) {
+        super.processError_1(mLink, mRequired)
+        mPresenter.formButtonData = null
+        progressDialog.dismiss()
+    }
+
+    override fun processCustom_error(mLink: String?, mRequired: String?) {
+        super.processCustom_error(mLink, mRequired)
+        mPresenter.formButtonData = null
+        progressDialog.dismiss()
     }
 }
 

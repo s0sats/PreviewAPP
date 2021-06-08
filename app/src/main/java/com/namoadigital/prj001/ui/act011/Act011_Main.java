@@ -101,7 +101,6 @@ import com.namoadigital.prj001.sql.GE_File_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
-import com.namoadigital.prj001.ui.act015.Act015_Main;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
@@ -124,13 +123,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
-import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_HAS_NON_CONFORMITY;
-import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_CANCELLED;
-import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_DONE;
-import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_IGNORED;
-import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_CHK_IS_NOT_EXEC;
-import static com.namoadigital.prj001.ui.act015.Act015_Main.FILTER_SEARCH_KEY;
-import static com.namoadigital.prj001.ui.act015.Act015_Main.FORM_SELECTED_INDEX_KEY;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -171,7 +163,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private String dtCustomer_Format;
 
     private Bundle bundle;
-    private Bundle bundle_act015;
 
     private HMAux hmPages = new HMAux();
 
@@ -1169,7 +1160,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 
     private void recoverGetIntents() {
         bundle = getIntent().getExtras();
-        bundle_act015 = new Bundle();
         if (bundle != null) {
             product_code = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
             //product_code = bundle.getString(Constant.ACT007_PRODUCT_CODE, "");
@@ -1196,13 +1186,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             mSo_Code = bundle.getString(SM_SODao.SO_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, null));
             mSite_Code = bundle.getString(SM_SODao.SITE_CODE, null);
             mOperation_Code = bundle.getString(SM_SODao.OPERATION_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.OPERATION_CODE, null));
-            filter_search = bundle.getString(FILTER_SEARCH_KEY, null);
-            form_selected_index = bundle.getInt(FORM_SELECTED_INDEX_KEY, -1);
-            bundle_act015.putBoolean(FILTER_CHK_IS_DONE, bundle.getBoolean(FILTER_CHK_IS_DONE, true));
-            bundle_act015.putBoolean(FILTER_CHK_IS_NOT_EXEC, bundle.getBoolean(FILTER_CHK_IS_NOT_EXEC, true));
-            bundle_act015.putBoolean(FILTER_CHK_IS_CANCELLED, bundle.getBoolean(FILTER_CHK_IS_CANCELLED, false));
-            bundle_act015.putBoolean(FILTER_CHK_IS_IGNORED, bundle.getBoolean(FILTER_CHK_IS_IGNORED, false));
-            bundle_act015.putBoolean(FILTER_CHK_HAS_NON_CONFORMITY, bundle.getBoolean(FILTER_CHK_HAS_NON_CONFORMITY, false));
             //LUCHE - 24/08/2020 - PK Ticket
             mTicket_prefix = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_PREFIX) ? bundle.getInt(TK_Ticket_CtrlDao.TICKET_PREFIX) : null;
             mTicket_code = bundle.containsKey(TK_Ticket_CtrlDao.TICKET_CODE)? bundle.getInt(TK_Ticket_CtrlDao.TICKET_CODE) : null;
@@ -2159,22 +2142,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
 //        int quantidade = returnValidCheck();
 //
 //        String sF = formData.getToken();
-    }
-
-    public void callAct015() {
-        Intent mIntent = new Intent(context, Act015_Main.class);
-        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        Bundle bundle = new Bundle();
-        if(filter_search != null && filter_search.length() > 0) {
-            bundle.putString(Act015_Main.FILTER_SEARCH_KEY, filter_search);
-        }
-        if(form_selected_index > -1) {
-            bundle.putInt(Act015_Main.FORM_SELECTED_INDEX_KEY, form_selected_index);
-        }
-        bundle.putAll(bundle_act015);
-        mIntent.putExtras(bundle);
-        startActivity(mIntent);
-        finish();
     }
 
     private class ScreenAdapter extends FragmentPagerAdapter {
