@@ -3,8 +3,6 @@ package com.namoadigital.prj001.ui.act081;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +10,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -165,7 +166,6 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         mFrgSerialSearch.setSupportNFC(supportNFC);
         controls_sta.addAll(mFrgSerialSearch.getControlsSta());
         mFrgSerialSearch.setClickListener(actionBTN);
-
         //
         mFrgSerialSearch.setShowHideTracking(ToolBox_Con.getPreference_Customer_Uses_Tracking(context) == 1 ? true : false);
         mFrgSerialSearch.setBtn_Option_01_BackGround(R.drawable.namoa_cell_3_states);
@@ -175,6 +175,8 @@ public class Act081_Main extends Base_Activity_Frag_NFC_Geral implements
         mFrgSerialSearch.setBtn_Option_03_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_04_Visibility(View.GONE);
         mFrgSerialSearch.setBtn_Option_05_Visibility(View.GONE);
+        //LUCHE - 08/06/2021 - evita que ao ler barcode, seja disparado o click no btn principal.
+        mFrgSerialSearch.setPerformClickOnEspecialistReturn(false);
 
 //        mPresenter = new Act081_Main_Presenter();
 

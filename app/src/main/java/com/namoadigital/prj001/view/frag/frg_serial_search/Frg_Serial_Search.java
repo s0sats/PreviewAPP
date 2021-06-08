@@ -3,10 +3,6 @@ package com.namoadigital.prj001.view.frag.frg_serial_search;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +13,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.ButtonNFC;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -83,6 +84,8 @@ public class Frg_Serial_Search extends Fragment {
     private On_Frg_Serial_Search mFragListener;
     private On_Frg_Serial_Search.onProductSelectionReturnListener mFragOnProductSelectionReturnListener;
     private On_Frg_Serial_Search.onProductTypingListener mFragOnProductTypingListener ;
+    //LUCHE - 08/06/2021 - Var que define se deve performar o click ao retornar do barcode.
+    private boolean performClickOnEspecialistReturn = true;
 
     public void setClickListener(View.OnClickListener clickListener) {
         this.clickListener = clickListener;
@@ -100,6 +103,10 @@ public class Frg_Serial_Search extends Fragment {
 
     public void allowChkForHideSerialInfo(boolean status) {
         chk_hide_serial_info.setEnabled(status);
+    }
+
+    public void setPerformClickOnEspecialistReturn(boolean performClickOnEspecialistReturn) {
+        this.performClickOnEspecialistReturn = performClickOnEspecialistReturn;
     }
 
     public boolean isbTokenPendenciesCheck() {
@@ -305,7 +312,11 @@ public class Frg_Serial_Search extends Fragment {
                 //LUCHE - 27/10/2020
                 //Seta var q define busca exata
                 forceExactSearch = true;
-                btn_option_01.performClick();
+                //LUCHE - 08/06/2021
+                //Verifica se deve forçar clique apos leitura do barcode. Comportamento padrão
+                if(performClickOnEspecialistReturn) {
+                    btn_option_01.performClick();
+                }
             }
         });
         //Interface que identifica digitação no campo e reseta var forceExactSearch
