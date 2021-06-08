@@ -86,7 +86,7 @@ class SqlAct005TagList001(private val context: Context,
                 count(t.tag_operational_code) qty,
                 max(case when ifnull(t.has_in_processing,0) > 0
                             then 0
-                            else max(t.update_required, t.update_required_product)
+                            else max(t.update_required, t.update_required_product, t.step_update_required)
                 end) update_required,             
                 max(t.sync_required) sync_required,
                 ifnull(max(t.has_in_processing),0) in_processing 
@@ -94,7 +94,8 @@ class SqlAct005TagList001(private val context: Context,
                    select tk.tag_operational_code, 
                        tk.tag_operational_desc ,                    
                        tk.update_required,
-                       tk.update_required_product, 
+                       tk.update_required_product,
+                       s.update_required step_update_required,
                        tk.sync_required sync_required,
                        has_in_processing 
                    from ${TK_TicketDao.TABLE} tk, 
@@ -123,7 +124,7 @@ class SqlAct005TagList001(private val context: Context,
                            --
                            AND tk.customer_code = $customerCode                      
                            and tk.ticket_status in ('${ConstantBaseApp.SYS_STATUS_PENDING}' , '${ConstantBaseApp.SYS_STATUS_PROCESS}' , '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
-                           and s.step_status in ('${ConstantBaseApp.SYS_STATUS_PENDING}',  '${ConstantBaseApp.SYS_STATUS_PROCESS}' )
+                           and s.step_status in ('${ConstantBaseApp.SYS_STATUS_PENDING}',  '${ConstantBaseApp.SYS_STATUS_PROCESS}' , '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
                            $ticketFilter
                    GROUP BY         
                          tk.customer_code,

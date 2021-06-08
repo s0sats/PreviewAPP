@@ -84,13 +84,12 @@
                 android:background="@drawable/main_menu_chat_badge"
                 android:elevation="10dp"
                 android:gravity="center"
-                android:padding="2dp"
                 android:textColor="@color/padrao_WHITE"
-                android:textSize="12sp"
+                android:textSize="14dp"
                 android:visibility="visible"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.29"
-                app:layout_constraintStart_toStartOf="@+id/iv_messenger"
+                app:layout_constraintEnd_toEndOf="@+id/iv_messenger"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/iv_messenger"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="2" />
 
