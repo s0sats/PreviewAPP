@@ -97,98 +97,15 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         }
     }
 
-//    @Override
-//    public void executeSerialSearch(String product_id, String serial_id, String tracking) {
-//
-//        if (ToolBox_Con.isOnline(context)) {
-//            mView.setWs_process(Act020_Main.PROGRESS_WS_SERIAL_SEARCH);
-//            mView.showPD();
-//
-//            Intent mIntent = new Intent(context, WBR_Serial_Search.class);
-//            Bundle bundle = new Bundle();
-//            //
-//            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_CODE, "");
-//            bundle.putString(Constant.WS_SERIAL_SEARCH_PRODUCT_ID, product_id);
-//            bundle.putString(Constant.WS_SERIAL_SEARCH_SERIAL_ID, serial_id);
-//            bundle.putString(Constant.WS_SERIAL_SEARCH_TRACKING, tracking);
-//            bundle.putInt(Constant.WS_SERIAL_SEARCH_EXACT, 0);
-//            //
-//            mIntent.putExtras(bundle);
-//            //
-//            context.sendBroadcast(mIntent);
-//            ToolBox.sendBCStatus(context, "STATUS", hmAux_Trans.get("msg_start_search"), "", "0");
-//        } else {
-//            ArrayList<MD_Product_Serial> serial_list = hasLocalSerial(product_id, serial_id, tracking);
-//            //
-//            //mView.closeDrawer();
-//            //
-//            //VALOR 100 CHUMBADO TROCAR DEPOIS DE TESTAR
-//            //VER COM JHON QUAL DEIXAR.
-//            //Seta qtd de registro
-//            mView.setRecordInfo(serial_list.size(), 100);
-//            //chama
-//            mView.loadProductSerialList(serial_list);
-//            //
-//            if (serial_list.size() > 0) {
-//                //Se qtd 1, chama proxima define flow
-//                if (serial_list.size() == 1) {
-//                    defineFlow(serial_list.get(0));
-//                } else if (serial_list.size() > 100) {
-//                    //Se qtd de registro maior que o total retornado,
-//                    //exibe msg para refinar a busca.
-//                    mView.showQtyExceededMsg(serial_list.size(), 100);
-//                }
-//
-//            } else {
-//                ToolBox_Inf.showNoConnectionDialog(context);
-//            }
-//        }
-//    }
-
-//    private ArrayList<MD_Product_Serial> hasLocalSerial(String product_id, String serial_id, String tracking) {
-//        ArrayList<HMAux> serial_list = (ArrayList<HMAux>)
-//                serialDao.query_HM(
-//                        new Sql_Act020_002(
-//                                ToolBox_Con.getPreference_Customer_Code(context),
-//                                ToolBox_Con.getPreference_Site_Code(context),
-//                                product_id,
-//                                serial_id,
-//                                tracking
-//                        ).toSqlQuery()
-//                );
-//        //
-//        ArrayList<MD_Product_Serial> tSerialList = new ArrayList<>();
-//        //
-//        if (serial_list != null && serial_list.size() > 0) {
-//            for (HMAux hmAux : serial_list) {
-//                MD_Product_Serial auxObj = new MD_Product_Serial();
-//                //
-//                auxObj.setCustomer_code(Long.parseLong(hmAux.get(MD_Product_SerialDao.CUSTOMER_CODE)));
-//                auxObj.setProduct_code(Long.valueOf(hmAux.get(MD_Product_SerialDao.PRODUCT_CODE)));
-//                auxObj.setProduct_id(hmAux.get(MD_ProductDao.PRODUCT_ID));
-//                auxObj.setProduct_desc(hmAux.get(MD_ProductDao.PRODUCT_DESC));
-//                auxObj.setSerial_code(Long.parseLong(hmAux.get(MD_Product_SerialDao.SERIAL_CODE)));
-//                auxObj.setSerial_id(hmAux.get(MD_Product_SerialDao.SERIAL_ID));
-//                auxObj.setSite_code(!hmAux.get(MD_Product_SerialDao.SITE_CODE).isEmpty() ? Integer.valueOf(hmAux.get(MD_Product_SerialDao.SITE_CODE)) : null);
-//                auxObj.setZone_code(!hmAux.get(MD_Product_SerialDao.ZONE_CODE).isEmpty() ? Integer.valueOf(hmAux.get(MD_Product_SerialDao.ZONE_CODE)) : null);
-//                auxObj.setLocal_code(!hmAux.get(MD_Product_SerialDao.LOCAL_CODE).isEmpty() ? Integer.valueOf(hmAux.get(MD_Product_SerialDao.LOCAL_CODE)) : null);
-//                auxObj.setAdd_inf1(!hmAux.get(MD_Product_SerialDao.ADD_INF1).isEmpty() ? hmAux.get(MD_Product_SerialDao.ADD_INF1) : null);
-//                auxObj.setAdd_inf2(!hmAux.get(MD_Product_SerialDao.ADD_INF2).isEmpty() ? hmAux.get(MD_Product_SerialDao.ADD_INF2) : null);
-//                auxObj.setAdd_inf3(!hmAux.get(MD_Product_SerialDao.ADD_INF3).isEmpty() ? hmAux.get(MD_Product_SerialDao.ADD_INF3) : null);
-//                auxObj.setSite_code_owner(!hmAux.get(MD_Product_SerialDao.SITE_CODE_OWNER).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.SITE_CODE_OWNER) : null);
-//                auxObj.setBrand_code(!hmAux.get(MD_Product_SerialDao.BRAND_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.BRAND_CODE) : null);
-//                auxObj.setModel_code(!hmAux.get(MD_Product_SerialDao.MODEL_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.MODEL_CODE) : null);
-//                auxObj.setColor_code(!hmAux.get(MD_Product_SerialDao.COLOR_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.COLOR_CODE) : null);
-//                auxObj.setSegment_code(!hmAux.get(MD_Product_SerialDao.SEGMENT_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.SEGMENT_CODE) : null);
-//                auxObj.setCategory_price_code(!hmAux.get(MD_Product_SerialDao.CATEGORY_PRICE_CODE).isEmpty() ? Integer.valueOf(MD_Product_SerialDao.CATEGORY_PRICE_CODE) : null);
-//                //
-//                tSerialList.add(auxObj);
-//            }
-//        }
-//        //
-//        return tSerialList;
-//    }
-
+    /**
+     * LUCHE - 08/06/2021
+     * Modificado metodo para contemplar a nova regra de sincronismo de forms. Quando o
+     * fluxo não é sem serial, o usr avança dessa tela para a act008 que fará a validação la em caso
+     * de novo form ou, se o usr for para a lista de actions,então a validação de baixar forms só
+     * deve ser feita no clique do botão criar form.
+     * @param productSerial
+     * @param no_serial
+     */
     @Override
     public void defineFlow(MD_Product_Serial productSerial, boolean no_serial) {
         //
@@ -201,68 +118,108 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
             if(mView.hasTk_ticket_is_form_off_hand() && !mView.isOffHandForm()){
                 prepareAct008();
             }else {
-                if (!hasSyncRegister()) {
-                    if (ToolBox_Con.isOnline(context)) {
-                        executeSyncProcess();
-                    } else {
-                        //ToolBox_Inf.showNoConnectionDialog(context);
-                        if (no_serial) {
+                //LUCHE - 08/06/2021
+                //AGORA SOMENTE FAZ SYNC DE FORM AQUI SE FOR FORM SEM SERIAL.
+                if (no_serial) {
+                    if (!hasSyncRegister()) {
+                        if (ToolBox_Con.isOnline(context)) {
+                            executeSyncProcess();
+                        }else{
                             ToolBox.alertMSG(
-                                    context,
-                                    hmAux_Trans.get("alert_no_connection_no_form_found_ttl"),
-                                    hmAux_Trans.get("alert_no_form_found_msg"),
-                                    null,
-                                    0
+                                context,
+                                hmAux_Trans.get("alert_no_connection_no_form_found_ttl"),
+                                hmAux_Trans.get("alert_no_form_found_msg"),
+                                null,
+                                0
                             );
                         }
-
-                        else {
-                            //LUCHE - 07/06/2021
-                            //A validação será feita na act083, pois como ele pode ter outras ações vinculados ao
-                            //serial, não poderemos bloquear aqui. OBS:No caso do sem serial a validação continua aqui
-                            //pois a unica coisa que pode ser feita sem serial é um novo form.
-//                            ToolBox.alertMSG(
-//                                    context,
-//                                    hmAux_Trans.get("alert_no_form_found_ttl"),
-//                                    hmAux_Trans.get("alert_no_form_but_go_to_serial_msg"),
-//                                    new DialogInterface.OnClickListener() {
-//                                        @Override
-//                                        public void onClick(DialogInterface dialog, int which) {
-//                                            prepareAct008();
-//                                        }
-//                                    },
-//                                    1
-//                            );
-                            prepareAct008();
-                        }
-
-                    }
-                } else {
-                    //Se for um criação sem serial, chama metodo que encaminha para lista de tipo de formulários.
-                    if (no_serial) {
+                    }else{
                         if(ToolBox_Inf.isConcurrentBySiteLicense(context)
-                                && ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context, ToolBox_Con.getPreference_Site_Code(context))) {
+                            && ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context, ToolBox_Con.getPreference_Site_Code(context))) {
                             ToolBox.alertMSG(
-                                    context,
-                                    hmAux_Trans.get("alert_serial_site_out_of_license_tll"),
-                                    hmAux_Trans.get("alert_serial_site_out_of_license_msg"),
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            //TODO ESTAVA AQUI A SECULOS SEM NADA KKK TESTARAM BEM
-                                            //VERIFICAR O QUE FAZER.
-                                            onBackPressedClicked();
-                                        }
-                                    },
-                                    1
+                                context,
+                                hmAux_Trans.get("alert_serial_site_out_of_license_tll"),
+                                hmAux_Trans.get("alert_serial_site_out_of_license_msg"),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //TODO ESTAVA AQUI A SECULOS SEM NADA KKK TESTARAM BEM
+                                        //VERIFICAR O QUE FAZER.
+                                        onBackPressedClicked();
+                                    }
+                                },
+                                1
                             );
                         }else {
                             prepareAct009();
                         }
-                    } else {
-                        prepareAct008();
                     }
+                }else{
+                    prepareAct008();
                 }
+                //region IF ANTIGO COM FORM SYNC
+
+//                if (!hasSyncRegister()) {
+//                    if (ToolBox_Con.isOnline(context)) {
+//                        executeSyncProcess();
+//                    } else {
+//                        //ToolBox_Inf.showNoConnectionDialog(context);
+//                        if (no_serial) {
+//                            ToolBox.alertMSG(
+//                                    context,
+//                                    hmAux_Trans.get("alert_no_connection_no_form_found_ttl"),
+//                                    hmAux_Trans.get("alert_no_form_found_msg"),
+//                                    null,
+//                                    0
+//                            );
+//                        } else {
+//                            //LUCHE - 07/06/2021
+//                            //A validação será feita na act083, pois como ele pode ter outras ações vinculados ao
+//                            //serial, não poderemos bloquear aqui. OBS:No caso do sem serial a validação continua aqui
+//                            //pois a unica coisa que pode ser feita sem serial é um novo form.
+////                            ToolBox.alertMSG(
+////                                    context,
+////                                    hmAux_Trans.get("alert_no_form_found_ttl"),
+////                                    hmAux_Trans.get("alert_no_form_but_go_to_serial_msg"),
+////                                    new DialogInterface.OnClickListener() {
+////                                        @Override
+////                                        public void onClick(DialogInterface dialog, int which) {
+////                                            prepareAct008();
+////                                        }
+////                                    },
+////                                    1
+////                            );
+//                            prepareAct008();
+//                        }
+//
+//                    }
+//                } else {
+//                    //Se for um criação sem serial, chama metodo que encaminha para lista de tipo de formulários.
+//                    if (no_serial) {
+//                        if(ToolBox_Inf.isConcurrentBySiteLicense(context)
+//                                && ToolBox_Inf.isSiteBlockedOrLimitExecutionReached(context, ToolBox_Con.getPreference_Site_Code(context))) {
+//                            ToolBox.alertMSG(
+//                                    context,
+//                                    hmAux_Trans.get("alert_serial_site_out_of_license_tll"),
+//                                    hmAux_Trans.get("alert_serial_site_out_of_license_msg"),
+//                                    new DialogInterface.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(DialogInterface dialog, int which) {
+//                                            //TODO ESTAVA AQUI A SECULOS SEM NADA KKK TESTARAM BEM
+//                                            //VERIFICAR O QUE FAZER.
+//                                            onBackPressedClicked();
+//                                        }
+//                                    },
+//                                    1
+//                            );
+//                        }else {
+//                            prepareAct009();
+//                        }
+//                    } else {
+//                        prepareAct008();
+//                    }
+//                }
+                //ENDREGION
             }
         }
     }

@@ -256,31 +256,63 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
     }
 
     //region Fluxo pós modificação Serial
+
+    /**
+     * LUCHE - 08/06/2021
+     * Modificado para contemplar a nova regra de sincronismo de forms.
+     * Quando o fluxo não é de criação de serial, o usr avança dessa tela para a lista de actions então
+     * a validação de baixar forms só deve ser feita no clique do botão criar form. No cenarios de
+     * criação de serial, como ele só pode executar form, a validação e sincronismo dos form continua
+     * sendo aqui.
+     */
     @Override
     public void checkFlow() {
         if(mView.isHas_tk_ticket_is_form_off_hand() && !mView.isOffHandForm()){
             defineFlow();
-        }else if (checkSyncChecklistV2()) {
+        }else if(isSchedule){
             checkNextStepV2();
-        } else {
-            if(isSchedule) {
-                checkNextStepV2();
-            }else {
-                if (ToolBox_Con.isOnline(context)) {
-                    executeSyncProcess();
-                }else {
-                    if(mView.isNewSerial()) {
+        }else{
+            if(mView.isNewSerial()) {
+                if(checkSyncChecklistV2()){
+                    defineFlow();
+                }else{
+                    if (ToolBox_Con.isOnline(context)) {
+                        executeSyncProcess();
+                    }else {
                         mView.showAlertDialog(
                             hmAux_Trans.get("alert_no_form_found_ttl"),
                             hmAux_Trans.get("alert_no_form_found_msg")
                         );
-                    }else{
-                        defineFlow();
                     }
                 }
+            } else{
+                defineFlow();
             }
         }
-
+        //REGION IF ANTIGO
+//        if(mView.isHas_tk_ticket_is_form_off_hand() && !mView.isOffHandForm()){
+//            defineFlow();
+//        }else if (checkSyncChecklistV2()) {
+//            checkNextStepV2();
+//        } else {
+//            if(isSchedule) {
+//                checkNextStepV2();
+//            }else {
+//                if (ToolBox_Con.isOnline(context)) {
+//                    executeSyncProcess();
+//                }else {
+//                    if(mView.isNewSerial()) {
+//                        mView.showAlertDialog(
+//                            hmAux_Trans.get("alert_no_form_found_ttl"),
+//                            hmAux_Trans.get("alert_no_form_found_msg")
+//                        );
+//                    }else{
+//                        defineFlow();
+//                    }
+//                }
+//            }
+//        }
+        //endregion
     }
 
     public void checkNextStepV2() {

@@ -23,6 +23,7 @@ import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.dialog.ScheduleRequestSerialDialog2
 import kotlinx.coroutines.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 class Act083_Main_Presenter(private val context: Context,
@@ -74,6 +75,7 @@ class Act083_Main_Presenter(private val context: Context,
         get() = _lastSelectedActionPk
     val lastSelectedActionType :String?
         get() = _lastSelectedActionType
+    var formButtonData: MyActionsFormButton? = null
 
     init {
         recoverIntentsInfo()
@@ -203,7 +205,6 @@ class Act083_Main_Presenter(private val context: Context,
             )
         }else{
             checkFormCreationFlow(myActionsFormButton)
-
         }
     }
 
@@ -212,34 +213,12 @@ class Act083_Main_Presenter(private val context: Context,
             validadeCreateNewForm(myActionsFormButton)
         }else{
             if(ToolBox_Con.isOnline(context)){
-                executeSyncProcess(myActionsFormButton.productCode.toLong())
+                formButtonData = myActionsFormButton
+                prepareWsFormSync(myActionsFormButton.productCode.toLong())
             }else{
                 validadeCreateNewForm(myActionsFormButton)
             }
         }
-    }
-
-    private fun executeSyncProcess(productCode: Long) {
-        mView.setProcess(WS_Sync::class.java.name)
-        //
-        mView.showPD(
-                hmAux_Trans!!["alert_start_sync_title"],
-                hmAux_Trans!!["alert_start_sync_msg"]
-        )
-        //
-        val data_package = ArrayList<String>()
-        data_package.add(DataPackage.DATA_PACKAGE_CHECKLIST)
-        //
-        val mIntent = Intent(context, WBR_Sync::class.java)
-        val bundle = Bundle()
-        bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context))
-        bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package)
-        bundle.putLong(Constant.GS_PRODUCT_CODE, productCode)
-        bundle.putInt(Constant.GC_STATUS_JUMP, 1)
-        bundle.putInt(Constant.GC_STATUS, 1)
-        mIntent.putExtras(bundle)
-        //
-        context.sendBroadcast(mIntent)
     }
 
     private fun checkSyncChecklistV2(productCode: Int): Boolean {
@@ -313,6 +292,42 @@ class Act083_Main_Presenter(private val context: Context,
         }
 
     }
+
+    /**
+     * LUCHE - 08/06/2021
+     * Fun que trata do retorno do Ws_Sync. Como tanto ticket quando criação de form chamam o msm Ws,
+     * esse metodo faz a tratativa adequada.
+     * Se existir formButtonData, significa q é criação de form
+     * e após o donwload deve atualizar a lista de sinc e chamar o metodo que valida se existem forms
+     * para o produto.
+     * Caso formButtonData vazio, significa que veio de um download de ticket e deve
+     * navegar para act070
+     */
+    override fun processWsSyncReturn(hmAuxTicketDownload: HMAux) {
+        if(formButtonData != null){
+            updateSyncChecklist(formButtonData!!)
+            validadeCreateNewForm(formButtonData!!)
+        }else {
+            mView.callAct070(
+                    getCacheTicketBundle(hmAuxTicketDownload)
+            )
+        }
+    }
+
+    fun updateSyncChecklist(formButtonData: MyActionsFormButton) {
+        //Pega data atual
+        val cDate = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val last_update = dateFormat.format(cDate.time)
+        val syncChecklist = Sync_Checklist()
+        syncChecklist.customer_code = ToolBox_Con.getPreference_Customer_Code(context)
+        syncChecklist.product_code = formButtonData.productCode.toLong()
+        syncChecklist.last_update = last_update
+        syncChecklistDao.addUpdate(syncChecklist)
+        //
+        ToolBox_Inf.scheduleAllDownloadWorkers(context)
+    }
+
 
     private fun getProductInfo(productCode: Int): MD_Product? {
         return productDao.getByString(
@@ -1434,13 +1449,19 @@ class Act083_Main_Presenter(private val context: Context,
         return ToolBox_Inf.hasFormProductOutdate(context, ticketPrefix, ticketCode)
     }
 
-    override fun prepareWsFormSync() {
+    override fun prepareWsFormSync(productCode: Long) {
+        mView.setProcess(WS_Sync::class.java.name)
+        //
+        mView.showPD(
+                hmAux_Trans!!["progress_sync_ttl"],
+                hmAux_Trans!!["progress_sync_msg"]
+        )
         val data_package = arrayListOf(DataPackage.DATA_PACKAGE_CHECKLIST)
         val mIntent = Intent(context, WBR_Sync::class.java)
         val bundle = Bundle()
         bundle.putString(Constant.GS_SESSION_APP, ToolBox_Con.getPreference_Session_App(context))
         bundle.putStringArrayList(Constant.GS_DATA_PACKAGE, data_package)
-        bundle.putLong(Constant.GS_PRODUCT_CODE, 0)
+        bundle.putLong(Constant.GS_PRODUCT_CODE, productCode)
         bundle.putInt(Constant.GC_STATUS_JUMP, 1)
         bundle.putInt(Constant.GC_STATUS, 1)
         //

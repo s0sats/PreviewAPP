@@ -47,13 +47,14 @@ interface Act083_Main_Contract {
         fun isScheduleFormType(myAction: MyActions): Boolean
         fun hasScheduleSiteAccess(siteCode: Int?): Boolean
         fun verifyProductOutdateForForm(hmAuxTicketDownloaded: HMAux): Boolean
-        fun prepareWsFormSync()
+        fun prepareWsFormSync(productCode: Long = 0)
         fun getCacheTicketBundle(hmAuxTicketDownloaded: HMAux): Bundle
         fun processActionClick(myAction: MyActions)
         fun checkFormFlow(action: MyActions)
         fun extractSearchResult(result: String?)
         fun processActionFormButtonClick(myActionsFormButton: MyActionsFormButton)
         fun onBackPressedClicked()
+        fun processWsSyncReturn(hmAuxTicketDownload: HMAux)
     }
 
 }
