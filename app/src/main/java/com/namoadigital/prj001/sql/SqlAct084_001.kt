@@ -23,7 +23,8 @@ class SqlAct084_001(
             1 ->  """    and t.${TK_TicketDao.TICKET_STATUS}  = '${ConstantBaseApp.SYS_STATUS_DONE}'"""
             else -> """    and t.${TK_TicketDao.TICKET_STATUS} in( '${ConstantBaseApp.SYS_STATUS_NOT_EXECUTED}',
                                                                    '${ConstantBaseApp.SYS_STATUS_CANCELLED}',
-                                                                   '${ConstantBaseApp.SYS_STATUS_ERROR}'                
+                                                                   '${ConstantBaseApp.SYS_STATUS_ERROR}',               
+                                                                   '${ConstantBaseApp.SYS_STATUS_REJECTED}'                
                                                                   ) """.trimMargin()
         }
     }
