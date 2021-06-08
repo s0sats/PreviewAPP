@@ -252,9 +252,9 @@ public class Act006_Main_Presenter_Impl implements Act006_Main_Presenter {
         MyActionFilterParam myActionFilterParam = new MyActionFilterParam(
             null,
             null,
-            (int) mdProduct.getProduct_code(),
-            mProduct_id,
-            mdProduct.getProduct_desc(),
+            mdProduct != null ? (int) mdProduct.getProduct_code() : null,
+            mProduct_id != null && !mProduct_id.isEmpty() ? mProduct_id : null,
+            mdProduct != null ? mdProduct.getProduct_desc() : null,
             mSerial_id,
             null,
             null,

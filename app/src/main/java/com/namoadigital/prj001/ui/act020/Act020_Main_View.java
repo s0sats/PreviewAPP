@@ -47,6 +47,8 @@ public interface Act020_Main_View {
 
     void callAct083(Context context);
 
+    Bundle getAct083Bundle();
+
     //void closeDrawer();
 
 }

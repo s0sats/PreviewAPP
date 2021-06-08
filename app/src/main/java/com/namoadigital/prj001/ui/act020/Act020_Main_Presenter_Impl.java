@@ -23,6 +23,7 @@ import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
+import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
@@ -347,6 +348,23 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
                 bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE));
                 bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION));
                 bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC));
+            }
+        }
+        //LUCHE - 08/06/2021 - Caso o usr tenha buscado somente pelo serial, atualiza informações.
+        Bundle act083Bundle = mView.getAct083Bundle();
+        if(act083Bundle != null && !act083Bundle.isEmpty()) {
+            MyActionFilterParam myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(act083Bundle);
+            if (myActionFilterParam.getProductCode() == null) {
+                //Atualiza infos de param no bundle da act083
+                myActionFilterParam.setProductCode((int) tProductSerial.getProduct_code());
+                myActionFilterParam.setProductId(tProductSerial.getProduct_id());
+                myActionFilterParam.setProductDesc(tProductSerial.getProduct_desc());
+                myActionFilterParam.setSerialId(tProductSerial.getSerial_id());
+                //
+                act083Bundle.putSerializable(
+                    MyActionFilterParam.MY_ACTION_FILTER_PARAM,
+                    myActionFilterParam
+                );
             }
         }
         //
