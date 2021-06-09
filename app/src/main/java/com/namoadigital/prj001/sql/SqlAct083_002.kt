@@ -26,6 +26,10 @@ class SqlAct083_002(
 ) : Specification {
 
     private val INNER_UPDATE_REQUIRED = "INNER_UPDATE_REQUIRED"
+    private val FORECAST_START_FOCUS = "FORECAST_START_FOCUS"
+    private val FORECAST_START_N_FOCUS = "FORECAST_START_N_FOCUS"
+    private val FORECAST_END_FOCUS = "FORECAST_END_FOCUS"
+    private val FORECAST_END_N_FOCUS = "FORECAST_END_N_FOCUS"
     private val deviceGMT = ToolBox.getDeviceGMT(false)
     private var periodDateFilter: String = ""
     private var statusFilter = ""
@@ -144,51 +148,78 @@ class SqlAct083_002(
                      ) $TOTAL_UPDATE_REQUIRED                                           
                     FROM
                         ${TK_TicketDao.TABLE} t
-                    LEFT JOIN    
-                        (SELECT
-                           s.${TK_Ticket_StepDao.CUSTOMER_CODE},
-                           s.${TK_Ticket_StepDao.TICKET_PREFIX},
-                           s.${TK_Ticket_StepDao.TICKET_CODE},
-                           s.${TK_Ticket_StepDao.STEP_ORDER},
-                           s.${TK_Ticket_StepDao.USER_FOCUS},
-                           (case when s.${TK_Ticket_StepDao.USER_FOCUS} = 0
-                                 then null   
-                                 when count(1) = 1
-                                 then min(s.${TK_Ticket_StepDao.STEP_DESC})
-                                 else '$multStepsLbl'
-                           end) ${TK_Ticket_StepDao.STEP_DESC} ,
-                           MIN(CASE WHEN s.${TK_Ticket_StepDao.STEP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
-                                    THEN s.forecast_start
-                                    else null
-                               END) ${TK_Ticket_StepDao.FORECAST_START},
-                           MAX(CASE WHEN s.${TK_Ticket_StepDao.STEP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
-                                    THEN  s.forecast_end
-                                    else null
-                               END) ${TK_Ticket_StepDao.FORECAST_END},
-                           ifnull(
-                                    max(s.${TK_Ticket_StepDao.UPDATE_REQUIRED},
-                                        c.${TK_Ticket_CtrlDao.UPDATE_REQUIRED}
-                                    ),0) $INNER_UPDATE_REQUIRED  
-                         FROM
-                           ${TK_Ticket_StepDao.TABLE} s,
-                           ${TK_Ticket_CtrlDao.TABLE} c
-                         WHERE  
-                            s.${TK_Ticket_StepDao.CUSTOMER_CODE} = c.${TK_Ticket_CtrlDao.CUSTOMER_CODE}
-                            and s.${TK_Ticket_StepDao.TICKET_PREFIX} = c.${TK_Ticket_CtrlDao.TICKET_PREFIX}
-                            and s.${TK_Ticket_StepDao.TICKET_CODE} = c.${TK_Ticket_CtrlDao.TICKET_CODE}
-                            and s.${TK_Ticket_StepDao.STEP_CODE} = c.${TK_Ticket_CtrlDao.STEP_CODE}
-                            and s.${TK_Ticket_StepDao.CUSTOMER_CODE} = $customerCode
-                            and ($userFocus = 0 or s.${TK_Ticket_StepDao.USER_FOCUS} = 1)                            
-                         GROUP BY  
-                           s.${TK_Ticket_StepDao.CUSTOMER_CODE},
-                           s.${TK_Ticket_StepDao.TICKET_PREFIX},
-                           s.${TK_Ticket_StepDao.TICKET_CODE},
-                           s.${TK_Ticket_StepDao.STEP_ORDER}     
+                    LEFT JOIN (SELECT
+                                    ts.${TK_Ticket_StepDao.CUSTOMER_CODE},
+                                    ts.${TK_Ticket_StepDao.TICKET_PREFIX},
+                                    ts.${TK_Ticket_StepDao.TICKET_CODE},
+                                    ts.${TK_Ticket_StepDao.STEP_ORDER}, 
+                                    ts.${TK_Ticket_StepDao.STEP_DESC},
+                                    IFNULL($FORECAST_START_FOCUS,$FORECAST_START_N_FOCUS) ${TK_Ticket_StepDao.FORECAST_START},
+                                    IFNULL($FORECAST_END_FOCUS,$FORECAST_END_N_FOCUS) ${TK_Ticket_StepDao.FORECAST_END},
+                                    $INNER_UPDATE_REQUIRED
+                               FROM 
+                                    (SELECT
+                                           s.${TK_Ticket_StepDao.CUSTOMER_CODE},
+                                           s.${TK_Ticket_StepDao.TICKET_PREFIX},
+                                           s.${TK_Ticket_StepDao.TICKET_CODE},
+                                           s.${TK_Ticket_StepDao.STEP_ORDER},
+                                           s.${TK_Ticket_StepDao.USER_FOCUS},
+                                           (case when s.${TK_Ticket_StepDao.USER_FOCUS} = 0
+                                                 then null   
+                                                 when count(1) = 1
+                                                 then min(s.${TK_Ticket_StepDao.STEP_DESC})
+                                                 else '$multStepsLbl'
+                                           end) ${TK_Ticket_StepDao.STEP_DESC} ,
+                                           MIN(CASE WHEN s.${TK_Ticket_StepDao.USER_FOCUS} = 0
+                                                    THEN null
+                                                    WHEN s.${TK_Ticket_StepDao.STEP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
+                                                    THEN s.forecast_start
+                                                    else null
+                                               END) $FORECAST_START_FOCUS,
+                                               
+                                           MAX(CASE WHEN s.${TK_Ticket_StepDao.USER_FOCUS} = 0
+                                                    THEN null
+                                                    WHEN s.${TK_Ticket_StepDao.STEP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
+                                                    THEN  s.forecast_end
+                                                    else null
+                                               END) $FORECAST_END_FOCUS,
+                                               
+                                           MIN(CASE WHEN s.${TK_Ticket_StepDao.USER_FOCUS} = 1
+                                                    THEN null                                           
+                                                    WHEN s.${TK_Ticket_StepDao.STEP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
+                                                    THEN s.forecast_start
+                                                    else null
+                                               END) $FORECAST_START_N_FOCUS,
+                                               
+                                           MAX(CASE WHEN s.${TK_Ticket_StepDao.USER_FOCUS} = 1
+                                                    THEN null 
+                                                    WHEN s.${TK_Ticket_StepDao.STEP_STATUS} in ('${ConstantBaseApp.SYS_STATUS_PENDING}','${ConstantBaseApp.SYS_STATUS_PROCESS}','${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}')
+                                                    THEN  s.forecast_end
+                                                    else null
+                                               END) $FORECAST_END_N_FOCUS,
+                                           ifnull(
+                                                    max(s.${TK_Ticket_StepDao.UPDATE_REQUIRED},
+                                                        c.${TK_Ticket_CtrlDao.UPDATE_REQUIRED}
+                                                    ),0) $INNER_UPDATE_REQUIRED  
+                                         FROM
+                                           ${TK_Ticket_StepDao.TABLE} s,
+                                           ${TK_Ticket_CtrlDao.TABLE} c
+                                         WHERE  
+                                            s.${TK_Ticket_StepDao.CUSTOMER_CODE} = c.${TK_Ticket_CtrlDao.CUSTOMER_CODE}
+                                            and s.${TK_Ticket_StepDao.TICKET_PREFIX} = c.${TK_Ticket_CtrlDao.TICKET_PREFIX}
+                                            and s.${TK_Ticket_StepDao.TICKET_CODE} = c.${TK_Ticket_CtrlDao.TICKET_CODE}
+                                            and s.${TK_Ticket_StepDao.STEP_CODE} = c.${TK_Ticket_CtrlDao.STEP_CODE}
+                                            and s.${TK_Ticket_StepDao.CUSTOMER_CODE} = $customerCode                                                                      
+                                         GROUP BY  
+                                           s.${TK_Ticket_StepDao.CUSTOMER_CODE},
+                                           s.${TK_Ticket_StepDao.TICKET_PREFIX},
+                                           s.${TK_Ticket_StepDao.TICKET_CODE},
+                                           s.${TK_Ticket_StepDao.STEP_ORDER} 
+                                    ) ts              
                         ) ts ON  ts.${TK_Ticket_StepDao.CUSTOMER_CODE} = t.${TK_TicketDao.CUSTOMER_CODE}
                                 and ts.${TK_Ticket_StepDao.TICKET_PREFIX} = t.${TK_TicketDao.TICKET_PREFIX}
                                 and ts.${TK_Ticket_StepDao.TICKET_CODE} = t.${TK_TicketDao.TICKET_CODE}
-                                and ts.${TK_Ticket_StepDao.STEP_ORDER} = t.${TK_TicketDao.CURRENT_STEP_ORDER}
-                                and ts.${TK_Ticket_StepDao.USER_FOCUS} = $userFocus
+                                and ts.${TK_Ticket_StepDao.STEP_ORDER} = t.${TK_TicketDao.CURRENT_STEP_ORDER}                                
                     WHERE                     
                           t.${TK_TicketDao.CUSTOMER_CODE} = $customerCode
                           and t.${TK_Ticket_StepDao.TICKET_PREFIX} > 0 
