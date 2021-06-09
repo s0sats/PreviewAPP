@@ -22,7 +22,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="center|bottom"
             android:orientation="vertical">
 
             <ImageView
@@ -45,7 +45,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="center|bottom"
             android:orientation="vertical"
             app:layout_constraintEnd_toStartOf="@+id/ll_messenger"
             app:layout_constraintTop_toTopOf="parent">
