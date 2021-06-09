@@ -909,7 +909,7 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
 
     @Override
     public boolean isEditable(TK_Ticket tkTicket) {
-        return !tkTicket.isReadOnly(context);
+        return !tkTicket.isProductReadOnly(context);
     }
 
     private String getFormatedProductInfo(MD_Product mdProduct) {

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -175,6 +176,18 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
             anim.setRepeatCount(5);
             //
             clBackground.startAnimation(anim);
+        }
+    }
+    /**
+     * BARRIONUEVO 07-06-2021
+     * Forçar o readOnly em steps sem focus quando o usuer nao tiver o perfil de acesso PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION
+     */
+    protected void applyStepReadOnly(boolean isUserFocus){
+
+        if(!inReadOnlyMode
+                && !ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
+                && !isUserFocus) {
+            inReadOnlyMode =true;
         }
     }
 }

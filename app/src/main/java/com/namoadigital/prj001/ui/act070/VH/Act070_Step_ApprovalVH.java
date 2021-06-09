@@ -87,6 +87,8 @@ public class Act070_Step_ApprovalVH extends Act070_Step_Abstract_ProcessVH {
     }
 
     public void bindData(StepApproval stepApproval){
+        applyStepReadOnly(stepApproval.isUserFocus());
+        //
         resetVisibility();
         //
         tvApprovalQuestion.setText(stepApproval.getApprovalQuestion());

@@ -131,8 +131,7 @@ class SqlAct005TagList001(private val context: Context,
                          tk.ticket_prefix,
                          tk.ticket_code
          ) t            
-        GROUP BY t.tag_operational_code, 
-                 t.tag_operational_desc                   
+        GROUP BY t.tag_operational_code                   
         
         --UNION TICKET CACHE
         UNION ALL 
@@ -149,8 +148,7 @@ class SqlAct005TagList001(private val context: Context,
                     and tk.ticket_code = tkc.ticket_code                    
             where tk.ticket_code is null
                 $ticketCacheFilter
-            GROUP BY tkc.tag_operational_code, 
-                   tkc.tag_operational_desc
+            GROUP BY tkc.tag_operational_code
         
         --UNION FORM AP                              
         UNION ALL 
@@ -169,8 +167,7 @@ class SqlAct005TagList001(private val context: Context,
                  and geap.${GE_Custom_Form_ApDao.CUSTOMER_CODE} = '$customerCode'
                  and geap.${GE_Custom_Form_ApDao.AP_STATUS} not in ('${Constant.SYS_STATUS_DONE}','${Constant.SYS_STATUS_CANCELLED}')
                  $formApFilter
-            GROUP BY mdt.${MdTagDao.TAG_CODE},   
-                     mdt.${MdTagDao.TAG_DESC}
+            GROUP BY mdt.${MdTagDao.TAG_CODE}
         -- UNION Agendamento
         UNION ALL 
             select mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
@@ -194,8 +191,7 @@ class SqlAct005TagList001(private val context: Context,
             and mse.${MD_Schedule_ExecDao.CUSTOMER_CODE} = mdt.${MdTagDao.CUSTOMER_CODE}
             and mse.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_IN_PROCESSING}','${Constant.SYS_STATUS_WAITING_SYNC}')
             $scheduleFilter
-             GROUP BY mdt.${MdTagDao.TAG_CODE},   
-                     mdt.${MdTagDao.TAG_DESC}
+             GROUP BY mdt.${MdTagDao.TAG_CODE}
         UNION ALL 
             select 
                 s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE} tag_operational_code, 
@@ -262,8 +258,7 @@ class SqlAct005TagList001(private val context: Context,
                                    IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0)
                    
                    )   
-            GROUP BY s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE},   
-                     s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_DESC}
+            GROUP BY s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}
          --UNION FORM AVULSO                     
             UNION ALL
                 select gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}, 
@@ -289,11 +284,10 @@ class SqlAct005TagList001(private val context: Context,
                   and gcdl.ticket_seq is null
                   and gcdl.ticket_seq_tmp is null
                   and gcdl.step_code is null 
-                GROUP BY gcdl.tag_operational_code, 
-                       gcdl.tag_operational_desc                  
+                GROUP BY gcdl.tag_operational_code                
                              )  ticket 
        where  ticket.tag_operational_code is not null
-       group by ticket.tag_operational_code, ticket.tag_operational_desc
+       group by ticket.tag_operational_code
        order by ticket.tag_operational_desc
                                                                 """
         ).toString()

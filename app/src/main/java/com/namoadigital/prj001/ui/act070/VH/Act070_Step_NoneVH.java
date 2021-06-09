@@ -66,6 +66,7 @@ public class Act070_Step_NoneVH extends Act070_Step_Abstract_ProcessVH {
     }
 
     public void bindData(StepNone stepNone){
+        applyStepReadOnly(stepNone.isUserFocus());
         resetVisibility();
         //
         tvActionDesc.setText(stepNone.getStepDescription());

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act070_Steps_Adapter;
 import com.namoadigital.prj001.ui.act070.model.StepProcessBtn;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -53,6 +54,7 @@ public class Act070_Step_Process_Btn_VH extends RecyclerView.ViewHolder{
     }
 
     public void bindData(StepProcessBtn stepProcessBtn){
+        applyStepFocusReadOnly(stepProcessBtn.isUserFocus());
         resetVisibility();
         configBtnByType(stepProcessBtn.getProcessType());
         if(ToolBox_Inf.hasConsistentValueString(stepProcessBtn.getStepDescription())){
@@ -62,6 +64,14 @@ public class Act070_Step_Process_Btn_VH extends RecyclerView.ViewHolder{
         }
         //LUCHE - 03/12/2020
         applyEditVisivilityIfNeeds();
+    }
+
+    private void applyStepFocusReadOnly(boolean isUserFocus) {
+        if(!inReadOnlyMode
+                && !ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
+                && !isUserFocus) {
+            inReadOnlyMode =true;
+        }
     }
 
     /**

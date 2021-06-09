@@ -28,7 +28,6 @@ public class StepMain extends BaseStep{
     private boolean scan_serial;
     private boolean allow_new_obj;
     private boolean move_next_step;
-    private boolean user_focus;
     private String ap_type;
     private String main_user;
 
@@ -55,7 +54,7 @@ public class StepMain extends BaseStep{
         this.scan_serial = scan_serial;
         this.allow_new_obj = allow_new_obj;
         this.move_next_step = move_next_step;
-        this.user_focus = user_focus;
+        this.userFocus = user_focus;
         this.workgroup_code = workgroup_code;
         this.workgroup_desc = workgroup_desc;
         this.zone_site_group_code = zone_site_group_code;
@@ -160,12 +159,17 @@ public class StepMain extends BaseStep{
         this.move_next_step = move_next_step;
     }
 
+    /**
+     * BARRIONUEVO 07-06-2021
+     * Controle de acesso por foco do step.
+     * @return
+     */
     public boolean isUser_focus() {
-        return user_focus;
+        return this.userFocus;
     }
 
     public void setUser_focus(boolean user_focus) {
-        this.user_focus = user_focus;
+        this.userFocus = user_focus;
     }
 
     public String getWorkgroup_code() {

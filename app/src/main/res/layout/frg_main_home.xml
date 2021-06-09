@@ -22,7 +22,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="center|bottom"
             android:orientation="vertical">
 
             <ImageView
@@ -45,7 +45,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="center|bottom"
             android:orientation="vertical"
             app:layout_constraintEnd_toStartOf="@+id/ll_messenger"
             app:layout_constraintTop_toTopOf="parent">
@@ -85,7 +85,7 @@
                 android:elevation="10dp"
                 android:gravity="center"
                 android:textColor="@color/padrao_WHITE"
-                android:textSize="14dp"
+                android:textSize="12dp"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="@+id/iv_messenger"
                 app:layout_constraintHorizontal_bias="0.0"

@@ -2515,7 +2515,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 StepProcessBtn stepProcessBtn = new StepProcessBtn(
                     stepMain.getStepCode(),
                     hmAux_Trans.get("process_check_out_btn"),
-                    ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKOUT
+                    ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKOUT,
+                    stepMain.isUser_focus()
                 );
                 //
                 stepsCtrls.add(stepsCtrls.size(),stepProcessBtn);
@@ -2605,7 +2606,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 new StepProcessBtn(
                     stepMain.getStepCode(),
                     hmAux_Trans.get("process_add_new_btn"),
-                    ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_ADD_NEW
+                    ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_ADD_NEW,
+                    stepMain.isUser_focus()
                 );
             //
             stepsCtrls.add(stepsCtrls.size(),stepNewProcess);
@@ -2624,7 +2626,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
                 new StepProcessBtn(
                     stepMain.getStepCode(),
                     hmAux_Trans.get("process_check_in_btn"),
-                    ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKIN
+                    ConstantBaseApp.TK_PIPELINE_STEP_NEW_PROCESS_TYPE_CHECKIN,
+                    stepMain.isUser_focus()
             );
             //
             stepsCtrls.add(0,stepNewProcess);
@@ -2742,6 +2745,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepForm.setEndDate(tkStepCtrl.getCtrl_end_date());
         stepForm.setEndUser(tkStepCtrl.getCtrl_end_user_name());
         stepForm.setPartnerDesc(tkStepCtrl.getPartner_desc());
+        stepForm.setUserFocus(stepMain.isUser_focus());
         stepForm.setProductDifferentThanTicket(tkStepCtrl.getProduct_code() != null && mTicket.getOpen_product_code() != tkStepCtrl.getProduct_code());
         stepForm.setSerialDifferentThanTicket(tkStepCtrl.getSerial_code() != null && mTicket.getOpen_serial_code() != tkStepCtrl.getSerial_code());
         return stepForm;
@@ -2774,6 +2778,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepApproval.setCurrentStep(stepMain.isCurrentStep());
         stepApproval.setStepAlreadyCheckedIn(ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate()));
         stepApproval.setProcessPlanned(tkStepCtrl.getObj_planned() == 1);
+        stepApproval.setUserFocus(stepMain.isUser_focus());
         //
         stepApproval.setProductDifferentThanTicket(tkStepCtrl.getProduct_code() != null && mTicket.getOpen_product_code() != tkStepCtrl.getProduct_code());
         stepApproval.setProductDifferentThanTicket(tkStepCtrl.getSerial_code() != null && mTicket.getOpen_serial_code() != tkStepCtrl.getSerial_code());
@@ -2791,6 +2796,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepAction.setCurrentStep(stepMain.isCurrentStep());
         stepAction.setStepAlreadyCheckedIn(ToolBox_Inf.hasConsistentValueString(stepMain.getCheckInDate()));
         stepAction.setProcessPlanned(tkStepCtrl.getObj_planned() == 1);
+        stepAction.setUserFocus(stepMain.isUser_focus());
         //PK DO APP
         stepAction.setProcessTkSeqTmp(tkStepCtrl.getTicket_seq_tmp());
         stepAction.setProductDesc(tkStepCtrl.getProduct_desc());
@@ -2824,6 +2830,7 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepNone.setEndDate(tkStepCtrl.getCtrl_end_date());
         stepNone.setEndUser(tkStepCtrl.getCtrl_end_user_name());
         stepNone.setPartnerDesc(tkStepCtrl.getPartner_desc());
+        stepNone.setUserFocus(stepMain.isUser_focus());
         stepNone.setProductDifferentThanTicket(tkStepCtrl.getProduct_code() != null && mTicket.getOpen_product_code() != tkStepCtrl.getProduct_code());
         stepNone.setSerialDifferentThanTicket(tkStepCtrl.getSerial_code() != null && mTicket.getOpen_serial_code() != tkStepCtrl.getSerial_code());
         return stepNone;

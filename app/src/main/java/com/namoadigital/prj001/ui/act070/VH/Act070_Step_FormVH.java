@@ -67,6 +67,7 @@ public class Act070_Step_FormVH extends Act070_Step_Abstract_ProcessVH {
     }
 
     public void bindData(StepForm stepForm){
+        applyStepReadOnly(stepForm.isUserFocus());
         resetVisibility();
         //
         tvActionDesc.setText(stepForm.getStepDescription());

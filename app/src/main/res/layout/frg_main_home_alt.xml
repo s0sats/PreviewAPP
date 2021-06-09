@@ -85,7 +85,7 @@
         android:elevation="10dp"
         android:gravity="center"
         android:textColor="@color/padrao_WHITE"
-        android:textSize="14dp"
+        android:textSize="12dp"
         app:layout_constraintBottom_toTopOf="@+id/fab_messenger"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.85"
