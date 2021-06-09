@@ -49,6 +49,8 @@ public interface Act020_Main_View {
 
     Bundle getAct083Bundle();
 
+    String getOriginFlow();
+
     //void closeDrawer();
 
 }

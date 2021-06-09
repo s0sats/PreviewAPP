@@ -663,6 +663,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     @Override
+    public String getOriginFlow() {
+        return originFlow;
+    }
+
+    @Override
     public void callAct006(Context context) {
         Bundle bundle = new Bundle();
         bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, fragProduct_ID);

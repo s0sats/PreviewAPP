@@ -33,6 +33,7 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_001;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -352,7 +353,8 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         }
         //LUCHE - 08/06/2021 - Caso o usr tenha buscado somente pelo serial, atualiza informações.
         Bundle act083Bundle = mView.getAct083Bundle();
-        if(act083Bundle != null && !act083Bundle.isEmpty()) {
+        String originFlow = mView.getOriginFlow();
+        if(act083Bundle != null && !act083Bundle.isEmpty() && ConstantBaseApp.ACT006.equals(originFlow)) {
             MyActionFilterParam myActionFilterParam = ToolBox_Inf.getMyActionFilterParam(act083Bundle);
             if (myActionFilterParam.getProductCode() == null) {
                 //Atualiza infos de param no bundle da act083
