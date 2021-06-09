@@ -2971,43 +2971,74 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void onSelectAsset() {
-        callAct051(context);
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct051(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @Override
     public void onSelectTags() {
         //Força a chamada de todas as tags.
-        callAct083(new MainTagMenu(0,
-                null,
-                0,
-                0,
-                0,
-                0));
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct083(new MainTagMenu(0,
+                    null,
+                    0,
+                    0,
+                    0,
+                    0));
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @Override
     public void onSelectTagsBySerialSearch() {
-        callAct006(context);
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct006(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @Override
     public void onSelectOS() {
-        callAct026(context);
+
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct026(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @Override
     public void onSelectOSVinSearch() {
-        callAct021(context);
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct021(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
     }
 
     @Override
     public void onSelectOSExpress() {
-        callAct040(context);
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct040(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
+
     }
 
     @Override
     public void onSelectOSNext() {
-        callAct047(context);
+        if (ToolBox_Inf.isLocalDatetimeOk(context)) {
+            callAct047(context);
+        }else{
+            handleInvalidLocalDatetime();
+        }
+
     }
 
 

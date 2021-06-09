@@ -82,7 +82,7 @@ class SqlAct005TagList001(private val context: Context,
           max(ticket.in_processing) in_processing
     from (select            
                 t.tag_operational_code, 
-                t.tag_operational_desc ,
+                max(t.tag_operational_desc) tag_operational_desc,
                 count(t.tag_operational_code) qty,
                 max(case when ifnull(t.has_in_processing,0) > 0
                             then 0
@@ -136,7 +136,7 @@ class SqlAct005TagList001(private val context: Context,
         --UNION TICKET CACHE
         UNION ALL 
             select tkc.tag_operational_code, 
-                   tkc.tag_operational_desc, 
+                   max(tkc.tag_operational_desc) tag_operational_desc, 
                    count(tkc.tag_operational_code) qty, 
                    max(0) update_required, 
                    max(0) sync_required, 
@@ -153,7 +153,7 @@ class SqlAct005TagList001(private val context: Context,
         --UNION FORM AP                              
         UNION ALL 
             select  mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
-                    mdt.${MdTagDao.TAG_DESC} tag_operational_desc, 
+                    max(mdt.${MdTagDao.TAG_DESC}) tag_operational_desc, 
                     count(geap.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE}) qty,
                     max(geap.upload_required) update_required,
                     max(0) sync_required,
@@ -171,7 +171,7 @@ class SqlAct005TagList001(private val context: Context,
         -- UNION Agendamento
         UNION ALL 
             select mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
-            mdt.${MdTagDao.TAG_DESC} tag_operational_desc, 
+            max(mdt.${MdTagDao.TAG_DESC}) tag_operational_desc, 
             count(mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}) qty,
             max((case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                   then 1
@@ -195,7 +195,7 @@ class SqlAct005TagList001(private val context: Context,
         UNION ALL 
             select 
                 s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE} tag_operational_code, 
-                s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_DESC} tag_operational_desc, 
+                max(s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_DESC}) tag_operational_desc, 
                 count(1) qty,
                 max((case when s2.${MD_Schedule_ExecDao.STATUS}  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                       then 1
@@ -262,7 +262,7 @@ class SqlAct005TagList001(private val context: Context,
          --UNION FORM AVULSO                     
             UNION ALL
                 select gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}, 
-                       gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC}, 
+                       max(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_DESC}) tag_operational_desc, 
                        count(gcdl.${GE_Custom_Form_LocalDao.TAG_OPERATIONAL_CODE}), 
                 max((case when gcdl.${GE_Custom_Form_LocalDao.CUSTOM_FORM_STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
                       then 1
@@ -288,7 +288,7 @@ class SqlAct005TagList001(private val context: Context,
                              )  ticket 
        where  ticket.tag_operational_code is not null
        group by ticket.tag_operational_code
-       order by ticket.tag_operational_desc
+       order by ticket.tag_operational_desc COLLATE NOCASE
                                                                 """
         ).toString()
         return toString
