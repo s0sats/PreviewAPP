@@ -116,9 +116,7 @@ public class Sql_Act016_002 implements Specification {
                 "      WHERE                     \n" +
                 "            t.customer_code = '"+customer_code+"'\n" +
                 "            and t.ticket_prefix > 0 \n" +
-                "            and ( (t.ticket_status in('"+ ConstantBaseApp.SYS_STATUS_PENDING+"','"+ ConstantBaseApp.SYS_STATUS_PROCESS+"') and t.user_focus = 1) \n" +
-                "                  or (t.user_focus = 0 or t.ticket_status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"')\n" +
-                "                )   \n" +
+                "            and t.ticket_status in('"+ ConstantBaseApp.SYS_STATUS_PENDING+"','"+ ConstantBaseApp.SYS_STATUS_PROCESS+"','"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC+"') \n" +
                 "      GROUP BY\n" +
                 "            t.ticket_prefix,\n" +
                 "            t.ticket_code \n " +
