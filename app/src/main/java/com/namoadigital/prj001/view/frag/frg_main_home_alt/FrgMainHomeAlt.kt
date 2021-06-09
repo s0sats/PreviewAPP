@@ -31,71 +31,104 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
     // TODO: Rename and change types of parameters
     private var mListener: OnFrgMainHomeAltInteract? = null
     //
-    private val mPresenter by lazy {
-        FrgMainHomeAltPresenter(
-                context,
-                hmAux_Trans_Frag,
-                TK_TicketDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                TkTicketCacheDao(
-                        context!!,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                MD_Schedule_ExecDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                GE_Custom_Form_ApDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                GE_Custom_Form_LocalDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                SM_SODao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                IO_InboundDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                IO_OutboundDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                IO_MoveDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                IO_Blind_MoveDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                MD_Site_ZoneDao(
-                        context,
-                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                        Constant.DB_VERSION_CUSTOM
-                ),
-                CH_MessageDao(context)
-        )
+    private lateinit var hmAux_Trans_Frag: HMAux
+    //
+    private lateinit var mPresenter: FrgMainHomeAltPresenter
+
+    private var _binding: FrgMainHomeAltBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var adapter: Act005MainMenuModuleAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
     }
 
-    //
-    private val hmAux_Trans_Frag: HMAux by lazy {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        // Inflate the layout for this fragment
+        _binding = FrgMainHomeAltBinding.inflate(inflater, container, false)
+        //
+        loadTranslation()
+        //
+        mPresenter = FrgMainHomeAltPresenter(
+                    context,
+                    hmAux_Trans_Frag,
+                    TK_TicketDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ),
+                    TkTicketCacheDao(
+                            context!!,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ),
+                    MD_Schedule_ExecDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ),
+                    GE_Custom_Form_ApDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ),
+                    GE_Custom_Form_LocalDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ),
+                    SM_SODao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ),
+                    IO_InboundDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ),
+                    IO_OutboundDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ),
+                    IO_MoveDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ),
+                    IO_Blind_MoveDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ),
+                    MD_Site_ZoneDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ),
+                    CH_MessageDao(context)
+            )
+        //
+        setList()
+        //
+        setActions()
+        //
+        val view = binding.root
+        return view
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnFrgMainHomeAltInteract) {
+            mListener = context
+        } else {
+            throw RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener")
+        }
+    }
+    private fun loadTranslation() {
         val transListFrag = ArrayList<String>()
         //
         transListFrag.add("sys_main_menu_os_downloaded_lbl")
@@ -121,44 +154,13 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
                 ConstantBaseApp.FRG_MAIN_HOME_ALT
         )
         //
-        ToolBox_Inf.setLanguage(
+        hmAux_Trans_Frag = ToolBox_Inf.setLanguage(
                 context,
                 ConstantBaseApp.APP_MODULE,
                 mResource_Code_Frag,
                 ToolBox_Con.getPreference_Translate_Code(context),  //transListFrag
                 transListFrag
         )
-    }
-
-    private var _binding: FrgMainHomeAltBinding? = null
-    private val binding get() = _binding!!
-    private lateinit var adapter: Act005MainMenuModuleAdapter
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        _binding = FrgMainHomeAltBinding.inflate(inflater, container, false)
-        //
-        setList()
-        //
-        setActions()
-        //
-        val view = binding.root
-        return view
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is OnFrgMainHomeAltInteract) {
-            mListener = context
-        } else {
-            throw RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener")
-        }
     }
 
     override fun onResume() {
@@ -178,6 +180,7 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
     }
 
     private fun setList() {
+
         val moduleList = mPresenter.getModules()
 
         binding.rvModules.visibility = View.VISIBLE
@@ -205,6 +208,8 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
     }
 
     fun refreshModuleList() {
+        loadTranslation()
+        mPresenter.setTranslation(hmAux_Trans_Frag)
         setList()
     }
 
