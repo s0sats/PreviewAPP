@@ -518,6 +518,10 @@ class Act083_Main_Presenter(private val context: Context,
                 object : ScheduleRequestSerialDialog2.OnScheduleRequestSerialDialogListeners {
                     override fun processToForm() {
                         val bundle = Bundle()
+                        //LUCHE - 09/06/2021
+                        //Como esse metodo só é chamado quando o usr prosegue SEM SERIAL,serial id
+                        //será mudado de null para ""
+                        scheduleExec.serial_id = scheduleExec.serial_id?:""
                         if (createFormLocalForSchedule(action, scheduleExec)) {
                             //Atualiza fomr_data no item
                             action.scheduleCustomFormData =

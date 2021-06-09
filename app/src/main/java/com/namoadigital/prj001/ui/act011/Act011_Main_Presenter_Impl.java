@@ -844,6 +844,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         String originalScheduleSerialId = MD_Schedule_Exec.isValidScheduleExec(mdScheduleExec) ? mdScheduleExec.getSerial_id() : null ;
         Integer originalScheduleSeriaCode = MD_Schedule_Exec.isValidScheduleExec(mdScheduleExec) ? mdScheduleExec.getSerial_code() : null ;
         MD_Product_Serial productSerial = null;
+        MD_Product mdProduct = getProduct(mdScheduleExec.getProduct_code());
         //Busca dados do serial. Se não havia serial no agendamento, busca usando o serial passado no bundle
         productSerial = getSerialInfo(
             mdScheduleExec.getCustomer_code(),
@@ -854,14 +855,20 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //
         customFormLocal.setSerial_id(productSerial.getSerial_id());
         customFormLocal.setCustom_form_status(Constant.SYS_STATUS_IN_PROCESSING);
-        //
+        //LUCHE - 09/06/2021
+        //Modificado logica para tb atualizar o serial de null para '' nos casos de agendamento
+        //de produto que não requer serial e o usr prossiga pro agendamento sem informar o serial.
         if(MD_Schedule_Exec.isValidScheduleExec(mdScheduleExec)){
-            if( originalScheduleSerialId == null
-                && productSerial.getSerial_id() != null
-                && !productSerial.getSerial_id().isEmpty()
-            ) {
-                mdScheduleExec.setSerial_code((int) productSerial.getSerial_code());
-                mdScheduleExec.setSerial_id(productSerial.getSerial_id());
+            if(originalScheduleSerialId == null) {
+                if( (productSerial.getSerial_id() != null
+                    && !productSerial.getSerial_id().isEmpty())
+                    || (mdProduct.getRequire_serial() == 0)
+                ){
+                    if(mdProduct.getRequire_serial() == 1) {
+                        mdScheduleExec.setSerial_code((int) productSerial.getSerial_code());
+                    }
+                    mdScheduleExec.setSerial_id(productSerial.getSerial_id());
+                }
             }
             mdScheduleExec.setStatus(Constant.SYS_STATUS_IN_PROCESSING);
         }
