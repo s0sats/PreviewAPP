@@ -52,4 +52,6 @@ public interface Act011_Main_View {
     void callAct083();
 
     void callAct084();
+
+    void nservCall();
 }

@@ -977,7 +977,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         return false;
     }
 
-    private void nservCall() {
+    @Override
+    public void nservCall() {
         Bundle bundle = new Bundle();
 
         bundle.putString(SM_SODao.SO_PREFIX, String.valueOf(mSo_Prefix));
