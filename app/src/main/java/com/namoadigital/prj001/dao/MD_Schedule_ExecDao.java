@@ -664,6 +664,39 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     }
 
     /**
+     * LUCHE - 09/06/2021
+     * Metodo que faz o delete dos agendamento não sincronizados.
+     */
+    public void deleteUnsyncSchedule() {
+        DaoObjReturn daoObjReturn = new DaoObjReturn(TABLE);
+        daoObjReturn.setAction(DaoObjReturn.DELETE);
+        openDB();
+        try {
+            //Se sucesso ao inserir  / atualizar , deleta agedamentos que não foram enviados.
+            ArrayList<MD_Schedule_Exec> scheduleToDell = (ArrayList<MD_Schedule_Exec>)
+                query(
+                    new MD_Schedule_Exec_Sql_003(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                    ).toSqlQuery()
+                );
+            //Se existem itens para delete, tenta o delete.
+            if (scheduleToDell != null && scheduleToDell.size() > 0) {
+                //Deleta agendamentos que não foram processados.
+                daoObjReturn = delete(scheduleToDell, db);
+                //
+                //Se erro ao deletar, dispara exception que por sua vez executa rollback
+                if (daoObjReturn.hasError()) {
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
+            }
+        }catch (Exception e){
+            ToolBox_Inf.registerException(getClass().getName(),e);
+        }finally {
+            closeDB();
+        }
+    }
+
+    /**
      * Luche - 10/05/2021
      * Metdo que resgata os dados relacionais da tag e seta no obj schedule
      * @param scheduleExec

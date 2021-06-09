@@ -1753,6 +1753,8 @@ public class WS_Sync extends IntentService {
                 }
                 //
                 mdScheduleExecDao.processConciliation(scheduleExecs,scheduleExecSiteList,scheduleExecOperationList,scheduleExecProductList);
+            }else{
+                mdScheduleExecDao.deleteUnsyncSchedule();
             }
             //Libera referencias par ao GB
             files_md_schedule_exec = null;
