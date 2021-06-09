@@ -338,7 +338,7 @@ class Act083_Main_Presenter(private val context: Context,
         );
     }
 
-    private fun getSerial(productCode: Int, serialId: String): MD_Product_Serial {
+    private fun getSerial(productCode: Int, serialId: String): MD_Product_Serial? {
         return serialDao.getByString(
                 MD_Product_Serial_Sql_002(
                         ToolBox_Con.getPreference_Customer_Code(context),

@@ -899,8 +899,8 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             //bundle.putString(Constant.ACT008_PRODUCT_ID, mdProduct.getProduct_id().trim());
             bundle.putString(MD_SiteDao.SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
             //bundle.putString(Constant.ACT008_SITE_CODE, mdProductSerial.getSite_code() != null ? String.valueOf(mdProductSerial.getSite_code()) : ToolBox_Con.getPreference_Site_Code(context));
-            //
-
+            //LUCHE - 09/06/2021 - Atualiza serial_id no bundle da act083
+            updateSerialInfoInAct083Bundle(act083Bundle);
             bundle.putAll(act081Bundle);
             bundle.putAll(act083Bundle);
             mIntent.putExtras(bundle);
@@ -921,6 +921,18 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             );
 
         }
+    }
+
+    /**
+     * LUCHE - 09/06/2021
+     * Metodo que atualiza o serial id no MyActionFilterParam do bundle.
+     * Como faz parte da criação do serial, ao acessar essa tela, ele pode mudar o id buscado
+     * e precisa ser atualizado apara a navegação.
+     * @param act083Bundle
+     */
+    private void updateSerialInfoInAct083Bundle(Bundle act083Bundle) {
+        MyActionFilterParam myActionFilterParam = getMyActionFilterParam(act083Bundle);
+        myActionFilterParam.setSerialId(mdProductSerial.getSerial_id());
     }
 
     @Override
