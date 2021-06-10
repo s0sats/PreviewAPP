@@ -13,6 +13,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.LicenseSiteAdapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.DataPackage;
 import com.namoadigital.prj001.model.EV_User_Customer;
 import com.namoadigital.prj001.model.SiteLicense;
@@ -21,10 +22,14 @@ import com.namoadigital.prj001.receiver.WBR_Get_Customer_Site_License;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.receiver.WBR_Session;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_001;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_002;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_003;
 import com.namoadigital.prj001.sql.EV_User_Customer_Sql_009;
+import com.namoadigital.prj001.sql.Sql_Act068_002;
+import com.namoadigital.prj001.sql.Sql_Act069_002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -465,5 +470,48 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     @Override
     public void onBackPressedClicked() {
         mView.callAct001();
+    }
+
+    @Override
+    public void executeWSTicketDownload(TK_TicketDao tk_ticketDao) {
+    //
+        mView.setWsProcess(WS_TK_Ticket_Download.class.getName());
+        //
+        mView.showPD(context.getString(R.string.act002_ws_ticket_download_ttl),
+                context.getString(R.string.act002_ws_ticket_download_msg),
+                context.getString(R.string.generic_msg_cancel),
+                context.getString(R.string.generic_msg_ok));
+        //
+        Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(TK_TicketDao.TICKET_PREFIX, getTicketConcatList(tk_ticketDao));
+        mIntent.putExtras(bundle);
+        //
+        context.sendBroadcast(mIntent);
+    //
+    }
+
+    private String getTicketConcatList(TK_TicketDao tk_ticketDao) {
+        ArrayList<HMAux> auxTickets = getTicketToSync(tk_ticketDao);
+        String ticketPKList = "";
+        for (HMAux aux : auxTickets) {
+            if(aux.hasConsistentValue(Sql_Act069_002.TICKET_PK)){
+                ticketPKList += ConstantBaseApp.MAIN_CONCAT_STRING + aux.get(Sql_Act069_002.TICKET_PK);
+            }
+        }
+        //
+        return ticketPKList.contains(ConstantBaseApp.MAIN_CONCAT_STRING) ? ticketPKList.substring(ConstantBaseApp.MAIN_CONCAT_STRING.length()) : "";
+    }
+
+    private ArrayList<HMAux> getTicketToSync(TK_TicketDao tk_ticketDao) {
+        ArrayList<HMAux> auxTickets = new ArrayList<>();
+        //
+        auxTickets = (ArrayList<HMAux>) tk_ticketDao.query_HM(
+                new Sql_Act068_002(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        return auxTickets;
     }
 }

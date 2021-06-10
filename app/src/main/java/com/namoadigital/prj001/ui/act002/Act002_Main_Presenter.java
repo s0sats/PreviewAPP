@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act002;
 
 import com.namoa_digital.namoa_library.util.HMAux;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.SiteLicense;
 
 /**
@@ -33,4 +34,6 @@ public interface Act002_Main_Presenter {
     void processCustomerSiteLicenseListReturn();
 
     void deleteEnvSiteLicenseFile();
+
+    void executeWSTicketDownload(TK_TicketDao tk_ticketDao);
 }
