@@ -18,8 +18,10 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.EV_User_Customer_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
+import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.SiteLicense;
 import com.namoadigital.prj001.receiver.WBR_Logout;
+import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
 import com.namoadigital.prj001.ui.act003.Act003_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -319,11 +321,18 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     @Override
     protected void processSync() {
         //super.processSync();
-
         if (ToolBox_Con.isOnline(context, true)) {
             //Seta variavel que define ação do metodo processCloseACT.
-            wsProcess = PROCESS_WS_SYNC;
-            mPresenter.executeSyncProcess();
+            TK_TicketDao tk_ticketDao = new TK_TicketDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM);
+            if(tk_ticketDao.hasSyncRequired()){
+                mPresenter.executeWSTicketDownload(tk_ticketDao);
+            }else{
+                wsProcess = PROCESS_WS_SYNC;
+                mPresenter.executeSyncProcess();
+            }
         } else {
             progressDialog.dismiss();
             ToolBox_Inf.showNoConnectionDialog(Act002_Main.this);
@@ -394,6 +403,12 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             mPresenter.processCustomerSiteLicenseListReturn();
             wsProcess = "";
         }
+        //
+        if(wsProcess.equals(WS_TK_Ticket_Download.class.getName())){
+            ToolBox_Inf.hasFormProductOutdate(context);
+            wsProcess = PROCESS_WS_SYNC;
+            mPresenter.executeSyncProcess();
+        }
     }
 
     @Override
@@ -407,7 +422,12 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     protected void processError_1(String mLink, String mRequired) {
         super.processError_1(mLink, mRequired);
         //
-        progressDialog.dismiss();
+        if(wsProcess.equals(WS_TK_Ticket_Download.class.getName())){
+            wsProcess = PROCESS_WS_SYNC;
+            mPresenter.executeSyncProcess();
+        }else{
+            progressDialog.dismiss();
+        }
     }
 
     /**

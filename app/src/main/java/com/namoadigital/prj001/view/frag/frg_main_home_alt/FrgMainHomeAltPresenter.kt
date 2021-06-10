@@ -19,7 +19,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class FrgMainHomeAltPresenter(val context: Context?, private var  hmauxTransFrag: HMAux, val tkTicketdao: TK_TicketDao, val tkTicketCacheDao: TkTicketCacheDao, val mdScheduleExecdao: MD_Schedule_ExecDao, val geCustomFormApdao: GE_Custom_Form_ApDao, val geCustomFormLocaldao: GE_Custom_Form_LocalDao, val smSodao: SM_SODao, val ioInbounddao: IO_InboundDao, val ioOutbounddao: IO_OutboundDao, val ioMovedao: IO_MoveDao, val ioBlindMovedao: IO_Blind_MoveDao, private val zoneDao: MD_Site_ZoneDao, private val chMessageDao: CH_MessageDao
+class FrgMainHomeAltPresenter(val context: Context?, private var hmauxTransFrag: HMAux, val tkTicketdao: TK_TicketDao, val tkTicketCacheDao: TkTicketCacheDao, val mdScheduleExecdao: MD_Schedule_ExecDao, val geCustomFormApdao: GE_Custom_Form_ApDao, val geCustomFormLocaldao: GE_Custom_Form_LocalDao, val mdProductDao: MD_Product_SerialDao, val smSodao: SM_SODao, val ioInbounddao: IO_InboundDao, val ioOutbounddao: IO_OutboundDao, val ioMovedao: IO_MoveDao, val ioBlindMovedao: IO_Blind_MoveDao, private val zoneDao: MD_Site_ZoneDao, private val chMessageDao: CH_MessageDao
 ) : FrgMainHomeAltContract.Presenter {
     //
     override fun getModules(): MutableList<MainModuleMenu> {
@@ -173,22 +173,18 @@ class FrgMainHomeAltPresenter(val context: Context?, private var  hmauxTransFrag
         if (ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_OI, Constant.PROFILE_MENU_IO_SHOW_ACTIONS)
                 || ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_SHOW_ACTIONS)) {
 //            val tagModuleDetail = """${hmauxTransFrag.get("sys_main_menu_tag_detail")!!}:""" + getTagModuleCount()
-            val tagModuleInfo = getTagModuleInfo()
-            var qty =  0
-            var updateRequired =  0
+
+            var qtyUpdateRequired = getTagModuleUpdateRequired()
             var tagDetail=""
-            if(tagModuleInfo.hasConsistentValue("qty")) {
-                qty = Integer.parseInt(tagModuleInfo["qty"]!!)
-                if(qty >0 ){
-                    tagDetail = hmauxTransFrag["main_menu_tag_has_pendency_detail"]!!
-                }else{
-                    tagDetail = hmauxTransFrag["main_menu_tag_no_pendency_detail"]!!
-                }
+            var updateRequired=0
+
+            if(qtyUpdateRequired > 0){
+                updateRequired =1
+                tagDetail = hmauxTransFrag["main_menu_tag_has_pendency_detail"]!!
+            }else{
+                tagDetail = hmauxTransFrag["main_menu_tag_no_pendency_detail"]!!
             }
-            //
-            if(tagModuleInfo.hasConsistentValue(TK_TicketDao.UPDATE_REQUIRED)) {
-                updateRequired = Integer.parseInt(tagModuleInfo[TK_TicketDao.UPDATE_REQUIRED]!!)
-            }
+
             //
             modules.add(
                     MainModuleMenu(
@@ -214,18 +210,54 @@ class FrgMainHomeAltPresenter(val context: Context?, private var  hmauxTransFrag
         }
     }
 
-    private fun getTagModuleInfo(): HMAux {
-        val queryResult: HMAux = tkTicketdao.getByStringHM(
-                SqlAct005TagList002(
-                        ToolBox_Con.getPreference_Customer_Code(context).toInt()
-                ).toSqlQuery()
-        )
+    private fun getTagModuleUpdateRequired(): Int {
+
+        val qtyTicket = Integer.parseInt(ToolBox_Inf.handleTicketUpdateRequired(context, ToolBox_Con.getPreference_Customer_Code(context)))
+        var qtySerial = getSerialUpdateRequired()
+        var qtyForm = getFormUpdateRequired()
+        var qtyFormAp = getFormApUpdateRequired()
+
+        val totalPendency = qtySerial + qtyTicket + qtyForm + qtyFormAp
         //
-        if(queryResult.hasConsistentValue("qty")){
-            return queryResult
+        return totalPendency
+    }
+
+    private fun getSerialUpdateRequired():Int {
+        var qtySerial: Int
+        try {
+            qtySerial = Integer.parseInt(mdProductDao.getByStringHM(
+                    Sql_Act005_008(
+                            ToolBox_Con.getPreference_Customer_Code(context)
+                    ).toSqlQuery()
+            ).get(Sql_Act005_008.BADGE_TO_SEND_QTY)!!)
+        } catch (e: java.lang.Exception) {
+            qtySerial = 0
         }
-        //
-        return HMAux()
+        return qtySerial + ToolBox_Inf.isSerialWithinTokenFile(ToolBox_Con.getPreference_Customer_Code(context))
+    }
+
+    private fun getFormUpdateRequired():Int {
+        var qty: Int
+        try {
+            qty = Integer.parseInt(geCustomFormLocaldao.getByStringHM(
+                    Sql_Act005_002(ToolBox_Con.getPreference_Customer_Code(context).toString()).toSqlQuery()
+            ).get(Sql_Act005_002.BADGE_WAITING_SYNC_QTY)!!)
+        } catch (e: java.lang.Exception) {
+            qty = 0
+        }
+        return qty
+    }
+
+    private fun getFormApUpdateRequired():Int {
+        var qty: Int
+        try {
+            qty = Integer.parseInt(geCustomFormLocaldao.getByStringHM(
+                    Sql_Act005_007(ToolBox_Con.getPreference_Customer_Code(context).toString()).toSqlQuery()
+            ).get(Sql_Act005_007.BADGE_TO_SEND_QTY)!!)
+        } catch (e: java.lang.Exception) {
+            qty = 0
+        }
+        return qty
     }
 
     override fun getChatMessageBadge(): String{

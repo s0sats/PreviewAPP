@@ -78,6 +78,11 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
                             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                             Constant.DB_VERSION_CUSTOM
                     ),
+                    MD_Product_SerialDao(
+                            context,
+                            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                            Constant.DB_VERSION_CUSTOM
+                    ),
                     SM_SODao(
                             context,
                             ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),

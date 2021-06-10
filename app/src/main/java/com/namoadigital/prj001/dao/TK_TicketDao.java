@@ -13,6 +13,7 @@ import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.sql.Sql_Act068_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_002;
 import com.namoadigital.prj001.util.Constant;
@@ -1187,5 +1188,21 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             //
             return contentValues;
         }
+    }
+
+
+    public boolean hasSyncRequired(){
+        ArrayList<HMAux> tickets = (ArrayList<HMAux>)  this.query_HM(
+                new Sql_Act068_002(
+                        ToolBox_Con.getPreference_Customer_Code(context)
+                ).toSqlQuery()
+        );
+        //
+        int qty = 0;
+        if (tickets != null) {
+            qty = tickets.size();
+        }
+        //
+        return qty > 0;
     }
 }

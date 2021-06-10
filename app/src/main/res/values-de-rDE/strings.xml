@@ -126,4 +126,6 @@
     <!--Text Helpers -->
     <string name="unicode_bullet">"\u2022"</string>
     <string name="unicode_copyright">©</string>
+    <string name="act002_ws_ticket_download_ttl">Download</string>
+    <string name="act002_ws_ticket_download_msg">Alte Tickets werden aktualisiert.</string>
 </resources>

@@ -111,6 +111,8 @@
     <string name="msg_login_invalid_current_time">The date / time of your device is incompatible with the Namoa server. \n Set the date / time of your device and try again.</string>
     <string name="act002_ws_site_license_ttl">Licenced Sites</string>
     <string name="act002_ws_site_license_msg">Loading Sites with available licences.</string>
+    <string name="act002_ws_ticket_download_ttl">Download de Tickets</string>
+    <string name="act002_ws_ticket_download_msg">Downloading outdated tickets.</string>
     <string name="license_site_dialog_ttl">Licenced Sites</string>
     <string name="license_site_dialog_filter_hint">Select the Site of your licence</string>
     <string name="license_site_dialog_close">Cancel</string>
