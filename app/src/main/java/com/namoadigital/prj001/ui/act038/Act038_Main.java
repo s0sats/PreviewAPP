@@ -1268,10 +1268,13 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //
         Bundle mBundle = new Bundle();
-        mBundle.putString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW, Constant.ACT005);
+        mBundle.putString(
+                ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,
+                bundle.getString(ConstantBaseApp.MY_ACTIONS_ORIGIN_FLOW,ConstantBaseApp.ACT005)
+        );
         mBundle.putSerializable(
                 MyActionFilterParam.MY_ACTION_FILTER_PARAM,
-                bundle.getSerializable(MyActionFilterParam.MY_ACTION_FILTER_PARAM)
+                ToolBox_Inf.getMyActionFilterParam(bundle)
         );
         intent.putExtras(mBundle);
         //
