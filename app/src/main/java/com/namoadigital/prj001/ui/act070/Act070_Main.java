@@ -922,6 +922,12 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
         }
     }
 
+    /**
+     * LUCHE - 10/06/2021
+     * Adicionado else para que caso não seja readonly, reconstruir todos os itens do fab.
+     * Com a implementação do sem foco e sem claim não pode executar, quando o usr recupera o foco
+     * o fab tem que ser reconstruido para a opção WG voltar a aparecer.
+     */
     private void handleFabMenuOnTicketStatusChanged() {
         if(mPresenter.getReadOnlyDefinition(mTicket)){
             ArrayList<FabMenuItem> fabMenuItems = fabMenu.getmButtons();
@@ -933,6 +939,8 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                     }
                 }
             }
+        }else{
+            setFabMenu();
         }
     }
 

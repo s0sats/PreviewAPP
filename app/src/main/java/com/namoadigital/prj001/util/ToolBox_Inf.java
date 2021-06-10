@@ -5724,7 +5724,11 @@ public class ToolBox_Inf {
      * <p></p>
      * Comentando os status do form que não existirão mais(Finalized e Sent) e modificando a cor dos
      * status schedule e waiting_sync
-     *
+     * <p></p>
+     * LUCHE - 10/06/2021
+     * <p></p>
+     * Modificado switch, separando status NOT_EXECUTED e SENT, pois agor a cor do NOT_EXECUTED será
+     * outra
      * @param status - Status
      * @return - R.color do status passado.
      */
@@ -5758,8 +5762,9 @@ public class ToolBox_Inf {
             case Constant.SYS_STATUS_FINALIZED://Remover após certeza que não é mais usado
                 return R.color.namoa_status_done;
             case Constant.SYS_STATUS_NOT_EXECUTED:
-            case Constant.SYS_STATUS_SENT://30/03/2020 - Ainda usado na O.S express
                 return R.color.namoa_status_not_executed;
+            case Constant.SYS_STATUS_SENT://30/03/2020 - Ainda usado na O.S express
+                return R.color.namoa_status_sent;
             case Constant.SYS_STATUS_CANCELLED:
             case Constant.SYS_STATUS_DELETED:
                 return R.color.namoa_status_cancelled;
@@ -8239,6 +8244,9 @@ public class ToolBox_Inf {
     /**
      * BARRIONUEVO - 03-12-2020
      * Encapsulamento de configuração de FABMenu do Pipeline.
+     * LUCHE - 10/06/2021
+     * Add chamada do metodo removeAllFabMenuItens antes de setar dos menuItens. Esse metodo, remove
+     * todos itens anteriores tando da lista quando do layout
      * @param context   Deve ser o contexto da Activity e nao da Applicacao
      * @param fabMenu
      * @param hmAux_Trans
@@ -8247,6 +8255,8 @@ public class ToolBox_Inf {
      */
     public static void setPipelineFabMenu(Context context, FabMenu fabMenu, HMAux hmAux_Trans, TK_Ticket ticket, FabMenu.IFabMenu listener) {
         ArrayList<FabMenuItem> fabMenuItems  = initFabMenuItens(context, hmAux_Trans, ticket);
+        //LUCHE - 10/06/2021 - Add chamada do metodo que remove todos itens dalista de e "do layout"
+        fabMenu.removeAllFabMenuItens();
         //
         fabMenu.setFabMenuItens(fabMenuItems);
         fabMenu.setmIcons_Enabled(true);

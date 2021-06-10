@@ -6,13 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +19,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -37,8 +38,6 @@ import com.namoadigital.prj001.adapter.Generic_Results_Adapter;
 import com.namoadigital.prj001.dao.MD_All_ProductDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
-import com.namoadigital.prj001.model.MD_All_Product;
-import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Approval;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
@@ -188,8 +187,11 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             setProductForApproveList(ticketCtrlStatus, hasWithdrawnApproved, hasAppliedApproved);
             fabMenu.setVisibility(View.GONE);
         }
-        //
+        //LUCHE - 10/06/2021 - Refresh no fab para exibir ou não workgroup
+        setFabMenu();
+    }
 
+    private void setFabMenu() {
         ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
                 tkTicket, new FabMenu.IFabMenu() {
                     @Override
@@ -828,6 +830,8 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
                     || !mPresenter.isEditable(tkTicket)) {
                 btnSave.setVisibility(View.GONE);
             }
+            //LUCHE - 10/06/2021 - Refresh no fab para exibir ou não workgroup
+            setFabMenu();
         } else {
             String ticketCtrlStatus = mPresenter.getSelectedCtrlStatus(mTkPrefix, mTkCode, mTkSeq, mStepCode);
             if (mPresenter.hasApproveProfile(mTkPrefix, mTkCode, mTkSeq, mStepCode)
