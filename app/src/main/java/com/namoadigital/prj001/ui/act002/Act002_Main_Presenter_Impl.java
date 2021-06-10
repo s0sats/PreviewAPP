@@ -477,10 +477,12 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     //
         mView.setWsProcess(WS_TK_Ticket_Download.class.getName());
         //
-        mView.showPD(context.getString(R.string.act002_ws_ticket_download_ttl),
+        /*mView.showPD(context.getString(R.string.act002_ws_ticket_download_ttl),
                 context.getString(R.string.act002_ws_ticket_download_msg),
                 context.getString(R.string.generic_msg_cancel),
                 context.getString(R.string.generic_msg_ok));
+         */
+        ToolBox.sendBCStatus(context, "STATUS", context.getString(R.string.act002_ws_ticket_download_msg), "", "0");
         //
         Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
         Bundle bundle = new Bundle();

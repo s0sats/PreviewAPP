@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act084
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.ToolBox
@@ -83,6 +84,9 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
                 mModule_Code,
                 ConstantBaseApp.ACT084
         )
+        //10/06/2021 - Add recolhimento do teclado
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
+                or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
     private fun iniTrans() {

@@ -4,13 +4,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -375,16 +376,16 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
     @Override
     protected void processCloseACT(String mLink, String mRequired, HMAux hmAux) {
         super.processCloseACT(mLink, mRequired, hmAux);
-        //
-        progressDialog.dismiss();
         //Existem dois processo que chama esse metodo
         //Se processo for get_customer, chama lista de customer
         //Se não, chama Act seleção de site.
         if (wsProcess.equals(PROCESS_WS_GET_CUSTOMER)) {
+            progressDialog.dismiss();
             mPresenter.getAllCustomers(false);
         }
         //
         if (wsProcess.equals(PROCESS_WS_SYNC)) {
+            progressDialog.dismiss();
             callAct003(context);
             //
             ToolBox_Con.setPreference_Service(context, "SERVICE");
@@ -395,11 +396,13 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             }
         }
         if (wsProcess.equals(PROCESS_WS_LOGOUT)) {
+            progressDialog.dismiss();
             processLogin();
             wsProcess = "";
         }
         //
         if(wsProcess.equals(PROCESS_WS_GET_CUSTOMER_SITE)){
+            progressDialog.dismiss();
             mPresenter.processCustomerSiteLicenseListReturn();
             wsProcess = "";
         }
@@ -408,6 +411,8 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             ToolBox_Inf.hasFormProductOutdate(context);
             wsProcess = PROCESS_WS_SYNC;
             mPresenter.executeSyncProcess();
+        }else{
+            progressDialog.dismiss();
         }
     }
 
