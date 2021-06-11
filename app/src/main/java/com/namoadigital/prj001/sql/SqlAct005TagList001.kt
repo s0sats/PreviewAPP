@@ -213,7 +213,7 @@ class SqlAct005TagList001(private val context: Context,
                         SELECT min(s1.${MD_Schedule_ExecDao.SCHEDULE_PREFIX} ||substr('0000000000'||s1.${MD_Schedule_ExecDao.SCHEDULE_CODE},-10)||substr('0000000000'||s1.${MD_Schedule_ExecDao.SCHEDULE_EXEC},-10)) schedule_pk                        
                           FROM  ${MD_Schedule_ExecDao.TABLE} s1
                          WHERE s1.${MD_Schedule_ExecDao.PRODUCT_CODE}||'_'||
-                           s1.${MD_Schedule_ExecDao.SERIAL_ID}||'_'||
+                           IFNULL(s1.${MD_Schedule_ExecDao.SERIAL_ID},0)||'_'||
                            s1.${MD_Schedule_ExecDao.SITE_CODE}||'_'||
                            s1.${MD_Schedule_ExecDao.OPERATION_CODE}||'_'||
                            s1.${MD_Schedule_ExecDao.SCHEDULE_TYPE}||'_'||
@@ -223,7 +223,7 @@ class SqlAct005TagList001(private val context: Context,
                                            s1.${MD_Schedule_ExecDao.DATE_START}  in  (
                                                             SELECT
                                                                  max(s.${MD_Schedule_ExecDao.PRODUCT_CODE}||'_'||
-                                                                     s.${MD_Schedule_ExecDao.SERIAL_ID}||'_'||
+                                                                     IFNULL(s.${MD_Schedule_ExecDao.SERIAL_ID},0)||'_'||
                                                                      s.${MD_Schedule_ExecDao.SITE_CODE}||'_'||
                                                                      s.${MD_Schedule_ExecDao.OPERATION_CODE}||'_'||
                                                                      s.${MD_Schedule_ExecDao.SCHEDULE_TYPE}||'_'||
@@ -240,7 +240,7 @@ class SqlAct005TagList001(private val context: Context,
                                                                 and s.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_IN_PROCESSING}','${Constant.SYS_STATUS_PENDING}','${Constant.SYS_STATUS_WAITING_SYNC}')                 
                                                              GROUP BY
                                                                  s.${MD_Schedule_ExecDao.PRODUCT_CODE},
-                                                                 s.${MD_Schedule_ExecDao.SERIAL_ID},
+                                                                 IFNULL(s.${MD_Schedule_ExecDao.SERIAL_ID},0),
                                                                  s.${MD_Schedule_ExecDao.SITE_CODE},
                                                                  s.${MD_Schedule_ExecDao.OPERATION_CODE},
                                                                  s.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
@@ -249,7 +249,7 @@ class SqlAct005TagList001(private val context: Context,
                                                                  IFNULL(s.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0)
                                                                     )
                         GROUP BY   s1.${MD_Schedule_ExecDao.PRODUCT_CODE},
-                                   s1.${MD_Schedule_ExecDao.SERIAL_ID},
+                                   IFNULL(s1.${MD_Schedule_ExecDao.SERIAL_ID},0),
                                    s1.${MD_Schedule_ExecDao.SITE_CODE},
                                    s1.${MD_Schedule_ExecDao.OPERATION_CODE},
                                    s1.${MD_Schedule_ExecDao.SCHEDULE_TYPE},

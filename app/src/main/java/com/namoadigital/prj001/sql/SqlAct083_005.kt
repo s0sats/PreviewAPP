@@ -64,7 +64,7 @@ class SqlAct083_005(
                                                ${MD_Schedule_ExecDao.TABLE} s1
                                               WHERE
                                                 (  s1.${MD_Schedule_ExecDao.PRODUCT_CODE}||'|'||
-                                                   s1.${MD_Schedule_ExecDao.SERIAL_ID}||'|'||
+                                                   IFNULL(s1.${MD_Schedule_ExecDao.SERIAL_ID},0)||'|'||
                                                    s1.${MD_Schedule_ExecDao.SITE_CODE}||'|'||
                                                    s1.${MD_Schedule_ExecDao.OPERATION_CODE}||'|'||
                                                    s1.${MD_Schedule_ExecDao.SCHEDULE_TYPE}||'|'||
@@ -73,7 +73,7 @@ class SqlAct083_005(
                                                    IFNULL(s1.${MD_Schedule_ExecDao.CUSTOM_FORM_CODE},0)||'|'||
                                                    s1.${MD_Schedule_ExecDao.DATE_START} ) in  (SELECT
                                                                          s.${MD_Schedule_ExecDao.PRODUCT_CODE}||'|'||
-                                                                         s.${MD_Schedule_ExecDao.SERIAL_ID}||'|'||
+                                                                         IFNULL(s.${MD_Schedule_ExecDao.SERIAL_ID},0)||'|'||
                                                                          s.${MD_Schedule_ExecDao.SITE_CODE}||'|'||
                                                                          s.${MD_Schedule_ExecDao.OPERATION_CODE}||'|'||
                                                                          s.${MD_Schedule_ExecDao.SCHEDULE_TYPE}||'|'||
@@ -94,7 +94,7 @@ class SqlAct083_005(
                                                                              $periodDateFilter
                                                                         GROUP BY
                                                                              s.${MD_Schedule_ExecDao.PRODUCT_CODE},
-                                                                             s.${MD_Schedule_ExecDao.SERIAL_ID},
+                                                                             IFNULL(s.${MD_Schedule_ExecDao.SERIAL_ID},0),
                                                                              s.${MD_Schedule_ExecDao.SITE_CODE},
                                                                              s.${MD_Schedule_ExecDao.OPERATION_CODE},
                                                                              s.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
@@ -104,7 +104,7 @@ class SqlAct083_005(
                                                                  )
                                               GROUP BY
                                                  s1.${MD_Schedule_ExecDao.PRODUCT_CODE},
-                                                 s1.${MD_Schedule_ExecDao.SERIAL_ID},
+                                                 IFNULL(s1.${MD_Schedule_ExecDao.SERIAL_ID},0),
                                                  s1.${MD_Schedule_ExecDao.SITE_CODE},
                                                  s1.${MD_Schedule_ExecDao.OPERATION_CODE},
                                                  s1.${MD_Schedule_ExecDao.SCHEDULE_TYPE},
