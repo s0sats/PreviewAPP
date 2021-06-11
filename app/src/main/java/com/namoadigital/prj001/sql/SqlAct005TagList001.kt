@@ -152,46 +152,39 @@ class SqlAct005TagList001(private val context: Context,
         
         --UNION FORM AP                              
         UNION ALL 
-            select  mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
-                    max(mdt.${MdTagDao.TAG_DESC}) tag_operational_desc, 
+            select  geap.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE} tag_operational_code, 
+                    max(geap.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_DESC}) tag_operational_desc, 
                     count(geap.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE}) qty,
                     max(geap.upload_required) update_required,
                     max(0) sync_required,
                     max(0) in_processing
-            from ${MdTagDao.TABLE} mdt,
-                 ${GE_Custom_Form_ApDao.TABLE} geap                    
+            from  ${GE_Custom_Form_ApDao.TABLE} geap                    
             where
-                 mdt.${MdTagDao.CUSTOMER_CODE} = geap.${GE_Custom_Form_ApDao.CUSTOMER_CODE}
-                 and mdt.${MdTagDao.TAG_CODE} = geap.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE}
-                 --
-                 and geap.${GE_Custom_Form_ApDao.CUSTOMER_CODE} = '$customerCode'
+                 geap.${GE_Custom_Form_ApDao.CUSTOMER_CODE} = '$customerCode'
                  and geap.${GE_Custom_Form_ApDao.AP_STATUS} not in ('${Constant.SYS_STATUS_DONE}','${Constant.SYS_STATUS_CANCELLED}')
                  $formApFilter
-            GROUP BY mdt.${MdTagDao.TAG_CODE}
+            GROUP BY geap.${GE_Custom_Form_ApDao.TAG_OPERATIONAL_CODE}
         -- UNION Agendamento
         UNION ALL 
-            select mdt.${MdTagDao.TAG_CODE} tag_operational_code, 
-            max(mdt.${MdTagDao.TAG_DESC}) tag_operational_desc, 
-            count(mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}) qty,
-            max((case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
-                  then 1
-                  else 0
-            end)) update_required,
-             max(0) sync_required,
-             max((case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
-                  then 1
-                  else 0
-            end)) in_processing
-              from ${MdTagDao.TABLE} mdt
-            inner join ${MD_Schedule_ExecDao.TABLE} mse
-                    on  mdt.${MdTagDao.CUSTOMER_CODE} = mse.${MD_Schedule_ExecDao.CUSTOMER_CODE}
-                    and  mdt.${MdTagDao.TAG_CODE} = mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}
-             where 
-            mse.${MD_Schedule_ExecDao.CUSTOMER_CODE} = '$customerCode'
-            and mse.${MD_Schedule_ExecDao.CUSTOMER_CODE} = mdt.${MdTagDao.CUSTOMER_CODE}
-            and mse.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_IN_PROCESSING}','${Constant.SYS_STATUS_WAITING_SYNC}')
-            $scheduleFilter
-             GROUP BY mdt.${MdTagDao.TAG_CODE}
+            select
+                    mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE} tag_operational_code, 
+                    max(mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_DESC}) tag_operational_desc, 
+                    count(mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}) qty,
+                    max((case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}'
+                          then 1
+                          else 0
+                    end)) update_required,
+                    max(0) sync_required,
+                    max((case when mse.${MD_Schedule_ExecDao.STATUS} = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
+                          then 1
+                          else 0
+                    end)) in_processing
+            from ${MD_Schedule_ExecDao.TABLE} mse              
+            where 
+                mse.${MD_Schedule_ExecDao.CUSTOMER_CODE} = '$customerCode'                
+                and mse.${MD_Schedule_ExecDao.STATUS} IN ('${Constant.SYS_STATUS_SCHEDULE}','${Constant.SYS_STATUS_IN_PROCESSING}','${Constant.SYS_STATUS_WAITING_SYNC}')
+                $scheduleFilter
+             GROUP BY mse.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE}
         UNION ALL 
             select 
                 s2.${MD_Schedule_ExecDao.TAG_OPERATIONAL_CODE} tag_operational_code, 
