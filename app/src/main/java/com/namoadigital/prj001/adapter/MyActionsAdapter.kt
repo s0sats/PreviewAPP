@@ -97,8 +97,20 @@ class MyActionsAdapter(
             binding.myActionsItemTvContract.applyVisibilityIfTextExists(myAction.contractInfo)
             binding.myActionsItemTvContract.applyVisibilityIfTextExists(myAction.contractInfo)
             binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
-            binding.myActionsItemTvDoneDate.applyVisibilityIfTextExists(myAction.doneDate)
+            configDoneDate(myAction)
+
             applyBackgroundStrokeColor(myAction)
+        }
+
+        private fun configDoneDate(myAction: MyActions) {
+            binding.myActionsItemTvDoneDate.apply {
+                this.applyVisibilityIfTextExists(myAction.doneDate)
+                if (ConstantBaseApp.SYS_STATUS_DONE.equals(myAction.processStatus)) {
+                    this.setTextColor(ToolBox_Inf.getStatusColorV2(context, myAction.processStatus))
+                }else{
+                    this.setTextColor(context.getResources().getColor(R.color.namoa_color_gray_8))
+                }
+            }
         }
 
         private fun configTvTag(myAction: MyActions) {
