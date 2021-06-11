@@ -43,7 +43,6 @@ class Act083_Main_Presenter(private val context: Context,
                             private val mResource_Code: String
 ) : Act083_Main_Contract.I_Presenter{
 
-
     private lateinit var myActionFilterParam : MyActionFilterParam
     private var tagFilter: Int? = null
     private var productCode: Int? = null
@@ -1536,6 +1535,9 @@ class Act083_Main_Presenter(private val context: Context,
         }
         //
         launch = CoroutineScope(Dispatchers.IO).launch {
+            //Antes de gerar lista exibida, calcula o contador da outra aba o.O
+            val otherCounter :Int = getOtherTabCounter(tabUserFocusFilter)
+            //
             _myActionsList.addAll(
                     getLocalTickets(tabUserFocusFilter).map {
                         val lastTicketSelected = getLastSelectedPk(MyActions.MY_ACTION_TYPE_TICKET)
@@ -1594,8 +1596,32 @@ class Act083_Main_Presenter(private val context: Context,
             withContext(Dispatchers.Main) {
                 mView.changeProgressBarVisility(false)
                 mView.iniRecycler()
+                //LUCHE - 11/06/2021
+                //Chama fun que insere a qtd concatenado ao label da aba
+                mView.setTabsCounters(_myActionsList.size, otherCounter)
             }
         }
+    }
+
+    /**
+     * LUCHE - 11/06/2021
+     * Fun que roda AS MESMAS QUERIES porem invertendo o parametro tabUserFocusFilter e soma a qtd
+     * retornada
+     */
+    private fun getOtherTabCounter(tabUserFocusFilter: Int): Int {
+        val otherTab = if(tabUserFocusFilter == 1) 0 else 1
+        var counter = 0
+        //
+        counter += getLocalTickets(otherTab).size
+        counter += getCachedTickets(otherTab).size
+        //Se o fluxo de origem for o da pesquisa, só devem ser contabilizados os tickets.
+        if (!ConstantBaseApp.ACT068.equals(originFlow, true)) {
+            counter += getSchedules(otherTab).size
+            counter += getFormAp(otherTab).size
+            counter += getLocalForms(otherTab).size
+        }
+        //
+        return counter
     }
 
     /**

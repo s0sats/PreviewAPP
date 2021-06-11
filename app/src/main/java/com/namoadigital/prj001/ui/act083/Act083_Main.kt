@@ -167,6 +167,25 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         }
     }
 
+    /**
+     * LUCHE - 11/06/2021
+     * Fun que altera os labes das abas, adicionando o contador.
+     */
+    override fun setTabsCounters(selectedTabCounter: Int, otherTabCounter: Int) {
+        with(binding.act083MainContent){
+            when(act083Tabs.checkedRadioButtonId){
+                act083TabMyActions.id -> {
+                    act083TabMyActions.text = hmAux_Trans["tab_my_actions_lbl"].plus(" ($selectedTabCounter)")
+                    act083TabOtherActions.text = hmAux_Trans["tab_other_actions_lbl"].plus(" ($otherTabCounter)")
+                }
+                else -> {
+                    act083TabMyActions.text = hmAux_Trans["tab_my_actions_lbl"].plus(" ($otherTabCounter)")
+                    act083TabOtherActions.text = hmAux_Trans["tab_other_actions_lbl"].plus(" ($selectedTabCounter)")
+                }
+            }
+        }
+    }
+
     override fun iniRecycler() {
         val myActionsList = mPresenter.myActionsList
         if(myActionsList.size > 0) {
