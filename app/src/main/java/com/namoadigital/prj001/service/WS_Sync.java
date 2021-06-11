@@ -306,11 +306,14 @@ public class WS_Sync extends IntentService {
         //Verifica se customer possui acesso ao SO
         //adiciona parametro no sincronismo.
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_MAIN)) {
-            if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
+            //LUCHE - 11/06/2021
+            //O servidor solicitou que SEMPRE fosse enviado new arraylist caso lista vazia ou customer
+            //sem o param de o.s. O metodo getDatapackageSoObjList retorna new ArrayList, caso não encontre itens.
+            //if (ToolBox_Inf.parameterExists(getApplicationContext(), new String[]{Constant.PARAM_SO/*, Constant.PARAM_SO_MOV*/})) {
                 //LUCHE - 22/05/2021 - Implementado envio do "inventario" local de so.
                 ArrayList<T_DataPackage_SM_SO_Env> SO = getDatapackageSoObjList(soDao);
                 dataPackage.setSO(SO);
-            }
+            //}
         }
         //Adiciona form_aps no data_package
         if (dataPackageType.contains(DataPackage.DATA_PACKAGE_AP)) {
