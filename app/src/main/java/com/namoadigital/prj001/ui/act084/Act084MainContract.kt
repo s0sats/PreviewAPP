@@ -15,6 +15,7 @@ interface Act084MainContract {
         fun showMsg(ttl: String?, msg: String?)
         fun setViewFiltersParam(mketFilter: String?, tabToLoad: Int,ncFilter: Boolean)
         fun getNcFilterStatus() : Boolean
+        fun setTabsCounters(selectedTabCounter: Int, otherTabCounter: Int)
     }
 
     interface I_Presenter {

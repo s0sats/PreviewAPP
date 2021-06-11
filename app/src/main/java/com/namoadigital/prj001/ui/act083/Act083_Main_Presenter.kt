@@ -1578,6 +1578,10 @@ class Act083_Main_Presenter(private val context: Context,
                         }
                 )
             }
+            //LUCHE - 11/06/2021
+            //Necessario pegar o contador aqui para não correr o risco de contar o botão de criar
+            //form no fluxo de serial
+            val currentTabCounter = _myActionsList.size
             //
             if (ConstantBaseApp.ACT006.equals(originFlow, true) && tabUserFocusFilter == 1 && ::myActionFilterParam.isInitialized) {
                 _myActionsList.add(
@@ -1598,7 +1602,7 @@ class Act083_Main_Presenter(private val context: Context,
                 mView.iniRecycler()
                 //LUCHE - 11/06/2021
                 //Chama fun que insere a qtd concatenado ao label da aba
-                mView.setTabsCounters(_myActionsList.size, otherCounter)
+                mView.setTabsCounters(currentTabCounter, otherCounter)
             }
         }
     }

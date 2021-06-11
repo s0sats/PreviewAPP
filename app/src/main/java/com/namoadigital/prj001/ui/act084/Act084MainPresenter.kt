@@ -100,7 +100,8 @@ class Act084MainPresenter(
         generateMyActionList(userFocusFilter,ncFilterOn)
     }
 
-    private fun generateMyActionList(tabDone: Int, ncFilterOn: Boolean) {
+    private fun generateMyActionList(tabDone: Int, orignalNcFilterOn: Boolean) {
+        var ncFilterOn = orignalNcFilterOn
         _myActionsList.clear()
         //Cancela a coroutine em execução caso ainda exista.
         launch?.let {
@@ -110,6 +111,13 @@ class Act084MainPresenter(
         }
         //
         launch = CoroutineScope(Dispatchers.IO).launch {
+            //Antes de gerar lista exibida, calcula o contador da outra aba o.O
+            val otherCounter :Int = getOtherTabCounter(tabDone,ncFilterOn)
+            //LUCHE - 11/06/2021
+            //A pedido do andre se aba descartado, não aplica filtro de NC
+            if(tabDone == 0){
+                ncFilterOn = false
+            }
             /*
             * Como somente agendamento de form e form possuem nc, somente busca ticket e form ap se
             * filtro ncFilterOn desativado
@@ -157,8 +165,32 @@ class Act084MainPresenter(
             withContext(Dispatchers.Main) {
                 mView.changeProgressBarVisility(false)
                 mView.iniRecycler()
+                //LUCHE - 11/06/2021
+                //Chama fun que insere a qtd concatenado ao label da aba
+                mView.setTabsCounters(_myActionsList.size, otherCounter)
             }
         }
+    }
+
+    /**
+     * LUCHE - 11/06/2021
+     * Fun que roda AS MESMAS QUERIES porem invertendo o parametro tabUserFocusFilter e soma a qtd
+     * retornada
+     */
+    private fun getOtherTabCounter(tabUserFocusFilter: Int, originalNcFilterOn: Boolean): Int {
+        val otherTab = if(tabUserFocusFilter == 1) 0 else 1
+        //Quando otherTab  == 0 , desconsidera o filtro por NC
+        val ncFilterOn = if(otherTab == 0) false else originalNcFilterOn
+        var counter = 0
+        //
+        if(!ncFilterOn) {
+            counter += getLocalTickets(otherTab).size
+            counter += getFormAp(otherTab).size
+        }
+        counter += getSchedules(otherTab,ncFilterOn).size
+        counter += getLocalForms(otherTab,ncFilterOn).size
+        //
+        return counter
     }
 
     /**

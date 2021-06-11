@@ -106,6 +106,25 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
         }
     }
 
+    /**
+     * LUCHE - 11/06/2021
+     * Fun chamada pelo presenter para atualizar o label da tab com o contador.
+     */
+    override fun setTabsCounters(selectedTabCounter: Int, otherTabCounter: Int) {
+        with(binding){
+            when(act084Tabs.checkedRadioButtonId){
+                act084TabMyActions.id -> {
+                    act084TabMyActions.text = hmAux_Trans["tab_done_lbl"].plus(" ($selectedTabCounter)")
+                    act084TabOtherActions.text = hmAux_Trans["tab_discard_lbl"].plus(" ($otherTabCounter)")
+                }
+                else -> {
+                    act084TabMyActions.text = hmAux_Trans["tab_done_lbl"].plus(" ($otherTabCounter)")
+                    act084TabOtherActions.text = hmAux_Trans["tab_discard_lbl"].plus(" ($selectedTabCounter)")
+                }
+            }
+        }
+    }
+
     override fun iniRecycler() {
         val myActionsList = mPresenter.myActionsList
         if(myActionsList.size > 0) {
