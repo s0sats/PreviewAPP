@@ -417,7 +417,10 @@ public class GE_Custom_Form_Ap {
         String processPk = getFormatedPk();
         boolean isSelectedItem = processPk.equals(lastFormApSelected);
         String doneDate = null;
-        if(ConstantBaseApp.SYS_STATUS_DONE.equals(ap_status)){
+        if(ConstantBaseApp.SYS_STATUS_DONE.equals(ap_status)
+        || ConstantBaseApp.SYS_STATUS_CANCELLED.equals(ap_status)
+        || ConstantBaseApp.SYS_STATUS_ERROR.equals(ap_status)
+        ){
             doneDate = ToolBox_Inf.millisecondsToString(
                 ToolBox_Inf.dateToMilliseconds(last_update),
                 ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
