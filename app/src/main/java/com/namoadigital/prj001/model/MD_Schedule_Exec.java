@@ -528,13 +528,25 @@ public class MD_Schedule_Exec {
         this.has_Nc = has_Nc;
     }
 
-    public MyActions toMyActionsObj(Context context, @Nullable String lastScheduleSelected){
+    public MyActions toMyActionsObj(Context context, @Nullable String lastScheduleSelected) {
         String customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
         String statusToUse = ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(status) ? ConstantBaseApp.SYS_STATUS_PROCESS : status;
-        int rightIcon =
-                !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(status)
-                ? R.drawable.ic_baseline_cloud_done_24_blue
-                : R.drawable.ic_cloud_upload_24_red;
+        int rightIcon = R.drawable.ic_baseline_cloud_done_24_blue;
+        if (status != null){
+            switch (status) {
+                case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
+                    rightIcon = R.drawable.ic_cloud_upload_24_red;
+                    break;
+                case ConstantBaseApp.SYS_STATUS_ERROR:
+                case ConstantBaseApp.SYS_STATUS_IGNORED:
+                    rightIcon = R.drawable.ic_baseline_clear_24dp_red;
+                    break;
+                default:
+                    rightIcon = R.drawable.ic_baseline_cloud_done_24_blue;
+                    break;
+            }
+        }
+
         Integer leftIcon =
             has_Nc != null && has_Nc.equals(1)
             ? R.drawable.ic_alert_nc_on
