@@ -281,7 +281,7 @@ public class Act040_Main extends Base_Activity implements Act040_Main_View {
     private void setExpressSOPendency() {
         expressSoPendency = mPresenter.getExpressSoPendency(hmAux_Trans);
         if(expressSoPendency >0) {
-            String btn_pendency_so_lbl = hmAux_Trans.get("btn_pendency_so") + "(" + expressSoPendency + ")";
+            String btn_pendency_so_lbl = hmAux_Trans.get("btn_pendency_so") + " (" + expressSoPendency + ")";
             btn_express_so.setText(btn_pendency_so_lbl);
             btn_express_so.setVisibility(View.VISIBLE);
         }else{
