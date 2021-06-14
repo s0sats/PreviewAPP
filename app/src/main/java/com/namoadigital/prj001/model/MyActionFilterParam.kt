@@ -45,8 +45,8 @@ class MyActionFilterParam(
         productDesc?.let {
             filters.add(it)
         }
-        serialId?.let {
-            filters.add(it)
+        if(!serialId.isNullOrEmpty()) {
+            filters.add(serialId!!)
         }
         if(!clientId.isNullOrEmpty()) {
             filters.add(clientId!!)
