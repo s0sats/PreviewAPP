@@ -94,8 +94,6 @@ public class TSave_Rec {
         //As propriedades abaixo são preenchidas após o retorno do servidor
         //e são usadas somente para exibição do erro na tela.
         @Expose
-        private String custom_form_type_desc;
-        @Expose
         private String custom_form_desc;
         @Expose
         private String schedule_pk;
@@ -154,14 +152,6 @@ public class TSave_Rec {
 
         public void setError(String error) {
             this.error = error;
-        }
-
-        public String getCustom_form_type_desc() {
-            return custom_form_type_desc;
-        }
-
-        public void setCustom_form_type_desc(String custom_form_type_desc) {
-            this.custom_form_type_desc = custom_form_type_desc;
         }
 
         public String getCustom_form_desc() {

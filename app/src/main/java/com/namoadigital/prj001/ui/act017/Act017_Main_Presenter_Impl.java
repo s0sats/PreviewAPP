@@ -858,7 +858,6 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
         bundle.putString(MD_ProductDao.PRODUCT_ID, item.get(MD_Schedule_ExecDao.PRODUCT_ID));
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, item.get(MD_Schedule_ExecDao.SERIAL_ID));
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE));
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_CODE));
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_VERSION));
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
@@ -1084,7 +1083,6 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
             bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_CODE));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_VERSION));
-            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
             bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, item.get(MD_Schedule_ExecDao.SCHEDULE_PK));
             bundle.putString(Constant.ACT017_SCHEDULED_SITE, item.get(MD_Schedule_ExecDao.SITE_CODE));
@@ -1173,7 +1171,6 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                 customFormLocal.setCustom_product_code(ToolBox_Inf.convertStringToInt(item.get(MD_Schedule_ExecDao.PRODUCT_CODE)));
                 customFormLocal.setCustom_product_desc(item.get(MD_Schedule_ExecDao.PRODUCT_DESC));
                 customFormLocal.setCustom_product_id(item.get(MD_Schedule_ExecDao.PRODUCT_ID));
-                customFormLocal.setCustom_form_type_desc(item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
                 customFormLocal.setCustom_form_desc(item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
                 customFormLocal.setSerial_id(item.get(MD_Schedule_ExecDao.SERIAL_ID));
                 customFormLocal.setRequire_signature(customForm.getRequire_signature());
@@ -1487,7 +1484,7 @@ public class Act017_Main_Presenter_Impl implements Act017_Main_Presenter {
                     hmAux_Trans.get("dialog_schedule_desc_lbl") +": \n"
                     + item.get(MD_Schedule_ExecDao.SCHEDULE_DESC) + "\n"
                     + hmAux_Trans.get("form_type_dialog_lbl") + ": \n"
-                    + item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE) + " - " + item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC)+ "\n"+
+                    + item.get(GE_Custom_Form_DataDao.CUSTOM_FORM_TYPE) +"\n"+
                     scheduleWarning;
 
                 //Seta negrito nas area necessarias

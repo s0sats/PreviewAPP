@@ -33,6 +33,9 @@ import com.namoadigital.prj001.util.ToolBox_Con;
  *
  * LUCHE - 08/09/2020
  * Modificado query corrigindo a,pois foi adicionado campos somente em uma das queries.
+ *
+ * LUCHE - 15/06/2021
+ * Removido da query os custom_form_type_desc pois na versão 4.0.0  foi removido do sistema.
  */
 
 public class Sql_Act013_001 implements Specification {
@@ -87,7 +90,6 @@ public class Sql_Act013_001 implements Specification {
             : "  SELECT\n" +
             "    e.customer_code,\n" +
             "    e.custom_form_type,\n" +
-            "    e.custom_form_type_desc,\n" +
             "    e.custom_form_code,\n" +
             "    e.custom_form_version,\n" +
             "    e.custom_form_desc,\n" +
@@ -149,7 +151,6 @@ public class Sql_Act013_001 implements Specification {
             " SELECT\n" +
             "  l.customer_code,\n" +
             "  l.custom_form_type,\n" +
-            "  l.custom_form_type_desc,\n" +
             "  l.custom_form_code,\n" +
             "  l.custom_form_version,\n" +
             "  l.custom_form_desc,\n" +

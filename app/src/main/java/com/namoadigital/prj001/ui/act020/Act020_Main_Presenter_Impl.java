@@ -345,7 +345,6 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
                 bundle.putString(MD_ProductDao.PRODUCT_DESC, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_DESC));
                 bundle.putString(MD_ProductDao.PRODUCT_ID, bundleForNFormFinishPlusNew.getString(MD_ProductDao.PRODUCT_ID));
                 bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, bundleForNFormFinishPlusNew.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE));
-                bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, bundleForNFormFinishPlusNew.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC));
                 bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE));
                 bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, bundleForNFormFinishPlusNew.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION));
                 bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, bundleForNFormFinishPlusNew.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC));

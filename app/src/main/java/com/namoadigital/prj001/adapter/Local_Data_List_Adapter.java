@@ -2,8 +2,6 @@ package com.namoadigital.prj001.adapter;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +11,9 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
@@ -532,13 +533,11 @@ public class Local_Data_List_Adapter extends BaseAdapter implements Filterable {
                     String custom_product_desc = ToolBox.AccentMapper(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC)).toLowerCase();
                     String custom_product_id = ToolBox.AccentMapper(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID)).toLowerCase();
                     String custom_form_desc = ToolBox.AccentMapper(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC)).toLowerCase();
-                    String custom_form_type_desc = ToolBox.AccentMapper(item.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC)).toLowerCase();
 
                     if ((serial_id != null && serial_id.contains(search))
                             || (custom_product_desc != null && custom_product_desc.contains(search))
                             || (custom_product_id != null && custom_product_id.contains(search))
                             || (custom_form_desc != null && custom_form_desc.contains(search))
-                            || (custom_form_type_desc != null && custom_form_type_desc.contains(search))
                     ) {
                         filterList.add(item);
                     }

@@ -463,7 +463,7 @@ class Act083_Main_Presenter(private val context: Context,
         bundle.putString(MD_ProductDao.PRODUCT_ID, scheduleExec.product_id.toString())
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, scheduleExec.serial_id.toString())
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, scheduleExec.custom_form_type.toString())
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, scheduleExec.custom_form_type_desc.toString())
+
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, scheduleExec.custom_form_code.toString())
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, scheduleExec.custom_form_version.toString())
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, scheduleExec.custom_form_desc.toString())
@@ -601,7 +601,6 @@ class Act083_Main_Presenter(private val context: Context,
                 customFormLocal.custom_product_code = scheduleExec.product_code
                 customFormLocal.custom_product_desc = scheduleExec.product_desc
                 customFormLocal.custom_product_id = scheduleExec.product_id
-                customFormLocal.custom_form_type_desc = scheduleExec.custom_form_type_desc
                 customFormLocal.custom_form_desc = scheduleExec.custom_form_desc
                 customFormLocal.serial_id = scheduleExec.serial_id
                 customFormLocal.require_signature = customForm.require_signature
@@ -904,7 +903,6 @@ class Act083_Main_Presenter(private val context: Context,
         //bundle.putString(MD_ProductDao.PRODUCT_ID, myAction.productDesc)
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, myAction.serialId)
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, splippedPk[0])
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, myAction.customFormTypeDesc)
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, splippedPk[1])
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, splippedPk[2])
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, myAction.customFormDesc)
@@ -1026,7 +1024,7 @@ class Act083_Main_Presenter(private val context: Context,
     override fun isScheduleFormType(myAction: MyActions): Boolean {
         val scheduleExec = getScheduleFromMyAction(myAction)
 
-        return scheduleExec != null && scheduleExec.schedule_type.equals(scheduleExec.custom_form_type_desc)
+        return scheduleExec != null && scheduleExec.schedule_type.equals(ConstantBaseApp.MD_SCHEDULE_TYPE_FORM)
     }
 
     private fun isAnyFormInProcessing(scheduleExec: MD_Schedule_Exec): Boolean {
@@ -1367,7 +1365,6 @@ class Act083_Main_Presenter(private val context: Context,
             bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, scheduleExec.custom_form_type.toString())
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE, scheduleExec.custom_form_code.toString())
             bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION, scheduleExec.custom_form_version.toString())
-            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, scheduleExec.custom_form_type_desc)
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, scheduleExec.custom_form_desc)
             bundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK, ToolBox_Inf.formatSchedulePk(scheduleExec.schedule_prefix, scheduleExec.schedule_code, scheduleExec.schedule_exec))
             bundle.putString(Constant.ACT017_SCHEDULED_SITE, scheduleExec.site_code.toString())

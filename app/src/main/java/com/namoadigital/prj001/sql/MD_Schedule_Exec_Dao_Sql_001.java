@@ -4,7 +4,6 @@ import com.namoadigital.prj001.dao.EV_Module_ResDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_TxtDao;
 import com.namoadigital.prj001.dao.EV_Module_Res_Txt_TransDao;
 import com.namoadigital.prj001.dao.GE_Custom_FormDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.database.Specification;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 
@@ -45,15 +44,6 @@ public class MD_Schedule_Exec_Dao_Sql_001 implements Specification {
                 .append(" SELECT\n" +
                         "    f.require_serial_done,\n" +
                         "    f.require_location,\n" +
-                        "    (SELECT txt_value\n" +
-                        "     FROM  "+ EV_Module_ResDao.TABLE +" r,\n" +
-                        "           "+ EV_Module_Res_Txt_TransDao.TABLE +" t\n" +
-                        "     WHERE r.module_code = t.module_code\n" +
-                        "           and r.resource_code = t.resource_code\n" +
-                        "           and t.txt_code = f.customer_code ||'|'|| f.custom_form_type\n" +
-                        "           and t.module_code = '"+ ConstantBaseApp.EV_MODULE_CUST_FORM +"'\n" +
-                        "           and t.translate_code = '"+preference_translate_code+"' \n" +
-                        "     ) "+ GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC+" ,\n" +
                         "     ( SELECT txt_value\n" +
                         "       FROM "+EV_Module_ResDao.TABLE+" r,\n" +
                         "            "+ EV_Module_Res_TxtDao.TABLE+" rt,\n" +

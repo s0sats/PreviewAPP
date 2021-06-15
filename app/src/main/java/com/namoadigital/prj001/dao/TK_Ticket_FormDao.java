@@ -39,7 +39,6 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
     public static final String STEP_CODE = "step_code";
     public static final String FORM_STATUS = "form_status";
     public static final String CUSTOM_FORM_TYPE = "custom_form_type";
-    public static final String CUSTOM_FORM_TYPE_DESC = "custom_form_type_desc";
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
@@ -626,7 +625,6 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             //
             tk_ticket_form.setForm_status(cursor.getString(cursor.getColumnIndex(FORM_STATUS)));
             tk_ticket_form.setCustom_form_type(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_TYPE)));
-            tk_ticket_form.setCustom_form_type_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_TYPE_DESC)));
             tk_ticket_form.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             tk_ticket_form.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
             tk_ticket_form.setCustom_form_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DESC)));
@@ -705,9 +703,7 @@ public class TK_Ticket_FormDao extends BaseDao implements DaoWithReturn<TK_Ticke
             if (tk_ticket_form.getCustom_form_type() > -1) {
                 contentValues.put(CUSTOM_FORM_TYPE,tk_ticket_form.getCustom_form_type());
             }
-            if (tk_ticket_form.getCustom_form_type_desc() != null) {
-                contentValues.put(CUSTOM_FORM_TYPE_DESC,tk_ticket_form.getCustom_form_type_desc());
-            }
+
             if (tk_ticket_form.getCustom_form_code() > -1) {
                 contentValues.put(CUSTOM_FORM_CODE,tk_ticket_form.getCustom_form_code());
             }

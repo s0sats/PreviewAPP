@@ -141,7 +141,7 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
     }
 
     @Override
-    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String product_id, String formtype_desc, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code) {
+    public void setData(String customer_code, String formtype_code, String form_code, String formversion_code, String product_code, String s_form_data, String product_desc, String product_id, String formcode_desc, String serial_id, Integer so_prefix, Integer so_code, String so_site_code, Integer so_operation_code, Integer mTicket_prefix, Integer mTicket_code, Integer mTicket_seq, Integer mTicket_seq_tmp, Integer mStep_code) {
         boolean hasNformPending = false;
         boolean bNew = false;
         boolean bAbortSchedule = false;
@@ -279,7 +279,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
             customFormLocal.setCustom_product_icon_name(productInfo.getProduct_icon_name());
             customFormLocal.setCustom_product_icon_url(productInfo.getProduct_icon_url());
             customFormLocal.setCustom_product_icon_url_local(productInfo.getProduct_icon_url_local());
-            customFormLocal.setCustom_form_type_desc(formtype_desc);
             customFormLocal.setCustom_form_desc(formcode_desc);
             customFormLocal.setSerial_id(serial_id);
             customFormLocal.setRequire_signature(customForm.getRequire_signature());
@@ -1693,7 +1692,6 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 TK_Ticket_Form tk_ticket_form = new TK_Ticket_Form();
                 tk_ticket_form.setPK(ticketCtrl);
                 tk_ticket_form.setCustom_form_type(customFormLocal.getCustom_form_type());
-                tk_ticket_form.setCustom_form_type_desc(customFormLocal.getCustom_form_type_desc());
                 tk_ticket_form.setCustom_form_code(customFormLocal.getCustom_form_code());
                 tk_ticket_form.setCustom_form_version(customFormLocal.getCustom_form_version());
                 tk_ticket_form.setCustom_form_desc(customFormLocal.getCustom_form_desc());

@@ -252,11 +252,6 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         );
         //
         bundle.putString(
-                GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,
-                item.get(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)
-        );
-        //
-        bundle.putString(
                 GE_Custom_FormDao.CUSTOM_FORM_CODE,
                 item.get(GE_Custom_FormDao.CUSTOM_FORM_CODE)
         );
@@ -330,9 +325,6 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         Intent mIntent = new Intent(context, Act009_Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         bundle.remove(GE_Custom_FormDao.CUSTOM_FORM_TYPE);
-        //bundle.removeFull(Constant.ACT009_CUSTOM_FORM_TYPE);
-        bundle.remove(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC);
-        //bundle.removeFull(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
         bundle.putInt(Constant.BACK_ACTION, 1);
         mIntent.putExtras(bundle);
         startActivity(mIntent);

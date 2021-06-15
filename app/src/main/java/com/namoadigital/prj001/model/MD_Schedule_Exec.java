@@ -33,8 +33,6 @@ public class MD_Schedule_Exec {
     @Nullable
     private Integer custom_form_type;
     @Nullable
-    private String custom_form_type_desc;
-    @Nullable
     private Integer custom_form_code;
     @Nullable
     private Integer custom_form_version;
@@ -253,15 +251,6 @@ public class MD_Schedule_Exec {
 
     public void setCustom_form_type(@Nullable Integer custom_form_type) {
         this.custom_form_type = custom_form_type;
-    }
-
-    @Nullable
-    public String getCustom_form_type_desc() {
-        return custom_form_type_desc;
-    }
-
-    public void setCustom_form_type_desc(@Nullable String custom_form_type_desc) {
-        this.custom_form_type_desc = custom_form_type_desc;
     }
 
     @Nullable
@@ -596,8 +585,7 @@ public class MD_Schedule_Exec {
             );
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);
-            myActions.setCustomFormTypeDesc(custom_form_type_desc);
-            myActions.setCustomFormTypeDesc(custom_form_desc);
+            myActions.setCustomFormDesc(custom_form_desc);
             return myActions;
         }catch (Exception e){
             /**
@@ -642,8 +630,7 @@ public class MD_Schedule_Exec {
             );
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);
-            myActions.setCustomFormTypeDesc(custom_form_type_desc);
-            myActions.setCustomFormTypeDesc(custom_form_desc);
+            myActions.setCustomFormDesc(custom_form_desc);
             return myActions;
         }
 

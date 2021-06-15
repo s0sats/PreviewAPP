@@ -55,7 +55,6 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public static final String SERIAL_CODE   = "serial_code";
     public static final String SERIAL_ID = "serial_id";
     public static final String CUSTOM_FORM_TYPE = "custom_form_type";
-    public static final String CUSTOM_FORM_TYPE_DESC = "custom_form_type_desc";
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
     public static final String CUSTOM_FORM_VERSION  = "custom_form_version";
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
@@ -428,85 +427,6 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                         scheduleExec.getSchedule_exec()
                     ).toSqlQuery(),db
                 );
-                //Conciliação até 14/05/2020
-                /*
-                //Se existir o agendamento e ele ja tiver sido iniciado, seta sync_process para 1 e
-                // substitui o agendamento do server pelo do banco de dados, evitando a substituição.
-                if( dbSchedule != null
-                    &&( !dbSchedule.getStatus().equalsIgnoreCase(ConstantBaseApp.SYS_STATUS_SCHEDULE)
-                        || scheduelFormLocalExists(  scheduleExec.getCustomer_code(),
-                                                        scheduleExec.getSchedule_prefix(),
-                                                        scheduleExec.getSchedule_code(),
-                                                        scheduleExec.getSchedule_exec(),
-                                                        db)
-                            )
-                ){
-                    dbSchedule.setSync_process(1);
-                    receivedScheduleExecs.set(i, dbSchedule);
-                }else{
-                    //Se agendamento não existia ou existia com status pending, seta sync_process e
-                    //mantem o agendamento do server para atualização.
-                    scheduleExec.setSync_process(1);
-                    //Se não existe no banco de dados, ou seja insert, seta status e dados do MD
-                    if(dbSchedule == null) {
-                        scheduleExec.setStatus(ConstantBaseApp.SYS_STATUS_SCHEDULE);
-                        if (scheduleExec.getSchedule_type() != null) {
-                            String scheduleType = scheduleExec.getSchedule_type();
-                            //
-                            switch (scheduleType){
-                                case ConstantBaseApp.MD_SCHEDULE_TYPE_FORM:
-                                    setFormsInfos(
-                                        scheduleExec,
-                                        scheduleExecSiteList,
-                                        scheduleExecOperationList,
-                                        scheduleExecProductList
-                                    );
-                                    break;
-                                case ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET:
-                                    setTicketInfos(
-                                        scheduleExec,
-                                        scheduleExecSiteList,
-                                        scheduleExecOperationList,
-                                        scheduleExecProductList
-                                    );
-                                    break;
-                            }
-                        }
-                    } else{
-                        //Se agendamento ja existe, pega os dados "realacionais" e atualiza no obj vindo do server.
-                        //Seta infos gerais a todos agendamentos
-                        scheduleExec.setSite_id(dbSchedule.getSite_id());
-                        scheduleExec.setSite_desc(dbSchedule.getSite_desc());
-                        scheduleExec.setOperation_id(dbSchedule.getOperation_id());
-                        scheduleExec.setOperation_desc(dbSchedule.getOperation_desc());
-                        scheduleExec.setProduct_id(dbSchedule.getProduct_id());
-                        scheduleExec.setProduct_desc(dbSchedule.getProduct_desc());
-                        //Seta informações especifica por tipo
-                        String scheduleType = scheduleExec.getSchedule_type();
-                        switch (scheduleType){
-                            case ConstantBaseApp.MD_SCHEDULE_TYPE_FORM:
-                                scheduleExec.setCustom_form_type_desc(dbSchedule.getCustom_form_type_desc());
-                                scheduleExec.setCustom_form_desc(dbSchedule.getCustom_form_desc());
-                                scheduleExec.setRequire_serial_done(dbSchedule.getRequire_serial_done());
-                                scheduleExec.setRequire_location(dbSchedule.getRequire_location());
-                                //LUCHE - 23/04/2020
-                                //Adicionado set das novas informações de produto.
-                                scheduleExec.setSerial_rule(dbSchedule.getSerial_rule());
-                                scheduleExec.setSerial_max_length(dbSchedule.getSerial_max_length());
-                                scheduleExec.setSerial_min_length(dbSchedule.getSerial_min_length());
-                                scheduleExec.setLocal_control(dbSchedule.getLocal_control());
-                                scheduleExec.setIo_control(dbSchedule.getIo_control());
-                                scheduleExec.setSite_restriction(dbSchedule.getSite_restriction());
-                                scheduleExec.setProduct_icon_name(dbSchedule.getProduct_icon_name());
-                                scheduleExec.setProduct_icon_url(dbSchedule.getProduct_icon_url());
-                                scheduleExec.setRequire_location(dbSchedule.getRequire_location());
-                                break;
-                            case ConstantBaseApp.MD_SCHEDULE_TYPE_TICKET:
-                            default:
-                                break;
-                        }
-                    }
-                }*/
                 //LUCHE - 15/05/2020
                 //Alterado conciliação para atualiza tb os dados de agendamento ja existentes desde
                 // que seu status seja schedule. Além disso, incluido atualiação do registro de
@@ -539,7 +459,6 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                                     db
                                 );
                                 //Até 15/05/2020, os dados do form no agendamento NUNCA SE ALTERAM
-                                scheduleExec.setCustom_form_type_desc(dbSchedule.getCustom_form_type_desc());
                                 scheduleExec.setCustom_form_desc(dbSchedule.getCustom_form_desc());
                                 scheduleExec.setRequire_serial_done(dbSchedule.getRequire_serial_done());
                                 scheduleExec.setRequire_location(dbSchedule.getRequire_location());
@@ -822,7 +741,6 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         if (mdAux != null && mdAux.size() > 0) {
             scheduleExec.setRequire_serial_done(ToolBox_Inf.convertStringToInt(mdAux.get(REQUIRE_SERIAL_DONE)));
             scheduleExec.setRequire_location(ToolBox_Inf.convertStringToInt(mdAux.get(REQUIRE_LOCATION)));
-            scheduleExec.setCustom_form_type_desc(mdAux.get(CUSTOM_FORM_TYPE_DESC));
             scheduleExec.setCustom_form_desc(mdAux.get(CUSTOM_FORM_DESC));
         }
     }
@@ -1180,11 +1098,6 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             }else{
                 md_schedule_exec.setCustom_form_type(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_TYPE)));
             }
-            if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_TYPE_DESC))){
-                md_schedule_exec.setCustom_form_type_desc(null);
-            }else{
-                md_schedule_exec.setCustom_form_type_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_TYPE_DESC)));
-            }
             if(cursor.isNull(cursor.getColumnIndex(CUSTOM_FORM_CODE))){
                 md_schedule_exec.setCustom_form_code(null);
             }else{
@@ -1349,7 +1262,6 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             contentValues.put(SERIAL_CODE,md_schedule_exec.getSerial_code());
             contentValues.put(SERIAL_ID,md_schedule_exec.getSerial_id());
             contentValues.put(CUSTOM_FORM_TYPE,md_schedule_exec.getCustom_form_type());
-            contentValues.put(CUSTOM_FORM_TYPE_DESC,md_schedule_exec.getCustom_form_type_desc());
             contentValues.put(CUSTOM_FORM_CODE,md_schedule_exec.getCustom_form_code());
             contentValues.put(CUSTOM_FORM_VERSION,md_schedule_exec.getCustom_form_version());
             contentValues.put(CUSTOM_FORM_DESC,md_schedule_exec.getCustom_form_desc());

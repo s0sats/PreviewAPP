@@ -106,7 +106,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     private String productId;
     private String serialId;
     private String customFormType;
-    private String customFormTypeDesc;
     private String customFormCode;
     private String customFormVersion;
     private String customFormCodeDesc;
@@ -323,7 +322,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             bundle.putString(MD_ProductDao.PRODUCT_ID,productId);
             bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
             bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, customFormType);
-            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, customFormTypeDesc);
             bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
             bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion);
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);
@@ -332,7 +330,7 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
     }
 
     private boolean hasNFormSelected() {
-        if(customFormTypeDesc.isEmpty()) {
+        if(customFormCodeDesc.isEmpty()) {
             return false;
         }
         return true;
@@ -376,7 +374,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             //LUCHE - 05/03/2020
             //Adicionando validação de se não contem ACT_SELECTED_DATE, pois o fluxo bem do agendamento
             //também passa chave CUSTOM_FORM_TYPE_DESC
-            if( bundle.containsKey(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)
+            //LUCHE - 15/06/2021 - substituido chave CUSTOM_FORM_TYPE_DESC pela ACT010_CUSTOM_FORM_CODE_DESC
+            //pois type_desc foi removido de tod o sistema.
+            if( bundle.containsKey(Constant.ACT010_CUSTOM_FORM_CODE_DESC)
                 && !bundle.containsKey(ConstantBaseApp.ACT_SELECTED_DATE)
             ){
                 productCode = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
@@ -384,7 +384,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 productId = bundle.getString(MD_ProductDao.PRODUCT_ID, "");
                 serialId = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
                 customFormType = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, "");
-                customFormTypeDesc = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, "");
                 customFormCode = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE, "");
                 customFormVersion = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, "");
                 customFormCodeDesc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
@@ -394,7 +393,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 productId = "";
                 serialId = "";
                 customFormType = "";
-                customFormTypeDesc = "";
                 customFormCode = "";
                 customFormVersion = "";
                 customFormCodeDesc = "";
@@ -406,7 +404,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 scheduleBundle.putString(Constant.ACT010_CUSTOM_FORM_CODE,bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE,""));
                 scheduleBundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION,bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION,""));
                 scheduleBundle.putString(Constant.ACT013_CUSTOM_FORM_DATA,bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA,""));
-                scheduleBundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC,""));
                 scheduleBundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC,""));
                 scheduleBundle.putString(MD_Schedule_ExecDao.SCHEDULE_PK,bundle.getString(MD_Schedule_ExecDao.SCHEDULE_PK,""));
                 scheduleBundle.putString(Constant.ACT017_SCHEDULED_SITE,bundle.getString(Constant.ACT017_SCHEDULED_SITE,""));
@@ -556,7 +553,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         productId = "";
         serialId = "";
         customFormType = "";
-        customFormTypeDesc = "";
         customFormCode = "";
         customFormVersion = "";
         customFormCodeDesc = "";
@@ -940,7 +936,6 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         bundle.putString(MD_ProductDao.PRODUCT_ID,productId);
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, customFormType);
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, customFormTypeDesc);
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion);
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);

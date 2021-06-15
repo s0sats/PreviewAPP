@@ -171,7 +171,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
     private String product_id;
     private String serial_id;
     private String type;
-    private String type_desc;
     private String form;
     private String form_version;
     private String form_desc;
@@ -774,7 +773,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 form_data,
                 product_desc,
                 product_id,
-                type_desc,
                 form_desc,
                 serial_id,
                 mSo_Prefix,
@@ -1163,25 +1161,14 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         bundle = getIntent().getExtras();
         if (bundle != null) {
             product_code = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
-            //product_code = bundle.getString(Constant.ACT007_PRODUCT_CODE, "");
             product_desc = bundle.getString(MD_ProductDao.PRODUCT_DESC, "");
-            //product_desc = bundle.getString(Constant.ACT008_PRODUCT_DESC, "");
             product_id = bundle.getString(MD_ProductDao.PRODUCT_ID, "Sem Product ID");
-            //product_id = bundle.getString(Constant.ACT008_PRODUCT_ID, "Sem Product ID");
             serial_id = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
-            //serial_id = bundle.getString(Constant.ACT008_SERIAL_ID, "");
             type = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, "");
-            //type = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE, "");
-            type_desc = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, "");
-            //type_desc = bundle.getString(Constant.ACT009_CUSTOM_FORM_TYPE_DESC, "");
             form = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE, "");
-            //form = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE, "");
             form_version = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, "");
-            //form_version = bundle.getString(Constant.ACT010_CUSTOM_FORM_VERSION, "");
-            // VERIFICAR
             form_desc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
             form_data = bundle.getString(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA, "0");
-            //form_data = bundle.getString(Constant.ACT013_CUSTOM_FORM_DATA, "0");
             //
             mSo_Prefix = bundle.getString(SM_SODao.SO_PREFIX, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.SO_PREFIX, null));
             mSo_Code = bundle.getString(SM_SODao.SO_CODE, null) == null ? null : Integer.parseInt(bundle.getString(SM_SODao.SO_CODE, null));
@@ -2510,7 +2497,6 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             bundle.putString(MD_ProductDao.PRODUCT_ID, formLocal.getCustom_product_id());
             bundle.putString(MD_Product_SerialDao.SERIAL_ID, formLocal.getSerial_id());
             bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(formLocal.getCustom_form_type()));
-            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, formLocal.getCustom_form_type_desc());
             bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(formLocal.getCustom_form_code()));
             bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(formLocal.getCustom_form_version()));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formLocal.getCustom_form_desc());
@@ -2881,7 +2867,7 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
         tv_ticket_info_lbl.setText(hmAux_Trans.get("dialog_info_ticket_code_lbl"));
         tv_product_desc.setText(product_desc);
         tv_serial_val.setText(serial_id);
-        tv_form_type_desc.setText(type + " - " + type_desc);
+        tv_form_type_desc.setText(type);
         tv_form_code_val.setText(form);
         tv_form_code_desc.setText(form_desc);
         tv_form_version_val.setText(form_version);

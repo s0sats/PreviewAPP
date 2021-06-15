@@ -106,7 +106,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     private String productId;
     private String serialId;
     private String customFormType;
-    private String customFormTypeDesc;
     private String customFormCode;
     private String customFormVersion;
     private String customFormCodeDesc;
@@ -329,7 +328,7 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
     }
 
     private boolean hasNFormSelected() {
-        if(customFormTypeDesc.isEmpty() || isSchedule) {
+        if(customFormCodeDesc.isEmpty() || isSchedule) {
             return false;
         }
         return true;
@@ -558,14 +557,13 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             } else {
                 mdProductSerial = new MD_Product_Serial();
             }
-
-            if(bundle.containsKey(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)){
+            //todo testar esse ponto, pois substitui o param original
+            if(bundle.containsKey(Constant.ACT010_CUSTOM_FORM_CODE_DESC)){
                 productCode = bundle.getString(MD_ProductDao.PRODUCT_CODE, "");
                 productDesc = bundle.getString(MD_ProductDao.PRODUCT_DESC, "");
                 productId = bundle.getString(MD_ProductDao.PRODUCT_ID, "");
                 serialId = bundle.getString(MD_Product_SerialDao.SERIAL_ID, "");
                 customFormType = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, "");
-                customFormTypeDesc = bundle.getString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, "");
                 customFormCode = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_CODE, "");
                 customFormVersion = bundle.getString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, "");
                 customFormCodeDesc = bundle.getString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, "");
@@ -602,7 +600,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         productId = "";
         serialId = "";
         customFormType = "";
-        customFormTypeDesc = "";
         customFormCode = "";
         customFormVersion = "";
         customFormCodeDesc = "";
@@ -952,23 +949,13 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //Remove dados não necessarios para act017
         bundle.remove(MD_ProductDao.PRODUCT_CODE);
-        //bundle.removeFull(Constant.ACT007_PRODUCT_CODE);
         bundle.remove(MD_ProductDao.PRODUCT_DESC);
-        //bundle.removeFull(Constant.ACT008_PRODUCT_DESC);
         bundle.remove(MD_Product_SerialDao.SERIAL_ID);
-        //bundle.removeFull(Constant.ACT008_SERIAL_ID);
         bundle.remove(GE_Custom_FormDao.CUSTOM_FORM_TYPE);
-        //bundle.removeFull(Constant.ACT009_CUSTOM_FORM_TYPE);
-        bundle.remove(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC);
-        //bundle.removeFull(Constant.ACT009_CUSTOM_FORM_TYPE_DESC);
         bundle.remove(GE_Custom_FormDao.CUSTOM_FORM_CODE);
-        //bundle.removeFull(Constant.ACT010_CUSTOM_FORM_CODE);
         bundle.remove(GE_Custom_FormDao.CUSTOM_FORM_VERSION);
-        //bundle.removeFull(Constant.ACT010_CUSTOM_FORM_VERSION);
-        // DIFERENTE VERIFICAR
         bundle.remove(Constant.ACT010_CUSTOM_FORM_CODE_DESC);
         bundle.remove(GE_Custom_Form_LocalDao.CUSTOM_FORM_DATA);
-        //bundle.removeFull(Constant.ACT013_CUSTOM_FORM_DATA);
 
         mIntent.putExtras(bundle);
 
@@ -1007,7 +994,6 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         bundle.putString(MD_ProductDao.PRODUCT_ID,productId);
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, serialId);
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, customFormType);
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, customFormTypeDesc);
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, customFormCode);
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION,customFormVersion);
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, customFormCodeDesc);

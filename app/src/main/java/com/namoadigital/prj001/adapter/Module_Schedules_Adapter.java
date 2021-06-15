@@ -239,8 +239,7 @@ public class Module_Schedules_Adapter extends BaseAdapter {
         }
         tv_type.setText(hmAux_Trans.get("form_type_lbl"));
         tv_type_val.setText(
-                item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE) + " - " +
-                        item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE_DESC)
+                item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE)
         );
         //
         tv_form_label.setText(hmAux_Trans.get("form_code_lbl"));

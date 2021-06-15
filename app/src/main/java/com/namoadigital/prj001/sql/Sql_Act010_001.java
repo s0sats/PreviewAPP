@@ -7,7 +7,6 @@ import com.namoadigital.prj001.dao.GE_Custom_FormDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_OperationDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_ProductDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_SiteDao;
-import com.namoadigital.prj001.dao.GE_Custom_Form_TypeDao;
 import com.namoadigital.prj001.database.Specification;
 
 /**
@@ -47,20 +46,6 @@ public class Sql_Act010_001 implements Specification {
                 "      cf."+GE_Custom_FormDao.CUSTOM_FORM_CODE+",\n" +
                 "      cf."+GE_Custom_FormDao.CUSTOM_FORM_VERSION+",\n" +
                 "      cf."+GE_Custom_FormDao.REQUIRE_LOCATION+",\n" +
-                "    ( \n" +
-                "     SELECT \n" +
-                "        ts."+EV_Module_Res_Txt_TransDao.TXT_VALUE +"\n"+
-                "     FROM \n" +
-                "       "+EV_Module_ResDao.TABLE +" mr, \n" +
-                "       "+EV_Module_Res_Txt_TransDao.TABLE +" ts \n" +
-                "     WHERE\n " +
-                "          ts."+EV_Module_Res_Txt_TransDao.MODULE_CODE+" = mr."+EV_Module_ResDao.MODULE_CODE+" \n" +
-                "          and ts."+EV_Module_Res_Txt_TransDao.RESOURCE_CODE+" = mr."+EV_Module_ResDao.RESOURCE_CODE+" \n" +
-                "          and ts."+EV_Module_Res_Txt_TransDao.TXT_CODE+" = cf.customer_code || '|' || cf."+GE_Custom_FormDao.CUSTOM_FORM_TYPE+"\n " +
-                "           \n" +
-                "          and ts."+EV_Module_Res_Txt_TransDao.MODULE_CODE+" = 'CUST_FORM'\n" +
-                "          and ts."+EV_Module_Res_Txt_TransDao.TRANSLATE_CODE+" = '"+s_translate_code+"' \n" +
-                        " ) "+ GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC+",\n"+
                 "      (SELECT txt_value\n" +
                 "       FROM "+ EV_Module_Res_Txt_TransDao.TABLE+" tr,\n" +
                 "            "+ EV_Module_Res_TxtDao.TABLE+" ts,\n" +

@@ -2822,8 +2822,7 @@ public class Act035_Main extends Base_Activity implements Act035_Main_View {
             //
             tv_type.setText(hmAux_Trans_Extra.get("form_type_lbl"));
             tv_type_val.setText(
-                    roomFormAp.getCustom_form_type() + " - " +
-                            roomFormAp.getCustom_form_type_desc()
+                    String.valueOf(roomFormAp.getCustom_form_type())
             );
             //
             tv_form_label.setText(hmAux_Trans_Extra.get("form_code_lbl"));
