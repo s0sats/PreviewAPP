@@ -7342,8 +7342,15 @@ public class ToolBox_Inf {
         }
     }
 
+    /**
+     * BARRIONUEVO 14-06-2021
+     * Data convertida para a do device pois é a data que é visualizada.
+     * @param startDate
+     * @param endDate
+     * @return
+     */
     public static boolean checkSameDayDate(String startDate, String endDate) {
-        return startDate.substring(0, 10).equals(endDate.substring(0,10));
+        return convertToDeviceTMZ(startDate).substring(0, 10).equals(convertToDeviceTMZ(endDate).substring(0,10));
     }
 
 
