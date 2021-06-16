@@ -382,9 +382,7 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         if (wsProcess.equals(PROCESS_WS_GET_CUSTOMER)) {
             progressDialog.dismiss();
             mPresenter.getAllCustomers(false);
-        }
-        //
-        if (wsProcess.equals(PROCESS_WS_SYNC)) {
+        }else if (wsProcess.equals(PROCESS_WS_SYNC)) {
             progressDialog.dismiss();
             callAct003(context);
             //
@@ -394,20 +392,15 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
             if (ToolBox_Inf.parameterExists(getApplicationContext(), Constant.PARAM_SCHEDULE_CHECKLIST)) {
                 startDownloadWorkers();
             }
-        }
-        if (wsProcess.equals(PROCESS_WS_LOGOUT)) {
+        } else if (wsProcess.equals(PROCESS_WS_LOGOUT)) {
             progressDialog.dismiss();
             processLogin();
             wsProcess = "";
-        }
-        //
-        if(wsProcess.equals(PROCESS_WS_GET_CUSTOMER_SITE)){
+        } else if(wsProcess.equals(PROCESS_WS_GET_CUSTOMER_SITE)){
             progressDialog.dismiss();
             mPresenter.processCustomerSiteLicenseListReturn();
             wsProcess = "";
-        }
-        //
-        if(wsProcess.equals(WS_TK_Ticket_Download.class.getName())){
+        } else if(wsProcess.equals(WS_TK_Ticket_Download.class.getName())){
             ToolBox_Inf.hasFormProductOutdate(context);
             wsProcess = PROCESS_WS_SYNC;
             mPresenter.executeSyncProcess();
