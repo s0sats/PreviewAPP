@@ -297,7 +297,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         setFragments();
 
         ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
-
+        /**
+         *  BARRIONUEVO 14-06-2021
+         *  Remocao de foco no menu do hamburguer e do menu calendario.
+         */
+        mDrawerLayout.requestFocus();
     }
 
     private void retryGetLocation() {
@@ -620,11 +624,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act005_drawer);
-        /**
-         *  BARRIONUEVO 14-06-2021
-         *  Remocao de foco no menu do hamburguer e do menu calendario.
-        */
-        mDrawerLayout.requestFocus();
 
         mPresenter = new Act005_Main_Presenter_Impl(
                 context,
