@@ -349,7 +349,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
         frgSerialEdit.setShowOffline(bundle_from_offline_source);
         //frgSerialEdit.setForceCheckExistences(isSchedule);
         //Se for agendamento e o produto controlar local seguir mesma validação do site_restriction 19/06/2018
-        if(isSchedule && mdProduct.getLocal_control() == 1) {
+        //LUCHE - 16/06/2021
+        //Modificado regra novamente, não forçando o site restriction caso o serial não esteja armazenado.
+        if(isSchedule && mdProduct.getLocal_control() == 1 && mdProductSerial.getSite_code() != null && mdProductSerial.getSite_code() > 0) {
             frgSerialEdit.setForceLoggedSiteRestriction(true);
         }
         //
