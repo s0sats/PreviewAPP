@@ -133,10 +133,11 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
         /**
          * BARRIONUEVO 07-06-2021
          * Forçar o readOnly em steps sem focus quando o usuer nao tiver o perfil de acesso PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION
+         * Adicionado isInWgEditMode na regra para permitir a edição caso o user tenha acesso ao profile de edicao.
          */
         if(!inReadOnlyMode
         && !ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
-        && !stepMain.isUser_focus()) {
+        && !isInWgEditMode) {
             inReadOnlyMode =true;
         }
         //
@@ -171,7 +172,8 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
     }
 
     private void applyInEditUIChanges(StepMain stepMain) {
-        if(!inReadOnlyMode){
+        if(!inReadOnlyMode
+        || ToolBox_Inf.profileExists(context, ConstantBaseApp.PROFILE_MENU_TICKET, ConstantBaseApp.PROFILE_MENU_TICKET_PARAM_CHANGE_WORKGROUP)){
                 if (statusAllowEdition) {
                     if (isInWgEditMode
                             && ConstantBaseApp.TK_PIPELINE_APPROVAL_GET_MATERIAL.equals(stepMain.getAp_type())

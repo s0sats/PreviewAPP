@@ -91,7 +91,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
               && !ConstantBaseApp.SYS_STATUS_REJECTED.equals(processStatus)
               &&( ConstantBaseApp.SYS_STATUS_DONE.equals(processStatus)
                   || ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(processStatus)
-                  || (isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn) && (!isInWgEditMode && !inReadOnlyMode))
+                  || (isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn) && !isInWgEditMode)
             )
         ) {
             ivProcessAction.setImageDrawable(drawable);

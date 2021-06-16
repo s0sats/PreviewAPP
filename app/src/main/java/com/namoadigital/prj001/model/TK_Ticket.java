@@ -1290,28 +1290,18 @@ public class TK_Ticket implements Cloneable, Serializable {
         }
         return evUserCustomer.getLicense_user_level_value() < user_level_min;
     }
-    /**
-     * BARRIONUEVO 07-06-2021
-     * Controle de acesso do produto n deve levar o foco do step.
-     * @return
-     */
-    public boolean isProductReadOnly(Context context) {
-        return isReadOnlyUserLevel(context)
-                || isReadOnlyStatus();
-    }
     //
     /**
      * BARRIONUEVO 07-06-2021
-     * Controle de acesso por foco do step.
+     * Controle de acesso.
      * @return
      */
     public boolean isReadOnly(Context context) {
         return isReadOnlyUserLevel(context)
-                || isReadOnlyStatus()
-                || isReadOnlyDueFocus(context);
+                || isReadOnlyStatus();
     }
 
-    private boolean isReadOnlyDueFocus(Context context) {
+    public boolean isReadOnlyDueFocus(Context context) {
         if(!ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
             && !isCurrentStepFocused()){
          return true;
