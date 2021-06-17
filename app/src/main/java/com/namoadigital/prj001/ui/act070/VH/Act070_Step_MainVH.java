@@ -3,12 +3,13 @@ package com.namoadigital.prj001.ui.act070.VH;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -152,7 +153,7 @@ public class Act070_Step_MainVH extends RecyclerView.ViewHolder{
             if ( stepMain.isCurrentStep()
                     && stepMain.isUser_focus()
                     && !ConstantBaseApp.SYS_STATUS_DONE.equals(stepMain.getStepStatus())){
-                tvDesc.setTextColor(context.getResources().getColor(R.color.namoa_sync_pipeline_background_btn));
+                tvDesc.setTextColor(context.getResources().getColor(R.color.namoa_status_process));
             }
         }
         if(ToolBox_Inf.hasConsistentValueString(stepMain.getForecastStartDate()) && ToolBox_Inf.hasConsistentValueString(stepMain.getForecastEndDate())){
