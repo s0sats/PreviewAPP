@@ -69,7 +69,8 @@
     <TextView
         android:id="@+id/step_main_tv_desc"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_default="wrap"
         android:layout_marginBottom="8dp"
         tools:text="1 -Planejamento 1 -Planejamento "
         android:textSize="18sp"
