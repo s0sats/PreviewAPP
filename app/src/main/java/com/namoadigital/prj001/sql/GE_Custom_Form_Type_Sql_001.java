@@ -16,8 +16,13 @@ import com.namoadigital.prj001.database.Specification;
  *  Adicionado Serial Id como parametro no construtor.
  *  Adicionado filtro na query para que, caso o serial_id seja null
  *  sejam filtrados apenas os form que NÃO REQUEREM SERIAL para finalização
+ *
+ * Modified by DANIEL.LUCHE on 15/06/2021
+ * Com a versão 4.0.0  do app, o form_type_desc foi removido do sistema e essa query não faz mais sentido
+ * Add deprecated
  */
 
+@Deprecated
 public class GE_Custom_Form_Type_Sql_001 implements Specification {
 
     public static final String CUSTOM_FORM_TYPE_DESC_FULL = "custom_form_type_desc_full";
@@ -60,7 +65,7 @@ public class GE_Custom_Form_Type_Sql_001 implements Specification {
                         "           \n" +
                         "          and ts."+EV_Module_Res_Txt_TransDao.MODULE_CODE+" = 'CUST_FORM'       \n" +
                         "          and ts."+EV_Module_Res_Txt_TransDao.TRANSLATE_CODE+" = '"+s_translate_code+"' \n" +
-                        "    ) "+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC+" \n"+
+                        "    ) "+CUSTOM_FORM_TYPE_DESC_FULL+" \n"+
                         "     \n" +
                         " FROM \n" +
                         "       "+ GE_Custom_Form_TypeDao.TABLE + " t, \n" +
@@ -93,7 +98,7 @@ public class GE_Custom_Form_Type_Sql_001 implements Specification {
                         "   AND (f.all_site = 1 OR s.site_code = '"+s_site_code+"')\n"+
                         "   AND ( '"+s_serial_id+"' IS NOT NULL OR f.require_serial_done = 0)\n"+
                         " ORDER BY \n" +
-                        "   upper(" + GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC+ ") \n"
+                        "   upper(" + CUSTOM_FORM_TYPE_DESC_FULL+ ") \n"
                 )
                 .append(";")
                 //.append(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE+"#"+GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC)

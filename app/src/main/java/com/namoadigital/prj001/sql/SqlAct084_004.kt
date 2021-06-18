@@ -54,8 +54,7 @@ class SqlAct084_004(
                          d.${GE_Custom_Form_DataDao.SO_PREFIX},
                          d.${GE_Custom_Form_DataDao.SO_CODE},
                          d.${GE_Custom_Form_DataDao.DATE_END},                 
-                         l.${GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE} ,
-                         l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC},
+                         l.${GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE} ,                         
                          l.${GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC},
                          MAX(case when instr(df.${GE_Custom_Form_Data_FieldDao.VALUE_EXTRA},'${ConstantBaseApp.CONST_NONCONFORMITY_INSTR_SEARCH}') > 0
                                  then 1

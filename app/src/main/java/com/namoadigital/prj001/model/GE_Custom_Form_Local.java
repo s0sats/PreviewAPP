@@ -35,7 +35,6 @@ public class GE_Custom_Form_Local {
     private String custom_product_icon_name;
     private String custom_product_icon_url;
     private String custom_product_icon_url_local;
-    private String custom_form_type_desc;
     private String custom_form_desc;
     private String serial_id;
     private String schedule_date_start_format;
@@ -211,14 +210,6 @@ public class GE_Custom_Form_Local {
 
     public void setCustom_product_icon_url_local(String custom_product_icon_url_local) {
         this.custom_product_icon_url_local = custom_product_icon_url_local;
-    }
-
-    public String getCustom_form_type_desc() {
-        return custom_form_type_desc;
-    }
-
-    public void setCustom_form_type_desc(String custom_form_type_desc) {
-        this.custom_form_type_desc = custom_form_type_desc;
     }
 
     public String getCustom_form_desc() {
@@ -580,7 +571,6 @@ public class GE_Custom_Form_Local {
             isSelectedItem
         );
         myActions.setProductCode(Integer.parseInt(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)));
-        myActions.setCustomFormTypeDesc(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_TYPE_DESC));
         myActions.setCustomFormDesc(hmAux.get(GE_Custom_Form_LocalDao.CUSTOM_FORM_DESC));
         return myActions;
     }

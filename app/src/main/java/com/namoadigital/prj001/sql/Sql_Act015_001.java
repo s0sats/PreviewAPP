@@ -77,7 +77,6 @@ public class Sql_Act015_001 implements Specification {
                 .append(" SELECT\n" +
                         "  l.customer_code,\n" +
                         "  l.custom_form_type,\n" +
-                        "  l.custom_form_type_desc,\n" +
                         "  l.custom_form_code,\n" +
                         "  l.custom_form_version,\n" +
                         "  l.custom_form_desc,\n" +

@@ -186,11 +186,18 @@ class MyActionsAdapter(
         private fun configTvOriginView(myAction: MyActions) {
             binding.myActionsItemTvOrigin.apply {
                 text = myAction.originDescriptor
+//                Log.d("TESTE_ORIGEM", """isTicketOriginManulOrBarcode: ${isTicketOriginManulOrBarcode(myAction)}""" )
+//                Log.d("TESTE_ORIGEM", """originDescriptor: ${myAction.originDescriptor}""" )
                 ellipsize = if (isTicketOriginManulOrBarcode(myAction)) {
                                     TextUtils.TruncateAt.START
                                 } else {
-                                    TextUtils.TruncateAt.END
+                                    null
                                 }
+                maxLines = if (isTicketOriginManulOrBarcode(myAction)) {
+                                1
+                            } else {
+                                Integer.MAX_VALUE
+                            }
             }
         }
 

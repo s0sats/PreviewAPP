@@ -212,8 +212,8 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     }
 
 
-
-    private void setHeaderFragment(TK_Ticket tkTicket, String custom_form_type_desc, String custom_form_desc, String step_date, String step_end_user_nick) {
+   //todo remover o campo tag_operational_desc, antigo custom_form_type_desc do layout
+    private void setHeaderFragment(TK_Ticket tkTicket, String tag_operational_desc, String custom_form_desc, String step_date, String step_end_user_nick) {
         fm = getSupportFragmentManager();
 
         String origin_type = "";
@@ -238,7 +238,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                 tkTicket.getOpen_product_desc(),
                 origin_type,
                 context.getResources().getColor(R.color.grid_header_normal),
-                custom_form_type_desc,
+                tag_operational_desc,
                 custom_form_desc,
                 step_date,
                 step_end_user_nick
@@ -346,8 +346,6 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
 
     @Override
     public void loadTicketOrigin(TK_Ticket ticket) {
-
-        String custom_form_type_desc ="-";
         String custom_form_desc ="-";
         String step_date ="-";
         String step_end_user_nick ="-";
@@ -371,7 +369,6 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             if(originCtrl != null){
                 final TK_Ticket_Form form = originCtrl.getForm();
                 try {
-                    custom_form_type_desc = form.getCustom_form_type_desc();
                     custom_form_desc = form.getCustom_form_desc();
                     if (form.getScore_perc() != null) {
                         tv_form_score.setText(form.getScore_perc().replace(".", ",") + "%");
@@ -407,7 +404,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             }
         }
         //
-        setHeaderFragment(ticket, custom_form_type_desc, custom_form_desc, step_date, step_end_user_nick);
+        setHeaderFragment(ticket, ticket.getTag_operational_desc(), custom_form_desc, step_date, step_end_user_nick);
         //
         setFabMenu(ticket);
         //

@@ -27,7 +27,6 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
     public static final String TABLE = "ge_custom_form_aps";
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String CUSTOM_FORM_TYPE = "custom_form_type";
-    public static final String CUSTOM_FORM_TYPE_DESC = "custom_form_type_desc";
     public static final String CUSTOM_FORM_CODE = "custom_form_code";
     public static final String CUSTOM_FORM_VERSION = "custom_form_version";
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
@@ -67,7 +66,7 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
 
 
     public static String[] columns = {
-            CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_TYPE_DESC, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DESC,
+            CUSTOMER_CODE, CUSTOM_FORM_TYPE, CUSTOM_FORM_CODE, CUSTOM_FORM_VERSION, CUSTOM_FORM_DESC,
             CUSTOM_FORM_DATA, AP_CODE, AP_DESCRIPTION, AP_STATUS, AP_COMMENTS, AP_WHAT, AP_WHERE, AP_WHY, AP_WHO,
             AP_WHO_NICK, AP_HOW, AP_HOW_MUCH, AP_WHEN, DEPARTMENT_CODE, DEPARTMENT_ID, DEPARTMENT_DESC, ROOM_CODE, AP_SCN,
             PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SERIAL_ID, SYNC_REQUIRED, UPLOAD_REQUIRED, CUSTOM_FORM_URL,
@@ -266,7 +265,6 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             //
             custom_form_ap.setCustomer_code(cursor.getLong(cursor.getColumnIndex(CUSTOMER_CODE)));
             custom_form_ap.setCustom_form_type(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_TYPE)));
-            custom_form_ap.setCustom_form_type_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_TYPE_DESC)));
             custom_form_ap.setCustom_form_code(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_CODE)));
             custom_form_ap.setCustom_form_version(cursor.getInt(cursor.getColumnIndex(CUSTOM_FORM_VERSION)));
             custom_form_ap.setCustom_form_desc(cursor.getString(cursor.getColumnIndex(CUSTOM_FORM_DESC)));
@@ -394,9 +392,6 @@ public class GE_Custom_Form_ApDao extends BaseDao implements Dao<GE_Custom_Form_
             }
             if (custom_form_ap.getCustom_form_type() > -1) {
                 contentValues.put(CUSTOM_FORM_TYPE, custom_form_ap.getCustom_form_type());
-            }
-            if (custom_form_ap.getCustom_form_type_desc() != null) {
-                contentValues.put(CUSTOM_FORM_TYPE_DESC, custom_form_ap.getCustom_form_type_desc());
             }
             if (custom_form_ap.getCustom_form_code() > -1) {
                 contentValues.put(CUSTOM_FORM_CODE, custom_form_ap.getCustom_form_code());

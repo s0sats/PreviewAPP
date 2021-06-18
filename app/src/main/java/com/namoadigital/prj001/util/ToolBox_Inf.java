@@ -7395,7 +7395,7 @@ public class ToolBox_Inf {
      * @return - String formatada
      */
     public static String formatFormErrorDesc(TSave_Rec.Error_Process error_process) {
-        return error_process.getCustom_form_type_desc() +"\n" + error_process.getCustom_form_desc();
+        return error_process.getCustom_form_desc();
     }
 
     /**

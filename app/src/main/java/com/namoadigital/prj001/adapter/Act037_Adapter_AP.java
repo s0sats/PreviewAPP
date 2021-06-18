@@ -133,15 +133,6 @@ public class Act037_Adapter_AP extends BaseAdapter implements Filterable {
         return convertView;
     }
 
-    /*
-    private void processNormalAP(HMAux item, View convertView) {
-        TextView tv_cf_desc = (TextView) convertView.findViewById(R.id.act037_main_content_cell_ap_normal_tv_cf_desc);
-        TextView tv_cf_type_desc = (TextView) convertView.findViewById(R.id.act037_main_content_cell_ap_normal_tv_cf_type_desc);
-        //
-        tv_cf_desc.setText(item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_DESC));
-        tv_cf_type_desc.setText(item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE_DESC));
-    }
-    */
     private void processNormalAP(HMAux item, View convertView) {
         TextView tv_form_ttl = (TextView) convertView.findViewById(R.id.namoa_ap_tv_form_ttl);
         ImageView iv_sync_upload = (ImageView) convertView.findViewById(R.id.namoa_ap_iv_sync_upload);
@@ -183,8 +174,7 @@ public class Act037_Adapter_AP extends BaseAdapter implements Filterable {
         }
         tv_type.setText(hmAux_Trans.get("form_type_lbl"));
         tv_type_val.setText(
-                item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE) + " - " +
-                        item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE_DESC)
+                item.get(GE_Custom_Form_ApDao.CUSTOM_FORM_TYPE)
         );
         //
         tv_form_label.setText(hmAux_Trans.get("form_code_lbl"));

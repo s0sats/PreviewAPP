@@ -20,7 +20,6 @@ public class Chat_Room_Obj_Form_AP {
     private Integer ap_who;
     private String ap_who_name;
     private String ap_when;
-    private String custom_form_type_desc;
     private String custom_form_desc;
     private String custom_form_url;
     private String ap_product_id;
@@ -137,14 +136,6 @@ public class Chat_Room_Obj_Form_AP {
 
     public void setAp_when(String ap_when) {
         this.ap_when = ap_when;
-    }
-
-    public String getCustom_form_type_desc() {
-        return custom_form_type_desc;
-    }
-
-    public void setCustom_form_type_desc(String custom_form_type_desc) {
-        this.custom_form_type_desc = custom_form_type_desc;
     }
 
     public String getCustom_form_desc() {

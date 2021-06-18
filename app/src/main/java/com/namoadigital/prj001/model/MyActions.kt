@@ -39,7 +39,6 @@ data class MyActions(
     }
     var productCode: Int? = null
     var productId: String? = null
-    var customFormTypeDesc: String? = null
     var customFormDesc: String? = null
     var scheduleCustomFormData: String? = null
 

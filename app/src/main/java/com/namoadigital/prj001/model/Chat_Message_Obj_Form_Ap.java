@@ -22,7 +22,6 @@ public class Chat_Message_Obj_Form_Ap {
     private Integer ap_who;
     private String ap_who_name;
     private String ap_when;
-    private String custom_form_type_desc;
     private String custom_form_desc;
     private Integer ap_product_code;
     private String ap_product_id;
@@ -144,14 +143,6 @@ public class Chat_Message_Obj_Form_Ap {
         this.ap_when = ap_when;
     }
 
-    public String getCustom_form_type_desc() {
-        return custom_form_type_desc;
-    }
-
-    public void setCustom_form_type_desc(String custom_form_type_desc) {
-        this.custom_form_type_desc = custom_form_type_desc;
-    }
-
     public String getCustom_form_desc() {
         return custom_form_desc;
     }
@@ -222,7 +213,6 @@ public class Chat_Message_Obj_Form_Ap {
             //
             formAp.setCustomer_code(this.customer_code);
             formAp.setCustom_form_type(this.custom_form_type);
-            formAp.setCustom_form_type_desc(this.custom_form_type_desc);
             formAp.setCustom_form_code(this.custom_form_code);
             formAp.setCustom_form_version(this.custom_form_version);
             formAp.setCustom_form_desc(this.custom_form_desc);

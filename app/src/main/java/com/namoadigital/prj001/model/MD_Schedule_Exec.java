@@ -33,8 +33,6 @@ public class MD_Schedule_Exec {
     @Nullable
     private Integer custom_form_type;
     @Nullable
-    private String custom_form_type_desc;
-    @Nullable
     private Integer custom_form_code;
     @Nullable
     private Integer custom_form_version;
@@ -253,15 +251,6 @@ public class MD_Schedule_Exec {
 
     public void setCustom_form_type(@Nullable Integer custom_form_type) {
         this.custom_form_type = custom_form_type;
-    }
-
-    @Nullable
-    public String getCustom_form_type_desc() {
-        return custom_form_type_desc;
-    }
-
-    public void setCustom_form_type_desc(@Nullable String custom_form_type_desc) {
-        this.custom_form_type_desc = custom_form_type_desc;
     }
 
     @Nullable
@@ -528,13 +517,25 @@ public class MD_Schedule_Exec {
         this.has_Nc = has_Nc;
     }
 
-    public MyActions toMyActionsObj(Context context, @Nullable String lastScheduleSelected){
+    public MyActions toMyActionsObj(Context context, @Nullable String lastScheduleSelected) {
         String customerGMT = ToolBox_Con.getPreference_Customer_TMZ(context);
         String statusToUse = ConstantBaseApp.SYS_STATUS_IN_PROCESSING.equals(status) ? ConstantBaseApp.SYS_STATUS_PROCESS : status;
-        int rightIcon =
-                !ConstantBaseApp.SYS_STATUS_WAITING_SYNC.equals(status)
-                ? R.drawable.ic_baseline_cloud_done_24_blue
-                : R.drawable.ic_cloud_upload_24_red;
+        int rightIcon = R.drawable.ic_baseline_cloud_done_24_blue;
+        if (status != null){
+            switch (status) {
+                case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
+                    rightIcon = R.drawable.ic_cloud_upload_24_red;
+                    break;
+                case ConstantBaseApp.SYS_STATUS_ERROR:
+                case ConstantBaseApp.SYS_STATUS_IGNORED:
+                    rightIcon = R.drawable.ic_baseline_clear_24dp_red;
+                    break;
+                default:
+                    rightIcon = R.drawable.ic_baseline_cloud_done_24_blue;
+                    break;
+            }
+        }
+
         Integer leftIcon =
             has_Nc != null && has_Nc.equals(1)
             ? R.drawable.ic_alert_nc_on
@@ -584,8 +585,7 @@ public class MD_Schedule_Exec {
             );
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);
-            myActions.setCustomFormTypeDesc(custom_form_type_desc);
-            myActions.setCustomFormTypeDesc(custom_form_desc);
+            myActions.setCustomFormDesc(custom_form_desc);
             return myActions;
         }catch (Exception e){
             /**
@@ -630,8 +630,7 @@ public class MD_Schedule_Exec {
             );
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);
-            myActions.setCustomFormTypeDesc(custom_form_type_desc);
-            myActions.setCustomFormTypeDesc(custom_form_desc);
+            myActions.setCustomFormDesc(custom_form_desc);
             return myActions;
         }
 

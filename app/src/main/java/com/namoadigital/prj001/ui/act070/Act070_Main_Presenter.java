@@ -1673,7 +1673,6 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         bundle.putString(MD_ProductDao.PRODUCT_ID, ticketCtrl.getProduct_id());
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, ticketCtrl.getSerial_id());
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, String.valueOf(ticketCtrl.getForm().getCustom_form_type()));
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, ticketCtrl.getForm().getCustom_form_type_desc());
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(ticketCtrl.getForm().getCustom_form_code()));
         /*
             Barrionuevo - 02-09-2020

@@ -78,7 +78,6 @@ public class Sql_Act017_001 implements Specification {
                         "'"+Constant.MODULE_CHECKLIST +"' "+ Act017_Main.ACT017_MODULE_KEY +" ,\n" +
                         "  s.customer_code,\n" +
                         "  s.custom_form_type,\n" +
-                        "  s.custom_form_type_desc,\n" +
                         "  s.custom_form_code,\n" +
                         "  s.custom_form_version,\n" +
                         "  s.custom_form_desc,\n" +

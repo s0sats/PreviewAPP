@@ -19,7 +19,6 @@ public class GE_Custom_Form_Ap {
     private long customer_code;
     @Expose
     private int custom_form_type;
-    private String custom_form_type_desc;
     @Expose
     private int custom_form_code;
     @Expose
@@ -93,14 +92,6 @@ public class GE_Custom_Form_Ap {
 
     public void setCustom_form_type(int custom_form_type) {
         this.custom_form_type = custom_form_type;
-    }
-
-    public String getCustom_form_type_desc() {
-        return custom_form_type_desc;
-    }
-
-    public void setCustom_form_type_desc(String custom_form_type_desc) {
-        this.custom_form_type_desc = custom_form_type_desc;
     }
 
     public int getCustom_form_code() {

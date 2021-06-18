@@ -108,7 +108,6 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
         bundle.putString(MD_ProductDao.PRODUCT_ID, item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ICON_NAME));
         bundle.putString(MD_Product_SerialDao.SERIAL_ID, item.get(GE_Custom_Form_LocalDao.SERIAL_ID));
         bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE));
-        bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_CODE));
         bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_VERSION));
         bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
@@ -303,7 +302,6 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
             bundle.putString(Constant.ACT009_CUSTOM_FORM_TYPE, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_CODE));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_VERSION, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_VERSION));
-            bundle.putString(GE_Custom_Form_TypeDao.CUSTOM_FORM_TYPE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
             bundle.putString(Constant.ACT017_SCHEDULED_SITE, item.get(MD_Schedule_ExecDao.SITE_CODE));
             //
@@ -456,7 +454,6 @@ public class Act013_Main_Presenter_Impl implements Act013_Main_Presenter {
                 customFormLocal.setCustom_product_code(ToolBox_Inf.convertStringToInt(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_CODE)));
                 customFormLocal.setCustom_product_desc(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_DESC));
                 customFormLocal.setCustom_product_id(item.get(GE_Custom_Form_LocalDao.CUSTOM_PRODUCT_ID));
-                customFormLocal.setCustom_form_type_desc(item.get(MD_Schedule_ExecDao.CUSTOM_FORM_TYPE_DESC));
                 customFormLocal.setCustom_form_desc(item.get(MD_Schedule_ExecDao.CUSTOM_FORM_DESC));
                 customFormLocal.setSerial_id(item.get(MD_Schedule_ExecDao.SERIAL_ID));
                 customFormLocal.setRequire_signature(customForm.getRequire_signature());

@@ -553,7 +553,7 @@ public class Act038_Main extends Base_Activity implements Act038_Main_View {
             //
             tv_form_type_ttl.setText(hmAux_Trans.get("form_type_lbl"));
             et_form_type_ttl.setEnabled(false);
-            et_form_type_ttl.setText(String.valueOf(ap.getCustom_form_type() + " - " + ap.getCustom_form_type_desc()));
+            et_form_type_ttl.setText(String.valueOf(ap.getCustom_form_type()));
             //
             tv_form_code_ttl.setText(hmAux_Trans.get("form_code_lbl"));
             et_form_code_ttl.setEnabled(false);

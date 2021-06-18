@@ -337,7 +337,6 @@ public class WS_Save extends IntentService {
                         );
                         //Preenche dados no obj de erro.
                         if(errorProcess != null){
-                            errorProcess.setCustom_form_type_desc(formLocal.getCustom_form_type_desc());
                             errorProcess.setCustom_form_desc(formLocal.getCustom_form_desc());
                             form_data.setCustom_form_status(ConstantBaseApp.SYS_STATUS_IGNORED);
                             formLocal.setCustom_form_status(ConstantBaseApp.SYS_STATUS_IGNORED);

@@ -25,10 +25,6 @@ public class GE_Custom_Form_TypeDao extends BaseDao implements Dao<GE_Custom_For
     public static final String TABLE = "ge_custom_form_types";
     public static final String CUSTOMER_CODE = "customer_code";
     public static final String CUSTOM_FORM_TYPE = "custom_form_type";
-    //CUSTOM_FORM_TYPE_DESC não é um campo da tabela,vem da tabela de tradução
-    public static final String CUSTOM_FORM_TYPE_DESC = "custom_form_type_desc";
-    //
-    private String[] columns = {CUSTOMER_CODE, CUSTOM_FORM_TYPE};
 
     public GE_Custom_Form_TypeDao(Context context, String DB_NAME, int DB_VERSION) {
         super(context, DB_NAME, DB_VERSION, Constant.DB_MODE_MULTI);

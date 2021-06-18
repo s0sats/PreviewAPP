@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -298,7 +297,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         setFragments();
 
         ToolBox_Inf.callPendencyNotification(getApplicationContext(), hmAux_Trans);
-
+        /**
+         *  BARRIONUEVO 14-06-2021
+         *  Remocao de foco no menu do hamburguer e do menu calendario.
+         */
+        mDrawerLayout.requestFocus();
     }
 
     private void retryGetLocation() {
@@ -621,11 +624,6 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
         mDrawerLayout = (DrawerLayout)
                 findViewById(R.id.act005_drawer);
-        /**
-         *  BARRIONUEVO 14-06-2021
-         *  Remocao de foco no menu do hamburguer e do menu calendario.
-        */
-        mDrawerLayout.requestFocus();
 
         mPresenter = new Act005_Main_Presenter_Impl(
                 context,
@@ -3089,11 +3087,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     if (fcmTitle.equals(FCM_MODULE_SYNC)) {
                         invalidateOptionsMenu();
                     } else if (fcmTitle.equals(FCM_MODULE_TICKET) || fcmTitle.equals(ConstantBaseApp.FCM_MODULE_FORM_AP)|| fcmTitle.equals(FCM_ACTION_TK_TICKET_UPDATE)) {
-                        if(!mPresenter.hasSOProfile()) {
-//                            Log.d("FCM", "mPresenter.hasSOProfile(): " + mPresenter.hasSOProfile());
-                            invalidateOptionsMenu();
-                            refreshUiData();
-                        }
+                        invalidateOptionsMenu();
+                        refreshUiData();
                     }
                 }
             }
