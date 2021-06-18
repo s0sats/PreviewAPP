@@ -32,6 +32,7 @@ interface Act083_Main_Contract {
         fun getMketFilter(): String?
         fun setViewFiltersParam(textFilter: String?, initialTabToLoad: Int)
         fun setTabsCounters(selectedTabCounter: Int, otherTabCounter: Int)
+        fun updateFooterInfos()
     }
 
     interface I_Presenter {

@@ -969,6 +969,8 @@ class Act083_Main_Presenter(private val context: Context,
                             ToolBox_Con.setPreference_Site_Code(context, item.siteCode.toString())
                             ToolBox_Con.setPreference_Zone_Code(context, -1)
                             //
+                            mView.updateFooterInfos();
+                            //
                             checkScheduleFlow(item)
                         } else {
                             ToolBox_Con.setPreference_Site_Code(context, item.siteCode.toString())

@@ -646,6 +646,18 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         ToolBox.toastMSG(context, msg)
     }
 
+    /**
+     * LUCHE - 18/06/2021
+     * Metodo que atualiza os dados após troca de site no agendamento.
+     */
+    override fun updateFooterInfos() {
+        //O unico efeito da troca na lista é visibilidade da informação de site
+        //sendo assim, somente o notify deve dar conta
+        mAdapter.notifyDataSetChanged()
+        //Atualiza dados no footer
+        iniUIFooter()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
@@ -657,11 +669,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private fun processChanceZoneResult(resultCode: Int) {
         if (resultCode == RESULT_OK) {
-            //O unico efeito da troca na lista é visibilidade da informação de site
-            //sendo assim, somente o notify deve dar conta
-            mAdapter.notifyDataSetChanged()
-            //Atualiza dados no footer
-            iniUIFooter()
+            updateFooterInfos()
             //Clica novamente no item
             mPresenter.actionSelected?.let {
                 mPresenter.checkScheduleFlow(it)
