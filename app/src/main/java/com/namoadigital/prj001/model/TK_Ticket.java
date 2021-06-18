@@ -1290,6 +1290,16 @@ public class TK_Ticket implements Cloneable, Serializable {
         }
         return evUserCustomer.getLicense_user_level_value() < user_level_min;
     }
+    /**
+     * BARRIONUEVO 07-06-2021
+     * Controle de acesso do produto deve levar o foco do step.
+     * @return
+     */
+    public boolean isProductReadOnly(Context context) {
+        return isReadOnlyUserLevel(context)
+                || isReadOnlyStatus()
+                || isReadOnlyDueFocus(context);
+    }
     //
     /**
      * BARRIONUEVO 07-06-2021
