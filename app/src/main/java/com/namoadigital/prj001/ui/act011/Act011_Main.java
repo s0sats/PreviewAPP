@@ -2500,10 +2500,12 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_CODE, String.valueOf(formLocal.getCustom_form_code()));
             bundle.putString(GE_Custom_FormDao.CUSTOM_FORM_VERSION, String.valueOf(formLocal.getCustom_form_version()));
             bundle.putString(Constant.ACT010_CUSTOM_FORM_CODE_DESC, formLocal.getCustom_form_desc());
-        }else{
-            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, formLocal.getCustom_product_id());
-            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, formLocal.getSerial_id());
         }
+        //LUCHE - 18/06/2021 comentado else de finalizeNewFlow  que passava via bundle as infos de produto e serial para serem usadas na act006. Segundo jhon isso foi definido erroneamente na documentação
+        // else{
+//            bundle.putString(Constant.FRAG_SEARCH_PRODUCT_ID_RECOVER, formLocal.getCustom_product_id());
+//            bundle.putString(Constant.FRAG_SEARCH_SERIAL_ID_RECOVER, formLocal.getSerial_id());
+//        }
         //
         mIntent.putExtras(bundle);
         startActivity(mIntent);
