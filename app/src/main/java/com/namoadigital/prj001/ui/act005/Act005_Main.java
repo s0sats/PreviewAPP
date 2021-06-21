@@ -3087,11 +3087,8 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
                     if (fcmTitle.equals(FCM_MODULE_SYNC)) {
                         invalidateOptionsMenu();
                     } else if (fcmTitle.equals(FCM_MODULE_TICKET) || fcmTitle.equals(ConstantBaseApp.FCM_MODULE_FORM_AP)|| fcmTitle.equals(FCM_ACTION_TK_TICKET_UPDATE)) {
-                        if(!mPresenter.hasSOProfile()) {
-//                            Log.d("FCM", "mPresenter.hasSOProfile(): " + mPresenter.hasSOProfile());
-                            invalidateOptionsMenu();
-                            refreshUiData();
-                        }
+                        invalidateOptionsMenu();
+                        refreshUiData();
                     }
                 }
             }
