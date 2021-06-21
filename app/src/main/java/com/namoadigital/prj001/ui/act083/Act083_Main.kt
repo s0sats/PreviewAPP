@@ -157,6 +157,9 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private fun initVars() {
         supportActionBar?.title = mPresenter.getActTitle()
+        //LUCHE - 21/06/2021
+        //Desabilita os cliques nas abas, pois só serão habilitado após corroutine retornar.
+        toggleTabEnableStattus(false)
         setLabels()
         setChips()
     }
@@ -425,7 +428,7 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
             }
         })
         binding.act083MainContent.act083Tabs.setOnCheckedChangeListener { _, checkedId ->
-            binding.act083MainContent.act083RvActionsList.stopScroll();
+            binding.act083MainContent.act083RvActionsList.stopScroll()
             with(binding.act083MainContent){
                 when(checkedId){
                     act083TabMyActions.id -> updateMyActionList(1)
@@ -451,9 +454,26 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
         mPresenter.updateMyActionList(userFocusFilter)
     }
 
+    /**
+     * LUCHE
+     * Fun que controla a visibilidade do progress e também o estado de habilitado ou não das tabs
+     */
     override fun changeProgressBarVisility(show: Boolean) {
         with(binding.act083MainContent.act083PbLoad){
             visibility = if(show) View.VISIBLE else View.GONE
+        }
+        //
+        toggleTabEnableStattus(!show)
+    }
+
+    /**
+     * LUCHE - 21/06/2021
+     * Fun que habilita de dasabilita as tabs.
+     */
+    private fun toggleTabEnableStattus(enable: Boolean) {
+        with(binding.act083MainContent) {
+            act083TabMyActions.isEnabled = enable
+            act083TabOtherActions.isEnabled = enable
         }
     }
 

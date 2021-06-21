@@ -94,6 +94,9 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
     }
 
     private fun initVars() {
+        //LUCHE - 21/06/2021
+        //Desabilita os cliques nas abas, pois só serão habilitado após corroutine retornar.
+        toggleTabEnableStatus(false)
         setLabels()
     }
 
@@ -272,6 +275,19 @@ class Act084Main : Base_Activity(), Act084MainContract.I_View {
     override fun changeProgressBarVisility(show: Boolean) {
         with(binding.act084PbLoad){
             visibility = if(show) View.VISIBLE else View.GONE
+        }
+        //
+        toggleTabEnableStatus(!show)
+    }
+
+    /**
+     * LUCHE - 21/06/2021
+     * Fun que habilita de dasabilita as tabs.
+     */
+    private fun toggleTabEnableStatus(enable: Boolean) {
+        with(binding) {
+            act084TabMyActions.isEnabled = enable
+            act084TabOtherActions.isEnabled = enable
         }
     }
 
