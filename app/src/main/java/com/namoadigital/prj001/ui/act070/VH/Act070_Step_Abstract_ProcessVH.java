@@ -64,7 +64,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
                 break;
             case ConstantBaseApp.SYS_STATUS_WAITING_SYNC:
                 tintColor = ToolBox_Inf.getStatusColorV2(context,ConstantBaseApp.SYS_STATUS_WAITING_SYNC);
-                drawable = context.getDrawable(R.drawable.ic_baseline_hourglass_empty_24dp_black);
+                drawable = context.getDrawable(R.drawable.ic_cloud_upload);
                 processActionText = transWaitingSync;
                 break;
             case ConstantBaseApp.SYS_STATUS_CANCELLED:
