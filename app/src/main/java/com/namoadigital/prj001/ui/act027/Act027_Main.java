@@ -2868,6 +2868,7 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
                // ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) &&
                 ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST,null) &&
                         hasExecutionProfile() &&
+                        ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_SHOW_ACTIONS) &&
                         !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE)
                 ) {
             menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
