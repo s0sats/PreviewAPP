@@ -54,7 +54,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="32dp"
-            android:layout_marginRight="48dp"
+            android:layout_marginRight="40dp"
             android:background="@color/padrao_WHITE"
             android:padding="4dp"
             android:textAlignment="center"
@@ -94,12 +94,12 @@
             app:layout_constraintEnd_toStartOf="@+id/gdl_withdrawn"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/product_cell_iv_withdrawn_add"
-            tools:text="TextView" />
+            tools:text="Zurückgegeben:" />
 
         <ImageView
             android:id="@+id/product_cell_iv_withdrawn_substract"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/tk_product_amount_controllers"
@@ -111,9 +111,9 @@
 
         <ImageView
             android:id="@+id/product_cell_iv_withdrawn_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/tk_product_amount_controllers"
             app:tint="@color/colorFooterWhite"
             app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_withdrawn_substract"
@@ -128,7 +128,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:background="@color/padrao_WHITE"
-            android:padding="4dp"
+
             android:textAlignment="center"
             android:textColor="@color/namoa_pipeline_product_lbl"
             app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_withdrawn_add"
@@ -170,8 +170,8 @@
 
         <ImageView
             android:id="@+id/product_cell_iv_applied_substract"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:background="@drawable/tk_product_amount_controllers"
@@ -183,9 +183,9 @@
 
         <ImageView
             android:id="@+id/product_cell_iv_applied_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/tk_product_amount_controllers"
             app:tint="@color/colorFooterWhite"
             app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_applied_substract"
@@ -244,8 +244,8 @@
 
         <ImageView
             android:id="@+id/product_cell_iv_returned_substract"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:background="#FB9C0E"
@@ -259,9 +259,9 @@
 
         <ImageView
             android:id="@+id/product_cell_iv_returned_add"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="8dp"
             android:src="@drawable/ic_check_white_24dp"
             app:tint="@color/namoa_product_extract_check"
             app:layout_constraintBottom_toBottomOf="@+id/product_cell_iv_returned_substract"
@@ -293,7 +293,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         tools:text="TextView"
         android:textColor="@color/namoa_pipeline_extract"
         android:textAlignment="textEnd"
