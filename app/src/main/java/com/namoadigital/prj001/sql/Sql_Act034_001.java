@@ -4,11 +4,15 @@ import com.namoadigital.prj001.dao.CH_MessageDao;
 import com.namoadigital.prj001.dao.CH_RoomDao;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
 import com.namoadigital.prj001.database.Specification;
+import com.namoadigital.prj001.util.Constant;
 
 /**
  * Created by d.luche on 13/12/2017.
  * Query do drawer de customers.
  * Retorna lista com qtd de msg não lidas para os customer com sessão
+ * LUCHE - 21/06/2021
+ * Corrigido verificação de msg não lida, substituindo o usr_code <> do logado pela logica
+ * Diferente do usr logado OU do usr logado, desde que NÃO seja imagem ou text
  */
 
 public class Sql_Act034_001 implements Specification {
@@ -49,7 +53,9 @@ public class Sql_Act034_001 implements Specification {
                         "          "+ CH_MessageDao.TABLE+" m ON \n" +
                         "             r.room_code = m.room_code\n" +
                         "             and m.read = 0\n" +
-                        "             and m.user_code <> '"+user_code+"'\n" +
+                        "             AND (m.user_code <> '" + user_code + "'\n" +
+                        "                  or (m.user_code ='" + user_code+"' AND m.msg_type not in ('"+ Constant.CHAT_MESSAGE_TYPE_TEXT+"','"+Constant.CHAT_MESSAGE_TYPE_IMAGE+"'))\n" +
+                        "             )\n" +
                         "      WHERE \n" +
                         "        r.customer_code in ("+customer_list_filter+")\n" +
                         "    ) t\n" +

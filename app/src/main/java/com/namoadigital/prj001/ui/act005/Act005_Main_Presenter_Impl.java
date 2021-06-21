@@ -771,7 +771,8 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
                         try {
                             qty = chMessageDao.getByStringHM(
                                     new CH_Message_Sql_025(
-                                            ToolBox_Con.getPreference_User_Code(context)
+                                            ToolBox_Con.getPreference_User_Code(context),
+                                            getFormatedSessionCustomerList()
                                     ).toSqlQuery()
                             ).get(CH_Message_Sql_025.BADGE_MESSAGES_QTY);
                         } catch (Exception e) {
@@ -1059,18 +1060,40 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     @Override
     public int getChatBadgeQty() {
         String qty = "0";
+        String sessionCustomerList = getFormatedSessionCustomerList();
         //
         try {
             qty = chMessageDao.getByStringHM(
                     new CH_Message_Sql_025(
-                            ToolBox_Con.getPreference_User_Code(context)
-                    ).toSqlQuery()
+                            ToolBox_Con.getPreference_User_Code(context),
+                        sessionCustomerList).toSqlQuery()
             ).get(CH_Message_Sql_025.BADGE_MESSAGES_QTY);
         } catch (Exception e) {
             qty = "0";
         }
         //
         return ToolBox_Inf.convertStringToInt(qty);
+    }
+
+    /**
+     * LUCHE - 21/06/2021
+     * Metodo que retorna a lista de customer com sessão no formato para in do SQL
+     * @return
+     */
+    private String getFormatedSessionCustomerList() {
+        ArrayList<HMAux> sessionCustomerList = ToolBox_Inf.getSessionCustomerChatList(context);
+        String formattedList = "";
+        //
+        if(sessionCustomerList != null && sessionCustomerList.size() > 0){
+            for (HMAux auxCustomer :sessionCustomerList) {
+                formattedList += "'"+auxCustomer.get(EV_User_CustomerDao.CUSTOMER_CODE)+"',";
+            }
+        }
+        //Se não encontoru customer logado, algo qe nunca deveria acontecer, retorna o customer logado.
+        return
+            formattedList.isEmpty()
+                ? "'"+ToolBox_Con.getPreference_Customer_Code(context)+"'"
+                : formattedList.substring(0,formattedList.length() -1);
     }
 
     @Override

@@ -228,18 +228,4 @@ class FrgMainHomeAltPresenter(val context: Context?, private var hmauxTransFrag:
         //
         return HMAux()
     }
-
-    override fun getChatMessageBadge(): String{
-        var qty = "0"
-        try {
-            qty = chMessageDao.getByStringHM(
-                CH_Message_Sql_025(
-                    ToolBox_Con.getPreference_User_Code(context)
-                ).toSqlQuery()
-            ).get(CH_Message_Sql_025.BADGE_MESSAGES_QTY)!!
-        } catch (e: Exception) {
-            qty = "0"
-        }
-        return qty
-    }
 }

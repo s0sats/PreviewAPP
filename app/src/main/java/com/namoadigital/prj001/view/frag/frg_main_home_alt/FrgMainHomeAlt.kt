@@ -16,19 +16,12 @@ import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 /**
  * A simple [Fragment] subclass.
  * Use the [FrgMainHomeAlt.newInstance] factory method to
  * create an instance of this fragment.
  */
 class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
-    // TODO: Rename and change types of parameters
     private var mListener: OnFrgMainHomeAltInteract? = null
     //
     private lateinit var hmAux_Trans_Frag: HMAux
@@ -211,11 +204,10 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
     }
 
     fun refreshChatBadge() {
-        var chatMessageBadge = mPresenter.getChatMessageBadge()
-        val messageQty = Integer.parseInt(chatMessageBadge)
+        val messageQty = mListener?.getChatBadgeQty()?:0
         binding.tvMessengerBadge.visibility = View.GONE
         if(messageQty > 0) {
-            binding.tvMessengerBadge.text = chatMessageBadge
+            binding.tvMessengerBadge.text = messageQty.toString()
             binding.tvMessengerBadge.visibility = View.VISIBLE
         }
     }
@@ -256,6 +248,8 @@ class FrgMainHomeAlt : BaseFragment(),  FrgMainHomeAltContract.View{
         fun onSelectMessenger()
         //
         fun getDatetimeWarning(): String
+        //LUCHE - 21/06/2021
+        fun getChatBadgeQty(): Int
     }
 
     companion object {

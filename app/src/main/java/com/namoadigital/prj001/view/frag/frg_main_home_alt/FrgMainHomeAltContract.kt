@@ -11,7 +11,6 @@ interface FrgMainHomeAltContract {
 
     interface Presenter{
         fun getModules(): MutableList<MainModuleMenu>
-        fun getChatMessageBadge(): String
         fun setTranslation(hmauxTransFrag : HMAux)
     }
 
