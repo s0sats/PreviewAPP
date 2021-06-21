@@ -94,11 +94,13 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
                   || (isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn) && !isInWgEditMode)
             )
         ) {
-            ivProcessAction.setImageDrawable(drawable);
-            tvProcessAction.setTextColor(tintColor);
-            tvProcessAction.setText(processActionText);
-            ivProcessAction.setVisibility(View.VISIBLE);
-            tvProcessAction.setVisibility(View.VISIBLE);
+            if(!inReadOnlyMode) {
+                ivProcessAction.setImageDrawable(drawable);
+                tvProcessAction.setTextColor(tintColor);
+                tvProcessAction.setText(processActionText);
+                ivProcessAction.setVisibility(View.VISIBLE);
+                tvProcessAction.setVisibility(View.VISIBLE);
+            }
         }
     }
 
