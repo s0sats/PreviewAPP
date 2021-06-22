@@ -7,9 +7,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +14,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
 import com.namoa_digital.namoa_library.util.ConstantBase;
@@ -190,6 +192,12 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
         TK_Ticket_Step originStep = tkTicket.getStep().get(0);
         step_end_date = originStep.getStep_end_date();
         step_end_user_nick = originStep.getStep_end_user_nick();
+        //LUCHE - 22/06/2021
+
+        String originLabel = originStep.getCtrl() != null && originStep.getCtrl().size() > 0
+                                ? hmAux_Trans.get("schedule_action_origin_type_lbl")
+                                : hmAux_Trans.get("schedule_ticket_origin_type_lbl") ;
+
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForOrigin(
                 tkTicket,
                 tkTicket.getTicket_id(),
@@ -201,7 +209,7 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
                 tkTicket.getOpen_site_desc(),
                 tkTicket.getOpen_serial_id(),
                 tkTicket.getOpen_product_desc(),
-                hmAux_Trans.get("schedule_action_origin_type_lbl"),
+                originLabel,
                 context.getResources().getColor(R.color.grid_header_normal),
                 "",
                 ToolBox_Inf.getFormattedTicketOriginDesc(tkTicket.getOrigin_type(), tkTicket.getOrigin_desc()),
@@ -250,6 +258,10 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
         //
         transList.add("alert_wg_edit_need_connection_ttl");
         transList.add("alert_wg_edit_need_connection_msg");
+        //
+        transList.add("schedule_ticket_origin_type_lbl");
+        transList.add("alert_origin_info_not_found_ttl");
+        transList.add("alert_origin_info_not_found_msg");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -349,40 +361,65 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
     }
 
     private void setOpenFields(TK_Ticket ticket) {
-        //
-        TK_Ticket_Step originStep = ticket.getStep().get(0);
-        if(originStep != null) {
-            TK_Ticket_Ctrl originCtrl = originStep.getCtrl().get(0);
-            if(originCtrl != null) {
-                TK_Ticket_Action action = originCtrl.getAction();
-                if(action != null) {
-                    if(action.getAction_comments() == null || action.getAction_comments().isEmpty()){
-                        ll_open_comments.setVisibility(View.GONE);
-                    }else {
-                        tv_action_comment_val.setText(action.getAction_comments());
-                    }
-                    actionPhotoLocalPath = action.getAction_photo_local();
-                    if ((actionPhotoLocalPath == null || actionPhotoLocalPath.isEmpty())
+        //LUCHE - 22/06/2021
+        if(ticket.getStep() != null && ticket.getStep().size() > 0) {
+            TK_Ticket_Step originStep = ticket.getStep().get(0);
+            ////LUCHE - 22/06/2021
+            if (originStep != null && originStep.getCtrl() != null && originStep.getCtrl().size() > 0) {
+                TK_Ticket_Ctrl originCtrl = originStep.getCtrl().get(0);
+                if (originCtrl != null) {
+                    TK_Ticket_Action action = originCtrl.getAction();
+                    if (action != null) {
+                        if (action.getAction_comments() == null || action.getAction_comments().isEmpty()) {
+                            ll_open_comments.setVisibility(View.GONE);
+                        } else {
+                            tv_action_comment_val.setText(action.getAction_comments());
+                        }
+                        actionPhotoLocalPath = action.getAction_photo_local();
+                        if ((actionPhotoLocalPath == null || actionPhotoLocalPath.isEmpty())
                             && (action.getAction_photo_url() == null || action.getAction_photo_url().isEmpty())
                             && (action.getAction_photo_name() == null || action.getAction_photo_name().isEmpty())
 
-                    ) {
-                        ll_open_photo.setVisibility(View.GONE);
-                    } else {
-                        try {
-                            Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
-                            if (bitmap == null) {
+                        ) {
+                            ll_open_photo.setVisibility(View.GONE);
+                        } else {
+                            try {
+                                Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                                if (bitmap == null) {
+                                    setImagePlaceholder();
+                                } else {
+                                    iv_action_photo.setImageBitmap(bitmap);
+                                }
+                            } catch (NullPointerException e) {
                                 setImagePlaceholder();
-                            } else {
-                                iv_action_photo.setImageBitmap(bitmap);
+                                e.printStackTrace();
                             }
-                        } catch (NullPointerException e) {
-                            setImagePlaceholder();
-                            e.printStackTrace();
                         }
                     }
                 }
+            }else{
+                //LUCHE - 22/06/2021
+                //Tratativa para o ticket "agendado" via automação.....
+                ll_open_comments.setVisibility(View.GONE);
+                ll_open_photo.setVisibility(View.GONE);
             }
+        }else{
+            //LUCHE - 22/06/2021
+            //Esse cenario nunca deveria acontecer....
+            //assim como agendamendo sem action até a versão 4.0.0.....
+            ll_open_comments.setVisibility(View.GONE);
+            ll_open_photo.setVisibility(View.GONE);
+            //
+            showAlert(
+                hmAux_Trans.get("alert_origin_info_not_found_ttl"),
+                hmAux_Trans.get("alert_origin_info_not_found_msg"),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onBackPressed();
+                    }
+                }
+            );
         }
     }
 
@@ -392,9 +429,15 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
         iv_action_photo.setImageDrawable(dPlaceholder);
     }
 
-    @Override
-    public void showAlert(String ttl, String msg) {
 
+    private void showAlert(String ttl, String msg,@Nullable DialogInterface.OnClickListener listner) {
+        ToolBox.alertMSG(
+            context,
+            ttl,
+            msg,
+            listner,
+            0
+        );
     }
     //
     @Override
