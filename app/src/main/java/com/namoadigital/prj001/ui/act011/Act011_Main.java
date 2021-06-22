@@ -1152,7 +1152,10 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             if(serial_id != null && !serial_id.isEmpty()){
                 callAct083();
             }else{
-                callAct005(context);
+                //LUCHE - 22/06/2021
+                //Modificado fluxo para voltar act006
+               // callAct005(context);
+                callAct006(context,false);
             }
         }
     }
