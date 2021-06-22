@@ -97,6 +97,7 @@ class MyActionsAdapter(
             binding.myActionsItemTvContract.applyVisibilityIfTextExists(myAction.contractInfo)
             binding.myActionsItemTvContract.applyVisibilityIfTextExists(myAction.contractInfo)
             binding.myActionsItemTvOsCode.applyVisibilityIfTextExists(myAction.serviceOrderCode)
+            binding.myActionsItemTvErrorMsg.applyVisibilityIfTextExists(myAction.erroMsg)
             configDoneDate(myAction)
 
             applyBackgroundStrokeColor(myAction)

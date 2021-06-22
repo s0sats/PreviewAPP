@@ -586,6 +586,7 @@ public class MD_Schedule_Exec {
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);
             myActions.setCustomFormDesc(custom_form_desc);
+            myActions.setErroMsg(schedule_erro_msg);
             return myActions;
         }catch (Exception e){
             /**
@@ -631,8 +632,21 @@ public class MD_Schedule_Exec {
             myActions.setProductCode(product_code);
             myActions.setProductId(product_id);
             myActions.setCustomFormDesc(custom_form_desc);
+            myActions.setErroMsg(schedule_erro_msg);
             return myActions;
         }
 
+    }
+
+    private String formatErrorMsg() {
+        String erroMsg = null;
+        if(schedule_erro_msg != null && !schedule_erro_msg.isEmpty()){
+            erroMsg = schedule_erro_msg;
+            if(fcm_user_nick != null && !fcm_user_nick.isEmpty()){
+                erroMsg+= " ("+fcm_user_nick+")";
+            }
+        }
+        //
+        return erroMsg;
     }
 }

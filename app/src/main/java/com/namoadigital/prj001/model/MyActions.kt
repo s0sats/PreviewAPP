@@ -41,6 +41,7 @@ data class MyActions(
     var productId: String? = null
     var customFormDesc: String? = null
     var scheduleCustomFormData: String? = null
+    var erroMsg: String? = null
 
     fun getSplippedPk(): List<String> {
         return processPk.split(".")
