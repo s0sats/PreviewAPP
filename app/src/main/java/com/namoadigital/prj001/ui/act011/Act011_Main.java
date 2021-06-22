@@ -1148,6 +1148,8 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
             callAct070();
         }else if(ConstantBaseApp.ACT084.equals(requestingAct)){
             callAct084();
+        }else if( ConstantBaseApp.ACT027.equals(requestingAct) || ConstantBaseApp.ACT028.equals(requestingAct)){
+            nservCall();
         }else{
             if(serial_id != null && !serial_id.isEmpty()){
                 callAct083();
