@@ -482,7 +482,7 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
                 mTicket.getOpen_product_desc(),
                 hmAux_Trans.get(mTicket.getTicket_status()),
                 ToolBox_Inf.getStatusColorV2(context, mTicket.getTicket_status()),
-                ToolBox_Inf.getFormattedTicketOriginDesc(mTicket.getOrigin_type(), mTicket.getOrigin_desc()),
+                ToolBox_Inf.getFormattedTicketOriginDesc(mTicket.getOrigin_type(), mTicket.getOrigin_desc(),mTicket.getType_desc()),
                 hmAux_Trans.get("please_sync_lbl"),
                 mPresenter.getSyncStatusParam(mTicket)
             );

@@ -3,24 +3,29 @@ package com.namoadigital.prj001.ui.act079;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.namoa_digital.namoa_library.ctls.FabMenu;
+import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.databinding.Act079MainBinding;
+import com.namoadigital.prj001.databinding.Act079MainContentBinding;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
@@ -43,36 +48,24 @@ import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contract.I_View {
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
-    private FabMenu fabMenu;
     private boolean hasFABActive=false;
     private Act079_Main_Presenter mPresenter;
     private Bundle requestingBundle;
     private int mTkPrefix;
     private int mTkCode;
-    ImageView iv_form_score;
-    TextView tv_form_score;
-    ImageView iv_form_nc_count;
-    TextView tv_form_nc_count;
-    ImageView iv_form_download_pdf;
-    TextView tv_form_download_pdf;
     private boolean is_from_edit_header;
     private boolean is_from_edit_workgroup;
+    private Act079MainContentBinding binding;
+    private String actionPhotoLocalPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act079_main);
+        Act079MainBinding mainBinding = Act079MainBinding.inflate(getLayoutInflater());
+        setContentView(mainBinding.getRoot());
+        setSupportActionBar(mainBinding.toolbar);
         //
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        //
-        fabMenu = (FabMenu) findViewById(R.id.act079_fabMenu_anchor);
-        iv_form_score = findViewById(R.id.act079_iv_form_score);
-        tv_form_score = findViewById(R.id.act079_tv_form_score);
-        iv_form_nc_count =  findViewById(R.id.act079_iv_form_nc_count);
-        tv_form_nc_count =  findViewById(R.id.act079_tv_form_nc_count);
-        iv_form_download_pdf =  findViewById(R.id.act079_iv_form_download_pdf);
-        tv_form_download_pdf =  findViewById(R.id.act079_tv_form_download_pdf);
+        binding = mainBinding.act079MainContent;
         //
         iniSetup();
         //
@@ -123,6 +116,12 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         transList.add("alert_wg_edit_need_connection_ttl");
         transList.add("alert_wg_edit_need_connection_msg");
         //
+        transList.add("open_photo_lbl");
+        transList.add("open_comment_lbl");
+        transList.add("open_username_lbl");
+        transList.add("open_email_lbl");
+        transList.add("open_phone_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -152,15 +151,24 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             );
         }else {
             //
-            tv_form_download_pdf.setText(hmAux_Trans.get("download_form_pdf_lbl"));
+            setLabels();
             //
             mPresenter.getStepOrigin(mTkPrefix, mTkCode);
         }
     }
 
+    private void setLabels() {
+        binding.act079TvOpenPhoneLbl.setText(hmAux_Trans.get("open_photo_lbl"));
+        binding.act079TvOpenCommentLbl.setText(hmAux_Trans.get("open_comment_lbl"));
+        binding.act079TvOpenUsernameLbl.setText(hmAux_Trans.get("open_username_lbl"));
+        binding.act079TvOpenEmailLbl.setText(hmAux_Trans.get("open_email_lbl"));
+        binding.act079TvOpenPhoneLbl.setText(hmAux_Trans.get("open_phone_lbl"));
+        binding.act079TvFormDownloadPdf.setText(hmAux_Trans.get("download_form_pdf_lbl"));
+    }
+
     private void setFabMenu(TK_Ticket mTicket) {
         if(!isInEditionMode()) {
-            ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
+            ToolBox_Inf.setPipelineFabMenu(context, binding.act079FabMenuAnchor, hmAux_Trans,
                     mTicket, new FabMenu.IFabMenu() {
                     @Override
                     public void onFabClick(View view) {
@@ -198,7 +206,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                 }
             );
         }else{
-            fabMenu.setVisibility(View.GONE);
+            binding.act079FabMenuAnchor.setVisibility(View.GONE);
         }
     }
 
@@ -269,7 +277,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     @Override
     public void onBackPressed() {
         if (hasFABActive) {
-            fabMenu.animateFAB();
+            binding.act079FabMenuAnchor.animateFAB();
         } else {
             if(is_from_edit_header){
                 callAct082();
@@ -350,8 +358,15 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         String step_date ="-";
         String step_end_user_nick ="-";
         //
-        TK_Ticket_Step originStep = ticket.getStep().get(0);
-        if(originStep != null ){
+        if(ticket.getStep() != null && ticket.getStep().size() > 0){
+            TK_Ticket_Step originStep = ticket.getStep().get(0);
+            if( originStep.getCtrl() != null
+                && originStep.getCtrl().size() > 0
+                && originStep.getCtrl().get(0).getForm() != null
+            ){
+                TK_Ticket_Form form = originStep.getCtrl().get(0).getForm();
+                custom_form_desc = form != null ? form.getCustom_form_desc() : custom_form_desc;
+            }
             //
             String dateStart = ToolBox_Inf.millisecondsToString(
                     ToolBox_Inf.dateToMilliseconds(originStep.getStep_start_date()),
@@ -365,49 +380,109 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             //
             step_date = ToolBox_Inf.formatScheduleIntervalDateFormatted(context, dateStart, dateEnd);
             step_end_user_nick = originStep.getStep_end_user_nick();
-            TK_Ticket_Ctrl originCtrl = originStep.getCtrl().get(0);
-            if(originCtrl != null){
-                final TK_Ticket_Form form = originCtrl.getForm();
-                try {
-                    custom_form_desc = form.getCustom_form_desc();
-                    if (form.getScore_perc() != null) {
-                        tv_form_score.setText(form.getScore_perc().replace(".", ",") + "%");
-                        int color = context.getResources().getColor(ToolBox_Inf.getScoreFormColor(form.getScore_status()));
-                        tv_form_score.setTextColor(color);
-                        iv_form_score.setImageTintList(ColorStateList.valueOf(color));
-                    } else {
-                        tv_form_score.setVisibility(View.GONE);
-                        iv_form_score.setVisibility(View.GONE);
-                    }
-                    if(form.getNc() > 0 ) {
-                        tv_form_nc_count.setText(String.format("%s", form.getNc()));
-                    }else{
-                        tv_form_nc_count.setVisibility(View.GONE);
-                        iv_form_nc_count.setVisibility(View.GONE);
-                    }
+            //
+            setHeaderFragment(ticket, ticket.getTag_operational_desc(), custom_form_desc, step_date, step_end_user_nick);
+            //
+            setFabMenu(ticket);
+            //
+            setOpenFields(ticket);
+            //
+            setFormFields(originStep);
+        }
+    }
 
-                }catch (NullPointerException e){
-                    ToolBox_Inf.registerException(getClass().getName(), e);
-                    tv_form_score.setVisibility(View.GONE);
-                    iv_form_score.setVisibility(View.GONE);
-                    tv_form_nc_count.setVisibility(View.GONE);
-                    iv_form_nc_count.setVisibility(View.GONE);
-                    tv_form_download_pdf.setVisibility(View.GONE);
-                    iv_form_download_pdf.setVisibility(View.GONE);
+    private void setFormFields(TK_Ticket_Step originStep) {
+        if(originStep.getCtrl() != null && originStep.getCtrl().size() > 0){
+            TK_Ticket_Ctrl originCtrl = originStep.getCtrl().get(0);
+            final TK_Ticket_Form form = originCtrl.getForm();
+            try {
+                if (form.getScore_perc() != null) {
+                    binding.act079TvFormScore.setText(form.getScore_perc().replace(".", ",") + "%");
+                    int color = context.getResources().getColor(ToolBox_Inf.getScoreFormColor(form.getScore_status()));
+                    binding.act079TvFormScore.setTextColor(color);
+                    binding.act079IvFormScore.setImageTintList(ColorStateList.valueOf(color));
+                } else {
+                    binding.act079TvFormScore.setVisibility(View.GONE);
+                    binding.act079IvFormScore.setVisibility(View.GONE);
                 }
-                tv_form_download_pdf.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mPresenter.tryOpenFormPDF(form);
-                    }
-                });
+                if(form.getNc() > 0 ) {
+                    binding.act079TvFormNcCount.setText(String.format("%s", form.getNc()));
+                }else{
+                    binding.act079TvFormNcCount.setVisibility(View.GONE);
+                    binding.act079IvFormNcCount.setVisibility(View.GONE);
+                }
+            }catch (NullPointerException e){
+                ToolBox_Inf.registerException(getClass().getName(), e);
+                binding.act079TvFormScore.setVisibility(View.GONE);
+                binding.act079IvFormScore.setVisibility(View.GONE);
+                binding.act079TvFormNcCount.setVisibility(View.GONE);
+                binding.act079IvFormNcCount.setVisibility(View.GONE);
+                binding.act079TvFormDownloadPdf.setVisibility(View.GONE);
+                binding.act079IvFormDownloadPdf.setVisibility(View.GONE);
+            }
+            binding.act079TvFormDownloadPdf.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mPresenter.tryOpenFormPDF(form);
+                }
+            });
+        }
+    }
+
+    private void setOpenFields(TK_Ticket ticket) {
+        binding.act079LlPrivacyFields.setVisibility(View.GONE);
+        //
+        if (ticket.getApp_personal_data() == 1){
+            binding.act079LlPrivacyFields.setVisibility(View.VISIBLE);
+            if(ticket.getOpen_name()==null || ticket.getOpen_name().isEmpty()){
+                binding.act079LlOpenUsername.setVisibility(View.GONE);
+            }else{
+                binding.act079TvOpenUsernameVal.setText(ticket.getOpen_name());
+            }
+            //
+            if(ticket.getOpen_email()==null || ticket.getOpen_email().isEmpty()){
+                binding.act079LlOpenEmail.setVisibility(View.GONE);
+            }else{
+                binding.act079TvOpenEmailVal.setText(ticket.getOpen_email());
+            }
+            //
+            if(ticket.getOpen_phone()==null || ticket.getOpen_phone().isEmpty()){
+                binding.act079LlOpenPhone.setVisibility(View.GONE);
+            }else{
+                binding.act079TvOpenPhoneVal.setText(ticket.getOpen_phone());
             }
         }
         //
-        setHeaderFragment(ticket, ticket.getTag_operational_desc(), custom_form_desc, step_date, step_end_user_nick);
+        if(ticket.getOpen_comments()==null || ticket.getOpen_comments().isEmpty()){
+            binding.act079LlOpenComment.setVisibility(View.GONE);
+        }else{
+            binding.act079TvOpenCommentVal.setText(ticket.getOpen_comments());
+        }
         //
-        setFabMenu(ticket);
-        //
+
+        actionPhotoLocalPath = ticket.getOpen_photo_local();
+        if (actionPhotoLocalPath == null && (ticket.getOpen_photo() == null || ticket.getOpen_photo().isEmpty())) {
+            binding.act079LlOpenPhoto.setVisibility(View.GONE);
+        } else {
+            try {
+                Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                if (bitmap == null) {
+                    setImagePlaceholder(binding.act079IvOpenPhoto);
+                } else {
+                    binding.act079IvOpenPhoto.setImageBitmap(bitmap);
+                }
+            } catch (NullPointerException e) {
+                setImagePlaceholder(binding.act079IvOpenPhoto);
+                ToolBox_Inf.registerException(getClass().getName(), e);
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void setImagePlaceholder(ImageView imageView) {
+        Drawable dPlaceholder = getResources().getDrawable(R.drawable.sand_watch_transp);
+        dPlaceholder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
+        imageView.setImageDrawable(dPlaceholder);
     }
 
     @Override

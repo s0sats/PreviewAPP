@@ -219,10 +219,8 @@ import com.namoadigital.prj001.ui.AppBase;
 import com.namoadigital.prj001.ui.act001.Act001_Main;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act035.Act035_Main;
-import com.namoadigital.prj001.ui.act077.Act077_Main;
 import com.namoadigital.prj001.ui.act078.Act078_Main;
 import com.namoadigital.prj001.ui.act079.Act079_Main;
-import com.namoadigital.prj001.ui.act080.Act080_Main;
 import com.namoadigital.prj001.worker.Work_Cleanning_Data;
 import com.namoadigital.prj001.worker.Work_DownLoad_Customer_Logo;
 import com.namoadigital.prj001.worker.Work_DownLoad_PDF;
@@ -8110,18 +8108,19 @@ public class ToolBox_Inf {
      * e switch criados pro futuro.
      * @param ticketOriginType Tipo da Origem
      * @param ticketOriginDesc Descricao da origem
+     * @param ticketTypeDesc Descrição do tipo do ticket
      * @return
      */
     @NonNull
-    public static String getFormattedTicketOriginDesc(String ticketOriginType, String ticketOriginDesc) {
+    public static String getFormattedTicketOriginDesc(String ticketOriginType, String ticketOriginDesc, String ticketTypeDesc) {
         if(ticketOriginType == null){
             return "\\" + ticketOriginDesc;
         }
         switch (ticketOriginType){
-            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE:
-                return ticketOriginDesc;
             case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL:
             case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE:
+                return ticketTypeDesc;
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE:
             case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MEASURE:
             case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM:
             case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_SCORE:
@@ -8135,7 +8134,7 @@ public class ToolBox_Inf {
     public static Intent getOriginIntent(Context context, String origin_type) {
         switch (origin_type){
             case TK_TICKET_ORIGIN_TYPE_MEASURE:
-                return new Intent(context, Act077_Main.class);
+            case TK_TICKET_ORIGIN_TYPE_SCHEDULE:
             case TK_TICKET_ORIGIN_TYPE_BARCODE:
             case TK_TICKET_ORIGIN_TYPE_MANUAL:
                 return new Intent(context, Act078_Main.class);
@@ -8143,8 +8142,6 @@ public class ToolBox_Inf {
             case TK_TICKET_ORIGIN_TYPE_FORM_NC:
             case TK_TICKET_ORIGIN_TYPE_FORM_SCORE:
                 return new Intent(context, Act079_Main.class);
-             case TK_TICKET_ORIGIN_TYPE_SCHEDULE:
-                return new Intent(context, Act080_Main.class);
             default:
                 return null;
         }
