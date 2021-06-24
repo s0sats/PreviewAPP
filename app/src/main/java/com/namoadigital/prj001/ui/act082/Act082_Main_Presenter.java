@@ -435,4 +435,22 @@ public class Act082_Main_Presenter implements Act082_Main_Contract.I_Presenter {
             mainUserListFile.delete();
         }
     }
+
+    /**
+     * LUCHE - 24/06/2021
+     * Retorna a descrição do main user
+     * Usado para preencher o campo "irmão" Tv , usado quando o usr não possui profile edit_header
+     * @param mValue
+     * @return
+     */
+    @Override
+    public String getSSMainUserCurrentDesc(HMAux mValue) {
+        if( mValue != null
+            && mValue.hasConsistentValue(SearchableSpinner.DESCRIPTION)
+        ){
+            return mValue.get(SearchableSpinner.DESCRIPTION);
+        }
+        //
+        return "";
+    }
 }

@@ -70,5 +70,7 @@ public interface Act082_Main_Contract {
         void deleteHeaderEditionFile();
 
         void deleteMainUserListFile();
+
+        String getSSMainUserCurrentDesc(HMAux mValue);
     }
 }

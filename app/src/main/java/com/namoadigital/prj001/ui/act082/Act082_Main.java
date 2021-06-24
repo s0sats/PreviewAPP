@@ -4,10 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +19,11 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
@@ -108,6 +111,9 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
     private boolean header_data_has_changed = false;
     private boolean hasInternalCommentsChanged = false;
     private Act082_Form_Data headerEditDataObj;
+    private TextView tv_main_user_no_profile_lbl;
+    private TextView tv_main_user_no_profile_val;
+    private TextView tv_internal_comments_val;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,8 +148,13 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         ll_header_infos = findViewById(R.id.act082_ll_header_infos);
         ll_edit_buttons = findViewById(R.id.act082_ll_edit_buttons);
         ss_main_user = findViewById(R.id.act082_ss_main_user);
+        //
+        tv_main_user_no_profile_lbl = findViewById(R.id.act082_tv_main_user_lbl);
+        tv_main_user_no_profile_val = findViewById(R.id.act082_tv_main_user_val);
+        //
         tv_internal_comments_lbl = findViewById(R.id.act082_tv_internal_comments_lbl);
         mket_internal_comments = findViewById(R.id.act082_mket_internal_comments_val);
+        tv_internal_comments_val = findViewById(R.id.act082_tv_internal_comments_val);
         ll_date_and_forecast_infos = findViewById(R.id.act082_ll_date_and_forecast_infos);
         tv_date_and_forecast_infos_lbl = findViewById(R.id.act082_tv_date_and_forecast_infos_lbl);
         rg_date_and_forecast_infos = findViewById(R.id.act082_rg_date_and_forecast_infos);
@@ -198,6 +209,9 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         refreshUI();
         //
         ss_main_user.setmOption(mPresenter.getSSMainUserList(mTk_ticket));
+        ss_main_user.setmShowLabel(false);
+        tv_main_user_no_profile_val.setText(mPresenter.getSSMainUserCurrentDesc(ss_main_user.getmValue()));
+        //
         mket_internal_comments.setmBARCODE(false);
         //
         handleReadOnly(false);
@@ -252,12 +266,22 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         mket_internal_comments.setEnabled(false);
         ss_main_user.setmEnabled(false);
         ss_main_user.setmCanClean(false);
+        //LUCHE - 24/06/2021 - Substituido o ss e mket pelo textView quando sem param edit_header
+        ss_main_user.setVisibility(View.GONE);
+        tv_main_user_no_profile_val.setVisibility(View.VISIBLE);
+        mket_internal_comments.setVisibility(View.GONE);
+        tv_internal_comments_val.setVisibility(View.VISIBLE);
     }
     private void setDateReadOnly() {
+        ColorStateList buttonTintColorList = ColorStateList.valueOf(ContextCompat.getColor(context,R.color.padrao_TRANSPARENT));
         rb_start_date.setEnabled(false);
         rb_end_date.setEnabled(false);
         rb_time.setEnabled(false);
         rg_date_and_forecast_infos.setEnabled(false);
+        //LUCHE - 24/06/2021 - "REMOVIDO" radio button quando desabilitado
+        rb_start_date.setButtonTintList(buttonTintColorList);
+        rb_end_date.setButtonTintList(buttonTintColorList);
+        rb_time.setButtonTintList(buttonTintColorList);
     }
 
     private void setVisibilityByProfile() {
@@ -288,7 +312,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         rb_end_date.setText(hmAux_Trans.get("end_service_datetime_opt"));
         rb_time.setText(hmAux_Trans.get("service_duration_time_opt"));
         ss_main_user.setmTitle(hmAux_Trans.get("main_user_lbl"));
-        ss_main_user.setmLabel(hmAux_Trans.get("main_user_lbl"));
+        tv_main_user_no_profile_lbl.setText(hmAux_Trans.get("main_user_lbl"));
         //
         tv_start_date_lbl.setText(hmAux_Trans.get("start_date_lbl"));
         tv_start_time_lbl.setText(hmAux_Trans.get("start_time_lbl"));
@@ -899,9 +923,11 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         if (headerEditDataObj.getInternal_comments() == null) {
             mket_internal_comments.setText("");
             mket_internal_comments.setTag("");
+            tv_internal_comments_val.setText("");
         } else {
             mket_internal_comments.setText(headerEditDataObj.getInternal_comments());
             mket_internal_comments.setTag(mTk_ticket.getInternal_comments());
+            tv_internal_comments_val.setText(headerEditDataObj.getInternal_comments());
         }
         //
         tv_start_date.setText(ToolBox_Inf.millisecondsToString(
