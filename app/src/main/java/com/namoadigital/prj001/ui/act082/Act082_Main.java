@@ -714,6 +714,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                 //
                 if (rb_start_date_is_checked) {
                     v_start_date_form.setVisibility(View.VISIBLE);
+                    setChkShiftDateDefault();
 //                    String start_date = tv_start_date.getText().toString();
                     mkdt_start_date_val.setmValue(headerEditDataObj.getStart_date());
                     mkdt_start_date_val.setmValueDb(mTk_ticket.getStart_date());
@@ -750,6 +751,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                     mkdt_end_date_val.setmValueDb(mTk_ticket.getForecast_date());
                     //
                     v_end_date_form.setVisibility(View.VISIBLE);
+                    setChkShiftDateDefault();
                     v_time_form.setVisibility(View.GONE);
                     v_start_date_form.setVisibility(View.GONE);
                     tv_end_date.setVisibility(View.GONE);
@@ -798,6 +800,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                         edt_service_time_minutes_val.setText("");
                     }
                     v_time_form.setVisibility(View.VISIBLE);
+                    setChkShiftDateDefault();
                     v_start_date_form.setVisibility(View.GONE);
                     v_end_date_form.setVisibility(View.GONE);
                     tv_service_time.setVisibility(View.GONE);
@@ -864,6 +867,23 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                 }
             }
         });
+    }
+
+    /**
+     * LUCHE - 24/06/2021
+     * Criado metodo que seta o valor default dos checkbox de shift ticket e step ao abrir o item.
+     */
+    private void setChkShiftDateDefault() {
+        boolean dateEditionProfile = mPresenter.getDateEditionProfile();
+        boolean stepEditTimeProfile = mPresenter.getStepEditTimeProfile();
+        //
+        chk_shift_ticket_start_date.setChecked(dateEditionProfile);
+        chk_shift_step_start_date.setChecked(stepEditTimeProfile);
+        //
+        chk_shift_ticket_end_date.setChecked(dateEditionProfile);
+        chk_shift_step_end_date.setChecked(stepEditTimeProfile);
+        //
+        chk_shift_step_service_time.setChecked(stepEditTimeProfile);
     }
 
     /**
