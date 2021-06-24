@@ -179,7 +179,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
     }
 
     private void setLabels() {
-        binding.act078TvOpenPhoneLbl.setText(hmAux_Trans.get("open_photo_lbl"));
+        binding.act078TvOpenPhotoLbl.setText(hmAux_Trans.get("open_photo_lbl"));
         binding.act078TvOpenCommentLbl.setText(hmAux_Trans.get("open_comment_lbl"));
         binding.act078TvOpenUsernameLbl.setText(hmAux_Trans.get("open_username_lbl"));
         binding.act078TvOpenEmailLbl.setText(hmAux_Trans.get("open_email_lbl"));
