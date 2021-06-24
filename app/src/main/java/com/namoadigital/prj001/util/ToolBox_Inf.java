@@ -7410,7 +7410,7 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 28/02/2020
-     * Metodo que retorna Id Descrição do produto formatada
+     * Metodo que retorna Id Descrição do produto formatada SEM "-"
      * @param productId - ID do produto
      * @param productDesc - Descrição do produto
      * @return
@@ -7427,7 +7427,7 @@ public class ToolBox_Inf {
 
     /**
      * LUCHE - 11/03/2020
-     * Metodo que retorna Id Descrição formatada
+     * Metodo que retorna Id Descrição formatada COM "-"
      * @param objId - ID do obj
      * @param objDesc - Descrição do obj
      * @return

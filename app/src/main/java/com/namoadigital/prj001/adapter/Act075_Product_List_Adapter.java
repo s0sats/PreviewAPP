@@ -2,12 +2,6 @@ package com.namoadigital.prj001.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import com.google.android.material.textfield.TextInputLayout;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -19,6 +13,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.textfield.TextInputLayout;
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -281,7 +282,9 @@ public class Act075_Product_List_Adapter extends RecyclerView.Adapter<RecyclerVi
 
         public void onBind(final TK_Ticket_Product tk_ticket_product, final int position) {
             //
-            tv_product_info.setText(tk_ticket_product.getProduct_desc());
+            tv_product_info.setText(
+                ToolBox_Inf.getFormattedGenericIdDesc(tk_ticket_product.getProduct_id(),tk_ticket_product.getProduct_desc())
+            );
             //String.format("%,.2f", myValue);
             if(tk_ticket_product.getQty_planned() != null
             && tk_ticket_product.getQty_planned() > 0 ) {
