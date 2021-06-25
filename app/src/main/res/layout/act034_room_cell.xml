@@ -70,24 +70,25 @@
                             android:id="@+id/act034_room_cell_tv_room_desc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="3"
                             android:layout_gravity="start"
                             android:text="Group Desc - Traduzir"
                             android:textColor="@color/namoa_color_black"
-                            android:textSize="@dimen/font_size_item" />
-
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="1dp"
-                            android:layout_weight="1" />
+                            android:textSize="@dimen/font_size_item"
+                            android:layout_marginEnd="4dp"
+                            />
 
                         <TextView
                             android:id="@+id/act034_room_cell_tv_msg_date"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:layout_gravity="top|end"
+                            android:gravity="end"
                             android:text="22/11/2017 19:58:00"
                             android:textColor="@color/namoa_color_gray_chat"
-                            android:textSize="@dimen/font_size_sub_item" />
+                            android:textSize="@dimen/font_size_sub_item"
+                            />
 
                     </LinearLayout>
 
