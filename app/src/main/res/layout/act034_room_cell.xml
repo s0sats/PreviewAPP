@@ -60,35 +60,46 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:src="@drawable/ic_grid_on_black_24dp" />
-
-                        <View
-                            android:layout_width="2dp"
-                            android:layout_height="1dp" />
-
-                        <TextView
-                            android:id="@+id/act034_room_cell_tv_room_desc"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="3"
-                            android:layout_gravity="start"
-                            android:text="Group Desc - Traduzir"
-                            android:textColor="@color/namoa_color_black"
-                            android:textSize="@dimen/font_size_item"
-                            android:layout_marginEnd="4dp"
+                            android:src="@drawable/ic_grid_on_black_24dp"
                             />
 
-                        <TextView
-                            android:id="@+id/act034_room_cell_tv_msg_date"
-                            android:layout_width="wrap_content"
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_gravity="top|end"
-                            android:gravity="end"
-                            android:text="22/11/2017 19:58:00"
-                            android:textColor="@color/namoa_color_gray_chat"
-                            android:textSize="@dimen/font_size_sub_item"
-                            />
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:id="@+id/act034_room_cell_tv_room_desc"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintWidth_default="wrap"
+                                app:layout_constraintHorizontal_bias="0"
+                                android:layout_weight="3"
+                                android:layout_gravity="start"
+                                android:text="Group Desc - Traduzir"
+                                android:textColor="@color/namoa_color_black"
+                                android:textSize="@dimen/font_size_item"
+                                android:layout_marginStart="4dp"
+                                android:layout_marginEnd="4dp"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toStartOf="@id/act034_room_cell_tv_msg_date"
+                                />
+
+                            <TextView
+                                android:id="@+id/act034_room_cell_tv_msg_date"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="end"
+                                android:text="22/11/2017 19:58:00"
+                                android:textColor="@color/namoa_color_gray_chat"
+                                android:textSize="@dimen/font_size_sub_item"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                     </LinearLayout>
 
