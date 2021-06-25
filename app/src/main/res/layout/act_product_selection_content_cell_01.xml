@@ -51,7 +51,8 @@
                         android:padding="1dp"
                         android:text="Code"
                         android:textColor="@color/lib_custom_cell_font_color"
-                        android:textSize="@dimen/font_size_item" />
+                        android:textSize="@dimen/font_size_item"
+                        android:visibility="gone"/>
 
                     <TextView
                         android:id="@+id/act_product_selection_content_cell_tv_id"
@@ -62,7 +63,7 @@
                         android:text="Id"
                         android:textColor="@color/lib_custom_cell_font_color"
                         android:textSize="@dimen/font_size_item"
-                        android:gravity="right"/>
+                        android:gravity="start"/>
 
                 </LinearLayout>
 
