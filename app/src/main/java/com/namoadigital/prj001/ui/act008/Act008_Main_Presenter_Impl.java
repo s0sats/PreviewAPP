@@ -279,10 +279,17 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                     if (ToolBox_Con.isOnline(context)) {
                         executeSyncProcess();
                     }else {
-                        mView.showAlertDialog(
-                            hmAux_Trans.get("alert_no_form_found_ttl"),
-                            hmAux_Trans.get("alert_no_form_found_msg")
-                        );
+                        //LUCHE - 25/06/2021
+                        //Modificado para primeiro verificar se tem algum all producs e
+                        //somente se não tiver all produtc, da a msg de sem form.
+                        if(hasAnyOtherFormAvailable()){
+                            defineFlow();
+                        }else{
+                            mView.showAlertDialog(
+                                hmAux_Trans.get("alert_no_form_found_ttl"),
+                                hmAux_Trans.get("alert_no_form_found_msg")
+                            );
+                        }
                     }
                 }
             } else{
@@ -776,7 +783,8 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
             } else {
                 if (mView.isHas_tk_ticket_is_form_off_hand()) {
                     if (mView.isOffHandForm()) {
-                        mView.callAct009(context);
+                        //LUCHE - 25/06/2021
+                        processOffHandFormFlow();
                     } else {
                         mView.callAct071(context, getAct071Bundle());
                     }
@@ -801,6 +809,57 @@ public class Act008_Main_Presenter_Impl implements Act008_Main_Presenter {
                 }
             }
     }
+
+    /**
+     * LUCHE - 25/06/2021
+     * <p></p>
+     * Metodo que faz a validação do fluxo do form off hand, verificando se o produto ja teve form
+     * sincronizado.
+     *   Caso produto ja conste na tabela SyncChecklist:
+     *      * Segue para act009;
+     *   Caso NÃO conste na tabela, caso TENHA conexão:
+     *      * Tenta o sincronismo;
+     *   Caso NÃO conste na tabela, caso NÃO TENHA conexão:
+     *      * Verifica se existe algum form disponivel com a flag all_products
+     *         * Caso exista:
+     *              * Segue para act009;
+     *         * Caso não exista:
+     *              * Exibe alert de nenhum form encontrado
+     */
+    private void processOffHandFormFlow() {
+        if(checkSyncChecklistV2()){
+            mView.callAct009(context);
+        }else{
+            if(ToolBox_Con.isOnline(context)){
+                executeSyncProcess();
+            }else{
+                if(hasAnyOtherFormAvailable()){
+                    mView.callAct009(context);
+                }else{
+                    mView.showAlertDialog(
+                        hmAux_Trans.get("alert_no_form_found_ttl"),
+                        hmAux_Trans.get("alert_no_form_found_msg")
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * LUCHE - 25/06/2021
+     * Metodo que verifica se existe algum form disponivel para o match produto x operacao x site.
+     * Usado após verificar que NÃO existem forms sincronizados para o produtos e nem conexão...
+     * @return
+     */
+    private boolean hasAnyOtherFormAvailable() {
+        return ToolBox_Inf.hasAnyAllParamFormMatch(
+            context,
+            product_code,
+            ToolBox_Con.getPreference_Operation_Code(context),
+            mView.getmdProductSerialSiteCode() != null ? mView.getmdProductSerialSiteCode() : ToolBox_Con.getPreference_Site_Code(context)
+        );
+    }
+
     /**
      * BARRIONUEVO - 19-01-2021
      *     Meotodo que verifica a condição das licenças para o site do serial.

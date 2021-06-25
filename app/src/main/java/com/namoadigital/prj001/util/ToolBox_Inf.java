@@ -212,6 +212,7 @@ import com.namoadigital.prj001.sql.Sql_Form_x_Site;
 import com.namoadigital.prj001.sql.Sql_Notification_Schedule_001;
 import com.namoadigital.prj001.sql.Sql_Notification_Schedule_002;
 import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Save_001;
+import com.namoadigital.prj001.sql.Sync_Checklist_Sql_002;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_003;
 import com.namoadigital.prj001.sql.Sync_Checklist_Sql_004;
 import com.namoadigital.prj001.sql.TK_Ticket_Ctrl_Sql_007;
@@ -8781,5 +8782,50 @@ public class ToolBox_Inf {
             default:
                 return hmAuxTrans.get(defaultActTitleKey);
         }
+    }
+
+    /**
+     * LUCHE - 25/06/2021
+     * <p></p>
+     * Metodo que verifica se produto ja existe na lista de sincronismos de form.
+     * <p></p>
+     * @param context
+     * @param productCode
+     * @return True Se registro existe.
+     */
+    public static boolean isProductInSyncChecklist(Context context, int productCode){
+        Sync_ChecklistDao syncChecklistDao = new Sync_ChecklistDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        Sync_Checklist syncChecklist = syncChecklistDao.getByString(
+            new Sync_Checklist_Sql_002(
+                ToolBox_Con.getPreference_Customer_Code(context),
+                productCode
+            ).toSqlQuery()
+        );
+        //
+        return syncChecklist != null && syncChecklist.getCustomer_code() > 0 && syncChecklist.getProduct_code() == productCode;
+    }
+
+    /**
+     * LUCHE - 25/06/2021
+     * <p></p>
+     * Metodo que verifica se existe ao menos um form para os 3 params enviados.
+     * <p></p>
+     * @param context
+     * @param productCode
+     * @param operationCode
+     * @param siteCode
+     * @return True se houver ao menos um form que de match para os 3 parametros: productCode, operationCode e siteCode
+     */
+    public static boolean hasAnyAllParamFormMatch(Context context, long productCode, long operationCode, String siteCode){
+        boolean formXProductExist = ToolBox_Inf.checkFormXProductExists(context, ToolBox_Con.getPreference_Customer_Code(context), productCode);
+        boolean formXOperationExists = ToolBox_Inf.checkFormXOperationExists(context, ToolBox_Con.getPreference_Customer_Code(context), operationCode);
+        boolean formXSiteExists = ToolBox_Inf.checkFormXSiteExists(context, ToolBox_Con.getPreference_Customer_Code(context), siteCode);
+        //Para debug define as var pra saber em qual deu falso
+        return formXProductExist && formXOperationExists && formXSiteExists;
     }
 }
