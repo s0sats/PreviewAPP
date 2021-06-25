@@ -241,10 +241,11 @@ class FrgMainHome : BaseFragment(), Frg_Main_Home_Contract.View, ActionByTagFilt
     }
 
     fun refreshList(tagList: MutableList<MainTagMenu>) {
+        //DEvido placeholder de lista vazia, se faz necessario reloadar a tradução.
+        loadTranslation()
+        setLabels()
         //
         if (tagList == null || tagList.isEmpty()) {
-            //DEvido placeholder de lista vazia, se faz necessario reloadar a tradução.
-            loadTranslation()
             binding.tvListPlaceholder.visibility = View.VISIBLE
             binding.tvListPlaceholder.text = hmAux_Trans_Frag["empty_list_lbl"]
             binding.rvTags.visibility = View.GONE

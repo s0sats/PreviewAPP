@@ -2198,7 +2198,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     private void refreshUiData() {
+        loadTranslation();
         invalidateOptionsMenu();
+        updateDrawerInfo();
         if (mPresenter.hasSOProfile()) {
             refreshModuleList();
         } else {
@@ -2613,6 +2615,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
      */
     private void updateDrawerInfo() {
         if(fragOpc != null){
+            fragOpc.setHmAux_Trans(hmAux_Trans);
             fragOpc.revalidateOptionSetup();
         }
     }

@@ -167,6 +167,7 @@ class Act005Opc : Fragment() {
      * Metodo publico camado pela act quando um ação pode refletir nas opções que devem ser exibidas.
      */
     fun revalidateOptionSetup(){
+        setLabels()
         setSetupViews()
     }
 
