@@ -284,6 +284,11 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
         rb_time.setButtonTintList(buttonTintColorList);
     }
 
+    /**
+     * LUCHE - 25/06/2021
+     * Add controle da visibilidade do chk_shift_step_service_time na validação
+     * do getStepEditTimeProfile
+     */
     private void setVisibilityByProfile() {
         //
         ll_date_and_forecast_infos.setVisibility(View.VISIBLE);
@@ -294,9 +299,11 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                 if (mPresenter.getStepEditTimeProfile()) {
                     chk_shift_step_start_date.setVisibility(View.VISIBLE);
                     chk_shift_step_end_date.setVisibility(View.VISIBLE);
+                    chk_shift_step_service_time.setVisibility(View.VISIBLE);
                 } else {
                     chk_shift_step_start_date.setVisibility(View.GONE);
                     chk_shift_step_end_date.setVisibility(View.GONE);
+                    chk_shift_step_service_time.setVisibility(View.GONE);
                 }
             }
         } else {
