@@ -44,6 +44,7 @@ import com.namoadigital.prj001.sql.FCMMessage_Sql_003;
 import com.namoadigital.prj001.sql.IO_Inbound_Sql_012;
 import com.namoadigital.prj001.sql.IO_Outbound_Sql_012;
 import com.namoadigital.prj001.sql.SM_SO_Sql_018;
+import com.namoadigital.prj001.sql.SqlMyFirebaseMessagingTicket001;
 import com.namoadigital.prj001.sql.Sql_Schedule_FCM_001;
 import com.namoadigital.prj001.sql.TKTicketCacheSql001;
 import com.namoadigital.prj001.sql.TKTicketCacheSql002;
@@ -301,9 +302,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     handleScheduleFCM(fcmMessage);
                 }
             } else if( fcmMessage.getModule().trim().equalsIgnoreCase(ConstantBaseApp.FCM_MODULE_SYNC)) {
-                if(ConstantBaseApp.FCM_ACTION_SYNC_REQUIRED_UPDATE.equals(fcmMessage.getTitle())) {
-                    //
+                if( ConstantBaseApp.FCM_ACTION_SYNC_REQUIRED_UPDATE.equals(fcmMessage.getTitle())
+                    || ConstantBaseApp.FCM_ACTION_SYNC_REQUIRED_FULL_UPDATE.equals(fcmMessage.getTitle())
+                ) {
                     ToolBox_Inf.updateUserCustomerSync(getApplicationContext(), fcmMessage.getCustomer(), ToolBox_Con.getPreference_User_Code(getApplicationContext()), Integer.parseInt(fcmMessage.getSync()));
+                    //LUCHE - 28/06/2021 - Seta todos o ticket para sync_required
+                    if(ConstantBaseApp.FCM_ACTION_SYNC_REQUIRED_FULL_UPDATE.equals(fcmMessage.getTitle())){
+                        //Atualiza sync do ticket
+                        setSyncRequiredForAllTickets(fcmMessage.getCustomer());
+                        //Dispara broadcast especifico para telas do ticket.
+                        sendFCMStatus(ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE);
+                    }
                     //
                     sendFCMStatus(fcmMessage.getModule());
                 }
@@ -362,7 +371,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // message, here is where that should be initiated. See sendNotification method below.
     }
 
-
+    /**
+     * LUCHE - 28/06/2021
+     * Metodo chamado quando o FCM de SYNC_REQUIRED_FULL é recebido.
+     * Esse metodo força TODOS OS TICKET para sync_required = 1 e SCN = 0, para que todos seja atualizados e
+     * tenham o user_focus atualizado.
+     * @param customerCode
+     */
+    private void setSyncRequiredForAllTickets(String customerCode) {
+        TK_TicketDao ticketDao = new TK_TicketDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(Long.parseLong(customerCode)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        ticketDao.addUpdate(
+            new SqlMyFirebaseMessagingTicket001(
+                customerCode
+            ).toSqlQuery()
+        );
+    }
 
 
     private void removeTicketCache(String msg_short) {
