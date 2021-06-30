@@ -19,7 +19,6 @@ import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.EV_User_Customer_Adapter;
 import com.namoadigital.prj001.dao.EV_User_CustomerDao;
-import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.SiteLicense;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Download;
@@ -324,16 +323,14 @@ public class Act002_Main extends Base_Activity implements Act002_Main_View {
         //super.processSync();
         if (ToolBox_Con.isOnline(context, true)) {
             //Seta variavel que define ação do metodo processCloseACT.
-            TK_TicketDao tk_ticketDao = new TK_TicketDao(
-                    context,
-                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-                    Constant.DB_VERSION_CUSTOM);
-            if(tk_ticketDao.hasSyncRequired()){
-                mPresenter.executeWSTicketDownload(tk_ticketDao);
-            }else{
-                wsProcess = PROCESS_WS_SYNC;
-                mPresenter.executeSyncProcess();
-            }
+            /*
+            * LUCHE - 30/06/2021
+            * Sempre que fizer o login e houvem ticket baixados,será chamado o ws_tickt_download com
+            * TODOS os tickets para que o servidor avalie a necessidade se enviar o ticket full.
+            * Necessidade "identificada" pois caso o usr perca sessão e atualizações sejam feitas no
+            * ticket sem ele saber, o ticket estará atualizado quando ele chegar na act005...
+            */
+            mPresenter.executeWSTicketDownload();
         } else {
             progressDialog.dismiss();
             ToolBox_Inf.showNoConnectionDialog(Act002_Main.this);
