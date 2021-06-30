@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -859,7 +860,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
         //
-        Notification.Builder builder = new Notification.Builder(context);
+        NotificationCompat.Builder builder = ToolBox_Inf.getNotificationBuilder(getApplicationContext(),nm);
         builder.setSmallIcon(R.mipmap.ic_namoa);
         builder.setAutoCancel(false);
         builder.setContentTitle(title);
