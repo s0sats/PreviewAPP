@@ -908,8 +908,15 @@ public class Act075_Main_Presenter implements Act075_Main_Contract.I_Presenter {
     }
 
     @Override
-    public boolean isEditable(TK_Ticket tkTicket) {
-        return !tkTicket.isProductReadOnly(context);
+    /**
+     * LUCHE - 01/07/2021
+     * <p></p>
+     * Modificado metodo para valida somente os status editaveis. O requisito de bloquear via
+     * usr focus foi definido erroneamente.
+     */
+    public boolean isEditable(String status) {
+        return ConstantBaseApp.SYS_STATUS_PENDING.equalsIgnoreCase(status)
+               ||  ConstantBaseApp.SYS_STATUS_PROCESS.equalsIgnoreCase(status);
     }
 
     private String getFormatedProductInfo(MD_Product mdProduct) {

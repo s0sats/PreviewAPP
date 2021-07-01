@@ -92,6 +92,6 @@ public interface Act075_Main_Contract {
 
         void processWsSerialSavelReturn(HMAux hmAux);
 
-        boolean isEditable(TK_Ticket tkTicket);
+        boolean isEditable(String status);
     }
 }
