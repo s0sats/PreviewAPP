@@ -1668,14 +1668,12 @@ public class Act028_Main extends Base_Activity_Frag implements Act028_Opc.IAct02
         menu.findItem(2).setIcon(getResources().getDrawable(R.drawable.ic_info));
         menu.findItem(2).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
         menu.findItem(2).setTitle(hmAux_Trans.get("toolbar_info_lbl"));
-        //
+        //LUCHE - 01/07/2021 - Removido verificação do profile de checklsit, deixando somente o SO_SHOW_ACTIONS
         if (
-                //ToolBox_Inf.parameterExists(context, Constant.PARAM_CHECKLIST) &&
-                ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_CHECKLIST,null) &&
-                        hasExecutionProfile() &&
-                        ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_SHOW_ACTIONS) &&
-                        !so_status.equalsIgnoreCase(Constant.SYS_STATUS_DONE)
-                ) {
+            ToolBox_Inf.profileExists(context, Constant.PROFILE_PRJ001_SO, Constant.PROFILE_MENU_SO_SHOW_ACTIONS) &&
+            hasExecutionProfile() &&
+            !so_status.equalsIgnoreCase(Constant.SYS_STATUS_DONE)
+        ) {
             menu.add(0, 3, Menu.FIRST + 4, hmAux_Trans.get("toolbar_n_form_lbl"));
             menu.findItem(3).setIcon(getResources().getDrawable(R.drawable.ic_n_form));
             menu.findItem(3).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_NEVER);
