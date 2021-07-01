@@ -12,7 +12,6 @@ public interface Act079_Main_Contract {
     }
 
     interface I_Presenter{
-
         void getStepOrigin(int mTkPrefix, int mTkCode);
         void tryOpenFormPDF(TK_Ticket_Form form);
     }

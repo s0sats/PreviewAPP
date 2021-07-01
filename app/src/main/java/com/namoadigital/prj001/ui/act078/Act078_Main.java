@@ -2,6 +2,7 @@ package com.namoadigital.prj001.ui.act078;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
@@ -12,13 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -30,7 +26,12 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
+import com.namoadigital.prj001.databinding.Act078MainBinding;
+import com.namoadigital.prj001.databinding.Act078MainContentBinding;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TK_Ticket_Action;
+import com.namoadigital.prj001.model.TK_Ticket_Ctrl;
+import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
@@ -52,62 +53,25 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
 
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
-    private FabMenu fabMenu;
     private boolean hasFABActive = false;
     private Act078_Main_Presenter mPresenter;
     private Bundle requestingBundle;
     private int mTkPrefix;
     private int mTkCode;
-    private TextView tv_open_photo_lbl;
-    private ImageView iv_open_photo;
-    private TextView tv_open_comment_lbl;
-    private TextView tv_open_comment_val;
-    private LinearLayout ll_privacy_fields;
-    private TextView tv_open_username_lbl;
-    private TextView tv_open_username_val;
-    private TextView tv_open_email_lbl;
-    private TextView tv_open_email_val;
-    private TextView tv_open_phone_lbl;
-    private TextView tv_open_phone_val;
-
-    private LinearLayout ll_open_phone;
-    private LinearLayout ll_open_email;
-    private LinearLayout ll_open_username;
-    private LinearLayout ll_open_comment;
-    private LinearLayout ll_open_photo;
     private String actionPhotoLocalPath;
-    //Implementação contrato e cliente
-    private ConstraintLayout cl_client_address;
-    private TextView tv_client_address_ttl;
-    private TextView tv_client_address_street_lbl;
-    private TextView tv_client_address_street_val;
-    private TextView tv_client_address_num_lbl;
-    private TextView tv_client_address_num_val;
-    private TextView tv_client_address_district_lbl;
-    private TextView tv_client_address_district_val;
-    private ImageButton btn_navegation;
-    private TextView tv_client_address_city_lbl;
-    private TextView tv_client_address_city_val;
-    private TextView tv_client_address_state_lbl;
-    private TextView tv_client_address_state_val;
-    private TextView tv_client_address_country_lbl;
-    private TextView tv_client_address_country_val;
-    private TextView tv_client_address_complement_lbl;
-    private TextView tv_client_address_complement_val;
-    private TextView tv_client_address_zipcode_lbl;
-    private TextView tv_client_address_zipcode_val;
+    //
     private boolean is_from_edit_header;
     private boolean is_from_edit_workgroup;
+    private Act078MainContentBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.act078_main);
+        Act078MainBinding mainBinding = Act078MainBinding.inflate(getLayoutInflater());
+        binding = mainBinding.act078MainContent;
         //
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        //
-        bindViews();
+        setContentView(mainBinding.getRoot());
+        setSupportActionBar(mainBinding.toolbar);
         //
         iniSetup();
         //
@@ -118,48 +82,6 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         initActions();
     }
 
-    private void bindViews() {
-        fabMenu = (FabMenu) findViewById(R.id.act078_fabMenu_anchor);
-
-        ll_open_phone = findViewById(R.id.act078_ll_open_phone);
-        ll_open_email = findViewById(R.id.act078_ll_open_email);
-        ll_open_username = findViewById(R.id.act078_ll_open_username);
-        ll_open_comment = findViewById(R.id.act078_ll_open_comment);
-        ll_open_photo = findViewById(R.id.act078_ll_open_photo);
-
-        tv_open_photo_lbl = findViewById(R.id.act078_tv_open_photo_lbl);
-        iv_open_photo = findViewById(R.id.act078_iv_open_photo);
-        tv_open_comment_lbl = findViewById(R.id.act078_tv_open_comment_lbl);
-        tv_open_comment_val = findViewById(R.id.act078_tv_open_comment_val);
-        ll_privacy_fields = findViewById(R.id.act078_ll_privacy_fields);
-        tv_open_username_lbl = findViewById(R.id.act078_tv_open_username_lbl);
-        tv_open_username_val = findViewById(R.id.act078_tv_open_username_val);
-        tv_open_email_lbl = findViewById(R.id.act078_tv_open_email_lbl);
-        tv_open_email_val = findViewById(R.id.act078_tv_open_email_val);
-        tv_open_phone_lbl = findViewById(R.id.act078_tv_open_phone_lbl);
-        tv_open_phone_val = findViewById(R.id.act078_tv_open_phone_val);
-        //Campos contract e client
-        cl_client_address = findViewById(R.id.act078_cl_client_address);
-        tv_client_address_ttl = findViewById(R.id.act078_tv_client_address_ttl);
-        tv_client_address_street_lbl = findViewById(R.id.act078_tv_client_address_street_lbl);
-        tv_client_address_street_val = findViewById(R.id.act078_tv_client_address_street_val);
-        tv_client_address_num_lbl = findViewById(R.id.act078_tv_client_address_num_lbl);
-        tv_client_address_num_val = findViewById(R.id.act078_tv_client_address_num_val);
-        tv_client_address_district_lbl = findViewById(R.id.act078_tv_client_address_district_lbl);
-        tv_client_address_district_val = findViewById(R.id.act078_tv_client_address_district_val);
-        btn_navegation = findViewById(R.id.act078_btn_navegation);
-        tv_client_address_city_lbl = findViewById(R.id.act078_tv_client_address_city_lbl);
-        tv_client_address_city_val = findViewById(R.id.act078_tv_client_address_city_val);
-        tv_client_address_state_lbl = findViewById(R.id.act078_tv_client_address_state_lbl);
-        tv_client_address_state_val = findViewById(R.id.act078_tv_client_address_state_val);
-        tv_client_address_country_lbl = findViewById(R.id.act078_tv_client_address_country_lbl);
-        tv_client_address_country_val = findViewById(R.id.act078_tv_client_address_country_val);
-        tv_client_address_complement_lbl = findViewById(R.id.act078_tv_client_address_complement_lbl);
-        tv_client_address_complement_val = findViewById(R.id.act078_tv_client_address_complement_val);
-        tv_client_address_zipcode_lbl = findViewById(R.id.act078_tv_client_address_zipcode_lbl);
-        tv_client_address_zipcode_val = findViewById(R.id.act078_tv_client_address_zipcode_val);
-    }
-
     private void initVars() {
         mPresenter = new Act078_Main_Presenter(context, this, hmAux_Trans);
         //
@@ -168,30 +90,48 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         setLabels();
         //
         if (mTkPrefix <= 0 || mTkCode <= 0) {
-            ToolBox.alertMSG(
-                    context,
-                    hmAux_Trans.get("alert_ticket_parameter_error_ttl"),
-                    hmAux_Trans.get("alert_ticket_parameter_error_msg"),
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            onBackPressed();
-                        }
-                    },
-                    0
+            ticketParameterError(
+                hmAux_Trans.get("alert_ticket_parameter_error_ttl"),
+                hmAux_Trans.get("alert_ticket_parameter_error_msg")
+
             );
         }else {
-            //
             mPresenter.getStepOrigin(mTkPrefix, mTkCode);
-            //
         }
+    }
+
+    @Override
+    public void ticketParameterError(String ttl,String msg) {
+        ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onBackPressed();
+                    }
+                },
+                0
+        );
+    }
+
+    @Override
+    public void showMsg(String ttl, String msg) {
+        ToolBox.alertMSG(
+            context,
+            ttl,
+            msg,
+            null,
+            0
+        );
     }
 
     private void setFabMenu(TK_Ticket mTicket) {
         //LUCHE - 16/12/2020
         //Quando em edição, o fab não deve ser exibido
         if(!isInEditionMode()) {
-            ToolBox_Inf.setPipelineFabMenu(context, fabMenu, hmAux_Trans,
+            ToolBox_Inf.setPipelineFabMenu(context, binding.act078FabMenuAnchor, hmAux_Trans,
                     mTicket, new FabMenu.IFabMenu() {
                     @Override
                     public void onFabClick(View view) {
@@ -210,12 +150,9 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                                 if(ToolBox_Con.isOnline(context)) {
                                     callAct070(true);
                                 }else{
-                                    ToolBox.alertMSG(
-                                        context,
+                                    showMsg(
                                         hmAux_Trans.get("alert_wg_edit_need_connection_ttl"),
-                                        hmAux_Trans.get("alert_wg_edit_need_connection_msg"),
-                                        null,
-                                        0
+                                        hmAux_Trans.get("alert_wg_edit_need_connection_msg")
                                     );
                                 }
                                 break;
@@ -228,7 +165,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                     }
                 });
         }else{
-            fabMenu.setVisibility(View.GONE);
+            binding.act078FabMenuAnchor.setVisibility(View.GONE);
         }
     }
 
@@ -242,32 +179,30 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
     }
 
     private void setLabels() {
-        tv_open_photo_lbl.setText(hmAux_Trans.get("open_photo_lbl"));
-        tv_open_comment_lbl.setText(hmAux_Trans.get("open_comment_lbl"));
-        tv_open_username_lbl.setText(hmAux_Trans.get("open_username_lbl"));
-        tv_open_email_lbl.setText(hmAux_Trans.get("open_email_lbl"));
-        tv_open_phone_lbl.setText(hmAux_Trans.get("open_phone_lbl"));
+        binding.act078TvOpenPhotoLbl.setText(hmAux_Trans.get("open_photo_lbl"));
+        binding.act078TvOpenCommentLbl.setText(hmAux_Trans.get("open_comment_lbl"));
+        binding.act078TvOpenUsernameLbl.setText(hmAux_Trans.get("open_username_lbl"));
+        binding.act078TvOpenEmailLbl.setText(hmAux_Trans.get("open_email_lbl"));
+        binding.act078TvOpenPhoneLbl.setText(hmAux_Trans.get("open_phone_lbl"));
         //
-        tv_client_address_ttl.setText(hmAux_Trans.get("client_address_ttl"));
-        tv_client_address_street_lbl.setText(hmAux_Trans.get("client_address_street_lbl"));
-        tv_client_address_num_lbl.setText(hmAux_Trans.get("client_address_num_lbl"));
-        tv_client_address_district_lbl.setText(hmAux_Trans.get("client_address_district_lbl"));
-        tv_client_address_city_lbl.setText(hmAux_Trans.get("client_address_city_lbl"));
-        tv_client_address_state_lbl.setText(hmAux_Trans.get("client_address_state_lbl"));
-        tv_client_address_country_lbl.setText(hmAux_Trans.get("client_address_country_lbl"));
-        tv_client_address_complement_lbl.setText(hmAux_Trans.get("client_address_complement_lbl"));
-        tv_client_address_zipcode_lbl.setText(hmAux_Trans.get("client_address_zipcode_lbl"));
+        binding.act078TvClientAddressTtl.setText(hmAux_Trans.get("client_address_ttl"));
+        binding.act078TvClientAddressStreetLbl.setText(hmAux_Trans.get("client_address_street_lbl"));
+        binding.act078TvClientAddressNumLbl.setText(hmAux_Trans.get("client_address_num_lbl"));
+        binding.act078TvClientAddressDistrictLbl.setText(hmAux_Trans.get("client_address_district_lbl"));
+        binding.act078TvClientAddressCityLbl.setText(hmAux_Trans.get("client_address_city_lbl"));
+        binding.act078TvClientAddressStateLbl.setText(hmAux_Trans.get("client_address_state_lbl"));
+        binding.act078TvClientAddressCountryLbl.setText(hmAux_Trans.get("client_address_country_lbl"));
+        binding.act078TvClientAddressComplementLbl.setText(hmAux_Trans.get("client_address_complement_lbl"));
+        binding.act078TvClientAddressZipcodeLbl.setText(hmAux_Trans.get("client_address_zipcode_lbl"));
+        //
+        binding.act078TvFormDownloadPdf.setText(hmAux_Trans.get("download_form_pdf_lbl"));
+        binding.act078TvScheduleOpenPhotoLbl.setText(hmAux_Trans.get("action_photo_lbl"));
+        binding.act078TvScheduleOpenCommentLbl.setText(hmAux_Trans.get("action_comment_lbl"));
     }
 
 
     private void setHeaderFragment(TK_Ticket tkTicket) {
         fm = getSupportFragmentManager();
-        String origin_type = "";
-        if(ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE.equalsIgnoreCase(tkTicket.getOrigin_type())) {
-            origin_type = hmAux_Trans.get("barcode_origin_type_lbl");
-        }else{
-            origin_type = hmAux_Trans.get("manual_origin_type_lbl");
-        }
 
         TK_Ticket_Step originStep = tkTicket.getStep().get(0);
         mFrgPipelineHeader = Frg_Pipeline_Header.newInstanceForOrigin(
@@ -281,10 +216,10 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                 tkTicket.getOpen_site_desc(),
                 tkTicket.getOpen_serial_id(),
                 tkTicket.getOpen_product_desc(),
-                origin_type,
+                mPresenter.getOriginTypeLbl(tkTicket),
                 context.getResources().getColor(R.color.grid_header_normal),
-                tkTicket.getType_path(),
-                tkTicket.getType_desc(),
+                getPathInfo(tkTicket),
+                ToolBox_Inf.getFormattedTicketOriginDesc(tkTicket.getOrigin_type(),tkTicket.getOrigin_desc(),tkTicket.getType_desc()),
                 ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(originStep.getStep_end_date()),
                         ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
@@ -296,6 +231,22 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         ft.replace(R.id.act078_frg_pipeline_header, mFrgPipelineHeader, mFrgPipelineHeader.getTag());
         ft.addToBackStack(null);
         ft.commit();
+    }
+
+    private String getPathInfo(TK_Ticket tkTicket) {
+        switch (tkTicket.getOrigin_type()){
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MANUAL:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_BARCODE:
+                return tkTicket.getType_path();
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_SCHEDULE:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_MEASURE:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_SCORE:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_FORM_NC:
+            case ConstantBaseApp.TK_TICKET_ORIGIN_TYPE_TRANSFER:
+            default:
+                return "";
+        }
     }
 
     private void recoverIntentsInfo() {
@@ -317,7 +268,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
     @Override
     public void onBackPressed() {
         if (hasFABActive) {
-            fabMenu.animateFAB();
+            binding.act078FabMenuAnchor.animateFAB();
         } else {
             if(is_from_edit_header){
                 callAct082();
@@ -329,45 +280,39 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
 
     private void initActions() {
 
-        tv_open_phone_val.setOnClickListener(new View.OnClickListener() {
+        binding.act078TvOpenPhoneVal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" +tv_open_phone_val.getText().toString()));
+                Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" +binding.act078TvOpenPhoneVal.getText().toString()));
                 //LUCHE - 18/03/2021 - Add trativa que verifica se existe app para resolver a ação
                 //se não houve, exibe msg
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 }else{
-                    ToolBox.alertMSG(
-                        context,
+                    showMsg(
                         hmAux_Trans.get("alert_no_caller_app_found_ttl"),
-                        hmAux_Trans.get("alert_no_caller_app_found_msg"),
-                        null,
-                        0
+                        hmAux_Trans.get("alert_no_caller_app_found_msg")
                     );
                 }
             }
         });
 
-        tv_open_email_val.setOnClickListener(new View.OnClickListener() {
+        binding.act078TvOpenEmailVal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     Intent intent = new Intent(Intent.ACTION_SENDTO);
                     intent.setData(Uri.parse("mailto:"));
-                    String[] email = new String[]{tv_open_email_val.getText().toString()};
+                    String[] email = new String[]{binding.act078TvOpenEmailVal.getText().toString()};
                     intent.putExtra(Intent.EXTRA_EMAIL, email);
                     //LUCHE - 18/03/2021 - Add trativa que verifica se existe app para resolver a ação
                     //se não houve, exibe msg
                     if (intent.resolveActivity(getPackageManager()) != null) {
                         startActivity(intent);
                     }else{
-                        ToolBox.alertMSG(
-                            context,
+                        showMsg(
                             hmAux_Trans.get("alert_no_email_app_found_ttl"),
-                            hmAux_Trans.get("alert_no_email_app_found_msg"),
-                            null,
-                            0
+                            hmAux_Trans.get("alert_no_email_app_found_msg")
                         );
                     }
                 }catch (Exception e){
@@ -376,7 +321,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
             }
         });
 
-        iv_open_photo.setOnClickListener(new View.OnClickListener() {
+        binding.act078IvOpenPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callCameraAct();
@@ -445,6 +390,22 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         transList.add("alert_no_caller_app_found_ttl");
         transList.add("alert_no_caller_app_found_msg");
         //
+        transList.add("alert_origin_step_not_found_error_ttl");
+        transList.add("alert_origin_step_not_found_error_msg");
+        transList.add("measure_origin_type_lbl");
+        transList.add("schedule_action_origin_type_lbl");
+        transList.add("schedule_ticket_origin_type_lbl");
+        transList.add("new_origin_type_lbl");
+        transList.add("alert_form_pdf_not_generated_ttl");
+        transList.add("alert_form_pdf_not_generated_msg");
+        transList.add("alert_form_pdf_not_downloaded_ttl");
+        transList.add("alert_form_pdf_not_downloaded_msg");
+        transList.add("alert_starting_pdf_not_supported_ttl");
+        transList.add("alert_starting_pdf_not_supported_msg");
+        transList.add("download_form_pdf_lbl");
+        transList.add("action_photo_lbl");
+        transList.add("action_comment_lbl");
+        //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
                 mModule_Code,
@@ -496,31 +457,37 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         setOpenFields(ticket);
 
         setContractAndClientFields(ticket);
+
+        setFieldsByOrigin(ticket);
+    }
+
+    private void setFieldsByOrigin(TK_Ticket ticket) {
+        mPresenter.defineOriginLayoutConfig(ticket);
     }
 
     private void setContractAndClientFields(final TK_Ticket ticket) {
         //
         if(ticket.getAddress_country() != null && !ticket.getAddress_country().isEmpty()) {
-            tv_client_address_street_val.setText(ticket.getAddress_street());
-            tv_client_address_num_val.setText(ticket.getAddress_num());
-            tv_client_address_district_val.setText(ticket.getAddress_district());
-            tv_client_address_city_val.setText(ticket.getAddress_city());
-            tv_client_address_state_val.setText(ticket.getAddress_state());
-            tv_client_address_country_val.setText(ticket.getAddress_country());
-            tv_client_address_complement_val.setText(ticket.getAddress_complement());
-            tv_client_address_zipcode_val.setText(ticket.getAddress_zipcode());
+            binding.act078TvClientAddressStreetVal.setText(ticket.getAddress_street());
+            binding.act078TvClientAddressNumVal.setText(ticket.getAddress_num());
+            binding.act078TvClientAddressDistrictVal.setText(ticket.getAddress_district());
+            binding.act078TvClientAddressCityVal.setText(ticket.getAddress_city());
+            binding.act078TvClientAddressStateVal.setText(ticket.getAddress_state());
+            binding.act078TvClientAddressCountryVal.setText(ticket.getAddress_country());
+            binding.act078TvClientAddressComplementVal.setText(ticket.getAddress_complement());
+            binding.act078TvClientAddressZipcodeVal.setText(ticket.getAddress_zipcode());
             //
             if (ticket.getAddress_complement() == null || ticket.getAddress_complement().isEmpty()) {
-                tv_client_address_complement_lbl.setVisibility(View.GONE);
-                tv_client_address_complement_val.setVisibility(View.GONE);
+                binding.act078TvClientAddressComplementLbl.setVisibility(View.GONE);
+                binding.act078TvClientAddressComplementVal.setVisibility(View.GONE);
             }
             //
             if (ticket.getAddress_zipcode() == null || ticket.getAddress_zipcode().isEmpty()) {
-                tv_client_address_zipcode_lbl.setVisibility(View.GONE);
-                tv_client_address_zipcode_val.setVisibility(View.GONE);
+                binding.act078TvClientAddressZipcodeLbl.setVisibility(View.GONE);
+                binding.act078TvClientAddressZipcodeVal.setVisibility(View.GONE);
             }
             //
-            btn_navegation.setOnClickListener(new View.OnClickListener() {
+            binding.act078BtnNavegation.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     callNavegationIntent(
@@ -529,7 +496,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
                 }
             });
         }else{
-            cl_client_address.setVisibility(View.GONE);
+            binding.act078ClClientAddress.setVisibility(View.GONE);
         }
     }
 
@@ -541,71 +508,69 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         }else{
-            ToolBox.alertMSG(
-                context,
+            showMsg(
                 hmAux_Trans.get("alert_no_navegation_app_found_ttl"),
-                hmAux_Trans.get("alert_no_navegation_app_found_msg"),
-                null,
-                0
+                hmAux_Trans.get("alert_no_navegation_app_found_msg")
             );
         }
     }
 
     private void setOpenFields(TK_Ticket ticket) {
-        ll_privacy_fields.setVisibility(View.GONE);
+        binding.act078LlPrivacyFields.setVisibility(View.GONE);
         //
         if (ticket.getApp_personal_data() == 1){
-            ll_privacy_fields.setVisibility(View.VISIBLE);
+            binding.act078LlPrivacyFields.setVisibility(View.VISIBLE);
             if(ticket.getOpen_name()==null || ticket.getOpen_name().isEmpty()){
-                ll_open_username.setVisibility(View.GONE);
+                binding.act078LlOpenUsername.setVisibility(View.GONE);
             }else{
-                tv_open_username_val.setText(ticket.getOpen_name());
+                binding.act078TvOpenUsernameVal.setText(ticket.getOpen_name());
             }
             //
             if(ticket.getOpen_email()==null || ticket.getOpen_email().isEmpty()){
-                ll_open_email.setVisibility(View.GONE);
+                binding.act078LlOpenEmail.setVisibility(View.GONE);
             }else{
-                tv_open_email_val.setText(ticket.getOpen_email());
+                binding.act078TvOpenEmailVal.setText(ticket.getOpen_email());
             }
             //
             if(ticket.getOpen_phone()==null || ticket.getOpen_phone().isEmpty()){
-                ll_open_phone.setVisibility(View.GONE);
+                binding.act078LlOpenPhone.setVisibility(View.GONE);
             }else{
-                tv_open_phone_val.setText(ticket.getOpen_phone());
+                binding.act078TvOpenPhoneVal.setText(ticket.getOpen_phone());
             }
         }
         //
         if(ticket.getOpen_comments()==null || ticket.getOpen_comments().isEmpty()){
-            ll_open_comment.setVisibility(View.GONE);
+            binding.act078LlOpenComment.setVisibility(View.GONE);
         }else{
-            tv_open_comment_val.setText(ticket.getOpen_comments());
+            binding.act078TvOpenCommentVal.setText(ticket.getOpen_comments());
         }
         //
 
         actionPhotoLocalPath = ticket.getOpen_photo_local();
             if (actionPhotoLocalPath == null && (ticket.getOpen_photo() == null || ticket.getOpen_photo().isEmpty())) {
-                ll_open_photo.setVisibility(View.GONE);
+                binding.act078LlOpenPhoto.setVisibility(View.GONE);
             } else {
                 try {
                     Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
                     if (bitmap == null) {
-                        setImagePlaceHolder();
+                        setImagePlaceholder(binding.act078IvOpenPhoto);
                     } else {
-                        iv_open_photo.setImageBitmap(bitmap);
+                        binding.act078IvOpenPhoto.setImageBitmap(bitmap);
                     }
                 } catch (NullPointerException e) {
-                    setImagePlaceHolder();
+                    setImagePlaceholder(binding.act078IvOpenPhoto);
                     ToolBox_Inf.registerException(getClass().getName(), e);
                     e.printStackTrace();
                 }
             }
     }
 
-    private void setImagePlaceHolder() {
+    private void setImagePlaceholder(ImageView imageView) {
         Drawable dPlaceholder = getResources().getDrawable(R.drawable.sand_watch_transp);
         dPlaceholder.setColorFilter(context.getResources().getColor(R.color.namoa_dark_blue), PorterDuff.Mode.SRC_ATOP);
-        iv_open_photo.setImageDrawable(dPlaceholder);
+        imageView.setImageDrawable(dPlaceholder);
     }
+
 
     private void callAct082() {
         Intent intent = new Intent(context, Act082_Main.class);
@@ -633,7 +598,7 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         }
         //
         Bundle bundle = new Bundle();
-        bundle.putInt(ConstantBase.PID, iv_open_photo.getId());
+        bundle.putInt(ConstantBase.PID, binding.act078IvOpenPhoto.getId());
         bundle.putInt(ConstantBase.PTYPE, 1);
         bundle.putString(ConstantBase.PPATH, actionPhotoLocalPath);
         bundle.putBoolean(ConstantBase.PEDIT, false);
@@ -648,5 +613,106 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         context.startActivity(mIntent);
     }
 
+    public void setMeasureLayout(TK_Ticket tkTicket, boolean isTicketOrigin){
+        if(isTicketOrigin){
+            setFormInfos(tkTicket);
+        }else{
+            binding.act078LlMeasureInfo.setVisibility(View.GONE);
+        }
+    }
+
+    private void setFormInfos(TK_Ticket tkTicket) {
+        boolean hasFormCtrl = false;
+        TK_Ticket_Step originStep = tkTicket.getStep().get(0);
+        if (originStep != null) {
+            for (TK_Ticket_Ctrl originCtrl : originStep.getCtrl()) {
+                if (originCtrl != null && Constant.TK_TICKET_CRTL_TYPE_FORM.equalsIgnoreCase(originCtrl.getCtrl_type())) {
+                    hasFormCtrl = true;
+                    final TK_Ticket_Form form = originCtrl.getForm();
+                    try {
+                        if (form.getScore_perc() != null) {
+                            binding.act078TvFormScore.setText(mPresenter.getFormatedScorePerc(form));
+                            int color = context.getResources().getColor(ToolBox_Inf.getScoreFormColor(form.getScore_status()));
+                            binding.act078TvFormScore.setTextColor(color);
+                            binding.act078IvFormScore.setImageTintList(ColorStateList.valueOf(color));
+                        } else {
+                            binding.act078TvFormScore.setVisibility(View.GONE);
+                            binding.act078IvFormScore.setVisibility(View.GONE);
+                        }
+                        if(form.getNc() > 0 ) {
+                            binding.act078TvFormNcCount.setText(String.format("%s", form.getNc()));
+                        }else{
+                            binding.act078TvFormNcCount.setVisibility(View.GONE);
+                            binding.act078IvFormNcCount.setVisibility(View.GONE);
+                        }
+
+                    } catch (NullPointerException e) {
+                        ToolBox_Inf.registerException(getClass().getName(), e);
+                        hideFormInfo();
+                    }
+                    binding.act078TvFormDownloadPdf.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mPresenter.tryOpenFormPDF(form);
+                        }
+                    });
+                }
+            }
+            if(!hasFormCtrl){
+                hideFormInfo();
+            }
+        }else{
+            hideFormInfo();
+        }
+    }
+
+    private void hideFormInfo() {
+        binding.act078TvFormScore.setVisibility(View.GONE);
+        binding.act078IvFormScore.setVisibility(View.GONE);
+        binding.act078TvFormNcCount.setVisibility(View.GONE);
+        binding.act078IvFormNcCount.setVisibility(View.GONE);
+        binding.act078TvFormDownloadPdf.setVisibility(View.GONE);
+        binding.act078IvFormDownloadPdf.setVisibility(View.GONE);
+    }
+
+    public void setScheduleLayout(TK_Ticket ticket, boolean isTicketOrigin, boolean isScheduleAction){
+        if(isTicketOrigin && isScheduleAction){
+            TK_Ticket_Step originStep = ticket.getStep().get(0);
+            if (originStep != null && originStep.getCtrl() != null && originStep.getCtrl().size() > 0) {
+                TK_Ticket_Ctrl originCtrl = originStep.getCtrl().get(0);
+                if (originCtrl != null) {
+                    TK_Ticket_Action action = originCtrl.getAction();
+                    if (action != null) {
+                        if (action.getAction_comments() == null || action.getAction_comments().isEmpty()) {
+                            binding.act078LlScheduleOpenComment.setVisibility(View.GONE);
+                        } else {
+                            binding.act078TvScheduleOpenCommentVal.setText(action.getAction_comments());
+                        }
+                        actionPhotoLocalPath = action.getAction_photo_local();
+                        if ((actionPhotoLocalPath == null || actionPhotoLocalPath.isEmpty())
+                            && (action.getAction_photo_url() == null || action.getAction_photo_url().isEmpty())
+                            && (action.getAction_photo_name() == null || action.getAction_photo_name().isEmpty())
+                        ) {
+                            binding.act078LlScheduleOpenPhoto.setVisibility(View.GONE);
+                        } else {
+                            try {
+                                Bitmap bitmap = BitmapFactory.decodeFile(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+                                if (bitmap == null) {
+                                   setImagePlaceholder(binding.act078IvScheduleOpenPhoto);
+                                } else {
+                                    binding.act078IvScheduleOpenPhoto.setImageBitmap(bitmap);
+                                }
+                            } catch (NullPointerException e) {
+                                setImagePlaceholder(binding.act078IvScheduleOpenPhoto);
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        }else{
+            binding.act078LlScheduleInfo.setVisibility(View.GONE);
+        }
+    }
 
 }

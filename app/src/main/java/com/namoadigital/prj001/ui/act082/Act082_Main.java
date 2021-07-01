@@ -25,6 +25,10 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -477,7 +481,7 @@ public class Act082_Main extends Base_Activity_Frag_NFC_Geral implements Act082_
                 tkTicket.getOpen_site_desc(),
                 tkTicket.getOpen_serial_id(),
                 tkTicket.getOpen_product_desc(),
-                ToolBox_Inf.getFormattedTicketOriginDesc(tkTicket.getOrigin_type(), tkTicket.getOrigin_desc())
+                ToolBox_Inf.getFormattedTicketOriginDesc(tkTicket.getOrigin_type(), tkTicket.getOrigin_desc(),tkTicket.getType_desc())
         );
         //
         FragmentTransaction ft = fm.beginTransaction();

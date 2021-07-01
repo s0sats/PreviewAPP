@@ -212,7 +212,7 @@ public class Act080_Main extends Base_Activity_Frag implements Act080_Main_Contr
                 originLabel,
                 context.getResources().getColor(R.color.grid_header_normal),
                 "",
-                ToolBox_Inf.getFormattedTicketOriginDesc(tkTicket.getOrigin_type(), tkTicket.getOrigin_desc()),
+                ToolBox_Inf.getFormattedTicketOriginDesc(tkTicket.getOrigin_type(), tkTicket.getOrigin_desc(),tkTicket.getType_desc()),
                 ToolBox_Inf.millisecondsToString(
                         ToolBox_Inf.dateToMilliseconds(originStep.getStep_end_date()),
                         ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
