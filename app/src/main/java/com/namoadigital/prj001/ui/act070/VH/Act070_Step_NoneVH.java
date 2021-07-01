@@ -1,15 +1,17 @@
 package com.namoadigital.prj001.ui.act070.VH;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act070_Steps_Adapter;
 import com.namoadigital.prj001.ui.act070.model.StepNone;
+import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -70,6 +72,7 @@ public class Act070_Step_NoneVH extends Act070_Step_Abstract_ProcessVH {
         resetVisibility();
         //
         tvActionDesc.setText(stepNone.getStepDescription());
+        tvActionDesc.setVisibility(View.GONE);
         if(ToolBox_Inf.hasConsistentValueString(stepNone.getProductDesc())) {
             setProductAndSerialVisibility(tvProduct,tvSerial, stepNone.isProductDifferentThanTicket(), stepNone.isSerialDifferentThanTicket());
             tvProduct.setText(stepNone.getProductDesc());
@@ -142,19 +145,43 @@ public class Act070_Step_NoneVH extends Act070_Step_Abstract_ProcessVH {
 
     /**
      * LUCHE - 10/11/2020
+     * <P></P>
      * Metodo que define a visibilidade do viewHolder.
+     * <P></P>
      * Em 09/11/2020, foi definido que ele não deve mais aparecer se seu status for != pending
      * ou se for pending , mas o step for start_end.
+     * <P></P>
+     * Em 30/06/2021, foi definido que o label não deve aparecer nunca, mas como efeito colateral,
+     * ficou bizarro. Então foi modificado novamente a regra de visibilide mais uma vez.
+     * Regra para ESCONDER o item em 30/06/2021:
+     *  * Se status for != pending
+     *  * ou Se status for == pending mas step start_end
+     *  * ou Se status for == pending mas step não é atual ou é atual mas o usr não tem foco e nem
+     *  parametro claim
+     *
      * @param stepNone
      */
     private void defineVhVisibility(StepNone stepNone) {
-        if(!ConstantBaseApp.SYS_STATUS_PENDING.equals(stepNone.getProcessStatus())
-            || (ConstantBaseApp.SYS_STATUS_PENDING.equals(stepNone.getProcessStatus())
-                && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(stepNone.getStepType())
-                )
-        ){
+        if(hideNoneItem(stepNone)){
             clBackground.setVisibility(View.GONE);
         }
+    }
+
+    /**
+     * LUCHE - 30/06/2021
+     * <P></P>
+     * Metodo que consilida regra de quando esconder o corpo do none
+     * @param stepNone
+     * @return
+     */
+    private boolean hideNoneItem(StepNone stepNone) {
+        return  !ConstantBaseApp.SYS_STATUS_PENDING.equals(stepNone.getProcessStatus())
+                || (ConstantBaseApp.SYS_STATUS_PENDING.equals(stepNone.getProcessStatus())
+                    && ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(stepNone.getStepType())
+                    )
+                || (ConstantBaseApp.SYS_STATUS_PENDING.equals(stepNone.getProcessStatus())
+                    && (!stepNone.isCurrentStep() || (!stepNone.isUserFocus() && !ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)))
+        );
     }
 
     @Override

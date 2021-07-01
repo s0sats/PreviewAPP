@@ -632,6 +632,8 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FCM_ACTION_SYNC_REQUIRED_UPDATE = "<SYNC_REQUIRED>";
     public static final String FCM_ACTION_TICKET_FOCUS_UPDATE = "<TICKET_FOCUS>";
     public static final String FCM_ACTION_TICKET_REMOVE_UPDATE = "<TICKET_REMOVE>";
+    //LUCHE - 28/06/2021 - Sync require para setar todos os ticket como SYNC_REQUIRED
+    public static final String FCM_ACTION_SYNC_REQUIRED_FULL_UPDATE = "<SYNC_REQUIRED_FULL>";
 
     public static final String FCM_TYPE_WARNING = "WARNING";
     public static final String FCM_TYPE_SILENT = "SILENT";

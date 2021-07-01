@@ -473,7 +473,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
     }
 
     @Override
-    public void executeWSTicketDownload(TK_TicketDao tk_ticketDao) {
+    public void executeWSTicketDownload() {
     //
         mView.setWsProcess(WS_TK_Ticket_Download.class.getName());
         //
@@ -486,7 +486,7 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         //
         Intent mIntent = new Intent(context, WBR_TK_Ticket_Download.class);
         Bundle bundle = new Bundle();
-        bundle.putString(TK_TicketDao.TICKET_PREFIX, getTicketConcatList(tk_ticketDao));
+        bundle.putInt(WS_TK_Ticket_Download.IS_LOGIN_PROCESS, 1);
         mIntent.putExtras(bundle);
         //
         context.sendBroadcast(mIntent);
@@ -516,4 +516,5 @@ public class Act002_Main_Presenter_Impl implements Act002_Main_Presenter {
         //
         return auxTickets;
     }
+
 }

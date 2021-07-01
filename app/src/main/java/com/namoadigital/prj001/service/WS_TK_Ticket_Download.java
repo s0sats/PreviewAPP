@@ -3,6 +3,7 @@ package com.namoadigital.prj001.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -17,6 +18,8 @@ import com.namoadigital.prj001.model.T_TK_Ticket_Download_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_PK_Env;
 import com.namoadigital.prj001.model.T_TK_Ticket_Download_Rec;
 import com.namoadigital.prj001.receiver.WBR_TK_Ticket_Download;
+import com.namoadigital.prj001.sql.Sql_WS_TK_Ticket_Download_001;
+import com.namoadigital.prj001.sql.Sql_Act069_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -27,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WS_TK_Ticket_Download extends IntentService {
+
+    public static final String IS_LOGIN_PROCESS = "IS_LOGIN_PROCESS";
 
     private HMAux hmAux_Trans = new HMAux();
     private String mModule_Code = Constant.APP_MODULE;
@@ -49,12 +54,11 @@ public class WS_TK_Ticket_Download extends IntentService {
         );
 
         try {
-
             gson = new GsonBuilder().serializeNulls().create();
             String ticket_pks = bundle.getString(TK_TicketDao.TICKET_PREFIX, "");
+            int isLoginSync = bundle.getInt(IS_LOGIN_PROCESS, 0);
             //
-            processTicketDownload(ticket_pks);
-
+            processTicketDownload(ticket_pks,isLoginSync);
         } catch (Exception e) {
 
             sb = ToolBox_Inf.wsExceptionTreatment(getApplicationContext(), e);
@@ -93,9 +97,23 @@ public class WS_TK_Ticket_Download extends IntentService {
         }
     }
 
-    private void processTicketDownload(String ticketPkList) throws Exception {
+    private void processTicketDownload(String ticketPkList, int isLoginSync) throws Exception {
+        ArrayList<T_TK_Ticket_Download_PK_Env> ticketsToSync = new ArrayList<>();
         //Seleciona traduções
         loadTranslation();
+        //LUCHE - 30/06/2021
+        //Se a chamada veio do login, tenta fazer a busca de ticket , se nenhum ticket encontrado,
+        // retorna close act. Caso contario , usa os ticket retornados no envio.
+        if(isLoginSync == 1){
+            ticketsToSync = getLoginTicketPkList();
+            if(ticketsToSync == null || ticketsToSync.size() == 0){
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux() , "", "0");
+                return;
+            }
+        }else{
+            //Fluxo antigo, pega a lista enviada pelo bundle e transform no obj de envio.
+            ticketsToSync = getTicketPkList(ticketPkList);
+        }
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_sending_data_msg"), "", "0");
         //
@@ -104,9 +122,9 @@ public class WS_TK_Ticket_Download extends IntentService {
         env.setApp_version(Constant.PRJ001_VERSION);
         env.setSession_app(ToolBox_Con.getPreference_Session_App(getApplicationContext()));
         env.setApp_type(Constant.PKG_APP_TYPE_DEFAULT);
-        env.getTicket().addAll(
-            getTicketPkList(ticketPkList)
-        );
+        env.getTicket().addAll(ticketsToSync);
+        //LUCHE - 30/06/2021 - Seta o novo atributo.
+        env.setLogin(isLoginSync);
         //
         String resultado = ToolBox_Con.connWebService(
             Constant.WS_TICKET_DOWNLOAD,
@@ -139,11 +157,11 @@ public class WS_TK_Ticket_Download extends IntentService {
         //
         ToolBox.sendBCStatus(getApplicationContext(), "STATUS", hmAux_Trans.get("generic_processing_data"), "", "0");
         //
-        processTicketReturn(rec.getTicket());
+        processTicketReturn(rec.getTicket(),isLoginSync);
 
     }
 
-    private void processTicketReturn(ArrayList<TK_Ticket> ticketList) {
+    private void processTicketReturn(ArrayList<TK_Ticket> ticketList, int isLoginSync) {
         if(ticketList != null && ticketList.size() > 0){
             DaoObjReturn daoObjReturn = new DaoObjReturn();
             //
@@ -195,7 +213,7 @@ public class WS_TK_Ticket_Download extends IntentService {
                 if(!daoObjReturn.hasError()){
                     ToolBox_Inf.startPdfPhotoDownloadWorkers(getApplicationContext());
                     //
-                    ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"),hmAux , "", "0");
+                    ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), hmAux , "", "0");
                 }else {
                     ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_on_insert_ticket"), new HMAux(), "", "0");
                 }
@@ -203,7 +221,14 @@ public class WS_TK_Ticket_Download extends IntentService {
                 ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_error_on_insert_ticket"), new HMAux(), "", "0");
             }
         }else{
-            ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_data_returned"), new HMAux(), "", "0");
+            //LUCHE - 30/06/2021
+            //No caso do sincronismo, o servidor só devolverá os ticket desatualziados, então nesse
+            //caso, se 0 tickets retornados, CLOSE ACT
+            if(isLoginSync == 1){
+                ToolBox.sendBCStatus(getApplicationContext(), "CLOSE_ACT", hmAux_Trans.get("generic_process_finalized_msg"), new HMAux() , "", "0");
+            }else {
+                ToolBox.sendBCStatus(getApplicationContext(), "ERROR_1", hmAux_Trans.get("msg_no_data_returned"), new HMAux(), "", "0");
+            }
         }
     }
 
@@ -249,6 +274,48 @@ public class WS_TK_Ticket_Download extends IntentService {
         }
         //
         return objPkList;
+    }
+
+    /**
+     * LUCHE - 30/06/2021
+     * Metodo que retorna a lista de ticket que serão enviados no login
+     * @return
+     * @throws Exception
+     */
+    private ArrayList<T_TK_Ticket_Download_PK_Env> getLoginTicketPkList() throws Exception {
+        ArrayList<T_TK_Ticket_Download_PK_Env> objPkList = new ArrayList<>();
+        ArrayList<HMAux> hmAuxes = (ArrayList<HMAux>) ticketDao.query_HM(
+            new Sql_WS_TK_Ticket_Download_001(
+                ToolBox_Con.getPreference_Customer_Code(getApplicationContext())
+            ).toSqlQuery()
+        );
+        //
+        if(hmAuxes != null && hmAuxes.size() > 0){
+            String concatTicketToSend = getTicketConcatList(hmAuxes);
+            if(!concatTicketToSend.isEmpty()){
+                objPkList = getTicketPkList(concatTicketToSend);
+            }
+        }
+        return objPkList;
+    }
+
+    /**
+     * LUCHE - 30/06/2021
+     * <P></P>
+     * Metodo que retorna a lista de ticket possiveis de serem atualizados.
+     * <P></P>
+     * @param auxTickets
+     * @return
+     */
+    private String getTicketConcatList(ArrayList<HMAux> auxTickets) {
+        String ticketPKList = "";
+        for (HMAux aux : auxTickets) {
+            if(aux.hasConsistentValue(Sql_Act069_002.TICKET_PK)){
+                ticketPKList += ConstantBaseApp.MAIN_CONCAT_STRING + aux.get(Sql_Act069_002.TICKET_PK);
+            }
+        }
+        //
+        return ticketPKList.contains(ConstantBaseApp.MAIN_CONCAT_STRING) ? ticketPKList.substring(ConstantBaseApp.MAIN_CONCAT_STRING.length()) : "";
     }
 
     private void loadTranslation() {
