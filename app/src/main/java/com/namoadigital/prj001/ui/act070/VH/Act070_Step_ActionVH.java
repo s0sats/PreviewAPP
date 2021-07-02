@@ -67,7 +67,7 @@ public class Act070_Step_ActionVH extends Act070_Step_Abstract_ProcessVH {
     }
 
     public void bindData(StepAction stepAction){
-        applyStepReadOnly(stepAction.isUserFocus());
+        applyProcessReadOnlyDueFocusAndClaim(stepAction.isUserFocus(), stepAction.getProcessStatus(), stepAction.getStartUserCode() );
         //
         resetVisibility();
         //

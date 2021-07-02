@@ -814,7 +814,10 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
 
         },
         inWgEditMode,
-        bReadOnly || (mTicket.isReadOnlyDueFocus(context) && !inWgEditMode)
+        //LUCHE - 02/07/2021 - Voltado a regra do readOnly apenas de status. Para focus ou claim,
+        //cada processo fará a ato avalição, pois se o processo estiver em processo, seré permitido
+        // a finalizacao do mesmo.
+        bReadOnly
         );
         //
         initRecycle();

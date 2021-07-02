@@ -2747,6 +2747,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepForm.setUserFocus(stepMain.isUser_focus());
         stepForm.setProductDifferentThanTicket(tkStepCtrl.getProduct_code() != null && mTicket.getOpen_product_code() != tkStepCtrl.getProduct_code());
         stepForm.setSerialDifferentThanTicket(tkStepCtrl.getSerial_code() != null && mTicket.getOpen_serial_code() != tkStepCtrl.getSerial_code());
+        //
+        stepForm.setStartUserCode(tkStepCtrl.getCtrl_start_user());
         return stepForm;
     }
 
@@ -2781,6 +2783,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         //
         stepApproval.setProductDifferentThanTicket(tkStepCtrl.getProduct_code() != null && mTicket.getOpen_product_code() != tkStepCtrl.getProduct_code());
         stepApproval.setProductDifferentThanTicket(tkStepCtrl.getSerial_code() != null && mTicket.getOpen_serial_code() != tkStepCtrl.getSerial_code());
+        //
+        stepApproval.setStartUserCode(tkStepCtrl.getCtrl_start_user());
         return stepApproval;
     }
 
@@ -2806,6 +2810,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepAction.setPartnerDesc(tkStepCtrl.getPartner_desc());
         stepAction.setProductDifferentThanTicket(tkStepCtrl.getProduct_code() != null && mTicket.getOpen_product_code() != tkStepCtrl.getProduct_code());
         stepAction.setSerialDifferentThanTicket(tkStepCtrl.getSerial_code() != null && mTicket.getOpen_serial_code() != tkStepCtrl.getSerial_code());
+        //
+        stepAction.setStartUserCode(tkStepCtrl.getCtrl_start_user());
         return stepAction;
     }
 
@@ -2832,6 +2838,8 @@ public class Act070_Main_Presenter implements Act070_Main_Contract.I_Presenter {
         stepNone.setUserFocus(stepMain.isUser_focus());
         stepNone.setProductDifferentThanTicket(tkStepCtrl.getProduct_code() != null && mTicket.getOpen_product_code() != tkStepCtrl.getProduct_code());
         stepNone.setSerialDifferentThanTicket(tkStepCtrl.getSerial_code() != null && mTicket.getOpen_serial_code() != tkStepCtrl.getSerial_code());
+        //
+        stepNone.setStartUserCode(tkStepCtrl.getCtrl_start_user());
         return stepNone;
     }
 

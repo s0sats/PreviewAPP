@@ -1,11 +1,12 @@
 package com.namoadigital.prj001.ui.act070.VH;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act070_Steps_Adapter;
@@ -67,7 +68,7 @@ public class Act070_Step_FormVH extends Act070_Step_Abstract_ProcessVH {
     }
 
     public void bindData(StepForm stepForm){
-        applyStepReadOnly(stepForm.isUserFocus());
+        applyProcessReadOnlyDueFocusAndClaim(stepForm.isUserFocus(), stepForm.getProcessStatus(),stepForm.getStartUserCode() );
         resetVisibility();
         //
         tvActionDesc.setText(stepForm.getStepDescription());

@@ -3,19 +3,21 @@ package com.namoadigital.prj001.ui.act070.VH;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
 public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHolder {
@@ -182,13 +184,26 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
     }
     /**
      * BARRIONUEVO 07-06-2021
-     * Forçar o readOnly em steps sem focus quando o usuer nao tiver o perfil de acesso PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION
+     * <P></P>
+     * Forçar o readOnly em steps sem focus quando o usuer nao tiver o perfil de acesso
+     * PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION
+     * <P></P>
+     * LUCHE - 02/07/2021
+     * <P></P>
+     * Modificado metodo, renomeando para nome mais adequado, modificando assinatura add processStatus e startUserCode
+     * e adicionando na logica o processStatus <> de process, pois caso o usr tenha iniciado o processo
+     * e perdeu o claim antes de finaliza-lo,algo que hj so ocorre no form, foi definido que o usr
+     * podera finaliza-lo
+     *  OU processStatus == process desde que seja de outro usuario.
      */
-    protected void applyStepReadOnly(boolean isUserFocus){
-
+    protected void applyProcessReadOnlyDueFocusAndClaim(boolean isUserFocus, String processStatus, Integer startUserCode){
         if(!inReadOnlyMode
-                && !ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
-                && !isUserFocus) {
+            && ( !ConstantBaseApp.SYS_STATUS_PROCESS.equals(processStatus)
+                 || (ConstantBaseApp.SYS_STATUS_PROCESS.equals(processStatus) && startUserCode != null && !ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(startUserCode)))
+               )
+            && !ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
+            && !isUserFocus
+        ) {
             inReadOnlyMode =true;
         }
     }

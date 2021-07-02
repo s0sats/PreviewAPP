@@ -12,6 +12,7 @@ public abstract class StepAbstractProcess extends BaseStep{
     protected boolean isProductDifferentThanTicket;
     protected boolean isSerialDifferentThanTicket;
     protected boolean backProcessHighlight;
+    protected Integer startUserCode;
 
     public String getStepType() {
         return stepType;
@@ -91,5 +92,13 @@ public abstract class StepAbstractProcess extends BaseStep{
 
     public boolean isBackProcessHighlight() {
         return backProcessHighlight;
+    }
+
+    public Integer getStartUserCode() {
+        return startUserCode;
+    }
+
+    public void setStartUserCode(Integer startUserCode) {
+        this.startUserCode = startUserCode;
     }
 }
