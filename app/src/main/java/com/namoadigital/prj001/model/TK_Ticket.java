@@ -1420,7 +1420,7 @@ public class TK_Ticket implements Cloneable, Serializable {
         }
         String processPk = hmAux.get(TK_TicketDao.TICKET_PREFIX)+"."+hmAux.get(TK_TicketDao.TICKET_CODE);
         String clientInf = !hmAux.get(TK_TicketDao.CLIENT_ID).isEmpty() ? hmAux.get(TK_TicketDao.CLIENT_ID) +" - "+ hmAux.get(TK_TicketDao.CLIENT_NAME): null;
-        String contractInf = !hmAux.get(TK_TicketDao.CONTRACT_ID).isEmpty() ? hmAux.get(TK_TicketDao.CONTRACT_ID) +" - "+ hmAux.get(TK_TicketDao.CONTRACT_CODE): null;
+        String contractInf = !hmAux.get(TK_TicketDao.CONTRACT_ID).isEmpty() ? hmAux.get(TK_TicketDao.CONTRACT_ID) +" - "+ hmAux.get(TK_TicketDao.CONTRACT_DESC): null;
         String plannedDate = ToolBox_Inf.getMyActionStartEndDateFormated(context,hmAux.get(TK_TicketDao.FORECAST_DATE),hmAux.get(TK_TicketDao.FORECAST_DATE));
         String orderByDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
         String periodStartDate = hmAux.get(TK_TicketDao.FORECAST_DATE);
