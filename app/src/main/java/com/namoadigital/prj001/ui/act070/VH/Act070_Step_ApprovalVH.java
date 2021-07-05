@@ -68,14 +68,14 @@ public class Act070_Step_ApprovalVH extends Act070_Step_Abstract_ProcessVH {
         ivRejection =  this.itemView.findViewById(R.id.step_approval_iv_rejection);
         tvRejection =  this.itemView.findViewById(R.id.step_approval_tv_rejection);
         //
-        clBackground.setOnClickListener(new View.OnClickListener() {
+        onVhClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(onApprovalClick != null){
+                if (onApprovalClick != null) {
                     onApprovalClick.onApprovalClick(getAdapterPosition());
                 }
             }
-        });
+        };
         //
         clRejectionBackground.setOnClickListener(new View.OnClickListener() {
             @Override

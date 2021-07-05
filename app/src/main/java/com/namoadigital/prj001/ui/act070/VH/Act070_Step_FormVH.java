@@ -57,14 +57,14 @@ public class Act070_Step_FormVH extends Act070_Step_Abstract_ProcessVH {
         ivProcessAction =  this.itemView.findViewById(R.id.step_checklist_iv_process_action);
         tvProcessAction =  this.itemView.findViewById(R.id.step_checklist_tv_process_action);
         //
-        clBackground.setOnClickListener(new View.OnClickListener() {
+        onVhClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(onChecklistClickListener != null){
+                if (onChecklistClickListener != null) {
                     onChecklistClickListener.onChecklistClick(getAdapterPosition());
                 }
             }
-        });
+        };
     }
 
     public void bindData(StepForm stepForm){

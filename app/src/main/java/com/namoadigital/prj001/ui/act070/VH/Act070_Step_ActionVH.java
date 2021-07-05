@@ -56,14 +56,14 @@ public class Act070_Step_ActionVH extends Act070_Step_Abstract_ProcessVH {
         tvPartner =  this.itemView.findViewById(R.id.step_action_tv_partner);
         ivProcessAction =  this.itemView.findViewById(R.id.step_action_iv_process_action);
         tvProcessAction =  this.itemView.findViewById(R.id.step_action_tv_process_action);
-        clBackground.setOnClickListener(new View.OnClickListener() {
+        onVhClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(actionClickListener != null){
+                if (actionClickListener != null) {
                     actionClickListener.onActionClick(getAdapterPosition());
                 }
             }
-        });
+        };
     }
 
     public void bindData(StepAction stepAction){

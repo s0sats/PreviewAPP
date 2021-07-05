@@ -57,14 +57,15 @@ public class Act070_Step_NoneVH extends Act070_Step_Abstract_ProcessVH {
         tvPartner =  this.itemView.findViewById(R.id.step_none_tv_partner);
         ivProcessAction =  this.itemView.findViewById(R.id.step_none_iv_process_action);
         tvProcessAction =  this.itemView.findViewById(R.id.step_none_tv_process_action);
-        clBackground.setOnClickListener(new View.OnClickListener() {
+        //
+        onVhClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(noneClickListener != null){
+                if (noneClickListener != null) {
                     noneClickListener.onNoneClick(getAdapterPosition());
                 }
             }
-        });
+        };
     }
 
     public void bindData(StepNone stepNone){

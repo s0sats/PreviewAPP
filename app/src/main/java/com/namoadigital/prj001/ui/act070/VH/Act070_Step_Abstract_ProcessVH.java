@@ -27,9 +27,13 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
     protected String transWaitingSync;
     protected String transContinue;
     protected boolean isInWgEditMode;
-    protected boolean inReadOnlyMode = false;
+    //atributo passado da act pro adapter e que representa o readonly do status + user_lvl
+    protected boolean isStepperInReadOnlyMode = false;
+    //Atributo que calcula o estado a cada vez que a view é reutilizada.
+    protected boolean forceVHToReadOnlyMode = false;
+    protected View.OnClickListener onVhClickListener;
 
-    public Act070_Step_Abstract_ProcessVH(Context context, @NonNull View itemView, String transStartProcess, String transReviewProcess, String transContinueProcess, String transWaitingSync, boolean isInWgEditMode,boolean inReadOnlyMode) {
+    public Act070_Step_Abstract_ProcessVH(Context context, @NonNull View itemView, String transStartProcess, String transReviewProcess, String transContinueProcess, String transWaitingSync, boolean isInWgEditMode,boolean isStepperInReadOnlyMode) {
         super(itemView);
         this.context = context;
         this.transStartProcess = transStartProcess;
@@ -37,7 +41,8 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         this.transContinue = transContinueProcess;
         this.transWaitingSync = transWaitingSync;
         this.isInWgEditMode = isInWgEditMode;
-        this.inReadOnlyMode = inReadOnlyMode;
+        this.isStepperInReadOnlyMode = isStepperInReadOnlyMode;
+        this.forceVHToReadOnlyMode = isStepperInReadOnlyMode;//Esta certo, a inicialização deve ser igual ao do stepper.
     }
 
     protected void setProductAndSerialVisibility(TextView tvProduct, TextView tvSerial, boolean isProductDifferentThanTicket, boolean isSerialDifferentThanTicket){
@@ -96,7 +101,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
                   || (isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn) && !isInWgEditMode)
             )
         ) {
-            if(!inReadOnlyMode) {
+            if(!forceVHToReadOnlyMode) {
                 ivProcessAction.setImageDrawable(drawable);
                 tvProcessAction.setTextColor(tintColor);
                 tvProcessAction.setText(processActionText);
@@ -129,7 +134,7 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
            && !ConstantBaseApp.SYS_STATUS_CANCELLED.equals(stepStatus)
            && !ConstantBaseApp.SYS_STATUS_REJECTED.equals(stepStatus)
         ) {
-            if(isCurrentStep && (!isInWgEditMode && !inReadOnlyMode)) {
+            if(isCurrentStep && (!isInWgEditMode && !forceVHToReadOnlyMode)) {
                 //Se start_end, se tiver checkin, fica amarelo , se não fica cinza indicando que falta q
                 //não é possivel mexer.
                 if (ConstantBaseApp.TK_PIPELINE_STEP_TYPE_START_END.equals(StepType)) {
@@ -147,7 +152,10 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
                     backgroundColor = R.color.namoa_color_ticket_process_highlight;
                     drawable = context.getDrawable(R.drawable.pipeline_step_highligh_states);
                 }
-                //
+                //LUCHE - 05/07/2021
+                //Seta o listener do card pois, se o ultimo VH tivesse caido no else, o click não
+                // era reabilitado.
+                clBackground.setOnClickListener(onVhClickListener);
             }else{
                 drawable = null;
                 clBackground.setOnClickListener(null);
@@ -195,16 +203,26 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
      * e perdeu o claim antes de finaliza-lo,algo que hj so ocorre no form, foi definido que o usr
      * podera finaliza-lo
      *  OU processStatus == process desde que seja de outro usuario.
+     *  LUCHE - 05/07/2021
+     *  <p></p>
+     *  Modificado metodo para analizar o atributo de readonly original isStepperInReadOnlyMode e,
+     *  caso as condições sejam satisfeitas, alterar o novo atributo forceVHToReadOnlyMode para true.
+     *  Foi necessario separar em dois atributos, pois era impossivel retornar o estado original do
+     *  VH na reciclagem da view.
+     *  Se a condição não for satisfeita, seta o novo atributo com o valor do original.
+     *
      */
     protected void applyProcessReadOnlyDueFocusAndClaim(boolean isUserFocus, String processStatus, Integer startUserCode){
-        if(!inReadOnlyMode
+        if(!isStepperInReadOnlyMode
             && ( !ConstantBaseApp.SYS_STATUS_PROCESS.equals(processStatus)
                  || (ConstantBaseApp.SYS_STATUS_PROCESS.equals(processStatus) && startUserCode != null && !ToolBox_Con.getPreference_User_Code(context).equals(String.valueOf(startUserCode)))
                )
             && !ToolBox_Inf.profileExists(context, Constant.PROFILE_MENU_TICKET , Constant.PROFILE_MENU_TICKET_PARAM_CLAIM_SPECIAL_EXECUTION_PERMITION)
             && !isUserFocus
         ) {
-            inReadOnlyMode =true;
+            forceVHToReadOnlyMode = true;
+        }else{
+            forceVHToReadOnlyMode = isStepperInReadOnlyMode;
         }
     }
 }
