@@ -10,6 +10,9 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
  * LUCHE - 30/06/2021
  * Criado query que seleciona todos os ticket em condições de serem possiveis de atualizar, para serem
  * enviados no processo de login.
+ * LUCHE - 02/07/2021
+ * Corrigido query, removendo os campos de ticket_seq e ticket_seq_tmp da query do not existis.
+ * Agora a query checa corretanemente se existem form com pendencia de GPS independente de ser o obj planejado ou não.
  */
 
 public class Sql_WS_TK_Ticket_Download_001 implements Specification {
@@ -50,8 +53,6 @@ public class Sql_WS_TK_Ticket_Download_001 implements Specification {
                         "                     WHERE d.customer_code = c.customer_code\n" +
                         "                           and d.ticket_prefix = c.ticket_prefix\n" +
                         "                           and d.ticket_code = c.ticket_code\n" +
-                        "                           and d.ticket_seq = c.ticket_seq\n" +
-                        "                           and d.ticket_seq_tmp = c.ticket_seq_tmp\n" +
                         "                           and d.custom_form_status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"'\n" +
                         "                           and d.location_pendency = 1)\n" +
                         "  ;"

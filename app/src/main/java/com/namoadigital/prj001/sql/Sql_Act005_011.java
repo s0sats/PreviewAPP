@@ -12,6 +12,9 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
  * Modificado query para excluir os ticket com form pendente de GPS, pois não podem ser sincronizados.
  * BARRIONUEVO 27-05-2021
  * MOdificado para pegar sync_required indenpendente do updaterequired.
+ * LUCHE - 02/07/2021
+ * Modificado query atualizando query do not exists removendo o g.ticket_seq > 0 quando o item que tem
+ * pendencia de GPS é um processo espontaneo.
  */
 
 public class Sql_Act005_011 implements Specification {
@@ -48,7 +51,7 @@ public class Sql_Act005_011 implements Specification {
                                 "                            and g.ticket_prefix = t.ticket_prefix\n" +
                                 "                            and g.ticket_code = t.ticket_code  \n" +
                                 "                            and ( " +
-                                "                                    (g.ticket_seq > 0 and g.custom_form_status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"'  and g.location_pendency = 1)\n" +
+                                "                                    (g.custom_form_status = '"+ ConstantBaseApp.SYS_STATUS_WAITING_SYNC +"'  and g.location_pendency = 1)\n" +
                                 "                                 or ( g.ticket_seq = 0 " +"\n" +
                                 "                                  and g.ticket_seq_tmp > 0 " +"\n" +
                                 "                                  and g.custom_form_status = '"+ ConstantBaseApp.SYS_STATUS_IN_PROCESSING +"') \n" +

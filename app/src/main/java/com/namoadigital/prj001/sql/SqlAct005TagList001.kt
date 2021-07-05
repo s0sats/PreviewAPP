@@ -13,6 +13,15 @@ import com.namoadigital.prj001.util.ToolBox_Con
  *  - Query responsavel pelo extrato de tags no menu principal.
  *  - O concatenamento da tabela de schedule para pegar o proximo item além do filtro de data foi ne
  *  cessario devido restricoes da versao do sqlite no Android < 8
+ *
+ * LUCHE - 05/07/2021
+ *  - Modificado query do ticket para não exibir tickets com offhand com o icone de sincronismo.
+ *  Para isso, foi modificado a subquery que calculava o has_in_processing, removendo o filtro de
+ *  status do form e adicionando o status no case when do campo e add outro campo has_gps_pendency
+ *  que usa o status waiting sync + pendencia d gps para calcular o campo has_gps_pendency
+ *  - Na query do nivel acima, o campo sync_required, agora verifica se a qtd de sync_required
+ *  é maior que a soma do has_in_processing e has_gps_pendency se sim, ai sim define como 1 caso
+ *  contrario 0
  */
 class SqlAct005TagList001(private val context: Context,
                           private val customerCode: Int,
@@ -88,7 +97,11 @@ class SqlAct005TagList001(private val context: Context,
                             then 0
                             else max(t.update_required, t.update_required_product, t.step_update_required)
                 end) update_required,             
-                max(t.sync_required) sync_required,
+                --max(t.sync_required) sync_required,
+                CASE WHEN sum(t.sync_required) > (ifnull(max(t.has_in_processing),0) + ifnull(max(t.has_gps_pendency),0))
+                     THEN 1 
+                     ELSE 0
+                END sync_required,
                 ifnull(max(t.has_in_processing),0) in_processing 
            from(
                    select tk.tag_operational_code, 
@@ -97,18 +110,25 @@ class SqlAct005TagList001(private val context: Context,
                        tk.update_required_product,
                        s.update_required step_update_required,
                        tk.sync_required sync_required,
-                       has_in_processing 
+                       d.has_in_processing,
+                       d.has_gps_pendency
                    from ${TK_TicketDao.TABLE} tk, 
                          ${TK_Ticket_StepDao.TABLE} s
                    left join (SELECT d.customer_code,
                                       d.ticket_prefix,
                                       d.ticket_code,
-                                      COUNT(1) has_in_processing
+                                      sum(CASE WHEN d.custom_form_status  = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
+                                           THEN 1
+                                           ELSE 0
+                                      END)has_in_processing,
+                                      sum(CASE WHEN d.custom_form_status  = '${ConstantBaseApp.SYS_STATUS_WAITING_SYNC}' and d.location_pendency = 1
+                                           THEN 1
+                                           ELSE 0
+                                      END) has_gps_pendency
                               FROM ${GE_Custom_Form_DataDao.TABLE} d
                               WHERE d.customer_code = $customerCode 
                                     and d.ticket_prefix is not null
-                                    and d.ticket_code is not null
-                                    and d.custom_form_status  = '${ConstantBaseApp.SYS_STATUS_IN_PROCESSING}'
+                                    and d.ticket_code is not null                                    
                               GROUP BY
                                      d.customer_code,
                                      d.ticket_prefix,
