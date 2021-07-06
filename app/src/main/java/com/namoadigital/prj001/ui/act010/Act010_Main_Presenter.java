@@ -10,7 +10,7 @@ import com.namoa_digital.namoa_library.util.HMAux;
 
 public interface Act010_Main_Presenter {
 
-    void setAdapterData(long product_code, int tagCode, String filter);
+    void setAdapterData(long product_code, int tagCode, Integer blockSpontaneous);
 
     void validateOpenForm(HMAux item);
 

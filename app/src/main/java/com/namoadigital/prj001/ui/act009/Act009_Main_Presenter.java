@@ -6,7 +6,7 @@ package com.namoadigital.prj001.ui.act009;
 
 public interface Act009_Main_Presenter {
 
-    void setAdapterData(long product_code, String filter, String serial_id);
+    void setAdapterData(long product_code, String serial_id, Integer blockSpontaneous);
 
     void onBackPressedClicked(String actResqueting);
 }

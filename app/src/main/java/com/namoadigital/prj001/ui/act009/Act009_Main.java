@@ -129,7 +129,12 @@ public class Act009_Main extends Base_Activity implements Act009_Main_View {
         //
         setLabels();
         //
-        mPresenter.setAdapterData(product_code, "", serial_id );
+        mPresenter.setAdapterData(
+            product_code,
+            serial_id,
+            ToolBox_Inf.getBlockSpontaneousValueByOrigin(context, originFlow)
+        );
+        //
         if(has_tk_ticket_is_form_off_hand){
             vStepSelected = findViewById(R.id.act009_process_in_progress);
             ImageView ivClose = vStepSelected.findViewById(R.id.iv_nform_new_header);

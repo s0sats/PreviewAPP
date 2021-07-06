@@ -18,6 +18,7 @@ public class GE_Custom_Form {
     private int all_operation;
     private int all_product;
     private int tag_operational_code;
+    private int block_spontaneous;
 
     public long getCustomer_code() {
         return customer_code;
@@ -113,5 +114,13 @@ public class GE_Custom_Form {
 
     public void setTag_operational_code(int tag_operational_code) {
         this.tag_operational_code = tag_operational_code;
+    }
+
+    public int getBlock_spontaneous() {
+        return block_spontaneous;
+    }
+
+    public void setBlock_spontaneous(int block_spontaneous) {
+        this.block_spontaneous = block_spontaneous;
     }
 }

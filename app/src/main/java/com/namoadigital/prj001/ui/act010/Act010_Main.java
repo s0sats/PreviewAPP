@@ -141,7 +141,11 @@ public class Act010_Main extends Base_Activity implements Act010_Main_View {
         //
         setLabels();
         //
-        mPresenter.setAdapterData(product_code, tagCode, "");
+        mPresenter.setAdapterData(
+            product_code,
+            tagCode,
+            ToolBox_Inf.getBlockSpontaneousValueByOrigin(context, originFlow)
+        );
         //
         if(has_tk_ticket_is_form_off_hand){
             vStepSelected = findViewById(R.id.act010_process_in_progress);

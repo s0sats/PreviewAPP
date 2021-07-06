@@ -38,7 +38,8 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
     }
 
     @Override
-    public void setAdapterData(long product_code, String filter, String serial_id) {
+    public void setAdapterData(long product_code, String serial_id, Integer blockSpontaneous) {
+        //
         List<HMAux> data =
         custom_form_typeDao.query_HM(
                 new Sql_Act009_001(
@@ -47,7 +48,8 @@ public class Act009_Main_Presenter_Impl implements Act009_Main_Presenter{
                         ToolBox_Con.getPreference_Translate_Code(context),
                         ToolBox_Con.getPreference_Operation_Code(context),
                         site_code_form_param,
-                        serial_id
+                        serial_id,
+                        blockSpontaneous
                 ).toSqlQuery()
         );
         //Se apenas um tipo, auto seleciona

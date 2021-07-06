@@ -8825,4 +8825,35 @@ public class ToolBox_Inf {
         //Para debug define as var pra saber em qual deu falso
         return formXProductExist && formXOperationExists && formXSiteExists;
     }
+
+    /**
+     * LUCHE - 06/07/2021
+     * <p></p>
+     * Metodo que define o valor do campo BlockSpontaneous pela origem.
+     * <p></p>
+     * Se origem null ou vazia
+     *      *   - Layout Menu O.S = null
+     *      *   - Layout padrap = 0 (decidi restringir nesse caso,pois nesse layout NUNCA DEVERIA TER ORIGEM VAZIA)
+     *      *  Se origem definida:
+     *      *   - Ativo/local(Act006) = 0
+     *      *   - Qualquer outro null.
+     * @param context
+     * @param originFlow - Origin do processo.
+     * @return 0 ou null
+     */
+    @Nullable
+    public static Integer getBlockSpontaneousValueByOrigin(Context context, String originFlow) {
+        if(originFlow == null || originFlow.isEmpty()){
+            return usesSoMainActivity(context) ? null : 0;
+        }
+        //
+        switch (originFlow){
+            case ConstantBaseApp.ACT006 :
+                return 0;
+            case ConstantBaseApp.ACT016 :
+            case ConstantBaseApp.ACT068 :
+            default:
+                return null;
+        }
+    }
 }

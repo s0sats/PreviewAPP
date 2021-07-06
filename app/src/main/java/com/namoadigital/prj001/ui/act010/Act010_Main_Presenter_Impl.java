@@ -12,7 +12,6 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao;
 import com.namoadigital.prj001.dao.GE_Custom_Form_LocalDao;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.sql.GE_Custom_Form_Data_Sql_004;
-import com.namoadigital.prj001.sql.GE_Custom_Form_Sql_002;
 import com.namoadigital.prj001.sql.Sql_Act010_001;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -50,8 +49,7 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
     }
 
     @Override
-    public void setAdapterData(long product_code, int tagCode, String filter) {
-
+    public void setAdapterData(long product_code, int tagCode, Integer blockSpontaneous) {
         List<HMAux> data =
                 custom_formDao.query_HM(
                         new Sql_Act010_001(
@@ -61,7 +59,8 @@ public class Act010_Main_Presenter_Impl implements Act010_Main_Presenter {
                                 String.valueOf(this.product_code),
                                 ToolBox_Con.getPreference_Operation_Code(context),
                                 site_code_form_param,
-                                serial_id
+                                serial_id,
+                                blockSpontaneous
                         ).toSqlQuery()
                 );
         //

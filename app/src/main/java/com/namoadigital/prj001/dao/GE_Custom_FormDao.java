@@ -35,6 +35,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
     public static final String ALL_OPERATION = "all_operation";
     public static final String ALL_PRODUCT = "all_product";
     public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
+    public static final String BLOCK_SPONTANEOUS = "block_spontaneous";
     //Não é campo da tabela, descrição vem da tradução
     public static final String CUSTOM_FORM_DESC = "custom_form_desc";
 
@@ -255,6 +256,7 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             custom_form.setAll_operation(cursor.getInt(cursor.getColumnIndex(ALL_OPERATION)));
             //
             custom_form.setTag_operational_code(cursor.getInt(cursor.getColumnIndex(TAG_OPERATIONAL_CODE)));
+            custom_form.setBlock_spontaneous(cursor.getInt(cursor.getColumnIndex(BLOCK_SPONTANEOUS)));
             return custom_form;
         }
     }
@@ -300,6 +302,9 @@ public class GE_Custom_FormDao extends BaseDao implements Dao<GE_Custom_Form> {
             //
             if (custom_form.getTag_operational_code() > -1) {
                 contentValues.put(TAG_OPERATIONAL_CODE, custom_form.getTag_operational_code());
+            }
+            if (custom_form.getBlock_spontaneous() > -1) {
+                contentValues.put(BLOCK_SPONTANEOUS, custom_form.getBlock_spontaneous());
             }
             return contentValues;
         }
