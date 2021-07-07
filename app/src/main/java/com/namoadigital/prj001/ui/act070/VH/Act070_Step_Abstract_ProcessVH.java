@@ -126,6 +126,11 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
     }
 
     protected void applyHighlightBackground(ConstraintLayout clBackground, String stepStatus, boolean isCurrentStep,String StepType, boolean isStepAlreadyCheckedIn) {
+        //LUCHE - 07/07/2021
+        //Movido o set do clique apara fora do if, pois no caso de iten ja finalizado , estava
+        //ficando sem clique
+        clBackground.setOnClickListener(onVhClickListener);
+        //
         int backgroundColor = R.color.padrao_TRANSPARENT;
         Drawable drawable = context.getDrawable(R.drawable.pipeline_step_states);
         //Se step atual, verifica o destaque
@@ -152,10 +157,6 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
                     backgroundColor = R.color.namoa_color_ticket_process_highlight;
                     drawable = context.getDrawable(R.drawable.pipeline_step_highligh_states);
                 }
-                //LUCHE - 05/07/2021
-                //Seta o listener do card pois, se o ultimo VH tivesse caido no else, o click não
-                // era reabilitado.
-                clBackground.setOnClickListener(onVhClickListener);
             }else{
                 drawable = null;
                 clBackground.setOnClickListener(null);
