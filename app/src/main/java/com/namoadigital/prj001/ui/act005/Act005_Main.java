@@ -2734,12 +2734,18 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+        /*
+         * LUCHE - 07/07/2021
+         * O metodo transformado o metodo antigo metodo hasTicketSyncRequired em hasTicketSyncRequiredCloudRule
+         * pois a regra usada nele é diferente da regra de itens para envio.
+         * Como isso estava causando um bug, decidi separar em 2 metodos, um especifico com para a nuvem
+         * (hasTicketSyncRequiredCloudRule) e outro especifico para envio hasTicketSyncRequired
+         */
         int iconColor = 0;
         boolean hasUpdateRequired = mPresenter.hasUpdateRequired();
-        boolean hasTicketSyncRequired = mPresenter.hasTicketSyncRequired();
+        boolean hasTicketSyncRequiredCloudRule = mPresenter.hasTicketSyncRequiredCloudRule();
         //
-        Drawable wrappedDrawable = setSyncIcon(iconColor, hasUpdateRequired, hasTicketSyncRequired);
+        Drawable wrappedDrawable = setSyncIcon(iconColor, hasUpdateRequired, hasTicketSyncRequiredCloudRule);
         //
         menu.add(0, TOOLBAR_SYNC_DATA_STATUS, Menu.FIRST + 0, hmAux_Trans.get("lbl_sync_data"));
         menu.findItem(TOOLBAR_SYNC_DATA_STATUS).setIcon(wrappedDrawable);

@@ -134,4 +134,6 @@ public interface Act005_Main_Presenter {
     void executeWSTicketDownload();
 
     boolean hasMasterDataSyncRequired();
+
+    boolean hasTicketSyncRequiredCloudRule();
 }

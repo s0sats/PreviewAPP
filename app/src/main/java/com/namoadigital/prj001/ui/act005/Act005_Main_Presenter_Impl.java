@@ -475,13 +475,48 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         return totalPendency > 0;
     }
 
+    /**
+     * LUCHE - 07/07/2021
+     * <p></p>
+     * Alterado metodo para utilizar a mesma regra da query que seleciona os tickets para envio.
+     * <p></p>
+     * @return
+     */
     @Override
     public boolean hasTicketSyncRequired() {
+//        //
+//        List<TK_Ticket> tickets = tk_ticketDao.query(
+//                new Sql_Act005_011(
+//                        ToolBox_Con.getPreference_Customer_Code(context)
+//                ).toSqlQuery()
+//        );
+//        //
+//        int qty = 0;
+//        if (tickets != null) {
+//            qty = tickets.size();
+//        }
+//        //
+//        return qty > 0;
+        //
+        ArrayList<HMAux> ticketToSync = getTicketToSync();
+        //
+        return ticketToSync != null && ticketToSync.size() > 0;
+    }
+
+    /**
+     * LUCHE - 07/07/2021
+     * <P></P>
+     * Metodo que valida o ticket sync requirede baseado nas regras exclusivas
+     * da nuvem no menu principal. Basicamente é a implementação antiga de hasTicketSyncRequired
+     * @return
+     */
+    @Override
+    public boolean hasTicketSyncRequiredCloudRule() {
         //
         List<TK_Ticket> tickets = tk_ticketDao.query(
-                new Sql_Act005_011(
-                        ToolBox_Con.getPreference_Customer_Code(context)
-                ).toSqlQuery()
+            new Sql_Act005_011(
+                ToolBox_Con.getPreference_Customer_Code(context)
+            ).toSqlQuery()
         );
         //
         int qty = 0;
@@ -490,7 +525,6 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
         }
         //
         return qty > 0;
-        //
     }
 
     @Deprecated
