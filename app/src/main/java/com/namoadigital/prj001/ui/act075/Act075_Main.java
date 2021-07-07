@@ -1226,4 +1226,24 @@ public class Act075_Main extends Base_Activity_Frag implements Act075_Main_Contr
             finish();
         }
     }
+
+    //TRATA SESSION_NOT_FOUND
+    @Override
+    protected void processLogin() {
+        super.processLogin();
+        //
+        ToolBox_Con.cleanPreferences(context);
+        //
+        ToolBox_Inf.call_Act001_Main(context);
+        //
+        finish();
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
+    @Override
+    protected void processUpdateSoftware(String mLink, String mRequired) {
+        super.processUpdateSoftware(mLink, mRequired);
+        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        progressDialog.dismiss();
+    }
 }
