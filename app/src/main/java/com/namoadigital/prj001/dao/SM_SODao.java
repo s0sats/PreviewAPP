@@ -14,7 +14,6 @@ import com.namoadigital.prj001.model.SM_SO_Product_Event;
 import com.namoadigital.prj001.sql.SM_SO_File_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Pack_Sql_002;
 import com.namoadigital.prj001.sql.SM_SO_Product_Event_Sql_001;
-import com.namoadigital.prj001.sql.SO_Pack_Express_Local_Sql_010;
 import com.namoadigital.prj001.sql.Sql_Act021_003;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -102,6 +101,15 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String ADD_INF1 = "add_inf1";
     public static final String ADD_INF2 = "add_inf2";
     public static final String ADD_INF3 = "add_inf3";
+    public static final String ADD_INF4 = "add_inf4";
+    public static final String ADD_INF5 = "add_inf5";
+    public static final String ADD_INF6 = "add_inf6";
+    public static final String BILLING_ADD_INF1 = "billing_add_inf1";
+    public static final String BILLING_ADD_INF2 = "billing_add_inf2";
+    public static final String BILLING_ADD_INF3 = "billing_add_inf3";
+    public static final String SERIAL_ADD_INF1 = "serial_add_inf1";
+    public static final String SERIAL_ADD_INF2 = "serial_add_inf2";
+    public static final String SERIAL_ADD_INF3 = "serial_add_inf3";
     public static final String APPROVE_BUDGET = "approve_budget";
     public static final String APPROVE_CLIENT = "approve_client";
 
@@ -739,6 +747,60 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             } else {
                 so.setAdd_inf3(cursor.getString(cursor.getColumnIndex(ADD_INF3)));
             }
+            //
+            if (cursor.isNull(cursor.getColumnIndex(ADD_INF4))) {
+                so.setAdd_inf4(null);
+            } else {
+                so.setAdd_inf4(cursor.getString(cursor.getColumnIndex(ADD_INF4)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(ADD_INF5))) {
+                so.setAdd_inf5(null);
+            } else {
+                so.setAdd_inf5(cursor.getString(cursor.getColumnIndex(ADD_INF5)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(ADD_INF6))) {
+                so.setAdd_inf6(null);
+            } else {
+                so.setAdd_inf6(cursor.getString(cursor.getColumnIndex(ADD_INF6)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF1))) {
+                so.setBilling_add_inf1(null);
+            } else {
+                so.setBilling_add_inf1(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF1)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF2))) {
+                so.setBilling_add_inf2(null);
+            } else {
+                so.setBilling_add_inf2(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF2)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF3))) {
+                so.setBilling_add_inf3(null);
+            } else {
+                so.setBilling_add_inf3(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF3)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(SERIAL_ADD_INF1))) {
+                so.setSerial_add_inf1(null);
+            } else {
+                so.setSerial_add_inf1(cursor.getString(cursor.getColumnIndex(SERIAL_ADD_INF1)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(SERIAL_ADD_INF2))) {
+                so.setSerial_add_inf2(null);
+            } else {
+                so.setSerial_add_inf2(cursor.getString(cursor.getColumnIndex(SERIAL_ADD_INF2)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(SERIAL_ADD_INF3))) {
+                so.setSerial_add_inf3(null);
+            } else {
+                so.setSerial_add_inf3(cursor.getString(cursor.getColumnIndex(SERIAL_ADD_INF3)));
+            }
 
             so.setApprove_budget(cursor.getInt(cursor.getColumnIndex(APPROVE_BUDGET)));
             so.setApprove_client(cursor.getInt(cursor.getColumnIndex(APPROVE_CLIENT)));
@@ -1074,7 +1136,17 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             if (sm_so.getAdd_inf3() != null) {
                 contentValues.put(ADD_INF3, sm_so.getAdd_inf3());
             }
-
+            //
+            contentValues.put(ADD_INF4, sm_so.getAdd_inf4());
+            contentValues.put(ADD_INF5, sm_so.getAdd_inf5());
+            contentValues.put(ADD_INF6, sm_so.getAdd_inf6());
+            contentValues.put(BILLING_ADD_INF1, sm_so.getBilling_add_inf1());
+            contentValues.put(BILLING_ADD_INF2, sm_so.getBilling_add_inf2());
+            contentValues.put(BILLING_ADD_INF3, sm_so.getBilling_add_inf3());
+            contentValues.put(SERIAL_ADD_INF1, sm_so.getSerial_add_inf1());
+            contentValues.put(SERIAL_ADD_INF2, sm_so.getSerial_add_inf2());
+            contentValues.put(SERIAL_ADD_INF3, sm_so.getSerial_add_inf3());
+            //
             if (sm_so.getApprove_budget() > -1) {
                 contentValues.put(APPROVE_BUDGET, sm_so.getApprove_budget());
             }
