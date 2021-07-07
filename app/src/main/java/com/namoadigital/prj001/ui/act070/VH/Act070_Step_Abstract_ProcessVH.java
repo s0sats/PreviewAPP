@@ -92,7 +92,6 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
         if(drawable != null){
             drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_ATOP);
         }
-        //TODO VALIDAR ESSE IF, POIS FOI ADICIONANDO O isInWgEditMode
         if(
              !ConstantBaseApp.SYS_STATUS_CANCELLED.equals(processStatus)
               && !ConstantBaseApp.SYS_STATUS_REJECTED.equals(processStatus)
@@ -101,13 +100,11 @@ public abstract class Act070_Step_Abstract_ProcessVH extends RecyclerView.ViewHo
                   || (isProcessCheckedIn(stepType,isCurrentStep,isStepAlreadyCheckedIn) && !isInWgEditMode)
             )
         ) {
-            if(!forceVHToReadOnlyMode) {
-                ivProcessAction.setImageDrawable(drawable);
-                tvProcessAction.setTextColor(tintColor);
-                tvProcessAction.setText(processActionText);
-                ivProcessAction.setVisibility(View.VISIBLE);
-                tvProcessAction.setVisibility(View.VISIBLE);
-            }
+            ivProcessAction.setImageDrawable(drawable);
+            tvProcessAction.setTextColor(tintColor);
+            tvProcessAction.setText(processActionText);
+            ivProcessAction.setVisibility(View.VISIBLE);
+            tvProcessAction.setVisibility(View.VISIBLE);
         }
     }
 
