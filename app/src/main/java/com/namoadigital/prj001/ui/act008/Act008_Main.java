@@ -930,8 +930,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
      * @param act083Bundle
      */
     private void updateSerialInfoInAct083Bundle(Bundle act083Bundle) {
-        MyActionFilterParam myActionFilterParam = getMyActionFilterParam(act083Bundle);
-        myActionFilterParam.setSerialId(mdProductSerial.getSerial_id());
+        if(!ConstantBaseApp.ACT005.equals(originFlow)){
+            MyActionFilterParam myActionFilterParam = getMyActionFilterParam(act083Bundle);
+            myActionFilterParam.setSerialId(mdProductSerial.getSerial_id());
+        }
     }
 
     @Override
