@@ -338,6 +338,8 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("serial_ll_lbl");
         transList.add("header_ll_lbl");
         transList.add("service_edition_ll_lbl");
+        transList.add("serial_add_infos_lbl");
+        transList.add("billing_add_infos_lbl");
 
         // ACT027_Approval Fragment
         transList.add("user_name_lbl");

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -109,6 +110,14 @@ public class Act027_Opc extends BaseFragment {
     private TextView tv_header_title;
     private TextView tv_approval_title;
     private TextView tv_service_edition_title;
+
+    private LinearLayout ll_serial_add_infos;
+    private TextView tv_serial_add_infos_label;
+    private TextView tv_serial_add_infos_value;
+
+    private LinearLayout ll_billing_add_infos;
+    private TextView tv_billing_add_infos_label;
+    private TextView tv_billing_add_infos_value;
 
     public interface IAct027_Opc {
         void menuOptionsSelected(String type);
@@ -230,6 +239,14 @@ public class Act027_Opc extends BaseFragment {
         tv_header_title = (TextView) view.findViewById(R.id.act027_opc_tv_header_title);
         tv_approval_title = (TextView) view.findViewById(R.id.act027_opc_tv_approval_title);
         tv_service_edition_title = (TextView) view.findViewById(R.id.act027_opc_tv_service_edition_title);
+        //LUCHE - 08/07/2021 - Add infos adicionais de serial e billing
+        ll_serial_add_infos = view.findViewById(R.id.act027_opc_ll_serial_add_info);
+        tv_serial_add_infos_label = view.findViewById(R.id.act027_opc_tv_serial_add_info_label);
+        tv_serial_add_infos_value = view.findViewById(R.id.act027_opc_tv_serial_add_info_value);
+
+        ll_billing_add_infos = view.findViewById(R.id.act027_opc_ll_billing_add_info);
+        tv_billing_add_infos_label = view.findViewById(R.id.act027_opc_tv_billing_label);
+        tv_billing_add_infos_value = view.findViewById(R.id.act027_opc_tv_billing_value);
     }
 
     private void iniAction() {
@@ -409,6 +426,7 @@ public class Act027_Opc extends BaseFragment {
                 defineSoChatLayout();
 
                 if (!mSm_so.getSo_id().equals(String.valueOf(mSm_so.getSo_prefix()) + "." + mSm_so.getSo_code())) {
+                    ll_so_id.setVisibility(View.VISIBLE);
                     tv_so_id_label.setText(hmAux_Trans.get("so_id_lbl"));
                     tv_so_id_value.setText(mSm_so.getSo_id());
                 } else {
@@ -416,6 +434,7 @@ public class Act027_Opc extends BaseFragment {
                 }
 
                 if (mSm_so.getSo_desc() != null && mSm_so.getSo_desc().length() > 0) {
+                    ll_so_desc.setVisibility(View.VISIBLE);
                     tv_so_desc.setText(mSm_so.getSo_desc());
                 } else {
                     ll_so_desc.setVisibility(View.GONE);
@@ -428,6 +447,10 @@ public class Act027_Opc extends BaseFragment {
                 tv_status_value.setText(hmAux_Trans.get(mSm_so.getStatus()));
 
                 if (mSm_so.getDeadline() != null && mSm_so.getDeadline().length() > 0) {
+                    //LUCHE - 08/07/2021 Add visibilidade, pois como essa info pode mudar apos o sinc
+                    //pode mudar de vazio para preenchido e vice e versa
+                    ll_deadline.setVisibility(View.VISIBLE);
+                    //
                     tv_deadline_label.setText(hmAux_Trans.get("deadline_lbl"));
                     tv_deadline_value.setText(
                             ToolBox_Inf.millisecondsToString(
@@ -451,6 +474,7 @@ public class Act027_Opc extends BaseFragment {
                         );
 
                 if (tranckingAuxList != null && tranckingAuxList.size() > 0) {
+                    ll_tracking.setVisibility(View.VISIBLE);
                     tv_tracking_label.setText(hmAux_Trans.get("tracking_num_lbl"));
                     tv_tracking_value.setText(formatTrackingList(tranckingAuxList));
                 } else {
@@ -467,6 +491,9 @@ public class Act027_Opc extends BaseFragment {
                 tv_serial_value.setText(mSm_so.getSerial_id());
                 //LUCHE - 12/08/2019
                 setSerialBrandModelColor();
+                //LUCHE - 08/07/2021
+                setSerialAddlInfoIfAny();
+                setBillingAddlInfoIfAny();
                 //
                 if (mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE) ||
                         mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT) ||
@@ -492,48 +519,9 @@ public class Act027_Opc extends BaseFragment {
                     v_service_edtion.setVisibility(View.GONE);
                 }
                 //
-//                // Hugo Visibilidade
-//                if( !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_DONE) &&
-//                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_CLIENT) &&
-//                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_CANCELLED) &&
-//                    !mSm_so.getStatus().equalsIgnoreCase(Constant.SYS_STATUS_WAITING_SYNC)
-//                ){
-//                    ll_product.setVisibility(View.VISIBLE);
-//                }else{
-//                    ll_product.setVisibility(View.GONE);
-//                }
-                //
                 ll_product.setVisibility(View.VISIBLE);
                 //
                 tv_status_value.setTextColor(getActivity().getResources().getColor(ToolBox_Inf.getStatusColor(mSm_so.getStatus())));
-                /*switch (mSm_so.getStatus()) {
-                    case Constant.SYS_STATUS_PENDING:
-                        tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_light_blue_9));
-                        break;
-                    case Constant.SYS_STATUS_PROCESS:
-                        tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_yellow_2));
-                        break;
-                    case Constant.SYS_STATUS_DONE:
-                        tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_green_2));
-                        break;
-                    case Constant.SYS_STATUS_CANCELLED:
-                        tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_gray_4));
-                        break;
-                    case Constant.SYS_STATUS_STOP:
-                        tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_black));
-                        break;
-                    case Constant.SYS_STATUS_WAITING_BUDGET:
-                    case Constant.SYS_STATUS_WAITING_QUALITY:
-                    case Constant.SYS_STATUS_WAITING_CLIENT:
-                        tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_brown));
-                        break;
-                    case Constant.SYS_STATUS_EDIT:
-                        tv_status_value.setTextColor(getActivity().getResources().getColor(R.color.namoa_color_pink_1));
-                        break;
-                    default:
-                        break;
-
-                }*/
 
                 tv_product_title.setText(hmAux_Trans.get("product_ll_lbl"));
                 tv_approval_title.setText(hmAux_Trans.get("approval_ll_lbl"));
@@ -541,10 +529,122 @@ public class Act027_Opc extends BaseFragment {
                 tv_serial_title.setText(hmAux_Trans.get("serial_ll_lbl"));
                 tv_header_title.setText(hmAux_Trans.get("header_ll_lbl"));
                 tv_service_edition_title.setText(hmAux_Trans.get("service_edition_ll_lbl"));
+                tv_serial_add_infos_label.setText(hmAux_Trans.get("serial_add_infos_lbl"));
+                tv_billing_add_infos_label.setText(hmAux_Trans.get("billing_add_infos_lbl"));
 
                 changeTabColor();
             }
         }
+    }
+
+    /**
+     * LUCHE - 08/07/2021
+     * <P></P>
+     * Metodo que valida a visibilidade das infos de serial e inseri a info ja formatada na view.
+     */
+    private void setSerialAddlInfoIfAny() {
+        if(hasAnySerialAddInfo()){
+            ll_serial_add_infos.setVisibility(View.VISIBLE);
+            tv_serial_add_infos_value.setText(getFormattedSerialAddInfo());
+        }else{
+            ll_serial_add_infos.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * LUCHE - 08/07/2021
+     * <P></P>
+     * Metodo que valida a se alguma das infos foi preenchida
+     * @return
+     */
+    private boolean hasAnySerialAddInfo() {
+        return mSm_so != null
+               && ( (mSm_so.getSerial_add_inf1() != null && !mSm_so.getSerial_add_inf1().isEmpty())
+                   || (mSm_so.getSerial_add_inf2() != null && !mSm_so.getSerial_add_inf2().isEmpty())
+                   || (mSm_so.getSerial_add_inf3() != null && !mSm_so.getSerial_add_inf3().isEmpty())
+                  )
+            ;
+    }
+
+    /**
+     * LUCHE - 08/07/2021
+     * <P></P>
+     * Metodo que formata o texto a ser exibido
+     * @return
+     */
+    private String getFormattedSerialAddInfo() {
+        String serialAddInfo = "";
+        String bullet = " º " ;
+        String linebreaker = "\n";
+        if(mSm_so.getSerial_add_inf1() != null && !mSm_so.getSerial_add_inf1().isEmpty()){
+            serialAddInfo+= bullet + mSm_so.getSerial_add_inf1() + linebreaker;
+        }
+        if(mSm_so.getSerial_add_inf2() != null && !mSm_so.getSerial_add_inf2().isEmpty()){
+            serialAddInfo+= bullet + mSm_so.getSerial_add_inf2() + linebreaker;
+        }
+        if(mSm_so.getSerial_add_inf3() != null && !mSm_so.getSerial_add_inf3().isEmpty()){
+            serialAddInfo+= bullet + mSm_so.getSerial_add_inf3() + linebreaker;
+        }
+        //Se string alterada, remove o ultimo \n se não , devolve a string original.
+        // Em tese, se esse metodo foi chamado, deveria haver algo aqui....
+        return  serialAddInfo.isEmpty()
+                ? serialAddInfo
+                : serialAddInfo.substring(0,serialAddInfo.length() - linebreaker.length());
+
+    }
+
+    /**
+     * LUCHE - 08/07/2021
+     * <P></P>
+     * Metodo que valida a visibilidade das infos de serial e inseri a info ja formatada na view.
+     */
+    private void setBillingAddlInfoIfAny() {
+        if(hasAnyBillingAddInfo()){
+            ll_billing_add_infos.setVisibility(View.VISIBLE);
+            tv_billing_add_infos_value.setText(getFormattedBillingAddInfo());
+        }else{
+            ll_billing_add_infos.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * LUCHE - 08/07/2021
+     * <P></P>
+     * Metodo que valida a se alguma das infos foi preenchida
+     * @return
+     */
+    private boolean hasAnyBillingAddInfo() {
+        return mSm_so != null
+            && ( (mSm_so.getBilling_add_inf1() != null && !mSm_so.getBilling_add_inf1().isEmpty())
+                 || (mSm_so.getBilling_add_inf2() != null && !mSm_so.getBilling_add_inf2().isEmpty())
+                 || (mSm_so.getBilling_add_inf3() != null && !mSm_so.getBilling_add_inf3().isEmpty())
+               );
+    }
+
+    /**
+     * LUCHE - 08/07/2021
+     * <P></P>
+     * Metodo que formata o texto a ser exibido
+     * @return
+     */
+    private String getFormattedBillingAddInfo() {
+        String serialbilling = "";
+        String bullet = " º " ;
+        String linebreaker = "\n";
+        if(mSm_so.getBilling_add_inf1() != null && !mSm_so.getBilling_add_inf1().isEmpty()){
+            serialbilling+= bullet +mSm_so.getBilling_add_inf1() + linebreaker;
+        }
+        if(mSm_so.getBilling_add_inf2() != null && !mSm_so.getBilling_add_inf2().isEmpty()){
+            serialbilling+= bullet +mSm_so.getBilling_add_inf2() + linebreaker;
+        }
+        if(mSm_so.getBilling_add_inf3() != null && !mSm_so.getBilling_add_inf3().isEmpty()){
+            serialbilling+= bullet +mSm_so.getBilling_add_inf3() + linebreaker;
+        }
+        //Se string alterada, remove o ultimo \n se não , devolve a string original.
+        // Em tese, se esse metodo foi chamado, deveria haver algo aqui....
+        return  serialbilling.isEmpty()
+            ? serialbilling
+            : serialbilling.substring(0,serialbilling.length() - linebreaker.length());
     }
 
     /**

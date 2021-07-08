@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +16,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.ConstantBase;
@@ -89,6 +90,9 @@ public class Act027_Services extends BaseFragment {
     private TextView tv_header_add_info_1;
     private TextView tv_header_add_info_2;
     private TextView tv_header_add_info_3;
+    private TextView tv_header_add_info_4;
+    private TextView tv_header_add_info_5;
+    private TextView tv_header_add_info_6;
     private View v_divider;
     private ImageView iv_editable_serial;
     private View listHeader;
@@ -204,6 +208,9 @@ public class Act027_Services extends BaseFragment {
         tv_header_add_info_1 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_1);
         tv_header_add_info_2 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_2);
         tv_header_add_info_3 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_3);
+        tv_header_add_info_4 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_4);
+        tv_header_add_info_5 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_5);
+        tv_header_add_info_6 = cvlistHeaderProductSerial.findViewById(R.id.act027_tv_header_add_info_6);
         v_divider = cvlistHeaderProductSerial.findViewById(R.id.act027_v_divider);
 
         iv_product_serial_id =  listHeader.findViewById(R.id.iv_product_serial_id);
@@ -262,6 +269,9 @@ public class Act027_Services extends BaseFragment {
         handleAddInfoLayout("1", mSm_so.getAdd_inf1(), tv_header_add_info_1);
         handleAddInfoLayout("2", mSm_so.getAdd_inf2(), tv_header_add_info_2);
         handleAddInfoLayout("3", mSm_so.getAdd_inf3(), tv_header_add_info_3);
+        handleAddInfoLayout("4", mSm_so.getAdd_inf4(), tv_header_add_info_4);
+        handleAddInfoLayout("5", mSm_so.getAdd_inf5(), tv_header_add_info_5);
+        handleAddInfoLayout("6", mSm_so.getAdd_inf6(), tv_header_add_info_6);
     }
 
     private void handleAddInfoLayout(String prefix, String add_info, TextView tv_add_info) {
