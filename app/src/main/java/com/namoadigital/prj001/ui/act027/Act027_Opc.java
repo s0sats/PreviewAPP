@@ -543,9 +543,15 @@ public class Act027_Opc extends BaseFragment {
      * Metodo que valida a visibilidade das infos de serial e inseri a info ja formatada na view.
      */
     private void setSerialAddlInfoIfAny() {
-        if(hasAnySerialAddInfo()){
+        if(hasAnyAddInfo(mSm_so.getSerial_add_inf1(), mSm_so.getSerial_add_inf2(), mSm_so.getSerial_add_inf3())){
             ll_serial_add_infos.setVisibility(View.VISIBLE);
-            tv_serial_add_infos_value.setText(getFormattedSerialAddInfo());
+            tv_serial_add_infos_value.setText(
+                getFormattedAddInfo(
+                    mSm_so.getSerial_add_inf1(),
+                    mSm_so.getSerial_add_inf2(),
+                    mSm_so.getSerial_add_inf3()
+                )
+            );
         }else{
             ll_serial_add_infos.setVisibility(View.GONE);
         }
@@ -554,54 +560,18 @@ public class Act027_Opc extends BaseFragment {
     /**
      * LUCHE - 08/07/2021
      * <P></P>
-     * Metodo que valida a se alguma das infos foi preenchida
-     * @return
-     */
-    private boolean hasAnySerialAddInfo() {
-        return mSm_so != null
-               && ( (mSm_so.getSerial_add_inf1() != null && !mSm_so.getSerial_add_inf1().isEmpty())
-                   || (mSm_so.getSerial_add_inf2() != null && !mSm_so.getSerial_add_inf2().isEmpty())
-                   || (mSm_so.getSerial_add_inf3() != null && !mSm_so.getSerial_add_inf3().isEmpty())
-                  )
-            ;
-    }
-
-    /**
-     * LUCHE - 08/07/2021
-     * <P></P>
-     * Metodo que formata o texto a ser exibido
-     * @return
-     */
-    private String getFormattedSerialAddInfo() {
-        String serialAddInfo = "";
-        String bullet = " º " ;
-        String linebreaker = "\n";
-        if(mSm_so.getSerial_add_inf1() != null && !mSm_so.getSerial_add_inf1().isEmpty()){
-            serialAddInfo+= bullet + mSm_so.getSerial_add_inf1() + linebreaker;
-        }
-        if(mSm_so.getSerial_add_inf2() != null && !mSm_so.getSerial_add_inf2().isEmpty()){
-            serialAddInfo+= bullet + mSm_so.getSerial_add_inf2() + linebreaker;
-        }
-        if(mSm_so.getSerial_add_inf3() != null && !mSm_so.getSerial_add_inf3().isEmpty()){
-            serialAddInfo+= bullet + mSm_so.getSerial_add_inf3() + linebreaker;
-        }
-        //Se string alterada, remove o ultimo \n se não , devolve a string original.
-        // Em tese, se esse metodo foi chamado, deveria haver algo aqui....
-        return  serialAddInfo.isEmpty()
-                ? serialAddInfo
-                : serialAddInfo.substring(0,serialAddInfo.length() - linebreaker.length());
-
-    }
-
-    /**
-     * LUCHE - 08/07/2021
-     * <P></P>
      * Metodo que valida a visibilidade das infos de serial e inseri a info ja formatada na view.
      */
     private void setBillingAddlInfoIfAny() {
-        if(hasAnyBillingAddInfo()){
+        if(hasAnyAddInfo(mSm_so.getBilling_add_inf1(), mSm_so.getBilling_add_inf2(), mSm_so.getBilling_add_inf3())){
             ll_billing_add_infos.setVisibility(View.VISIBLE);
-            tv_billing_add_infos_value.setText(getFormattedBillingAddInfo());
+            tv_billing_add_infos_value.setText(
+                getFormattedAddInfo(
+                    mSm_so.getBilling_add_inf1(),
+                    mSm_so.getBilling_add_inf2(),
+                    mSm_so.getBilling_add_inf3()
+                )
+            );
         }else{
             ll_billing_add_infos.setVisibility(View.GONE);
         }
@@ -613,11 +583,11 @@ public class Act027_Opc extends BaseFragment {
      * Metodo que valida a se alguma das infos foi preenchida
      * @return
      */
-    private boolean hasAnyBillingAddInfo() {
+    private boolean hasAnyAddInfo(String inf1, String inf2, String inf3) {
         return mSm_so != null
-            && ( (mSm_so.getBilling_add_inf1() != null && !mSm_so.getBilling_add_inf1().isEmpty())
-                 || (mSm_so.getBilling_add_inf2() != null && !mSm_so.getBilling_add_inf2().isEmpty())
-                 || (mSm_so.getBilling_add_inf3() != null && !mSm_so.getBilling_add_inf3().isEmpty())
+            && ( (inf1 != null && !inf1.isEmpty())
+                 || (inf2 != null && !inf2.isEmpty())
+                 || (inf3 != null && !inf3.isEmpty())
                );
     }
 
@@ -627,24 +597,25 @@ public class Act027_Opc extends BaseFragment {
      * Metodo que formata o texto a ser exibido
      * @return
      */
-    private String getFormattedBillingAddInfo() {
-        String serialbilling = "";
+
+    private String getFormattedAddInfo(String inf1, String inf2, String inf3) {
+        String formattedInfo = "";
         String bullet = " º " ;
         String linebreaker = "\n";
-        if(mSm_so.getBilling_add_inf1() != null && !mSm_so.getBilling_add_inf1().isEmpty()){
-            serialbilling+= bullet +mSm_so.getBilling_add_inf1() + linebreaker;
+        if(inf1 != null && !inf1.isEmpty()){
+            formattedInfo+= bullet + inf1 + linebreaker;
         }
-        if(mSm_so.getBilling_add_inf2() != null && !mSm_so.getBilling_add_inf2().isEmpty()){
-            serialbilling+= bullet +mSm_so.getBilling_add_inf2() + linebreaker;
+        if(inf2 != null && !inf2.isEmpty()){
+            formattedInfo+= bullet + inf2 + linebreaker;
         }
-        if(mSm_so.getBilling_add_inf3() != null && !mSm_so.getBilling_add_inf3().isEmpty()){
-            serialbilling+= bullet +mSm_so.getBilling_add_inf3() + linebreaker;
+        if(inf3 != null && !inf3.isEmpty()){
+            formattedInfo+= bullet + inf3 + linebreaker;
         }
         //Se string alterada, remove o ultimo \n se não , devolve a string original.
         // Em tese, se esse metodo foi chamado, deveria haver algo aqui....
-        return  serialbilling.isEmpty()
-            ? serialbilling
-            : serialbilling.substring(0,serialbilling.length() - linebreaker.length());
+        return  formattedInfo.isEmpty()
+            ? formattedInfo
+            : formattedInfo.substring(0,formattedInfo.length() - linebreaker.length());
     }
 
     /**
