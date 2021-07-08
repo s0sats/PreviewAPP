@@ -113,13 +113,30 @@ public class SM_SO {
     private String add_inf2;
     @Expose
     private String add_inf3;
+    @Expose
+    private String add_inf4;
+    @Expose
+    private String add_inf5;
+    @Expose
+    private String add_inf6;
+    @Expose
+    private String billing_add_inf1;
+    @Expose
+    private String billing_add_inf2;
+    @Expose
+    private String billing_add_inf3;
+    @Expose
+    private String serial_add_inf1;
+    @Expose
+    private String serial_add_inf2;
+    @Expose
+    private String serial_add_inf3;
     private int approve_budget;
     private int approve_client;
     private int update_required;
     private int approval_required;
     private int sync_required;
     private String log_date;
-
     @Expose
     private String action;
     private String token;
@@ -686,6 +703,78 @@ public class SM_SO {
 
     public void setAdd_inf3(String add_inf3) {
         this.add_inf3 = add_inf3;
+    }
+
+    public String getAdd_inf4() {
+        return add_inf4;
+    }
+
+    public void setAdd_inf4(String add_inf4) {
+        this.add_inf4 = add_inf4;
+    }
+
+    public String getAdd_inf5() {
+        return add_inf5;
+    }
+
+    public void setAdd_inf5(String add_inf5) {
+        this.add_inf5 = add_inf5;
+    }
+
+    public String getAdd_inf6() {
+        return add_inf6;
+    }
+
+    public void setAdd_inf6(String add_inf6) {
+        this.add_inf6 = add_inf6;
+    }
+
+    public String getBilling_add_inf1() {
+        return billing_add_inf1;
+    }
+
+    public void setBilling_add_inf1(String billing_add_inf1) {
+        this.billing_add_inf1 = billing_add_inf1;
+    }
+
+    public String getBilling_add_inf2() {
+        return billing_add_inf2;
+    }
+
+    public void setBilling_add_inf2(String billing_add_inf2) {
+        this.billing_add_inf2 = billing_add_inf2;
+    }
+
+    public String getBilling_add_inf3() {
+        return billing_add_inf3;
+    }
+
+    public void setBilling_add_inf3(String billing_add_inf3) {
+        this.billing_add_inf3 = billing_add_inf3;
+    }
+
+    public String getSerial_add_inf1() {
+        return serial_add_inf1;
+    }
+
+    public void setSerial_add_inf1(String serial_add_inf1) {
+        this.serial_add_inf1 = serial_add_inf1;
+    }
+
+    public String getSerial_add_inf2() {
+        return serial_add_inf2;
+    }
+
+    public void setSerial_add_inf2(String serial_add_inf2) {
+        this.serial_add_inf2 = serial_add_inf2;
+    }
+
+    public String getSerial_add_inf3() {
+        return serial_add_inf3;
+    }
+
+    public void setSerial_add_inf3(String serial_add_inf3) {
+        this.serial_add_inf3 = serial_add_inf3;
     }
 
     public int getApprove_budget() {
