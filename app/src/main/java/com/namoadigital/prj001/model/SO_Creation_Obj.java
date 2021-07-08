@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import androidx.annotation.Nullable;
+
 import java.io.Serializable;
 
 /**
@@ -50,6 +52,12 @@ public class SO_Creation_Obj implements Serializable {
     private Integer pack_code;
     private String pack_service_desc_full;
     private Integer po_code;
+    @Nullable
+    private Integer site_exec_code;
+    @Nullable
+    private String site_exec_id;
+    @Nullable
+    private String site_exec_desc;
 
     public long getCustomer_code() {
         return customer_code;
@@ -337,6 +345,33 @@ public class SO_Creation_Obj implements Serializable {
 
     public void setPo_code(Integer po_code) {
         this.po_code = po_code;
+    }
+
+    @Nullable
+    public Integer getSite_exec_code() {
+        return site_exec_code;
+    }
+
+    public void setSite_exec_code(@Nullable Integer site_exec_code) {
+        this.site_exec_code = site_exec_code;
+    }
+
+    @Nullable
+    public String getSite_exec_id() {
+        return site_exec_id;
+    }
+
+    public void setSite_exec_id(@Nullable String site_exec_id) {
+        this.site_exec_id = site_exec_id;
+    }
+
+    @Nullable
+    public String getSite_exec_desc() {
+        return site_exec_desc;
+    }
+
+    public void setSite_exec_desc(@Nullable String site_exec_desc) {
+        this.site_exec_desc = site_exec_desc;
     }
 
     @Override

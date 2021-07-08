@@ -65,6 +65,15 @@ public class SO_Favorite_Item implements Serializable {
     @SerializedName("pack_service_desc_full")
     @Expose
     private String packServiceDescFull;
+    @SerializedName("site_exec_code")
+    @Expose
+    private Integer siteExecCode;
+    @SerializedName("site_exec_id")
+    @Expose
+    private String siteExecId;
+    @SerializedName("site_exec_desc")
+    @Expose
+    private String siteExecDesc;
 
     public SO_Favorite_Item(Integer customerCode, Integer profileCode, Integer favoriteCode, String favoriteDesc, String favoriteColor, String favoriteFontColor, Integer contractCode, String packDefault, String clientType, Integer clientCode, String clientId, String clientName, String clientEmail, String clientPhone) {
         this.customerCode = customerCode;
@@ -255,5 +264,29 @@ public class SO_Favorite_Item implements Serializable {
 
     public void setPackServiceDescFull(String packServiceDescFull) {
         this.packServiceDescFull = packServiceDescFull;
+    }
+
+    public Integer getSiteExecCode() {
+        return siteExecCode;
+    }
+
+    public void setSiteExecCode(Integer siteExecCode) {
+        this.siteExecCode = siteExecCode;
+    }
+
+    public String getSiteExecId() {
+        return siteExecId;
+    }
+
+    public void setSiteExecId(String siteExecId) {
+        this.siteExecId = siteExecId;
+    }
+
+    public String getSiteExecDesc() {
+        return siteExecDesc;
+    }
+
+    public void setSiteExecDesc(String siteExecDesc) {
+        this.siteExecDesc = siteExecDesc;
     }
 }

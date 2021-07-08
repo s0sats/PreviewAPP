@@ -66,7 +66,7 @@
                         android:id="@+id/act050_frag_client_id_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="ID Cliente - trad"
+                        tools:text="ID Cliente - trad"
                         android:paddingStart="4dp"
                         android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold" />
@@ -88,7 +88,7 @@
                             android:id="@+id/act050_frag_so_client_name_lbl"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Nome do Cliente - trad"
+                            tools:text="Nome do Cliente - trad"
                             android:paddingStart="4dp"
                             android:textSize="@dimen/font_size_title_md"
                             android:textStyle="bold"
@@ -99,7 +99,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="4dp"
-                            android:text="*"
+                            tools:text="*"
                             android:textStyle="bold"
                             android:textColor="@color/font_required"
                             app:layout_constraintTop_toTopOf="@+id/act050_frag_so_client_name_lbl"
@@ -129,7 +129,7 @@
                             android:id="@+id/act050_frag_so_client_email_lbl"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="E-mail - trad"
+                            tools:text="E-mail - trad"
                             android:paddingStart="4dp"
                             android:textSize="@dimen/font_size_title_md"
                             android:textStyle="bold" />
@@ -147,7 +147,7 @@
                         android:id="@+id/act050_frag_so_client_phone_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Telefone - trad"
+                        tools:text="Telefone - trad"
                         android:paddingStart="4dp"
                         android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold" />
@@ -167,7 +167,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_marginStart="@dimen/searchablespinner_border_papping_half"
-                    android:text="Deadline manual - trad"
+                    tools:text="Deadline manual - trad"
                     android:textSize="@dimen/font_size_title_md"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -242,7 +242,7 @@
                         android:id="@+id/act050_frag_so_package_default_lbl"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Package Default- trad"
+                        tools:text="Package Default- trad"
                         android:layout_marginStart="@dimen/searchablespinner_border_papping_half"
                         android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold"
@@ -254,7 +254,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="4dp"
-                        android:text="*"
+                        tools:text="*"
                         android:textColor="@color/font_required"
                         app:layout_constraintBottom_toBottomOf="@+id/act050_frag_so_package_default_lbl"
                         app:layout_constraintStart_toEndOf="@+id/act050_frag_so_package_default_lbl"
@@ -290,7 +290,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_marginStart="@dimen/searchablespinner_border_papping_half"
-                    android:text="Outras Informações - trad"
+                    tools:text="Outras Informações - trad"
                     android:textSize="@dimen/font_size_title_md"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -315,7 +315,7 @@
                     android:layout_marginStart="@dimen/searchablespinner_border_papping_half"
                     android:paddingStart="@dimen/searchablespinner_border_papping_half"
                     android:orientation="vertical"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_title_lbl">
@@ -325,7 +325,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="S.O. - trad"
+                        tools:text="S.O. - trad"
                         android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
@@ -343,7 +343,7 @@
                         android:id="@+id/act050_frag_so_desc_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="S.O. ID - trad"
+                        tools:text="S.O. ID - trad"
                         android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold" />
 
@@ -361,7 +361,7 @@
                         android:id="@+id/act050_frag_so_info1_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Info. adicional 1 - trad"
+                        tools:text="Info. adicional 1 - trad"
                         android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold" />
 
@@ -378,7 +378,7 @@
                         android:id="@+id/act050_frag_so_info2_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Info. adicional 2 - trad"
+                        tools:text="Info. adicional 2 - trad"
                         android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold" />
 
@@ -394,12 +394,77 @@
                         android:id="@+id/act050_frag_so_info3_lbl"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Info. adicional 3 - trad"
+                        tools:text="Info. adicional 3 - trad"
                         android:textSize="@dimen/font_size_title_md"
                         android:textStyle="bold" />
 
                     <EditText
                         android:id="@+id/act050_frag_so_info3_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:inputType="text"/>
+
+                    <TextView
+                        android:id="@+id/act050_frag_so_info4_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Info. adicional 4 - trad"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/act050_frag_so_info4_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:inputType="text"
+                        />
+
+                    <TextView
+                        android:id="@+id/act050_frag_so_info5_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Info. adicional 5 - trad"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/act050_frag_so_info5_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:inputType="text"/>
+
+                    <TextView
+                        android:id="@+id/act050_frag_so_info6_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Info. adicional 6 - trad"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/act050_frag_so_info6_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:inputType="text"/>
+
+                    <TextView
+                        android:id="@+id/act050_frag_so_client_so_id_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Cliente So Id - trad"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/act050_frag_so_client_so_id_val"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/namoa_light_blue"

@@ -4,11 +4,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.WindowManager;
+
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -294,7 +295,7 @@ public class Act050_Main extends Base_Activity_Frag implements
            setMSOCreationObjByFavorite(mSoFavoriteItem);
         }
         //Inicializa e seta fragmento de parametros.
-        act050_frag_parameters = Act050_Frag_Parameters.newInstance(hmAux_Trans, item.getFavoriteDesc(), item.getContractCode(), item.getPoCode(), item.getFavoriteCode());
+        act050_frag_parameters = Act050_Frag_Parameters.newInstance(hmAux_Trans, item.getFavoriteDesc(), item.getContractCode(), item.getPoCode(), item.getFavoriteCode(), item.getSiteExecCode() );
         setFrag(act050_frag_parameters, PARAMETERS_FRAGMENT);
     }
 
@@ -312,6 +313,9 @@ public class Act050_Main extends Base_Activity_Frag implements
         mSOCreationObj.setPrice_list_code(mSoFavoriteItem.getPriceListCode());
         mSOCreationObj.setPack_service_desc_full(mSoFavoriteItem.getPackServiceDescFull());
         onContractSelected(mSoFavoriteItem.getContractCode());
+        mSOCreationObj.setSite_exec_code(mSoFavoriteItem.getSiteExecCode());
+        mSOCreationObj.setSite_exec_id(mSoFavoriteItem.getSiteExecId());
+        mSOCreationObj.setSite_exec_desc(mSoFavoriteItem.getSiteExecDesc());
         isSOCreationObjectFilled = true;
     }
 
@@ -440,6 +444,23 @@ public class Act050_Main extends Base_Activity_Frag implements
     @Override
     public Integer getSelectedPO() {
         return mSOCreationObj.getPo_code();
+    }
+
+    @Override
+    public List<HMAux> getSiteExecList() {
+        //TODO IMPLEMENTAR
+        return null;
+    }
+
+    @Override
+    public void onSiteExecSelected(Integer site_exec_code) {
+        //TODO IMPLEMENTAR
+    }
+
+    @Override
+    public Integer getSelectedSiteExec() {
+        //TODO IMPLEMENTAR
+        return null;
     }
 
     //endregion

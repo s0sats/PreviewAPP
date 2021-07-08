@@ -3,8 +3,6 @@ package com.namoadigital.prj001.ui.act050;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +10,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -36,7 +37,9 @@ public class Act050_Frag_Parameters extends BaseFragment {
     public static final String FAVORITE_CODE ="FAVORITE_CODE";
     public static final String FAVORITE_CONTRACT_CODE ="FAVORITE_CONTRACT_CODE";
     public static final String FAVORITE_PO_CODE ="FAVORITE_PO_CODE";
+    public static final String FAVORITE_SITE_EXEC_CODE ="FAVORITE_SITE_EXEC_CODE";
     public static final String SELECTED_CONTRACT_CODE ="SELECTED_CONTRACT_CODE";
+    public static final String SELECTED_SITE_EXEC_CODE ="SELECTED_SITE_EXEC_CODE";
 
     private Context context;
     private HMAux hmAux_Trans;
@@ -47,6 +50,10 @@ public class Act050_Frag_Parameters extends BaseFragment {
     private Integer favorite_code;
     private List<SO_Favorite_Contract> contracts = new ArrayList<>();
     private Integer selected_contract_code = -1;
+    //LUCHE 08/07/2021
+    private Integer site_exec_code;
+    private Integer selected_site_exec_code = -1;
+    private List<HMAux> site_exec_list = new ArrayList<>();
 
     private ScrollView sv_main;
     private TextView tv_favorite_val;
@@ -73,6 +80,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
     private ImageButton btn_next;
     private OnFragParameterInteraction mFragListner;
     private Integer selected_po_code = -1;
+    private SearchableSpinner ss_site_exec;
 
     public interface OnFragParameterInteraction{
         /**
@@ -123,6 +131,22 @@ public class Act050_Frag_Parameters extends BaseFragment {
          * Interface que recupera o po selecionado caso haja volta da tela de SO
          */
         Integer getSelectedPO();
+
+        /**
+         * Interface que pega lista de sites do profile
+         */
+        List<HMAux> getSiteExecList();
+
+        /**
+         * Interface disparada na momento que o site_exec é selecionado
+         * @param site_exec_code - Codigo do site
+         */
+        void onSiteExecSelected(Integer site_exec_code);
+
+        /*
+         * Interface que recupera o site_exec selecionado caso haja volta da tela de SO
+         */
+        Integer getSelectedSiteExec();
     }
 
     public void setmFragListner(OnFragParameterInteraction mFragListner) {
@@ -131,7 +155,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
     public Act050_Frag_Parameters() {}
 
-    public static Act050_Frag_Parameters newInstance(HMAux hmAux_Trans, String favorite_desc, Integer favorite_contract_code, Integer favorite_po_code, Integer favorite_code){
+    public static Act050_Frag_Parameters newInstance(HMAux hmAux_Trans, String favorite_desc, Integer favorite_contract_code, Integer favorite_po_code, Integer favorite_code, Integer site_exec_code){
         Act050_Frag_Parameters fragment = new Act050_Frag_Parameters();
         //
         Bundle args = new Bundle();
@@ -143,6 +167,8 @@ public class Act050_Frag_Parameters extends BaseFragment {
         args.putInt(FAVORITE_CONTRACT_CODE, favorite_contract_code != null ? favorite_contract_code : -1);
         args.putInt(FAVORITE_PO_CODE, favorite_po_code != null ? favorite_po_code : -1);
         args.putInt(SELECTED_CONTRACT_CODE, -1);
+        args.putInt(FAVORITE_SITE_EXEC_CODE, site_exec_code != null ? site_exec_code : -1);
+        args.putInt(SELECTED_SITE_EXEC_CODE, -1);
         fragment.setArguments(args);
         //
         return fragment;
@@ -291,6 +317,8 @@ public class Act050_Frag_Parameters extends BaseFragment {
             this.favorite_contract_code = arguments.getInt(FAVORITE_CONTRACT_CODE) != -1 ? arguments.getInt(FAVORITE_CONTRACT_CODE) : null;
             this.favorite_po_code = arguments.getInt(FAVORITE_PO_CODE) != -1 ? arguments.getInt(FAVORITE_PO_CODE) : null;
             this.selected_contract_code = arguments.getInt(SELECTED_CONTRACT_CODE) != -1 ? arguments.getInt(SELECTED_CONTRACT_CODE) : null;
+            this.site_exec_code = arguments.getInt(FAVORITE_SITE_EXEC_CODE) != -1 ? arguments.getInt(FAVORITE_SITE_EXEC_CODE) : null;
+            this.selected_site_exec_code = arguments.getInt(SELECTED_SITE_EXEC_CODE) != -1 ? arguments.getInt(SELECTED_SITE_EXEC_CODE) : null;
         }
     }
 
@@ -334,6 +362,14 @@ public class Act050_Frag_Parameters extends BaseFragment {
         tv_info_client3_lbl = view.findViewById(R.id.act050_frag_param_tv_info_client3_lbl);
         tv_info_client3_lbl.setText(hmAux_Trans.get("info_client3_lbl"));
         tv_info_client3_val = view.findViewById(R.id.act050_frag_param_tv_info_client3_val);
+        //
+        ss_site_exec = view.findViewById(R.id.act050_frag_param_ss_site_exec);
+        ss_site_exec.setmLabel(hmAux_Trans.get("site_exec_lbl"));
+        ss_site_exec.setmShowLabel(true);
+        ss_site_exec.setmStyle(1);
+        ss_site_exec.setmTextSizeLabel(20);
+        ss_site_exec.setmCanClean(false);
+        //
         btn_back = view.findViewById(R.id.act050_frag_param_iv_back);
         btn_next = view.findViewById(R.id.act050_frag_param_iv_next);
         btn_next.setEnabled(false);
@@ -419,6 +455,8 @@ public class Act050_Frag_Parameters extends BaseFragment {
                 tv_serial_val.setText(mdProductSerial.getSerial_id());
                 tv_category_val.setText(mdProductSerial.getCategory_price_id() + " - " + mdProductSerial.getCategory_price_desc());
                 tv_segment_val.setText(mdProductSerial.getSegment_id() + " - " + mdProductSerial.getSegment_desc());
+                //
+
             }
         }
     }
@@ -532,6 +570,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
         transList.add("info_client1_lbl");
         transList.add("info_client2_lbl");
         transList.add("info_client3_lbl");
+        transList.add("site_exec_lbl");
         return transList;
     }
 
