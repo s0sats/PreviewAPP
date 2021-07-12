@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.fragment.app.FragmentManager;
 
+import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoadigital.prj001.dao.MD_ProductDao;
@@ -23,20 +25,25 @@ import com.namoadigital.prj001.service.WS_SO_Client_List;
 import com.namoadigital.prj001.service.WS_SO_Creation_Save;
 import com.namoadigital.prj001.service.WS_SO_Favorite_List;
 import com.namoadigital.prj001.sql.MD_Product_Serial_Sql_009;
+import com.namoadigital.prj001.sql.MD_Site_Sql_SS;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.ArrayList;
 
 public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
 
     private Context context;
     private Act050_Main mView;
     private HMAux hmAux_Trans;
+    private MD_SiteDao siteDao;
 
-    public Act050_Main_Presenter(Context context, Act050_Main mView, HMAux hmAux_Trans) {
+    public Act050_Main_Presenter(Context context, Act050_Main mView, HMAux hmAux_Trans, MD_SiteDao md_siteDao) {
         this.context = context;
         this.mView = mView;
         this.hmAux_Trans = hmAux_Trans;
+        this.siteDao = md_siteDao;
     }
 
     @Override
@@ -167,6 +174,89 @@ public class Act050_Main_Presenter implements Act050_Main_Contract.I_Presenter {
                     0
             );
         }
+    }
+
+    /**
+     * LUCHE - 12/07/2021
+     * <p></p>
+     * Metodo que gera lista de se site selecionaveis. Busca os sites do master data do user e adiciona
+     * na lista o site recebido no favorito, caso o usr não possua no seu master data.
+     *
+     * @param siteExecCode
+     * @param siteExecId
+     * @param siteExecDesc
+     * @return
+     */
+    @Override
+    public ArrayList<HMAux> getSiteExecList(Integer siteExecCode, String siteExecId, String siteExecDesc) {
+        ArrayList<HMAux> siteExecAuxList = (ArrayList<HMAux>) siteDao.query_HM(
+                                        new MD_Site_Sql_SS(
+                                            String.valueOf(ToolBox_Con.getPreference_Customer_Code(context))
+                                        ).toSqlQuery()
+                                    );
+        //Se existe site exec no favorito, verifica se ele existe na lista
+        if(siteExecCode != null) {
+            boolean siteExecExists = false;
+            //Se lista <> vazia, verifica se o site_exec do fav esta la
+            if(siteExecAuxList != null && siteExecAuxList.size() > 0) {
+                siteExecExists = checkIfFavoriteSiteExecExists(siteExecAuxList, siteExecCode);
+            }
+            //Se lista vazia ou site não encontrado, add na lista
+            if(!siteExecExists){
+                if(siteExecAuxList == null) new ArrayList<HMAux>();
+                //
+                siteExecAuxList.add(
+                    generateAuxSiteExecFromFavorite(
+                        siteExecCode,
+                        siteExecId,
+                        siteExecDesc
+                    )
+                );
+            }
+        }
+        //
+        return siteExecAuxList;
+    }
+
+    /**
+     * LUCHE - 12/07/2021
+     * <p></p>
+     * Gera HmAux com os dados do site exec enviado favorito.
+     * @param siteExecCode
+     * @param siteExecId
+     * @param siteExecDesc
+     * @return
+     */
+    private HMAux generateAuxSiteExecFromFavorite(Integer siteExecCode, String siteExecId, String siteExecDesc) {
+        HMAux aux = new HMAux();
+        aux.put(SearchableSpinner.CODE, String.valueOf(siteExecCode));
+        aux.put(SearchableSpinner.ID,siteExecId);
+        aux.put(SearchableSpinner.DESCRIPTION,siteExecDesc);
+        return aux;
+    }
+
+    /**
+     * LUCHE - 12/07/2021
+     * <p></p>
+     * Metodo que varre a lista buscando nela o site enviado no favorito.
+     * @param siteExecAuxList
+     * @param siteExecCode
+     * @return
+     */
+    private boolean checkIfFavoriteSiteExecExists(ArrayList<HMAux> siteExecAuxList, Integer siteExecCode) {
+        if(siteExecCode == null){
+            return false;
+        }
+        //
+        for (HMAux siteAux : siteExecAuxList) {
+            if( siteAux.hasConsistentValue(SearchableSpinner.CODE)
+                && siteAux.get(SearchableSpinner.CODE).equals(String.valueOf(siteExecCode))
+             ){
+                return true;
+            }
+        }
+        //
+        return false;
     }
 
     @Override

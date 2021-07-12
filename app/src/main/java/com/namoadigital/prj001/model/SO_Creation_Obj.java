@@ -1,7 +1,5 @@
 package com.namoadigital.prj001.model;
 
-import androidx.annotation.Nullable;
-
 import java.io.Serializable;
 
 /**
@@ -10,7 +8,8 @@ import java.io.Serializable;
  *
  * Objeto json esperado pelo server no enviao da criação da O.S
  *
- *
+ * LUCHE - 12/07/2021
+ * Add proprieades de site_exec
  */
 
 public class SO_Creation_Obj implements Serializable {
@@ -52,11 +51,8 @@ public class SO_Creation_Obj implements Serializable {
     private Integer pack_code;
     private String pack_service_desc_full;
     private Integer po_code;
-    @Nullable
-    private Integer site_exec_code;
-    @Nullable
+    private int site_exec_code;
     private String site_exec_id;
-    @Nullable
     private String site_exec_desc;
 
     public long getCustomer_code() {
@@ -347,30 +343,28 @@ public class SO_Creation_Obj implements Serializable {
         this.po_code = po_code;
     }
 
-    @Nullable
-    public Integer getSite_exec_code() {
+
+    public int getSite_exec_code() {
         return site_exec_code;
     }
 
-    public void setSite_exec_code(@Nullable Integer site_exec_code) {
+    public void setSite_exec_code(int site_exec_code) {
         this.site_exec_code = site_exec_code;
     }
 
-    @Nullable
     public String getSite_exec_id() {
         return site_exec_id;
     }
 
-    public void setSite_exec_id(@Nullable String site_exec_id) {
+    public void setSite_exec_id(String site_exec_id) {
         this.site_exec_id = site_exec_id;
     }
 
-    @Nullable
     public String getSite_exec_desc() {
         return site_exec_desc;
     }
 
-    public void setSite_exec_desc(@Nullable String site_exec_desc) {
+    public void setSite_exec_desc(String site_exec_desc) {
         this.site_exec_desc = site_exec_desc;
     }
 
@@ -410,7 +404,8 @@ public class SO_Creation_Obj implements Serializable {
                 "add_inf3 -> " +add_inf3+ "\n" +
                 "edit_user -> " +edit_user+ "\n" +
                 "po_code-> " +po_code+ "\n" +
-                "pack_code-> " +pack_code+ "\n"
+                "pack_code-> " +pack_code+ "\n"+
+                "site_exec-> " +site_exec_code+ "\n"
                 ;
     }
 }

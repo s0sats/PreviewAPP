@@ -51,9 +51,9 @@ public class Act050_Frag_Parameters extends BaseFragment {
     private List<SO_Favorite_Contract> contracts = new ArrayList<>();
     private Integer selected_contract_code = -1;
     //LUCHE 08/07/2021
-    private Integer site_exec_code;
+    private Integer favorite_site_exec_code;
     private Integer selected_site_exec_code = -1;
-    private List<HMAux> site_exec_list = new ArrayList<>();
+    private ArrayList<HMAux> site_exec_list = new ArrayList<>();
 
     private ScrollView sv_main;
     private TextView tv_favorite_val;
@@ -135,7 +135,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
         /**
          * Interface que pega lista de sites do profile
          */
-        List<HMAux> getSiteExecList();
+        ArrayList<HMAux> getSiteExecList();
 
         /**
          * Interface disparada na momento que o site_exec é selecionado
@@ -143,10 +143,17 @@ public class Act050_Frag_Parameters extends BaseFragment {
          */
         void onSiteExecSelected(Integer site_exec_code);
 
-        /*
+        /**
          * Interface que recupera o site_exec selecionado caso haja volta da tela de SO
          */
         Integer getSelectedSiteExec();
+
+        /**
+         * Interface que checa se SiteExec já foi selecionado.
+         * @return
+         */
+        boolean checkIsSiteExecSelected();
+
     }
 
     public void setmFragListner(OnFragParameterInteraction mFragListner) {
@@ -255,6 +262,26 @@ public class Act050_Frag_Parameters extends BaseFragment {
             }
         });
         //
+        ss_site_exec.setOnItemSelectedListener(new SearchableSpinner.OnItemSelectedListener() {
+            @Override
+            public void onItemPreSelected(HMAux hmAux) {
+
+            }
+
+            @Override
+            public void onItemPostSelected(HMAux hmAux) {
+                if(mFragListner != null) {
+                    if (hmAux.hasConsistentValue(SearchableSpinner.CODE)) {
+                        Integer site_exec_code = hmAux.hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(hmAux.get(SearchableSpinner.CODE)) : -1;
+                        selected_site_exec_code = site_exec_code;
+                        mFragListner.onSiteExecSelected(site_exec_code);
+                    }
+                    //
+                    reviewNextButtonEnableState();
+                }
+            }
+        });
+        //
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -267,17 +294,29 @@ public class Act050_Frag_Parameters extends BaseFragment {
         btn_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ss_contract.getmValue().hasConsistentValue(SearchableSpinner.CODE)) {
+                //LUCHE - 12/07/2021
+                if(areRequiredFieldsFilled()){
                     if (mFragListner != null) {
                         mFragListner.onContractSelected(Integer.parseInt(ss_contract.getmValue().get(SearchableSpinner.CODE)));
                         mFragListner.onPOSelected(Integer.parseInt(ss_po.getmValue().get(SearchableSpinner.CODE)));
+                        mFragListner.onSiteExecSelected(Integer.parseInt(ss_site_exec.getmValue().get(SearchableSpinner.CODE)));
                         mFragListner.onMoveToOSFragment();
                     }
-                }else{
-
                 }
             }
         });
+    }
+
+    /**
+     * LUCHE - 12/07/2021
+     * <p></p>
+     * Metodo que valida se os 3 spinners obrigatorios estão preenchidos.
+     * @return verdadeiro se todos estiverem preenchids.
+     */
+    private boolean areRequiredFieldsFilled() {
+        return  ss_contract.getmValue().hasConsistentValue(SearchableSpinner.CODE)
+                && ss_po.getmValue().hasConsistentValue(SearchableSpinner.CODE)
+                && ss_site_exec.getmValue().hasConsistentValue(SearchableSpinner.CODE);
     }
 
     private void clearPOValueAndInfo() {
@@ -317,7 +356,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
             this.favorite_contract_code = arguments.getInt(FAVORITE_CONTRACT_CODE) != -1 ? arguments.getInt(FAVORITE_CONTRACT_CODE) : null;
             this.favorite_po_code = arguments.getInt(FAVORITE_PO_CODE) != -1 ? arguments.getInt(FAVORITE_PO_CODE) : null;
             this.selected_contract_code = arguments.getInt(SELECTED_CONTRACT_CODE) != -1 ? arguments.getInt(SELECTED_CONTRACT_CODE) : null;
-            this.site_exec_code = arguments.getInt(FAVORITE_SITE_EXEC_CODE) != -1 ? arguments.getInt(FAVORITE_SITE_EXEC_CODE) : null;
+            this.favorite_site_exec_code = arguments.getInt(FAVORITE_SITE_EXEC_CODE) != -1 ? arguments.getInt(FAVORITE_SITE_EXEC_CODE) : null;
             this.selected_site_exec_code = arguments.getInt(SELECTED_SITE_EXEC_CODE) != -1 ? arguments.getInt(SELECTED_SITE_EXEC_CODE) : null;
         }
     }
@@ -449,6 +488,38 @@ public class Act050_Frag_Parameters extends BaseFragment {
                         }
                     }
                 }
+                //region SS_SITE_EXE
+                //LUCHE - 12/07/2021
+                site_exec_list = mFragListner.getSiteExecList();
+                //
+                if (site_exec_list != null && site_exec_list.size() > 0) {
+                    ss_site_exec.setmOption((ArrayList<HMAux>) site_exec_list);
+                    if(favorite_site_exec_code != null
+                        && favorite_site_exec_code > 0){
+                        ss_site_exec.setmValue(getSelectedValue(site_exec_list, favorite_site_exec_code));
+                        ss_site_exec.setmEnabled(false);
+                    }else {
+                        if (site_exec_list.size() == 1) {
+                            HMAux auxSiteExec = site_exec_list.get(0);
+                            ss_site_exec.setmValue(auxSiteExec);
+                            ss_site_exec.setmEnabled(false);
+                            //
+                            Integer site_exec_code = auxSiteExec.hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(auxSiteExec.get(SearchableSpinner.CODE)) : -1;
+                            selected_site_exec_code = site_exec_code;
+                        } else if (site_exec_list.size() > 1) {
+                            ss_site_exec.setmEnabled(true);
+                            //Se lista maior que 1, verifica se item ja estava preenchid na act050
+                            //se tiver, seta ele novamente.
+                            if (mFragListner.checkIsSiteExecSelected()) {
+                                selected_contract_code = mFragListner.getSelectedSiteExec();
+                                ss_site_exec.setmValue(getSelectedValue(site_exec_list, selected_contract_code));
+                            }
+                        }
+                    }
+                    //Valida layout independente da situação.
+                    reviewNextButtonEnableState();
+                }
+                //endregion
                 //
                 tv_favorite_val.setText(favorite_desc);
                 tv_product_val.setText(mdProductSerial.getProduct_id() + " - " + mdProductSerial.getProduct_desc());
@@ -456,7 +527,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
                 tv_category_val.setText(mdProductSerial.getCategory_price_id() + " - " + mdProductSerial.getCategory_price_desc());
                 tv_segment_val.setText(mdProductSerial.getSegment_id() + " - " + mdProductSerial.getSegment_desc());
                 //
-
             }
         }
     }
@@ -487,16 +557,25 @@ public class Act050_Frag_Parameters extends BaseFragment {
                     sv_main.fullScroll(View.FOCUS_DOWN);
                 }
             });
-            btn_next.setEnabled(true);
-
         }else{
             ll_contract_po_info.setVisibility(View.GONE);
             tv_info_erp_val.setText("");
             tv_info_client1_val.setText("");
             tv_info_client2_val.setText("");
             tv_info_client3_val.setText("");
-            btn_next.setEnabled(false);
         }
+        //
+        reviewNextButtonEnableState();
+    }
+
+    /**
+     * LUCHE - 12/07/2021
+     * <p></p>
+     * Metodo que revalida o estado de enable do btn next. Se todos spinners preenchidos, libera
+     * se não bloqueia
+     */
+    private void reviewNextButtonEnableState(){
+        btn_next.setEnabled(areRequiredFieldsFilled());
     }
 
     private ArrayList<HMAux> generateSSOption(List<SO_Favorite_Contract> contracts) {

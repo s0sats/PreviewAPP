@@ -20,6 +20,7 @@ import com.namoa_digital.namoa_library.view.BaseFragment;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.MD_Product_SerialDao;
+import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SM_SO_Client;
 import com.namoadigital.prj001.model.SO_Creation_Obj;
@@ -197,7 +198,12 @@ public class Act050_Main extends Base_Activity_Frag implements
         mPresenter = new Act050_Main_Presenter(
                 context,
                 this,
-                hmAux_Trans
+                hmAux_Trans,
+                new MD_SiteDao(
+                    context,
+                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+                    Constant.DB_VERSION_CUSTOM
+                )
         );
         //
         if (mPresenter.getProductSerial(mProductCode, mSerialCode)) {
@@ -222,6 +228,10 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     }
 
+    /**
+     * Inicializa mSOCreationObj
+     * Campos estao como -1 para evitar NPE
+     */
     private void initSoCreationObj() {
         mSOCreationObj.setCustomer_code(ToolBox_Con.getPreference_Customer_Code(context));
         mSOCreationObj.setProduct_code(mdProductSerial.getProduct_code());
@@ -237,6 +247,7 @@ public class Act050_Main extends Base_Activity_Frag implements
         mSOCreationObj.setOrigin_change(WS_SO_Save.SO_ORIGIN_CHANGE_APP);
         mSOCreationObj.setAction(Constant.SO_ACTION_EDIT);
         mSOCreationObj.setEdit_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
+        mSOCreationObj.setSite_exec_code(-1);
     }
 
     @Override
@@ -295,7 +306,14 @@ public class Act050_Main extends Base_Activity_Frag implements
            setMSOCreationObjByFavorite(mSoFavoriteItem);
         }
         //Inicializa e seta fragmento de parametros.
-        act050_frag_parameters = Act050_Frag_Parameters.newInstance(hmAux_Trans, item.getFavoriteDesc(), item.getContractCode(), item.getPoCode(), item.getFavoriteCode(), item.getSiteExecCode() );
+        act050_frag_parameters = Act050_Frag_Parameters.newInstance(
+            hmAux_Trans,
+            item.getFavoriteDesc(),
+            item.getContractCode(),
+            item.getPoCode(),
+            item.getFavoriteCode(),
+            item.getSiteExecCode()
+        );
         setFrag(act050_frag_parameters, PARAMETERS_FRAGMENT);
     }
 
@@ -313,9 +331,7 @@ public class Act050_Main extends Base_Activity_Frag implements
         mSOCreationObj.setPrice_list_code(mSoFavoriteItem.getPriceListCode());
         mSOCreationObj.setPack_service_desc_full(mSoFavoriteItem.getPackServiceDescFull());
         onContractSelected(mSoFavoriteItem.getContractCode());
-        mSOCreationObj.setSite_exec_code(mSoFavoriteItem.getSiteExecCode());
-        mSOCreationObj.setSite_exec_id(mSoFavoriteItem.getSiteExecId());
-        mSOCreationObj.setSite_exec_desc(mSoFavoriteItem.getSiteExecDesc());
+        onSiteExecSelected(mSoFavoriteItem.getSiteExecCode());
         isSOCreationObjectFilled = true;
     }
 
@@ -447,22 +463,24 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
-    public List<HMAux> getSiteExecList() {
-        //TODO IMPLEMENTAR
-        return null;
+    public ArrayList<HMAux> getSiteExecList() {
+        return mPresenter.getSiteExecList(mSoFavoriteItem.getSiteExecCode(),mSoFavoriteItem.getSiteExecId(),mSoFavoriteItem.getSiteExecDesc());
     }
 
     @Override
     public void onSiteExecSelected(Integer site_exec_code) {
-        //TODO IMPLEMENTAR
+        mSOCreationObj.setSite_exec_code(site_exec_code != null ? site_exec_code : -1);
     }
 
     @Override
     public Integer getSelectedSiteExec() {
-        //TODO IMPLEMENTAR
-        return null;
+        return mSOCreationObj.getSite_exec_code();
     }
 
+    @Override
+    public boolean checkIsSiteExecSelected() {
+        return mSOCreationObj.getSite_exec_code() > 0;
+    }
     //endregion
 
     @Override

@@ -2,11 +2,14 @@ package com.namoadigital.prj001.ui.act050;
 
 import android.content.Context;
 import android.os.Bundle;
+
 import androidx.fragment.app.FragmentManager;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.SO_Creation_Obj;
+
+import java.util.ArrayList;
 
 public interface Act050_Main_Contract {
 
@@ -16,6 +19,7 @@ public interface Act050_Main_Contract {
     interface I_Presenter{
         boolean getProductSerial(long productCode, long serialCode);
         void getFavoriteList(long productCode, long serialCode, int categoryPriceCode, int segmentCode, MD_Product_Serial mdProductSerial);
+        ArrayList<HMAux> getSiteExecList(Integer siteExecCode, String siteExecId, String siteExecDesc);
         void executeWsSoClient();
         void executeWsSoCreation(SO_Creation_Obj mSoCreation);
         void processSoCreationRet(HMAux hmAuxRet);
