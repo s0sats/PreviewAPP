@@ -4,8 +4,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +16,9 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -74,6 +75,14 @@ public class Act050_Frag_SO extends BaseFragment {
     private EditText edtSoInfo2;
     private EditText edtSoInfo3;
 
+    private EditText edtSoInfo4;
+    private EditText edtSoInfo5;
+    private EditText edtSoInfo6;
+    private EditText etBillingInfo1;
+    private EditText etBillingInfo2;
+    private EditText etBillingInfo3;
+    private EditText etClientSoId;
+    //
     private TextView tvClientIdLbl;
     private TextView tvClientNameLbl;
     private TextView tvClientEmailLbl;
@@ -86,6 +95,13 @@ public class Act050_Frag_SO extends BaseFragment {
     private TextView tvInfo1lbl;
     private TextView tvInfo2lbl;
     private TextView tvInfo3lbl;
+    private TextView tvInfo4lbl;
+    private TextView tvInfo5lbl;
+    private TextView tvInfo6lbl;
+    private TextView tvBilingInfo1lbl;
+    private TextView tvBilingInfo2lbl;
+    private TextView tvBilingInfo3lbl;
+    private TextView tvSoClientIdLbl;
 
     private ImageButton ibBack;
     private ImageButton ibNext;
@@ -228,6 +244,13 @@ public class Act050_Frag_SO extends BaseFragment {
         edtSoInfo1.setText(my_so_creation_obj.getAdd_inf1());
         edtSoInfo2.setText(my_so_creation_obj.getAdd_inf2());
         edtSoInfo3.setText(my_so_creation_obj.getAdd_inf3());
+        edtSoInfo4.setText(my_so_creation_obj.getAdd_inf4());
+        edtSoInfo5.setText(my_so_creation_obj.getAdd_inf5());
+        edtSoInfo6.setText(my_so_creation_obj.getAdd_inf6());
+        etBillingInfo1.setText(my_so_creation_obj.getBilling_add_inf1());
+        etBillingInfo2.setText(my_so_creation_obj.getBilling_add_inf2());
+        etBillingInfo3.setText(my_so_creation_obj.getBilling_add_inf3());
+        etClientSoId.setText(my_so_creation_obj.getClient_so_id());
     }
 
     private void setPackageDefaultSearchableSpinner(SO_Creation_Obj my_so_creation_obj) {
@@ -719,6 +742,13 @@ public class Act050_Frag_SO extends BaseFragment {
         my_so_creation_obj.setAdd_inf1(edtSoInfo1.getText().toString());
         my_so_creation_obj.setAdd_inf2(edtSoInfo2.getText().toString());
         my_so_creation_obj.setAdd_inf3(edtSoInfo3.getText().toString());
+        my_so_creation_obj.setAdd_inf4(edtSoInfo4.getText().toString());
+        my_so_creation_obj.setAdd_inf5(edtSoInfo5.getText().toString());
+        my_so_creation_obj.setAdd_inf6(edtSoInfo6.getText().toString());
+        my_so_creation_obj.setBilling_add_inf1(etBillingInfo1.getText().toString());
+        my_so_creation_obj.setBilling_add_inf2(etBillingInfo2.getText().toString());
+        my_so_creation_obj.setBilling_add_inf3(etBillingInfo3.getText().toString());
+        my_so_creation_obj.setClient_so_id(etClientSoId.getText().toString());
     }
 
     private void addClientInfoToRequest(SO_Creation_Obj my_so_creation_obj) {
@@ -838,6 +868,20 @@ public class Act050_Frag_SO extends BaseFragment {
         tvInfo2lbl.setText(hmAux_Trans.get("add_inf2_lbl"));
         tvInfo3lbl = view.findViewById(R.id.act050_frag_so_info3_lbl);
         tvInfo3lbl.setText(hmAux_Trans.get("add_inf3_lbl"));
+        tvInfo4lbl = view.findViewById(R.id.act050_frag_so_info4_lbl);
+        tvInfo4lbl.setText(hmAux_Trans.get("add_inf4_lbl"));
+        tvInfo5lbl = view.findViewById(R.id.act050_frag_so_info5_lbl);
+        tvInfo5lbl.setText(hmAux_Trans.get("add_inf5_lbl"));
+        tvInfo6lbl = view.findViewById(R.id.act050_frag_so_info6_lbl);
+        tvInfo6lbl.setText(hmAux_Trans.get("add_inf6_lbl"));
+        tvBilingInfo1lbl = view.findViewById(R.id.act050_frag_so_biiling_info1_lbl);
+        tvBilingInfo1lbl.setText(hmAux_Trans.get("billing_add_inf1_lbl"));
+        tvBilingInfo2lbl = view.findViewById(R.id.act050_frag_so_biiling_info2_lbl);
+        tvBilingInfo2lbl.setText(hmAux_Trans.get("billing_add_inf2_lbl"));
+        tvBilingInfo3lbl = view.findViewById(R.id.act050_frag_so_biiling_info3_lbl);
+        tvBilingInfo3lbl.setText(hmAux_Trans.get("billing_add_inf3_lbl"));
+        tvSoClientIdLbl = view.findViewById(R.id.act050_frag_so_client_so_id_lbl);
+        tvSoClientIdLbl.setText(hmAux_Trans.get("so_client_id_lbl"));
     }
 
     private void bindEditText(View view) {
@@ -850,6 +894,13 @@ public class Act050_Frag_SO extends BaseFragment {
         edtSoInfo1 = view.findViewById(R.id.act050_frag_so_info1_val);
         edtSoInfo2 = view.findViewById(R.id.act050_frag_so_info2_val);
         edtSoInfo3 = view.findViewById(R.id.act050_frag_so_info3_val);
+        edtSoInfo4 = view.findViewById(R.id.act050_frag_so_info4_val);
+        edtSoInfo5 = view.findViewById(R.id.act050_frag_so_info5_val);
+        edtSoInfo6 = view.findViewById(R.id.act050_frag_so_info6_val);
+        etBillingInfo1 = view.findViewById(R.id.act050_frag_so_biiling_info1_val);
+        etBillingInfo2 = view.findViewById(R.id.act050_frag_so_biiling_info2_val);
+        etBillingInfo3 = view.findViewById(R.id.act050_frag_so_biiling_info3_val);
+        etClientSoId = view.findViewById(R.id.act050_frag_so_client_so_id_val);
     }
 
     private void bindSearchableSpinner(View view) {
@@ -945,6 +996,14 @@ public class Act050_Frag_SO extends BaseFragment {
         transList.add("alert_invalid_email_msg");
         transList.add("msg_error_invalid_date");
         transList.add("alert_fill_package_default_field_msg");
+        //
+        transList.add("add_inf4_lbl");
+        transList.add("add_inf5_lbl");
+        transList.add("add_inf6_lbl");
+        transList.add("billing_add_inf1_lbl");
+        transList.add("billing_add_inf2_lbl");
+        transList.add("billing_add_inf3_lbl");
+        transList.add("so_client_id_lbl");
 
         return transList;
     }

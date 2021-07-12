@@ -306,7 +306,9 @@
                     android:button="@null"
                     app:layout_constraintBottom_toBottomOf="@+id/act050_frag_so_title_lbl"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/act050_frag_so_title_lbl" />
+                    app:layout_constraintTop_toTopOf="@+id/act050_frag_so_title_lbl"
+                    android:checked="true"
+                    />
 
                 <LinearLayout
                     android:id="@+id/act050_frag_so_ll"
@@ -449,6 +451,55 @@
 
                     <EditText
                         android:id="@+id/act050_frag_so_info6_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:inputType="text"/>
+
+                    <TextView
+                        android:id="@+id/act050_frag_so_biiling_info1_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Billing Info. 1 - trad"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/act050_frag_so_biiling_info1_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:inputType="text"
+                        />
+
+                    <TextView
+                        android:id="@+id/act050_frag_so_biiling_info2_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Billing Info. 2 - trad"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/act050_frag_so_biiling_info2_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:inputType="text"/>
+
+                    <TextView
+                        android:id="@+id/act050_frag_so_biiling_info3_lbl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:text="Billing Info. 3 - trad"
+                        android:textSize="@dimen/font_size_title_md"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/act050_frag_so_biiling_info3_val"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/namoa_light_blue"

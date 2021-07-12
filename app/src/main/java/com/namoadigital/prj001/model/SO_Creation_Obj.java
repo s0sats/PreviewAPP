@@ -46,6 +46,13 @@ public class SO_Creation_Obj implements Serializable {
     private String add_inf1;
     private String add_inf2;
     private String add_inf3;
+    private String add_inf4;
+    private String add_inf5;
+    private String add_inf6;
+    private String billing_add_inf1;
+    private String billing_add_inf2;
+    private String billing_add_inf3;
+    private String client_so_id;
     private int edit_user;
     private Integer price_list_code;
     private Integer pack_code;
@@ -301,6 +308,62 @@ public class SO_Creation_Obj implements Serializable {
 
     public void setAdd_inf3(String add_inf3) {
         this.add_inf3 = add_inf3;
+    }
+
+    public String getAdd_inf4() {
+        return add_inf4;
+    }
+
+    public void setAdd_inf4(String add_inf4) {
+        this.add_inf4 = add_inf4;
+    }
+
+    public String getAdd_inf5() {
+        return add_inf5;
+    }
+
+    public void setAdd_inf5(String add_inf5) {
+        this.add_inf5 = add_inf5;
+    }
+
+    public String getAdd_inf6() {
+        return add_inf6;
+    }
+
+    public void setAdd_inf6(String add_inf6) {
+        this.add_inf6 = add_inf6;
+    }
+
+    public String getBilling_add_inf1() {
+        return billing_add_inf1;
+    }
+
+    public void setBilling_add_inf1(String billing_add_inf1) {
+        this.billing_add_inf1 = billing_add_inf1;
+    }
+
+    public String getBilling_add_inf2() {
+        return billing_add_inf2;
+    }
+
+    public void setBilling_add_inf2(String billing_add_inf2) {
+        this.billing_add_inf2 = billing_add_inf2;
+    }
+
+    public String getBilling_add_inf3() {
+        return billing_add_inf3;
+    }
+
+    public void setBilling_add_inf3(String billing_add_inf3) {
+        this.billing_add_inf3 = billing_add_inf3;
+    }
+
+    public String getClient_so_id() {
+        return client_so_id;
+    }
+
+    public void setClient_so_id(String client_so_id) {
+        this.client_so_id = client_so_id;
     }
 
     public int getEdit_user() {
