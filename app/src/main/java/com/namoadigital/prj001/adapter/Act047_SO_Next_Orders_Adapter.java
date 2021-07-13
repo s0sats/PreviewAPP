@@ -92,7 +92,7 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         TextView tv_product_lbl = (TextView) convertView.findViewById(R.id.act047_cell_tv_product_lbl);
         TextView tv_product_val = (TextView) convertView.findViewById(R.id.act047_cell_tv_product_val);
         LinearLayout ll_tracking = (LinearLayout) convertView.findViewById(R.id.act047_cell_ll_tracking);
-        TextView tv_tracking_lbl = (TextView) convertView.findViewById(R.id.act047_cell_tv_tracking_lbl);
+        ImageView tv_tracking_lbl = (ImageView) convertView.findViewById(R.id.act047_cell_iv_tracking);
         TextView tv_tracking_val = (TextView) convertView.findViewById(R.id.act047_cell_tv_tracking_val);
         LinearLayout ll_brand_model_color = (LinearLayout) convertView.findViewById(R.id.act047_cell_ll_brand_model_color);
         TextView tv_brand_model_color = (TextView) convertView.findViewById(R.id.act047_cell_tv_brand_model_color_val);
@@ -150,11 +150,9 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         //
         if(item.getTracking() == null || item.getTracking().isEmpty()) {
             ll_tracking.setVisibility(View.GONE);
-            tv_tracking_lbl.setText(hmAux_Trans.get("tracking_lbl"));
             tv_tracking_val.setText("");
         }else{
             ll_tracking.setVisibility(View.VISIBLE);
-            tv_tracking_lbl.setText(hmAux_Trans.get("tracking_lbl"));
             tv_tracking_val.setText(item.getTracking());
         }
         //
