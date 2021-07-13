@@ -296,6 +296,8 @@ public class SO_Next_Orders_Obj {
      * LUCHE - 17/03/2021
      * Metodo que retorna todos os campos filtraveis e que será usado no filtro da
      * lista de proximas o.s
+     * LUCHE - 13/07/2021
+     * Add novos campos do card
      * @return
      */
     public String getAllFieldForFilter(){
@@ -310,7 +312,10 @@ public class SO_Next_Orders_Obj {
                 status_filter+ "|" +
                 deadline_filter+ "|" +
                 tracking+ "|" +
-                brand_model_color+ "|"
+                brand_model_color+ "|" +
+                segment_category_price + "|"+
+                pipeline_desc + "|"+
+                client_so_id + "|"
                     /*+
                 comments+ "|" +
                 service+ "|" +

@@ -96,6 +96,16 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         TextView tv_tracking_val = (TextView) convertView.findViewById(R.id.act047_cell_tv_tracking_val);
         LinearLayout ll_brand_model_color = (LinearLayout) convertView.findViewById(R.id.act047_cell_ll_brand_model_color);
         TextView tv_brand_model_color = (TextView) convertView.findViewById(R.id.act047_cell_tv_brand_model_color_val);
+        //LUCHE -13/07/2021
+        LinearLayout ll_segment_category = (LinearLayout) convertView.findViewById(R.id.act047_cell_ll_segment_category);
+        TextView tv_segment_category_lbl = (TextView) convertView.findViewById(R.id.act047_cell_tv_segment_category_lbl);
+        TextView tv_segment_category_val = (TextView) convertView.findViewById(R.id.act047_cell_tv_segment_category_val);
+        LinearLayout ll_pipeline = (LinearLayout) convertView.findViewById(R.id.act047_cell_ll_pipeline);
+        TextView tv_pipeline_lbl = (TextView) convertView.findViewById(R.id.act047_cell_tv_pipeline_lbl);
+        TextView tv_pipeline_val = (TextView) convertView.findViewById(R.id.act047_cell_tv_pipeline_val);
+        LinearLayout ll_client_so_id = (LinearLayout) convertView.findViewById(R.id.act047_cell_ll_client_so_id);
+        TextView tv_client_so_id_lbl = (TextView) convertView.findViewById(R.id.act047_cell_tv_client_so_id_lbl);
+        TextView tv_client_so_id_val = (TextView) convertView.findViewById(R.id.act047_cell_tv_client_so_id_val);
         //
         //Seta Valores
         tv_so_ttl.setText(hmAux_Trans.get("so_main_title"));
@@ -155,6 +165,33 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
             ll_brand_model_color.setVisibility(View.VISIBLE);
             tv_brand_model_color.setText(item.getBrand_model_color());
         }
+        //Segment
+        tv_segment_category_lbl.setText(hmAux_Trans.get("segment_category_price_lbl"));
+        if(item.getSegment_category_price() != null && !item.getSegment_category_price().isEmpty()){
+            ll_segment_category.setVisibility(View.VISIBLE);
+            tv_segment_category_val.setText(item.getSegment_category_price());
+        }else{
+            ll_segment_category.setVisibility(View.GONE);
+            tv_segment_category_val.setText("");
+        }
+        //Pipeline
+        tv_pipeline_lbl.setText(hmAux_Trans.get("pipeline_lbl"));
+        if(item.getPipeline_desc() != null && !item.getPipeline_desc().isEmpty()){
+            ll_pipeline.setVisibility(View.VISIBLE);
+            tv_pipeline_val.setText(item.getPipeline_desc());
+        }else{
+            ll_pipeline.setVisibility(View.GONE);
+            tv_pipeline_val.setText("");
+        }
+        //Client So ID
+        tv_client_so_id_lbl.setText(hmAux_Trans.get("client_so_id"));
+        if(item.getClient_so_id() != null && !item.getClient_so_id().isEmpty()){
+            ll_client_so_id.setVisibility(View.VISIBLE);
+            tv_client_so_id_val.setText(item.getClient_so_id());
+        }else{
+            ll_client_so_id.setVisibility(View.GONE);
+            tv_client_so_id_val.setText("");
+        }
         //
         return convertView;
     }
@@ -174,6 +211,10 @@ public class Act047_SO_Next_Orders_Adapter extends BaseAdapter implements Filter
         translateList.add("dialog_services_lbl");
         translateList.add("dialog_so_comment_lbl");
         translateList.add("dialog_so_details_ttl");
+        //
+        translateList.add("segment_category_price_lbl");
+        translateList.add("pipeline_lbl");
+        translateList.add("client_so_id");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,

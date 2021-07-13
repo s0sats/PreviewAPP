@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/act047_cell_01_ll_bg"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -22,7 +23,7 @@
             android:id="@+id/act047_cell_tv_so_ttl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="O.S"
+            tools:text="O.S"
             android:textSize="16sp"
             android:textStyle="bold"
             android:gravity="center_vertical"
@@ -40,7 +41,7 @@
                 android:id="@+id/act047_cell_tv_prefix_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2017.XXX"
+                tools:text="2017.XXX"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -79,7 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="left"
-            android:text="ID O.S"
+            tools:text="ID O.S"
             android:textStyle="bold" />
 
         <View
@@ -92,7 +93,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="MY-OS.XXX" />
+            tools:text="MY-OS.XXX" />
 
     </LinearLayout>
 
@@ -109,7 +110,7 @@
             android:layout_height="wrap_content"
 
             android:gravity="left"
-            android:text="Status"
+            tools:text="Status"
             android:textStyle="bold" />
 
         <View
@@ -122,7 +123,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="PENDING"
+            tools:text="PENDING"
             android:textStyle="bold"/>
 
     </LinearLayout>
@@ -140,7 +141,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="left"
-            android:text="Deadline"
+            tools:text="Deadline"
             android:textStyle="bold" />
 
         <View
@@ -153,7 +154,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="31/02/2999 23:59" />
+            tools:text="31/02/2999 23:59" />
 
     </LinearLayout>
 
@@ -171,7 +172,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="left"
-            android:text="Operation"
+            tools:text="Operation"
             android:textStyle="bold" />
 
         <View
@@ -184,7 +185,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="right"
-            android:text="01 - BMW" />
+            tools:text="01 - BMW" />
 
     </LinearLayout>
 
@@ -205,7 +206,7 @@
                 android:id="@+id/act047_cell_tv_serial_lbl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Serial"
+                tools:text="Serial"
                 android:textSize="16sp"
                 android:textStyle="bold" />
             <View
@@ -217,69 +218,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="PROMO"
+                tools:text="PROMO"
                 android:textSize="16sp"
                 android:textStyle="bold"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/act047_cell_ll_product"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/act047_cell_tv_product_lbl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="left"
-                android:text="Product"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="0dp" />
-
-            <TextView
-                android:id="@+id/act047_cell_tv_product_val"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="44 - TST" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/act047_cell_ll_tracking"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/act047_cell_tv_tracking_lbl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="left"
-                android:text="Tracking - Trad"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:id="@+id/act047_cell_tv_tracking_val"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="trk001"
-                />
 
         </LinearLayout>
 
@@ -296,9 +237,156 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="VW | Virtus | Azul"
+                tools:text="VW | Virtus | Azul"
                 android:textStyle="bold"/>
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act047_cell_ll_tracking"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act047_cell_tv_tracking_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                tools:text="Tracking - Trad "
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/act047_cell_tv_tracking_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="end"
+                tools:text="trk001"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act047_cell_ll_product"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act047_cell_tv_product_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                tools:text="Product"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp" />
+
+            <TextView
+                android:id="@+id/act047_cell_tv_product_val"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                tools:text="44 - TST" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act047_cell_ll_segment_category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act047_cell_tv_segment_category_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                tools:text="Segmento Categoria"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp" />
+
+            <TextView
+                android:id="@+id/act047_cell_tv_segment_category_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                tools:text="SEGMENTO | CATEGORIA " />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act047_cell_ll_pipeline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act047_cell_tv_pipeline_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                tools:text="Pipeline"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp" />
+
+            <TextView
+                android:id="@+id/act047_cell_tv_pipeline_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                tools:text="Cano em linha" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/act047_cell_ll_client_so_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/act047_cell_tv_client_so_id_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                tools:text="Cliente So Id"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="10dp"
+                android:layout_height="0dp" />
+
+            <TextView
+                android:id="@+id/act047_cell_tv_client_so_id_val"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                tools:text="Identificador quse unico" />
         </LinearLayout>
     </LinearLayout>
 
