@@ -25,7 +25,16 @@ public class SO_Next_Orders_Obj {
     private String last_approval_budget_user;
     private String deadline_filter;
     private String status_filter;
-
+    //LUCHE - 13/07/2021
+    private String segment_category_price;
+    private String pipeline_desc;
+    private String add_inf1;
+    private String add_inf2;
+    private String add_inf3;
+    private String add_inf4;
+    private String add_inf5;
+    private String add_inf6;
+    private String client_so_id;
 
     public String getSo_prefix() {
         return so_prefix;
@@ -209,6 +218,78 @@ public class SO_Next_Orders_Obj {
 
     public void setStatus_filter(String status_filter) {
         this.status_filter = status_filter;
+    }
+
+    public String getSegment_category_price() {
+        return segment_category_price;
+    }
+
+    public void setSegment_category_price(String segment_category_price) {
+        this.segment_category_price = segment_category_price;
+    }
+
+    public String getPipeline_desc() {
+        return pipeline_desc;
+    }
+
+    public void setPipeline_desc(String pipeline_desc) {
+        this.pipeline_desc = pipeline_desc;
+    }
+
+    public String getAdd_inf1() {
+        return add_inf1;
+    }
+
+    public void setAdd_inf1(String add_inf1) {
+        this.add_inf1 = add_inf1;
+    }
+
+    public String getAdd_inf2() {
+        return add_inf2;
+    }
+
+    public void setAdd_inf2(String add_inf2) {
+        this.add_inf2 = add_inf2;
+    }
+
+    public String getAdd_inf3() {
+        return add_inf3;
+    }
+
+    public void setAdd_inf3(String add_inf3) {
+        this.add_inf3 = add_inf3;
+    }
+
+    public String getAdd_inf4() {
+        return add_inf4;
+    }
+
+    public void setAdd_inf4(String add_inf4) {
+        this.add_inf4 = add_inf4;
+    }
+
+    public String getAdd_inf5() {
+        return add_inf5;
+    }
+
+    public void setAdd_inf5(String add_inf5) {
+        this.add_inf5 = add_inf5;
+    }
+
+    public String getAdd_inf6() {
+        return add_inf6;
+    }
+
+    public void setAdd_inf6(String add_inf6) {
+        this.add_inf6 = add_inf6;
+    }
+
+    public String getClient_so_id() {
+        return client_so_id;
+    }
+
+    public void setClient_so_id(String client_so_id) {
+        this.client_so_id = client_so_id;
     }
 
     /**

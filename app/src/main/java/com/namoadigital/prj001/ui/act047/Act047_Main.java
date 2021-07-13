@@ -6,17 +6,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -24,6 +24,7 @@ import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.adapter.Act047_SO_Next_Orders_Adapter;
+import com.namoadigital.prj001.databinding.Act047SoNextOrdersDialogBinding;
 import com.namoadigital.prj001.model.SO_Next_Orders_Obj;
 import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_SO_Next_Orders;
@@ -121,6 +122,8 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         transList.add("dialog_so_approved_by_lbl");
         //
         transList.add("filter_hint");
+        //
+        transList.add("dialog_so_add_info_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -305,118 +308,90 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
 
     private void showDetailsDialog(final SO_Next_Orders_Obj item) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context,R.style.AlertDialogTheme);
+        Act047SoNextOrdersDialogBinding binding = Act047SoNextOrdersDialogBinding.inflate(LayoutInflater.from(context));
         //
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.act047_so_next_orders_dialog,null);
-        //IniVars
-        LinearLayout ll_title =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_title);
-        TextView tv_title =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_title);
-        LinearLayout ll_so_desc =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_desc);
-        TextView tv_so_desc_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_desc_lbl);
-        TextView tv_so_desc_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_desc_val);
-        LinearLayout ll_services =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_services);
-        TextView tv_services_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_services_lbl);
-        TextView tv_services_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_services_val);
-        LinearLayout ll_so_comments =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_comment);
-        TextView tv_so_comment_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_lbl);
-        TextView tv_so_comment_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_comment_val);
-
-        LinearLayout ll_so_position =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_position);
-        LinearLayout ll_so_position_site =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_position_site);
-        TextView tv_position_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_position_lbl);
-        TextView tv_so_position_site_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_position_site_lbl);
-        TextView tv_so_position_site_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_position_site_val);
-        TextView tv_so_position_zone_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_position_zone_lbl);
-        TextView tv_so_position_zone_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_position_zone_val);
-        TextView tv_so_position_local_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_position_local_lbl);
-        TextView tv_so_position_local_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_position_local_val);
-
-        LinearLayout ll_so_created_by =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_created_by);
-        TextView tv_so_created_by_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_created_by_lbl);
-        TextView tv_so_created_by_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_created_by_val);
-
-        LinearLayout ll_so_approved_by =  view.findViewById(R.id.act047_so_next_orders_dialog_ll_so_approved_by);
-        TextView tv_so_approved_by_lbl =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_approved_by_lbl);
-        TextView tv_so_approved_by_val =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_so_approved_by_val);
-
-        final TextView tv_error =  view.findViewById(R.id.act047_so_next_orders_dialog_tv_error);
-        final MKEditTextNM mket_serial =  view.findViewById(R.id.act047_so_next_orders_dialog_mket_serial_confirm);
-        //Seta data
-        //ll_title.setVisibility(View.GONE);
-        tv_title.setText((hmAux_Trans.get("dialog_so_details_ttl")+" "+ item.getSo_prefix()+"."+item.getSo_code()));
-
+        binding.act047SoNextOrdersDialogTvTitle.setText((hmAux_Trans.get("dialog_so_details_ttl")+" "+ item.getSo_prefix()+"."+item.getSo_code()));
 
         if (item.getSo_desc()==null || item.getSo_desc().isEmpty()) {
-            ll_so_desc.setVisibility(View.GONE);
+            binding.act047SoNextOrdersDialogLlSoDesc.setVisibility(View.GONE);
         }else{
-            ll_so_desc.setVisibility(View.VISIBLE);
-            tv_so_desc_lbl.setText(hmAux_Trans.get("dialog_so_desc_lbl"));
-            tv_so_desc_val.setText(item.getSo_desc());
+            binding.act047SoNextOrdersDialogLlSoDesc.setVisibility(View.VISIBLE);
+            binding.act047SoNextOrdersDialogTvSoDescLbl.setText(hmAux_Trans.get("dialog_so_desc_lbl"));
+            binding.act047SoNextOrdersDialogTvSoDescVal.setText(item.getSo_desc());
         }
          if (item.getComments()==null || item.getComments().isEmpty()) {
-             ll_so_comments.setVisibility(View.GONE);
+             binding.act047SoNextOrdersDialogLlSoComment.setVisibility(View.GONE);
         }else{
-            ll_so_comments.setVisibility(View.VISIBLE);
-            tv_so_comment_lbl.setText(hmAux_Trans.get("dialog_so_comment_lbl"));
-            tv_so_comment_val.setText(item.getComments());
+            binding.act047SoNextOrdersDialogLlSoComment.setVisibility(View.VISIBLE);
+            binding.act047SoNextOrdersDialogTvSoCommentLbl.setText(hmAux_Trans.get("dialog_so_comment_lbl"));
+            binding.act047SoNextOrdersDialogTvSoCommentVal.setText(item.getComments());
         }
 
-        tv_services_lbl.setText(hmAux_Trans.get("dialog_services_lbl"));
-        tv_services_val.setText(item.getService());
+        binding.act047SoNextOrdersDialogTvServicesLbl.setText(hmAux_Trans.get("dialog_services_lbl"));
+        binding.act047SoNextOrdersDialogTvServicesVal.setText(item.getService());
 
-        mket_serial.setHint(hmAux_Trans.get("serial_hint"));
-        tv_error.setText(hmAux_Trans.get("serial_no_match_hint"));
+        binding.act047SoNextOrdersDialogMketSerialConfirm.setHint(hmAux_Trans.get("serial_hint"));
+        binding.act047SoNextOrdersDialogTvError.setText(hmAux_Trans.get("serial_no_match_hint"));
 
-        tv_position_lbl.setText(hmAux_Trans.get("dialog_so_serial_position_lbl"));
+        binding.act047SoNextOrdersDialogTvPositionLbl.setText(hmAux_Trans.get("dialog_so_serial_position_lbl"));
         if(item.getSerial_site_code() != null) {
-            ll_so_position.setVisibility(View.VISIBLE);
+            binding.act047SoNextOrdersDialogLlSoPosition.setVisibility(View.VISIBLE);
             if (item.getSerial_site_code().equals(ToolBox_Con.getPreference_Site_Code(context))) {
-                ll_so_position_site.setVisibility(View.GONE);
-                tv_so_position_site_val.setTextColor(getResources().getColor(R.color.font_normal));
-                tv_so_position_zone_val.setTextColor(getResources().getColor(R.color.font_normal));
-                tv_so_position_local_val.setTextColor(getResources().getColor(R.color.font_normal));
+                binding.act047SoNextOrdersDialogLlSoPositionSite.setVisibility(View.GONE);
+                binding.act047SoNextOrdersDialogTvSoPositionSiteVal.setTextColor(getResources().getColor(R.color.font_normal));
+                binding.act047SoNextOrdersDialogTvSoPositionZoneVal.setTextColor(getResources().getColor(R.color.font_normal));
+                binding.act047SoNextOrdersDialogTvSoPositionLocalVal.setTextColor(getResources().getColor(R.color.font_normal));
             } else {
-                ll_so_position_site.setVisibility(View.VISIBLE);
-                tv_so_position_site_val.setTextColor(getResources().getColor(R.color.namoa_status_error));
-                tv_so_position_zone_val.setTextColor(getResources().getColor(R.color.namoa_status_error));
-                tv_so_position_local_val.setTextColor(getResources().getColor(R.color.namoa_status_error));
+                binding.act047SoNextOrdersDialogLlSoPositionSite.setVisibility(View.VISIBLE);
+                binding.act047SoNextOrdersDialogTvSoPositionSiteVal.setTextColor(getResources().getColor(R.color.namoa_status_error));
+                binding.act047SoNextOrdersDialogTvSoPositionZoneVal.setTextColor(getResources().getColor(R.color.namoa_status_error));
+                binding.act047SoNextOrdersDialogTvSoPositionLocalVal.setTextColor(getResources().getColor(R.color.namoa_status_error));
             }
         }else{
-            ll_so_position.setVisibility(View.GONE);
-            ll_so_position_site.setVisibility(View.GONE);
+            binding.act047SoNextOrdersDialogLlSoPosition.setVisibility(View.GONE);
+            binding.act047SoNextOrdersDialogLlSoPositionSite.setVisibility(View.GONE);
         }
 
-        tv_so_position_site_lbl.setText(hmAux_Trans.get("dialog_so_site_lbl"));
-        tv_so_position_site_val.setText(item.getSerial_site_desc());
-        tv_so_position_zone_lbl.setText(hmAux_Trans.get("dialog_so_zone_lbl"));
-        tv_so_position_zone_val.setText(item.getSerial_zone_desc());
-        tv_so_position_local_lbl.setText(hmAux_Trans.get("dialog_so_local_lbl"));
-        tv_so_position_local_val.setText(item.getSerial_local_desc());
+        binding.act047SoNextOrdersDialogTvSoPositionSiteLbl.setText(hmAux_Trans.get("dialog_so_site_lbl"));
+        binding.act047SoNextOrdersDialogTvSoPositionSiteVal.setText(item.getSerial_site_desc());
+        binding.act047SoNextOrdersDialogTvSoPositionZoneLbl.setText(hmAux_Trans.get("dialog_so_zone_lbl"));
+        binding.act047SoNextOrdersDialogTvSoPositionZoneVal.setText(item.getSerial_zone_desc());
+        binding.act047SoNextOrdersDialogTvSoPositionLocalLbl.setText(hmAux_Trans.get("dialog_so_local_lbl"));
+        binding.act047SoNextOrdersDialogTvSoPositionLocalVal.setText(item.getSerial_local_desc());
 
         if (item.getLast_approval_budget_user()==null
                 || item.getLast_approval_budget_user().isEmpty()) {
-            ll_so_approved_by.setVisibility(View.GONE);
+            binding.act047SoNextOrdersDialogLlSoApprovedBy.setVisibility(View.GONE);
         }else{
-            ll_so_approved_by.setVisibility(View.VISIBLE);
-            tv_so_approved_by_lbl.setText(hmAux_Trans.get("dialog_so_approved_by_lbl"));
-            tv_so_approved_by_val.setText(item.getLast_approval_budget_user());
+            binding.act047SoNextOrdersDialogLlSoApprovedBy.setVisibility(View.VISIBLE);
+            binding.act047SoNextOrdersDialogTvSoApprovedByLbl.setText(hmAux_Trans.get("dialog_so_approved_by_lbl"));
+            binding.act047SoNextOrdersDialogTvSoApprovedByVal.setText(item.getLast_approval_budget_user());
         }
 
         if (item.getCreate_user()==null
         || item.getCreate_user().isEmpty()) {
-            ll_so_created_by.setVisibility(View.GONE);
+            binding.act047SoNextOrdersDialogLlSoCreatedBy.setVisibility(View.GONE);
         }else{
-            ll_so_created_by.setVisibility(View.VISIBLE);
-            tv_so_created_by_lbl.setText(hmAux_Trans.get("dialog_so_created_by_lbl"));
-            tv_so_created_by_val.setText(item.getCreate_user());
+            binding.act047SoNextOrdersDialogLlSoCreatedBy.setVisibility(View.VISIBLE);
+            binding.act047SoNextOrdersDialogTvSoCreatedByLbl.setText(hmAux_Trans.get("dialog_so_created_by_lbl"));
+            binding.act047SoNextOrdersDialogTvSoCreatedByVal.setText(item.getCreate_user());
+        }
+        //LUCHE - 13/07/2021 - Add infos add da o.s
+        String formatedSoAddInfo = getFormatedSoAddInfo(item);
+        if(!formatedSoAddInfo.isEmpty()){
+            binding.act047SoNextOrdersDialogLlSoAddInfo.setVisibility(View.VISIBLE);
+            binding.act047SoNextOrdersDialogTvSoAddInfoLbl.setText(hmAux_Trans.get("dialog_so_add_info_lbl"));
+            binding.act047SoNextOrdersDialogTvSoAddInfoVal.setText(formatedSoAddInfo);
+        }else{
+            binding.act047SoNextOrdersDialogLlSoAddInfo.setVisibility(View.GONE);
         }
 
         //Config TIl e Mket do seria
-        configSerialViews(tv_error,mket_serial,item);
-        hideSerialForByPassProfile(mket_serial);
+        configSerialViews(binding.act047SoNextOrdersDialogTvError,binding.act047SoNextOrdersDialogMketSerialConfirm,item);
+        hideSerialForByPassProfile(binding.act047SoNextOrdersDialogMketSerialConfirm);
         //
         builder
-                .setView(view)
+                .setView(binding.getRoot())
                 .setPositiveButton(
                     hmAux_Trans.get("sys_alert_btn_ok"),
                     null
@@ -433,16 +408,53 @@ public class Act047_Main extends Base_Activity implements Act047_Main_Contract.I
         dialog.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkDialogFlow(dialog,tv_error,mket_serial,item);
+                checkDialogFlow(dialog,binding.act047SoNextOrdersDialogTvError,binding.act047SoNextOrdersDialogMketSerialConfirm,item);
             }
         });
         //Listener para remover o mket_serial da lista de componentes
         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                controls_sta.remove(mket_serial);
+                controls_sta.remove(binding.act047SoNextOrdersDialogMketSerialConfirm);
             }
         });
+    }
+
+    /**
+     * LUCHE - 13/07/2021
+     * <p></p>
+     * Metodo que formata a exibição das 6 infos add da o.s
+     * A exibição deve seguir, caso exista:
+     *  idx : Valor \n
+     * @param ordersObj
+     * @return
+     */
+    private String getFormatedSoAddInfo(SO_Next_Orders_Obj ordersObj) {
+        String finalAddInfo = "";
+        //
+        finalAddInfo += getIdxAddInfoWithExists("1",ordersObj.getAdd_inf1());
+        finalAddInfo += getIdxAddInfoWithExists("2",ordersObj.getAdd_inf2());
+        finalAddInfo += getIdxAddInfoWithExists("3",ordersObj.getAdd_inf3());
+        finalAddInfo += getIdxAddInfoWithExists("4",ordersObj.getAdd_inf4());
+        finalAddInfo += getIdxAddInfoWithExists("5",ordersObj.getAdd_inf5());
+        finalAddInfo += getIdxAddInfoWithExists("6",ordersObj.getAdd_inf6());
+        //
+        return !finalAddInfo.isEmpty() ? finalAddInfo.substring(0,finalAddInfo.length() -1) : finalAddInfo ;
+    }
+
+    /**
+     * LUCHE - 13/07/2021
+     * <p></p>
+     * Metodo que avalia concatena o idx a info caso exista.
+     * @param idx
+     * @param addInfo
+     * @return
+     */
+    private String getIdxAddInfoWithExists(String idx, String addInfo) {
+        if(addInfo != null && !addInfo.isEmpty()){
+            return idx + ": " + addInfo.trim()+"\n";
+        }
+        return "";
     }
 
     private void hideSerialForByPassProfile(MKEditTextNM mket_serial) {

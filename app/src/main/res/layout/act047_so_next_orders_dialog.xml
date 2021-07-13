@@ -247,6 +247,32 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/act047_so_next_orders_dialog_ll_so_add_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/act047_so_next_orders_dialog_tv_so_add_info_lbl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center_vertical"
+                        android:textSize="@dimen/font_size_title"
+                        android:textStyle="bold"
+                        tools:text="AddInfos - Trad" />
+
+                    <TextView
+                        android:id="@+id/act047_so_next_orders_dialog_tv_so_add_info_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:gravity="start|center_vertical"
+                        tools:text="addInfos - Trad" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/act047_so_next_orders_dialog_ll_so_comment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
