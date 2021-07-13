@@ -247,7 +247,7 @@ public class Act050_Main extends Base_Activity_Frag implements
         mSOCreationObj.setOrigin_change(WS_SO_Save.SO_ORIGIN_CHANGE_APP);
         mSOCreationObj.setAction(Constant.SO_ACTION_EDIT);
         mSOCreationObj.setEdit_user(Integer.valueOf(ToolBox_Con.getPreference_User_Code(context)));
-        mSOCreationObj.setSite_exec_code(-1);
+        mSOCreationObj.setSite_exec(-1);
     }
 
     @Override
@@ -469,17 +469,17 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public void onSiteExecSelected(Integer site_exec_code) {
-        mSOCreationObj.setSite_exec_code(site_exec_code != null ? site_exec_code : -1);
+        mSOCreationObj.setSite_exec(site_exec_code != null ? site_exec_code : -1);
     }
 
     @Override
     public Integer getSelectedSiteExec() {
-        return mSOCreationObj.getSite_exec_code();
+        return mSOCreationObj.getSite_exec();
     }
 
     @Override
     public boolean checkIsSiteExecSelected() {
-        return mSOCreationObj.getSite_exec_code() > 0;
+        return mSOCreationObj.getSite_exec() > 0;
     }
     //endregion
 

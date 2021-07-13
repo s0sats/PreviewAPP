@@ -9,7 +9,10 @@ import java.io.Serializable;
  * Objeto json esperado pelo server no enviao da criação da O.S
  *
  * LUCHE - 12/07/2021
- * Add proprieades de site_exec
+ * Add atributo de site_exec
+ *
+ * LUCHE - 13/07/2021
+ * Modificado atributo site_exec_code para site_exec, pois o servidor recebe dessa maneira
  */
 
 public class SO_Creation_Obj implements Serializable {
@@ -58,9 +61,7 @@ public class SO_Creation_Obj implements Serializable {
     private Integer pack_code;
     private String pack_service_desc_full;
     private Integer po_code;
-    private int site_exec_code;
-    private String site_exec_id;
-    private String site_exec_desc;
+    private int site_exec;
 
     public long getCustomer_code() {
         return customer_code;
@@ -407,28 +408,12 @@ public class SO_Creation_Obj implements Serializable {
     }
 
 
-    public int getSite_exec_code() {
-        return site_exec_code;
+    public int getSite_exec() {
+        return site_exec;
     }
 
-    public void setSite_exec_code(int site_exec_code) {
-        this.site_exec_code = site_exec_code;
-    }
-
-    public String getSite_exec_id() {
-        return site_exec_id;
-    }
-
-    public void setSite_exec_id(String site_exec_id) {
-        this.site_exec_id = site_exec_id;
-    }
-
-    public String getSite_exec_desc() {
-        return site_exec_desc;
-    }
-
-    public void setSite_exec_desc(String site_exec_desc) {
-        this.site_exec_desc = site_exec_desc;
+    public void setSite_exec(int site_exec) {
+        this.site_exec = site_exec;
     }
 
     @Override
@@ -468,7 +453,7 @@ public class SO_Creation_Obj implements Serializable {
                 "edit_user -> " +edit_user+ "\n" +
                 "po_code-> " +po_code+ "\n" +
                 "pack_code-> " +pack_code+ "\n"+
-                "site_exec-> " +site_exec_code+ "\n"
+                "site_exec-> " + site_exec + "\n"
                 ;
     }
 }

@@ -211,11 +211,13 @@ public class Act050_Frag_SO extends BaseFragment {
         setSOInfo(my_so_creation_obj);
         if(cbOtherInfo.isChecked()){
             llSoOtherInfo.setVisibility(View.VISIBLE);
-            sv_main.post(new Runnable() {
-                public void run() {
-                    sv_main.fullScroll(View.FOCUS_DOWN);
-                }
-            });
+            //LUCHE - 13/07/2021
+            //André solicitou que fosse removido após a inclusão dos novos campos.
+//            sv_main.post(new Runnable() {
+//                public void run() {
+//                    sv_main.fullScroll(View.FOCUS_DOWN);
+//                }
+//            });
         }else{
             llSoOtherInfo.setVisibility(View.GONE);
         }
@@ -444,11 +446,13 @@ public class Act050_Frag_SO extends BaseFragment {
                     llSoOtherInfo.setVisibility(View.GONE);
                 else {
                     llSoOtherInfo.setVisibility(View.VISIBLE);
-                    sv_main.post(new Runnable() {
-                        public void run() {
-                            sv_main.fullScroll(View.FOCUS_DOWN);
-                        }
-                    });
+                    //LUCHE - 13/07/2021
+                    //André solicitou que fosse removido após a inclusão dos novos campos.
+//                    sv_main.post(new Runnable() {
+//                        public void run() {
+//                            sv_main.fullScroll(View.FOCUS_DOWN);
+//                        }
+//                    });
                 }
             }
         });

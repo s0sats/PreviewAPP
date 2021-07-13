@@ -334,6 +334,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
         super.onPause();
         //
         getArguments().putInt(SELECTED_CONTRACT_CODE, selected_contract_code != null ? selected_contract_code : -1);
+        getArguments().putInt(SELECTED_SITE_EXEC_CODE, selected_site_exec_code != null ? selected_site_exec_code : -1);
     }
 
     @Override
