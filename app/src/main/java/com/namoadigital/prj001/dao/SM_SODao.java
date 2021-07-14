@@ -125,6 +125,21 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String ROOM_MEMBER = "room_member";
     public static final String ROOM_CODE = "room_code";
 
+    public static final String SITE_EXEC =  "site_exec";
+    public static final String SITE_EXEC_ID =  "site_exec_id";
+    public static final String SITE_EXEC_DESC =  "site_exec_desc";
+    public static final String CREATE_DATE =  "create_date";
+    public static final String CREATE_USER =  "create_user";
+    public static final String CREATE_USER_NICK =  "create_user_nick";
+    public static final String LOG_USER =  "log_user";
+    public static final String LOG_USER_NICK =  "log_user_nick";
+    public static final String LAST_APPROVAL_BUDGET_DATE =  "last_approval_budget_date";
+    public static final String LAST_APPROVAL_BUDGET_USER =  "last_approval_budget_user";
+    public static final String LAST_APPROVAL_BUDGET_USER_NICK =  "last_approval_budget_user_nick";
+    public static final String PIPELINE_CODE =  "pipeline_code";
+    public static final String PIPELINE_DESC =  "pipeline_desc";
+
+
     public static String[] columns = {CUSTOMER_CODE, SO_PREFIX, SO_CODE, SO_ID, SO_SCN, SO_DESC, PRODUCT_CODE, PRODUCT_ID,
             PRODUCT_DESC, SERIAL_CODE, SERIAL_ID, CATEGORY_PRICE_CODE, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC,
             SEGMENT_CODE, SEGMENT_ID, SEGMENT_DESC, SITE_CODE, SITE_ID, SITE_DESC, OPERATION_CODE, OPERATION_ID, OPERATION_DESC,
@@ -853,7 +868,47 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             }else{
                 so.setRoom_code(cursor.getString(cursor.getColumnIndex(ROOM_CODE)));
             }
+            //LUCHE - 13/07/2021
+            so.setSite_exec(cursor.getInt(cursor.getColumnIndex(SITE_EXEC)));
+            so.setSite_exec_id(cursor.getString(cursor.getColumnIndex(SITE_EXEC_ID)));
+            so.setSite_exec_desc(cursor.getString(cursor.getColumnIndex(SITE_EXEC_DESC)));
+            //
+            if(cursor.isNull(cursor.getColumnIndex(PIPELINE_CODE))) {
+                so.setPipeline_code(null);
+            }else{
+                so.setPipeline_code(cursor.getInt(cursor.getColumnIndex(PIPELINE_CODE)));
+            }
+            //
+            if(cursor.isNull(cursor.getColumnIndex(PIPELINE_DESC))) {
+                so.setPipeline_desc(null);
+            }else{
+                so.setPipeline_desc(cursor.getString(cursor.getColumnIndex(PIPELINE_DESC)));
+            }
+            so.setCreate_date(cursor.getString(cursor.getColumnIndex(CREATE_DATE)));
+            so.setCreate_user(cursor.getInt(cursor.getColumnIndex(CREATE_USER)));
+            so.setCreate_user_nick(cursor.getString(cursor.getColumnIndex(CREATE_USER_NICK)));
+            //
+            so.setLog_user(cursor.getInt(cursor.getColumnIndex(LOG_USER)));
+            so.setLog_user_nick(cursor.getString(cursor.getColumnIndex(LOG_USER_NICK)));
 
+            if(cursor.isNull(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_DATE))) {
+                so.setLast_approval_budget_date(null);
+            }else{
+                so.setLast_approval_budget_date(cursor.getString(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_DATE)));
+            }
+            //
+            if(cursor.isNull(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_USER))) {
+                so.setLast_approval_budget_user(null);
+            }else{
+                so.setLast_approval_budget_user(cursor.getInt(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_USER)));
+            }
+            //
+            if(cursor.isNull(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_USER_NICK))) {
+                so.setLast_approval_budget_user_nick(null);
+            }else{
+                so.setLast_approval_budget_user_nick(cursor.getString(cursor.getColumnIndex(LAST_APPROVAL_BUDGET_USER_NICK)));
+            }
+            //
             return so;
         }
     }
@@ -1191,6 +1246,37 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             }
             //
             contentValues.put(ROOM_CODE, sm_so.getRoom_code());
+            //LUCHE - 13/07/2021
+            if(sm_so.getSite_exec() > -1) {
+                contentValues.put(SITE_EXEC, sm_so.getSite_exec());
+            }
+            if(sm_so.getSite_exec_id() != null) {
+                contentValues.put(SITE_EXEC_ID, sm_so.getSite_exec_id());
+            }
+            if(sm_so.getSite_exec_desc()!= null) {
+                contentValues.put(SITE_EXEC_DESC, sm_so.getSite_exec_desc());
+            }
+            contentValues.put(PIPELINE_CODE, sm_so.getPipeline_code());
+            contentValues.put(PIPELINE_DESC, sm_so.getPipeline_desc());
+            if(sm_so.getCreate_user() > -1) {
+                contentValues.put(CREATE_USER, sm_so.getCreate_user());
+            }
+            if(sm_so.getCreate_user_nick() != null) {
+                contentValues.put(CREATE_USER_NICK, sm_so.getCreate_user_nick());
+            }
+            if(sm_so.getCreate_date()!= null) {
+                contentValues.put(CREATE_DATE, sm_so.getCreate_date());
+            }
+            if(sm_so.getLog_user() > -1) {
+                contentValues.put(LOG_USER, sm_so.getLog_user());
+            }
+            if(sm_so.getLog_user_nick() != null) {
+                contentValues.put(LOG_USER_NICK, sm_so.getLog_user_nick());
+            }
+            //
+            contentValues.put(LAST_APPROVAL_BUDGET_DATE, sm_so.getLast_approval_budget_date());
+            contentValues.put(LAST_APPROVAL_BUDGET_USER, sm_so.getLast_approval_budget_user());
+            contentValues.put(LAST_APPROVAL_BUDGET_USER_NICK, sm_so.getLast_approval_budget_user_nick());
             //
             return contentValues;
         }

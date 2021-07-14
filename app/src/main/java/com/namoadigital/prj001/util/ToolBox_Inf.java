@@ -7432,10 +7432,26 @@ public class ToolBox_Inf {
      * @return
      */
     public static String getFormattedGenericIdDesc(String objId, String objDesc) {
+        return getFormattedGenericIdDesc(objId,objDesc,"-");
+    }
+
+    /**
+     * LUCHE - 14/07/2021
+     * <p></p>
+     * Metodo que retorna o primeiro e segundo param concatenado pelo terceiro param,
+     * caso os 2 primeiros existam.
+     * @param objId - ID
+     * @param objDesc - Desc
+     * @param separator - Caracter separado sem espaços
+     * @return
+     */
+    public static String getFormattedGenericIdDesc(String objId, String objDesc,@Nullable String separator) {
+        separator = separator == null || separator.isEmpty() ? " " : " " + separator.trim() + " ";
+        //
         if(objId != null && !objId.equalsIgnoreCase("null") && !objId.isEmpty()
             && objDesc != null && !objDesc.equalsIgnoreCase("null") && !objDesc.isEmpty()
         ){
-            return objId +" - "+ objDesc;
+            return objId + separator + objDesc;
         }
         //
         return objId +" " + objDesc;

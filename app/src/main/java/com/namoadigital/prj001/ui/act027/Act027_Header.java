@@ -187,6 +187,58 @@ public class Act027_Header extends BaseFragment {
     //
     private Handler attachHandler;
     private Runnable attachRunnable = null;
+    //LUCHE - 14/07/2021
+    private TextView tv_add_inf4_title;
+    private TextView tv_add_inf4;
+
+    private TextView tv_add_inf5_title;
+    private TextView tv_add_inf5;
+
+    private TextView tv_add_inf6_title;
+    private TextView tv_add_inf6;
+
+    private TextView tv_billing_add_inf1_title;
+    private TextView tv_billing_add_inf1;
+
+    private TextView tv_billing_add_inf2_title;
+    private TextView tv_billing_add_inf2;
+
+    private TextView tv_billing_add_inf3_title;
+    private TextView tv_billing_add_inf3;
+
+    private TextView tv_serial_add_inf1_title;
+    private TextView tv_serial_add_inf1;
+
+    private TextView tv_serial_add_inf2_title;
+    private TextView tv_serial_add_inf2;
+
+    private TextView tv_serial_add_inf3_title;
+    private TextView tv_serial_add_inf3;
+
+    private TextView tv_pipeline_title;
+    private TextView tv_pipeline;
+
+    private TextView tv_site_exec_desc_title;
+    private TextView tv_site_exec_desc;
+
+    private TextView tv_last_budget_approval_user_nick_title;
+    private TextView tv_last_budget_approval_user_nick;
+
+    private TextView tv_last_budget_approval_date_title;
+    private TextView tv_last_budget_approval_date;
+
+    private TextView tv_create_user_nick_title;
+    private TextView tv_create_user_nick;
+
+    private TextView tv_create_date_title;
+    private TextView tv_create_date;
+
+    private TextView tv_log_user_nick_title;
+    private TextView tv_log_user_nick;
+
+    private TextView tv_log_date_title;
+    private TextView tv_log_date;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -379,6 +431,56 @@ public class Act027_Header extends BaseFragment {
         tv_add_inf3_title = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf3_title);
         tv_add_inf3 = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf3);
         //
+        tv_add_inf4_title = view.findViewById(R.id.act027_header_content_tv_add_inf4_title);
+        tv_add_inf4 = view.findViewById(R.id.act027_header_content_tv_add_inf4);
+
+        tv_add_inf5_title = view.findViewById(R.id.act027_header_content_tv_add_inf5_title);
+        tv_add_inf5 = view.findViewById(R.id.act027_header_content_tv_add_inf5);
+
+        tv_add_inf6_title = view.findViewById(R.id.act027_header_content_tv_add_inf6_title);
+        tv_add_inf6 = view.findViewById(R.id.act027_header_content_tv_add_inf6);
+
+        tv_billing_add_inf1_title = view.findViewById(R.id.act027_header_content_tv_billing_add_inf1_title);
+        tv_billing_add_inf1 = view.findViewById(R.id.act027_header_content_tv_billing_add_inf1);
+
+        tv_billing_add_inf2_title = view.findViewById(R.id.act027_header_content_tv_billing_add_inf2_title);
+        tv_billing_add_inf2 = view.findViewById(R.id.act027_header_content_tv_billing_add_inf2);
+
+        tv_billing_add_inf3_title = view.findViewById(R.id.act027_header_content_tv_billing_add_inf3_title);
+        tv_billing_add_inf3 = view.findViewById(R.id.act027_header_content_tv_billing_add_inf3);
+
+        tv_serial_add_inf1_title = view.findViewById(R.id.act027_header_content_tv_serial_add_inf1_title);
+        tv_serial_add_inf1 = view.findViewById(R.id.act027_header_content_tv_serial_add_inf1);
+
+        tv_serial_add_inf2_title = view.findViewById(R.id.act027_header_content_tv_serial_add_inf2_title);
+        tv_serial_add_inf2 = view.findViewById(R.id.act027_header_content_tv_serial_add_inf2);
+
+        tv_serial_add_inf3_title = view.findViewById(R.id.act027_header_content_tv_serial_add_inf3_title);
+        tv_serial_add_inf3 = view.findViewById(R.id.act027_header_content_tv_serial_add_inf3);
+
+        tv_pipeline_title = view.findViewById(R.id.act027_header_content_tv_pipeline_title);
+        tv_pipeline = view.findViewById(R.id.act027_header_content_tv_pipeline);
+
+        tv_site_exec_desc_title = view.findViewById(R.id.act027_header_content_tv_site_exec_desc_title);
+        tv_site_exec_desc = view.findViewById(R.id.act027_header_content_tv_site_exec_desc);
+
+        tv_last_budget_approval_user_nick_title = view.findViewById(R.id.act027_header_content_tv_last_budget_approval_user_nick_title);
+        tv_last_budget_approval_user_nick = view.findViewById(R.id.act027_header_content_tv_last_budget_approval_user_nick);
+
+        tv_last_budget_approval_date_title = view.findViewById(R.id.act027_header_content_tv_last_budget_approval_date_title);
+        tv_last_budget_approval_date = view.findViewById(R.id.act027_header_content_tv_last_budget_approval_date);
+
+        tv_create_user_nick_title = view.findViewById(R.id.act027_header_content_tv_create_user_nick_title);
+        tv_create_user_nick = view.findViewById(R.id.act027_header_content_tv_create_user_nick);
+
+        tv_create_date_title = view.findViewById(R.id.act027_header_content_tv_create_date_title);
+        tv_create_date = view.findViewById(R.id.act027_header_content_tv_create_date);
+
+        tv_log_user_nick_title =  view.findViewById(R.id.act027_header_content_tv_log_user_nick_title);
+        tv_log_user_nick =  view.findViewById(R.id.act027_header_content_tv_log_user_nick);
+
+        tv_log_date_title = view.findViewById(R.id.act027_header_content_tv_log_date_title);
+        tv_log_date = view.findViewById(R.id.act027_header_content_tv_log_date);
         attachHandler = new Handler();
     }
 
@@ -561,18 +663,118 @@ public class Act027_Header extends BaseFragment {
                 tv_total_price.setText(valueOf(mSm_so.getTotal_price()));*/
 
                 tv_add_inf1_title.setText(hmAux_Trans.get("add_info1_ttl"));
-                tv_add_inf1.setText(mSm_so.getAdd_inf1() == null ? "" : valueOf(mSm_so.getAdd_inf1()));
+                tv_add_inf1.setText(getInfoIfExistis(mSm_so.getAdd_inf1()));
 
                 tv_add_inf2_title.setText(hmAux_Trans.get("add_info2_ttl"));
-                tv_add_inf2.setText(mSm_so.getAdd_inf2() == null ? "" : valueOf(mSm_so.getAdd_inf2()));
+                tv_add_inf2.setText(getInfoIfExistis(mSm_so.getAdd_inf2()));
 
                 tv_add_inf3_title.setText(hmAux_Trans.get("add_info3_ttl"));
-                tv_add_inf3.setText(mSm_so.getAdd_inf3() == null ? "" : valueOf(mSm_so.getAdd_inf3()));
+                tv_add_inf3.setText(getInfoIfExistis(mSm_so.getAdd_inf3()));
+
+                tv_add_inf4_title.setText(hmAux_Trans.get("add_info4_ttl"));
+                tv_add_inf4.setText(getInfoIfExistis(mSm_so.getAdd_inf4()));
+
+                tv_add_inf5_title.setText(hmAux_Trans.get("add_info5_ttl"));
+                tv_add_inf5.setText(getInfoIfExistis(mSm_so.getAdd_inf5()));
+
+                tv_add_inf6_title.setText(hmAux_Trans.get("add_info6_ttl"));
+                tv_add_inf6.setText(getInfoIfExistis(mSm_so.getAdd_inf6()));
+
+                tv_billing_add_inf1_title.setText(hmAux_Trans.get("billing_add_info1_ttl"));
+                tv_billing_add_inf1.setText(getInfoIfExistis(mSm_so.getBilling_add_inf1()));
+
+                tv_billing_add_inf2_title.setText(hmAux_Trans.get("billing_add_info2_ttl"));
+                tv_billing_add_inf2.setText(getInfoIfExistis(mSm_so.getBilling_add_inf2()));
+
+                tv_billing_add_inf3_title.setText(hmAux_Trans.get("billing_add_info3_ttl"));
+                tv_billing_add_inf3.setText(getInfoIfExistis(mSm_so.getBilling_add_inf3()));
+
+                tv_serial_add_inf1_title.setText(hmAux_Trans.get("serial_add_info1_ttl"));
+                tv_serial_add_inf1.setText(getInfoIfExistis(mSm_so.getSerial_add_inf1()));
+
+                tv_serial_add_inf2_title.setText(hmAux_Trans.get("serial_add_info2_ttl"));
+                tv_serial_add_inf2.setText(getInfoIfExistis(mSm_so.getSerial_add_inf2()));
+
+                tv_serial_add_inf3_title.setText(hmAux_Trans.get("serial_add_info3_ttl"));
+                tv_serial_add_inf3.setText(getInfoIfExistis(mSm_so.getSerial_add_inf3()));
+
+                tv_pipeline_title.setText(hmAux_Trans.get("pipeline_ttl"));
+                tv_pipeline.setText(getInfoIfExistis(mSm_so.getPipeline_desc()));
+
+                tv_site_exec_desc_title.setText(hmAux_Trans.get("site_exec_ttl"));
+                tv_site_exec_desc.setText(getInfoIfExistis(mSm_so.getSite_exec_id(),ToolBox_Inf.getFormattedGenericIdDesc(mSm_so.getSite_exec_id(),mSm_so.getSite_exec_desc())));
+
+                tv_last_budget_approval_user_nick_title.setText(hmAux_Trans.get("last_budget_approval_user_nick_ttl"));
+                tv_last_budget_approval_user_nick.setText(getInfoIfExistis(mSm_so.getLast_approval_budget_user_nick()));
+
+                tv_last_budget_approval_date_title.setText(hmAux_Trans.get("last_budget_approval_date_ttl"));
+                tv_last_budget_approval_date.setText(
+                    getInfoIfExistis(
+                        mSm_so.getLast_approval_budget_date(),
+                        ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(mSm_so.getLast_approval_budget_date() != null ? mSm_so.getLast_approval_budget_date() : "", ""),
+                            ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                        )
+                    )
+                );
+
+                tv_create_user_nick_title.setText(hmAux_Trans.get("create_user_nick_ttl"));
+                tv_create_user_nick.setText(getInfoIfExistis(mSm_so.getCreate_user_nick()));
+
+                tv_create_date_title.setText(hmAux_Trans.get("create_date_ttl"));
+                tv_create_date.setText(
+                    getInfoIfExistis(
+                        mSm_so.getCreate_date(),
+                        ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(mSm_so.getCreate_date() != null ? mSm_so.getCreate_date() : "", ""),
+                            ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                        )
+                    )
+                );
+
+                tv_log_user_nick_title.setText(hmAux_Trans.get("log_user_nick_ttl"));
+                tv_log_user_nick.setText(getInfoIfExistis(mSm_so.getLog_user_nick()));
+
+                tv_log_date_title.setText(hmAux_Trans.get("log_date_ttl"));
+                tv_log_date.setText(
+                    getInfoIfExistis(
+                        mSm_so.getLog_date(),
+                        ToolBox_Inf.millisecondsToString(
+                            ToolBox_Inf.dateToMilliseconds(mSm_so.getLog_date() != null ? mSm_so.getLog_date() : "", ""),
+                            ToolBox_Inf.nlsDateFormat(getActivity()) + " HH:mm"
+                        )
+                    )
+                );
 
             } else {
                 delegate.callAct005();
             }
         }
+    }
+
+    /**
+     * LUCHE - 14/07/2021
+     * <P></P>
+     * Segunda assinatura do metodo , que chama o metodo original passando o unico param recebido
+     * nos 2 campos.
+     * @param value
+     * @return
+     */
+    private String getInfoIfExistis(String value) {
+        return getInfoIfExistis(value,value);
+    }
+
+    /**
+     * LUCHE - 14/07/2021
+     * <p></p>
+     * Metodo que verifica se o param é null e caso não seja, devolve o segundo param.
+     * Se for null, devolve ""
+     * @param value
+     * @param usesIfExists
+     * @return
+     */
+    private String getInfoIfExistis(String value, String usesIfExists) {
+        return value == null ? "" : usesIfExists;
     }
 
     @NonNull

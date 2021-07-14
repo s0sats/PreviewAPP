@@ -504,6 +504,25 @@ public class Act027_Main extends Base_Activity_Frag_NFC_Geral implements
         transList.add("add_info2_ttl");
         transList.add("add_info3_ttl");
         transList.add("po_desc");
+        //
+        transList.add("add_info4_ttl");
+        transList.add("add_info5_ttl");
+        transList.add("add_info6_ttl");
+        transList.add("billing_add_info1_ttl");
+        transList.add("billing_add_info2_ttl");
+        transList.add("billing_add_info3_ttl");
+        transList.add("serial_add_info1_ttl");
+        transList.add("serial_add_info2_ttl");
+        transList.add("serial_add_info3_ttl");
+        transList.add("pipeline_ttl");
+        transList.add("site_exec_ttl");
+        transList.add("last_budget_approval_user_nick_ttl");
+        transList.add("last_budget_approval_date_ttl");
+        transList.add("create_user_nick_ttl");
+        transList.add("create_date_ttl");
+        transList.add("log_user_nick_ttl");
+        transList.add("log_date_ttl");
+
         //Service Fragment
         transList.add("filter_lbl");
         transList.add("select_partner_lbl");

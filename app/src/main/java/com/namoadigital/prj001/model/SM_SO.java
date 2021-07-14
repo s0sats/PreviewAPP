@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.Expose;
 
 import java.util.ArrayList;
@@ -9,7 +11,6 @@ import java.util.ArrayList;
  */
 
 public class SM_SO {
-
     @Expose
     private long customer_code; //pk
     @Expose
@@ -154,6 +155,26 @@ public class SM_SO {
     //LUCHE - 02/06/2020 - Chat integration
     private int room_member;
     private String room_code;
+    //LUCHE - 13/07/2021
+    @Expose
+    private int site_exec;
+    private String site_exec_id;
+    private String site_exec_desc;
+    private String create_date;
+    private int create_user;
+    private String create_user_nick;
+    private int log_user;
+    private String log_user_nick;
+    @Nullable
+    private String last_approval_budget_date;
+    @Nullable
+    private Integer last_approval_budget_user;
+    @Nullable
+    private String last_approval_budget_user_nick;
+    @Nullable
+    private Integer pipeline_code;
+    @Nullable
+    private String pipeline_desc;
 
     public void setPK() {
         for (int i = 0; i < so_file.size(); i++) {
@@ -919,5 +940,114 @@ public class SM_SO {
 
     public void setRoom_code(String room_code) {
         this.room_code = room_code;
+    }
+
+    public int getSite_exec() {
+        return site_exec;
+    }
+
+    public void setSite_exec(int site_exec) {
+        this.site_exec = site_exec;
+    }
+
+    public String getSite_exec_id() {
+        return site_exec_id;
+    }
+
+    public void setSite_exec_id(String site_exec_id) {
+        this.site_exec_id = site_exec_id;
+    }
+
+    public String getSite_exec_desc() {
+        return site_exec_desc;
+    }
+
+    public void setSite_exec_desc(String site_exec_desc) {
+        this.site_exec_desc = site_exec_desc;
+    }
+
+    public String getCreate_date() {
+        return create_date;
+    }
+
+    public void setCreate_date(String create_date) {
+        this.create_date = create_date;
+    }
+
+    public int getCreate_user() {
+        return create_user;
+    }
+
+    public void setCreate_user(int create_user) {
+        this.create_user = create_user;
+    }
+
+    public String getCreate_user_nick() {
+        return create_user_nick;
+    }
+
+    public void setCreate_user_nick(String create_user_nick) {
+        this.create_user_nick = create_user_nick;
+    }
+
+    public int getLog_user() {
+        return log_user;
+    }
+
+    public void setLog_user(int log_user) {
+        this.log_user = log_user;
+    }
+
+    public String getLog_user_nick() {
+        return log_user_nick;
+    }
+
+    public void setLog_user_nick(String log_user_nick) {
+        this.log_user_nick = log_user_nick;
+    }
+
+    @Nullable
+    public String getLast_approval_budget_date() {
+        return last_approval_budget_date;
+    }
+
+    public void setLast_approval_budget_date(@Nullable String last_approval_budget_date) {
+        this.last_approval_budget_date = last_approval_budget_date;
+    }
+
+    @Nullable
+    public Integer getLast_approval_budget_user() {
+        return last_approval_budget_user;
+    }
+
+    public void setLast_approval_budget_user(@Nullable Integer last_approval_budget_user) {
+        this.last_approval_budget_user = last_approval_budget_user;
+    }
+
+    @Nullable
+    public String getLast_approval_budget_user_nick() {
+        return last_approval_budget_user_nick;
+    }
+
+    public void setLast_approval_budget_user_nick(@Nullable String last_approval_budget_user_nick) {
+        this.last_approval_budget_user_nick = last_approval_budget_user_nick;
+    }
+
+    @Nullable
+    public Integer getPipeline_code() {
+        return pipeline_code;
+    }
+
+    public void setPipeline_code(@Nullable Integer pipeline_code) {
+        this.pipeline_code = pipeline_code;
+    }
+
+    @Nullable
+    public String getPipeline_desc() {
+        return pipeline_desc;
+    }
+
+    public void setPipeline_desc(@Nullable String pipeline_desc) {
+        this.pipeline_desc = pipeline_desc;
     }
 }
