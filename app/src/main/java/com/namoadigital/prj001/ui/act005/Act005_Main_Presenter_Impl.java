@@ -2191,6 +2191,15 @@ public class Act005_Main_Presenter_Impl implements Act005_Main_Presenter {
     }
 
     @Override
+    public boolean showEditUserWg() {
+        return ToolBox_Inf.profileExists(
+                    context,
+                    ConstantBaseApp.PROFILE_PRJ001_MASTER_DATA,
+                    ConstantBaseApp.PROFILE_PRJ001_MASTER_DATA_PARAM_EDIT_USER_WORKGROUP_HOME
+                );
+    }
+
+    @Override
     public boolean showEnableNfcOption() {
         EV_User ev_user = getEv_user();
         return ev_user != null && ev_user.getNfc_blocked() == 1;

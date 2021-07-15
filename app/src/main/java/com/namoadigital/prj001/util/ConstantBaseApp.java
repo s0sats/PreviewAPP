@@ -535,6 +535,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_MENU_SO_PARAM_PRODUCT_EVENT_CANCEL = "PRODUCT_EVENT_CANCEL";
     public static final String PROFILE_MENU_SO_PARAM_BYPASS_SERIAL_VERIFICATION = "BYPASS_SERIAL_VERIFICATION";
     public static final String PROFILE_MENU_SO_SHOW_ACTIONS = "SHOW_ACTIONS";
+    public static final String PROFILE_PRJ001_MASTER_DATA_PARAM_EDIT_USER_WORKGROUP_HOME = "EDIT_USER_WORKGROUP_HOME";
 
     public static final String SO_ORIGIN_CHANGE_APP = "APP";
     public static final String PROFILE_MENU_AP = "PRJ001_AP";
@@ -553,6 +554,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String PROFILE_PRJ001_SCHEDULE_CHECKLIST = "PRJ001_SCHEDULE_CHECKLIST";
     public static final String PROFILE_PRJ001_PRODUCT_SERIAL = "PRJ001_PRODUCT_SERIAL";
     public static final String PROFILE_PRJ001_OI = "PRJ001_IO";
+    public static final String PROFILE_PRJ001_MASTER_DATA = "PRJ001_MASTER_DATA";
 
     //Profiles Mket Serial
     public static final String PROFILE_MENU_PROFILE = "PROFILE";

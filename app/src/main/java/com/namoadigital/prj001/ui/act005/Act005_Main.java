@@ -598,6 +598,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
         //
         transList.add("drawer_historic_lbl");
         transList.add("drawer_loading_lbl");
+        transList.add("drawer_edit_user_workgroup_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -1006,6 +1007,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     @Override
+    public boolean showEditUserWg() {
+        return mPresenter.showEditUserWg();
+    }
+
+    @Override
     public boolean showEnableNfcOption() {
         return mPresenter.showEnableNfcOption();
     }
@@ -1018,6 +1024,11 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     @Override
     public boolean showChangeCustomerOption() {
         return mPresenter.showChangeCustomerOption();
+    }
+
+    @Override
+    public void onEditUserWgClick() {
+        ToolBox.toastMSG(context,"In Dev");
     }
 
     @Override

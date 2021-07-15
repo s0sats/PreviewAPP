@@ -100,6 +100,12 @@ public interface Act005_Main_Presenter {
     void processWS_SaveReturn(String wsRet);
 
     /**
+     * Metodo que retorna se deve ser exibido ou não a opção de editar wg do usr.*
+     * @return True se user possuir o profile EDIT_USER_WORKGROUP_HOME
+     */
+    boolean showEditUserWg();
+
+    /**
      * Metodo que retorna se deve ser exibido ou não a opção de habilitar NFC
      * @return
      */
@@ -136,4 +142,5 @@ public interface Act005_Main_Presenter {
     boolean hasMasterDataSyncRequired();
 
     boolean hasTicketSyncRequiredCloudRule();
+
 }

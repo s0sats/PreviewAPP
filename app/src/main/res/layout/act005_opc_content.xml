@@ -92,6 +92,26 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/act005_opc_tv_edit_user_wg"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/namoa_icon_bg_states"
+                android:drawablePadding="10dp"
+                android:paddingStart="19dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="10dp"
+                android:text="Edição de WG de usuario"
+                android:textSize="@dimen/font_size_font_16"
+                app:drawableStartCompat="@drawable/ic_outline_groups_24"
+                app:drawableTint="@color/namoa_dark_blue"
+                app:drawableTintMode="src_atop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/act005_opc_tv_pendencies" />
+
+            <TextView
                 android:id="@+id/act005_opc_tv_historic"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -109,7 +129,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/act005_opc_tv_pendencies" />
+                app:layout_constraintTop_toBottomOf="@id/act005_opc_tv_edit_user_wg" />
 
 
             <TextView

@@ -29,9 +29,11 @@ class Act005Opc : Fragment() {
         @Nullable
         fun getCustomerLogo(): Bitmap
         fun hasPendencies() : Boolean
+        fun showEditUserWg(): Boolean
         fun showEnableNfcOption(): Boolean
         fun showDisableNfcOption(): Boolean
         fun showChangeCustomerOption(): Boolean
+        fun onEditUserWgClick()
         fun onHistoricClick()
         fun onEnableNfcClick()
         fun onDisableNfcClick()
@@ -96,6 +98,7 @@ class Act005Opc : Fragment() {
         with(binding){
             act005OpcTvLoadingLogo.text = hmAux_Trans.get("drawer_loading_lbl")
             act005OpcTvPendencies.text = hmAux_Trans.get("lbl_unfinished_data")
+            act005OpcTvEditUserWg.text = hmAux_Trans.get("drawer_edit_user_workgroup_lbl")
             act005OpcTvHistoric.text = hmAux_Trans.get("drawer_historic_lbl")
             act005OpcTvEnableNfc.text = hmAux_Trans.get("toolbar_enable_nfc")
             act005OpcTvDisableNfc.text = hmAux_Trans.get("toolbar_cancel_nfc")
@@ -136,6 +139,13 @@ class Act005Opc : Fragment() {
                         }else{
                             View.VISIBLE
                         }
+            }
+            act005OpcTvEditUserWg.apply {
+                visibility =  if(innerDelegate == null || !innerDelegate.showEditUserWg()){
+                                    View.GONE
+                                }else{
+                                    View.VISIBLE
+                                }
             }
         }
         //
@@ -243,6 +253,9 @@ class Act005Opc : Fragment() {
                 }
                 act005OpcTvLogout.setOnClickListener {
                     checkedDelegate.onLogoutClick()
+                }
+                act005OpcTvEditUserWg.setOnClickListener {
+                    checkedDelegate.onEditUserWgClick()
                 }
             }
         }
