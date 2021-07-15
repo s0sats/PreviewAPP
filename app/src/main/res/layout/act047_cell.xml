@@ -314,7 +314,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="left"
-                tools:text="Segmento Categoria"
+                tools:text="Spare/Kateg."
                 android:textStyle="bold" />
 
             <View
@@ -325,7 +325,7 @@
                 android:id="@+id/act047_cell_tv_segment_category_val"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:gravity="right"
                 tools:text="SEGMENTO | CATEGORIA " />
         </LinearLayout>

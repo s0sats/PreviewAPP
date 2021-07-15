@@ -13,6 +13,10 @@ import java.io.Serializable;
  *
  * LUCHE - 13/07/2021
  * Modificado atributo site_exec_code para site_exec, pois o servidor recebe dessa maneira
+ *
+ * Luche - 15/07/2021
+ * Add atributos _tracking, pois o servidor não sabe qual o favorito selecionei então estas infos precisam
+ * ser enviadas
  */
 
 public class SO_Creation_Obj implements Serializable {
@@ -55,6 +59,15 @@ public class SO_Creation_Obj implements Serializable {
     private String billing_add_inf1;
     private String billing_add_inf2;
     private String billing_add_inf3;
+    private int add_inf1_tracking;
+    private int add_inf2_tracking;
+    private int add_inf3_tracking;
+    private int add_inf4_tracking;
+    private int add_inf5_tracking;
+    private int add_inf6_tracking;
+    private int billing_add_inf1_tracking;
+    private int billing_add_inf2_tracking;
+    private int billing_add_inf3_tracking;
     private String client_so_id;
     private int edit_user;
     private Integer price_list_code;
@@ -357,6 +370,78 @@ public class SO_Creation_Obj implements Serializable {
 
     public void setBilling_add_inf3(String billing_add_inf3) {
         this.billing_add_inf3 = billing_add_inf3;
+    }
+
+    public int getAdd_inf1_tracking() {
+        return add_inf1_tracking;
+    }
+
+    public void setAdd_inf1_tracking(int add_inf1_tracking) {
+        this.add_inf1_tracking = add_inf1_tracking;
+    }
+
+    public int getAdd_inf2_tracking() {
+        return add_inf2_tracking;
+    }
+
+    public void setAdd_inf2_tracking(int add_inf2_tracking) {
+        this.add_inf2_tracking = add_inf2_tracking;
+    }
+
+    public int getAdd_inf3_tracking() {
+        return add_inf3_tracking;
+    }
+
+    public void setAdd_inf3_tracking(int add_inf3_tracking) {
+        this.add_inf3_tracking = add_inf3_tracking;
+    }
+
+    public int getAdd_inf4_tracking() {
+        return add_inf4_tracking;
+    }
+
+    public void setAdd_inf4_tracking(int add_inf4_tracking) {
+        this.add_inf4_tracking = add_inf4_tracking;
+    }
+
+    public int getAdd_inf5_tracking() {
+        return add_inf5_tracking;
+    }
+
+    public void setAdd_inf5_tracking(int add_inf5_tracking) {
+        this.add_inf5_tracking = add_inf5_tracking;
+    }
+
+    public int getAdd_inf6_tracking() {
+        return add_inf6_tracking;
+    }
+
+    public void setAdd_inf6_tracking(int add_inf6_tracking) {
+        this.add_inf6_tracking = add_inf6_tracking;
+    }
+
+    public int getBilling_add_inf1_tracking() {
+        return billing_add_inf1_tracking;
+    }
+
+    public void setBilling_add_inf1_tracking(int billing_add_inf1_tracking) {
+        this.billing_add_inf1_tracking = billing_add_inf1_tracking;
+    }
+
+    public int getBilling_add_inf2_tracking() {
+        return billing_add_inf2_tracking;
+    }
+
+    public void setBilling_add_inf2_tracking(int billing_add_inf2_tracking) {
+        this.billing_add_inf2_tracking = billing_add_inf2_tracking;
+    }
+
+    public int getBilling_add_inf3_tracking() {
+        return billing_add_inf3_tracking;
+    }
+
+    public void setBilling_add_inf3_tracking(int billing_add_inf3_tracking) {
+        this.billing_add_inf3_tracking = billing_add_inf3_tracking;
     }
 
     public String getClient_so_id() {

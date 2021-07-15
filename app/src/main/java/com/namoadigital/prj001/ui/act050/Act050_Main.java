@@ -332,7 +332,17 @@ public class Act050_Main extends Base_Activity_Frag implements
         mSOCreationObj.setPack_service_desc_full(mSoFavoriteItem.getPackServiceDescFull());
         onContractSelected(mSoFavoriteItem.getContractCode());
         onSiteExecSelected(mSoFavoriteItem.getSiteExecCode());
+        mSOCreationObj.setAdd_inf1_tracking(setZeroIfIntNull(mSoFavoriteItem.getSoAddInf1Tracking()));
+        mSOCreationObj.setAdd_inf2_tracking(setZeroIfIntNull(mSoFavoriteItem.getSoAddInf2Tracking()));
+        mSOCreationObj.setAdd_inf3_tracking(setZeroIfIntNull(mSoFavoriteItem.getSoAddInf3Tracking()));
+        mSOCreationObj.setAdd_inf4_tracking(setZeroIfIntNull(mSoFavoriteItem.getSoAddInf4Tracking()));
+        mSOCreationObj.setAdd_inf5_tracking(setZeroIfIntNull(mSoFavoriteItem.getSoAddInf5Tracking()));
+        mSOCreationObj.setAdd_inf6_tracking(setZeroIfIntNull(mSoFavoriteItem.getSoAddInf6Tracking()));
         isSOCreationObjectFilled = true;
+    }
+
+    private int setZeroIfIntNull(Integer nullableInteger) {
+        return nullableInteger != null ? nullableInteger : 0;
     }
 
     @Override
@@ -431,8 +441,11 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
 
     @Override
-    public void onPOSelected(int po_code) {
+    public void onPOSelected(int po_code, HMAux mValue) {
         mSOCreationObj.setPo_code(po_code);
+        mSOCreationObj.setBilling_add_inf1_tracking(castHmAuxValueIntoInt(mValue,SO_Favorite_PO.BILLING_ADD_INF1_TRACKING));
+        mSOCreationObj.setBilling_add_inf2_tracking(castHmAuxValueIntoInt(mValue,SO_Favorite_PO.BILLING_ADD_INF2_TRACKING));
+        mSOCreationObj.setBilling_add_inf3_tracking(castHmAuxValueIntoInt(mValue,SO_Favorite_PO.BILLING_ADD_INF3_TRACKING));
     }
 
     @Override
@@ -483,6 +496,24 @@ public class Act050_Main extends Base_Activity_Frag implements
     }
     //endregion
 
+    /**
+     * Metodo que recebe o hmaux a a chave a ser transformada em int
+     * Se null, vazia ou "null", retorna 0, se não retorna a conversão pra int usando metodo
+     * que em caso de exception retorna 0
+     * @param mValue
+     * @param auxKey
+     * @return
+     */
+    private int castHmAuxValueIntoInt(HMAux mValue, String auxKey) {
+        if (mValue.hasConsistentValue(auxKey)
+            && mValue.get(auxKey) != null
+            && !mValue.get(auxKey).isEmpty()
+            && !"null".equals(mValue.get(auxKey))
+        ) {
+            return ToolBox_Inf.convertStringToInt(mValue.get(auxKey).trim());
+        }
+        return 0;
+    }
     @Override
     public void onBackPressed() {
         mPresenter.onBackPressedClicked(fm, mdProductSerial, isEmptyList);
