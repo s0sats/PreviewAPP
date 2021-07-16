@@ -74,6 +74,94 @@ public class SO_Favorite_Item implements Serializable {
     @SerializedName("site_exec_desc")
     @Expose
     private String siteExecDesc;
+    @SerializedName("mask_code")
+    @Expose
+    private Integer maskCode;
+    @SerializedName("so_id_view")
+    @Expose
+    private String soIdView;
+    @SerializedName("so_id_text")
+    @Expose
+    private String soIdText;
+    @SerializedName("so_desc_view")
+    @Expose
+    private String soDescView;
+    @SerializedName("so_desc_text")
+    @Expose
+    private String soDescText;
+    @SerializedName("so_add_inf1_view")
+    @Expose
+    private String soAddInf1View;
+    @SerializedName("so_add_inf1_text")
+    @Expose
+    private String soAddInf1Text;
+    @SerializedName("so_add_inf2_view")
+    @Expose
+    private String soAddInf2View;
+    @SerializedName("so_add_inf2_text")
+    @Expose
+    private String soAddInf2Text;
+    @SerializedName("so_add_inf3_view")
+    @Expose
+    private String soAddInf3View;
+    @SerializedName("so_add_inf3_text")
+    @Expose
+    private String soAddInf3Text;
+    @SerializedName("so_file_view")
+    @Expose
+    private String soFileView;
+    @SerializedName("so_file_text")
+    @Expose
+    private String soFileText;
+    @SerializedName("so_priority_view")
+    @Expose
+    private String soPriorityView;
+    @SerializedName("so_client_type_view")
+    @Expose
+    private String soClientTypeView;
+    @SerializedName("so_client_so_id_view")
+    @Expose
+    private String soClientSoIdView;
+    @SerializedName("so_client_so_id_text")
+    @Expose
+    private String soClientSoIdText;
+    @SerializedName("so_add_inf1_tracking")
+    @Expose
+    private Integer soAddInf1Tracking;
+    @SerializedName("so_add_inf2_tracking")
+    @Expose
+    private Integer soAddInf2Tracking;
+    @SerializedName("so_add_inf3_tracking")
+    @Expose
+    private Integer soAddInf3Tracking;
+    @SerializedName("so_add_inf4_view")
+    @Expose
+    private String soAddInf4View;
+    @SerializedName("so_add_inf4_text")
+    @Expose
+    private String soAddInf4Text;
+    @SerializedName("so_add_inf4_tracking")
+    @Expose
+    private Integer soAddInf4Tracking;
+    @SerializedName("so_add_inf5_view")
+    @Expose
+    private String soAddInf5View;
+    @SerializedName("so_add_inf5_text")
+    @Expose
+    private String soAddInf5Text;
+    @SerializedName("so_add_inf5_tracking")
+    @Expose
+    private Integer soAddInf5Tracking;
+    @SerializedName("so_add_inf6_view")
+    @Expose
+    private String soAddInf6View;
+    @SerializedName("so_add_inf6_text")
+    @Expose
+    private String soAddInf6Text;
+    @SerializedName("so_add_inf6_tracking")
+    @Expose
+    private Integer soAddInf6Tracking;
+
 
     public SO_Favorite_Item(Integer customerCode, Integer profileCode, Integer favoriteCode, String favoriteDesc, String favoriteColor, String favoriteFontColor, Integer contractCode, String packDefault, String clientType, Integer clientCode, String clientId, String clientName, String clientEmail, String clientPhone) {
         this.customerCode = customerCode;
@@ -288,5 +376,237 @@ public class SO_Favorite_Item implements Serializable {
 
     public void setSiteExecDesc(String siteExecDesc) {
         this.siteExecDesc = siteExecDesc;
+    }
+
+    public Integer getMaskCode() {
+        return maskCode;
+    }
+
+    public void setMaskCode(Integer maskCode) {
+        this.maskCode = maskCode;
+    }
+
+    public String getSoIdView() {
+        return soIdView;
+    }
+
+    public void setSoIdView(String soIdView) {
+        this.soIdView = soIdView;
+    }
+
+    public String getSoIdText() {
+        return soIdText;
+    }
+
+    public void setSoIdText(String soIdText) {
+        this.soIdText = soIdText;
+    }
+
+    public String getSoDescView() {
+        return soDescView;
+    }
+
+    public void setSoDescView(String soDescView) {
+        this.soDescView = soDescView;
+    }
+
+    public String getSoDescText() {
+        return soDescText;
+    }
+
+    public void setSoDescText(String soDescText) {
+        this.soDescText = soDescText;
+    }
+
+    public String getSoAddInf1View() {
+        return soAddInf1View;
+    }
+
+    public void setSoAddInf1View(String soAddInf1View) {
+        this.soAddInf1View = soAddInf1View;
+    }
+
+    public String getSoAddInf1Text() {
+        return soAddInf1Text;
+    }
+
+    public void setSoAddInf1Text(String soAddInf1Text) {
+        this.soAddInf1Text = soAddInf1Text;
+    }
+
+    public String getSoAddInf2View() {
+        return soAddInf2View;
+    }
+
+    public void setSoAddInf2View(String soAddInf2View) {
+        this.soAddInf2View = soAddInf2View;
+    }
+
+    public String getSoAddInf2Text() {
+        return soAddInf2Text;
+    }
+
+    public void setSoAddInf2Text(String soAddInf2Text) {
+        this.soAddInf2Text = soAddInf2Text;
+    }
+
+    public String getSoAddInf3View() {
+        return soAddInf3View;
+    }
+
+    public void setSoAddInf3View(String soAddInf3View) {
+        this.soAddInf3View = soAddInf3View;
+    }
+
+    public String getSoAddInf3Text() {
+        return soAddInf3Text;
+    }
+
+    public void setSoAddInf3Text(String soAddInf3Text) {
+        this.soAddInf3Text = soAddInf3Text;
+    }
+
+    public String getSoFileView() {
+        return soFileView;
+    }
+
+    public void setSoFileView(String soFileView) {
+        this.soFileView = soFileView;
+    }
+
+    public String getSoFileText() {
+        return soFileText;
+    }
+
+    public void setSoFileText(String soFileText) {
+        this.soFileText = soFileText;
+    }
+
+    public String getSoPriorityView() {
+        return soPriorityView;
+    }
+
+    public void setSoPriorityView(String soPriorityView) {
+        this.soPriorityView = soPriorityView;
+    }
+
+    public String getSoClientTypeView() {
+        return soClientTypeView;
+    }
+
+    public void setSoClientTypeView(String soClientTypeView) {
+        this.soClientTypeView = soClientTypeView;
+    }
+
+    public String getSoClientSoIdView() {
+        return soClientSoIdView;
+    }
+
+    public void setSoClientSoIdView(String soClientSoIdView) {
+        this.soClientSoIdView = soClientSoIdView;
+    }
+
+    public String getSoClientSoIdText() {
+        return soClientSoIdText;
+    }
+
+    public void setSoClientSoIdText(String soClientSoIdText) {
+        this.soClientSoIdText = soClientSoIdText;
+    }
+
+    public Integer getSoAddInf1Tracking() {
+        return soAddInf1Tracking;
+    }
+
+    public void setSoAddInf1Tracking(Integer soAddInf1Tracking) {
+        this.soAddInf1Tracking = soAddInf1Tracking;
+    }
+
+    public Integer getSoAddInf2Tracking() {
+        return soAddInf2Tracking;
+    }
+
+    public void setSoAddInf2Tracking(Integer soAddInf2Tracking) {
+        this.soAddInf2Tracking = soAddInf2Tracking;
+    }
+
+    public Integer getSoAddInf3Tracking() {
+        return soAddInf3Tracking;
+    }
+
+    public void setSoAddInf3Tracking(Integer soAddInf3Tracking) {
+        this.soAddInf3Tracking = soAddInf3Tracking;
+    }
+
+    public String getSoAddInf4View() {
+        return soAddInf4View;
+    }
+
+    public void setSoAddInf4View(String soAddInf4View) {
+        this.soAddInf4View = soAddInf4View;
+    }
+
+    public String getSoAddInf4Text() {
+        return soAddInf4Text;
+    }
+
+    public void setSoAddInf4Text(String soAddInf4Text) {
+        this.soAddInf4Text = soAddInf4Text;
+    }
+
+    public Integer getSoAddInf4Tracking() {
+        return soAddInf4Tracking;
+    }
+
+    public void setSoAddInf4Tracking(Integer soAddInf4Tracking) {
+        this.soAddInf4Tracking = soAddInf4Tracking;
+    }
+
+    public String getSoAddInf5View() {
+        return soAddInf5View;
+    }
+
+    public void setSoAddInf5View(String soAddInf5View) {
+        this.soAddInf5View = soAddInf5View;
+    }
+
+    public String getSoAddInf5Text() {
+        return soAddInf5Text;
+    }
+
+    public void setSoAddInf5Text(String soAddInf5Text) {
+        this.soAddInf5Text = soAddInf5Text;
+    }
+
+    public Integer getSoAddInf5Tracking() {
+        return soAddInf5Tracking;
+    }
+
+    public void setSoAddInf5Tracking(Integer soAddInf5Tracking) {
+        this.soAddInf5Tracking = soAddInf5Tracking;
+    }
+
+    public String getSoAddInf6View() {
+        return soAddInf6View;
+    }
+
+    public void setSoAddInf6View(String soAddInf6View) {
+        this.soAddInf6View = soAddInf6View;
+    }
+
+    public String getSoAddInf6Text() {
+        return soAddInf6Text;
+    }
+
+    public void setSoAddInf6Text(String soAddInf6Text) {
+        this.soAddInf6Text = soAddInf6Text;
+    }
+
+    public Integer getSoAddInf6Tracking() {
+        return soAddInf6Tracking;
+    }
+
+    public void setSoAddInf6Tracking(Integer soAddInf6Tracking) {
+        this.soAddInf6Tracking = soAddInf6Tracking;
     }
 }

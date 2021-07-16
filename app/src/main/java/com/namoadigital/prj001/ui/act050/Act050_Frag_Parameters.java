@@ -100,10 +100,13 @@ public class Act050_Frag_Parameters extends BaseFragment {
         void onContractSelected(Integer contract_code);
 
         /**
-         * Interface disparada na momento que o contrato é selecionado
+         * Interface disparada na momento que o po é selecionado
+         * Alterado assinatura para enviar o mValue tb, pois há muitas informações que
+         * precisaram ser usadas na criação e no layout.
          * @param po_code - Codigo do PO
+         * @param mValue - HmAux o item selecionado
          */
-        void onPOSelected(int po_code);
+        void onPOSelected(int po_code,HMAux mValue);
 
         /**
          * Interface que checa se contrato já foi selecionado.
@@ -222,7 +225,6 @@ public class Act050_Frag_Parameters extends BaseFragment {
 
             @Override
             public void onItemPostSelected(HMAux hmAux) {
-
                 //
                 if(mFragListner != null) {
                     Integer contract_code = hmAux.hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(hmAux.get(SearchableSpinner.CODE)) : -1;
@@ -255,6 +257,9 @@ public class Act050_Frag_Parameters extends BaseFragment {
             @Override
             public void onItemPostSelected(HMAux hmAux) {
                 if (hmAux.hasConsistentValue(SearchableSpinner.CODE)) {
+                    Integer po_code = hmAux.hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(hmAux.get(SearchableSpinner.CODE)) : -1;
+                    selected_po_code = po_code;
+                    mFragListner.onPOSelected(po_code,hmAux);
                     setContractPoInfo(hmAux);
                 }else {
                     clearPOValueAndInfo();
@@ -298,7 +303,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
                 if(areRequiredFieldsFilled()){
                     if (mFragListner != null) {
                         mFragListner.onContractSelected(Integer.parseInt(ss_contract.getmValue().get(SearchableSpinner.CODE)));
-                        mFragListner.onPOSelected(Integer.parseInt(ss_po.getmValue().get(SearchableSpinner.CODE)));
+                        mFragListner.onPOSelected(Integer.parseInt(ss_po.getmValue().get(SearchableSpinner.CODE)),ss_po.getmValue());
                         mFragListner.onSiteExecSelected(Integer.parseInt(ss_site_exec.getmValue().get(SearchableSpinner.CODE)));
                         mFragListner.onMoveToOSFragment();
                     }
@@ -458,7 +463,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
                                 ss_po.setmValue(poValue);
                                 ss_po.setmEnabled(false);
                                 setContractPoInfo(ss_po.getmValue());
-                                mFragListner.onPOSelected(favorite_po_code);
+                                mFragListner.onPOSelected(favorite_po_code,ss_po.getmValue());
                             }
                         }
                     }else {
@@ -472,7 +477,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
                             setContractPoInfo(options.get(0));
                             Integer po_code = options.get(0).hasConsistentValue(SearchableSpinner.CODE) ? ToolBox_Inf.mIntegerParse(options.get(0).get(SearchableSpinner.CODE)) : -1;
                             selected_po_code = po_code;
-                            mFragListner.onPOSelected(po_code);
+                            mFragListner.onPOSelected(po_code,options.get(0));
                         } else {
                             if (options.size() > 0) {
                                 ss_po.setmEnabled(true);
@@ -626,6 +631,15 @@ public class Act050_Frag_Parameters extends BaseFragment {
             aux.put(SM_SODao.CONTRACT_PO_CLIENT1,po_item.getPoClient1());
             aux.put(SM_SODao.CONTRACT_PO_CLIENT2,po_item.getPoClient2());
             aux.put(SM_SODao.CONTRACT_PO_CLIENT3,po_item.getPoClient3());
+            aux.put(SO_Favorite_PO.BILLING_ADD_INF1_TRACKING,String.valueOf(po_item.getBillingAddInf1Tracking()));
+            aux.put(SO_Favorite_PO.BILLING_ADD_INF2_TRACKING,String.valueOf(po_item.getBillingAddInf2Tracking()));
+            aux.put(SO_Favorite_PO.BILLING_ADD_INF3_TRACKING,String.valueOf(po_item.getBillingAddInf3Tracking()));
+            aux.put(SO_Favorite_PO.BILLING_ADD_INF1_VIEW,po_item.getBillingAddInf1View());
+            aux.put(SO_Favorite_PO.BILLING_ADD_INF2_VIEW,po_item.getBillingAddInf2View());
+            aux.put(SO_Favorite_PO.BILLING_ADD_INF3_VIEW,po_item.getBillingAddInf3View());
+            aux.put(SO_Favorite_PO.BILLING_ADD_INF1_TEXT,po_item.getBillingAddInf1Text());
+            aux.put(SO_Favorite_PO.BILLING_ADD_INF2_TEXT,po_item.getBillingAddInf2Text());
+            aux.put(SO_Favorite_PO.BILLING_ADD_INF3_TEXT,po_item.getBillingAddInf3Text());
 //            aux.put(Act050_Main.SO_CONTRACT_PIPELINE_KEY, String.valueOf(po_item.getPipelineCode()));
             options.add(aux);
         }
