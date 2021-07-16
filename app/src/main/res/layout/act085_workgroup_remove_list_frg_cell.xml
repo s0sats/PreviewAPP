@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/act043_adapter_services_preview_cell_ll_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="10dp">
+        <!--android:background="@drawable/namoa_cell_9_states"-->
+
+        <ImageView
+            android:id="@+id/act043_adapter_services_preview_cell_iv_remove"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/namoa_danger_bg_states"
+            android:padding="2dp"
+            android:tint="@color/padrao_WHITE"
+            app:srcCompat="@drawable/ic_trash" />
+
+
+        <View
+            android:layout_width="5dp"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            >
+
+            <TextView
+                android:id="@+id/act043_adapter_services_preview_cell_tv_service_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="1dp"
+                android:text="Limpeza de limpos"
+                android:textColor="@color/lib_custom_cell_font_color"
+                android:textSize="@dimen/font_size_title"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/act043_adapter_services_preview_cell_tv_comments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:padding="1dp"
+                android:text="Até 22/04/2999"
+                />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

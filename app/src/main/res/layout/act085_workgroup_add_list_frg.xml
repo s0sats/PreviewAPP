@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.act085.Act085WorkgroupAddListFrg">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/act085_workgroup_add_list_frg_tv_usr_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Daniel Luche"
+            android:textSize="@dimen/font_size_item_md"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/act085_workgroup_add_list_frg_gd_end"
+            app:layout_constraintStart_toStartOf="@+id/act085_workgroup_add_list_frg_gd_start"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/act085_workgroup_add_list_frg_tv_usr_nick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="luche(52)"
+            android:textSize="@dimen/font_size_font_12"
+            app:layout_constraintEnd_toStartOf="@+id/act085_workgroup_add_list_frg_gd_end"
+            app:layout_constraintStart_toStartOf="@+id/act085_workgroup_add_list_frg_gd_start"
+            app:layout_constraintTop_toBottomOf="@+id/act085_workgroup_add_list_frg_tv_usr_name" />
+
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act085_workgroup_add_list_frg_tv_list_ttl"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Busca por texto"
+            app:layout_constraintEnd_toStartOf="@+id/act085_workgroup_add_list_frg_gd_end"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/act085_workgroup_add_list_frg_gd_start"
+            app:layout_constraintTop_toBottomOf="@+id/act085_workgroup_add_list_frg_tv_usr_nick" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/act085_workgroup_add_list_frg_gd_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="8dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/act085_workgroup_add_list_frg_gd_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintGuide_end="8dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/act085_workgroup_add_list_frg_rv_wg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_default="spread"
+            app:layout_constraintHeight_default="wrap"
+            app:layout_constraintVertical_bias="0"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/act085_workgroup_add_list_frg_cv_period"
+            app:layout_constraintEnd_toStartOf="@+id/act085_workgroup_add_list_frg_gd_end"
+            app:layout_constraintStart_toStartOf="@+id/act085_workgroup_add_list_frg_gd_start"
+            app:layout_constraintTop_toBottomOf="@+id/act085_workgroup_add_list_frg_tv_list_ttl"
+            tools:itemCount="15"
+            tools:listitem="@layout/act085_workgroup_add_list_frg_cell"
+            />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/act085_workgroup_add_list_frg_cv_period"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/act085_workgroup_add_list_frg_cl_btn"
+            app:layout_constraintEnd_toStartOf="@id/act085_workgroup_add_list_frg_gd_end"
+            app:layout_constraintStart_toStartOf="@id/act085_workgroup_add_list_frg_gd_start"
+            android:layout_margin="5dp"
+            >
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/act085_workgroup_add_list_frg_tv_period"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Periodo de permanencia" />
+
+                <RadioGroup
+                    android:id="@+id/act085_workgroup_add_list_frg_rg_period"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/act085_workgroup_add_list_frg_tv_period"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    >
+
+                    <RadioButton
+                        android:id="@+id/act085_workgroup_add_list_frg_rdo_no_limit"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Sem limte de data"
+                        android:textColor="@color/namoa_dark_blue"
+                        />
+
+                    <RadioButton
+                        android:id="@+id/act085_workgroup_add_list_frg_rdo_until"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Até data especificada"
+                        android:textColor="@color/namoa_dark_blue"
+                        android:checked="true"
+                        />
+                </RadioGroup>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/act085_workgroup_add_list_frg_cl_until_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act085_workgroup_add_list_frg_rg_period"
+                    android:visibility="visible"
+                    >
+
+                    <TextView
+                        android:id="@+id/act085_workgroup_add_list_frg_tv_time_lbl"
+                        style="@style/MyTicketRadioButtton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintWidth_default="wrap"
+                        android:layout_marginTop="8dp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/act085_workgroup_add_list_frg_tv_date_val"
+                        app:layout_constraintStart_toStartOf="@+id/act085_workgroup_add_list_frg_gd_date_hour"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Hora" />
+
+                    <TextView
+                        android:id="@+id/act085_workgroup_add_list_frg_tv_date_lbl"
+                        style="@style/MyTicketRadioButtton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintWidth_default="wrap"
+                        app:layout_constraintHeight_default="wrap"
+                        tools:text="Data"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/act085_workgroup_add_list_frg_tv_time_lbl"
+                        app:layout_constraintEnd_toStartOf="@+id/act085_workgroup_add_list_frg_gd_date_hour"
+                        app:layout_constraintStart_toStartOf="@+id/act085_workgroup_add_list_frg_tv_date_val"
+                        app:layout_constraintTop_toTopOf="@+id/act085_workgroup_add_list_frg_tv_time_lbl" />
+
+
+                    <com.namoa_digital.namoa_library.ctls.MkDateTime
+                        android:id="@+id/act085_workgroup_add_list_frg_tv_date_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:mConfigType="DATE_HOUR"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/act085_workgroup_add_list_frg_tv_time_lbl" />
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/act085_workgroup_add_list_frg_gd_date_hour"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent=".64" />
+
+                    <CheckBox
+                        android:id="@+id/act085_workgroup_add_list_frg_chk_expire_return"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        tools:text="Desativar temporariamente outros workgroup do usuario?"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/act085_workgroup_add_list_frg_tv_date_val"
+                        app:layout_constraintTop_toBottomOf="@+id/act085_workgroup_add_list_frg_tv_date_val"
+                        android:textColor="@color/namoa_dark_blue"
+                        />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/act085_workgroup_add_list_frg_cl_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/act085_workgroup_add_list_frg_gd_end"
+            app:layout_constraintStart_toStartOf="@id/act085_workgroup_add_list_frg_gd_start"
+            android:layout_marginBottom="8dp"
+            >
+
+            <Button
+                android:id="@+id/act085_workgroup_add_list_frg_btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@+id/act085_workgroup_add_list_frg_btn_save"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.48"
+                android:background="@drawable/namoa_cell_12_states"
+                android:textColor="@color/padrao_WHITE"
+                tools:text="CAncelar"
+                />
+
+            <Button
+                android:id="@+id/act085_workgroup_add_list_frg_btn_save"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/act085_workgroup_add_list_frg_btn_cancel"
+                app:layout_constraintWidth_percent="0.48"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/namoa_cell_12_states"
+                android:textColor="@color/padrao_WHITE"
+                tools:text="Salvar"
+                android:enabled="false"
+
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
