@@ -88,6 +88,7 @@ import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
+import com.namoadigital.prj001.ui.act085.Act085Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -1028,7 +1029,7 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     @Override
     public void onEditUserWgClick() {
-        ToolBox.toastMSG(context,"In Dev");
+        callAct085();
     }
 
     @Override
@@ -1630,6 +1631,13 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
 
     private void callAct084() {
         Intent mIntent = new Intent(context, Act084Main.class);
+        mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(mIntent);
+        finish();
+    }
+
+    private void callAct085() {
+        Intent mIntent = new Intent(context, Act085Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();
