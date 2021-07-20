@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.act085.Act085Main"
     tools:showIn="@layout/act085_main"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     >
     <FrameLayout
         android:id="@+id/act085_frg_placeholder"

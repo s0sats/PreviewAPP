@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/act043_adapter_services_preview_cell_ll_background"
+        android:id="@+id/act085_workgroup_remove_list_frg_cell_ll_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -15,7 +16,7 @@
         <!--android:background="@drawable/namoa_cell_9_states"-->
 
         <ImageView
-            android:id="@+id/act043_adapter_services_preview_cell_iv_remove"
+            android:id="@+id/act085_workgroup_remove_list_frg_cell_iv_remove"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center_vertical"
@@ -25,6 +26,18 @@
             android:tint="@color/padrao_WHITE"
             app:srcCompat="@drawable/ic_trash" />
 
+        <View
+            android:layout_width="5dp"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/act085_workgroup_remove_list_frg_cell_iv_wg_img"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="10dp"
+            android:padding="2dp"
+            tools:srcCompat="@drawable/ic_room_group" />
 
         <View
             android:layout_width="5dp"
@@ -39,7 +52,7 @@
             >
 
             <TextView
-                android:id="@+id/act043_adapter_services_preview_cell_tv_service_desc"
+                android:id="@+id/act085_workgroup_remove_list_frg_cell_tv_workgroup_desc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="1dp"
@@ -49,7 +62,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/act043_adapter_services_preview_cell_tv_comments"
+                android:id="@+id/act085_workgroup_remove_list_frg_cell_tv_expire_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"

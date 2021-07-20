@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.model
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class TUserWorkgroupObj(
     @SerializedName("user_code")
@@ -15,4 +16,4 @@ data class TUserWorkgroupObj(
     var userImage: String?,
     @SerializedName("erp_code")
     var erpCode: String?
-)
+) : Serializable

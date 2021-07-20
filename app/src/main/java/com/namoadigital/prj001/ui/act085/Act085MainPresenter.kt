@@ -37,4 +37,23 @@ class Act085MainPresenter(
     override fun getTranslation(): HMAux {
         return hmAuxTrans
     }
+
+    //region Act085WorkgroupRemoveListFrg.onWorkgroupRemoveInteract
+    override fun executeWorkgroupEditService(action: Int, vararg workgroupCode: Int) {
+//        mView.setWsProcess(
+//
+//        )
+        //
+        mView.showPD(
+            hmAuxTrans["workgroup_edit_ttl"]?:"",
+            hmAuxTrans["workgroup_edit_start"]?:"",
+        )
+        //
+
+    }
+
+    override fun executeWorkgroupMemberListService(user_code: Int) {
+        TODO("Not yet implemented")
+    }
+    //endregion
 }
