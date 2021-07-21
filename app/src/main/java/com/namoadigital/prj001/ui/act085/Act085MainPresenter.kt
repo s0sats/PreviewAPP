@@ -6,8 +6,12 @@ import android.os.Bundle
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.receiver.WBR_User_Search
+import com.namoadigital.prj001.service.WS_User_Search
+import com.namoadigital.prj001.util.Constant
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.dao.EV_UserDao
+import com.namoadigital.prj001.model.TUser_Search_Rec
 import com.namoadigital.prj001.model.TWorkgroupObj
 import com.namoadigital.prj001.model.T_Workgroup_Member_Edit_Env
 import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_Edit
@@ -35,12 +39,14 @@ class Act085MainPresenter(
     private fun loadTranslation(): HMAux {
         val transList: MutableList<String> = mutableListOf(
             "act085_title",
+            "dialog_user_search_ttl",
+            "dialog_user_search_start",
             "workgroup_edit_ttl",
             "workgroup_edit_start",
             "workgroup_member_list_ttl",
             "workgroup_member_list_start",
             "alert_workgroup_list_not_found_tll",
-            "alert_workgroup_list_not_found_msg",
+            "alert_workgroup_list_not_found_msg"
         )
         transList.addAll(Act085WorkgroupRemoveListFrg.getFragTranslationsVars())
         //
@@ -158,5 +164,48 @@ class Act085MainPresenter(
 
     override fun onBackPressedClick() {
         mView.callAct005()
+    }
+
+    override fun executeWsUserSearch(
+        user_code_sql: String,
+        email_p: String,
+        erp_code: String,
+        user_name: String
+    ) {
+        if (ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_User_Search::class.java.getName())
+            if(hmAuxTrans.hasConsistentValue("dialog_user_search_ttl")
+                && hmAuxTrans.hasConsistentValue("dialog_user_search_start")){
+                    mView.showPD(hmAuxTrans["dialog_user_search_ttl"]!!, hmAuxTrans["dialog_user_search_start"]!!)
+            } else {
+                mView.showPD("", "")
+            }
+            val mIntent = Intent(context, WBR_User_Search::class.java)
+            val bundle = Bundle()
+            bundle.putString(Constant.WS_PROFILE_CHECK_FIELD, "1")
+            bundle.putString(Constant.WS_USER_NAME_FIELD, user_name)
+            bundle.putString(Constant.WS_USER_EMAIL_FIELD, email_p)
+            bundle.putString(Constant.WS_USER_CODE_FIELD, user_code_sql)
+            bundle.putString(Constant.WS_ERP_CODE_FIELD, erp_code)
+            mIntent.putExtras(bundle)
+            //
+            context.sendBroadcast(mIntent)
+        } else {
+            ToolBox_Inf.showNoConnectionDialog(context)
+        }
+
+    }
+
+    override fun extractUserSearchResult(mLink: String?) {
+        //
+        val gson = GsonBuilder().serializeNulls().create()
+        //
+        val result = gson.fromJson(
+            mLink,
+            TUser_Search_Rec::class.java
+        )
+
+        mView.callAct085UserListFrg(result.getAct085UserModel())
+
     }
 }

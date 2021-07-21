@@ -126,6 +126,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String FRAG_SEARCH_ISONLYONE = "frag_search_isonlyone";
     public static final String FRG_MAIN_HOME = "frg_main_home";
     public static final String FRG_MAIN_HOME_ALT = "frg_main_home_alt";
+    public static final String FRG_USER_WORK_GROUP_SEARCH = "frg_user_work_group_search";
 
     public static final String ACT_SELECTED_DATE = "selected_date";
     public static final String ACT_FILTER_FORM = "filter_form";
@@ -381,6 +382,15 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String WS_SERIAL_TRACKING_SEARCH_SERIAL_CODE = "serial_tracking_search_serial_code";
     public static final String WS_SERIAL_TRACKING_SEARCH_TRACKING = "serial_tracking_search_tracking";
     public static final String WS_SERIAL_TRACKING_SEARCH_SITE_CODE = "serial_tracking_search_site_code";
+
+     /**
+     * WS User Search
+     */
+    public static final String WS_PROFILE_CHECK_FIELD = "ws_profile_check_field";
+    public static final String WS_USER_NAME_FIELD = "ws_user_name_field";
+    public static final String WS_USER_EMAIL_FIELD = "ws_user_email_field";
+    public static final String WS_USER_CODE_FIELD = "ws_user_code_field";
+    public static final String WS_ERP_CODE_FIELD = "ws_erp_code_field";
 
     /**
      * Retorno dos Ws de Envio

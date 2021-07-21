@@ -16,4 +16,14 @@ data class TUserWorkgroupObj(
     var userImage: String?,
     @SerializedName("erp_code")
     var erpCode: String?
-) : Serializable
+) : Serializable{
+    fun getAllFieldForFilter() : String{
+        return  "$userCode|" +
+                "$userNick|" +
+                "$userName|" +
+                "$emailP|" +
+                "$erpCode|"
+                    .replace("null|","")
+                    .replace("null","")
+    }
+}

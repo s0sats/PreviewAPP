@@ -13,8 +13,10 @@ import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act085MainBinding
 import com.namoadigital.prj001.databinding.Act085MainContentBinding
+import com.namoadigital.prj001.model.Act085UserModel
 import com.namoadigital.prj001.model.TUserWorkgroupObj
 import com.namoadigital.prj001.model.TWorkgroupObj
+import com.namoadigital.prj001.service.WS_User_Search
 import com.namoadigital.prj001.service.WS_Workgroup_Member_Edit
 import com.namoadigital.prj001.service.WS_Workgroup_Member_List
 import com.namoadigital.prj001.ui.act005.Act005_Main
@@ -29,6 +31,8 @@ class Act085Main :
     Act085WorkgroupRemoveListFrg.onWorkgroupRemoveInteract {
 
     private val WORKGROUP_REMOVE_LIST_FRAG_TAG = "WORKGROUP_REMOVE_LIST_FRAG"
+    private val USER_SEARCH_FRG_TAG = "USER_SEARCH_FRG_TAG"
+    private val USER_LIST_FRG_TAG = "USER_LIST_FRG_TAG"
     private lateinit var binding : Act085MainContentBinding
     private val fm = supportFragmentManager
     private lateinit var bundle: Bundle
@@ -75,7 +79,7 @@ class Act085Main :
     }
 
     private fun initBundle(savedInstanceState: Bundle?) {
-        bundle = (savedInstanceState?: intent.extras?: Bundle()) as Bundle
+        bundle = (savedInstanceState ?: intent.extras ?: Bundle())
     }
 
     private fun iniSetup() {
@@ -96,9 +100,10 @@ class Act085Main :
     }
 
     private fun initVars() {
-        setFrag(workgroupRemoveListFrg,WORKGROUP_REMOVE_LIST_FRAG_TAG)
-        //
-        mPresenter.executeWorkgroupMemberListService(52)
+        if(bundle.isEmpty) {
+            val act085UserSearchFrg = Act085UserSearchFrg.newInstance()
+            setFrag(act085UserSearchFrg, USER_SEARCH_FRG_TAG)
+        }
     }
 
     private fun <T : BaseFragment?> setFrag(type: T, sTag: String) {
@@ -107,6 +112,24 @@ class Act085Main :
             ft.replace(binding.act085FrgPlaceholder.id, type as Fragment, sTag)
             ft.addToBackStack(null)
             ft.commit()
+        }
+    }
+    override fun onAttachFragment(fragment: Fragment) {
+        super.onAttachFragment(fragment)
+
+        when (fragment) {
+            is Act085UserSearchFrg -> {
+                fragment.executeWsSearchUser =
+                    { name: String, email: String, userCode: String, erpCode: String ->
+                        mPresenter.executeWsUserSearch(userCode, email, erpCode, name)
+                    }
+
+            }
+            is Act085UserListFrg ->{
+                fragment.onUserSelected = {
+                    callAct085WorkgroupAddListFrg(it)
+                }
+            }
         }
     }
 
@@ -178,9 +201,13 @@ class Act085Main :
         super.processCloseACT(mLink, mRequired, hmAux)
         //
         when(wsProcess){
+            WS_User_Search::class.java.getName() -> {
+                resetWsResources()
+
+                mPresenter.extractUserSearchResult(mLink)
+            }
             WS_Workgroup_Member_List::class.java.name ->{
-                wsProcess = ""
-                progressDialog.dismiss()
+                resetWsResources()
                 //
                 mPresenter.processWgMemberListReturn(mLink)
             }
@@ -192,6 +219,11 @@ class Act085Main :
                 progressDialog.dismiss()
             }
         }
+    }
+
+    private fun resetWsResources() {
+        wsProcess = ""
+        progressDialog.dismiss()
     }
 
     override fun onBackPressed() {
@@ -209,6 +241,21 @@ class Act085Main :
         )
         //
         finish()
+    }
+
+    override fun callAct085UserListFrg(act085UserModel: Act085UserModel) {
+        val act085UserListFrg = Act085UserListFrg.newInstance(act085UserModel)
+        setFrag(act085UserListFrg, USER_LIST_FRG_TAG)
+    }
+
+    fun callAct085WorkgroupAddListFrg(user: TUserWorkgroupObj) {
+
+    }
+
+
+
+    override fun processError_1(mLink: String?, mRequired: String?) {
+        super.processError_1(mLink, mRequired)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
