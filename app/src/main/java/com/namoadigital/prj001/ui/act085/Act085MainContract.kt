@@ -8,7 +8,9 @@ interface Act085MainContract {
         fun setWsProcess(wsProcess: String)
         fun showPD(ttl: String , msg: String)
         fun showAlert(ttl: String, msg: String)
+        fun updateWorkgroupMemberList(wgMemberList: List<TWorkgroupObj>)
         fun updateLinkeWorkgroupListIntoFrag(wgMemberList: List<TWorkgroupObj>)
+        fun callAct005()
     }
 
     interface I_Presenter{
@@ -23,5 +25,6 @@ interface Act085MainContract {
         )
         fun executeWorkgroupMemberListService(userCode: Int)
         fun processWgMemberListReturn(mLink: String?)
+        fun onBackPressedClick()
     }
 }

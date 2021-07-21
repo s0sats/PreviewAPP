@@ -9,19 +9,21 @@ import com.namoadigital.prj001.model.VH_models.Act085WorkgroupRemoveVH
 
 class Act085WorkgroupRemoveAdapter(
     var source: List<TWorkgroupObj>,
-    val onRemoveItemClick : (action: Int, wgCode: TWorkgroupObj) -> Unit
+    val onRemoveItemClick : (action: Int, wgCode: TWorkgroupObj) -> Unit,
+    val untilExpireDateLbl: String
 ) : RecyclerView.Adapter<Act085WorkgroupRemoveVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Act085WorkgroupRemoveVH {
         return Act085WorkgroupRemoveVH(
-            Act085WorkgroupRemoveListFrgCellBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            Act085WorkgroupRemoveListFrgCellBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            onRemoveItemClick,
+            untilExpireDateLbl
         )
     }
 
     override fun onBindViewHolder(holder: Act085WorkgroupRemoveVH, position: Int) {
         holder.onBindData(
-            source[position],
-            onRemoveItemClick
+            source[position]
         )
     }
 

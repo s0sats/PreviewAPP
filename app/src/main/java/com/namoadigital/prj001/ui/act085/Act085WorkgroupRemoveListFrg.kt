@@ -35,7 +35,8 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
     private val mAdapter: Act085WorkgroupRemoveAdapter by lazy {
         Act085WorkgroupRemoveAdapter(
             linkedWg,
-            this::onRemoveItemClick
+            this::onRemoveItemClick,
+            hmAux_Trans["until_lbl"]?:""
         )
     }
     private var mFragListner : onWorkgroupRemoveInteract? = null
@@ -165,7 +166,8 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
                 "btn_add_in_wrokgroup",
                 "remove_workgroup_link_ttl",
                 "remove_workgroup_link_confirm",
-                "workgroup_list_successfully_update"
+                "workgroup_list_successfully_update",
+                "until_lbl"
             )
         }
     }

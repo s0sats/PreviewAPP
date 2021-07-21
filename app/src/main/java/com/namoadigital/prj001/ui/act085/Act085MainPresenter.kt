@@ -124,17 +124,15 @@ class Act085MainPresenter(
                     ),
                     object : TypeToken<java.util.ArrayList<TWorkgroupObj?>?>() {}.type
                 )
-                //
-                wgMemberList = wgMemberList.filter {
-                    it.active == 1
-                }
             } catch (e: Exception){
                 ToolBox_Inf.registerException(javaClass.name,e)
             }
             //
             deleteWgJsonFile(file)
             //
-            mView.updateLinkeWorkgroupListIntoFrag(wgMemberList)
+            mView.updateWorkgroupMemberList(wgMemberList)
+            //
+            mView.updateLinkeWorkgroupListIntoFrag(getOnlyLinkedWorkgroup(wgMemberList))
         } else{
             mView.showAlert(
                 hmAuxTrans["alert_workgroup_list_not_found_tll"]!!,
@@ -143,8 +141,22 @@ class Act085MainPresenter(
         }
     }
 
+    /**
+     * LUCHE - 21/07/2021
+     * Fun que filtar apenas a lista de WG vinculados ao usr
+     */
+    private fun getOnlyLinkedWorkgroup(
+        wgMemberList: List<TWorkgroupObj>
+    ) = wgMemberList.filter {
+            it.active == 1
+        }
+
     private fun deleteWgJsonFile(file: File) {
         file.delete()
     }
     //endregion
+
+    override fun onBackPressedClick() {
+        mView.callAct005()
+    }
 }
