@@ -5,18 +5,21 @@ import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.databinding.Act085MainBinding
 import com.namoadigital.prj001.databinding.Act085MainContentBinding
 import com.namoadigital.prj001.model.TUserWorkgroupObj
 import com.namoadigital.prj001.model.TWorkgroupObj
-import com.namoadigital.prj001.model.TkTicketCache
+import com.namoadigital.prj001.service.WS_Workgroup_Member_Edit
+import com.namoadigital.prj001.service.WS_Workgroup_Member_List
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.util.*
+import kotlin.collections.ArrayList
 
 class Act085Main :
     Base_Activity_Frag(),
@@ -50,7 +53,9 @@ class Act085Main :
             getMockedList()
         )
     }
-
+    //
+    private var wsProcess = ""
+    //
     private fun getMockedList(): ArrayList<TWorkgroupObj> {
         val mockedJson: String = "[{\n" +
                 "            \"customer_code\": \"1\",\n" +
@@ -480,12 +485,13 @@ class Act085Main :
             mockedJson,
             object : TypeToken<ArrayList<TWorkgroupObj?>?>() {}.type
         )
-        return fromJson.filter {
-            it.active == 1
-        } as ArrayList<TWorkgroupObj>
+//        return fromJson.filter {
+//            it.active == 1
+//        } as ArrayList<TWorkgroupObj>
+
+        return arrayListOf()
 
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -513,6 +519,7 @@ class Act085Main :
         )
         //10/06/2021 - Add recolhimento do teclado
         window.setSoftInputMode(
+
             WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
                 or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
@@ -521,9 +528,10 @@ class Act085Main :
         hmAux_Trans = mPresenter.getTranslation()
     }
 
-
     private fun initVars() {
         setFrag(workgroupRemoveListFrg,WORKGROUP_REMOVE_LIST_FRAG_TAG)
+        //
+        mPresenter.executeWorkgroupMemberListService(52)
     }
 
     private fun <T : BaseFragment?> setFrag(type: T, sTag: String) {
@@ -535,11 +543,40 @@ class Act085Main :
         }
     }
 
-    //region Act085WorkgroupRemoveListFrg.onWorkgroupRemoveInteract
-    override fun callWorkgroupEditService(action: Int, workgroupCode: Int) {
-        mPresenter.executeWorkgroupEditService(action,workgroupCode)
+    override fun setWsProcess(wsProcess: String) {
+        this.wsProcess = wsProcess
     }
 
+    override fun showPD(ttl: String, msg: String) {
+        enableProgressDialog(
+            ttl,
+            msg,
+            hmAux_Trans["sys_alert_btn_cancel"],
+            hmAux_Trans["sys_alert_btn_ok"]
+        )
+    }
+
+    override fun showAlert(ttl: String, msg: String) {
+        ToolBox.alertMSG(
+            context,
+            ttl,
+            msg,
+            null,
+            0
+        )
+    }
+
+
+    //region Act085WorkgroupRemoveListFrg.onWorkgroupRemoveInteract
+    override fun callWorkgroupEditService(userCode: Int, action: Int, workgroupCode: Int) {
+        mPresenter.executeWorkgroupEditService(userCode,action, arrayListOf(workgroupCode))
+    }
+
+    override fun updateLinkeWorkgroupListIntoFrag(wgMemberList: List<TWorkgroupObj>) {
+        workgroupRemoveListFrg?.let{
+            it.updateLinkedWorkgroupList(wgMemberList as ArrayList<TWorkgroupObj>)
+        }
+    }
     //endregion
 
     private fun iniUIFooter() {
@@ -561,5 +598,31 @@ class Act085Main :
 
     override fun footerCreateDialog() {
         ToolBox_Inf.buildFooterDialog(context)
+    }
+
+    override fun processCloseACT(mLink: String?, mRequired: String?) {
+        super.processCloseACT(mLink, mRequired)
+        processCloseACT(mLink,mRequired, HMAux())
+    }
+
+    override fun processCloseACT(mLink: String?, mRequired: String?, hmAux: HMAux?) {
+        super.processCloseACT(mLink, mRequired, hmAux)
+        //
+        when(wsProcess){
+            WS_Workgroup_Member_List::class.java.name ->{
+                wsProcess = ""
+                progressDialog.dismiss()
+                //
+                mPresenter.processWgMemberListReturn(mLink)
+            }
+            WS_Workgroup_Member_Edit::class.java.name ->{
+                progressDialog.dismiss()
+                mPresenter.executeWorkgroupMemberListService(52)
+            }
+            else -> {
+                progressDialog.dismiss()
+            }
+
+        }
     }
 }

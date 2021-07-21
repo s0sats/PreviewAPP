@@ -41,7 +41,7 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
     private var mFragListner : onWorkgroupRemoveInteract? = null
 
     interface onWorkgroupRemoveInteract{
-        fun callWorkgroupEditService(action: Int, workgroupCode: Int)
+        fun callWorkgroupEditService(userCode:Int, action: Int, workgroupCode: Int)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,7 +117,7 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
             hmAux_Trans["remove_workgroup_link_ttl"],
             hmAux_Trans["remove_workgroup_link_confirm"],
             DialogInterface.OnClickListener { _, _ ->
-                mFragListner?.callWorkgroupEditService(action,workgroupObj.groupCode)
+                mFragListner?.callWorkgroupEditService( userWgObj.userCode, action,workgroupObj.groupCode)
             },
             1
         )

@@ -1,10 +1,23 @@
 package com.namoadigital.prj001.ui.act085
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.dao.EV_UserDao
+import com.namoadigital.prj001.model.TWorkgroupObj
+import com.namoadigital.prj001.model.T_Workgroup_Member_Edit_Env
+import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_Edit
+import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_List
+import com.namoadigital.prj001.service.WS_Workgroup_Member_Edit
+import com.namoadigital.prj001.service.WS_Workgroup_Member_List
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.io.File
 
 class Act085MainPresenter(
     private val context: Context,
@@ -21,7 +34,13 @@ class Act085MainPresenter(
 
     private fun loadTranslation(): HMAux {
         val transList: MutableList<String> = mutableListOf(
-            "act085_title"
+            "act085_title",
+            "workgroup_edit_ttl",
+            "workgroup_edit_start",
+            "workgroup_member_list_ttl",
+            "workgroup_member_list_start",
+            "alert_workgroup_list_not_found_tll",
+            "alert_workgroup_list_not_found_msg",
         )
         transList.addAll(Act085WorkgroupRemoveListFrg.getFragTranslationsVars())
         //
@@ -39,21 +58,93 @@ class Act085MainPresenter(
     }
 
     //region Act085WorkgroupRemoveListFrg.onWorkgroupRemoveInteract
-    override fun executeWorkgroupEditService(action: Int, vararg workgroupCode: Int) {
-//        mView.setWsProcess(
-//
-//        )
+    override fun executeWorkgroupEditService(
+        userCode: Int,
+        action: Int,
+        workgroupCode: ArrayList<Int>,
+        limit: Int,
+        dateExpire: String?,
+        expireReturn: Int?
+    ) {
+        mView.setWsProcess(WS_Workgroup_Member_Edit::class.java.name)
         //
         mView.showPD(
             hmAuxTrans["workgroup_edit_ttl"]?:"",
             hmAuxTrans["workgroup_edit_start"]?:"",
         )
         //
-
+        val mIntent = Intent(context,WBR_Workgroup_Member_Edit::class.java).apply {
+            putExtras(
+                Bundle().apply {
+                    putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.USER_CODE,userCode)
+                    putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.ACTIVE,action)
+                    putIntegerArrayList(T_Workgroup_Member_Edit_Env.WorkgroupSetData.GROUP_CODE,workgroupCode)
+                    putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.LIMIT,action)
+                    putString(T_Workgroup_Member_Edit_Env.WorkgroupSetData.DATE_EXPIRE,dateExpire)
+                    putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.EXPIRE_RETURN,action)
+                }
+            )
+        }
+        //
+        context.sendBroadcast(mIntent)
     }
 
-    override fun executeWorkgroupMemberListService(user_code: Int) {
-        TODO("Not yet implemented")
+    override fun executeWorkgroupMemberListService(userCode: Int) {
+        mView.setWsProcess(WS_Workgroup_Member_List::class.java.name)
+        //
+        mView.showPD(
+            hmAuxTrans["workgroup_member_list_ttl"]?:"",
+            hmAuxTrans["workgroup_member_list_start"]?:"",
+        )
+        //
+        val mIntent = Intent(context,WBR_Workgroup_Member_List::class.java).apply {
+            putExtras(
+                Bundle().apply {
+                    putInt(EV_UserDao.USER_CODE,userCode)
+                }
+            )
+        }
+        //
+        context.sendBroadcast(mIntent)
+    }
+
+    override fun processWgMemberListReturn(mLink: String?) {
+        val file = File(
+            ConstantBaseApp.TICKET_JSON_PATH,
+            mLink?: ConstantBaseApp.MD_WORKGROUP_MEMBER_LIST_JSON_FILE
+        )
+        //
+        if(file.exists()){
+            var wgMemberList = emptyList<TWorkgroupObj>()
+            val gson = GsonBuilder().serializeNulls().create()
+            try{
+                wgMemberList = gson.fromJson<java.util.ArrayList<TWorkgroupObj>>(
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(file)
+                    ),
+                    object : TypeToken<java.util.ArrayList<TWorkgroupObj?>?>() {}.type
+                )
+                //
+                wgMemberList = wgMemberList.filter {
+                    it.active == 1
+                }
+            } catch (e: Exception){
+                ToolBox_Inf.registerException(javaClass.name,e)
+            }
+            //
+            deleteWgJsonFile(file)
+            //
+            mView.updateLinkeWorkgroupListIntoFrag(wgMemberList)
+        } else{
+            mView.showAlert(
+                hmAuxTrans["alert_workgroup_list_not_found_tll"]!!,
+                hmAuxTrans["alert_workgroup_list_not_found_msg"]!!
+            )
+        }
+    }
+
+    private fun deleteWgJsonFile(file: File) {
+        file.delete()
     }
     //endregion
 }

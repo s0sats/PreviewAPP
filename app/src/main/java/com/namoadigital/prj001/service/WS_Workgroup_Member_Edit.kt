@@ -8,22 +8,21 @@ import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoadigital.prj001.R
-import com.namoadigital.prj001.dao.EV_UserDao
-import com.namoadigital.prj001.model.T_Workgroup_Member_List_Env
-import com.namoadigital.prj001.model.T_Workgroup_Member_List_Rec
-import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_List
+import com.namoadigital.prj001.model.T_Workgroup_Member_Edit_Env
+import com.namoadigital.prj001.model.T_Workgroup_Member_Edit_Rec
+import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_Edit
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import java.io.File
 import java.io.IOException
+import java.util.*
 
-class WS_Workgroup_Member_List :
-    IntentService("WS_Workgroup_Member_List")
+class WS_Workgroup_Member_Edit :
+    IntentService("WS_Workgroup_Member_Edit")
 {
     private val mModuleCode = Constant.APP_MODULE
-    private val mResourceName = "ws_workgroup_member_list"
+    private val mResourceName = "ws_workgroup_member_edit"
     private val gson = GsonBuilder().serializeNulls().create()
     private val hmAuxTrans:HMAux by lazy {
         loadTranslation()
@@ -34,9 +33,15 @@ class WS_Workgroup_Member_List :
         //
         try {
             val bundle = intent?.extras ?: Bundle()
-            val userCode = bundle.getInt(EV_UserDao.USER_CODE,-1)
+            val userCode = bundle.getInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.USER_CODE,-1)
+            val action = bundle.getInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.ACTIVE,0)
+            val limit = bundle.getInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.LIMIT)
+            val dateExpire = bundle.getString(T_Workgroup_Member_Edit_Env.WorkgroupSetData.DATE_EXPIRE)
+            val expireReturn = bundle.getInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.EXPIRE_RETURN)
+            val groupCodeList = bundle.getIntegerArrayList(T_Workgroup_Member_Edit_Env.WorkgroupSetData.GROUP_CODE)?: arrayListOf()
             //
-            processWorkgroupMemberList(userCode)
+            processWorkgroupMemberEdit(userCode,action,limit,dateExpire,expireReturn,groupCodeList)
+
         } catch (e: Exception) {
             sb = ToolBox_Inf.wsExceptionTreatment(applicationContext, e)
             //
@@ -50,31 +55,45 @@ class WS_Workgroup_Member_List :
                 "0"
             )
         } finally {
-            WBR_Workgroup_Member_List.completeWakefulIntent(intent)
+            WBR_Workgroup_Member_Edit.completeWakefulIntent(intent)
         }
     }
 
     @Throws(IOException::class)
-    private fun processWorkgroupMemberList(userCode: Int) {
+    private fun processWorkgroupMemberEdit(
+        userCode: Int,
+        action: Int,
+        limit: Int,
+        dateExpire: String?,
+        expireReturn: Int,
+        groupCodeList: ArrayList<Int>
+    ) {
         //
         ToolBox.sendBCStatus(applicationContext, "STATUS", hmAuxTrans["generic_sending_data_msg"], "", "0")
         //
-        val env = T_Workgroup_Member_List_Env(
+        val env = T_Workgroup_Member_Edit_Env(
             app_code = Constant.PRJ001_CODE,
             app_version = Constant.PRJ001_VERSION,
             session_app = ToolBox_Con.getPreference_Session_App(applicationContext),
             app_type = Constant.PKG_APP_TYPE_DEFAULT,
-            userCode = userCode
+            data = T_Workgroup_Member_Edit_Env.WorkgroupSetData(
+                userCode = userCode,
+                active = action,
+                limit = limit,
+                dateExpire = dateExpire,
+                expireReturn = expireReturn,
+                groupCodeList = groupCodeList
+            )
         )
         //
         val resultado = ToolBox_Con.connWebService(
-            Constant.WS_WORKGROUP_MEMBER_LIST,
+            Constant.WS_WORKGROUP_MEMBER_EDIT,
             gson.toJson(env)
         )
         //
         ToolBox.sendBCStatus(applicationContext, "STATUS", hmAuxTrans["generic_receiving_data_msg"], "", "0")
         //
-        val rec = gson.fromJson(resultado,T_Workgroup_Member_List_Rec::class.java)
+        val rec = gson.fromJson(resultado, T_Workgroup_Member_Edit_Rec::class.java)
         //
         if (!ToolBox_Inf.processWSCheckValidation(
                 applicationContext,
@@ -93,36 +112,34 @@ class WS_Workgroup_Member_List :
         //
         ToolBox.sendBCStatus(applicationContext, "STATUS", hmAuxTrans["generic_processing_data"], "", "0")
         //
-        processWorkgroupMemberListReturn(rec)
+        processWorkgroupMemberEditReturn(rec)
     }
 
     @Throws(IOException::class)
-    private fun processWorkgroupMemberListReturn(rec: T_Workgroup_Member_List_Rec?) {
+    private fun processWorkgroupMemberEditReturn(rec: T_Workgroup_Member_Edit_Rec?) {
         if(rec != null){
-            if(rec.data.isNullOrEmpty()){
-                ToolBox.sendBCStatus(applicationContext, "ERROR_1", hmAuxTrans["msg_no_data_returned"], HMAux(), "", "0")
+            if(rec.status == null || ConstantBaseApp.MAIN_RESULT_OK != rec.status){
+                ToolBox.sendBCStatus(
+                    applicationContext,
+                    "ERROR_1",
+                    rec.error_msg ?: hmAuxTrans["msg_no_data_returned"],
+                    HMAux(),
+                    "",
+                    "0"
+                )
             }else{
-                createWorkgroupListJsonFile(ConstantBaseApp.MD_WORKGROUP_MEMBER_LIST_JSON_FILE, gson.toJson(rec.data))
-                //
                 ToolBox.sendBCStatus(
                     applicationContext,
                     "CLOSE_ACT",
                     hmAuxTrans["generic_process_finalized_msg"],
                     HMAux(),
-                    ConstantBaseApp.MD_WORKGROUP_MEMBER_LIST_JSON_FILE,
+                    ConstantBaseApp.MAIN_RESULT_OK,
                     "0"
                 )
             }
         }else{
             ToolBox.sendBCStatus(applicationContext, "ERROR_1", hmAuxTrans["msg_no_data_returned"], HMAux(), "", "0")
         }
-    }
-
-    @Throws(IOException::class)
-    private fun createWorkgroupListJsonFile(fileName: String, workGroupList: String): File {
-        val json_file = File(ConstantBaseApp.TICKET_JSON_PATH, fileName)
-        ToolBox_Inf.writeIn(workGroupList, json_file)
-        return json_file
     }
 
     private fun loadTranslation() : HMAux {
@@ -150,5 +167,4 @@ class WS_Workgroup_Member_List :
             translist
         )
     }
-
 }

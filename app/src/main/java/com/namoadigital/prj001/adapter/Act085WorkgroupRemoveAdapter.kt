@@ -19,7 +19,10 @@ class Act085WorkgroupRemoveAdapter(
     }
 
     override fun onBindViewHolder(holder: Act085WorkgroupRemoveVH, position: Int) {
-        holder.onBindData(source[position])
+        holder.onBindData(
+            source[position],
+            onRemoveItemClick
+        )
     }
 
     override fun getItemCount(): Int {

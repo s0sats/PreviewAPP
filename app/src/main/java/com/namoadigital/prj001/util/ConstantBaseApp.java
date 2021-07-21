@@ -702,6 +702,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String TICKET_MAIN_USER_LIST_JSON_FILE = "tk_main_user_list.json";
     public static final String TICKET_HEADER_EDITION_JSON_FILE = "tk_header_edition.json";
     public static final String ENV_SITE_LICENSE_JSON_FILE = "env_site_license.json";
+    public static final String MD_WORKGROUP_MEMBER_LIST_JSON_FILE = "md_workgroup_member_list.json";
     /*
      * Constantes Pipeline
      */

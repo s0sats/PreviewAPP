@@ -13,9 +13,15 @@ class Act085WorkgroupRemoveVH(
     val binding: Act085WorkgroupRemoveListFrgCellBinding
     ) : RecyclerView.ViewHolder(binding.root)
 {
-    fun onBindData(item: TWorkgroupObj){
+    fun onBindData(
+        item: TWorkgroupObj,
+        onRemoveItemClick: (action: Int, wgCode: TWorkgroupObj) -> Unit
+    ){
         val context = binding.root.context
         with(binding){
+            act085WorkgroupRemoveListFrgCellIvRemove.setOnClickListener { _->
+                onRemoveItemClick(0,item)
+            }
             act085WorkgroupRemoveListFrgCellTvWorkgroupDesc.text = item.groupDesc
             act085WorkgroupRemoveListFrgCellTvExpireDate.apply {
                 text = ""
