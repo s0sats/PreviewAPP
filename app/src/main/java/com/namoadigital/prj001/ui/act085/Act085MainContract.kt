@@ -21,10 +21,11 @@ interface Act085MainContract {
             workgroupCode: ArrayList<Int>,
             limit: Int = 0,
             dateExpire: String? = null,
-            expireReturn: Int? = null
+            expireReturn: Int = 0
         )
         fun executeWorkgroupMemberListService(userCode: Int)
         fun processWgMemberListReturn(mLink: String?)
+        fun getUnlinkedWgList(workgroupMemberList: List<TWorkgroupObj>): List<TWorkgroupObj>
         fun onBackPressedClick()
     }
 }

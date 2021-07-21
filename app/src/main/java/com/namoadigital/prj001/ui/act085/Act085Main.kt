@@ -26,9 +26,12 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 class Act085Main :
     Base_Activity_Frag(),
     Act085MainContract.I_View ,
-    Act085WorkgroupRemoveListFrg.onWorkgroupRemoveInteract {
+    Act085WorkgroupRemoveListFrg.onWorkgroupRemoveInteract,
+    Act085WorkgroupAddListFrg.onWorkgroupAddInteract
+{
 
     private val WORKGROUP_REMOVE_LIST_FRAG_TAG = "WORKGROUP_REMOVE_LIST_FRAG"
+    private val WORKGROUP_ADD_LIST_FRAG_TAG = "WORKGROUP_ADD_LIST_FRAG_TAG"
     private lateinit var binding : Act085MainContentBinding
     private val fm = supportFragmentManager
     private lateinit var bundle: Bundle
@@ -56,9 +59,18 @@ class Act085Main :
             arrayListOf()
         )
     }
+
+    private val workgroupAddListFrg: Act085WorkgroupAddListFrg by lazy {
+        Act085WorkgroupAddListFrg.newInstance(
+            hmAux_Trans,
+            userWorkgroup,
+            mPresenter.getUnlinkedWgList(workgroupMemberList) as ArrayList<TWorkgroupObj>
+        )
+    }
     //
     private var wsProcess = ""
     private var workgroupMemberList = arrayListOf<TWorkgroupObj>()
+    private lateinit var userWorkgroup : TUserWorkgroupObj
     //
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +98,6 @@ class Act085Main :
         )
         //10/06/2021 - Add recolhimento do teclado
         window.setSoftInputMode(
-
             WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN
                 or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
@@ -96,9 +107,22 @@ class Act085Main :
     }
 
     private fun initVars() {
+        mockUser()
+        //
         setFrag(workgroupRemoveListFrg,WORKGROUP_REMOVE_LIST_FRAG_TAG)
         //
         mPresenter.executeWorkgroupMemberListService(52)
+    }
+
+    private fun mockUser() {
+        userWorkgroup = TUserWorkgroupObj(
+            userName = "Daniel Luche",
+            userCode = 52,
+            userImage = null,
+            userNick = "luche (52)",
+            emailP = "d.luche@namoadigital.com",
+            erpCode = null
+        )
     }
 
     private fun <T : BaseFragment?> setFrag(type: T, sTag: String) {
@@ -141,12 +165,36 @@ class Act085Main :
         mPresenter.executeWorkgroupEditService(userCode,action, arrayListOf(workgroupCode))
     }
 
+    override fun onAddUsrToWorkGroupClick(userWgObj: TUserWorkgroupObj) {
+        setFrag(workgroupAddListFrg,WORKGROUP_ADD_LIST_FRAG_TAG)
+    }
+
     override fun updateLinkeWorkgroupListIntoFrag(wgMemberList: List<TWorkgroupObj>) {
         workgroupRemoveListFrg?.let{
             it.updateLinkedWorkgroupList(wgMemberList as ArrayList<TWorkgroupObj>)
         }
     }
+
     //endregion
+    //region Act085WorkgroupAddListFrg.onWorkgroupAddInteract
+    override fun onAddWorkgroupSave(
+        userCode: Int,
+        action: Int,
+        workgroupCode: ArrayList<Int>,
+        period: Int,
+        expireDate: String?,
+        expireReturn: Int
+    ) {
+        mPresenter.executeWorkgroupEditService(
+            userCode,
+            action,
+            workgroupCode,
+            period,
+            expireDate,
+            expireReturn
+        )
+    }
+    //endRegion
 
     private fun iniUIFooter() {
         iniFooter()
@@ -218,4 +266,10 @@ class Act085Main :
         menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         return true
     }
+
+    companion object{
+       const val ARG_USER_WG_OBJ = "ARG_USER_WG_OBJ"
+       const val ARG_WG_LIST_OBJ = "ARG_WG_LIST_OBJ"
+    }
+
 }

@@ -29,7 +29,6 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
     private val binding: Act085WorkgroupRemoveListFrgBinding by lazy{
         Act085WorkgroupRemoveListFrgBinding.inflate(layoutInflater)
     }
-    private lateinit var hmAux_Trans: String
     private lateinit var userWgObj: TUserWorkgroupObj
     private var linkedWg = emptyList<TWorkgroupObj>()
     private val mAdapter: Act085WorkgroupRemoveAdapter by lazy {
@@ -43,14 +42,15 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
 
     interface onWorkgroupRemoveInteract{
         fun callWorkgroupEditService(userCode:Int, action: Int, workgroupCode: Int)
+        fun onAddUsrToWorkGroupClick(userWgObj: TUserWorkgroupObj)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             hmAux_Trans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
-            userWgObj = it.getSerializable(ARG_USER_WG_OBJ) as TUserWorkgroupObj
-            linkedWg = it.getSerializable(ARG_WG_LIST_OBJ) as ArrayList<TWorkgroupObj>
+            userWgObj = it.getSerializable(Act085Main.ARG_USER_WG_OBJ) as TUserWorkgroupObj
+            linkedWg = it.getSerializable(Act085Main.ARG_WG_LIST_OBJ) as ArrayList<TWorkgroupObj>
         }
     }
 
@@ -67,7 +67,9 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
         setLabels()
         initVars()
         initRecycler()
+        initActions()
     }
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -112,6 +114,15 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
         }
     }
 
+
+    private fun initActions() {
+        with(binding) {
+            act085WorkgroupRemoveListFrgBtnAddInWg.setOnClickListener { _ ->
+                mFragListner?.onAddUsrToWorkGroupClick(userWgObj)
+            }
+        }
+    }
+
     private fun onRemoveItemClick(action: Int, workgroupObj: TWorkgroupObj) {
         ToolBox.alertMSG_YES_NO(
             context,
@@ -126,7 +137,7 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
 
     fun updateLinkedWorkgroupList(updatedLinkedWgList: ArrayList<TWorkgroupObj>){
         arguments?.apply {
-            putSerializable(ARG_WG_LIST_OBJ, updatedLinkedWgList)
+            putSerializable(Act085Main.ARG_WG_LIST_OBJ, updatedLinkedWgList)
         }
         //
         mAdapter.source = updatedLinkedWgList
@@ -139,12 +150,9 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
     }
 
     companion object {
-        private const val ARG_USER_WG_OBJ = "ARG_USER_WG_OBJ"
-        private const val ARG_WG_LIST_OBJ = "ARG_WG_LIST_OBJ"
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
-         *
          * @param hmAuxTrans traducoes.
          * @param userWgObj objUserSelecionado.
          * @param linkedWgList Lista com Workgroups vinculadas ao usr.
@@ -155,8 +163,8 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
             Act085WorkgroupRemoveListFrg().apply {
                 arguments = Bundle().apply {
                     putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
-                    putSerializable(ARG_USER_WG_OBJ, userWgObj)
-                    putSerializable(ARG_WG_LIST_OBJ, linkedWgList)
+                    putSerializable(Act085Main.ARG_USER_WG_OBJ, userWgObj)
+                    putSerializable(Act085Main.ARG_WG_LIST_OBJ, linkedWgList)
                 }
             }
 

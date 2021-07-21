@@ -43,6 +43,7 @@ class Act085MainPresenter(
             "alert_workgroup_list_not_found_msg",
         )
         transList.addAll(Act085WorkgroupRemoveListFrg.getFragTranslationsVars())
+        transList.addAll(Act085WorkgroupAddListFrg.getFragTranslationsVars())
         //
         return ToolBox_Inf.setLanguage(
             context,
@@ -64,7 +65,7 @@ class Act085MainPresenter(
         workgroupCode: ArrayList<Int>,
         limit: Int,
         dateExpire: String?,
-        expireReturn: Int?
+        expireReturn: Int
     ) {
         mView.setWsProcess(WS_Workgroup_Member_Edit::class.java.name)
         //
@@ -79,9 +80,9 @@ class Act085MainPresenter(
                     putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.USER_CODE,userCode)
                     putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.ACTIVE,action)
                     putIntegerArrayList(T_Workgroup_Member_Edit_Env.WorkgroupSetData.GROUP_CODE,workgroupCode)
-                    putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.LIMIT,action)
+                    putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.LIMIT,limit)
                     putString(T_Workgroup_Member_Edit_Env.WorkgroupSetData.DATE_EXPIRE,dateExpire)
-                    putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.EXPIRE_RETURN,action)
+                    putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.EXPIRE_RETURN,expireReturn)
                 }
             )
         }
@@ -149,7 +150,13 @@ class Act085MainPresenter(
         wgMemberList: List<TWorkgroupObj>
     ) = wgMemberList.filter {
             it.active == 1
-        }
+    }
+
+    override fun getUnlinkedWgList(
+        workgroupMemberList: List<TWorkgroupObj>
+    ) = workgroupMemberList.filter{
+        it.active == 0
+    }
 
     private fun deleteWgJsonFile(file: File) {
         file.delete()
