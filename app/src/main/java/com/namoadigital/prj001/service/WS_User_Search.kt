@@ -79,8 +79,8 @@ class WS_User_Search : IntentService("WS_User_Search") {
             erpCode,
             Constant.PRJ001_CODE,
             Constant.PRJ001_VERSION,
-            ToolBox_Con.getPreference_Session_App(applicationContext),
-            Constant.PKG_APP_TYPE_DEFAULT
+            Constant.PKG_APP_TYPE_DEFAULT,
+            ToolBox_Con.getPreference_Session_App(applicationContext)
         )
         //
         ToolBox_Inf.sendBCStatus(

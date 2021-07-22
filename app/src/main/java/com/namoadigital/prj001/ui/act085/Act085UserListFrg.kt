@@ -6,14 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.adapter.Act085_User_Adapter
 import com.namoadigital.prj001.databinding.Act085UserListFrgBinding
 import com.namoadigital.prj001.model.Act085UserModel
 import com.namoadigital.prj001.model.TUserWorkgroupObj
 import com.namoadigital.prj001.util.Constant
-import com.namoadigital.prj001.util.ToolBox_Con
-import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -38,38 +38,8 @@ class Act085UserListFrg : BaseFragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             userListModel = it.getSerializable(ARG_USER_LIST) as Act085UserModel
+            hmAux_Trans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
         }
-        iniSetup()
-    }
-
-    private fun iniSetup() {
-
-        val mResource_Code = ToolBox_Inf.getResourceCode(
-            context,
-            Constant.APP_MODULE,
-            Constant.ACT085
-        )
-
-        val transList: MutableList<String> = ArrayList()
-        transList.add("act005_title")
-        transList.add("records_found_lbl")
-        transList.add("records_display_limit_lbl")
-        transList.add("records_lbl")
-        transList.add("showing_lbl")
-        transList.add("alert_qty_records_exceeded_ttl")
-        transList.add("alert_qty_records_exceeded_msg")
-        transList.add("alert_qty_records_founded")
-        transList.add("alert_user_nfc_bloqued_ttl")
-        transList.add("alert_user_nfc_bloqued_msg")
-
-        hmAux_Trans = ToolBox_Inf.setLanguage(
-            context,
-            Constant.APP_MODULE,
-            mResource_Code,
-            ToolBox_Con.getPreference_Translate_Code(context),
-            transList
-        )
-
     }
 
     override fun onCreateView(
@@ -84,8 +54,32 @@ class Act085UserListFrg : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.act005RvUserList.layoutManager = LinearLayoutManager(context)
-        binding.act005RvUserList.adapter = mAdapter
+        setRecyclerView()
+        setRecordsCountLabel()
+        binding.act085MketFilter.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText {
+            override fun reportTextChange(s: String) {}
+            //
+            override fun reportTextChange(s: String, b: Boolean) {
+                if (mAdapter != null) {
+                    mAdapter.filter.filter(binding.act085MketFilter.getText().toString().trim { it <= ' ' })
+                }
+            }
+        })
+    }
+
+    private fun setRecordsCountLabel() {
+        binding.act085TvRecords.text =
+            """ ${hmAux_Trans["showing_lbl"]} ${userListModel.usersCount} ${hmAux_Trans["records_lbl"]} """
+    }
+
+    private fun setRecyclerView() {
+        binding.act085RvUserList.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = mAdapter
+            if(userListModel.users.size == 1){
+                onUserSelected(userListModel.users[0])
+            }
+        }
     }
 
 
@@ -99,11 +93,24 @@ class Act085UserListFrg : BaseFragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: Act085UserModel) =
+        fun newInstance(param1: Act085UserModel, hmAuxTrans: HMAux) =
             Act085UserListFrg().apply {
                 arguments = Bundle().apply {
                     putSerializable(ARG_USER_LIST, param1)
+                    putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
                 }
             }
+
+        fun getFragTranslationsVars() : List<String>{
+            return listOf(
+                "records_found_lbl",
+                "records_display_limit_lbl",
+                "records_lbl",
+                "showing_lbl",
+                "alert_qty_records_exceeded_ttl",
+                "alert_qty_records_exceeded_msg",
+                "alert_qty_records_founded"
+            )
+        }
     }
 }

@@ -10,7 +10,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/act005_guide_start"
+        android:id="@+id/act085_guide_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/act005_guide_end"
+        android:id="@+id/act085_guide_end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -29,7 +29,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/act005_cl_result"
+        android:id="@+id/act085_cl_result"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
@@ -37,33 +37,46 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/act005_tv_records"
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act085_mket_filter"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:gravity="center"
-            android:text="Exibindo 100 - trad"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/act005_cl_limit_exceeded"
+            app:mBARCODE="false"
+            app:mNFC="false"
+            app:mOCRVin="false"
+            app:mOCR="false"
+            android:hint="Busca Texto"
             />
 
+        <TextView
+            android:id="@+id/act085_tv_records"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="4dp"
+            android:text="Exibindo 100 - trad"
+            app:layout_constraintBottom_toTopOf="@id/act085_cl_limit_exceeded"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/act085_mket_filter" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/act005_cl_limit_exceeded"
+            android:id="@+id/act085_cl_limit_exceeded"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/act005_rv_user_list"
-            app:layout_constraintTop_toBottomOf="@id/act005_tv_records"
+            app:layout_constraintBottom_toTopOf="@id/act085_rv_user_list"
+            app:layout_constraintTop_toBottomOf="@id/act085_tv_records"
             android:visibility="gone"
             >
 
             <TextView
-                android:id="@+id/act005_tv_record_limit"
+                android:id="@+id/act085_tv_record_limit"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toStartOf="@id/act005_gd_middle"
+                app:layout_constraintEnd_toStartOf="@id/act085_gd_middle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:text="Limit: 100 - trad"
@@ -72,7 +85,7 @@
                 />
 
             <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/act005_gd_middle"
+                android:id="@+id/act085_gd_middle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
@@ -81,11 +94,11 @@
                 app:layout_constraintGuide_percent="0.5" />
 
             <TextView
-                android:id="@+id/act005_tv_record_count"
+                android:id="@+id/act085_tv_record_count"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/act005_gd_middle"
+                app:layout_constraintStart_toEndOf="@id/act085_gd_middle"
                 app:layout_constraintTop_toTopOf="parent"
                 android:text="Encontrado: 150 - trad"
                 android:gravity="center"
@@ -95,7 +108,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/act005_rv_user_list"
+            android:id="@+id/act085_rv_user_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
@@ -103,7 +116,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/act005_cl_limit_exceeded"
+            app:layout_constraintTop_toBottomOf="@id/act085_cl_limit_exceeded"
             tools:listitem="@layout/act085_user_list_frg_cell" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

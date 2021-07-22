@@ -4,14 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.fragment.app.Fragment
+import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.databinding.Act085UserSearchFrgBinding
-import com.namoadigital.prj001.util.ConstantBaseApp
-import com.namoadigital.prj001.util.ToolBox_Con
-import com.namoadigital.prj001.util.ToolBox_Inf
+import com.namoadigital.prj001.util.Constant
 import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -30,33 +28,6 @@ class Act085UserSearchFrg : BaseFragment() {
     var emailFormField = ""
     var userCodeFormField = ""
     var erpCodeFormField = ""
-    val hmAux_Trans_Frag by lazy {
-        val transListFrag = ArrayList<String>()
-        //
-        transListFrag.add("user_name_nick_hint")
-        transListFrag.add("email_hint")
-        transListFrag.add("user_code_hint")
-        transListFrag.add("erp_code_hint")
-        transListFrag.add("btn_user_work_group_seacrh")
-        transListFrag.add("alert_invalid_input_ttl")
-        transListFrag.add("alert_invalid_input_msg")
-        transListFrag.add("progress_user_work_group_seacrh_ttl")
-        transListFrag.add("progress_user_work_group_seacrh_msg")
-        //
-        val mResource_Code_Frag = ToolBox_Inf.getResourceCode(
-            context,
-            ConstantBaseApp.APP_MODULE,
-            ConstantBaseApp.FRG_USER_WORK_GROUP_SEARCH
-        )
-        //
-        ToolBox_Inf.setLanguage(
-            context,
-            ConstantBaseApp.APP_MODULE,
-            mResource_Code_Frag,
-            ToolBox_Con.getPreference_Translate_Code(context),
-            transListFrag
-        )
-    }
 
     var executeWsSearchUser: (name: String,
                               email: String,
@@ -65,7 +36,9 @@ class Act085UserSearchFrg : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        arguments?.let {
+            hmAux_Trans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
+        }
     }
 
     override fun onCreateView(
@@ -107,8 +80,8 @@ class Act085UserSearchFrg : BaseFragment() {
             }else{
                 ToolBox.alertMSG(
                     context,
-                    hmAux_Trans_Frag["alert_invalid_input_ttl"],
-                    hmAux_Trans_Frag["alert_invalid_input_msg"],
+                    hmAux_Trans["alert_invalid_input_ttl"],
+                    hmAux_Trans["alert_invalid_input_msg"],
                     null,
                     0
                 )
@@ -117,11 +90,11 @@ class Act085UserSearchFrg : BaseFragment() {
     }
 
     private fun setMkeditTextHint() {
-        binding.act085UserSearchFrgMketUserName.hint = hmAux_Trans_Frag.get("user_name_nick_hint")
-        binding.act085UserSearchFrgMketUserEmail.hint = hmAux_Trans_Frag.get("email_hint")
-        binding.act085UserSearchFrgMketUserCode.hint =hmAux_Trans_Frag.get("user_code_hint")
-        binding.act085UserSearchFrgMketUserErpCode.hint = hmAux_Trans_Frag.get("erp_code_hint")
-        binding.act085UserSearchFrgBtnSearch.text = hmAux_Trans_Frag.get("btn_user_work_group_seacrh")
+        binding.act085UserSearchFrgMketUserName.hint = hmAux_Trans.get("user_name_nick_hint")
+        binding.act085UserSearchFrgMketUserEmail.hint = hmAux_Trans.get("email_hint")
+        binding.act085UserSearchFrgMketUserCode.hint =hmAux_Trans.get("user_code_hint")
+        binding.act085UserSearchFrgMketUserErpCode.hint = hmAux_Trans.get("erp_code_hint")
+        binding.act085UserSearchFrgBtnSearch.text = hmAux_Trans.get("btn_user_work_group_seacrh")
     }
 
     private fun isValidSearch(
@@ -148,11 +121,25 @@ class Act085UserSearchFrg : BaseFragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance() =
+        fun newInstance(hmAuxTrans: HMAux) =
             Act085UserSearchFrg().apply {
                 arguments = Bundle().apply {
-
+                    putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
                 }
             }
+
+        fun getFragTranslationsVars() : List<String>{
+            return listOf(
+                "user_name_nick_hint",
+                "email_hint",
+                "user_code_hint",
+                "erp_code_hint",
+                "btn_user_work_group_seacrh",
+                "alert_invalid_input_ttl",
+                "alert_invalid_input_msg",
+                "progress_user_work_group_seacrh_ttl",
+                "progress_user_work_group_seacrh_msg"
+            )
+        }
     }
 }

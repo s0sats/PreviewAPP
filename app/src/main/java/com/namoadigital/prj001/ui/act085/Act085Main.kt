@@ -101,7 +101,7 @@ class Act085Main :
 
     private fun initVars() {
         if(bundle.isEmpty) {
-            val act085UserSearchFrg = Act085UserSearchFrg.newInstance()
+            val act085UserSearchFrg = Act085UserSearchFrg.newInstance(hmAux_Trans)
             setFrag(act085UserSearchFrg, USER_SEARCH_FRG_TAG)
         }
     }
@@ -127,7 +127,7 @@ class Act085Main :
             }
             is Act085UserListFrg ->{
                 fragment.onUserSelected = {
-                    callAct085WorkgroupAddListFrg(it)
+                    callAct085WorkgroupRemoveListFrg(it)
                 }
             }
         }
@@ -244,15 +244,18 @@ class Act085Main :
     }
 
     override fun callAct085UserListFrg(act085UserModel: Act085UserModel) {
-        val act085UserListFrg = Act085UserListFrg.newInstance(act085UserModel)
+        val act085UserListFrg = Act085UserListFrg.newInstance(act085UserModel,hmAux_Trans)
         setFrag(act085UserListFrg, USER_LIST_FRG_TAG)
     }
 
-    fun callAct085WorkgroupAddListFrg(user: TUserWorkgroupObj) {
-
+    fun callAct085WorkgroupRemoveListFrg(user: TUserWorkgroupObj) {
+        val act085WorkgroupRemoveListFrg = Act085WorkgroupRemoveListFrg.newInstance(
+            hmAux_Trans,
+            user,
+            arrayListOf()
+        )
+        setFrag(act085WorkgroupRemoveListFrg, WORKGROUP_REMOVE_LIST_FRAG_TAG)
     }
-
-
 
     override fun processError_1(mLink: String?, mRequired: String?) {
         super.processError_1(mLink, mRequired)

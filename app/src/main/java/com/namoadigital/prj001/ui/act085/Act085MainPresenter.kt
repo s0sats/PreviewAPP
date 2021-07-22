@@ -48,6 +48,8 @@ class Act085MainPresenter(
             "alert_workgroup_list_not_found_tll",
             "alert_workgroup_list_not_found_msg"
         )
+        transList.addAll(Act085UserSearchFrg.getFragTranslationsVars())
+        transList.addAll(Act085UserListFrg.getFragTranslationsVars())
         transList.addAll(Act085WorkgroupRemoveListFrg.getFragTranslationsVars())
         //
         return ToolBox_Inf.setLanguage(
