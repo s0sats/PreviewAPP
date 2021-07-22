@@ -34,7 +34,7 @@
             app:layout_constraintTop_toBottomOf="@+id/act085_workgroup_add_list_frg_tv_usr_name" />
 
         <com.namoa_digital.namoa_library.ctls.MKEditTextNM
-            android:id="@+id/act085_workgroup_add_list_frg_tv_list_ttl"
+            android:id="@+id/act085_workgroup_add_list_frg_mket_search"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -66,12 +66,12 @@
             app:layout_constraintWidth_default="spread"
             app:layout_constraintHeight_default="wrap"
             app:layout_constraintVertical_bias="0"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toTopOf="@+id/act085_workgroup_add_list_frg_cv_period"
             app:layout_constraintEnd_toStartOf="@+id/act085_workgroup_add_list_frg_gd_end"
             app:layout_constraintStart_toStartOf="@+id/act085_workgroup_add_list_frg_gd_start"
-            app:layout_constraintTop_toBottomOf="@+id/act085_workgroup_add_list_frg_tv_list_ttl"
+            app:layout_constraintTop_toBottomOf="@+id/act085_workgroup_add_list_frg_mket_search"
             tools:itemCount="15"
             tools:listitem="@layout/act085_workgroup_add_list_frg_cell"
             />
@@ -87,7 +87,9 @@
             >
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                >
 
                 <TextView
                     android:id="@+id/act085_workgroup_add_list_frg_tv_period"
@@ -115,6 +117,7 @@
                         android:layout_height="match_parent"
                         android:text="Sem limte de data"
                         android:textColor="@color/namoa_dark_blue"
+                        android:checked="true"
                         />
 
                     <RadioButton
@@ -123,9 +126,9 @@
                         android:layout_height="match_parent"
                         android:text="Até data especificada"
                         android:textColor="@color/namoa_dark_blue"
-                        android:checked="true"
                         />
                 </RadioGroup>
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/act085_workgroup_add_list_frg_cl_until_date"
                     android:layout_width="match_parent"
@@ -133,7 +136,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/act085_workgroup_add_list_frg_rg_period"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     >
 
                     <TextView
@@ -234,7 +237,7 @@
                 android:background="@drawable/namoa_cell_12_states"
                 android:textColor="@color/padrao_WHITE"
                 tools:text="Salvar"
-                android:enabled="false"
+                android:enabled="true"
 
                 />
 
