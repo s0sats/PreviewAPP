@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act085
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -48,25 +49,11 @@ class Act085Main :
     private val workgroupRemoveListFrg: Act085WorkgroupRemoveListFrg by lazy {
         Act085WorkgroupRemoveListFrg.newInstance(
             hmAux_Trans,
-            TUserWorkgroupObj(
-                userName = "Daniel Luche",
-                userCode = 52,
-                userImage = null,
-                userNick = "luche (52)",
-                emailP = "d.luche@namoadigital.com",
-                erpCode = null
-            ),
-            arrayListOf()
-        )
-    }
-
-    private val workgroupAddListFrg: Act085WorkgroupAddListFrg by lazy {
-        Act085WorkgroupAddListFrg.newInstance(
-            hmAux_Trans,
             userWorkgroup,
-            mPresenter.getUnlinkedWgList(workgroupMemberList) as ArrayList<TWorkgroupObj>
+            workgroupMemberList
         )
     }
+    private var workgroupAddListFrg: Act085WorkgroupAddListFrg? = null
     //
     private var wsProcess = ""
     private var workgroupMemberList = arrayListOf<TWorkgroupObj>()
@@ -147,31 +134,79 @@ class Act085Main :
         )
     }
 
-    override fun showAlert(ttl: String, msg: String) {
-        ToolBox.alertMSG(
-            context,
-            ttl,
-            msg,
-            null,
-            0
-        )
+    override fun showAlert(
+        ttl: String,
+        msg: String,
+        positiveListener: DialogInterface.OnClickListener?,
+        negativeOption: Int
+    ) {
+
+        if(negativeOption == 0){
+            ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                positiveListener,
+                negativeOption
+            )
+        }else{
+            ToolBox.alertMSG_YES_NO(
+                context,
+                ttl,
+                msg,
+                positiveListener,
+                negativeOption
+            )
+        }
     }
-    //
+
+    /**
+     * Fun que atualiza a lista de wg da act com os dados vindo do server
+     */
     override fun updateWorkgroupMemberList(wgMemberList: List<TWorkgroupObj>) {
         this.workgroupMemberList = wgMemberList as ArrayList<TWorkgroupObj>
     }
     //region Act085WorkgroupRemoveListFrg.onWorkgroupRemoveInteract
+    /**
+     * Callback acionando quando o usr confirma a remocao do vinculos entre user e wg
+     */
     override fun callWorkgroupEditService(userCode: Int, action: Int, workgroupCode: Int) {
         mPresenter.executeWorkgroupEditService(userCode,action, arrayListOf(workgroupCode))
     }
-
+    /**
+     * Callback do click no botao de add wg e que instancia e seta o frag
+     * Act085WorkgroupAddListFrg
+     */
     override fun onAddUsrToWorkGroupClick(userWgObj: TUserWorkgroupObj) {
-        setFrag(workgroupAddListFrg,WORKGROUP_ADD_LIST_FRAG_TAG)
+        initWorkgroupAddListFrg()
+        setFrag(workgroupAddListFrg, WORKGROUP_ADD_LIST_FRAG_TAG)
     }
 
+    /**
+     * Fun que pega nova instancia do Act085WorkgroupAddListFrg
+     */
+    private fun initWorkgroupAddListFrg() {
+           workgroupAddListFrg = Act085WorkgroupAddListFrg.newInstance(
+               hmAux_Trans,
+               userWorkgroup,
+               mPresenter.getUnlinkedWgList(workgroupMemberList) as ArrayList<TWorkgroupObj>
+           )
+    }
+
+    /**
+     * Fun que atualiza a lista de wg vinculadas ao usr no frag de remocao e
+     * caso o frag atual seja o addWg, o remove da lista pois significa que a atualizacao
+     * da lista foi oriunda da add de wg.
+     */
     override fun updateLinkeWorkgroupListIntoFrag(wgMemberList: List<TWorkgroupObj>) {
         workgroupRemoveListFrg?.let{
             it.updateLinkedWorkgroupList(wgMemberList as ArrayList<TWorkgroupObj>)
+        }
+        //
+        fm.findFragmentByTag(WORKGROUP_ADD_LIST_FRAG_TAG)?.let {
+            if(it.isVisible) {
+                fm.popBackStackImmediate()
+            }
         }
     }
 
@@ -244,8 +279,7 @@ class Act085Main :
 
     override fun onBackPressed() {
         //super.onBackPressed()
-        //
-        mPresenter.onBackPressedClick()
+        mPresenter.onBackPressedClick(fm)
     }
 
     override fun callAct005(){

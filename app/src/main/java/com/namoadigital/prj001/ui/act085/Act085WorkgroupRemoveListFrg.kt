@@ -103,13 +103,13 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
     private fun initRecycler() {
         with(binding) {
             act085WorkgroupRemoveListFrgRvWg.layoutManager = LinearLayoutManager(context)
-            act085WorkgroupRemoveListFrgRvWg.addItemDecoration(
-                DividerItemDecoration(
-                    context,
-                    DividerItemDecoration.VERTICAL
-                )
-            )
-            //
+//            act085WorkgroupRemoveListFrgRvWg.addItemDecoration(
+//                DividerItemDecoration(
+//                    context,
+//                    DividerItemDecoration.VERTICAL
+//                )
+//            )
+//            //
             act085WorkgroupRemoveListFrgRvWg.adapter = mAdapter
         }
     }

@@ -18,6 +18,7 @@ import com.namoadigital.prj001.databinding.Act085WorkgroupAddListFrgBinding
 import com.namoadigital.prj001.model.TUserWorkgroupObj
 import com.namoadigital.prj001.model.TWorkgroupObj
 import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.*
 
 /**
@@ -95,6 +96,9 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
     override fun onDetach() {
         super.onDetach()
         mFragListner = null
+        unlinkedWgList.forEach {
+            it.createUsrWgLink = false
+        }
     }
 
     private fun setLabels() {
@@ -145,24 +149,8 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
                 }
             })
 
-
-            act085WorkgroupAddListFrgRgPeriod.setOnCheckedChangeListener { group, checkedId ->
-                act085WorkgroupAddListFrgClUntilDate.apply {
-                    visibility = when (checkedId){
-                        act085WorkgroupAddListFrgRdoUntil.id ->{
-                            act085WorkgroupAddListFrgTvDateVal.setmRequired(true)
-                            binding.act085WorkgroupAddListFrgTvDateVal.setmHighlightWhenInvalid(true)
-                            View.VISIBLE
-                        }
-                        else ->{
-                            act085WorkgroupAddListFrgTvDateVal.setmRequired(false)
-                            binding.act085WorkgroupAddListFrgTvDateVal.setmHighlightWhenInvalid(false)
-                            binding.act085WorkgroupAddListFrgTvDateVal.isValid
-                            View.GONE
-                        }
-                    }
-                }
-                //
+            act085WorkgroupAddListFrgRgPeriod.setOnCheckedChangeListener { _, checkedId ->
+                configDateComponentForRdoOption(checkedId == act085WorkgroupAddListFrgRdoUntil.id)
             }
             //
             act085WorkgroupAddListFrgBtnSave.setOnClickListener {
@@ -200,8 +188,37 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
                     )
                 }
             }
+            //
+            act085WorkgroupAddListFrgBtnCancel.setOnClickListener {
+                activity?.onBackPressed()
+            }
         }
     }
+
+    /**
+     * Fun que define comportamento da view de dateHour
+     */
+    private fun configDateComponentForRdoOption(dateFieldRequired: Boolean) {
+        with(binding) {
+            act085WorkgroupAddListFrgTvDateVal.setmRequired(dateFieldRequired)
+            act085WorkgroupAddListFrgTvDateVal.setmHighlightWhenInvalid(dateFieldRequired)
+            //
+            if(dateFieldRequired){
+                act085WorkgroupAddListFrgTvDateVal.setmValue(
+                    getCurrentDateHour()
+                )
+                act085WorkgroupAddListFrgClUntilDate.visibility = View.VISIBLE
+            }else{
+                act085WorkgroupAddListFrgTvDateVal.setmValue(null)
+                act085WorkgroupAddListFrgTvDateVal.isValid
+                act085WorkgroupAddListFrgClUntilDate.visibility = View.GONE
+            }
+
+        }
+    }
+
+    private fun getCurrentDateHour() = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
+
 
     private fun applyTextFilter(text: String?){
         mAdapter.filter.filter(text)
@@ -230,6 +247,21 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
         binding.act085WorkgroupAddListFrgBtnSave.apply {
           isEnabled = isValidSave()
         }
+    }
+
+    /**
+     * Fun que verifica se existem dados alterados  na tela
+     */
+    fun hasUnsavedDate() : Boolean{
+       //Busca item com checkbox marcado e se encontrar retorna true
+       unlinkedWgList.find {
+            it.createUsrWgLink
+        }?.let {
+            return true
+        }
+        //Se nenhum item, verifica se teve alteração na data ou no checkbox
+        return binding.act085WorkgroupAddListFrgTvDateVal.hasChanged()
+               && binding.act085WorkgroupAddListFrgChkExpireReturn.isChecked
     }
 
     companion object {
@@ -262,6 +294,8 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
                 "chk_deactivate_other_workgroup_until_expire_date",
                 "btn_cancel",
                 "btn_save",
+                "alert_invalid_save_ttl",
+                "alert_invalid_save_msg"
             )
         }
     }

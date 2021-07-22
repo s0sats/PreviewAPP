@@ -4,15 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="5dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
     android:background="@drawable/namoa_icon_bg_states"
+    android:clickable="true"
+    android:focusable="true"
     >
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
         >
-
         <CheckBox
             android:id="@+id/act085_workgroup_add_list_frg_cell_chk"
             android:layout_width="40dp"
