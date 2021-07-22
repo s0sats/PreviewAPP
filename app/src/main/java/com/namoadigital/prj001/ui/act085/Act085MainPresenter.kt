@@ -183,17 +183,18 @@ class Act085MainPresenter(
         //
         val lastTest = fm.fragments.last()
         //
-        if(visibleFrg.size == 1){
+        if (visibleFrg.size == 1) {
             val fragment = visibleFrg[0]
-            when(fragment){
+            when (fragment) {
                 is Act085WorkgroupAddListFrg -> {
                     confirmLeaveWorkgroupAddFrg(fm, fragment.hasUnsavedDate())
                 }
                 else -> mView.callAct005()
             }
-        }else{
+        } else {
             mView.callAct005()
         }
+    }
 
     override fun executeWsUserSearch(
         user_code_sql: String,
@@ -236,7 +237,6 @@ class Act085MainPresenter(
 
         mView.callAct085UserListFrg(result.getAct085UserModel())
 
-    }
     }
 
     /**

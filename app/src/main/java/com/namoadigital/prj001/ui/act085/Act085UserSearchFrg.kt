@@ -24,10 +24,6 @@ private const val ARG_PARAM2 = "param2"
 class Act085UserSearchFrg : BaseFragment() {
 
     private lateinit var binding: Act085UserSearchFrgBinding
-    var usernameFormField = ""
-    var emailFormField = ""
-    var userCodeFormField = ""
-    var erpCodeFormField = ""
 
     var executeWsSearchUser: (name: String,
                               email: String,
@@ -60,10 +56,12 @@ class Act085UserSearchFrg : BaseFragment() {
 
     private fun setActions() {
         binding.act085UserSearchFrgBtnSearch.setOnClickListener {
-            usernameFormField = binding.act085UserSearchFrgMketUserName.text.toString()
-            emailFormField = binding.act085UserSearchFrgMketUserEmail.text.toString()
-            userCodeFormField = binding.act085UserSearchFrgMketUserCode.text.toString()
-            erpCodeFormField = binding.act085UserSearchFrgMketUserErpCode.text.toString()
+            //
+            val usernameFormField = binding.act085UserSearchFrgMketUserName.text.toString()
+            val emailFormField = binding.act085UserSearchFrgMketUserEmail.text.toString()
+            val userCodeFormField = binding.act085UserSearchFrgMketUserCode.text.toString()
+            val erpCodeFormField = binding.act085UserSearchFrgMketUserErpCode.text.toString()
+            //
             if(isValidSearch(
                     usernameFormField,
                     emailFormField,
@@ -121,7 +119,13 @@ class Act085UserSearchFrg : BaseFragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(hmAuxTrans: HMAux) =
+        fun newInstance(
+            hmAuxTrans: HMAux,
+            usernameFormField: String,
+            emailFormField: String,
+            userCodeFormField: String,
+            erpCodeFormField: String
+        ) =
             Act085UserSearchFrg().apply {
                 arguments = Bundle().apply {
                     putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)

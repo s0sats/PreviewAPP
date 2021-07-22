@@ -37,8 +37,13 @@ class Act085Main :
     private val WORKGROUP_ADD_LIST_FRAG_TAG = "WORKGROUP_ADD_LIST_FRAG_TAG"
     private val USER_SEARCH_FRG_TAG = "USER_SEARCH_FRG_TAG"
     private val USER_LIST_FRG_TAG = "USER_LIST_FRG_TAG"
-    private lateinit var binding : Act085MainContentBinding
     private val fm = supportFragmentManager
+    private var usernameFormField = ""
+    private var emailFormField = ""
+    private var userCodeFormField = ""
+    private var erpCodeFormField = ""
+
+    private lateinit var binding : Act085MainContentBinding
     private lateinit var bundle: Bundle
     private val mPresenter : Act085MainContract.I_Presenter by lazy{
         Act085MainPresenter(
@@ -99,9 +104,19 @@ class Act085Main :
 
     private fun initVars() {
         if(bundle.isEmpty) {
-            val act085UserSearchFrg = Act085UserSearchFrg.newInstance(hmAux_Trans)
-            setFrag(act085UserSearchFrg, USER_SEARCH_FRG_TAG)
+            callAct085UserSearchFrg()
         }
+    }
+
+    private fun callAct085UserSearchFrg() {
+        val act085UserSearchFrg = Act085UserSearchFrg.newInstance(
+            hmAux_Trans,
+            usernameFormField,
+            emailFormField,
+            userCodeFormField,
+            erpCodeFormField
+        )
+        setFrag(act085UserSearchFrg, USER_SEARCH_FRG_TAG)
     }
 
     private fun <T : BaseFragment?> setFrag(type: T, sTag: String) {
@@ -119,9 +134,14 @@ class Act085Main :
             is Act085UserSearchFrg -> {
                 fragment.executeWsSearchUser =
                     { name: String, email: String, userCode: String, erpCode: String ->
+                        //
+                        usernameFormField = name
+                        emailFormField = email
+                        userCodeFormField = userCode
+                        erpCodeFormField = erpCode
                         mPresenter.executeWsUserSearch(userCode, email, erpCode, name)
+                        //
                     }
-
             }
             is Act085UserListFrg ->{
                 fragment.onUserSelected = {
