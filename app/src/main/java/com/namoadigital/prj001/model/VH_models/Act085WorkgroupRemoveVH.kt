@@ -35,7 +35,7 @@ class Act085WorkgroupRemoveVH(
                 }
             }
             //
-            val placeholderAndErroDrawable = ContextCompat.getDrawable(context, R.drawable.ic_room_group)
+            val placeholderAndErroDrawable = ContextCompat.getDrawable(context, R.drawable.ic_outline_groups_24)
             act085WorkgroupRemoveListFrgCellIvWgImg.setImageDrawable(placeholderAndErroDrawable)
             item.groupImage?.let{
                 Glide

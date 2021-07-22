@@ -89,6 +89,7 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
         with(binding){
             act085WorkgroupRemoveListFrgTvListTtl.text = hmAux_Trans["linked_workgroup_lbl"]
             act085WorkgroupRemoveListFrgBtnAddInWg.text = hmAux_Trans["btn_add_in_wrokgroup"]
+            act085WorkgroupRemoveListTvEmptyList.text = hmAux_Trans["linked_wg_empty_list"]
         }
     }
 
@@ -103,15 +104,15 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
     private fun initRecycler() {
         with(binding) {
             act085WorkgroupRemoveListFrgRvWg.layoutManager = LinearLayoutManager(context)
-//            act085WorkgroupRemoveListFrgRvWg.addItemDecoration(
-//                DividerItemDecoration(
-//                    context,
-//                    DividerItemDecoration.VERTICAL
-//                )
-//            )
-//            //
             act085WorkgroupRemoveListFrgRvWg.adapter = mAdapter
+            //
+            checkEmptyListViewVisibility()
         }
+    }
+
+    private fun checkEmptyListViewVisibility() {
+        binding.act085WorkgroupRemoveListTvEmptyList
+            .visibility = if (linkedWg.isNullOrEmpty()) View.VISIBLE else View.GONE
     }
 
 
@@ -140,8 +141,11 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
             putSerializable(Act085Main.ARG_WG_LIST_OBJ, updatedLinkedWgList)
         }
         //
+        linkedWg = updatedLinkedWgList
         mAdapter.source = updatedLinkedWgList
         mAdapter.notifyDataSetChanged()
+        //
+        checkEmptyListViewVisibility()
         //
         ToolBox.toastMSG(
             context,
@@ -175,7 +179,8 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
                 "remove_workgroup_link_ttl",
                 "remove_workgroup_link_confirm",
                 "workgroup_list_successfully_update",
-                "until_lbl"
+                "until_lbl",
+                "linked_wg_empty_list"
             )
         }
     }

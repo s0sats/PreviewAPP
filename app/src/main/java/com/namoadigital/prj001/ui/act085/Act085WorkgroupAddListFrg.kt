@@ -5,7 +5,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +17,6 @@ import com.namoadigital.prj001.databinding.Act085WorkgroupAddListFrgBinding
 import com.namoadigital.prj001.model.TUserWorkgroupObj
 import com.namoadigital.prj001.model.TWorkgroupObj
 import com.namoadigital.prj001.util.Constant
-import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.*
 
 /**
@@ -80,6 +78,7 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
         setLabels()
         initVars()
         initRecycler()
+        applyEmptyListLayoutIfCase()
         initAction()
     }
 
@@ -112,6 +111,7 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
             act085WorkgroupAddListFrgChkExpireReturn.text = hmAux_Trans["chk_deactivate_other_workgroup_until_expire_date"]
             act085WorkgroupAddListFrgBtnCancel.text = hmAux_Trans["btn_cancel"]
             act085WorkgroupAddListFrgBtnSave.text = hmAux_Trans["btn_save"]
+            act085WorkgroupAddListTvEmptyList.text = hmAux_Trans["unlinked_wg_empty_list"]
         }
     }
 
@@ -120,20 +120,39 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
             act085WorkgroupAddListFrgTvUsrName.text = userWgObj.userName
             act085WorkgroupAddListFrgTvUsrNick.text = userWgObj.userNick
             act085WorkgroupAddListFrgClUntilDate.visibility = View.GONE
+            act085WorkgroupAddListFrgMketSearch.apply {
+                setmBARCODE(false)
+                setmOCR(false)
+                setmNFC(false)
+            }
         }
     }
 
     private fun initRecycler() {
         with(binding) {
             act085WorkgroupAddListFrgRvWg.layoutManager = LinearLayoutManager(context)
-//            act085WorkgroupAddListFrgRvWg.addItemDecoration(
-//                DividerItemDecoration(
-//                    context,
-//                    DividerItemDecoration.VERTICAL
-//                )
-//            )
-            //
             act085WorkgroupAddListFrgRvWg.adapter = mAdapter
+        }
+    }
+
+    /**
+     * Fun que seta visibilidade inicial da tabela baseada na existencia ou não de itens na lista
+     */
+    private fun applyEmptyListLayoutIfCase() {
+        with(binding) {
+            if (!unlinkedWgList.isNullOrEmpty()) {
+                act085WorkgroupAddListTvEmptyList.visibility = View.GONE
+                act085WorkgroupAddListFrgMketSearch.visibility = View.VISIBLE
+                act085WorkgroupAddListFrgCvPeriod.visibility = View.VISIBLE
+                act085WorkgroupAddListFrgCvPeriod.visibility = View.VISIBLE
+                act085WorkgroupAddListFrgClBtn.visibility = View.VISIBLE
+            } else{
+                act085WorkgroupAddListTvEmptyList.visibility = View.VISIBLE
+                act085WorkgroupAddListFrgMketSearch.visibility = View.GONE
+                act085WorkgroupAddListFrgCvPeriod.visibility = View.GONE
+                act085WorkgroupAddListFrgCvPeriod.visibility = View.GONE
+                act085WorkgroupAddListFrgClBtn.visibility = View.GONE
+            }
         }
     }
 
@@ -155,36 +174,18 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
             //
             act085WorkgroupAddListFrgBtnSave.setOnClickListener {
                 if(isValidSave()){
-                    var wgToLinkList = unlinkedWgList.filter {
-                            it.createUsrWgLink
-                        }.map {
-                            it.groupCode
-                        } as ArrayList<Int>
-                    //
-                    var period = 0
-                    var expireDate: String? = null
-                    var expireReturn = 0
-                    if(act085WorkgroupAddListFrgRdoUntil.isChecked){
-                        period = 1
-                        expireDate = act085WorkgroupAddListFrgTvDateVal.getmValue()
-                        expireReturn = if(act085WorkgroupAddListFrgChkExpireReturn.isChecked) 1 else 0
-                    }
-                    //
-                    mFragListner?.onAddWorkgroupSave(
-                        userCode = userWgObj.userCode,
-                        action = 1,
-                        workgroupCode = wgToLinkList,
-                        period = period,
-                        expireDate = expireDate,
-                        expireReturn = expireReturn
+                    showAlert(
+                        hmAux_Trans["alert_save_edition_ttl"],
+                        hmAux_Trans["alert_save_edition_confirm"],
+                        DialogInterface.OnClickListener { _, _ ->
+                            prepareDataToSave()
+                        },
+                        1
                     )
                 }else{
-                    ToolBox.alertMSG(
-                        context,
+                    showAlert(
                         hmAux_Trans["alert_invalid_save_ttl"],
-                        hmAux_Trans["alert_invalid_save_msg"],
-                        null,
-                        0
+                        hmAux_Trans["alert_invalid_save_msg"]
                     )
                 }
             }
@@ -192,6 +193,57 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
             act085WorkgroupAddListFrgBtnCancel.setOnClickListener {
                 activity?.onBackPressed()
             }
+        }
+    }
+
+    /**
+     * Fun que prepara os dados para chamada do ws
+     */
+    private fun prepareDataToSave() {
+        var wgToLinkList = unlinkedWgList.filter {
+            it.createUsrWgLink
+        }.map {
+            it.groupCode
+        } as ArrayList<Int>
+        //
+        var period = 0
+        var expireDate: String? = null
+        var expireReturn = 0
+        with(binding) {
+            if (act085WorkgroupAddListFrgRdoUntil.isChecked) {
+                period = 1
+                expireDate = act085WorkgroupAddListFrgTvDateVal.getmValue()
+                expireReturn = if (act085WorkgroupAddListFrgChkExpireReturn.isChecked) 1 else 0
+            }
+        }
+        //Chama interface que chamará o WS
+        mFragListner?.onAddWorkgroupSave(
+            userCode = userWgObj.userCode,
+            action = 1,
+            workgroupCode = wgToLinkList,
+            period = period,
+            expireDate = expireDate,
+            expireReturn = expireReturn
+        )
+    }
+
+    private fun showAlert(ttl: String?, msg: String?, positiveListener: DialogInterface.OnClickListener? = null, negativeOption: Int = 0){
+        if(negativeOption == 0) {
+            ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                positiveListener,
+                negativeOption
+            )
+        }else{
+            ToolBox.alertMSG_YES_NO(
+                context,
+                ttl,
+                msg,
+                positiveListener,
+                negativeOption
+            )
         }
     }
 
@@ -205,7 +257,7 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
             //
             if(dateFieldRequired){
                 act085WorkgroupAddListFrgTvDateVal.setmValue(
-                    getCurrentDateHour()
+                    getTodayLastMinute()
                 )
                 act085WorkgroupAddListFrgClUntilDate.visibility = View.VISIBLE
             }else{
@@ -217,8 +269,12 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
         }
     }
 
-    private fun getCurrentDateHour() = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
-
+    /**
+     * Fun que retorna o ultimo minuto do dia de hoje
+     */
+    private fun getTodayLastMinute(): String{
+       return "${ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z").substring(0,10)} 23:59:59 ${ToolBox.getDeviceGMT(false)}"
+    }
 
     private fun applyTextFilter(text: String?){
         mAdapter.filter.filter(text)
@@ -241,12 +297,6 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
         }
         //
         return true
-    }
-
-    private fun updateSaveBtnState(){
-        binding.act085WorkgroupAddListFrgBtnSave.apply {
-          isEnabled = isValidSave()
-        }
     }
 
     /**
@@ -295,7 +345,10 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
                 "btn_cancel",
                 "btn_save",
                 "alert_invalid_save_ttl",
-                "alert_invalid_save_msg"
+                "alert_invalid_save_msg",
+                "alert_save_edition_ttl",
+                "alert_save_edition_confirm",
+                "unlinked_wg_empty_list"
             )
         }
     }

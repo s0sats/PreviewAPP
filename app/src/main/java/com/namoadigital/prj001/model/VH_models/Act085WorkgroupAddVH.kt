@@ -41,7 +41,8 @@ class Act085WorkgroupAddVH(
         item: TWorkgroupObj
     ) {
         val placeholderAndErroDrawable =
-            ContextCompat.getDrawable(context, R.drawable.ic_room_group)
+            ContextCompat.getDrawable(context, R.drawable.ic_outline_groups_24)
+        //
         with(binding) {
             act085WorkgroupAddListFrgCellIvWgImg.setImageDrawable(placeholderAndErroDrawable)
             item.groupImage?.let {
