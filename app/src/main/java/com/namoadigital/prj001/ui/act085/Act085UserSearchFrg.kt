@@ -120,11 +120,7 @@ class Act085UserSearchFrg : BaseFragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(
-            hmAuxTrans: HMAux,
-            usernameFormField: String,
-            emailFormField: String,
-            userCodeFormField: String,
-            erpCodeFormField: String
+            hmAuxTrans: HMAux
         ) =
             Act085UserSearchFrg().apply {
                 arguments = Bundle().apply {
