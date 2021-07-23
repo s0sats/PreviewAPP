@@ -34,11 +34,6 @@ class Act085Main :
     Act085WorkgroupAddListFrg.onWorkgroupAddInteract
 {
     private val fm = supportFragmentManager
-    private var usernameFormField = ""
-    private var emailFormField = ""
-    private var userCodeFormField = ""
-    private var erpCodeFormField = ""
-
     private var hasErrorOnWorkgroupServices = false
 
     private lateinit var binding : Act085MainContentBinding
