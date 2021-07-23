@@ -53,18 +53,12 @@ class Act085Main :
         )
     }
     //
-    private val workgroupRemoveListFrg: Act085WorkgroupRemoveListFrg by lazy {
-        Act085WorkgroupRemoveListFrg.newInstance(
-            hmAux_Trans,
-            userWorkgroup,
-            workgroupMemberList
-        )
-    }
-    private var workgroupAddListFrg: Act085WorkgroupAddListFrg? = null
-    //
     private var wsProcess = ""
     private var workgroupMemberList = arrayListOf<TWorkgroupObj>()
     private lateinit var userWorkgroup : TUserWorkgroupObj
+    private var workgroupRemoveListFrg: Act085WorkgroupRemoveListFrg? = null
+    private var workgroupAddListFrg: Act085WorkgroupAddListFrg? = null
+
     //
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -226,6 +220,17 @@ class Act085Main :
     }
 
     /**
+     * Fun que pega nova instancia do Act085WorkgroupRemoveListFrg
+     */
+    private fun initWorkgroupRemoveListFrg(){
+        workgroupRemoveListFrg = Act085WorkgroupRemoveListFrg.newInstance(
+            hmAux_Trans,
+            userWorkgroup,
+            workgroupMemberList
+        )
+    }
+
+    /**
      * Fun que pega nova instancia do Act085WorkgroupAddListFrg
      */
     private fun initWorkgroupAddListFrg() {
@@ -306,7 +311,6 @@ class Act085Main :
         when(wsProcess){
             WS_User_Search::class.java.getName() -> {
                 resetWsResources()
-
                 mPresenter.extractUserSearchResult(mLink)
             }
             WS_Workgroup_Member_List::class.java.name ->{
@@ -319,7 +323,7 @@ class Act085Main :
                 mPresenter.executeWorkgroupMemberListService(userWorkgroup.userCode)
             }
             else -> {
-                progressDialog.dismiss()
+                resetWsResources()
             }
         }
     }
@@ -327,6 +331,10 @@ class Act085Main :
     private fun resetWsResources() {
         wsProcess = ""
         progressDialog.dismiss()
+    }
+
+    override fun resetWorkgroupMemberList() {
+        workgroupMemberList = arrayListOf()
     }
 
     override fun onBackPressed() {
@@ -352,6 +360,7 @@ class Act085Main :
 
     fun callAct085WorkgroupRemoveListFrg(user: TUserWorkgroupObj) {
         userWorkgroup = user
+        initWorkgroupRemoveListFrg()
         setFrag(workgroupRemoveListFrg, WORKGROUP_REMOVE_LIST_FRAG_TAG)
         mPresenter.executeWorkgroupMemberListService(user.userCode)
     }
@@ -360,37 +369,58 @@ class Act085Main :
         super.processError_1(mLink, mRequired)
         when(wsProcess){
            WS_Workgroup_Member_List::class.java.name ->{
-                resetWsResources()
-                //
-               hasErrorOnWorkgroupServices = true
-            }
+               handleWsWorkgroupMemberListError()
+           }
             WS_Workgroup_Member_Edit::class.java.name ->{
                 progressDialog.dismiss()
                 hasErrorOnWorkgroupServices = true
             }
             else -> {
-                progressDialog.dismiss()
+                resetWsResources()
             }
         }
+    }
+
+    private fun handleWsWorkgroupMemberListError() {
+        resetWsResources()
+        hasErrorOnWorkgroupServices = true
+        onBackPressed()
     }
 
     override fun processCustom_error(mLink: String?, mRequired: String?) {
         super.processCustom_error(mLink, mRequired)
         when(wsProcess){
             WS_Workgroup_Member_List::class.java.name ->{
-                resetWsResources()
-                //
-                hasErrorOnWorkgroupServices = true
+                handleWsWorkgroupMemberListError()
             }
             WS_Workgroup_Member_Edit::class.java.name ->{
                 progressDialog.dismiss()
                 hasErrorOnWorkgroupServices = true
             }
             else -> {
-                progressDialog.dismiss()
+                resetWsResources()
             }
         }
     }
+
+    //TRATA SESSION_NOT_FOUND
+    override fun processLogin() {
+        super.processLogin()
+        //
+        ToolBox_Con.cleanPreferences(context)
+        //
+        ToolBox_Inf.call_Act001_Main(context)
+        //
+        finish()
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
+    override fun processUpdateSoftware(mLink: String?, mRequired: String?) {
+        super.processUpdateSoftware(mLink, mRequired)
+        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        progressDialog.dismiss()
+    }
+    //endregion
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.

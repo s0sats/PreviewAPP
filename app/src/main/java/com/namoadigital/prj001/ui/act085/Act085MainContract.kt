@@ -15,6 +15,7 @@ interface Act085MainContract {
         fun updateLinkeWorkgroupListIntoFrag(wgMemberList: List<TWorkgroupObj>)
         fun callAct005()
         fun callAct085UserListFrg(act085UserModel: Act085UserModel)
+        fun resetWorkgroupMemberList()
     }
     interface I_Presenter{
         fun getTranslation(): HMAux
