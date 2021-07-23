@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.BaseFragment
@@ -32,16 +33,13 @@ class Act085Main :
     Act085WorkgroupRemoveListFrg.onWorkgroupRemoveInteract,
     Act085WorkgroupAddListFrg.onWorkgroupAddInteract
 {
-
-
-
-
-
     private val fm = supportFragmentManager
     private var usernameFormField = ""
     private var emailFormField = ""
     private var userCodeFormField = ""
     private var erpCodeFormField = ""
+
+    private var hasErrorOnWorkgroupServices = false
 
     private lateinit var binding : Act085MainContentBinding
     private lateinit var bundle: Bundle
@@ -55,18 +53,12 @@ class Act085Main :
         )
     }
     //
-    private val workgroupRemoveListFrg: Act085WorkgroupRemoveListFrg by lazy {
-        Act085WorkgroupRemoveListFrg.newInstance(
-            hmAux_Trans,
-            userWorkgroup,
-            workgroupMemberList
-        )
-    }
-    private var workgroupAddListFrg: Act085WorkgroupAddListFrg? = null
-    //
     private var wsProcess = ""
     private var workgroupMemberList = arrayListOf<TWorkgroupObj>()
     private lateinit var userWorkgroup : TUserWorkgroupObj
+    private var workgroupRemoveListFrg: Act085WorkgroupRemoveListFrg? = null
+    private var workgroupAddListFrg: Act085WorkgroupAddListFrg? = null
+
     //
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +72,29 @@ class Act085Main :
         iniTrans()
         initVars()
         iniUIFooter()
+
+        setBackstackListener()
+    }
+
+    /**
+     * BARRIONUEVO 23-07-2021
+     *      Metodo responsável por resetar os fragmentos da stack.
+     *      Solução encontrada para limpar todos os campos do primeiro fragmento de
+     * forma rápida e rasteira.
+     */
+    private fun setBackstackListener() {
+        fm.addOnBackStackChangedListener(
+            object : FragmentManager.OnBackStackChangedListener {
+                override fun onBackStackChanged() {
+                    val fm: FragmentManager = supportFragmentManager
+                    if (fm != null) {
+                        val backStackCount: Int = fm.getBackStackEntryCount()
+                        if (backStackCount == 0) {
+                            callAct085UserSearchFrg()
+                        }
+                    }
+                }
+            })
     }
 
     private fun initBundle(savedInstanceState: Bundle?) {
@@ -110,11 +125,7 @@ class Act085Main :
 
     private fun callAct085UserSearchFrg() {
         val act085UserSearchFrg = Act085UserSearchFrg.newInstance(
-            hmAux_Trans,
-            usernameFormField,
-            emailFormField,
-            userCodeFormField,
-            erpCodeFormField
+            hmAux_Trans
         )
         setFrag(act085UserSearchFrg, USER_SEARCH_FRG_TAG)
     }
@@ -135,10 +146,6 @@ class Act085Main :
                 fragment.executeWsSearchUser =
                     { name: String, email: String, userCode: String, erpCode: String ->
                         //
-                        usernameFormField = name
-                        emailFormField = email
-                        userCodeFormField = userCode
-                        erpCodeFormField = erpCode
                         mPresenter.executeWsUserSearch(userCode, email, erpCode, name)
                         //
                     }
@@ -210,6 +217,17 @@ class Act085Main :
     override fun onAddUsrToWorkGroupClick(userWgObj: TUserWorkgroupObj) {
         initWorkgroupAddListFrg()
         setFrag(workgroupAddListFrg, WORKGROUP_ADD_LIST_FRAG_TAG)
+    }
+
+    /**
+     * Fun que pega nova instancia do Act085WorkgroupRemoveListFrg
+     */
+    private fun initWorkgroupRemoveListFrg(){
+        workgroupRemoveListFrg = Act085WorkgroupRemoveListFrg.newInstance(
+            hmAux_Trans,
+            userWorkgroup,
+            workgroupMemberList
+        )
     }
 
     /**
@@ -293,7 +311,6 @@ class Act085Main :
         when(wsProcess){
             WS_User_Search::class.java.getName() -> {
                 resetWsResources()
-
                 mPresenter.extractUserSearchResult(mLink)
             }
             WS_Workgroup_Member_List::class.java.name ->{
@@ -303,10 +320,10 @@ class Act085Main :
             }
             WS_Workgroup_Member_Edit::class.java.name ->{
                 progressDialog.dismiss()
-                mPresenter.executeWorkgroupMemberListService(52)
+                mPresenter.executeWorkgroupMemberListService(userWorkgroup.userCode)
             }
             else -> {
-                progressDialog.dismiss()
+                resetWsResources()
             }
         }
     }
@@ -316,9 +333,13 @@ class Act085Main :
         progressDialog.dismiss()
     }
 
+    override fun resetWorkgroupMemberList() {
+        workgroupMemberList = arrayListOf()
+    }
+
     override fun onBackPressed() {
         //super.onBackPressed()
-        mPresenter.onBackPressedClick(fm)
+        mPresenter.onBackPressedClick(fm, hasErrorOnWorkgroupServices)
     }
 
     override fun callAct005(){
@@ -339,13 +360,67 @@ class Act085Main :
 
     fun callAct085WorkgroupRemoveListFrg(user: TUserWorkgroupObj) {
         userWorkgroup = user
+        initWorkgroupRemoveListFrg()
         setFrag(workgroupRemoveListFrg, WORKGROUP_REMOVE_LIST_FRAG_TAG)
         mPresenter.executeWorkgroupMemberListService(user.userCode)
     }
 
     override fun processError_1(mLink: String?, mRequired: String?) {
         super.processError_1(mLink, mRequired)
+        when(wsProcess){
+           WS_Workgroup_Member_List::class.java.name ->{
+               handleWsWorkgroupMemberListError()
+           }
+            WS_Workgroup_Member_Edit::class.java.name ->{
+                progressDialog.dismiss()
+                hasErrorOnWorkgroupServices = true
+            }
+            else -> {
+                resetWsResources()
+            }
+        }
     }
+
+    private fun handleWsWorkgroupMemberListError() {
+        resetWsResources()
+        hasErrorOnWorkgroupServices = true
+        onBackPressed()
+    }
+
+    override fun processCustom_error(mLink: String?, mRequired: String?) {
+        super.processCustom_error(mLink, mRequired)
+        when(wsProcess){
+            WS_Workgroup_Member_List::class.java.name ->{
+                handleWsWorkgroupMemberListError()
+            }
+            WS_Workgroup_Member_Edit::class.java.name ->{
+                progressDialog.dismiss()
+                hasErrorOnWorkgroupServices = true
+            }
+            else -> {
+                resetWsResources()
+            }
+        }
+    }
+
+    //TRATA SESSION_NOT_FOUND
+    override fun processLogin() {
+        super.processLogin()
+        //
+        ToolBox_Con.cleanPreferences(context)
+        //
+        ToolBox_Inf.call_Act001_Main(context)
+        //
+        finish()
+    }
+
+    //TRATAVIA QUANDO VERSÃO RETORNADO É EXPIRED
+    override fun processUpdateSoftware(mLink: String?, mRequired: String?) {
+        super.processUpdateSoftware(mLink, mRequired)
+        //ToolBox_Inf.executeUpdSW(context, mLink, mRequired);
+        progressDialog.dismiss()
+    }
+    //endregion
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.

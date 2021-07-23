@@ -44,28 +44,7 @@ class Act085UserVH(
                 Glide
                     .with(binding.root.context)
                     .load(it)
-                    .placeholder(null)
-                    .listener(object : RequestListener<Drawable?> {
-                        override fun onLoadFailed(
-                            @Nullable e: GlideException?,
-                            model: Any,
-                            target: Target<Drawable?>,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            binding.act085UserListFrgCellIvPhoto.setImageDrawable(null)
-                            return true
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any,
-                            target: Target<Drawable?>,
-                            dataSource: DataSource,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            return false
-                        }
-                    })
+                    .placeholder(R.drawable.ic_baseline_account_box_24)
                     .into(binding.act085UserListFrgCellIvPhoto)
             }
         }?: binding.act085UserListFrgCellIvPhoto.apply {

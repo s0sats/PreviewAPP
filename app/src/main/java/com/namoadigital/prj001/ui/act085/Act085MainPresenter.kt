@@ -53,6 +53,8 @@ class Act085MainPresenter(
             "alert_workgroup_list_not_found_msg",
             "alert_leave_without_save_ttl",
             "alert_leave_without_save_confirm",
+            "alert_leave_remove_workgroup_ttl",
+            "alert_leave_remove_workgroup_confirm"
 
         )
         transList.addAll(Act085UserSearchFrg.getFragTranslationsVars())
@@ -195,12 +197,10 @@ class Act085MainPresenter(
     }
     //endregion
 
-    override fun onBackPressedClick(fm: FragmentManager) {
+    override fun onBackPressedClick(fm: FragmentManager, errorOnWorkgroupServices: Boolean) {
         val visibleFrg = fm.fragments.filter {
             it.isVisible
         }
-        //
-        val lastTest = fm.fragments.last()
         //
         if (visibleFrg.size == 1) {
             val fragment = visibleFrg[0]
@@ -210,7 +210,7 @@ class Act085MainPresenter(
                 }
                 is Act085WorkgroupRemoveListFrg -> {
 //                    fm.popBackStack(USER_SEARCH_FRG_TAG, 0)
-                    fm.popBackStack(USER_LIST_FRG_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                    workgroupRemoveListFrgBackFlow(errorOnWorkgroupServices, fm)
                 }
                 is Act085UserSearchFrg -> {
                     mView.callAct005()
@@ -219,6 +219,29 @@ class Act085MainPresenter(
             }
         } else {
             mView.callAct005()
+        }
+    }
+
+    /**
+     * Fun que lida com o voltar do frg de remoção de vinculo de WG
+     */
+    private fun workgroupRemoveListFrgBackFlow(
+        errorOnWorkgroupServices: Boolean,
+        fm: FragmentManager
+    ) {
+        if (errorOnWorkgroupServices) {
+            mView.resetWorkgroupMemberList()
+            fm.popBackStack(USER_LIST_FRG_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        } else {
+            mView.showAlert(
+                hmAuxTrans["alert_leave_remove_workgroup_ttl"] ?: "",
+                hmAuxTrans["alert_leave_remove_workgroup_confirm"] ?: "",
+                DialogInterface.OnClickListener { _, _ ->
+                    mView.resetWorkgroupMemberList()
+                    fm.popBackStack(USER_SEARCH_FRG_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                },
+                1
+            )
         }
     }
 

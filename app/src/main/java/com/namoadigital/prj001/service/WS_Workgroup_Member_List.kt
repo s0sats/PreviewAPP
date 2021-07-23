@@ -98,21 +98,19 @@ class WS_Workgroup_Member_List :
 
     @Throws(IOException::class)
     private fun processWorkgroupMemberListReturn(rec: T_Workgroup_Member_List_Rec?) {
-        if(rec != null){
-            if(rec.data.isNullOrEmpty()){
-                ToolBox.sendBCStatus(applicationContext, "ERROR_1", hmAuxTrans["msg_no_data_returned"], HMAux(), "", "0")
-            }else{
-                createWorkgroupListJsonFile(ConstantBaseApp.MD_WORKGROUP_MEMBER_LIST_JSON_FILE, gson.toJson(rec.data))
-                //
-                ToolBox.sendBCStatus(
-                    applicationContext,
-                    "CLOSE_ACT",
-                    hmAuxTrans["generic_process_finalized_msg"],
-                    HMAux(),
-                    ConstantBaseApp.MD_WORKGROUP_MEMBER_LIST_JSON_FILE,
-                    "0"
-                )
-            }
+        if(rec != null && rec.data!= null){
+            //
+            createWorkgroupListJsonFile(ConstantBaseApp.MD_WORKGROUP_MEMBER_LIST_JSON_FILE, gson.toJson(rec.data))
+            //
+            ToolBox.sendBCStatus(
+                applicationContext,
+                "CLOSE_ACT",
+                hmAuxTrans["generic_process_finalized_msg"],
+                HMAux(),
+                ConstantBaseApp.MD_WORKGROUP_MEMBER_LIST_JSON_FILE,
+                "0"
+            )
+            //
         }else{
             ToolBox.sendBCStatus(applicationContext, "ERROR_1", hmAuxTrans["msg_no_data_returned"], HMAux(), "", "0")
         }
