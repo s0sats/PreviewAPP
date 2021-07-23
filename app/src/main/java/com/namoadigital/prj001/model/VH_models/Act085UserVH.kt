@@ -23,6 +23,7 @@ class Act085UserVH(
                 binding.act085UserListFrgCellTvEmail.text = it
             }
         }
+        //
         user.erpCode?.let {
             if (!it.isEmpty()) {
                 binding.act085UserListFrgCellTvErp.text = it
@@ -34,7 +35,7 @@ class Act085UserVH(
         }
         //
         if (!user.userNick.isEmpty()) {
-            binding.act085UserListFrgCellTvNick.text = user.userNick
+            binding.act085UserListFrgCellTvNick.text = """(${user.userCode}) ${user.userNick}"""
         }
         //
         user.userImage?.let {

@@ -20,6 +20,8 @@ import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_Edit
 import com.namoadigital.prj001.receiver.WBR_Workgroup_Member_List
 import com.namoadigital.prj001.service.WS_Workgroup_Member_Edit
 import com.namoadigital.prj001.service.WS_Workgroup_Member_List
+import com.namoadigital.prj001.ui.act085.Act085Main.Companion.USER_LIST_FRG_TAG
+import com.namoadigital.prj001.ui.act085.Act085Main.Companion.USER_SEARCH_FRG_TAG
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -206,7 +208,14 @@ class Act085MainPresenter(
                 is Act085WorkgroupAddListFrg -> {
                     confirmLeaveWorkgroupAddFrg(fm, fragment.hasUnsavedDate())
                 }
-                else -> mView.callAct005()
+                is Act085WorkgroupRemoveListFrg -> {
+//                    fm.popBackStack(USER_SEARCH_FRG_TAG, 0)
+                    fm.popBackStack(USER_LIST_FRG_TAG, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                }
+                is Act085UserSearchFrg -> {
+                    mView.callAct005()
+                }
+                else -> fm.popBackStack()
             }
         } else {
             mView.callAct005()

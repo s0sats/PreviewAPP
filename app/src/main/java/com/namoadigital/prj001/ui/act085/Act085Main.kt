@@ -33,10 +33,10 @@ class Act085Main :
     Act085WorkgroupAddListFrg.onWorkgroupAddInteract
 {
 
-    private val WORKGROUP_REMOVE_LIST_FRAG_TAG = "WORKGROUP_REMOVE_LIST_FRAG"
-    private val WORKGROUP_ADD_LIST_FRAG_TAG = "WORKGROUP_ADD_LIST_FRAG_TAG"
-    private val USER_SEARCH_FRG_TAG = "USER_SEARCH_FRG_TAG"
-    private val USER_LIST_FRG_TAG = "USER_LIST_FRG_TAG"
+
+
+
+
     private val fm = supportFragmentManager
     private var usernameFormField = ""
     private var emailFormField = ""
@@ -123,7 +123,7 @@ class Act085Main :
         if (fm.findFragmentByTag(sTag) == null) {
             val ft = fm.beginTransaction()
             ft.replace(binding.act085FrgPlaceholder.id, type as Fragment, sTag)
-            ft.addToBackStack(null)
+            ft.addToBackStack(sTag)
             ft.commit()
         }
     }
@@ -338,12 +338,9 @@ class Act085Main :
     }
 
     fun callAct085WorkgroupRemoveListFrg(user: TUserWorkgroupObj) {
-        val act085WorkgroupRemoveListFrg = Act085WorkgroupRemoveListFrg.newInstance(
-            hmAux_Trans,
-            user,
-            arrayListOf()
-        )
-        setFrag(act085WorkgroupRemoveListFrg, WORKGROUP_REMOVE_LIST_FRAG_TAG)
+        userWorkgroup = user
+        setFrag(workgroupRemoveListFrg, WORKGROUP_REMOVE_LIST_FRAG_TAG)
+        mPresenter.executeWorkgroupMemberListService(user.userCode)
     }
 
     override fun processError_1(mLink: String?, mRequired: String?) {
@@ -361,6 +358,10 @@ class Act085Main :
     companion object{
        const val ARG_USER_WG_OBJ = "ARG_USER_WG_OBJ"
        const val ARG_WG_LIST_OBJ = "ARG_WG_LIST_OBJ"
+       const val WORKGROUP_REMOVE_LIST_FRAG_TAG = "WORKGROUP_REMOVE_LIST_FRAG"
+       const val WORKGROUP_ADD_LIST_FRAG_TAG = "WORKGROUP_ADD_LIST_FRAG_TAG"
+       const val USER_SEARCH_FRG_TAG = "USER_SEARCH_FRG_TAG"
+       const val USER_LIST_FRG_TAG = "USER_LIST_FRG_TAG"
     }
 
 }
