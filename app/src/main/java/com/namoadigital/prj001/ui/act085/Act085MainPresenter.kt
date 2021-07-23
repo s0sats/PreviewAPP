@@ -80,46 +80,63 @@ class Act085MainPresenter(
         dateExpire: String?,
         expireReturn: Int
     ) {
-        mView.setWsProcess(WS_Workgroup_Member_Edit::class.java.name)
-        //
-        mView.showPD(
-            hmAuxTrans["workgroup_edit_ttl"]?:"",
-            hmAuxTrans["workgroup_edit_start"]?:"",
-        )
-        //
-        val mIntent = Intent(context,WBR_Workgroup_Member_Edit::class.java).apply {
-            putExtras(
-                Bundle().apply {
-                    putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.USER_CODE,userCode)
-                    putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.ACTIVE,action)
-                    putIntegerArrayList(T_Workgroup_Member_Edit_Env.WorkgroupSetData.GROUP_CODE,workgroupCode)
-                    putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.LIMIT,limit)
-                    putString(T_Workgroup_Member_Edit_Env.WorkgroupSetData.DATE_EXPIRE,dateExpire)
-                    putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.EXPIRE_RETURN,expireReturn)
-                }
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Workgroup_Member_Edit::class.java.name)
+            //
+            mView.showPD(
+                hmAuxTrans["workgroup_edit_ttl"] ?: "",
+                hmAuxTrans["workgroup_edit_start"] ?: "",
             )
+            //
+            val mIntent = Intent(context, WBR_Workgroup_Member_Edit::class.java).apply {
+                putExtras(
+                    Bundle().apply {
+                        putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.USER_CODE, userCode)
+                        putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.ACTIVE, action)
+                        putIntegerArrayList(
+                            T_Workgroup_Member_Edit_Env.WorkgroupSetData.GROUP_CODE,
+                            workgroupCode
+                        )
+                        putInt(T_Workgroup_Member_Edit_Env.WorkgroupSetData.LIMIT, limit)
+                        putString(
+                            T_Workgroup_Member_Edit_Env.WorkgroupSetData.DATE_EXPIRE,
+                            dateExpire
+                        )
+                        putInt(
+                            T_Workgroup_Member_Edit_Env.WorkgroupSetData.EXPIRE_RETURN,
+                            expireReturn
+                        )
+                    }
+                )
+            }
+            //
+            context.sendBroadcast(mIntent)
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context)
         }
-        //
-        context.sendBroadcast(mIntent)
     }
 
     override fun executeWorkgroupMemberListService(userCode: Int) {
-        mView.setWsProcess(WS_Workgroup_Member_List::class.java.name)
-        //
-        mView.showPD(
-            hmAuxTrans["workgroup_member_list_ttl"]?:"",
-            hmAuxTrans["workgroup_member_list_start"]?:"",
-        )
-        //
-        val mIntent = Intent(context,WBR_Workgroup_Member_List::class.java).apply {
-            putExtras(
-                Bundle().apply {
-                    putInt(EV_UserDao.USER_CODE,userCode)
-                }
+        if(ToolBox_Con.isOnline(context)) {
+            mView.setWsProcess(WS_Workgroup_Member_List::class.java.name)
+            //
+            mView.showPD(
+                hmAuxTrans["workgroup_member_list_ttl"] ?: "",
+                hmAuxTrans["workgroup_member_list_start"] ?: "",
             )
+            //
+            val mIntent = Intent(context, WBR_Workgroup_Member_List::class.java).apply {
+                putExtras(
+                    Bundle().apply {
+                        putInt(EV_UserDao.USER_CODE, userCode)
+                    }
+                )
+            }
+            //
+            context.sendBroadcast(mIntent)
+        }else{
+            ToolBox_Inf.showNoConnectionDialog(context)
         }
-        //
-        context.sendBroadcast(mIntent)
     }
 
     override fun processWgMemberListReturn(mLink: String?) {

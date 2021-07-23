@@ -22,7 +22,7 @@ class WS_Workgroup_Member_Edit :
     IntentService("WS_Workgroup_Member_Edit")
 {
     private val mModuleCode = Constant.APP_MODULE
-    private val mResourceName = "ws_workgroup_member_edit"
+    private val mResourceName = "ws_generic_resource"
     private val gson = GsonBuilder().serializeNulls().create()
     private val hmAuxTrans:HMAux by lazy {
         loadTranslation()
@@ -148,9 +148,7 @@ class WS_Workgroup_Member_Edit :
             "generic_receiving_data_msg",
             "generic_processing_data",
             "generic_process_finalized_msg",
-            "msg_error_on_insert_ticket",
-            "msg_no_data_returned",
-            "msg_error_on_update_ticket_schedule_infos"
+            "msg_no_data_returned"
         )
         //
         val mResourceCode = ToolBox_Inf.getResourceCode(
