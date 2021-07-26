@@ -115,23 +115,23 @@ public class SM_SO {
     @Expose
     private String add_inf2;
     @Expose
-    private String add_inf2_tracking;
+    private Integer add_inf2_tracking;
     @Expose
     private String add_inf3;
     @Expose
-    private String add_inf3_tracking;
+    private Integer add_inf3_tracking;
     @Expose
     private String add_inf4;
     @Expose
-    private String add_inf4_tracking;
+    private Integer add_inf4_tracking;
     @Expose
     private String add_inf5;
     @Expose
-    private String add_inf5_tracking;
+    private Integer add_inf5_tracking;
     @Expose
     private String add_inf6;
     @Expose
-    private String add_inf6_tracking;
+    private Integer add_inf6_tracking;
     @Expose
     private String billing_add_inf1;
     @Expose
@@ -760,11 +760,11 @@ public class SM_SO {
         this.add_inf2 = add_inf2;
     }
 
-    public String getAdd_inf2_tracking() {
+    public Integer getAdd_inf2_tracking() {
         return add_inf2_tracking;
     }
 
-    public void setAdd_inf2_tracking(String add_inf2_tracking) {
+    public void setAdd_inf2_tracking(Integer add_inf2_tracking) {
         this.add_inf2_tracking = add_inf2_tracking;
     }
 
@@ -776,11 +776,11 @@ public class SM_SO {
         this.add_inf3 = add_inf3;
     }
 
-    public String getAdd_inf3_tracking() {
+    public Integer getAdd_inf3_tracking() {
         return add_inf3_tracking;
     }
 
-    public void setAdd_inf3_tracking(String add_inf3_tracking) {
+    public void setAdd_inf3_tracking(Integer add_inf3_tracking) {
         this.add_inf3_tracking = add_inf3_tracking;
     }
 
@@ -792,11 +792,11 @@ public class SM_SO {
         this.add_inf4 = add_inf4;
     }
 
-    public String getAdd_inf4_tracking() {
+    public Integer getAdd_inf4_tracking() {
         return add_inf4_tracking;
     }
 
-    public void setAdd_inf4_tracking(String add_inf4_tracking) {
+    public void setAdd_inf4_tracking(Integer add_inf4_tracking) {
         this.add_inf4_tracking = add_inf4_tracking;
     }
 
@@ -808,11 +808,11 @@ public class SM_SO {
         this.add_inf5 = add_inf5;
     }
 
-    public String getAdd_inf5_tracking() {
+    public Integer getAdd_inf5_tracking() {
         return add_inf5_tracking;
     }
 
-    public void setAdd_inf5_tracking(String add_inf5_tracking) {
+    public void setAdd_inf5_tracking(Integer add_inf5_tracking) {
         this.add_inf5_tracking = add_inf5_tracking;
     }
 
@@ -824,11 +824,11 @@ public class SM_SO {
         this.add_inf6 = add_inf6;
     }
 
-    public String getAdd_inf6_tracking() {
+    public Integer getAdd_inf6_tracking() {
         return add_inf6_tracking;
     }
 
-    public void setAdd_inf6_tracking(String add_inf6_tracking) {
+    public void setAdd_inf6_tracking(Integer add_inf6_tracking) {
         this.add_inf6_tracking = add_inf6_tracking;
     }
 

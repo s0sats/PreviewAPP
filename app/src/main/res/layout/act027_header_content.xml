@@ -294,7 +294,7 @@
                     android:background="@drawable/namoa_bg_1"
                     android:padding="10dp"
                     tools:text="Serial Add Info 3"
-                    android:textSize="@dimen/font_size_title_md" />                
+                    android:textSize="@dimen/font_size_title_md" />
 
                 <TextView
                     android:id="@+id/act027_header_content_tv_category_price_id_title"
@@ -1052,15 +1052,38 @@
                     android:textSize="@dimen/font_size_title_md"
                     android:visibility="gone"
                 />
-
-                <TextView
-                    android:id="@+id/act027_header_content_tv_add_inf1_title"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:paddingLeft="10dp"
-                    tools:text="Info 1"
-                    android:textSize="@dimen/font_size_title_lib" />
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:id="@+id/act027_header_content_tv_add_inf1_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/font_size_title_lib"
+                        tools:text="Info 1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <ImageView
+                        android:id="@+id/act027_header_content_iv_add_inf1_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_gravity="bottom"
+                        android:src="@drawable/ic_tag_black_24dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_add_inf1_title"
+                        app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_add_inf1_title"
+                        app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_add_inf1_title"
+                        app:tint="@color/so_tag_color" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/act027_header_content_tv_add_inf1"
@@ -1071,14 +1094,38 @@
                     tools:text="Add Info 1"
                     android:textSize="@dimen/font_size_title_md" />
 
-                <TextView
-                    android:id="@+id/act027_header_content_tv_add_inf2_title"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:paddingLeft="10dp"
-                    tools:text="Info 2"
-                    android:textSize="@dimen/font_size_title_lib" />
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:id="@+id/act027_header_content_tv_add_inf2_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/font_size_title_lib"
+                        tools:text="Info 2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <ImageView
+                        android:id="@+id/act027_header_content_iv_add_inf2_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_gravity="bottom"
+                        android:src="@drawable/ic_tag_black_24dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_add_inf2_title"
+                        app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_add_inf2_title"
+                        app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_add_inf2_title"
+                        app:tint="@color/so_tag_color" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/act027_header_content_tv_add_inf2"
@@ -1089,15 +1136,38 @@
                     tools:text="Add Info 22222"
                     android:textSize="@dimen/font_size_title_md" />
 
-                <TextView
-                    android:id="@+id/act027_header_content_tv_add_inf3_title"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:paddingLeft="10dp"
-                    tools:text="Info 3"
-                    android:textSize="@dimen/font_size_title_lib" />
+                    android:orientation="horizontal"
+                    >
 
+                    <TextView
+                        android:id="@+id/act027_header_content_tv_add_inf3_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/font_size_title_lib"
+                        tools:text="Info 3"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <ImageView
+                        android:id="@+id/act027_header_content_iv_add_inf3_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_gravity="bottom"
+                        android:src="@drawable/ic_tag_black_24dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_add_inf3_title"
+                        app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_add_inf3_title"
+                        app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_add_inf3_title"
+                        app:tint="@color/so_tag_color" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
                 <TextView
                     android:id="@+id/act027_header_content_tv_add_inf3"
                     android:layout_width="match_parent"
@@ -1107,15 +1177,38 @@
                     tools:text="Add Info 3"
                     android:textSize="@dimen/font_size_title_md" />
 
-                <TextView
-                    android:id="@+id/act027_header_content_tv_add_inf4_title"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:paddingLeft="10dp"
-                    tools:text="Info 4"
-                    android:textSize="@dimen/font_size_title_lib" />
+                    android:orientation="horizontal"
+                    >
 
+                    <TextView
+                        android:id="@+id/act027_header_content_tv_add_inf4_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/font_size_title_lib"
+                        tools:text="Info 4"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <ImageView
+                        android:id="@+id/act027_header_content_iv_add_inf4_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_gravity="bottom"
+                        android:src="@drawable/ic_tag_black_24dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_add_inf4_title"
+                        app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_add_inf4_title"
+                        app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_add_inf4_title"
+                        app:tint="@color/so_tag_color" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
                 <TextView
                     android:id="@+id/act027_header_content_tv_add_inf4"
                     android:layout_width="match_parent"
@@ -1125,14 +1218,37 @@
                     tools:text="Add Info 4"
                     android:textSize="@dimen/font_size_title_md" />
 
-                <TextView
-                    android:id="@+id/act027_header_content_tv_add_inf5_title"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:paddingLeft="10dp"
-                    tools:text="Info 5"
-                    android:textSize="@dimen/font_size_title_lib" />
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:id="@+id/act027_header_content_tv_add_inf5_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/font_size_title_lib"
+                        tools:text="Info 5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <ImageView
+                        android:id="@+id/act027_header_content_iv_add_inf5_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_gravity="bottom"
+                        android:src="@drawable/ic_tag_black_24dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_add_inf5_title"
+                        app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_add_inf5_title"
+                        app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_add_inf5_title"
+                        app:tint="@color/so_tag_color" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/act027_header_content_tv_add_inf5"
@@ -1143,14 +1259,36 @@
                     tools:text="Add Info 5"
                     android:textSize="@dimen/font_size_title_md" />
 
-                <TextView
-                    android:id="@+id/act027_header_content_tv_add_inf6_title"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:paddingLeft="10dp"
-                    tools:text="Info 6"
-                    android:textSize="@dimen/font_size_title_lib" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act027_header_content_tv_add_inf6_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/font_size_title_lib"
+                        tools:text="Info 6"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <ImageView
+                        android:id="@+id/act027_header_content_iv_add_inf6_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_gravity="bottom"
+                        android:src="@drawable/ic_tag_black_24dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_add_inf6_title"
+                        app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_add_inf6_title"
+                        app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_add_inf6_title"
+                        app:tint="@color/so_tag_color" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/act027_header_content_tv_add_inf6"
@@ -1161,14 +1299,37 @@
                     tools:text="Add Info 6"
                     android:textSize="@dimen/font_size_title_md" />
 
-                <TextView
-                    android:id="@+id/act027_header_content_tv_billing_add_inf1_title"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:paddingLeft="10dp"
-                    tools:text="Billing Info 1"
-                    android:textSize="@dimen/font_size_title_lib" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act027_header_content_tv_billing_add_inf1_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/font_size_title_lib"
+                        tools:text="Billing Info 1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <ImageView
+                        android:id="@+id/act027_header_content_iv_billing_add_inf1_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_gravity="bottom"
+                        android:src="@drawable/ic_tag_black_24dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_billing_add_inf1_title"
+                        app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_billing_add_inf1_title"
+                        app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_billing_add_inf1_title"
+                        app:tint="@color/so_tag_color" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/act027_header_content_tv_billing_add_inf1"
@@ -1179,14 +1340,37 @@
                     tools:text="Billing Add Info 1"
                     android:textSize="@dimen/font_size_title_md" />
 
-                <TextView
-                    android:id="@+id/act027_header_content_tv_billing_add_inf2_title"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:paddingLeft="10dp"
-                    tools:text="Billing Info 2"
-                    android:textSize="@dimen/font_size_title_lib" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/act027_header_content_tv_billing_add_inf2_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/font_size_title_lib"
+                        tools:text="Billing Info 2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <ImageView
+                        android:id="@+id/act027_header_content_iv_billing_add_inf2_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_gravity="bottom"
+                        android:src="@drawable/ic_tag_black_24dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_billing_add_inf2_title"
+                        app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_billing_add_inf2_title"
+                        app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_billing_add_inf2_title"
+                        app:tint="@color/so_tag_color" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/act027_header_content_tv_billing_add_inf2"
@@ -1197,15 +1381,37 @@
                     tools:text=" Billing Add Info 22222"
                     android:textSize="@dimen/font_size_title_md" />
 
-                <TextView
-                    android:id="@+id/act027_header_content_tv_billing_add_inf3_title"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:paddingLeft="10dp"
-                    tools:text="Billing Info 3"
-                    android:textSize="@dimen/font_size_title_lib" />
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:id="@+id/act027_header_content_tv_billing_add_inf3_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:paddingLeft="10dp"
+                        android:textSize="@dimen/font_size_title_lib"
+                        tools:text="Billing Info 3"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        />
+
+                    <ImageView
+                        android:id="@+id/act027_header_content_iv_billing_add_inf3_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_gravity="bottom"
+                        android:src="@drawable/ic_tag_black_24dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_billing_add_inf3_title"
+                        app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_billing_add_inf3_title"
+                        app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_billing_add_inf3_title"
+                        app:tint="@color/namoa_status_pending" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
                 <TextView
                     android:id="@+id/act027_header_content_tv_billing_add_inf3"
                     android:layout_width="match_parent"
