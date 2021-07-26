@@ -99,14 +99,23 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
     public static final String TOTAL_QTY_SERVICE = "total_qty_service";
     public static final String TOTAL_PRICE = "total_price";
     public static final String ADD_INF1 = "add_inf1";
+    public static final String ADD_INF1_TRACKING = "add_inf1_tracking";
     public static final String ADD_INF2 = "add_inf2";
+    public static final String ADD_INF2_TRACKING = "add_inf2_tracking";
     public static final String ADD_INF3 = "add_inf3";
+    public static final String ADD_INF3_TRACKING = "add_inf3_tracking";
     public static final String ADD_INF4 = "add_inf4";
+    public static final String ADD_INF4_TRACKING = "add_inf4_tracking";
     public static final String ADD_INF5 = "add_inf5";
+    public static final String ADD_INF5_TRACKING = "add_inf5_tracking";
     public static final String ADD_INF6 = "add_inf6";
+    public static final String ADD_INF6_TRACKING= "add_inf6_tracking";
     public static final String BILLING_ADD_INF1 = "billing_add_inf1";
+    public static final String BILLING_ADD_INF1_TRACKING = "billing_add_inf1_tracking";
     public static final String BILLING_ADD_INF2 = "billing_add_inf2";
+    public static final String BILLING_ADD_INF2_TRACKING= "billing_add_inf2_tracking";
     public static final String BILLING_ADD_INF3 = "billing_add_inf3";
+    public static final String BILLING_ADD_INF3_TRACKING = "billing_add_inf3_tracking";
     public static final String SERIAL_ADD_INF1 = "serial_add_inf1";
     public static final String SERIAL_ADD_INF2 = "serial_add_inf2";
     public static final String SERIAL_ADD_INF3 = "serial_add_inf3";
@@ -148,7 +157,8 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
             DEADLINE, ORIGIN, CLIENT_TYPE, CLIENT_USER, CLIENT_CODE, CLIENT_ID, CLIENT_NAME, CLIENT_EMAIL, CLIENT_PHONE, CLIENT_APPROVAL_IMAGE,
             CLIENT_APPROVAL_IMAGE_NAME, CLIENT_APPROVAL_IMAGE_URL, CLIENT_APPROVAL_DATE, CLIENT_APPROVAL_USER, CLIENT_APPROVAL_USER_NICK,
             CLIENT_APPROVAL_TYPE_SIG, ORIGIN_CHANGE, STARTED_FLAG, EDIT_ORIGIN, EDIT_USER, EDIT_USER_NICK, TOTAL_QTY_SERVICE, TOTAL_PRICE,
-            ADD_INF1, ADD_INF2, ADD_INF3, APPROVE_BUDGET, APPROVE_CLIENT, UPDATE_REQUIRED, APPROVAL_REQUIRED, SYNC_REQUIRED, LOG_DATE, TOKEN,
+            ADD_INF1, ADD_INF1_TRACKING, ADD_INF2, ADD_INF2_TRACKING, ADD_INF3, ADD_INF3_TRACKING, ADD_INF4, ADD_INF4_TRACKING, ADD_INF5, ADD_INF5_TRACKING, ADD_INF6, ADD_INF6_TRACKING,
+            APPROVE_BUDGET, APPROVE_CLIENT, UPDATE_REQUIRED, APPROVAL_REQUIRED, SYNC_REQUIRED, LOG_DATE, TOKEN,
             PRODUCT_ICON_NAME, PRODUCT_ICON_URL, PRODUCT_ICON_URL_LOCAL,ROOM_MEMBER,ROOM_CODE
     };
 
@@ -751,16 +761,34 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 so.setAdd_inf1(cursor.getString(cursor.getColumnIndex(ADD_INF1)));
             }
 
+            if (cursor.isNull(cursor.getColumnIndex(ADD_INF1_TRACKING))) {
+                so.setAdd_inf1(null);
+            } else {
+                so.setAdd_inf1_tracking(cursor.getInt(cursor.getColumnIndex(ADD_INF1_TRACKING)));
+            }
+
             if (cursor.isNull(cursor.getColumnIndex(ADD_INF2))) {
                 so.setAdd_inf2(null);
             } else {
                 so.setAdd_inf2(cursor.getString(cursor.getColumnIndex(ADD_INF2)));
             }
 
+            if (cursor.isNull(cursor.getColumnIndex(ADD_INF2_TRACKING))) {
+                so.setAdd_inf1(null);
+            } else {
+                so.setAdd_inf1_tracking(cursor.getInt(cursor.getColumnIndex(ADD_INF2_TRACKING)));
+            }
+
             if (cursor.isNull(cursor.getColumnIndex(ADD_INF3))) {
                 so.setAdd_inf3(null);
             } else {
                 so.setAdd_inf3(cursor.getString(cursor.getColumnIndex(ADD_INF3)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(ADD_INF3_TRACKING))) {
+                so.setAdd_inf1(null);
+            } else {
+                so.setAdd_inf1_tracking(cursor.getInt(cursor.getColumnIndex(ADD_INF3_TRACKING)));
             }
             //
             if (cursor.isNull(cursor.getColumnIndex(ADD_INF4))) {
@@ -769,10 +797,22 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 so.setAdd_inf4(cursor.getString(cursor.getColumnIndex(ADD_INF4)));
             }
 
+            if (cursor.isNull(cursor.getColumnIndex(ADD_INF4_TRACKING))) {
+                so.setAdd_inf1(null);
+            } else {
+                so.setAdd_inf1_tracking(cursor.getInt(cursor.getColumnIndex(ADD_INF4_TRACKING)));
+            }
+
             if (cursor.isNull(cursor.getColumnIndex(ADD_INF5))) {
                 so.setAdd_inf5(null);
             } else {
                 so.setAdd_inf5(cursor.getString(cursor.getColumnIndex(ADD_INF5)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(ADD_INF5_TRACKING))) {
+                so.setAdd_inf1(null);
+            } else {
+                so.setAdd_inf1_tracking(cursor.getInt(cursor.getColumnIndex(ADD_INF5_TRACKING)));
             }
 
             if (cursor.isNull(cursor.getColumnIndex(ADD_INF6))) {
@@ -781,10 +821,22 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 so.setAdd_inf6(cursor.getString(cursor.getColumnIndex(ADD_INF6)));
             }
 
+            if (cursor.isNull(cursor.getColumnIndex(ADD_INF6_TRACKING))) {
+                so.setAdd_inf1(null);
+            } else {
+                so.setAdd_inf1_tracking(cursor.getInt(cursor.getColumnIndex(ADD_INF6_TRACKING)));
+            }
+
             if (cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF1))) {
                 so.setBilling_add_inf1(null);
             } else {
                 so.setBilling_add_inf1(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF1)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF1_TRACKING))) {
+                so.setAdd_inf1(null);
+            } else {
+                so.setAdd_inf1_tracking(cursor.getInt(cursor.getColumnIndex(BILLING_ADD_INF1_TRACKING)));
             }
 
             if (cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF2))) {
@@ -793,10 +845,22 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 so.setBilling_add_inf2(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF2)));
             }
 
+            if (cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF2_TRACKING))) {
+                so.setAdd_inf1(null);
+            } else {
+                so.setAdd_inf1_tracking(cursor.getInt(cursor.getColumnIndex(BILLING_ADD_INF2_TRACKING)));
+            }
+
             if (cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF3))) {
                 so.setBilling_add_inf3(null);
             } else {
                 so.setBilling_add_inf3(cursor.getString(cursor.getColumnIndex(BILLING_ADD_INF3)));
+            }
+
+            if (cursor.isNull(cursor.getColumnIndex(BILLING_ADD_INF3_TRACKING))) {
+                so.setAdd_inf1(null);
+            } else {
+                so.setAdd_inf1_tracking(cursor.getInt(cursor.getColumnIndex(BILLING_ADD_INF3_TRACKING)));
             }
 
             if (cursor.isNull(cursor.getColumnIndex(SERIAL_ADD_INF1))) {
@@ -1192,12 +1256,28 @@ public class SM_SODao extends BaseDao implements Dao<SM_SO>, DaoSOFullDelete<SM_
                 contentValues.put(ADD_INF3, sm_so.getAdd_inf3());
             }
             //
+            contentValues.put(ADD_INF1_TRACKING, sm_so.getAdd_inf1_tracking());
+            contentValues.put(ADD_INF2_TRACKING, sm_so.getAdd_inf2_tracking());
+            contentValues.put(ADD_INF3_TRACKING, sm_so.getAdd_inf3_tracking());
+
             contentValues.put(ADD_INF4, sm_so.getAdd_inf4());
+            contentValues.put(ADD_INF4_TRACKING, sm_so.getAdd_inf4_tracking());
+
             contentValues.put(ADD_INF5, sm_so.getAdd_inf5());
+            contentValues.put(ADD_INF5_TRACKING, sm_so.getAdd_inf5_tracking());
+
             contentValues.put(ADD_INF6, sm_so.getAdd_inf6());
+            contentValues.put(ADD_INF6_TRACKING, sm_so.getAdd_inf6_tracking());
+
             contentValues.put(BILLING_ADD_INF1, sm_so.getBilling_add_inf1());
+            contentValues.put(BILLING_ADD_INF1_TRACKING, sm_so.getBilling_add_inf1_tracking());
+
             contentValues.put(BILLING_ADD_INF2, sm_so.getBilling_add_inf2());
+            contentValues.put(BILLING_ADD_INF2_TRACKING, sm_so.getBilling_add_inf2_tracking());
+
             contentValues.put(BILLING_ADD_INF3, sm_so.getBilling_add_inf3());
+            contentValues.put(BILLING_ADD_INF3_TRACKING, sm_so.getBilling_add_inf3_tracking());
+
             contentValues.put(SERIAL_ADD_INF1, sm_so.getSerial_add_inf1());
             contentValues.put(SERIAL_ADD_INF2, sm_so.getSerial_add_inf2());
             contentValues.put(SERIAL_ADD_INF3, sm_so.getSerial_add_inf3());
