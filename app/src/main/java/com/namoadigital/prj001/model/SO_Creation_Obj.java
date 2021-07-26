@@ -17,6 +17,8 @@ import java.io.Serializable;
  * Luche - 15/07/2021
  * Add atributos _tracking, pois o servidor não sabe qual o favorito selecionei então estas infos precisam
  * ser enviadas
+ * Luche - 26/07/2021
+ * Add atributos _view e _text de billing
  */
 
 public class SO_Creation_Obj implements Serializable {
@@ -68,6 +70,12 @@ public class SO_Creation_Obj implements Serializable {
     private int billing_add_inf1_tracking;
     private int billing_add_inf2_tracking;
     private int billing_add_inf3_tracking;
+    private String billing_add_inf1_view;
+    private String billing_add_inf2_view;
+    private String billing_add_inf3_view;
+    private String billing_add_inf1_text;
+    private String billing_add_inf2_text;
+    private String billing_add_inf3_text;
     private String client_so_id;
     private int edit_user;
     private Integer price_list_code;
@@ -442,6 +450,54 @@ public class SO_Creation_Obj implements Serializable {
 
     public void setBilling_add_inf3_tracking(int billing_add_inf3_tracking) {
         this.billing_add_inf3_tracking = billing_add_inf3_tracking;
+    }
+
+    public String getBilling_add_inf1_view() {
+        return billing_add_inf1_view;
+    }
+
+    public void setBilling_add_inf1_view(String billing_add_inf1_view) {
+        this.billing_add_inf1_view = billing_add_inf1_view;
+    }
+
+    public String getBilling_add_inf2_view() {
+        return billing_add_inf2_view;
+    }
+
+    public void setBilling_add_inf2_view(String billing_add_inf2_view) {
+        this.billing_add_inf2_view = billing_add_inf2_view;
+    }
+
+    public String getBilling_add_inf3_view() {
+        return billing_add_inf3_view;
+    }
+
+    public void setBilling_add_inf3_view(String billing_add_inf3_view) {
+        this.billing_add_inf3_view = billing_add_inf3_view;
+    }
+
+    public String getBilling_add_inf1_text() {
+        return billing_add_inf1_text;
+    }
+
+    public void setBilling_add_inf1_text(String billing_add_inf1_text) {
+        this.billing_add_inf1_text = billing_add_inf1_text;
+    }
+
+    public String getBilling_add_inf2_text() {
+        return billing_add_inf2_text;
+    }
+
+    public void setBilling_add_inf2_text(String billing_add_inf2_text) {
+        this.billing_add_inf2_text = billing_add_inf2_text;
+    }
+
+    public String getBilling_add_inf3_text() {
+        return billing_add_inf3_text;
+    }
+
+    public void setBilling_add_inf3_text(String billing_add_inf3_text) {
+        this.billing_add_inf3_text = billing_add_inf3_text;
     }
 
     public String getClient_so_id() {

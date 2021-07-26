@@ -376,12 +376,14 @@ public class Act050_Frag_Parameters extends BaseFragment {
         ss_contract.setmStyle(1);
         ss_contract.setmTextSizeLabel(20);
         ss_contract.setmCanClean(false);
+        ss_contract.setmRequired(true);
         ss_po = view.findViewById(R.id.act050_frag_param_ss_po);
         ss_po.setmLabel(hmAux_Trans.get("po_lbl"));
         ss_po.setmShowLabel(true);
         ss_po.setmStyle(1);
         ss_po.setmTextSizeLabel(20);
         ss_po.setmCanClean(false);
+        ss_po.setmRequired(true);
         tv_product_lbl = view.findViewById(R.id.act050_frag_param_tv_product_lbl);
         tv_product_lbl.setText(hmAux_Trans.get("product_lbl"));
         tv_product_val = view.findViewById(R.id.act050_frag_param_tv_product_val);
@@ -414,6 +416,7 @@ public class Act050_Frag_Parameters extends BaseFragment {
         ss_site_exec.setmStyle(1);
         ss_site_exec.setmTextSizeLabel(20);
         ss_site_exec.setmCanClean(false);
+        ss_site_exec.setmRequired(true);
         //
         btn_back = view.findViewById(R.id.act050_frag_param_iv_back);
         btn_next = view.findViewById(R.id.act050_frag_param_iv_next);

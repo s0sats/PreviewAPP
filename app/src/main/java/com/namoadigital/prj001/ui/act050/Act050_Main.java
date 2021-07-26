@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -446,6 +447,12 @@ public class Act050_Main extends Base_Activity_Frag implements
         mSOCreationObj.setBilling_add_inf1_tracking(castHmAuxValueIntoInt(mValue,SO_Favorite_PO.BILLING_ADD_INF1_TRACKING));
         mSOCreationObj.setBilling_add_inf2_tracking(castHmAuxValueIntoInt(mValue,SO_Favorite_PO.BILLING_ADD_INF2_TRACKING));
         mSOCreationObj.setBilling_add_inf3_tracking(castHmAuxValueIntoInt(mValue,SO_Favorite_PO.BILLING_ADD_INF3_TRACKING));
+        mSOCreationObj.setBilling_add_inf1_view(mValue.hasConsistentValue(SO_Favorite_PO.BILLING_ADD_INF1_VIEW) ? mValue.get(SO_Favorite_PO.BILLING_ADD_INF1_VIEW) : null);
+        mSOCreationObj.setBilling_add_inf2_view(mValue.hasConsistentValue(SO_Favorite_PO.BILLING_ADD_INF2_VIEW) ? mValue.get(SO_Favorite_PO.BILLING_ADD_INF2_VIEW) : null);
+        mSOCreationObj.setBilling_add_inf3_view(mValue.hasConsistentValue(SO_Favorite_PO.BILLING_ADD_INF3_VIEW) ? mValue.get(SO_Favorite_PO.BILLING_ADD_INF3_VIEW) : null);
+        mSOCreationObj.setBilling_add_inf1_text(mValue.hasConsistentValue(SO_Favorite_PO.BILLING_ADD_INF1_TEXT) ? mValue.get(SO_Favorite_PO.BILLING_ADD_INF1_TEXT) : null);
+        mSOCreationObj.setBilling_add_inf2_text(mValue.hasConsistentValue(SO_Favorite_PO.BILLING_ADD_INF2_TEXT) ? mValue.get(SO_Favorite_PO.BILLING_ADD_INF2_TEXT) : null);
+        mSOCreationObj.setBilling_add_inf3_text(mValue.hasConsistentValue(SO_Favorite_PO.BILLING_ADD_INF3_TEXT) ? mValue.get(SO_Favorite_PO.BILLING_ADD_INF3_TEXT) : null);
     }
 
     @Override
@@ -662,6 +669,12 @@ public class Act050_Main extends Base_Activity_Frag implements
     @Override
     public void updateSO_Creation_Obj(SO_Creation_Obj my_so_creation_obj) {
         this.mSOCreationObj = my_so_creation_obj;
+    }
+
+    @Override
+    @Nullable
+    public SO_Favorite_Item getFavoriteItem() {
+        return mSoFavoriteItem;
     }
     //endregion
 

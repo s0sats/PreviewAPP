@@ -233,7 +233,7 @@
                     android:layout_marginTop="8dp"
                     android:orientation="horizontal"
                     android:paddingBottom="@dimen/searchablespinner_border_papping_half"
-                    app:layout_constraintBottom_toTopOf="@+id/act050_frag_so_title_lbl"
+                    app:layout_constraintBottom_toTopOf="@id/act050_frag_so_ll"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_priority"
                     app:layout_constraintVertical_chainStyle="spread_inside">
@@ -268,10 +268,10 @@
                         android:background="@drawable/namoa_icon_bg_states"
                         android:scaleType="fitXY"
                         android:src="@drawable/ic_info"
-                        android:tint="@color/namoa_color_dark_blue"
                         app:layout_constraintBottom_toBottomOf="@+id/act050_frag_so_package_default_lbl"
                         app:layout_constraintStart_toEndOf="@+id/act050_frag_so_package_default_req"
-                        app:layout_constraintTop_toTopOf="@+id/act050_frag_so_package_default_lbl" />
+                        app:layout_constraintTop_toTopOf="@+id/act050_frag_so_package_default_lbl"
+                        app:tint="@color/namoa_color_dark_blue" />
 
 
                     <com.namoa_digital.namoa_library.ctls.SearchableSpinner
@@ -284,243 +284,644 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <TextView
-                    android:id="@+id/act050_frag_so_title_lbl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginStart="@dimen/searchablespinner_border_papping_half"
-                    tools:text="Outras Informações - trad"
-                    android:textSize="@dimen/font_size_title_md"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_package_default_ll" />
-
-                <CheckBox
-                    android:id="@+id/act050_header_cb_show_hide"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:layout_marginEnd="8dp"
-                    android:background="@drawable/ic_menos_info_states"
-                    android:button="@null"
-                    app:layout_constraintBottom_toBottomOf="@+id/act050_frag_so_title_lbl"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/act050_frag_so_title_lbl"
-                    android:checked="true"
-                    />
-
                 <LinearLayout
                     android:id="@+id/act050_frag_so_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/searchablespinner_border_papping_half"
+
                     android:paddingStart="@dimen/searchablespinner_border_papping_half"
                     android:orientation="vertical"
                     android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/act050_frag_so_title_lbl">
+                    app:layout_constraintTop_toBottomOf="@id/act050_frag_so_package_default_ll">
 
-                    <TextView
-                        android:id="@+id/act050_frag_so_biiling_info1_lbl"
+                    <LinearLayout
+                        android:id="@+id/act050_frag_so_ll_billing_info1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        tools:text="Billing Info. 1 - trad"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold" />
+                        android:orientation="vertical">
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
 
-                    <EditText
-                        android:id="@+id/act050_frag_so_biiling_info1_val"
+                            <TextView
+                                android:id="@+id/act050_frag_so_billing_info1_lbl"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintWidth_default="wrap"
+                                android:textSize="@dimen/font_size_title_md"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Billing Info. 1 - trad "
+                                app:layout_constraintEnd_toStartOf="@id/act050_frag_so_billing_info1_iv"
+                                app:layout_constraintHorizontal_chainStyle="packed"
+                                app:layout_constraintVertical_bias="0"
+                                />
+
+                            <ImageView
+                                android:id="@+id/act050_frag_so_billing_info1_iv"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:src="@drawable/ic_tag_black_24dp"
+                                app:layout_constraintStart_toEndOf="@+id/act050_frag_so_billing_info1_lbl"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintWidth_default="wrap"
+                                app:tint="@color/namoa_status_pending"
+                                />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <TextView
+                            android:id="@+id/act050_frag_so_billing_info1_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_title_md"
+                            tools:text="Billing Info. 1 - trad "
+                            android:textColor="@color/namoa_color_light_green6"
+                            />
+
+                        <EditText
+                            android:id="@+id/act050_frag_so_billing_info1_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/namoa_light_blue"
+                            android:textSize="@dimen/font_size_item_md"
+                            android:inputType="text"
+                            />
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/act050_frag_so_ll_billing_info2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md"
-                        android:inputType="text"
-                        />
-
-                    <TextView
-                        android:id="@+id/act050_frag_so_biiling_info2_lbl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="Billing Info. 2 - trad"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/act050_frag_so_biiling_info2_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md"
-                        android:inputType="text"/>
-
-                    <TextView
-                        android:id="@+id/act050_frag_so_biiling_info3_lbl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="Billing Info. 3 - trad"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/act050_frag_so_biiling_info3_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md"
-                        android:inputType="text"/>
-
-                    <TextView
-                        android:id="@+id/act050_frag_so_client_so_id_lbl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="Cliente So Id - trad"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/act050_frag_so_client_so_id_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md"
-                        android:inputType="text"/>
-
-                    <TextView
-                        android:id="@+id/act050_frag_so_info1_lbl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="Info. adicional 1 - trad"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/act050_frag_so_info1_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md"
-                        android:inputType="text"
-                        />
-
-                    <TextView
-                        android:id="@+id/act050_frag_so_info2_lbl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="Info. adicional 2 - trad"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/act050_frag_so_info2_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md"
-                        android:inputType="text"/>
-
-                    <TextView
-                        android:id="@+id/act050_frag_so_info3_lbl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="Info. adicional 3 - trad"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/act050_frag_so_info3_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md"
-                        android:inputType="text"/>
-
-                    <TextView
-                        android:id="@+id/act050_frag_so_info4_lbl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="Info. adicional 4 - trad"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/act050_frag_so_info4_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md"
-                        android:inputType="text"
-                        />
-
-                    <TextView
-                        android:id="@+id/act050_frag_so_info5_lbl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="Info. adicional 5 - trad"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/act050_frag_so_info5_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md"
-                        android:inputType="text"/>
-
-                    <TextView
-                        android:id="@+id/act050_frag_so_info6_lbl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="Info. adicional 6 - trad"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/act050_frag_so_info6_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md"
-                        android:inputType="text"/>
-
-                    <TextView
-                        android:id="@+id/act050_frag_so_desc_lbl"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:text="S.O.Desc - trad"
-                        android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/act050_frag_so_desc_val"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/namoa_light_blue"
-                        android:textSize="@dimen/font_size_item_md"
-                        android:inputType="text"
-                        />
-
-
-                    <TextView
-                        android:id="@+id/act050_frag_so_id_lbl"
+                        android:orientation="vertical">
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/act050_frag_so_billing_info2_lbl"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintWidth_default="wrap"
+                            android:textSize="@dimen/font_size_title_md"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Billing Info. 2 - trad"
+                            app:layout_constraintEnd_toStartOf="@id/act050_frag_so_billing_info2_iv"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintVertical_bias="0"
+                            />
+
+                        <ImageView
+                                android:id="@+id/act050_frag_so_billing_info2_iv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:src="@drawable/ic_tag_black_24dp"
+                            app:layout_constraintStart_toEndOf="@+id/act050_frag_so_billing_info2_lbl"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintWidth_default="wrap"
+                            app:tint="@color/namoa_status_pending"
+                            />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/act050_frag_so_billing_info2_hint"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        tools:text="S.O. Id - trad"
                         android:textSize="@dimen/font_size_title_md"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        tools:text="Hint Billing Info. 2 - trad "
+                        android:textColor="@color/namoa_color_light_green6"
+                        />
+
 
                     <EditText
-                        android:id="@+id/act050_frag_so_id_val"
+                        android:id="@+id/act050_frag_so_billing_info2_val"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/namoa_light_blue"
-                        android:inputType="text"
-                        android:textSize="@dimen/font_size_item_md" />
+                        android:textSize="@dimen/font_size_item_md"
+                        android:inputType="text"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/act050_frag_so_ll_billing_info3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/act050_frag_so_billing_info3_lbl"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintWidth_default="wrap"
+                            android:textSize="@dimen/font_size_title_md"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Billing Info. 3 - trad"
+                            app:layout_constraintEnd_toStartOf="@id/act050_frag_so_billing_info3_iv"
+                            app:layout_constraintHorizontal_chainStyle="packed"
+                            app:layout_constraintVertical_bias="0"
+                            />
+
+                        <ImageView
+                            android:id="@+id/act050_frag_so_billing_info3_iv"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:src="@drawable/ic_tag_black_24dp"
+                            app:layout_constraintStart_toEndOf="@+id/act050_frag_so_billing_info3_lbl"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintWidth_default="wrap"
+                            app:tint="@color/namoa_status_pending"
+                            />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:id="@+id/act050_frag_so_billing_info3_hint"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_title_md"
+                        tools:text="Hint Billing Info. 3 - trad "
+                        android:textColor="@color/namoa_color_light_green6"
+                        />
+
+                    <EditText
+                        android:id="@+id/act050_frag_so_billing_info3_val"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/namoa_light_blue"
+                        android:textSize="@dimen/font_size_item_md"
+                        android:inputType="text"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/act050_frag_so_ll_client_so_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/act050_frag_so_client_so_id_lbl"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="Cliente So Id - trad"
+                            android:textSize="@dimen/font_size_title_md"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/act050_frag_so_client_so_id_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_title_md"
+                            tools:text="Hint soId "
+                            android:textColor="@color/namoa_color_light_green6"
+                            />
+
+                        <EditText
+                            android:id="@+id/act050_frag_so_client_so_id_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/namoa_light_blue"
+                            android:textSize="@dimen/font_size_item_md"
+                            android:inputType="text"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/act050_frag_so_ll_info1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/act050_frag_so_info1_lbl"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintWidth_default="wrap"
+                                android:textSize="@dimen/font_size_title_md"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Info adicional 1 - trad"
+                                app:layout_constraintEnd_toStartOf="@id/act050_frag_so_info1_iv"
+                                app:layout_constraintHorizontal_chainStyle="packed"
+                                app:layout_constraintVertical_bias="0"
+                                />
+
+                            <ImageView
+                                android:id="@+id/act050_frag_so_info1_iv"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:src="@drawable/ic_tag_black_24dp"
+                                app:layout_constraintStart_toEndOf="@+id/act050_frag_so_info1_lbl"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintWidth_default="wrap"
+                                app:tint="@color/namoa_status_pending"
+                                />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <TextView
+                            android:id="@+id/act050_frag_so_info1_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_title_md"
+                            tools:text="Hint Info adicional 1- trad "
+                            android:textColor="@color/namoa_color_light_green6"
+                            />
+
+
+                        <EditText
+                            android:id="@+id/act050_frag_so_info1_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/namoa_light_blue"
+                            android:textSize="@dimen/font_size_item_md"
+                            android:inputType="text"
+                            />
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:id="@+id/act050_frag_so_ll_info2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/act050_frag_so_info2_lbl"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintWidth_default="wrap"
+                                android:textSize="@dimen/font_size_title_md"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Info adicional 2 - trad"
+                                app:layout_constraintEnd_toStartOf="@id/act050_frag_so_info2_iv"
+                                app:layout_constraintHorizontal_chainStyle="packed"
+                                app:layout_constraintVertical_bias="0"
+                                />
+
+                            <ImageView
+                                android:id="@+id/act050_frag_so_info2_iv"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:src="@drawable/ic_tag_black_24dp"
+                                app:layout_constraintStart_toEndOf="@+id/act050_frag_so_info2_lbl"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintWidth_default="wrap"
+                                app:tint="@color/namoa_status_pending"
+                                />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <TextView
+                            android:id="@+id/act050_frag_so_info2_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_title_md"
+                            tools:text="Hint Info adicional 2 - trad "
+                            android:textColor="@color/namoa_color_light_green6"
+                            />
+
+                        <EditText
+                            android:id="@+id/act050_frag_so_info2_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/namoa_light_blue"
+                            android:textSize="@dimen/font_size_item_md"
+                            android:inputType="text"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/act050_frag_so_ll_info3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/act050_frag_so_info3_lbl"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintWidth_default="wrap"
+                                android:textSize="@dimen/font_size_title_md"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Info adicional 3 - trad"
+                                app:layout_constraintEnd_toStartOf="@id/act050_frag_so_info3_iv"
+                                app:layout_constraintHorizontal_chainStyle="packed"
+                                app:layout_constraintVertical_bias="0"
+                                />
+
+                            <ImageView
+                                android:id="@+id/act050_frag_so_info3_iv"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:src="@drawable/ic_tag_black_24dp"
+                                app:layout_constraintStart_toEndOf="@+id/act050_frag_so_info3_lbl"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintWidth_default="wrap"
+                                app:tint="@color/namoa_status_pending"
+                                />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <TextView
+                            android:id="@+id/act050_frag_so_info3_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_title_md"
+                            tools:text="Hint Info adicional 3 - trad "
+                            android:textColor="@color/namoa_color_light_green6"
+                            />
+
+                        <EditText
+                            android:id="@+id/act050_frag_so_info3_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/namoa_light_blue"
+                            android:textSize="@dimen/font_size_item_md"
+                            android:inputType="text"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/act050_frag_so_ll_info4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/act050_frag_so_info4_lbl"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintWidth_default="wrap"
+                                android:textSize="@dimen/font_size_title_md"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Info adicional 4 - trad"
+                                app:layout_constraintEnd_toStartOf="@id/act050_frag_so_info4_iv"
+                                app:layout_constraintHorizontal_chainStyle="packed"
+                                app:layout_constraintVertical_bias="0"
+                                />
+
+                            <ImageView
+                                android:id="@+id/act050_frag_so_info4_iv"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:src="@drawable/ic_tag_black_24dp"
+                                app:layout_constraintStart_toEndOf="@+id/act050_frag_so_info4_lbl"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintWidth_default="wrap"
+                                app:tint="@color/namoa_status_pending"
+                                />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <TextView
+                            android:id="@+id/act050_frag_so_info4_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_title_md"
+                            tools:text="Hint Info adicional 4 - trad "
+                            android:textColor="@color/namoa_color_light_green6"
+                            />
+
+                        <EditText
+                            android:id="@+id/act050_frag_so_info4_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/namoa_light_blue"
+                            android:textSize="@dimen/font_size_item_md"
+                            android:inputType="text"
+                            />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/act050_frag_so_ll_info5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/act050_frag_so_info5_lbl"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintWidth_default="wrap"
+                                android:textSize="@dimen/font_size_title_md"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Info adicional 5 - trad"
+                                app:layout_constraintEnd_toStartOf="@id/act050_frag_so_info5_iv"
+                                app:layout_constraintHorizontal_chainStyle="packed"
+                                app:layout_constraintVertical_bias="0"
+                                />
+
+                            <ImageView
+                                android:id="@+id/act050_frag_so_info5_iv"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:src="@drawable/ic_tag_black_24dp"
+                                app:layout_constraintStart_toEndOf="@+id/act050_frag_so_info5_lbl"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintWidth_default="wrap"
+                                app:tint="@color/namoa_status_pending"
+                                />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <TextView
+                            android:id="@+id/act050_frag_so_info5_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_title_md"
+                            tools:text="Hint Info adicional 5 - trad "
+                            android:textColor="@color/namoa_color_light_green6"
+                            />
+
+                        <EditText
+                            android:id="@+id/act050_frag_so_info5_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/namoa_light_blue"
+                            android:textSize="@dimen/font_size_item_md"
+                            android:inputType="text"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/act050_frag_so_ll_info6"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/act050_frag_so_info6_lbl"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintWidth_default="wrap"
+                                android:textSize="@dimen/font_size_title_md"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Info adicional 6 - trad"
+                                app:layout_constraintEnd_toStartOf="@id/act050_frag_so_info6_iv"
+                                app:layout_constraintHorizontal_chainStyle="packed"
+                                app:layout_constraintVertical_bias="0"
+                                />
+
+                            <ImageView
+                                android:id="@+id/act050_frag_so_info6_iv"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:src="@drawable/ic_tag_black_24dp"
+                                app:layout_constraintStart_toEndOf="@+id/act050_frag_so_info6_lbl"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintWidth_default="wrap"
+                                app:tint="@color/namoa_status_pending"
+                                />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                        <TextView
+                            android:id="@+id/act050_frag_so_info6_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_title_md"
+                            tools:text="Hint Info adicional 6 - trad "
+                            android:textColor="@color/namoa_color_light_green6"
+                            />
+
+                        <EditText
+                            android:id="@+id/act050_frag_so_info6_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/namoa_light_blue"
+                            android:textSize="@dimen/font_size_item_md"
+                            android:inputType="text"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/act050_frag_so_ll_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/act050_frag_so_desc_lbl"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:text="S.O.Desc - trad"
+                            android:textSize="@dimen/font_size_title_md"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/act050_frag_so_desc_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_title_md"
+                            tools:text="Hint soDesc - trad "
+                            android:textColor="@color/namoa_color_light_green6"
+                            />
+
+                        <EditText
+                            android:id="@+id/act050_frag_so_desc_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/namoa_light_blue"
+                            android:textSize="@dimen/font_size_item_md"
+                            android:inputType="text"
+                            />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/act050_frag_so_ll_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/act050_frag_so_id_lbl"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            tools:text="S.O. Id - trad"
+                            android:textSize="@dimen/font_size_title_md"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/act050_frag_so_id_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_title_md"
+                            tools:text="Hint soDesc - trad "
+                            android:textColor="@color/namoa_color_light_green6"
+                            />
+
+                        <EditText
+                            android:id="@+id/act050_frag_so_id_val"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/namoa_light_blue"
+                            android:inputType="text"
+                            android:textSize="@dimen/font_size_item_md" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,11 +4,13 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -18,7 +20,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import com.namoa_digital.namoa_library.ctls.MkDateTime;
 import com.namoa_digital.namoa_library.ctls.SearchableSpinner;
@@ -29,6 +33,7 @@ import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.model.SM_SO_Client;
 import com.namoadigital.prj001.model.SO_Creation_Obj;
+import com.namoadigital.prj001.model.SO_Favorite_Item;
 import com.namoadigital.prj001.model.SO_Favorite_Pipeline;
 import com.namoadigital.prj001.model.SO_Favorite_Priority;
 import com.namoadigital.prj001.util.Constant;
@@ -56,6 +61,9 @@ public class Act050_Frag_SO extends BaseFragment {
     public static final String PACK_DEFAULT_CODE_KEY = "PACK_DEFAULT_CODE_KEY";
     public static final String PRIORITY_CODE_KEY = "PRIORITY_CODE_KEY";
     public static final String RESQUEST_CLIENT = "RESQUEST_CLIENT";
+    private final String MASK_VIEW_TYPE_HIDE = "HIDE";
+    private final String MASK_VIEW_TYPE_OPTIONAL = "OPTIONAL";
+    private final String MASK_VIEW_TYPE_REQUIRED = "REQUIRED";
 
     private OnFragmentInteractionListener mListener;
 
@@ -89,7 +97,6 @@ public class Act050_Frag_SO extends BaseFragment {
     private TextView tvClientPhoneLbl;
     private TextView tvDeadlineLbl;
     private TextView tvPackDefaultLbl;
-    private TextView tvSoInfoLbl;
     private TextView tvSoDescLbl;
     private TextView tvSoIDLbl;
     private TextView tvInfo1lbl;
@@ -102,20 +109,53 @@ public class Act050_Frag_SO extends BaseFragment {
     private TextView tvBilingInfo2lbl;
     private TextView tvBilingInfo3lbl;
     private TextView tvSoClientIdLbl;
+    private TextView tvBillingInfo1Hint;
+    private TextView tvBillingInfo2Hint;
+    private TextView tvBillingInfo3Hint;
+    private TextView tvClientSoIdHint;
+    private TextView tvInfo1Hint;
+    private TextView tvInfo2Hint;
+    private TextView tvInfo3Hint;
+    private TextView tvInfo4Hint;
+    private TextView tvInfo5Hint;
+    private TextView tvInfo6Hint;
+    private TextView tvIdHint;
+    private TextView tvDescHint;
 
     private ImageButton ibBack;
     private ImageButton ibNext;
     private ImageView ibPackageDeafultInfo;
+    private ImageView ivBillingInfo1;
+    private ImageView ivBillingInfo2;
+    private ImageView ivBillingInfo3;
+    private ImageView ivInfo1;
+    private ImageView ivInfo2;
+    private ImageView ivInfo3;
+    private ImageView ivInfo4;
+    private ImageView ivInfo5;
+    private ImageView ivInfo6;
 
     private MkDateTime mkDateTime;
 
     private LinearLayout llSoClient;
     private LinearLayout llSoOtherInfo;
+    private LinearLayout llClientEmail;
+    private LinearLayout llBillingInfo1;
+    private LinearLayout llBillingInfo2;
+    private LinearLayout llBillingInfo3;
+    private LinearLayout llClientSoId;
+    private LinearLayout llInfo1;
+    private LinearLayout llInfo2;
+    private LinearLayout llInfo3;
+    private LinearLayout llInfo4;
+    private LinearLayout llInfo5;
+    private LinearLayout llInfo6;
+    private LinearLayout llDesc;
+    private LinearLayout llId;
+
     private ConstraintLayout clClientName;
     private ConstraintLayout clPackageDefault;
-    private LinearLayout llClientEmail;
     private Switch swHasManualDeadline;
-    private CheckBox cbOtherInfo;
     private ScrollView sv_main;
     private ArrayList<SM_SO_Client> clientsList = new ArrayList<>();
     private boolean isClientListRequest = true;
@@ -163,8 +203,22 @@ public class Act050_Frag_SO extends BaseFragment {
         llSoClient = view.findViewById(R.id.act050_frag_so_client_ll);
         llSoOtherInfo = view.findViewById(R.id.act050_frag_so_ll);
         swHasManualDeadline = view.findViewById(R.id.act050_frag_so_has_manual_dealine);
-        cbOtherInfo = view.findViewById(R.id.act050_header_cb_show_hide);
         sv_main = view.findViewById(R.id.act050_frag_so_sv_main);
+
+        llBillingInfo1 = view.findViewById(R.id.act050_frag_so_ll_billing_info1);
+        llBillingInfo2 = view.findViewById(R.id.act050_frag_so_ll_billing_info2);
+        llBillingInfo3 = view.findViewById(R.id.act050_frag_so_ll_billing_info3);
+        llId = view.findViewById(R.id.act050_frag_so_ll_id);
+        llDesc = view.findViewById(R.id.act050_frag_so_ll_desc);
+        llClientSoId = view.findViewById(R.id.act050_frag_so_ll_client_so_id);
+        llInfo1 = view.findViewById(R.id.act050_frag_so_ll_info1);
+        llInfo2 = view.findViewById(R.id.act050_frag_so_ll_info2);
+        llInfo3 = view.findViewById(R.id.act050_frag_so_ll_info3);
+        llInfo4 = view.findViewById(R.id.act050_frag_so_ll_info4);
+        llInfo5 = view.findViewById(R.id.act050_frag_so_ll_info5);
+        llInfo6 = view.findViewById(R.id.act050_frag_so_ll_info6);
+
+
 //      Metodo abaixo foram movidos para o onStart , pois no restore da tela os SS estavam com informações
 //      erradas
 //        initVars();
@@ -198,10 +252,8 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void initVars() {
-
         SO_Creation_Obj my_so_creation_obj = mListener.getmSOCreationObj();
         //Log.d("NEW_OS", "initVars SO_Creation_Obj - > " + my_so_creation_obj.toString());
-
         setClientTypeSearchableSpinner(my_so_creation_obj);
         setClientNameSearchableSpinner(my_so_creation_obj);
         setPipelineSearchableSpinner(my_so_creation_obj);
@@ -209,20 +261,162 @@ public class Act050_Frag_SO extends BaseFragment {
         setPrioritySearchableSpinner(my_so_creation_obj);
         setPackageDefaultSearchableSpinner(my_so_creation_obj);
         setSOInfo(my_so_creation_obj);
-        if(cbOtherInfo.isChecked()){
-            llSoOtherInfo.setVisibility(View.VISIBLE);
-            //LUCHE - 13/07/2021
-            //André solicitou que fosse removido após a inclusão dos novos campos.
-//            sv_main.post(new Runnable() {
-//                public void run() {
-//                    sv_main.fullScroll(View.FOCUS_DOWN);
-//                }
-//            });
+        mListener.updateSO_Creation_Obj(my_so_creation_obj);
+        //
+        setMaskInfoWithExists(my_so_creation_obj);
+    }
+
+    /**
+     * LUCHE - 26/07/2021
+     * <p></p>
+     * Metodo que verifica se existe mascara definida e se sim aplica
+     * @param soCreationObj
+     */
+    private void setMaskInfoWithExists(SO_Creation_Obj soCreationObj) {
+        if(mListener != null) {
+            SO_Favorite_Item favoriteItem = mListener.getFavoriteItem();
+            if (favoriteItem != null) {
+                if(favoriteItem.getMaskCode() != null){
+                    applyMaskConfig(favoriteItem,soCreationObj);
+                }else{
+                    resetMaskedViews();
+                }
+            }
+        }
+    }
+
+    /**
+     * LUCHE - 26/07/2021
+     * <p></p>
+     * Metodo que aplica as configurações nas views baseada na mascara configurada
+     * @param favoriteItem
+     * @param soCreationObj
+     */
+    private void applyMaskConfig(SO_Favorite_Item favoriteItem, SO_Creation_Obj soCreationObj) {
+        configMaskedViewWithTracking(llInfo1,tvInfo1lbl, favoriteItem.getSoAddInf1View(), tvInfo1Hint, favoriteItem.getSoAddInf1Text(), ivInfo1, favoriteItem.getSoAddInf1Tracking());
+        configMaskedViewWithTracking(llInfo2,tvInfo2lbl, favoriteItem.getSoAddInf2View(), tvInfo2Hint, favoriteItem.getSoAddInf2Text(), ivInfo2, favoriteItem.getSoAddInf2Tracking());
+        configMaskedViewWithTracking(llInfo3,tvInfo3lbl, favoriteItem.getSoAddInf3View(), tvInfo3Hint, favoriteItem.getSoAddInf3Text(), ivInfo3, favoriteItem.getSoAddInf3Tracking());
+        configMaskedViewWithTracking(llInfo4,tvInfo4lbl, favoriteItem.getSoAddInf4View(), tvInfo4Hint, favoriteItem.getSoAddInf4Text(), ivInfo4, favoriteItem.getSoAddInf4Tracking());
+        configMaskedViewWithTracking(llInfo5,tvInfo5lbl, favoriteItem.getSoAddInf5View(), tvInfo5Hint, favoriteItem.getSoAddInf5Text(), ivInfo5, favoriteItem.getSoAddInf5Tracking());
+        configMaskedViewWithTracking(llInfo6,tvInfo6lbl, favoriteItem.getSoAddInf6View(), tvInfo6Hint, favoriteItem.getSoAddInf6Text(), ivInfo6, favoriteItem.getSoAddInf6Tracking());
+        configMaskedViewWithTracking(llBillingInfo1,tvBilingInfo1lbl, soCreationObj.getBilling_add_inf1_view(), tvBillingInfo1Hint, soCreationObj.getBilling_add_inf1_text(), ivBillingInfo1, soCreationObj.getBilling_add_inf1_tracking());
+        configMaskedViewWithTracking(llBillingInfo2,tvBilingInfo2lbl, soCreationObj.getBilling_add_inf2_view(), tvBillingInfo2Hint, soCreationObj.getBilling_add_inf2_text(), ivBillingInfo2, soCreationObj.getBilling_add_inf2_tracking());
+        configMaskedViewWithTracking(llBillingInfo3,tvBilingInfo3lbl, soCreationObj.getBilling_add_inf3_view(), tvBillingInfo3Hint, soCreationObj.getBilling_add_inf3_text(), ivBillingInfo3, soCreationObj.getBilling_add_inf3_tracking());
+        configMaskedViewWithTracking(llId,tvSoIDLbl, favoriteItem.getSoIdView(), tvIdHint, favoriteItem.getSoIdText(), null, null);
+        configMaskedViewWithTracking(llClientSoId,tvClientIdLbl, favoriteItem.getSoClientSoIdView(), tvClientSoIdHint, favoriteItem.getSoClientSoIdText(), null, null);
+        configMaskedViewWithTracking(llDesc,tvSoDescLbl, favoriteItem.getSoDescView(), tvDescHint, favoriteItem.getSoDescText(), null, null);
+        configMaskedViewSingle(ssPriority,favoriteItem.getSoPriorityView());
+        configMaskedViewSingle(ssClientType,favoriteItem.getSoClientTypeView());
+    }
+
+    private void configMaskedViewSingle(SearchableSpinner searchableSpinner, String viewType) {
+        searchableSpinner.setVisibility(
+            viewType == null || MASK_VIEW_TYPE_HIDE.equals(viewType)
+                ? View.GONE
+                : View.VISIBLE
+        );
+    }
+
+    /**
+     * LUCHE - 26/07/2021
+     * <p></p>
+     * Metodo que configura:
+     *  - Se item deve ou não ser exibido
+     *  - Se item obrigatorio, seta cor laranja no titulo
+     *  - Se item gera tracking, exibe icone de tracking ao lado do lbl
+     *  - Se item possui text, exibe dica.
+     * @param llContainer - Ll que contem as infos
+     * @param tvLbl - TextView do lbl do item
+     * @param viewType - Info View para o item
+     * @param tvHint - TextView do hint do item
+     * @param hintText - Info Text para o item
+     * @param ivTracking - ImageView com icone do tracking
+     * @param setTracking - Info Tracking para o item
+     */
+    private void configMaskedViewWithTracking(LinearLayout llContainer, TextView tvLbl, String viewType, TextView tvHint, String hintText, @Nullable ImageView ivTracking, @Nullable Integer setTracking) {
+        if(viewType == null || MASK_VIEW_TYPE_HIDE.equals(viewType)){
+            llContainer.setVisibility(View.GONE);
+            if(ivTracking != null) {
+                ivTracking.setVisibility(View.GONE);
+            }
+            tvHint.setText("");
         }else{
-            llSoOtherInfo.setVisibility(View.GONE);
+            llContainer.setVisibility(View.VISIBLE);
+            applySpannableStringIfRequired(tvLbl,MASK_VIEW_TYPE_REQUIRED.equals(viewType));
+            if(ivTracking != null) {
+                ivTracking.setVisibility(setTracking != null && setTracking == 1 ? View.VISIBLE : View.GONE);
+            }
+            if(hintText != null && !hintText.isEmpty()){
+                tvHint.setText(hintText);
+                tvHint.setVisibility(View.VISIBLE);
+            }else{
+                tvHint.setText("");
+                tvHint.setVisibility(View.GONE);
+            }
         }
 
-        mListener.updateSO_Creation_Obj(my_so_creation_obj);
+   }
+
+    /**
+     * LUCHE - 26/07/2021
+     * <p></p>
+     * Metodo que seta o * quando item required
+     * @param tvLbl
+     * @param required
+     */
+
+   private void applySpannableStringIfRequired(TextView tvLbl, boolean required) {
+        String text = tvLbl.getText().toString();
+        if(required) {
+            if (text.lastIndexOf("*") == -1) {
+                text += " *";
+                SpannableString spannableString = new SpannableString(text);
+                spannableString.setSpan(
+                    new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.font_required)),
+                    text.length() - 1,
+                    text.length(),
+                    Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                );
+                tvLbl.setText(spannableString);
+                //tvLbl.setText(text);
+                //tvLbl.setTextColor(ContextCompat.getColor(getContext(), R.color.font_required));
+            }
+        }else{
+            if (text.lastIndexOf("*") > -1 && text.lastIndexOf("*") == text.length()) {
+                tvLbl.setText(text.substring(text.length() -1));
+            }
+            //tvLbl.setTextColor(ContextCompat.getColor(getContext(), R.color.namoa_dark_blue));
+        }
+    }
+
+
+    /**
+     * LUCHE - 26/07/2021
+     * <p></p>
+     * Metodo que reseta as views quando o favorito não possui mask
+     */
+    private void resetMaskedViews() {
+        ivBillingInfo1.setVisibility(View.GONE);
+        ivBillingInfo2.setVisibility(View.GONE);
+        ivBillingInfo3.setVisibility(View.GONE);
+        ivInfo1.setVisibility(View.GONE);
+        ivInfo2.setVisibility(View.GONE);
+        ivInfo3.setVisibility(View.GONE);
+        ivInfo4.setVisibility(View.GONE);
+        ivInfo5.setVisibility(View.GONE);
+        ivInfo6.setVisibility(View.GONE);
+        tvIdHint.setVisibility(View.GONE);
+        tvClientSoIdHint.setVisibility(View.GONE);
+        tvDescHint.setVisibility(View.GONE);
+        tvBillingInfo1Hint.setVisibility(View.GONE);
+        tvBillingInfo2Hint.setVisibility(View.GONE);
+        tvBillingInfo3Hint.setVisibility(View.GONE);
+        tvInfo1Hint.setVisibility(View.GONE);
+        tvInfo2Hint.setVisibility(View.GONE);
+        tvInfo3Hint.setVisibility(View.GONE);
+        tvInfo4Hint.setVisibility(View.GONE);
+        tvInfo5Hint.setVisibility(View.GONE);
+        tvInfo6Hint.setVisibility(View.GONE);
     }
 
     private void setDeadline(SO_Creation_Obj my_so_creation_obj) {
@@ -439,24 +633,6 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void initAction() {
-        cbOtherInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (llSoOtherInfo.getVisibility() == View.VISIBLE)
-                    llSoOtherInfo.setVisibility(View.GONE);
-                else {
-                    llSoOtherInfo.setVisibility(View.VISIBLE);
-                    //LUCHE - 13/07/2021
-                    //André solicitou que fosse removido após a inclusão dos novos campos.
-//                    sv_main.post(new Runnable() {
-//                        public void run() {
-//                            sv_main.fullScroll(View.FOCUS_DOWN);
-//                        }
-//                    });
-                }
-            }
-        });
-
         swHasManualDeadline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -845,6 +1021,15 @@ public class Act050_Frag_SO extends BaseFragment {
         ibBack = view.findViewById(R.id.act050_frag_param_iv_back);
         ibNext = view.findViewById(R.id.act050_frag_param_iv_next);
         ibPackageDeafultInfo = view.findViewById(R.id.act050_frag_so_package_default_info);
+        ivBillingInfo1 = view.findViewById(R.id.act050_frag_so_billing_info1_iv);
+        ivBillingInfo2 = view.findViewById(R.id.act050_frag_so_billing_info2_iv);
+        ivBillingInfo3 = view.findViewById(R.id.act050_frag_so_billing_info3_iv);
+        ivInfo1 = view.findViewById(R.id.act050_frag_so_info1_iv);
+        ivInfo2 = view.findViewById(R.id.act050_frag_so_info2_iv);
+        ivInfo3 = view.findViewById(R.id.act050_frag_so_info3_iv);
+        ivInfo4 = view.findViewById(R.id.act050_frag_so_info4_iv);
+        ivInfo5 = view.findViewById(R.id.act050_frag_so_info5_iv);
+        ivInfo6 = view.findViewById(R.id.act050_frag_so_info6_iv);
     }
 
     private void bindTextView(View view) {
@@ -860,8 +1045,6 @@ public class Act050_Frag_SO extends BaseFragment {
         tvDeadlineLbl.setText(hmAux_Trans.get("deadline_lbl"));
         tvPackDefaultLbl = view.findViewById(R.id.act050_frag_so_package_default_lbl);
         tvPackDefaultLbl.setText(hmAux_Trans.get("pack_default_lbl"));
-        tvSoInfoLbl = view.findViewById(R.id.act050_frag_so_title_lbl);
-        tvSoInfoLbl.setText(hmAux_Trans.get("so_others_info_ttl"));
         tvSoDescLbl = view.findViewById(R.id.act050_frag_so_desc_lbl);
         tvSoDescLbl.setText(hmAux_Trans.get("so_desc_lbl"));
         tvSoIDLbl = view.findViewById(R.id.act050_frag_so_id_lbl);
@@ -878,14 +1061,28 @@ public class Act050_Frag_SO extends BaseFragment {
         tvInfo5lbl.setText(hmAux_Trans.get("add_inf5_lbl"));
         tvInfo6lbl = view.findViewById(R.id.act050_frag_so_info6_lbl);
         tvInfo6lbl.setText(hmAux_Trans.get("add_inf6_lbl"));
-        tvBilingInfo1lbl = view.findViewById(R.id.act050_frag_so_biiling_info1_lbl);
+        tvBilingInfo1lbl = view.findViewById(R.id.act050_frag_so_billing_info1_lbl);
         tvBilingInfo1lbl.setText(hmAux_Trans.get("billing_add_inf1_lbl"));
-        tvBilingInfo2lbl = view.findViewById(R.id.act050_frag_so_biiling_info2_lbl);
+        tvBilingInfo2lbl = view.findViewById(R.id.act050_frag_so_billing_info2_lbl);
         tvBilingInfo2lbl.setText(hmAux_Trans.get("billing_add_inf2_lbl"));
-        tvBilingInfo3lbl = view.findViewById(R.id.act050_frag_so_biiling_info3_lbl);
+        tvBilingInfo3lbl = view.findViewById(R.id.act050_frag_so_billing_info3_lbl);
         tvBilingInfo3lbl.setText(hmAux_Trans.get("billing_add_inf3_lbl"));
         tvSoClientIdLbl = view.findViewById(R.id.act050_frag_so_client_so_id_lbl);
         tvSoClientIdLbl.setText(hmAux_Trans.get("so_client_id_lbl"));
+        //
+        tvBillingInfo1Hint = view.findViewById(R.id.act050_frag_so_billing_info1_hint);
+        tvBillingInfo2Hint = view.findViewById(R.id.act050_frag_so_billing_info2_hint);
+        tvBillingInfo3Hint = view.findViewById(R.id.act050_frag_so_billing_info3_hint);
+        tvDescHint = view.findViewById(R.id.act050_frag_so_desc_hint);
+        tvClientSoIdHint= view.findViewById(R.id.act050_frag_so_client_so_id_hint);
+        tvIdHint = view.findViewById(R.id.act050_frag_so_id_hint);
+        tvInfo1Hint = view.findViewById(R.id.act050_frag_so_info1_hint);
+        tvInfo2Hint = view.findViewById(R.id.act050_frag_so_info2_hint);
+        tvInfo3Hint = view.findViewById(R.id.act050_frag_so_info3_hint);
+        tvInfo4Hint = view.findViewById(R.id.act050_frag_so_info4_hint);
+        tvInfo5Hint = view.findViewById(R.id.act050_frag_so_info5_hint);
+        tvInfo6Hint = view.findViewById(R.id.act050_frag_so_info6_hint);
+        //
     }
 
     private void bindEditText(View view) {
@@ -901,9 +1098,9 @@ public class Act050_Frag_SO extends BaseFragment {
         edtSoInfo4 = view.findViewById(R.id.act050_frag_so_info4_val);
         edtSoInfo5 = view.findViewById(R.id.act050_frag_so_info5_val);
         edtSoInfo6 = view.findViewById(R.id.act050_frag_so_info6_val);
-        etBillingInfo1 = view.findViewById(R.id.act050_frag_so_biiling_info1_val);
-        etBillingInfo2 = view.findViewById(R.id.act050_frag_so_biiling_info2_val);
-        etBillingInfo3 = view.findViewById(R.id.act050_frag_so_biiling_info3_val);
+        etBillingInfo1 = view.findViewById(R.id.act050_frag_so_billing_info1_val);
+        etBillingInfo2 = view.findViewById(R.id.act050_frag_so_billing_info2_val);
+        etBillingInfo3 = view.findViewById(R.id.act050_frag_so_billing_info3_val);
         etClientSoId = view.findViewById(R.id.act050_frag_so_client_so_id_val);
     }
 
@@ -1012,40 +1209,42 @@ public class Act050_Frag_SO extends BaseFragment {
         return transList;
     }
 
-/**
- * This interface must be implemented by activities that contain this
- * fragment to allow an interaction in this fragment to be communicated
- * to the activity and potentially other fragments contained in that
- * activity.
- * <p>
- * See the Android Training lesson <a href=
- * "http://developer.android.com/training/basics/fragments/communicating.html"
- * >Communicating with Other Fragments</a> for more information.
- */
-public interface OnFragmentInteractionListener {
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
 
-    List<SO_Favorite_Pipeline> getPipelineList();
+        List<SO_Favorite_Pipeline> getPipelineList();
 
-    HMAux getPipelineFavorite(int favorite_code);
+        HMAux getPipelineFavorite(int favorite_code);
 
-    void getClientList();
+        void getClientList();
 
-    ArrayList<SM_SO_Client> getClientListLocal();
+        ArrayList<SM_SO_Client> getClientListLocal();
 
-    void requestSoCreation(SO_Creation_Obj mSOCreationObj);
+        void requestSoCreation(SO_Creation_Obj mSOCreationObj);
 
-    List<SO_Favorite_Priority> getPriorityList();
+        List<SO_Favorite_Priority> getPriorityList();
 
-    List<String> getPackageDefaultByContract();
+        List<String> getPackageDefaultByContract();
 
-    String getPackageDefault();
+        String getPackageDefault();
 
-    boolean hasValidPackageDefault(Integer contract_code_selected);
+        boolean hasValidPackageDefault(Integer contract_code_selected);
 
-    void onBackButtonPressed();
+        void onBackButtonPressed();
 
-    SO_Creation_Obj getmSOCreationObj();
+        SO_Creation_Obj getmSOCreationObj();
 
-    void updateSO_Creation_Obj(SO_Creation_Obj my_so_creation_obj);
-}
+        void updateSO_Creation_Obj(SO_Creation_Obj my_so_creation_obj);
+
+        SO_Favorite_Item getFavoriteItem();
+    }
 }
