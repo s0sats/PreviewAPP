@@ -107,8 +107,9 @@ public class Act050_Favorite_RecyclerView_Adapter extends RecyclerView.Adapter<A
         @Override
         protected Filter.FilterResults performFiltering(CharSequence constraint) {
             String charString = constraint.toString();
+            List<SO_Favorite_Item> temp = new ArrayList<>();
             if (charString.isEmpty()) {
-                mFilteredValues = mValues;
+                temp = mValues;
             } else {
                 List<SO_Favorite_Item> filteredList = new ArrayList<>();
                 for (SO_Favorite_Item row : mValues) {
@@ -120,11 +121,11 @@ public class Act050_Favorite_RecyclerView_Adapter extends RecyclerView.Adapter<A
                     }
                 }
 
-                mFilteredValues = filteredList;
+                temp = filteredList;
             }
 
             FilterResults filterResults = new FilterResults();
-            filterResults.values = mFilteredValues;
+            filterResults.values = temp;
             return filterResults;
         }
 
