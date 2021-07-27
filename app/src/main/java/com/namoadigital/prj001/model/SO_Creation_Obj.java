@@ -17,8 +17,13 @@ import java.io.Serializable;
  * Luche - 15/07/2021
  * Add atributos _tracking, pois o servidor não sabe qual o favorito selecionei então estas infos precisam
  * ser enviadas
+ *
  * Luche - 26/07/2021
  * Add atributos _view e _text de billing
+ *
+ * LUCHE - 27/07/2021
+ * Add atributo fullVision que reflete estado do switch.
+ *
  */
 
 public class SO_Creation_Obj implements Serializable {
@@ -83,6 +88,7 @@ public class SO_Creation_Obj implements Serializable {
     private String pack_service_desc_full;
     private Integer po_code;
     private int site_exec;
+    private boolean fullVision;
 
     public long getCustomer_code() {
         return customer_code;
@@ -555,6 +561,14 @@ public class SO_Creation_Obj implements Serializable {
 
     public void setSite_exec(int site_exec) {
         this.site_exec = site_exec;
+    }
+
+    public boolean isFullVision() {
+        return fullVision;
+    }
+
+    public void setFullVision(boolean fullVision) {
+        this.fullVision = fullVision;
     }
 
     @Override

@@ -16,11 +16,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
@@ -121,6 +121,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private TextView tvInfo6Hint;
     private TextView tvIdHint;
     private TextView tvDescHint;
+    private TextView tvFullVisionLbl;
 
     private ImageButton ibBack;
     private ImageButton ibNext;
@@ -155,16 +156,16 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private ConstraintLayout clClientName;
     private ConstraintLayout clPackageDefault;
-    private Switch swHasManualDeadline;
+    private SwitchCompat swHasManualDeadline;
     private ScrollView sv_main;
     private ArrayList<SM_SO_Client> clientsList = new ArrayList<>();
     private boolean isClientListRequest = true;
     private Integer favorite_code;
+    private SwitchCompat swFullVision;
 
     public Act050_Frag_SO() {
         // Required empty public constructor
     }
-
 
     public static Act050_Frag_SO newInstance(HMAux hmAux_Trans, Integer favorite_code) {
         Act050_Frag_SO fragment = new Act050_Frag_SO();
@@ -195,6 +196,7 @@ public class Act050_Frag_SO extends BaseFragment {
         bindTextView(view);
         bindImageButton(view);
 
+        swFullVision = view.findViewById(R.id.act050_frag_so_sw_full_vision);
         clClientName = view.findViewById(R.id.act050_frag_so_client_name_ll);
         llClientEmail = view.findViewById(R.id.act050_frag_so_client_email_ll);
         clPackageDefault = view.findViewById(R.id.act050_frag_so_package_default_ll);
@@ -254,6 +256,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private void initVars() {
         SO_Creation_Obj my_so_creation_obj = mListener.getmSOCreationObj();
         //Log.d("NEW_OS", "initVars SO_Creation_Obj - > " + my_so_creation_obj.toString());
+        setFullVisionState(my_so_creation_obj.isFullVision());
         setClientTypeSearchableSpinner(my_so_creation_obj);
         setClientNameSearchableSpinner(my_so_creation_obj);
         setPipelineSearchableSpinner(my_so_creation_obj);
@@ -264,6 +267,10 @@ public class Act050_Frag_SO extends BaseFragment {
         mListener.updateSO_Creation_Obj(my_so_creation_obj);
         //
         setMaskInfoWithExists(my_so_creation_obj);
+    }
+
+    private void setFullVisionState(boolean fullVisionState) {
+        swFullVision.setChecked(fullVisionState);
     }
 
     /**
@@ -277,12 +284,24 @@ public class Act050_Frag_SO extends BaseFragment {
             SO_Favorite_Item favoriteItem = mListener.getFavoriteItem();
             if (favoriteItem != null) {
                 if(favoriteItem.getMaskCode() != null){
-                    applyMaskConfig(favoriteItem,soCreationObj);
+                    applyMaskConfig(favoriteItem);
                 }else{
                     resetMaskedViews();
                 }
+                //
+                applyBillingInfoConfig(soCreationObj);
             }
         }
+    }
+
+    /**
+     * Metodo que aplica as configuraões oas campos de billing
+     * @param soCreationObj
+     */
+    private void applyBillingInfoConfig(SO_Creation_Obj soCreationObj) {
+        configMaskedViewWithTracking(llBillingInfo1,tvBilingInfo1lbl, soCreationObj.getBilling_add_inf1_view(), tvBillingInfo1Hint, soCreationObj.getBilling_add_inf1_text(), ivBillingInfo1, soCreationObj.getBilling_add_inf1_tracking());
+        configMaskedViewWithTracking(llBillingInfo2,tvBilingInfo2lbl, soCreationObj.getBilling_add_inf2_view(), tvBillingInfo2Hint, soCreationObj.getBilling_add_inf2_text(), ivBillingInfo2, soCreationObj.getBilling_add_inf2_tracking());
+        configMaskedViewWithTracking(llBillingInfo3,tvBilingInfo3lbl, soCreationObj.getBilling_add_inf3_view(), tvBillingInfo3Hint, soCreationObj.getBilling_add_inf3_text(), ivBillingInfo3, soCreationObj.getBilling_add_inf3_tracking());
     }
 
     /**
@@ -290,18 +309,15 @@ public class Act050_Frag_SO extends BaseFragment {
      * <p></p>
      * Metodo que aplica as configurações nas views baseada na mascara configurada
      * @param favoriteItem
-     * @param soCreationObj
+     *
      */
-    private void applyMaskConfig(SO_Favorite_Item favoriteItem, SO_Creation_Obj soCreationObj) {
+    private void applyMaskConfig(SO_Favorite_Item favoriteItem) {
         configMaskedViewWithTracking(llInfo1,tvInfo1lbl, favoriteItem.getSoAddInf1View(), tvInfo1Hint, favoriteItem.getSoAddInf1Text(), ivInfo1, favoriteItem.getSoAddInf1Tracking());
         configMaskedViewWithTracking(llInfo2,tvInfo2lbl, favoriteItem.getSoAddInf2View(), tvInfo2Hint, favoriteItem.getSoAddInf2Text(), ivInfo2, favoriteItem.getSoAddInf2Tracking());
         configMaskedViewWithTracking(llInfo3,tvInfo3lbl, favoriteItem.getSoAddInf3View(), tvInfo3Hint, favoriteItem.getSoAddInf3Text(), ivInfo3, favoriteItem.getSoAddInf3Tracking());
         configMaskedViewWithTracking(llInfo4,tvInfo4lbl, favoriteItem.getSoAddInf4View(), tvInfo4Hint, favoriteItem.getSoAddInf4Text(), ivInfo4, favoriteItem.getSoAddInf4Tracking());
         configMaskedViewWithTracking(llInfo5,tvInfo5lbl, favoriteItem.getSoAddInf5View(), tvInfo5Hint, favoriteItem.getSoAddInf5Text(), ivInfo5, favoriteItem.getSoAddInf5Tracking());
         configMaskedViewWithTracking(llInfo6,tvInfo6lbl, favoriteItem.getSoAddInf6View(), tvInfo6Hint, favoriteItem.getSoAddInf6Text(), ivInfo6, favoriteItem.getSoAddInf6Tracking());
-        configMaskedViewWithTracking(llBillingInfo1,tvBilingInfo1lbl, soCreationObj.getBilling_add_inf1_view(), tvBillingInfo1Hint, soCreationObj.getBilling_add_inf1_text(), ivBillingInfo1, soCreationObj.getBilling_add_inf1_tracking());
-        configMaskedViewWithTracking(llBillingInfo2,tvBilingInfo2lbl, soCreationObj.getBilling_add_inf2_view(), tvBillingInfo2Hint, soCreationObj.getBilling_add_inf2_text(), ivBillingInfo2, soCreationObj.getBilling_add_inf2_tracking());
-        configMaskedViewWithTracking(llBillingInfo3,tvBilingInfo3lbl, soCreationObj.getBilling_add_inf3_view(), tvBillingInfo3Hint, soCreationObj.getBilling_add_inf3_text(), ivBillingInfo3, soCreationObj.getBilling_add_inf3_tracking());
         configMaskedViewWithTracking(llId,tvSoIDLbl, favoriteItem.getSoIdView(), tvIdHint, favoriteItem.getSoIdText(), null, null);
         configMaskedViewWithTracking(llClientSoId, tvClientSoIdLbl, favoriteItem.getSoClientSoIdView(), tvClientSoIdHint, favoriteItem.getSoClientSoIdText(), null, null);
         configMaskedViewWithTracking(llDesc,tvSoDescLbl, favoriteItem.getSoDescView(), tvDescHint, favoriteItem.getSoDescText(), null, null);
@@ -311,7 +327,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private void configMaskedViewSingle(SearchableSpinner searchableSpinner, String viewType) {
         searchableSpinner.setVisibility(
-            viewType == null || MASK_VIEW_TYPE_HIDE.equals(viewType)
+            viewType == null || (MASK_VIEW_TYPE_HIDE.equals(viewType) && !swFullVision.isChecked())
                 ? View.GONE
                 : View.VISIBLE
         );
@@ -334,7 +350,7 @@ public class Act050_Frag_SO extends BaseFragment {
      * @param setTracking - Info Tracking para o item
      */
     private void configMaskedViewWithTracking(LinearLayout llContainer, TextView tvLbl, String viewType, TextView tvHint, String hintText, @Nullable ImageView ivTracking, @Nullable Integer setTracking) {
-        if(viewType == null || MASK_VIEW_TYPE_HIDE.equals(viewType)){
+        if(viewType == null || (MASK_VIEW_TYPE_HIDE.equals(viewType) && !swFullVision.isChecked())){
             llContainer.setVisibility(View.GONE);
             if(ivTracking != null) {
                 ivTracking.setVisibility(View.GONE);
@@ -396,9 +412,9 @@ public class Act050_Frag_SO extends BaseFragment {
      * Metodo que reseta as views quando o favorito não possui mask
      */
     private void resetMaskedViews() {
-        ivBillingInfo1.setVisibility(View.GONE);
-        ivBillingInfo2.setVisibility(View.GONE);
-        ivBillingInfo3.setVisibility(View.GONE);
+//        ivBillingInfo1.setVisibility(View.GONE);
+//        ivBillingInfo2.setVisibility(View.GONE);
+//        ivBillingInfo3.setVisibility(View.GONE);
         ivInfo1.setVisibility(View.GONE);
         ivInfo2.setVisibility(View.GONE);
         ivInfo3.setVisibility(View.GONE);
@@ -408,9 +424,9 @@ public class Act050_Frag_SO extends BaseFragment {
         tvIdHint.setVisibility(View.GONE);
         tvClientSoIdHint.setVisibility(View.GONE);
         tvDescHint.setVisibility(View.GONE);
-        tvBillingInfo1Hint.setVisibility(View.GONE);
-        tvBillingInfo2Hint.setVisibility(View.GONE);
-        tvBillingInfo3Hint.setVisibility(View.GONE);
+//        tvBillingInfo1Hint.setVisibility(View.GONE);
+//        tvBillingInfo2Hint.setVisibility(View.GONE);
+//        tvBillingInfo3Hint.setVisibility(View.GONE);
         tvInfo1Hint.setVisibility(View.GONE);
         tvInfo2Hint.setVisibility(View.GONE);
         tvInfo3Hint.setVisibility(View.GONE);
@@ -633,6 +649,16 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void initAction() {
+        swFullVision.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mListener!= null) {
+                    mListener.getmSOCreationObj();
+                    setMaskInfoWithExists(mListener.getmSOCreationObj());
+                }
+            }
+        });
+
         swHasManualDeadline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -705,6 +731,8 @@ public class Act050_Frag_SO extends BaseFragment {
     @NonNull
     private SO_Creation_Obj setSOCreationObj() {
         SO_Creation_Obj my_so_creation_obj = mListener.getmSOCreationObj();
+
+        my_so_creation_obj.setFullVision(swFullVision.isChecked());
 
         addClientInfoToRequest(my_so_creation_obj);
         addSoInfoToRequest(my_so_creation_obj);
@@ -831,7 +859,7 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private boolean formFieldsValitaded() {
-        boolean isValitaded = true;
+        boolean isValidated = true;
         String alertMsg = "";
         HMAux selectedClientType = ssClientType.getmValue();
         HMAux selectedPriority = ssPriority.getmValue();
@@ -840,26 +868,25 @@ public class Act050_Frag_SO extends BaseFragment {
         if (selectedClientType == null || !selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE)) {
             alertMsg = hmAux_Trans.get("alert_fill_client_type_field_msg") + "\n";
             ssClientType.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
-            isValitaded = false;
+            isValidated = false;
         }
         if (selectedPriority == null || !selectedPriority.hasConsistentValue(PRIORITY_CODE_KEY)) {
             alertMsg = alertMsg + hmAux_Trans.get("alert_fill_priority_field_msg") + "\n";
             ssPriority.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
-            isValitaded = false;
+            isValidated = false;
         }
 
         if (selectedPackageDefault == null || !selectedPackageDefault.hasConsistentValue(PACK_DEFAULT_CODE_KEY)) {
             alertMsg = alertMsg + hmAux_Trans.get("alert_fill_package_default_field_msg") + "\n";
             clPackageDefault.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
-            isValitaded = false;
+            isValidated = false;
         }
 
         if (selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE) && selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
-
             if (edtClientName.getText().toString().isEmpty()) {
                 alertMsg = alertMsg + hmAux_Trans.get("alert_fill_client_name_field_msg") + "\n";
                 clClientName.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
-                isValitaded = false;
+                isValidated = false;
             }
 
             if (edtClientEmail.isEnabled()
@@ -867,21 +894,94 @@ public class Act050_Frag_SO extends BaseFragment {
                     && !ToolBox.isValidEmailAddress(edtClientEmail.getText().toString())) {
                 alertMsg = alertMsg + hmAux_Trans.get("alert_invalid_email_msg") + "\n";
                 llClientEmail.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
-                isValitaded = false;
+                isValidated = false;
             }
         }
+        //
         if (swHasManualDeadline.isChecked() && !validateMkDateTime()) {
             alertMsg = alertMsg + hmAux_Trans.get("msg_error_invalid_date") + "\n";
-            isValitaded = false;
+            isValidated = false;
         }
+
+        SO_Creation_Obj soCreationObj = mListener.getmSOCreationObj();
+        //Novo agrupamento de avalidações baseado no envio.
+        if(!validadeByMaskViewType(etBillingInfo1.getText().toString().trim(),soCreationObj.getBilling_add_inf1_view())){
+            alertMsg += hmAux_Trans.get("msg_error_billing_info1_required") + "\n";
+            isValidated = false;
+        }
+        if(!validadeByMaskViewType(etBillingInfo2.getText().toString().trim(),soCreationObj.getBilling_add_inf2_view())){
+            alertMsg += hmAux_Trans.get("msg_error_billing_info2_required") + "\n";
+            isValidated = false;
+        }
+        if(!validadeByMaskViewType(etBillingInfo3.getText().toString().trim(),soCreationObj.getBilling_add_inf3_view())){
+            alertMsg += hmAux_Trans.get("msg_error_billing_info3_required") + "\n";
+            isValidated = false;
+        }
+        //Valida campos da mascara
+        SO_Favorite_Item favoriteItem = mListener.getFavoriteItem();
+        if(favoriteItem != null && favoriteItem.getMaskCode() != null ){
+            if(!validadeByMaskViewType(edtSoInfo1.getText().toString().trim(),favoriteItem.getSoAddInf1View())){
+                alertMsg += hmAux_Trans.get("msg_error_so_add_info1_required") + "\n";
+                isValidated = false;
+            }
+            if(!validadeByMaskViewType(edtSoInfo2.getText().toString().trim(),favoriteItem.getSoAddInf2View())){
+                alertMsg += hmAux_Trans.get("msg_error_so_add_info2_required") + "\n";
+                isValidated = false;
+            }
+            if(!validadeByMaskViewType(edtSoInfo3.getText().toString().trim(),favoriteItem.getSoAddInf3View())){
+                alertMsg += hmAux_Trans.get("msg_error_so_add_info3_required") + "\n";
+                isValidated = false;
+            }
+            if(!validadeByMaskViewType(edtSoInfo4.getText().toString().trim(),favoriteItem.getSoAddInf4View())){
+                alertMsg += hmAux_Trans.get("msg_error_so_add_info4_required") + "\n";
+                isValidated = false;
+            }
+            if(!validadeByMaskViewType(edtSoInfo5.getText().toString().trim(),favoriteItem.getSoAddInf5View())){
+                alertMsg += hmAux_Trans.get("msg_error_so_add_info5_required") + "\n";
+                isValidated = false;
+            }
+            if(!validadeByMaskViewType(edtSoInfo6.getText().toString().trim(),favoriteItem.getSoAddInf6View())){
+                alertMsg += hmAux_Trans.get("msg_error_so_add_info6_required") + "\n";
+                isValidated = false;
+            }
+            if(!validadeByMaskViewType(etClientSoId.getText().toString().trim(),favoriteItem.getSoClientSoIdView())){
+                alertMsg += hmAux_Trans.get("msg_error_client_so_id_required") + "\n";
+                isValidated = false;
+            }
+            if(!validadeByMaskViewType(edtSoId.getText().toString().trim(),favoriteItem.getSoIdView())){
+                alertMsg += hmAux_Trans.get("msg_error_so_id_required") + "\n";
+                isValidated = false;
+            }
+            if(!validadeByMaskViewType(edtSoDesc.getText().toString().trim(),favoriteItem.getSoDescView())){
+                alertMsg += hmAux_Trans.get("msg_error_so_desc_required") + "\n";
+                isValidated = false;
+            }
+        }
+
         //chamado para limpar retangulo de validacao do componente
         mkDateTime.isValid();
-        if (isValitaded) {
-            return isValitaded;
+        if (isValidated) {
+            return isValidated;
         }
 
         alertError(hmAux_Trans.get("alert_so_creation_validation_ttl"), alertMsg);
-        return isValitaded;
+        return isValidated;
+    }
+
+    /**
+     * LUCHE - 27/07/2021
+     * <p></p>
+     * Metodo que valida se o item esta como required e se esta preenchido.
+     * Caso não esteja configurado como required, retorna como valido.
+     * @param etTextVal - Text do campo
+     * @param viewTypeValidation - Valor do atributo View
+     * @return Verdadeiro de viewTypeValidation != de requied OU required com valor preenchido.
+     */
+    private boolean validadeByMaskViewType(String etTextVal, String viewTypeValidation) {
+        if(MASK_VIEW_TYPE_REQUIRED.equals(viewTypeValidation)){
+           return etTextVal != null && !etTextVal.isEmpty();
+        }
+        return true;
     }
 
     private void clearValidation() {
@@ -1033,6 +1133,8 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void bindTextView(View view) {
+        tvFullVisionLbl = view.findViewById(R.id.act050_frag_so_tv_full_vision_lbl);
+        tvFullVisionLbl.setText(hmAux_Trans.get("full_vision_lbl"));
         tvClientIdLbl = view.findViewById(R.id.act050_frag_client_id_lbl);
         tvClientIdLbl.setText(hmAux_Trans.get("client_id_lbl"));
         tvClientNameLbl = view.findViewById(R.id.act050_frag_so_client_name_lbl);
@@ -1205,7 +1307,21 @@ public class Act050_Frag_SO extends BaseFragment {
         transList.add("billing_add_inf2_lbl");
         transList.add("billing_add_inf3_lbl");
         transList.add("so_client_id_lbl");
-
+        //
+        transList.add("msg_error_billing_info1_required");
+        transList.add("msg_error_billing_info2_required");
+        transList.add("msg_error_billing_info3_required");
+        transList.add("msg_error_so_add_info1_required");
+        transList.add("msg_error_so_add_info2_required");
+        transList.add("msg_error_so_add_info3_required");
+        transList.add("msg_error_so_add_info4_required");
+        transList.add("msg_error_so_add_info5_required");
+        transList.add("msg_error_so_add_info6_required");
+        transList.add("msg_error_client_so_id_required");
+        transList.add("msg_error_so_id_required");
+        transList.add("msg_error_so_desc_required");
+        transList.add("full_vision_lbl");
+        //
         return transList;
     }
 
