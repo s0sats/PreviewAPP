@@ -724,12 +724,24 @@ public class Act027_Header extends BaseFragment {
 
                 tv_billing_add_inf1_title.setText(hmAux_Trans.get("billing_add_info1_ttl"));
                 tv_billing_add_inf1.setText(getInfoIfExistis(mSm_so.getBilling_add_inf1()));
+                if (mSm_so.getBilling_add_inf1_tracking() != null
+                        && mSm_so.getBilling_add_inf1_tracking() == 1) {
+                    iv_billing_add_inf1.setVisibility(View.VISIBLE);
+                }
 
                 tv_billing_add_inf2_title.setText(hmAux_Trans.get("billing_add_info2_ttl"));
                 tv_billing_add_inf2.setText(getInfoIfExistis(mSm_so.getBilling_add_inf2()));
+                if (mSm_so.getBilling_add_inf2_tracking() != null
+                        && mSm_so.getBilling_add_inf2_tracking() == 1) {
+                    iv_billing_add_inf2.setVisibility(View.VISIBLE);
+                }
 
                 tv_billing_add_inf3_title.setText(hmAux_Trans.get("billing_add_info3_ttl"));
                 tv_billing_add_inf3.setText(getInfoIfExistis(mSm_so.getBilling_add_inf3()));
+                if (mSm_so.getBilling_add_inf3_tracking() != null
+                        && mSm_so.getBilling_add_inf3_tracking() == 1) {
+                    iv_billing_add_inf3.setVisibility(View.VISIBLE);
+                }
 
                 tv_serial_add_inf1_title.setText(hmAux_Trans.get("serial_add_info1_ttl"));
                 tv_serial_add_inf1.setText(getInfoIfExistis(mSm_so.getSerial_add_inf1()));
