@@ -178,33 +178,42 @@ public class Act027_Header extends BaseFragment {
 
     private TextView tv_add_inf1_title;
     private TextView tv_add_inf1;
+    private ImageView iv_add_inf1;
 
     private TextView tv_add_inf2_title;
     private TextView tv_add_inf2;
+    private ImageView iv_add_inf2;
 
     private TextView tv_add_inf3_title;
     private TextView tv_add_inf3;
+    private ImageView iv_add_inf3;
     //
     private Handler attachHandler;
     private Runnable attachRunnable = null;
     //LUCHE - 14/07/2021
     private TextView tv_add_inf4_title;
     private TextView tv_add_inf4;
+    private ImageView iv_add_inf4;
 
     private TextView tv_add_inf5_title;
     private TextView tv_add_inf5;
+    private ImageView iv_add_inf5;
 
     private TextView tv_add_inf6_title;
     private TextView tv_add_inf6;
+    private ImageView iv_add_inf6;
 
     private TextView tv_billing_add_inf1_title;
     private TextView tv_billing_add_inf1;
+    private ImageView iv_billing_add_inf1;
 
     private TextView tv_billing_add_inf2_title;
     private TextView tv_billing_add_inf2;
+    private ImageView iv_billing_add_inf2;
 
     private TextView tv_billing_add_inf3_title;
     private TextView tv_billing_add_inf3;
+    private ImageView iv_billing_add_inf3;
 
     private TextView tv_serial_add_inf1_title;
     private TextView tv_serial_add_inf1;
@@ -424,30 +433,39 @@ public class Act027_Header extends BaseFragment {
 
         tv_add_inf1_title = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf1_title);
         tv_add_inf1 = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf1);
+        iv_add_inf1 = (ImageView) view.findViewById(R.id.act027_header_content_iv_add_inf1_tag);
 
         tv_add_inf2_title = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf2_title);
         tv_add_inf2 = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf2);
+        iv_add_inf2 = (ImageView) view.findViewById(R.id.act027_header_content_iv_add_inf2_tag);
 
         tv_add_inf3_title = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf3_title);
         tv_add_inf3 = (TextView) view.findViewById(R.id.act027_header_content_tv_add_inf3);
+        iv_add_inf3 = (ImageView) view.findViewById(R.id.act027_header_content_iv_add_inf3_tag);
         //
         tv_add_inf4_title = view.findViewById(R.id.act027_header_content_tv_add_inf4_title);
         tv_add_inf4 = view.findViewById(R.id.act027_header_content_tv_add_inf4);
+        iv_add_inf4 = (ImageView) view.findViewById(R.id.act027_header_content_iv_add_inf4_tag);
 
         tv_add_inf5_title = view.findViewById(R.id.act027_header_content_tv_add_inf5_title);
         tv_add_inf5 = view.findViewById(R.id.act027_header_content_tv_add_inf5);
+        iv_add_inf5 = (ImageView) view.findViewById(R.id.act027_header_content_iv_add_inf5_tag);
 
         tv_add_inf6_title = view.findViewById(R.id.act027_header_content_tv_add_inf6_title);
         tv_add_inf6 = view.findViewById(R.id.act027_header_content_tv_add_inf6);
+        iv_add_inf6 = (ImageView) view.findViewById(R.id.act027_header_content_iv_add_inf6_tag);
 
         tv_billing_add_inf1_title = view.findViewById(R.id.act027_header_content_tv_billing_add_inf1_title);
         tv_billing_add_inf1 = view.findViewById(R.id.act027_header_content_tv_billing_add_inf1);
+        iv_billing_add_inf1 = (ImageView) view.findViewById(R.id.act027_header_content_iv_billing_add_inf1_tag);
 
         tv_billing_add_inf2_title = view.findViewById(R.id.act027_header_content_tv_billing_add_inf2_title);
         tv_billing_add_inf2 = view.findViewById(R.id.act027_header_content_tv_billing_add_inf2);
+        iv_billing_add_inf2 = (ImageView) view.findViewById(R.id.act027_header_content_iv_billing_add_inf2_tag);
 
         tv_billing_add_inf3_title = view.findViewById(R.id.act027_header_content_tv_billing_add_inf3_title);
         tv_billing_add_inf3 = view.findViewById(R.id.act027_header_content_tv_billing_add_inf3);
+        iv_billing_add_inf3 = (ImageView) view.findViewById(R.id.act027_header_content_iv_billing_add_inf3_tag);
 
         tv_serial_add_inf1_title = view.findViewById(R.id.act027_header_content_tv_serial_add_inf1_title);
         tv_serial_add_inf1 = view.findViewById(R.id.act027_header_content_tv_serial_add_inf1);
@@ -664,30 +682,66 @@ public class Act027_Header extends BaseFragment {
 
                 tv_add_inf1_title.setText(hmAux_Trans.get("add_info1_ttl"));
                 tv_add_inf1.setText(getInfoIfExistis(mSm_so.getAdd_inf1()));
+                if (mSm_so.getAdd_inf1_tracking() != null
+                && mSm_so.getAdd_inf1_tracking() == 1) {
+                    iv_add_inf1.setVisibility(View.VISIBLE);
+                }
 
                 tv_add_inf2_title.setText(hmAux_Trans.get("add_info2_ttl"));
                 tv_add_inf2.setText(getInfoIfExistis(mSm_so.getAdd_inf2()));
+                if (mSm_so.getAdd_inf2_tracking() != null
+                        && mSm_so.getAdd_inf2_tracking() == 1) {
+                    iv_add_inf2.setVisibility(View.VISIBLE);
+                }
 
                 tv_add_inf3_title.setText(hmAux_Trans.get("add_info3_ttl"));
                 tv_add_inf3.setText(getInfoIfExistis(mSm_so.getAdd_inf3()));
+                if (mSm_so.getAdd_inf3_tracking() != null
+                        && mSm_so.getAdd_inf3_tracking() == 1) {
+                    iv_add_inf3.setVisibility(View.VISIBLE);
+                }
 
                 tv_add_inf4_title.setText(hmAux_Trans.get("add_info4_ttl"));
                 tv_add_inf4.setText(getInfoIfExistis(mSm_so.getAdd_inf4()));
+                if (mSm_so.getAdd_inf4_tracking() != null
+                        && mSm_so.getAdd_inf4_tracking() == 1) {
+                    iv_add_inf4.setVisibility(View.VISIBLE);
+                }
 
                 tv_add_inf5_title.setText(hmAux_Trans.get("add_info5_ttl"));
                 tv_add_inf5.setText(getInfoIfExistis(mSm_so.getAdd_inf5()));
+                if (mSm_so.getAdd_inf5_tracking() != null
+                        && mSm_so.getAdd_inf5_tracking() == 1) {
+                    iv_add_inf5.setVisibility(View.VISIBLE);
+                }
 
                 tv_add_inf6_title.setText(hmAux_Trans.get("add_info6_ttl"));
                 tv_add_inf6.setText(getInfoIfExistis(mSm_so.getAdd_inf6()));
+                if (mSm_so.getAdd_inf6_tracking() != null
+                        && mSm_so.getAdd_inf6_tracking() == 1) {
+                    iv_add_inf6.setVisibility(View.VISIBLE);
+                }
 
                 tv_billing_add_inf1_title.setText(hmAux_Trans.get("billing_add_info1_ttl"));
                 tv_billing_add_inf1.setText(getInfoIfExistis(mSm_so.getBilling_add_inf1()));
+                if (mSm_so.getBilling_add_inf1_tracking() != null
+                        && mSm_so.getBilling_add_inf1_tracking() == 1) {
+                    iv_billing_add_inf1.setVisibility(View.VISIBLE);
+                }
 
                 tv_billing_add_inf2_title.setText(hmAux_Trans.get("billing_add_info2_ttl"));
                 tv_billing_add_inf2.setText(getInfoIfExistis(mSm_so.getBilling_add_inf2()));
+                if (mSm_so.getBilling_add_inf2_tracking() != null
+                        && mSm_so.getBilling_add_inf2_tracking() == 1) {
+                    iv_billing_add_inf2.setVisibility(View.VISIBLE);
+                }
 
                 tv_billing_add_inf3_title.setText(hmAux_Trans.get("billing_add_info3_ttl"));
                 tv_billing_add_inf3.setText(getInfoIfExistis(mSm_so.getBilling_add_inf3()));
+                if (mSm_so.getBilling_add_inf3_tracking() != null
+                        && mSm_so.getBilling_add_inf3_tracking() == 1) {
+                    iv_billing_add_inf3.setVisibility(View.VISIBLE);
+                }
 
                 tv_serial_add_inf1_title.setText(hmAux_Trans.get("serial_add_info1_ttl"));
                 tv_serial_add_inf1.setText(getInfoIfExistis(mSm_so.getSerial_add_inf1()));

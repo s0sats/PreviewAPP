@@ -111,21 +111,39 @@ public class SM_SO {
     @Expose
     private String add_inf1;
     @Expose
+    private Integer add_inf1_tracking;
+    @Expose
     private String add_inf2;
+    @Expose
+    private Integer add_inf2_tracking;
     @Expose
     private String add_inf3;
     @Expose
+    private Integer add_inf3_tracking;
+    @Expose
     private String add_inf4;
+    @Expose
+    private Integer add_inf4_tracking;
     @Expose
     private String add_inf5;
     @Expose
+    private Integer add_inf5_tracking;
+    @Expose
     private String add_inf6;
+    @Expose
+    private Integer add_inf6_tracking;
     @Expose
     private String billing_add_inf1;
     @Expose
+    private Integer billing_add_inf1_tracking;
+    @Expose
     private String billing_add_inf2;
     @Expose
+    private Integer billing_add_inf2_tracking;
+    @Expose
     private String billing_add_inf3;
+    @Expose
+    private Integer billing_add_inf3_tracking;
     @Expose
     private String serial_add_inf1;
     @Expose
@@ -614,6 +632,14 @@ public class SM_SO {
         this.client_approval_image_url = client_approval_image_url;
     }
 
+    public String getClient_approval_image_url_local() {
+        return client_approval_image_url_local;
+    }
+
+    public void setClient_approval_image_url_local(String client_approval_image_url_local) {
+        this.client_approval_image_url_local = client_approval_image_url_local;
+    }
+
     public String getClient_approval_date() {
         return client_approval_date;
     }
@@ -644,6 +670,14 @@ public class SM_SO {
 
     public void setClient_approval_type_sig(String client_approval_type_sig) {
         this.client_approval_type_sig = client_approval_type_sig;
+    }
+
+    public String getClient_so_id() {
+        return client_so_id;
+    }
+
+    public void setClient_so_id(String client_so_id) {
+        this.client_so_id = client_so_id;
     }
 
     public String getOrigin_change() {
@@ -710,12 +744,28 @@ public class SM_SO {
         this.add_inf1 = add_inf1;
     }
 
+    public Integer getAdd_inf1_tracking() {
+        return add_inf1_tracking;
+    }
+
+    public void setAdd_inf1_tracking(Integer add_inf1_tracking) {
+        this.add_inf1_tracking = add_inf1_tracking;
+    }
+
     public String getAdd_inf2() {
         return add_inf2;
     }
 
     public void setAdd_inf2(String add_inf2) {
         this.add_inf2 = add_inf2;
+    }
+
+    public Integer getAdd_inf2_tracking() {
+        return add_inf2_tracking;
+    }
+
+    public void setAdd_inf2_tracking(Integer add_inf2_tracking) {
+        this.add_inf2_tracking = add_inf2_tracking;
     }
 
     public String getAdd_inf3() {
@@ -726,12 +776,28 @@ public class SM_SO {
         this.add_inf3 = add_inf3;
     }
 
+    public Integer getAdd_inf3_tracking() {
+        return add_inf3_tracking;
+    }
+
+    public void setAdd_inf3_tracking(Integer add_inf3_tracking) {
+        this.add_inf3_tracking = add_inf3_tracking;
+    }
+
     public String getAdd_inf4() {
         return add_inf4;
     }
 
     public void setAdd_inf4(String add_inf4) {
         this.add_inf4 = add_inf4;
+    }
+
+    public Integer getAdd_inf4_tracking() {
+        return add_inf4_tracking;
+    }
+
+    public void setAdd_inf4_tracking(Integer add_inf4_tracking) {
+        this.add_inf4_tracking = add_inf4_tracking;
     }
 
     public String getAdd_inf5() {
@@ -742,12 +808,28 @@ public class SM_SO {
         this.add_inf5 = add_inf5;
     }
 
+    public Integer getAdd_inf5_tracking() {
+        return add_inf5_tracking;
+    }
+
+    public void setAdd_inf5_tracking(Integer add_inf5_tracking) {
+        this.add_inf5_tracking = add_inf5_tracking;
+    }
+
     public String getAdd_inf6() {
         return add_inf6;
     }
 
     public void setAdd_inf6(String add_inf6) {
         this.add_inf6 = add_inf6;
+    }
+
+    public Integer getAdd_inf6_tracking() {
+        return add_inf6_tracking;
+    }
+
+    public void setAdd_inf6_tracking(Integer add_inf6_tracking) {
+        this.add_inf6_tracking = add_inf6_tracking;
     }
 
     public String getBilling_add_inf1() {
@@ -758,6 +840,14 @@ public class SM_SO {
         this.billing_add_inf1 = billing_add_inf1;
     }
 
+    public Integer getBilling_add_inf1_tracking() {
+        return billing_add_inf1_tracking;
+    }
+
+    public void setBilling_add_inf1_tracking(Integer billing_add_inf1_tracking) {
+        this.billing_add_inf1_tracking = billing_add_inf1_tracking;
+    }
+
     public String getBilling_add_inf2() {
         return billing_add_inf2;
     }
@@ -766,12 +856,28 @@ public class SM_SO {
         this.billing_add_inf2 = billing_add_inf2;
     }
 
+    public Integer getBilling_add_inf2_tracking() {
+        return billing_add_inf2_tracking;
+    }
+
+    public void setBilling_add_inf2_tracking(Integer billing_add_inf2_tracking) {
+        this.billing_add_inf2_tracking = billing_add_inf2_tracking;
+    }
+
     public String getBilling_add_inf3() {
         return billing_add_inf3;
     }
 
     public void setBilling_add_inf3(String billing_add_inf3) {
         this.billing_add_inf3 = billing_add_inf3;
+    }
+
+    public Integer getBilling_add_inf3_tracking() {
+        return billing_add_inf3_tracking;
+    }
+
+    public void setBilling_add_inf3_tracking(Integer billing_add_inf3_tracking) {
+        this.billing_add_inf3_tracking = billing_add_inf3_tracking;
     }
 
     public String getSerial_add_inf1() {
@@ -884,22 +990,6 @@ public class SM_SO {
 
     public void setProduct_event(ArrayList<SM_SO_Product_Event> product_event) {
         this.product_event = product_event;
-    }
-
-    public String getClient_approval_image_url_local() {
-        return client_approval_image_url_local;
-    }
-
-    public void setClient_approval_image_url_local(String client_approval_image_url_local) {
-        this.client_approval_image_url_local = client_approval_image_url_local;
-    }
-
-    public String getClient_so_id() {
-        return client_so_id;
-    }
-
-    public void setClient_so_id(String client_so_id) {
-        this.client_so_id = client_so_id;
     }
 
     public String getProduct_icon_name() {
