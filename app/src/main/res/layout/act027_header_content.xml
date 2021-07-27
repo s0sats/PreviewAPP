@@ -1081,7 +1081,7 @@
                         app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_add_inf1_title"
                         app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_add_inf1_title"
                         app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_add_inf1_title"
-                        app:tint="@color/so_tag_color" />
+                        app:tint="@color/namoa_status_pending" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -1123,7 +1123,7 @@
                         app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_add_inf2_title"
                         app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_add_inf2_title"
                         app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_add_inf2_title"
-                        app:tint="@color/so_tag_color" />
+                        app:tint="@color/namoa_status_pending" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -1165,7 +1165,7 @@
                         app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_add_inf3_title"
                         app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_add_inf3_title"
                         app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_add_inf3_title"
-                        app:tint="@color/so_tag_color" />
+                        app:tint="@color/namoa_status_pending" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <TextView
@@ -1206,7 +1206,7 @@
                         app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_add_inf4_title"
                         app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_add_inf4_title"
                         app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_add_inf4_title"
-                        app:tint="@color/so_tag_color" />
+                        app:tint="@color/namoa_status_pending" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <TextView
@@ -1247,7 +1247,7 @@
                         app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_add_inf5_title"
                         app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_add_inf5_title"
                         app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_add_inf5_title"
-                        app:tint="@color/so_tag_color" />
+                        app:tint="@color/namoa_status_pending" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
@@ -1287,7 +1287,7 @@
                         app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_add_inf6_title"
                         app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_add_inf6_title"
                         app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_add_inf6_title"
-                        app:tint="@color/so_tag_color" />
+                        app:tint="@color/namoa_status_pending" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
@@ -1327,7 +1327,7 @@
                         app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_billing_add_inf1_title"
                         app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_billing_add_inf1_title"
                         app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_billing_add_inf1_title"
-                        app:tint="@color/so_tag_color" />
+                        app:tint="@color/namoa_status_pending" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -1368,7 +1368,7 @@
                         app:layout_constraintTop_toTopOf="@+id/act027_header_content_tv_billing_add_inf2_title"
                         app:layout_constraintBottom_toBottomOf="@+id/act027_header_content_tv_billing_add_inf2_title"
                         app:layout_constraintStart_toEndOf="@+id/act027_header_content_tv_billing_add_inf2_title"
-                        app:tint="@color/so_tag_color" />
+                        app:tint="@color/namoa_status_pending" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
