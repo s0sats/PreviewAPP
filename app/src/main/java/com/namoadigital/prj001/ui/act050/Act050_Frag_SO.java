@@ -108,7 +108,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private TextView tvBilingInfo1lbl;
     private TextView tvBilingInfo2lbl;
     private TextView tvBilingInfo3lbl;
-    private TextView tvSoClientIdLbl;
+    private TextView tvClientSoIdLbl;
     private TextView tvBillingInfo1Hint;
     private TextView tvBillingInfo2Hint;
     private TextView tvBillingInfo3Hint;
@@ -303,7 +303,7 @@ public class Act050_Frag_SO extends BaseFragment {
         configMaskedViewWithTracking(llBillingInfo2,tvBilingInfo2lbl, soCreationObj.getBilling_add_inf2_view(), tvBillingInfo2Hint, soCreationObj.getBilling_add_inf2_text(), ivBillingInfo2, soCreationObj.getBilling_add_inf2_tracking());
         configMaskedViewWithTracking(llBillingInfo3,tvBilingInfo3lbl, soCreationObj.getBilling_add_inf3_view(), tvBillingInfo3Hint, soCreationObj.getBilling_add_inf3_text(), ivBillingInfo3, soCreationObj.getBilling_add_inf3_tracking());
         configMaskedViewWithTracking(llId,tvSoIDLbl, favoriteItem.getSoIdView(), tvIdHint, favoriteItem.getSoIdText(), null, null);
-        configMaskedViewWithTracking(llClientSoId,tvClientIdLbl, favoriteItem.getSoClientSoIdView(), tvClientSoIdHint, favoriteItem.getSoClientSoIdText(), null, null);
+        configMaskedViewWithTracking(llClientSoId, tvClientSoIdLbl, favoriteItem.getSoClientSoIdView(), tvClientSoIdHint, favoriteItem.getSoClientSoIdText(), null, null);
         configMaskedViewWithTracking(llDesc,tvSoDescLbl, favoriteItem.getSoDescView(), tvDescHint, favoriteItem.getSoDescText(), null, null);
         configMaskedViewSingle(ssPriority,favoriteItem.getSoPriorityView());
         configMaskedViewSingle(ssClientType,favoriteItem.getSoClientTypeView());
@@ -1067,8 +1067,8 @@ public class Act050_Frag_SO extends BaseFragment {
         tvBilingInfo2lbl.setText(hmAux_Trans.get("billing_add_inf2_lbl"));
         tvBilingInfo3lbl = view.findViewById(R.id.act050_frag_so_billing_info3_lbl);
         tvBilingInfo3lbl.setText(hmAux_Trans.get("billing_add_inf3_lbl"));
-        tvSoClientIdLbl = view.findViewById(R.id.act050_frag_so_client_so_id_lbl);
-        tvSoClientIdLbl.setText(hmAux_Trans.get("so_client_id_lbl"));
+        tvClientSoIdLbl = view.findViewById(R.id.act050_frag_so_client_so_id_lbl);
+        tvClientSoIdLbl.setText(hmAux_Trans.get("so_client_id_lbl"));
         //
         tvBillingInfo1Hint = view.findViewById(R.id.act050_frag_so_billing_info1_hint);
         tvBillingInfo2Hint = view.findViewById(R.id.act050_frag_so_billing_info2_hint);
