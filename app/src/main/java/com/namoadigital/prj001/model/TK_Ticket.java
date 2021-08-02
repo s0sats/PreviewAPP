@@ -166,6 +166,8 @@ public class TK_Ticket implements Cloneable, Serializable {
     private ArrayList<TK_Ticket_Step> step = new ArrayList<>();
     @Expose
     private ArrayList<TK_Ticket_Product> product = new ArrayList<>();
+    @Expose
+    private ArrayList<TkTicketOriginNc> nc = new ArrayList<>();
 
     public void setPK() {
         for (int i = 0; i < step.size(); i++) {
@@ -173,6 +175,9 @@ public class TK_Ticket implements Cloneable, Serializable {
         }
         for (int i = 0; i < product.size(); i++) {
             product.get(i).setPK(this);
+        }
+        for (int i = 0; i < nc.size(); i++) {
+            nc.get(i).setPk(this);
         }
     }
 
@@ -945,7 +950,15 @@ public class TK_Ticket implements Cloneable, Serializable {
         this.product = product;
     }
 
-//TODO - VERIFICAR SE METODO AINDA UTEIS E MOVER PARA STEP QE É QUE TEM LISTA DE CONTROLS AGORA.
+    public ArrayList<TkTicketOriginNc> getNc() {
+        return nc;
+    }
+
+    public void setNc(ArrayList<TkTicketOriginNc> nc) {
+        this.nc = nc;
+    }
+
+    //TODO - VERIFICAR SE METODO AINDA UTEIS E MOVER PARA STEP QE É QUE TEM LISTA DE CONTROLS AGORA.
 //region NOVO_TICKET_CTRL_NA_STEP
     /**
      * Metodo que seta a referente a imagem local no campos *_photo_local.

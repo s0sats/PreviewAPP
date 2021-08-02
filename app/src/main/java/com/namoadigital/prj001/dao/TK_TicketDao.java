@@ -13,9 +13,11 @@ import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
+import com.namoadigital.prj001.model.TkTicketOriginNc;
 import com.namoadigital.prj001.sql.Sql_Act068_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Product_Sql_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Step_Sql_002;
+import com.namoadigital.prj001.sql.TkTicketOriginNcSql002;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -184,6 +186,12 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (daoObjReturn.hasError()) {
                 throw new Exception(daoObjReturn.getRawMessage());
             }
+            //Chama insertUpdate de NC, passando db como param aguardando retorno.
+            daoObjReturn = tryAddUpdateOriginNc(tk_ticket.getNc(),db);
+            //Se erro durante insert, dispara exception abortando o processamento.
+            if (daoObjReturn.hasError()) {
+                throw new Exception(daoObjReturn.getRawMessage());
+            }
             //Se db não foi passado, finaliza transaction com sucesso
             if (dbInstance == null) {
                 db.setTransactionSuccessful();
@@ -289,6 +297,12 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                 if (daoObjReturn.hasError()) {
                     throw new Exception(daoObjReturn.getRawMessage());
                 }
+                //Chama insertUpdate de NC, passando db como param aguardando retorno.
+                daoObjReturn = tryAddUpdateOriginNc(tk_ticket.getNc(),db);
+                //Se erro durante insert, dispara exception abortando o processamento.
+                if (daoObjReturn.hasError()) {
+                    throw new Exception(daoObjReturn.getRawMessage());
+                }
             }
             //Se db não foi passado, finaliza transaction com sucesso
             if (dbInstance == null) {
@@ -386,6 +400,12 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (daoObjReturn.hasError()) {
                 throw new Exception(daoObjReturn.getRawMessage());
             }
+            //Chama insertUpdate de NC, passando db como param aguardando retorno.
+            daoObjReturn = tryAddUpdateOriginNc(tk_ticket.getNc(),db);
+            //Se erro durante insert, dispara exception abortando o processamento.
+            if (daoObjReturn.hasError()) {
+                throw new Exception(daoObjReturn.getRawMessage());
+            }
             //Se db não foi passado, finaliza transaction com sucesso
             if (dbInstance == null) {
                 db.setTransactionSuccessful();
@@ -471,6 +491,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             db.delete(TK_Ticket_ApprovalDao.TABLE, sbWhere.toString(), null);
             db.delete(TK_Ticket_Approval_RejectionDao.TABLE, sbWhere.toString(), null);
             db.delete(TK_Ticket_MeasureDao.TABLE, sbWhere.toString(), null);
+            db.delete(TkTicketOriginNcDao.TABLE, sbWhere.toString(), null);
             //
             db.setTransactionSuccessful();
         }catch (SQLiteException e){
@@ -498,7 +519,6 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         closeDB();
         return daoObjReturn;
     }
-
 
     /**
      * LUCHE - 04/08/2020
@@ -599,6 +619,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
             if (tk_ticket != null) {
                 getTicketSteps(tk_ticket);
                 getTicketProducts(tk_ticket);
+                getTicketNcs(tk_ticket);
             }
             cursor.close();
         } catch (Exception e) {
@@ -647,6 +668,24 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         );
     }
 
+    private void getTicketNcs(TK_Ticket tk_ticket) {
+        TkTicketOriginNcDao ticketOriginNcDao = new TkTicketOriginNcDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //
+        tk_ticket.setNc(
+            (ArrayList<TkTicketOriginNc>) ticketOriginNcDao.query(
+                new TkTicketOriginNcSql002(
+                    tk_ticket.getCustomer_code(),
+                    tk_ticket.getTicket_prefix(),
+                    tk_ticket.getTicket_code()
+                ).toSqlQuery()
+            )
+        );
+    }
+
     private DaoObjReturn tryAddUpdateSteps(ArrayList<TK_Ticket_Step> tk_ticket_steps, SQLiteDatabase db) {
         TK_Ticket_StepDao ticketStepDao = new TK_Ticket_StepDao(
             context,
@@ -666,6 +705,18 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
         //Chama insertUpdate do Step,passando db como param aguardando retorno.
         return ticketProductDao.addUpdate(tk_ticket_products, false, db);
     }
+
+    private DaoObjReturn tryAddUpdateOriginNc(ArrayList<TkTicketOriginNc> ticketOriginNcs, SQLiteDatabase db) {
+        TkTicketOriginNcDao ticketOriginNcDao = new TkTicketOriginNcDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        );
+        //Chama insertUpdate do Step,passando db como param aguardando retorno.
+        return ticketOriginNcDao.addUpdate(ticketOriginNcs, false, db);
+    }
+
+
     @Override
     public HMAux getByStringHM(String sQuery) {
         HMAux hmAux = null;
@@ -699,6 +750,7 @@ public class TK_TicketDao extends BaseDao implements DaoWithReturn<TK_Ticket> {
                 if (uAux != null) {
                     getTicketSteps(uAux);
                     getTicketProducts(uAux);
+                    getTicketNcs(uAux);
                 }
                 //
                 tk_tickets.add(uAux);
