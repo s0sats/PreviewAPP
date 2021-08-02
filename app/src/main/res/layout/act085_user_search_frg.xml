@@ -50,6 +50,8 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:hint="Name / Nick - Trad"
+                app:mInputType="text"
+                android:imeOptions="actionDone"
                 />
 
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -65,9 +67,11 @@
                 app:mNFC="false"
                 app:mOCRVin="false"
                 android:inputType="text|textEmailAddress"
+                app:mInputType="text"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:hint="Email - trad"
+                android:imeOptions="actionDone"
                 />
 
 
@@ -86,6 +90,7 @@
                 android:inputType="number"
                 app:mInputType="NUMBER"
                 android:hint="User Code - Trad"
+                android:imeOptions="actionDone"
                 />
 
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
@@ -102,6 +107,7 @@
                 app:mOCRVin="false"
                 android:inputType="text"
                 android:hint="ERP User Code - Trad"
+                android:imeOptions="actionDone"
                 />
 
             <Button
@@ -111,7 +117,7 @@
                 android:layout_gravity="bottom"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:background="@drawable/namoa_cell_2_states"
+                android:background="@drawable/namoa_cell_3_states"
                 android:padding="15dp"
                 android:text="Buscar User - trad"
                 android:textColor="@color/padrao_WHITE"
@@ -120,7 +126,7 @@
                 app:layout_constraintEnd_toStartOf="@id/act085_user_search_frg_gd_end"
                 app:layout_constraintStart_toStartOf="@id/act085_user_search_frg_gd_start"
                 app:layout_constraintTop_toBottomOf="@id/act085_user_search_frg_mket_user_erp_code"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintVertical_bias="0.0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

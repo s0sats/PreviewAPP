@@ -144,6 +144,13 @@ class Act085Main :
                         mPresenter.executeWsUserSearch(userCode, email, erpCode, name)
                         //
                     }
+                fragment.addControlStaIntoAct = { controlStaList ->
+                    controls_sta.clear()
+                    controls_sta.addAll(controlStaList)
+                }
+                fragment.removeControlStaIntoAct ={controlStaList ->
+                    controls_sta.removeAll(controlStaList)
+                }
             }
             is Act085UserListFrg ->{
                 fragment.onUserSelected = {
@@ -418,10 +425,6 @@ class Act085Main :
     //endregion
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, resources.getString(R.string.app_name))
-        menu.getItem(0).icon = resources.getDrawable(R.mipmap.ic_namoa)
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         return true
     }
 

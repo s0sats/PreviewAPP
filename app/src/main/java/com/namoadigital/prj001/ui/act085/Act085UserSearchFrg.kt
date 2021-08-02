@@ -1,16 +1,19 @@
 package com.namoadigital.prj001.ui.act085
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.databinding.Act085UserSearchFrgBinding
 import com.namoadigital.prj001.util.Constant
 import java.util.*
+import kotlin.collections.ArrayList
 
 // TODO: Rename parameter arguments, choose names that match
 private const val ARG_PARAM1 = "param1"
@@ -29,6 +32,8 @@ class Act085UserSearchFrg : BaseFragment() {
                               email: String,
                               userCode: String,
                               erpCode: String) -> Unit = { name: String, email: String, userCode: String, erpCode: String -> }
+    var addControlStaIntoAct: (controlStaList : List<MKEditTextNM>) -> Unit = {}
+    var removeControlStaIntoAct: (controlStaList : List<MKEditTextNM>) -> Unit = {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,9 +54,22 @@ class Act085UserSearchFrg : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //
+        setStaControlsIntoList()
         setMkeditTextHint()
         //
         setActions()
+    }
+
+    private fun setStaControlsIntoList() {
+        if(controls_sta.isEmpty()) {
+            controls_sta = arrayListOf(
+                binding.act085UserSearchFrgMketUserName,
+                binding.act085UserSearchFrgMketUserEmail,
+                binding.act085UserSearchFrgMketUserCode,
+                binding.act085UserSearchFrgMketUserErpCode
+            )
+            addControlStaIntoAct(controls_sta)
+        }
     }
 
     private fun setActions() {
@@ -106,6 +124,12 @@ class Act085UserSearchFrg : BaseFragment() {
 
     interface OnUserSearchInteract{
         fun executeWsSearchUser(wsProcess : String)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        removeControlStaIntoAct(controls_sta)
+        controls_sta.clear()
     }
 
     companion object {
