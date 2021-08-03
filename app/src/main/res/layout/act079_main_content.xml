@@ -55,7 +55,8 @@
         android:orientation="vertical"
         app:layout_constraintGuide_end="8dp" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/act079_nsv_main"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/include"
@@ -327,6 +328,11 @@
                     tools:text="TextView" />
                 
             </androidx.constraintlayout.widget.ConstraintLayout>
+            <LinearLayout
+                android:id="@+id/act079_ll_nc_views"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

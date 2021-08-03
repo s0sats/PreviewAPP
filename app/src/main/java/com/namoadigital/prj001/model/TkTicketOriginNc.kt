@@ -19,9 +19,9 @@ class TkTicketOriginNc(
     @SerializedName("description")
     private var description: String,
     @SerializedName("data_value")
-    private var dataValue: String,
+    private var dataValue: String?,
     @SerializedName("data_value_txt")
-    private var dataValueTxt: String,
+    private var dataValueTxt: String?,
     @SerializedName("data_value_local")
     private var dataValueLocal: String?,
     @SerializedName("data_photo1_url")
@@ -140,5 +140,10 @@ class TkTicketOriginNc(
 
     fun getPictureUrlLocal() = pictureUrlLocal
     fun setPictureUrlLocal(pictureUrlLocal: String?) { this.pictureUrlLocal = pictureUrlLocal }
+    
+    override fun toString(): String {
+        return "TkTicketOriginNc(customerCode=$customerCode, \nticketPrefix=$ticketPrefix, \nticketCode=$ticketCode, \npage=$page, \ncustomFormDataType='$customFormDataType', \ncustomFormOrder=$customFormOrder, \ndescription='$description', \ndataValue='$dataValue', \ndataValueTxt='$dataValueTxt', \ndataValueLocal=$dataValueLocal, \ndataPhoto1Url=$dataPhoto1Url, \ndataPhoto1UrlLocal=$dataPhoto1UrlLocal, \ndataPhoto2Url=$dataPhoto2Url, \ndataPhoto2UrlLocal=$dataPhoto2UrlLocal, \ndataPhoto3Url=$dataPhoto3Url, \ndataPhoto3UrlLocal=$dataPhoto3UrlLocal, \ndataPhoto4Url=$dataPhoto4Url, \ndataPhoto4UrlLocal=$dataPhoto4UrlLocal, \ndataComment=$dataComment, \npictureLines=$pictureLines, \npictureColumns=$pictureColumns, \npictureColor=$pictureColor, \npictureUrl=$pictureUrl, \npictureUrlLocal=$pictureUrlLocal)"
+    }
 
 }
+

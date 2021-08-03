@@ -11,8 +11,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -154,6 +157,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             setLabels();
             //
             mPresenter.getStepOrigin(mTkPrefix, mTkCode);
+            mPresenter.checkOriginType(mTkPrefix, mTkCode);
         }
     }
 
@@ -388,6 +392,30 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             setOpenFields(ticket);
             //
             setFormFields(originStep);
+        }
+    }
+
+    @Override
+    public void loadTicketNcs(ArrayList<TextView> ncViews) {
+        binding.act079LlNcViews.removeAllViews();
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        for (int i = 0; i < ncViews.size(); i++) {
+            TextView ncView = ncViews.get(i);
+            int finalI = i;
+            ncView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ToolBox.toastMSG(
+                        context,
+                        "Position: " + finalI +"\n" +
+                        "Scroll Y: " +binding.act079NsvMain.getScrollY()
+                    );
+                }
+            });
+            binding.act079LlNcViews.addView(ncView,layoutParams);
         }
     }
 
