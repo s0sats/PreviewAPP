@@ -39,6 +39,7 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
         )
     }
     private var mFragListner : onWorkgroupRemoveInteract? = null
+    private var iFrgToolbarInteraction: IFrgToolbarInteraction? = null
 
     interface onWorkgroupRemoveInteract{
         fun callWorkgroupEditService(userCode:Int, action: Int, workgroupCode: Int)
@@ -64,6 +65,7 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //
+        setToolbarTitle()
         setLabels()
         initVars()
         initRecycler()
@@ -78,11 +80,17 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
         } else{
             throw Exception("onWorkgroupRemoveInteract Not Implemented")
         }
+        if(context is IFrgToolbarInteraction){
+            iFrgToolbarInteraction = context
+        }else{
+            throw Exception("IFrgToolbarInteraction Not Implemented")
+        }
     }
 
     override fun onDetach() {
         super.onDetach()
         mFragListner = null
+        iFrgToolbarInteraction = null
     }
 
     private fun setLabels() {
@@ -91,6 +99,10 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
             act085WorkgroupRemoveListFrgBtnAddInWg.text = hmAux_Trans["btn_add_in_wrokgroup"]
             act085WorkgroupRemoveListTvEmptyList.text = hmAux_Trans["linked_wg_empty_list"]
         }
+    }
+
+    private fun setToolbarTitle() {
+        iFrgToolbarInteraction?.updateToolbarTitle (hmAux_Trans["act085_workgroup_list_ttl"]?:"")
     }
 
     private fun initVars() {
@@ -180,7 +192,8 @@ class Act085WorkgroupRemoveListFrg : BaseFragment() {
                 "remove_workgroup_link_confirm",
                 "workgroup_list_successfully_update",
                 "until_lbl",
-                "linked_wg_empty_list"
+                "linked_wg_empty_list",
+                "act085_workgroup_list_ttl"
             )
         }
     }

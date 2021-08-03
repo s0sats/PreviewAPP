@@ -37,6 +37,7 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
         )
     }
     private var mFragListner : onWorkgroupAddInteract? = null
+    private var iFrgToolbarInteraction: IFrgToolbarInteraction? = null
 
     interface onWorkgroupAddInteract{
         fun onAddWorkgroupSave(
@@ -76,6 +77,7 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setLabels()
+        setToolbarTitle()
         initVars()
         initRecycler()
         applyEmptyListLayoutIfCase()
@@ -89,12 +91,18 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
         } else{
             throw Exception("onWorkgroupAddInteract Not Implemented")
         }
+        if(context is IFrgToolbarInteraction){
+            iFrgToolbarInteraction = context
+        }else{
+            throw Exception("IFrgToolbarInteraction Not Implemented")
+        }
 
     }
 
     override fun onDetach() {
         super.onDetach()
         mFragListner = null
+        iFrgToolbarInteraction = null
         unlinkedWgList.forEach {
             it.createUsrWgLink = false
         }
@@ -114,6 +122,10 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
             act085WorkgroupAddListTvEmptyList.text = hmAux_Trans["unlinked_wg_empty_list"]
             act085WorkgroupAddListFrgTvDateVal.setmLabel("")
         }
+    }
+
+    private fun setToolbarTitle() {
+        iFrgToolbarInteraction?.updateToolbarTitle (hmAux_Trans["act085_add_workgroup_ttl"]?:"")
     }
 
     private fun initVars() {
@@ -358,7 +370,8 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
                 "alert_save_edition_ttl",
                 "alert_save_edition_confirm",
                 "unlinked_wg_empty_list",
-                "workgroup_found_lbl"
+                "workgroup_found_lbl",
+                "act085_add_workgroup_ttl"
             )
         }
     }

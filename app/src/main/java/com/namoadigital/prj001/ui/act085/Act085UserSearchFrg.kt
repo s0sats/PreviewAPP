@@ -1,6 +1,5 @@
 package com.namoadigital.prj001.ui.act085
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import com.namoa_digital.namoa_library.view.BaseFragment
 import com.namoadigital.prj001.databinding.Act085UserSearchFrgBinding
 import com.namoadigital.prj001.util.Constant
 import java.util.*
-import kotlin.collections.ArrayList
 
 // TODO: Rename parameter arguments, choose names that match
 private const val ARG_PARAM1 = "param1"
@@ -34,6 +32,7 @@ class Act085UserSearchFrg : BaseFragment() {
                               erpCode: String) -> Unit = { name: String, email: String, userCode: String, erpCode: String -> }
     var addControlStaIntoAct: (controlStaList : List<MKEditTextNM>) -> Unit = {}
     var removeControlStaIntoAct: (controlStaList : List<MKEditTextNM>) -> Unit = {}
+    lateinit var iFrgToolbarInteraction: IFrgToolbarInteraction
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,9 +54,16 @@ class Act085UserSearchFrg : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         //
         setStaControlsIntoList()
+        //
+        setToolbarTitle()
+        //
         setMkeditTextHint()
         //
         setActions()
+    }
+
+    private fun setToolbarTitle() {
+        iFrgToolbarInteraction.updateToolbarTitle (hmAux_Trans["act085_user_search_ttl"]?:"")
     }
 
     private fun setStaControlsIntoList() {
@@ -162,7 +168,8 @@ class Act085UserSearchFrg : BaseFragment() {
                 "alert_invalid_input_ttl",
                 "alert_invalid_input_msg",
                 "progress_user_work_group_seacrh_ttl",
-                "progress_user_work_group_seacrh_msg"
+                "progress_user_work_group_seacrh_msg",
+                "act085_user_search_ttl"
             )
         }
     }

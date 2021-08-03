@@ -34,6 +34,8 @@ class Act085UserListFrg : BaseFragment() {
     private lateinit var userListModel: Act085UserModel
     private lateinit var binding: Act085UserListFrgBinding
     var onUserSelected: (user: TUserWorkgroupObj)  -> Unit = { user: TUserWorkgroupObj -> }
+    lateinit var iFrgToolbarInteraction: IFrgToolbarInteraction
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -54,6 +56,7 @@ class Act085UserListFrg : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setToolbarTitle()
         setRecyclerView()
         setRecordsCountLabel()
         binding.act085MketFilter.setOnReportTextChangeListner(object : MKEditTextNM.IMKEditTextChangeText {
@@ -65,6 +68,10 @@ class Act085UserListFrg : BaseFragment() {
                 }
             }
         })
+    }
+
+    private fun setToolbarTitle() {
+        iFrgToolbarInteraction.updateToolbarTitle (hmAux_Trans["act085_user_list_ttl"]?:"")
     }
 
     private fun setRecordsCountLabel() {
@@ -109,7 +116,8 @@ class Act085UserListFrg : BaseFragment() {
                 "showing_lbl",
                 "alert_qty_records_exceeded_ttl",
                 "alert_qty_records_exceeded_msg",
-                "alert_qty_records_founded"
+                "alert_qty_records_founded",
+                "act085_user_list_ttl"
             )
         }
     }
