@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.namoadigital.prj001.ui.act050.Act050_Frag_Parameters.FAVORITE_CODE;
+import static com.namoadigital.prj001.ui.act050.Act050_Frag_Parameters.FAVORITE_DESC;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CLIENT_TYPE_CLIENT;
 
 /**
@@ -91,6 +92,7 @@ public class Act050_Frag_SO extends BaseFragment {
     private EditText etBillingInfo3;
     private EditText etClientSoId;
     //
+    private TextView tvFavoriteVal;
     private TextView tvClientIdLbl;
     private TextView tvClientNameLbl;
     private TextView tvClientEmailLbl;
@@ -161,16 +163,18 @@ public class Act050_Frag_SO extends BaseFragment {
     private ArrayList<SM_SO_Client> clientsList = new ArrayList<>();
     private boolean isClientListRequest = true;
     private Integer favorite_code;
+    private String favorite_desc;
     private SwitchCompat swFullVision;
 
     public Act050_Frag_SO() {
         // Required empty public constructor
     }
 
-    public static Act050_Frag_SO newInstance(HMAux hmAux_Trans, Integer favorite_code) {
+    public static Act050_Frag_SO newInstance(HMAux hmAux_Trans, Integer favorite_code, String favorite_desc) {
         Act050_Frag_SO fragment = new Act050_Frag_SO();
         Bundle args = new Bundle();
         args.putInt(FAVORITE_CODE, favorite_code != null ? favorite_code : -1);
+        args.putString(FAVORITE_DESC, favorite_desc != null ? favorite_desc : "");
         args.putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAux_Trans);
         fragment.setArguments(args);
         return fragment;
@@ -250,6 +254,7 @@ public class Act050_Frag_SO extends BaseFragment {
         if (arguments != null) {
             this.hmAux_Trans = HMAux.getHmAuxFromHashMap((HashMap<String, String>) arguments.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY));
             this.favorite_code = arguments.getInt(FAVORITE_CODE) != -1 ? arguments.getInt(FAVORITE_CODE) : null;
+            this.favorite_desc = !arguments.getString(FAVORITE_DESC).isEmpty() ? arguments.getString(FAVORITE_DESC) : null;
         }
     }
 
@@ -388,20 +393,20 @@ public class Act050_Frag_SO extends BaseFragment {
                 text += " *";
                 SpannableString spannableString = new SpannableString(text);
                 spannableString.setSpan(
-                    new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.font_required)),
+                    new ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.font_required)),
                     text.length() - 1,
                     text.length(),
                     Spanned.SPAN_INCLUSIVE_INCLUSIVE
                 );
                 tvLbl.setText(spannableString);
                 //tvLbl.setText(text);
-                //tvLbl.setTextColor(ContextCompat.getColor(getContext(), R.color.font_required));
+                //tvLbl.setTextColor(ContextCompat.getColor(requireContext(), R.color.font_required));
             }
         }else{
             if (text.lastIndexOf("*") > -1 && text.lastIndexOf("*") == text.length()) {
                 tvLbl.setText(text.substring(text.length() -1));
             }
-            //tvLbl.setTextColor(ContextCompat.getColor(getContext(), R.color.namoa_dark_blue));
+            //tvLbl.setTextColor(ContextCompat.getColor(requireContext(), R.color.namoa_dark_blue));
         }
     }
 
@@ -514,7 +519,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ssPriority.setmLabel(hmAux_Trans.get("priority_lbl"));
         ssPriority.setmStyle(1);
         ssPriority.setmCanClean(false);
-        ssPriority.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(), getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
+        ssPriority.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(requireContext(), requireContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
         //
         ArrayList<HMAux> mPriorityOptions = new ArrayList<>();
         for (SO_Favorite_Priority priority :
@@ -541,7 +546,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ssPipelineCode.setmTitle(hmAux_Trans.get("pipeline_lbl"));
         ssPipelineCode.setmLabel(hmAux_Trans.get("pipeline_lbl"));
         ssPipelineCode.setmStyle(1);
-        ssPipelineCode.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(), getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
+        ssPipelineCode.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(requireContext(), requireContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
 
         HMAux pipelineFav = new HMAux();
 
@@ -581,7 +586,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ssClientName.setmTitle(hmAux_Trans.get("client_lbl"));
         ssClientName.setmLabel(hmAux_Trans.get("client_lbl"));
         ssClientName.setmStyle(1);
-        ssClientName.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(), getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
+        ssClientName.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(requireContext(), requireContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
     }
 
     private void setllSoClientVisibility(SO_Creation_Obj my_so_creation_obj) {
@@ -624,7 +629,7 @@ public class Act050_Frag_SO extends BaseFragment {
         ssClientType.setmLabel(hmAux_Trans.get("client_type_lbl"));
         ssClientType.setmShowLabel(true);
         ssClientType.setmStyle(1);
-        ssClientType.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(getContext(), getContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
+        ssClientType.setmTextSizeLabel((int) ToolBox.convertPixelsToDp(requireContext(), requireContext().getResources().getDimensionPixelSize(R.dimen.font_size_title_md)));
 
         try {
             if (my_so_creation_obj.getClient_type().equals(CLIENT_TYPE_CLIENT)) {
@@ -691,7 +696,7 @@ public class Act050_Frag_SO extends BaseFragment {
                 clearValidation();
                 if (formFieldsValitaded()) {
                     ToolBox.alertMSG_YES_NO(
-                            getContext(),
+                            requireContext(),
                             hmAux_Trans.get("alert_creation_so_save_ttl"),
                             hmAux_Trans.get("alert_creation_so_save_confirm"),
                             new DialogInterface.OnClickListener() {
@@ -718,7 +723,7 @@ public class Act050_Frag_SO extends BaseFragment {
                 }
 
                 ToolBox.alertMSG(
-                        getContext(),
+                        requireContext(),
                         title,
                         msg,
                         null,
@@ -867,25 +872,25 @@ public class Act050_Frag_SO extends BaseFragment {
 
         if (selectedClientType == null || !selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE)) {
             alertMsg = hmAux_Trans.get("alert_fill_client_type_field_msg") + "\n";
-            ssClientType.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            ssClientType.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_error));
             isValidated = false;
         }
         if (selectedPriority == null || !selectedPriority.hasConsistentValue(PRIORITY_CODE_KEY)) {
             alertMsg = alertMsg + hmAux_Trans.get("alert_fill_priority_field_msg") + "\n";
-            ssPriority.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            ssPriority.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_error));
             isValidated = false;
         }
 
         if (selectedPackageDefault == null || !selectedPackageDefault.hasConsistentValue(PACK_DEFAULT_CODE_KEY)) {
             alertMsg = alertMsg + hmAux_Trans.get("alert_fill_package_default_field_msg") + "\n";
-            clPackageDefault.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+            clPackageDefault.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_error));
             isValidated = false;
         }
 
         if (selectedClientType.hasConsistentValue(SM_SODao.CLIENT_TYPE) && selectedClientType.get(SM_SODao.CLIENT_TYPE).equals(CLIENT_TYPE_CLIENT)) {
             if (edtClientName.getText().toString().isEmpty()) {
                 alertMsg = alertMsg + hmAux_Trans.get("alert_fill_client_name_field_msg") + "\n";
-                clClientName.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+                clClientName.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_error));
                 isValidated = false;
             }
 
@@ -893,7 +898,7 @@ public class Act050_Frag_SO extends BaseFragment {
                     && !edtClientEmail.getText().toString().isEmpty()
                     && !ToolBox.isValidEmailAddress(edtClientEmail.getText().toString())) {
                 alertMsg = alertMsg + hmAux_Trans.get("alert_invalid_email_msg") + "\n";
-                llClientEmail.setBackground(getContext().getResources().getDrawable(R.drawable.shape_error));
+                llClientEmail.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_error));
                 isValidated = false;
             }
         }
@@ -906,14 +911,17 @@ public class Act050_Frag_SO extends BaseFragment {
         SO_Creation_Obj soCreationObj = mListener.getmSOCreationObj();
         //Novo agrupamento de avalidações baseado no envio.
         if(!validadeByMaskViewType(etBillingInfo1.getText().toString().trim(),soCreationObj.getBilling_add_inf1_view())){
+            llBillingInfo1.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
             alertMsg += hmAux_Trans.get("msg_error_billing_info1_required") + "\n";
             isValidated = false;
         }
         if(!validadeByMaskViewType(etBillingInfo2.getText().toString().trim(),soCreationObj.getBilling_add_inf2_view())){
+            llBillingInfo2.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
             alertMsg += hmAux_Trans.get("msg_error_billing_info2_required") + "\n";
             isValidated = false;
         }
         if(!validadeByMaskViewType(etBillingInfo3.getText().toString().trim(),soCreationObj.getBilling_add_inf3_view())){
+            llBillingInfo3.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
             alertMsg += hmAux_Trans.get("msg_error_billing_info3_required") + "\n";
             isValidated = false;
         }
@@ -921,38 +929,47 @@ public class Act050_Frag_SO extends BaseFragment {
         SO_Favorite_Item favoriteItem = mListener.getFavoriteItem();
         if(favoriteItem != null && favoriteItem.getMaskCode() != null ){
             if(!validadeByMaskViewType(edtSoInfo1.getText().toString().trim(),favoriteItem.getSoAddInf1View())){
+                llInfo1.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_add_info1_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoInfo2.getText().toString().trim(),favoriteItem.getSoAddInf2View())){
+                llInfo2.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_add_info2_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoInfo3.getText().toString().trim(),favoriteItem.getSoAddInf3View())){
+                llInfo3.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_add_info3_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoInfo4.getText().toString().trim(),favoriteItem.getSoAddInf4View())){
+                llInfo4.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_add_info4_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoInfo5.getText().toString().trim(),favoriteItem.getSoAddInf5View())){
+                llInfo5.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_add_info5_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoInfo6.getText().toString().trim(),favoriteItem.getSoAddInf6View())){
+                llInfo6.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_add_info6_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(etClientSoId.getText().toString().trim(),favoriteItem.getSoClientSoIdView())){
+                llClientSoId.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_client_so_id_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoId.getText().toString().trim(),favoriteItem.getSoIdView())){
+                llId.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_id_required") + "\n";
                 isValidated = false;
             }
             if(!validadeByMaskViewType(edtSoDesc.getText().toString().trim(),favoriteItem.getSoDescView())){
+                llDesc.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_error));
                 alertMsg += hmAux_Trans.get("msg_error_so_desc_required") + "\n";
                 isValidated = false;
             }
@@ -985,11 +1002,24 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void clearValidation() {
-        ssClientType.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
-        ssPriority.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
-        clPackageDefault.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
-        clClientName.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
-        llClientEmail.setBackground(getContext().getResources().getDrawable(R.drawable.shape_ok));
+        ssClientType.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok));
+        ssPriority.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok));
+        clPackageDefault.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok));
+        clClientName.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok));
+        llClientEmail.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.shape_ok));
+        //LUCHE - 03/08/2021
+        llBillingInfo1.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
+        llBillingInfo2.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
+        llBillingInfo3.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
+        llInfo1.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
+        llInfo2.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
+        llInfo3.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
+        llInfo4.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
+        llInfo5.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
+        llInfo6.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
+        llClientSoId.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
+        llId.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
+        llDesc.setBackground(ContextCompat.getDrawable(requireContext(),R.drawable.shape_ok));
     }
 
     private boolean validateMkDateTime() {
@@ -1008,7 +1038,7 @@ public class Act050_Frag_SO extends BaseFragment {
 
     private void alertError(String title, String msg) {
         ToolBox.alertMSG(
-                getContext(),
+                requireContext(),
                 title,
                 msg,
                 null,
@@ -1102,7 +1132,7 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void verifyPermission() {
-        if (ToolBox_Inf.profileExists(getContext(), Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT_CLIENT)) {
+        if (ToolBox_Inf.profileExists(requireContext(), Constant.PROFILE_MENU_SO, Constant.PROFILE_MENU_SO_PARAM_EDIT_CLIENT)) {
             setEnableFields(true);
         } else {
             setEnableFields(false);
@@ -1133,6 +1163,8 @@ public class Act050_Frag_SO extends BaseFragment {
     }
 
     private void bindTextView(View view) {
+        tvFavoriteVal = view.findViewById(R.id.act050_frag_so_tv_favorite_val);
+        tvFavoriteVal.setText(favorite_desc);
         tvFullVisionLbl = view.findViewById(R.id.act050_frag_so_tv_full_vision_lbl);
         tvFullVisionLbl.setText(hmAux_Trans.get("full_vision_lbl"));
         tvClientIdLbl = view.findViewById(R.id.act050_frag_client_id_lbl);
