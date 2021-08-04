@@ -41,7 +41,7 @@ class WS_User_Search : IntentService("WS_User_Search") {
 
     private val mModule_Code: String = Constant.APP_MODULE
     private var mResource_Code = "0"
-    private val mResource_Name = "ws_search"
+    private val mResource_Name = "ws_generic_resource"
     private val gson = GsonBuilder().serializeNulls().create()
     override fun onHandleIntent(intent: Intent?) {
         var sb = StringBuilder()

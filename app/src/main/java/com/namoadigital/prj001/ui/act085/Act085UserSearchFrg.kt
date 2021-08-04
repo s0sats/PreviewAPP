@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.namoa_digital.namoa_library.ctls.MKEditTextNM
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.BaseFragment
@@ -29,6 +30,9 @@ class Act085UserSearchFrg : BaseFragment() {
                               email: String,
                               userCode: String,
                               erpCode: String) -> Unit = { name: String, email: String, userCode: String, erpCode: String -> }
+    var addControlStaIntoAct: (controlStaList : List<MKEditTextNM>) -> Unit = {}
+    var removeControlStaIntoAct: (controlStaList : List<MKEditTextNM>) -> Unit = {}
+    lateinit var iFrgToolbarInteraction: IFrgToolbarInteraction
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,9 +53,29 @@ class Act085UserSearchFrg : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //
+        setStaControlsIntoList()
+        //
+        setToolbarTitle()
+        //
         setMkeditTextHint()
         //
         setActions()
+    }
+
+    private fun setToolbarTitle() {
+        iFrgToolbarInteraction.updateToolbarTitle (hmAux_Trans["act085_user_search_ttl"]?:"")
+    }
+
+    private fun setStaControlsIntoList() {
+        if(controls_sta.isEmpty()) {
+            controls_sta = arrayListOf(
+                binding.act085UserSearchFrgMketUserName,
+                binding.act085UserSearchFrgMketUserEmail,
+                binding.act085UserSearchFrgMketUserCode,
+                binding.act085UserSearchFrgMketUserErpCode
+            )
+            addControlStaIntoAct(controls_sta)
+        }
     }
 
     private fun setActions() {
@@ -108,6 +132,12 @@ class Act085UserSearchFrg : BaseFragment() {
         fun executeWsSearchUser(wsProcess : String)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        removeControlStaIntoAct(controls_sta)
+        controls_sta.clear()
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -138,7 +168,8 @@ class Act085UserSearchFrg : BaseFragment() {
                 "alert_invalid_input_ttl",
                 "alert_invalid_input_msg",
                 "progress_user_work_group_seacrh_ttl",
-                "progress_user_work_group_seacrh_msg"
+                "progress_user_work_group_seacrh_msg",
+                "act085_user_search_ttl"
             )
         }
     }

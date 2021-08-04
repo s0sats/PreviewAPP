@@ -462,7 +462,7 @@ public class Act050_Main extends Base_Activity_Frag implements
 
     @Override
     public void onMoveToOSFragment() {
-        act050_s0_creation_fragment = Act050_Frag_SO.newInstance(hmAux_Trans, mSoFavoriteItem.getFavoriteCode());
+        act050_s0_creation_fragment = Act050_Frag_SO.newInstance(hmAux_Trans, mSoFavoriteItem.getFavoriteCode(),mSoFavoriteItem.getFavoriteDesc());
         //act050_s0_creation_fragment.setHmAux_Trans(hmAux_Trans);
         setFrag(act050_s0_creation_fragment, SO_CREATION_FRAGMENT);
     }

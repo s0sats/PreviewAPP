@@ -37,6 +37,7 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
         )
     }
     private var mFragListner : onWorkgroupAddInteract? = null
+    private var iFrgToolbarInteraction: IFrgToolbarInteraction? = null
 
     interface onWorkgroupAddInteract{
         fun onAddWorkgroupSave(
@@ -76,6 +77,7 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setLabels()
+        setToolbarTitle()
         initVars()
         initRecycler()
         applyEmptyListLayoutIfCase()
@@ -89,12 +91,18 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
         } else{
             throw Exception("onWorkgroupAddInteract Not Implemented")
         }
+        if(context is IFrgToolbarInteraction){
+            iFrgToolbarInteraction = context
+        }else{
+            throw Exception("IFrgToolbarInteraction Not Implemented")
+        }
 
     }
 
     override fun onDetach() {
         super.onDetach()
         mFragListner = null
+        iFrgToolbarInteraction = null
         unlinkedWgList.forEach {
             it.createUsrWgLink = false
         }
@@ -112,7 +120,12 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
             act085WorkgroupAddListFrgBtnCancel.text = hmAux_Trans["btn_cancel"]
             act085WorkgroupAddListFrgBtnSave.text = hmAux_Trans["btn_save"]
             act085WorkgroupAddListTvEmptyList.text = hmAux_Trans["unlinked_wg_empty_list"]
+            act085WorkgroupAddListFrgTvDateVal.setmLabel("")
         }
+    }
+
+    private fun setToolbarTitle() {
+        iFrgToolbarInteraction?.updateToolbarTitle (hmAux_Trans["act085_add_workgroup_ttl"]?:"")
     }
 
     private fun initVars() {
@@ -146,14 +159,22 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
                 act085WorkgroupAddListFrgCvPeriod.visibility = View.VISIBLE
                 act085WorkgroupAddListFrgCvPeriod.visibility = View.VISIBLE
                 act085WorkgroupAddListFrgClBtn.visibility = View.VISIBLE
+                //act085WorkgroupAddListFrgTvRecords.visibility = View.VISIBLE
+                act085WorkgroupAddListFrgTvRecords.text = getRecordInfoLabel(unlinkedWgList.size)
             } else{
                 act085WorkgroupAddListTvEmptyList.visibility = View.VISIBLE
                 act085WorkgroupAddListFrgMketSearch.visibility = View.GONE
                 act085WorkgroupAddListFrgCvPeriod.visibility = View.GONE
                 act085WorkgroupAddListFrgCvPeriod.visibility = View.GONE
                 act085WorkgroupAddListFrgClBtn.visibility = View.GONE
+                act085WorkgroupAddListFrgTvRecords.visibility = View.GONE
+
             }
         }
+    }
+
+    private fun getRecordInfoLabel(size: Int): String {
+        return "$size ${hmAux_Trans["workgroup_found_lbl"]}"
     }
 
     private fun initAction() {
@@ -254,6 +275,7 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
         with(binding) {
             act085WorkgroupAddListFrgTvDateVal.setmRequired(dateFieldRequired)
             act085WorkgroupAddListFrgTvDateVal.setmHighlightWhenInvalid(dateFieldRequired)
+            act085WorkgroupAddListFrgTvDateVal.setmLabel("")
             //
             if(dateFieldRequired){
                 act085WorkgroupAddListFrgTvDateVal.setmValue(
@@ -265,7 +287,6 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
                 act085WorkgroupAddListFrgTvDateVal.isValid
                 act085WorkgroupAddListFrgClUntilDate.visibility = View.GONE
             }
-
         }
     }
 
@@ -348,7 +369,9 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
                 "alert_invalid_save_msg",
                 "alert_save_edition_ttl",
                 "alert_save_edition_confirm",
-                "unlinked_wg_empty_list"
+                "unlinked_wg_empty_list",
+                "workgroup_found_lbl",
+                "act085_add_workgroup_ttl"
             )
         }
     }

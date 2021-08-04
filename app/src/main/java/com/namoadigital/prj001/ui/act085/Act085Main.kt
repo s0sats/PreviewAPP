@@ -31,7 +31,8 @@ class Act085Main :
     Base_Activity_Frag(),
     Act085MainContract.I_View ,
     Act085WorkgroupRemoveListFrg.onWorkgroupRemoveInteract,
-    Act085WorkgroupAddListFrg.onWorkgroupAddInteract
+    Act085WorkgroupAddListFrg.onWorkgroupAddInteract,
+    IFrgToolbarInteraction
 {
     private val fm = supportFragmentManager
     private var hasErrorOnWorkgroupServices = false
@@ -118,6 +119,15 @@ class Act085Main :
         }
     }
 
+    /**
+     * Fun da interface IFrgToolbarInteraction que é acionada pelos frg para setarem
+     * o titulo na actionbar
+     */
+    override fun updateToolbarTitle(frgTitle: String) {
+        supportActionBar?.title = frgTitle
+        invalidateOptionsMenu()
+    }
+
     private fun callAct085UserSearchFrg() {
         val act085UserSearchFrg = Act085UserSearchFrg.newInstance(
             hmAux_Trans
@@ -135,7 +145,6 @@ class Act085Main :
     }
     override fun onAttachFragment(fragment: Fragment) {
         super.onAttachFragment(fragment)
-
         when (fragment) {
             is Act085UserSearchFrg -> {
                 fragment.executeWsSearchUser =
@@ -144,11 +153,20 @@ class Act085Main :
                         mPresenter.executeWsUserSearch(userCode, email, erpCode, name)
                         //
                     }
+                fragment.addControlStaIntoAct = { controlStaList ->
+                    controls_sta.clear()
+                    controls_sta.addAll(controlStaList)
+                }
+                fragment.removeControlStaIntoAct ={controlStaList ->
+                    controls_sta.removeAll(controlStaList)
+                }
+                fragment.iFrgToolbarInteraction = this
             }
             is Act085UserListFrg ->{
                 fragment.onUserSelected = {
                     callAct085WorkgroupRemoveListFrg(it)
                 }
+                fragment.iFrgToolbarInteraction = this
             }
         }
     }
@@ -418,10 +436,6 @@ class Act085Main :
     //endregion
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, 1, Menu.NONE, resources.getString(R.string.app_name))
-        menu.getItem(0).icon = resources.getDrawable(R.mipmap.ic_namoa)
-        menu.getItem(0).setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         return true
     }
 
