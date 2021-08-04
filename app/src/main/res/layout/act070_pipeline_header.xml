@@ -242,11 +242,11 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp"
                 android:src="@drawable/ic_baseline_error_outline_24dp_black"
-                android:tint="@color/namoa_color_pipeline_origin_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/frg_pipeline_header_gd_origin_icon_end"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/namoa_color_pipeline_origin_icon" />
 
             <TextView
                 android:id="@+id/frg_ticket_tv_desc_origin"
@@ -263,13 +263,13 @@
 
             <ImageView
                 android:id="@+id/frg_ticket_iv_action_shortcut"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="23dp"
+                android:layout_height="27dp"
                 android:src="@drawable/ic_outline_open_in_new_24"
-                android:tint="@color/namoa_pipeline_background_icon"
                 app:layout_constraintBottom_toBottomOf="@+id/frg_ticket_tv_desc_origin"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/frg_ticket_tv_desc_origin" />
+                app:layout_constraintTop_toTopOf="@+id/frg_ticket_tv_desc_origin"
+                app:tint="@color/namoa_pipeline_background_icon" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -358,11 +358,11 @@
                 android:id="@+id/frg_ticket_iv_schedule_date"
                 android:layout_width="@dimen/pipeline_step_icon_width"
                 android:layout_height="@dimen/pipeline_step_icon_height"
-                android:tint="@color/namoa_color_gray_4"
                 app:layout_constraintBottom_toBottomOf="@+id/frg_ticket_tv_schedule_date"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/frg_ticket_tv_schedule_date"
-                app:srcCompat="@drawable/ic_baseline_date_range_24" />
+                app:srcCompat="@drawable/ic_baseline_date_range_24"
+                app:tint="@color/namoa_color_gray_4" />
 
 
             <TextView

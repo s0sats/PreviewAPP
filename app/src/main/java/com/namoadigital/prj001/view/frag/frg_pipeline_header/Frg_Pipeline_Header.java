@@ -1,13 +1,9 @@
 package com.namoadigital.prj001.view.frag.frg_pipeline_header;
 
+import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.Group;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-import androidx.cardview.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +11,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Group;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TK_Ticket;
+import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
+
+import java.util.Objects;
 
 public class Frg_Pipeline_Header extends Fragment {
 
@@ -105,6 +111,7 @@ public class Frg_Pipeline_Header extends Fragment {
     private TextView tv_schedule_comment;
     private OnPipelineFragmentInteractionListener mSyncListener;
     private OnPipelineFragmentOriginListener mOriginListener;
+    private OnPipelineFragmentOriginFormListener mOriginFormListener;
     private boolean forceRefreshDrawableOnFail = false;
     private TextView tv_origin_complete_path;
     private TextView tv_origin_desc;
@@ -112,8 +119,19 @@ public class Frg_Pipeline_Header extends Fragment {
     private TextView tv_origin_end_user;
     private ImageView iv_origin_end_user;
     private View pipeline_origin_header;
+    private ConstraintLayout cl_origin_form_info;
     private TK_Ticket mTicket;
     private ImageView iv_offline;
+
+    private ImageView iv_toggle_icon;
+    private ImageView iv_form_score;
+    private ImageView iv_form_nc_count;
+    private TextView tv_form_score;
+    private TextView tv_form_nc_count;
+    private ImageView iv_form_download_pdf;
+    private TextView tv_form_download_pdf;
+
+
 
     public Frg_Pipeline_Header() {
         // Required empty public constructor
@@ -294,6 +312,15 @@ public class Frg_Pipeline_Header extends Fragment {
         iv_origin_end_user = pipeline_header_view.findViewById(R.id.frg_ticket_iv_origin_end_user);
         tv_origin_end_user = pipeline_header_view.findViewById(R.id.frg_ticket_tv_origin_end_user);
         pipeline_origin_header = pipeline_header_view.findViewById(R.id.frg_pipeline_origin_header);
+        iv_toggle_icon = pipeline_header_view.findViewById(R.id.iv_toggle_icon);
+        cl_origin_form_info = pipeline_header_view.findViewById(R.id.cl_origin_form_info);
+        //
+        iv_form_score = cl_origin_form_info.findViewById(R.id.origin_iv_form_score);
+        iv_form_nc_count = cl_origin_form_info.findViewById(R.id.origin_iv_form_nc_count);
+        tv_form_score = cl_origin_form_info.findViewById(R.id.origin_tv_form_score);
+        tv_form_nc_count = cl_origin_form_info.findViewById(R.id.origin_tv_form_nc_count);
+        iv_form_download_pdf = cl_origin_form_info.findViewById(R.id.origin_iv_form_download_pdf);
+        tv_form_download_pdf = cl_origin_form_info.findViewById(R.id.origin_tv_form_download_pdf);
         //
         initializeLayoutVisibility();
         //
@@ -381,6 +408,11 @@ public class Frg_Pipeline_Header extends Fragment {
                     tv_origin_end_user.setVisibility(View.GONE);
                     iv_origin_end_user.setVisibility(View.GONE);
                 }
+                setOriginFormListener();
+                if(mOriginFormListener != null) {
+                    setFormInfo();
+                }
+                //
                 break;
             case APPROVAL:
                 cl_step_ticket.setVisibility(View.VISIBLE);
@@ -417,6 +449,12 @@ public class Frg_Pipeline_Header extends Fragment {
         }
     }
 
+    private void setOriginFormListener() {
+        if (getContext() instanceof OnPipelineFragmentOriginFormListener) {
+            mOriginFormListener = (OnPipelineFragmentOriginFormListener) getContext();
+        }
+    }
+
 
     @Override
     public void onDetach() {
@@ -443,6 +481,9 @@ public class Frg_Pipeline_Header extends Fragment {
         gp_step.setVisibility(View.GONE);
         gp_schedule.setVisibility(View.GONE);
         pipeline_origin_header.setVisibility(View.GONE);
+        //
+        cl_origin_form_info.setVisibility(View.GONE);
+        iv_toggle_icon.setVisibility(View.GONE);
     }
 
     private void setTvContent() {
@@ -567,12 +608,75 @@ public class Frg_Pipeline_Header extends Fragment {
         tv_status.setTextColor(statusColor);
     }
 
+    public void setFormInfo() {
+        final TK_Ticket_Form form = mOriginFormListener.getTicketForm();
+        try {
+            cl_origin_form_info.setVisibility(View.VISIBLE);
+            iv_toggle_icon.setVisibility(View.VISIBLE);
+            //
+            iv_toggle_icon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(cl_origin_form_info.getVisibility() == View.VISIBLE){
+                        iv_toggle_icon.setImageDrawable(
+                                ContextCompat.getDrawable(Objects.requireNonNull(getContext()),R.drawable.ic_baseline_keyboard_arrow_down_24_black)
+                        );
+                        cl_origin_form_info.setVisibility(View.GONE);
+                    }else{
+                        iv_toggle_icon.setImageDrawable(
+                                ContextCompat.getDrawable(Objects.requireNonNull(getContext()),R.drawable.ic_baseline_keyboard_arrow_up_24_black)
+                        );
+                        cl_origin_form_info.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+            //
+            if (form.getScore_perc() != null) {
+                tv_form_score.setText(String.format("%s%%", form.getScore_perc().replace(".", ",")));
+                int color = getContext().getResources().getColor(ToolBox_Inf.getScoreFormColor(form.getScore_status()));
+                tv_form_score.setTextColor(color);
+                iv_form_score.setImageTintList(ColorStateList.valueOf(color));
+            } else {
+                tv_form_score.setVisibility(View.GONE);
+                iv_form_score.setVisibility(View.GONE);
+            }
+            if(form.getNc() > 0 ) {
+                tv_form_nc_count.setText(String.format("%s", form.getNc()));
+            }else{
+                tv_form_nc_count.setVisibility(View.GONE);
+                iv_form_nc_count.setVisibility(View.GONE);
+            }
+            tv_form_download_pdf.setText(mOriginFormListener.getPdfLabel());
+            tv_form_download_pdf.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOriginFormListener.openFormPdf(form);
+                }
+            });
+        }catch (NullPointerException e){
+            ToolBox_Inf.registerException(getClass().getName(), e);
+            tv_form_score.setVisibility(View.GONE);
+            iv_form_score.setVisibility(View.GONE);
+            tv_form_nc_count.setVisibility(View.GONE);
+            iv_form_nc_count.setVisibility(View.GONE);
+            tv_form_download_pdf.setVisibility(View.GONE);
+            iv_form_download_pdf.setVisibility(View.GONE);
+            cl_origin_form_info.setVisibility(View.GONE);
+        }
+    }
+
     public interface OnPipelineFragmentInteractionListener {
         void syncPipeline();
     }
 
     public interface OnPipelineFragmentOriginListener {
         void callOrigin();
+    }
+
+    public interface OnPipelineFragmentOriginFormListener {
+        TK_Ticket_Form getTicketForm();
+        void openFormPdf(TK_Ticket_Form form);
+        String getPdfLabel();
     }
 
 

@@ -36,10 +36,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:tint="@color/namoa_pipeline_header_icon"
         app:layout_constraintStart_toStartOf="@+id/frg_ticket_tv_origin_desc"
         app:layout_constraintTop_toBottomOf="@+id/frg_ticket_tv_origin_desc"
-        app:srcCompat="@drawable/ic_check_white_24dp" />
+        app:srcCompat="@drawable/ic_check_white_24dp"
+        app:tint="@color/namoa_pipeline_header_icon" />
 
     <TextView
         android:id="@+id/frg_ticket_tv_origin_end_date"
@@ -60,14 +60,15 @@
         android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="@+id/frg_ticket_iv_origin_date_end"
         app:layout_constraintTop_toBottomOf="@+id/frg_ticket_iv_origin_date_end"
-        android:tint="@color/namoa_pipeline_header_icon"
-        app:srcCompat="@drawable/ic_person_black_24dp" />
+        app:srcCompat="@drawable/ic_person_black_24dp"
+        app:tint="@color/namoa_pipeline_header_icon" />
 
     <TextView
         android:id="@+id/frg_ticket_tv_origin_end_user"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
+        android:layout_marginEnd="32dp"
         android:text="TextView"
         android:textColor="@color/namoa_pipeline_header_icon"
         app:layout_constraintBottom_toBottomOf="@+id/frg_ticket_iv_origin_end_user"
@@ -75,5 +76,98 @@
         app:layout_constraintStart_toEndOf="@+id/frg_ticket_iv_origin_end_user"
         app:layout_constraintTop_toTopOf="@+id/frg_ticket_iv_origin_end_user" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_origin_form_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frg_ticket_tv_origin_end_user"
+        tools:visibility="visible">
 
+        <ImageView
+            android:id="@+id/origin_iv_form_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/origin_tv_form_score"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/origin_tv_form_score"
+            app:srcCompat="@drawable/ic_baseline_star_24"
+            app:tint="@color/namoa_color_gray_4" />
+
+        <ImageView
+            android:id="@+id/origin_iv_form_nc_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/origin_tv_form_score"
+            app:srcCompat="@drawable/ic_non_compliance_on" />
+
+        <TextView
+            android:id="@+id/origin_tv_form_score"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/origin_iv_form_score"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="wrap"
+            tools:text="TextView" />
+
+        <TextView
+            android:id="@+id/origin_tv_form_nc_count"
+            android:layout_width="59dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/namoa_color_danger_red_lib"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/origin_iv_form_nc_count"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/origin_iv_form_nc_count"
+            app:layout_constraintTop_toTopOf="@id/origin_iv_form_nc_count"
+            app:layout_constraintWidth_default="wrap"
+            tools:text="TextView" />
+
+
+        <ImageView
+            android:id="@+id/origin_iv_form_download_pdf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/origin_tv_form_nc_count"
+            app:srcCompat="@drawable/ic_baseline_get_app_24"
+            app:tint="@color/namoa_pipeline_product_lbl" />
+
+        <TextView
+            android:id="@+id/origin_tv_form_download_pdf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="32dp"
+            android:textColor="@color/namoa_pipeline_product_lbl"
+            app:layout_constraintBottom_toBottomOf="@id/origin_iv_form_download_pdf"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@id/origin_iv_form_download_pdf"
+            app:layout_constraintTop_toTopOf="@id/origin_iv_form_download_pdf"
+            app:layout_constraintWidth_default="wrap"
+            tools:text="PDF access" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/iv_toggle_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_keyboard_arrow_up_24_black"
+        app:layout_constraintBottom_toBottomOf="@+id/cl_origin_form_info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/frg_ticket_tv_origin_end_user"
+        app:layout_constraintVertical_bias="1.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

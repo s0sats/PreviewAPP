@@ -1,8 +1,10 @@
 package com.namoadigital.prj001.ui.act079;
 
+import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
+import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
+
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
@@ -45,10 +47,7 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
-import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
-
-public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contract.I_View {
+public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentOriginFormListener {
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private boolean hasFABActive=false;
@@ -60,6 +59,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     private boolean is_from_edit_workgroup;
     private Act079MainContentBinding binding;
     private String actionPhotoLocalPath;
+    private TK_Ticket_Form form;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,7 +167,6 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         binding.act079TvOpenUsernameLbl.setText(hmAux_Trans.get("open_username_lbl"));
         binding.act079TvOpenEmailLbl.setText(hmAux_Trans.get("open_email_lbl"));
         binding.act079TvOpenPhoneLbl.setText(hmAux_Trans.get("open_phone_lbl"));
-        binding.act079TvFormDownloadPdf.setText(hmAux_Trans.get("download_form_pdf_lbl"));
     }
 
     private void setFabMenu(TK_Ticket mTicket) {
@@ -422,38 +421,8 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     private void setFormFields(TK_Ticket_Step originStep) {
         if(originStep.getCtrl() != null && originStep.getCtrl().size() > 0){
             TK_Ticket_Ctrl originCtrl = originStep.getCtrl().get(0);
-            final TK_Ticket_Form form = originCtrl.getForm();
-            try {
-                if (form.getScore_perc() != null) {
-                    binding.act079TvFormScore.setText(form.getScore_perc().replace(".", ",") + "%");
-                    int color = context.getResources().getColor(ToolBox_Inf.getScoreFormColor(form.getScore_status()));
-                    binding.act079TvFormScore.setTextColor(color);
-                    binding.act079IvFormScore.setImageTintList(ColorStateList.valueOf(color));
-                } else {
-                    binding.act079TvFormScore.setVisibility(View.GONE);
-                    binding.act079IvFormScore.setVisibility(View.GONE);
-                }
-                if(form.getNc() > 0 ) {
-                    binding.act079TvFormNcCount.setText(String.format("%s", form.getNc()));
-                }else{
-                    binding.act079TvFormNcCount.setVisibility(View.GONE);
-                    binding.act079IvFormNcCount.setVisibility(View.GONE);
-                }
-            }catch (NullPointerException e){
-                ToolBox_Inf.registerException(getClass().getName(), e);
-                binding.act079TvFormScore.setVisibility(View.GONE);
-                binding.act079IvFormScore.setVisibility(View.GONE);
-                binding.act079TvFormNcCount.setVisibility(View.GONE);
-                binding.act079IvFormNcCount.setVisibility(View.GONE);
-                binding.act079TvFormDownloadPdf.setVisibility(View.GONE);
-                binding.act079IvFormDownloadPdf.setVisibility(View.GONE);
-            }
-            binding.act079TvFormDownloadPdf.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mPresenter.tryOpenFormPDF(form);
-                }
-            });
+            this.form = originCtrl.getForm();
+            //
         }
     }
 
@@ -522,5 +491,20 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                 null,
                 0
         );
+    }
+
+    @Override
+    public TK_Ticket_Form getTicketForm() {
+        return form;
+    }
+
+    @Override
+    public void openFormPdf(TK_Ticket_Form form) {
+        mPresenter.tryOpenFormPDF(form);
+    }
+
+    @Override
+    public String getPdfLabel() {
+        return hmAux_Trans.get("download_form_pdf_lbl");
     }
 }
