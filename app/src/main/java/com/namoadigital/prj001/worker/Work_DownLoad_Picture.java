@@ -23,6 +23,8 @@ import com.namoadigital.prj001.dao.SM_SO_Product_Event_FileDao;
 import com.namoadigital.prj001.dao.SM_SO_Service_Exec_Task_FileDao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_ActionDao;
+import com.namoadigital.prj001.dao.TkTicketOriginNcDao;
+import com.namoadigital.prj001.model.TkTicketOriginNc;
 import com.namoadigital.prj001.sql.CH_Message_Sql_006;
 import com.namoadigital.prj001.sql.CH_Message_Sql_007;
 import com.namoadigital.prj001.sql.CH_Room_Sql_002;
@@ -49,6 +51,8 @@ import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_Img_Download_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Action_Sql_Img_Download_002;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_Img_Download_001;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_Img_Download_002;
+import com.namoadigital.prj001.sql.TkTicketOriginNcDownloadSql001;
+import com.namoadigital.prj001.sql.TkTicketOriginNcSql001;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -57,6 +61,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Work_DownLoad_Picture extends Worker {
     public static final String WORKER_TAG = "Work_DownLoad_Picture";
@@ -79,7 +84,7 @@ public class Work_DownLoad_Picture extends Worker {
     //ticket
     private TK_TicketDao ticketDao;
     private TK_Ticket_ActionDao ticketActionDao;
-
+    private TkTicketOriginNcDao tickeOriginNctDao;
     //LISTAS
     //N-Form
     private ArrayList<HMAux> dados = new ArrayList<>();
@@ -99,6 +104,7 @@ public class Work_DownLoad_Picture extends Worker {
     //Ticket
     private ArrayList<HMAux> ticketImgList = new ArrayList<>();
     private ArrayList<HMAux> ticketActionImgList = new ArrayList<>();
+    private ArrayList<HMAux> ticketNcImgList = new ArrayList<>();
 
     public Work_DownLoad_Picture(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -191,7 +197,8 @@ public class Work_DownLoad_Picture extends Worker {
              messageImgList.size() +
              product_icon_list.size() +
              ticketImgList.size() +
-             ticketActionImgList.size() ;
+             ticketActionImgList.size() +
+             ticketNcImgList.size() ;
 
         Log.d("workerTsts", WORKER_TAG+" : Itens to download = " + i);
 
@@ -207,7 +214,8 @@ public class Work_DownLoad_Picture extends Worker {
             && product_icon_list.size() == 0
             //&& schedule_product_icon_list.size() == 0
             && ticketImgList.size() == 0
-            && ticketActionImgList.size() == 0;
+            && ticketActionImgList.size() == 0
+            && ticketNcImgList.size() == 0;
     }
 
     /**
@@ -325,6 +333,12 @@ public class Work_DownLoad_Picture extends Worker {
                 new TK_Ticket_Action_Sql_Img_Download_001(customer_code).toSqlQuery()
             )
         );
+        //
+        ticketNcImgList.addAll(
+                tickeOriginNctDao.query_HM(
+                    new TkTicketOriginNcDownloadSql001(customer_code).toSqlQuery()
+            )
+        );
     }
 
     private void initDaos() {
@@ -400,6 +414,11 @@ public class Work_DownLoad_Picture extends Worker {
             Constant.DB_VERSION_CUSTOM
         );
         ticketActionDao = new TK_Ticket_ActionDao(
+            getApplicationContext(),
+            ToolBox_Con.customDBPath(customer_code),
+            Constant.DB_VERSION_CUSTOM
+        );
+        tickeOriginNctDao = new TkTicketOriginNcDao(
             getApplicationContext(),
             ToolBox_Con.customDBPath(customer_code),
             Constant.DB_VERSION_CUSTOM
@@ -496,6 +515,73 @@ public class Work_DownLoad_Picture extends Worker {
             } catch (Exception e) {
                 ToolBox_Inf.registerException(getClass().getName(), e);
             }
+        }
+
+        for(HMAux item: ticketNcImgList){
+            if(isStopped()){
+                break;
+            }
+            try {
+                String fileNameLocal = item.get(TkTicketOriginNcDownloadSql001.FILE_NAME_LOCAL).toLowerCase();
+                if (!ToolBox_Inf.verifyDownloadFileInf( fileNameLocal + ".jpg", Constant.CACHE_PATH_PHOTO)) {
+
+                    ToolBox_Inf.deleteDownloadFileInf(fileNameLocal + ".tmp", Constant.CACHE_PATH_PHOTO);
+                    //
+                    ToolBox_Inf.downloadImagePDF(
+                            item.get(TkTicketOriginNcDownloadSql001.FILE_NAME_URL),
+                            Constant.CACHE_PATH_PHOTO + "/" + fileNameLocal + ".tmp"
+                    );
+                    //
+                    ToolBox_Inf.renameDownloadFileInf(fileNameLocal, ".jpg", Constant.CACHE_PATH_PHOTO);
+                    //
+                    //Atualiza campo com url local
+                    updateFileName(item, fileNameLocal);
+                } else {
+                    //Atualiza campo com url local
+
+                    updateFileName(item, fileNameLocal);
+                }
+            } catch (Exception e) {
+                ToolBox_Inf.registerException(getClass().getName(), e);
+            }
+        }
+    }
+
+    private void updateFileName(HMAux item, String fileNameLocal) {
+        TkTicketOriginNc originNc = tickeOriginNctDao.getByString(
+                new TkTicketOriginNcSql001(
+                        customer_code,
+                        Integer.parseInt(item.get(TkTicketOriginNcDao.TICKET_PREFIX)),
+                        Integer.parseInt(item.get(TkTicketOriginNcDao.TICKET_CODE)),
+                        Integer.parseInt(item.get(TkTicketOriginNcDao.PAGE)),
+                        Integer.parseInt(item.get(TkTicketOriginNcDao.CUSTOM_FORM_ORDER))
+                ).toSqlQuery().toLowerCase()
+        );
+        //
+        if(originNc != null) {
+            switch (Objects.requireNonNull(item.get(TkTicketOriginNcDownloadSql001.TICKET_ORIGIN_FILE_NAME_ID))) {
+                case "1":
+                    originNc.setDataPhoto1UrlLocal(fileNameLocal + ".jpg");
+                    break;
+                case "2":
+                    originNc.setDataPhoto2UrlLocal(fileNameLocal + ".jpg");
+                    break;
+                case "3":
+                    originNc.setDataPhoto3UrlLocal(fileNameLocal + ".jpg");
+                    break;
+                case "4":
+                    originNc.setDataPhoto4UrlLocal(fileNameLocal + ".jpg");
+                    break;
+                case "5":
+                    originNc.setDataValueLocal(fileNameLocal + ".jpg");
+                    break;
+                case "6":
+                    originNc.setPictureUrlLocal(fileNameLocal + ".jpg");
+                    break;
+
+            }
+            //
+            tickeOriginNctDao.addUpdate(originNc);
         }
     }
 

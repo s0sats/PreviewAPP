@@ -5,11 +5,11 @@ import java.io.Serializable
 
 class TkTicketOriginNc(
     @SerializedName("customer_code")
-    private var customerCode: Int,
+    private var customerCode: Int =-1,
     @SerializedName("ticket_prefix")
-    private var ticketPrefix: Int,
+    private var ticketPrefix: Int=-1,
     @SerializedName("ticket_code")
-    private var ticketCode: Int,
+    private var ticketCode: Int=-1,
     @SerializedName("page")
     private var page: Int,
     @SerializedName("custom_form_data_type")
@@ -53,11 +53,6 @@ class TkTicketOriginNc(
     @SerializedName("picture_url_local")
     private var pictureUrlLocal: String?
 ): Serializable{
-    init {
-        customerCode = -1
-        ticketPrefix = -1
-        ticketCode = -1
-    }
 
     fun setPk(tkTicket: TK_Ticket){
         customerCode = tkTicket.customer_code.toInt()
