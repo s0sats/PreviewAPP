@@ -28,6 +28,9 @@ class Act079ViewNcField(
         Act079ViewNcFieldBinding.inflate(LayoutInflater.from(context),this,true)
     }
 
+    var onFieldClick: onFieldClickListener? = null
+    var emptyAnswerLabel: String? = null
+
     init {
         initialize()
     }
@@ -71,7 +74,7 @@ class Act079ViewNcField(
         return TextView(context).apply {
             layoutParams = lParams
             if (answer.isNullOrEmpty()) {
-                text = "Vazio"
+                text = emptyAnswerLabel
                 setTextColor(ContextCompat.getColor(context, R.color.namoa_status_not_executed))
             } else {
                 text = answer
@@ -102,7 +105,6 @@ class Act079ViewNcField(
                 id = View.generateViewId()
                 setmLabel(null)
                 setmOrder(nc.getCustomFormOrder())
-                setmSequence(mSequence)
                 setmType(nc.getCustomFormDataType())
                 setmOption(mOption)
                 setmRequired(false)
@@ -117,8 +119,9 @@ class Act079ViewNcField(
             //
             binding.act079ViewNcFieldFrame.apply {
                 setOnClickListener {
-                    binding.root.background = ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_blue_states)
+                    onFieldClick?.onFieldClick(mSequence)
                     pictureFF.findViewById<ImageViewCR>(R.id.pictureff_icr_value)?.performClick()
+                    binding.act079ViewNcFieldClMain.background = ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_blue_states)
                 }
                 addView(pictureFF)
             }

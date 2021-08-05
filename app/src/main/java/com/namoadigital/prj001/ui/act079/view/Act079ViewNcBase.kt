@@ -9,4 +9,7 @@ abstract class Act079ViewNcBase(
     protected val nc: TkTicketOriginNc
 ): LinearLayoutCompat(context){
     var mSequence : Int = -1
+    interface onFieldClickListener{
+        fun onFieldClick(itemPositionIdx: Int)
+    }
 }

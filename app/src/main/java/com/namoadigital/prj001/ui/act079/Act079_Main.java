@@ -34,6 +34,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
 import com.namoadigital.prj001.ui.act079.view.Act079ViewNcBase;
+import com.namoadigital.prj001.ui.act079.view.Act079ViewNcField;
 import com.namoadigital.prj001.ui.act082.Act082_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -60,6 +61,8 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     private Act079MainContentBinding binding;
     private String actionPhotoLocalPath;
     private TK_Ticket_Form form;
+    private int ncItemPositionIdx = -1;
+    private int ncNestedScrollYPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +127,8 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         transList.add("open_username_lbl");
         transList.add("open_email_lbl");
         transList.add("open_phone_lbl");
+        //
+        transList.add("nc_empty_answer_lbl");
         //
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -405,16 +410,17 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             Act079ViewNcBase ncView = ncViews.get(i);
             int finalI = i;
             ncView.setMSequence(finalI);
-            ncView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ToolBox.toastMSG(
-                        context,
-                        "Position: " + finalI +"\n" +
-                        "Scroll Y: " +binding.act079NsvMain.getScrollY()
-                    );
-                }
-            });
+            if(ncView instanceof Act079ViewNcField){
+                ((Act079ViewNcField) ncView).setOnFieldClick(new Act079ViewNcBase.onFieldClickListener() {
+                    @Override
+                    public void onFieldClick(int itemPositionIdx) {
+                        ncItemPositionIdx = itemPositionIdx;
+                        ncNestedScrollYPosition = binding.act079NsvMain.getScrollY();
+                    }
+                });
+                ((Act079ViewNcField) ncView).setEmptyAnswerLabel(hmAux_Trans.get("nc_empty_answer_lbl"));
+            }
+            //
             binding.act079LlNcViews.addView(ncView,layoutParams);
         }
     }
