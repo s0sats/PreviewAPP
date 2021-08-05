@@ -523,16 +523,16 @@ public class Work_DownLoad_Picture extends Worker {
             }
             try {
                 String fileNameLocal = item.get(TkTicketOriginNcDownloadSql001.FILE_NAME_LOCAL).toLowerCase();
-                if (!ToolBox_Inf.verifyDownloadFileInf( fileNameLocal + ".jpg", Constant.CACHE_PATH_PHOTO)) {
+                if (!ToolBox_Inf.verifyDownloadFileInf( fileNameLocal + ".jpg", Constant.CACHE_PATH)) {
 
-                    ToolBox_Inf.deleteDownloadFileInf(fileNameLocal + ".tmp", Constant.CACHE_PATH_PHOTO);
+                    ToolBox_Inf.deleteDownloadFileInf(fileNameLocal + ".tmp", Constant.CACHE_PATH);
                     //
                     ToolBox_Inf.downloadImagePDF(
                             item.get(TkTicketOriginNcDownloadSql001.FILE_NAME_URL),
-                            Constant.CACHE_PATH_PHOTO + "/" + fileNameLocal + ".tmp"
+                            Constant.CACHE_PATH + "/" + fileNameLocal + ".tmp"
                     );
                     //
-                    ToolBox_Inf.renameDownloadFileInf(fileNameLocal, ".jpg", Constant.CACHE_PATH_PHOTO);
+                    ToolBox_Inf.renameDownloadFileInf(fileNameLocal, ".jpg", Constant.CACHE_PATH);
                     //
                     //Atualiza campo com url local
                     updateFileName(item, fileNameLocal);

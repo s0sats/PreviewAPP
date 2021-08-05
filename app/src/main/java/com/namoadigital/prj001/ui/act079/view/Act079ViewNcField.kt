@@ -15,6 +15,7 @@ import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act079ViewNcFieldBinding
 import com.namoadigital.prj001.model.Act079PictureOptionJson
 import com.namoadigital.prj001.model.TkTicketOriginNc
+import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
 class Act079ViewNcField(
@@ -110,8 +111,8 @@ class Act079ViewNcField(
                 setmRequired(false)
                 setmValue(mValeu)
                 setmEnabled(false)
-//                setmFName(nc.getPictureUrlLocal())
-                setmFName("picture_1_8_1_4_13.jpg")
+                setmFName(nc.getPictureUrlLocal())
+//                setmFName("picture_1_8_1_4_13.jpg")
                 setmIv_Dots(0)
                 setmV_Line(0)
             }
@@ -152,7 +153,7 @@ class Act079ViewNcField(
             if(nc.getDataValueLocal().isNullOrEmpty()){
                 imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sand_watch_transp))
             }else{
-                imageView.setImageBitmap(BitmapFactory.decodeFile(nc.getDataValueLocal()))
+                imageView.setImageBitmap(BitmapFactory.decodeFile("${ConstantBaseApp.CACHE_PATH}/${nc.getDataValueLocal()}"))
             }
         }else{
             imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_delete_empty))
