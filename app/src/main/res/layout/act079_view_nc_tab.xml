@@ -4,10 +4,15 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="8dp">
+    android:layout_marginTop="12dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    >
 
     <TextView
-        android:id="@+id/act079_nc_view_tab_tv_desc"
+        android:id="@+id/act079_view_nc_tab_tv_desc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -16,7 +21,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:text="1 - Descrição"
         android:padding="4dp"
-        android:background="@color/namoa_color_gray_8"
+        android:background="@color/namoa_color_gray_6"
         android:textStyle="bold"
         />
 

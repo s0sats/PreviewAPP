@@ -1,8 +1,5 @@
 package com.namoadigital.prj001.ui.act079;
 
-import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
-import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -37,6 +33,7 @@ import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TK_Ticket_Step;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
 import com.namoadigital.prj001.ui.act075.Act075_Main;
+import com.namoadigital.prj001.ui.act079.view.Act079ViewNcBase;
 import com.namoadigital.prj001.ui.act082.Act082_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
@@ -46,6 +43,9 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
+import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
 public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentOriginFormListener {
     private FragmentManager fm;
@@ -395,15 +395,16 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     }
 
     @Override
-    public void loadTicketNcs(ArrayList<TextView> ncViews) {
+    public void loadTicketNcs(ArrayList<Act079ViewNcBase> ncViews) {
         binding.act079LlNcViews.removeAllViews();
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         );
         for (int i = 0; i < ncViews.size(); i++) {
-            TextView ncView = ncViews.get(i);
+            Act079ViewNcBase ncView = ncViews.get(i);
             int finalI = i;
+            ncView.setMSequence(finalI);
             ncView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

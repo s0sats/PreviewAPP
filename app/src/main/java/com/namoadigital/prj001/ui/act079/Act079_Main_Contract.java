@@ -1,9 +1,8 @@
 package com.namoadigital.prj001.ui.act079;
 
-import android.widget.TextView;
-
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
+import com.namoadigital.prj001.ui.act079.view.Act079ViewNcBase;
 
 import java.util.ArrayList;
 
@@ -14,7 +13,7 @@ public interface Act079_Main_Contract {
 
         void showAlert(String ttl, String msg);
 
-        void loadTicketNcs(ArrayList<TextView> ncViews);
+        void loadTicketNcs(ArrayList<Act079ViewNcBase> ncViews);
     }
 
     interface I_Presenter{
