@@ -1,7 +1,10 @@
 package com.namoadigital.prj001.ui.act079.view
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
+import android.graphics.Typeface
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +13,16 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.namoa_digital.namoa_library.ctls.ImageViewCR
 import com.namoa_digital.namoa_library.ctls.PictureFF
+import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoa_digital.namoa_library.view.Camera_Activity
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act079ViewNcFieldBinding
 import com.namoadigital.prj001.model.Act079PictureOptionJson
 import com.namoadigital.prj001.model.TkTicketOriginNc
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
+import java.io.File
 
 class Act079ViewNcField(
     context: Context,
@@ -28,16 +34,13 @@ class Act079ViewNcField(
     private val binding: Act079ViewNcFieldBinding by lazy {
         Act079ViewNcFieldBinding.inflate(LayoutInflater.from(context),this,true)
     }
-
     var onFieldClick: onFieldClickListener? = null
     var emptyAnswerLabel: String? = null
-
-    init {
-        initialize()
-    }
+    var isHighlighted: Boolean = false
 
     private fun initialize() {
         bindData()
+        applyHighlight()
     }
 
     private fun bindData() {
@@ -62,7 +65,7 @@ class Act079ViewNcField(
     private fun configDataTypeOthers() {
         binding.act079ViewNcFieldFrame.addView(
             getAnswerTextView(
-                nc.getDataValueTxt().toString()
+                nc.getDataValueTxt()?:""
             )
         )
     }
@@ -77,6 +80,7 @@ class Act079ViewNcField(
             if (answer.isNullOrEmpty()) {
                 text = emptyAnswerLabel
                 setTextColor(ContextCompat.getColor(context, R.color.namoa_status_not_executed))
+                setTypeface(null,Typeface.ITALIC)
             } else {
                 text = answer
                 setTextColor(ContextCompat.getColor(context, R.color.namoa_status_pending))
@@ -99,32 +103,43 @@ class Act079ViewNcField(
     }
 
     private fun configDataTypePicture() {
-        if(!nc.getDataValue().isNullOrEmpty()){
-            val mValeu = convertPictureDataValueToJson()
-            val mOption: String = getmOptionJson()
-            val pictureFF = PictureFF(context).apply {
-                id = View.generateViewId()
-                setmLabel(null)
-                setmOrder(nc.getCustomFormOrder())
-                setmType(nc.getCustomFormDataType())
-                setmOption(mOption)
-                setmRequired(false)
-                setmValue(mValeu)
-                setmEnabled(false)
-                setmFName(nc.getPictureUrlLocal())
-//                setmFName("picture_1_8_1_4_13.jpg")
-                setmIv_Dots(0)
-                setmV_Line(0)
-            }
-            pictureFF.findViewById<ImageViewCR>(R.id.pictureff_icr_value)?.isClickable = false
-            //
-            binding.act079ViewNcFieldFrame.apply {
-                setOnClickListener {
-                    onFieldClick?.onFieldClick(mSequence)
-                    pictureFF.findViewById<ImageViewCR>(R.id.pictureff_icr_value)?.performClick()
-                    binding.act079ViewNcFieldClMain.background = ContextCompat.getDrawable(context, R.drawable.namoa_cell_default_blue_states)
+        if(!nc.getPictureUrl().isNullOrEmpty()){
+            if(!nc.getPictureUrlLocal().isNullOrEmpty()) {
+                //Transform o valor de data_value no json de mValue
+                val mValue = convertPictureDataValueToJson()
+                //Construi o json usado pelo mOption baseado nas propriedades de line, column, e color
+                val mOption: String = getmOptionJson()
+                val pictureFF = PictureFF(context).apply {
+                    id = View.generateViewId()
+                    setmLabel(null)
+                    setmOrder(nc.getCustomFormOrder())
+                    setmType(nc.getCustomFormDataType())
+                    setmOption(mOption)
+                    setmRequired(false)
+                    setmValue(mValue)
+                    setmEnabled(false)
+                    setmFName(nc.getPictureUrlLocal())
+                    //remove icone do dots
+                    setmIv_Dots(0)
+                    //remove linha abaixo.
+                    setmV_Line(0)
                 }
-                addView(pictureFF)
+                //
+                pictureFF.findViewById<ImageViewCR>(R.id.pictureff_icr_value)?.isClickable = false
+                pictureFF.findViewById<TextView>(R.id.customff_tv_label)?.visibility = if(!pictureFF.getmLabel().isNullOrEmpty()) VISIBLE else GONE
+                //
+                binding.act079ViewNcFieldFrame.apply {
+                    setOnClickListener {
+                        reportPositionAndHighlightItem()
+                        pictureFF.findViewById<ImageViewCR>(R.id.pictureff_icr_value)
+                            ?.performClick()
+                    }
+                    addView(pictureFF)
+                }
+            }else{
+                binding.act079ViewNcFieldFrame.addView(
+                    getWaitingImgDownloadIv(getLayoutParamWithPercentWindowMetric(0.8,0.3))
+                )
             }
         }else{
             configDataTypeOthers()
@@ -146,19 +161,49 @@ class Act079ViewNcField(
 
     private fun configDataTypePhoto() {
         val layoutParams = getLayoutParamWithPercentWindowMetric(0.8,0.3)
-        val imageView = ImageView(context)
-        imageView.layoutParams = layoutParams
-
+        val imageView = getWaitingImgDownloadIv(layoutParams)
         if(!nc.getDataValue().isNullOrEmpty()){
-            if(nc.getDataValueLocal().isNullOrEmpty()){
-                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sand_watch_transp))
-            }else{
-                imageView.setImageBitmap(BitmapFactory.decodeFile("${ConstantBaseApp.CACHE_PATH}/${nc.getDataValueLocal()}"))
+            if(!nc.getDataValueLocal().isNullOrEmpty()){
+                val photoFullPath = getPhotoFullPath(nc.getDataValueLocal() ?: "")
+                imageView.apply{
+                    setImageBitmap(BitmapFactory.decodeFile(photoFullPath))
+                    setOnClickListener {
+                        reportPositionAndHighlightItem()
+                        callCameraAct(photoFullPath)
+                    }
+                }
             }
+            //
+            binding.act079ViewNcFieldFrame.addView(imageView)
         }else{
-            imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_delete_empty))
+            configDataTypeOthers()
         }
-        binding.act079ViewNcFieldFrame.addView(imageView)
+    }
+
+    private fun reportPositionAndHighlightItem() {
+        isHighlighted = true
+        onFieldClick?.onFieldClick(mSequence)
+        applyHighlight()
+    }
+
+    private fun applyHighlight() {
+        if(isHighlighted) {
+            binding.act079ViewNcFieldClMain.background = ContextCompat.getDrawable(
+                context,
+                R.drawable.namoa_cell_default_blue_states
+            )
+        }else{
+            binding.act079ViewNcFieldClMain.background = null
+        }
+    }
+
+    private fun getPhotoFullPath(photoLocal: String) = "${ConstantBaseApp.CACHE_PATH}/$photoLocal"
+
+    private fun getWaitingImgDownloadIv(params: ViewGroup.LayoutParams): ImageView {
+        return ImageView(context).apply {
+            layoutParams = params
+            setImageDrawable(ContextCompat.getDrawable(context, R.drawable.sand_watch_transp))
+        }
     }
 
     private fun getLayoutParamWithPercentWindowMetric(wPercent: Double, hPercent: Double): ViewGroup.LayoutParams {
@@ -195,4 +240,83 @@ class Act079ViewNcField(
     private fun getFieldDesc(): String {
         return "${nc.getPage()}.${nc.getCustomFormOrder()} - ${nc.getDescription()}"
     }
+
+
+    private fun callCameraAct(photoFullPath: String) {
+        val sFile =  File(photoFullPath)
+        if (!sFile.exists()) {
+            return
+        }
+        //
+        val bundle = Bundle()
+        bundle.putInt(ConstantBase.PID, id)
+        bundle.putInt(ConstantBase.PTYPE, 1)
+        bundle.putString(ConstantBase.PPATH, photoFullPath)
+        //
+        bundle.putBoolean(ConstantBase.PEDIT, false)
+        bundle.putBoolean(ConstantBase.PENABLED, false)
+        bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false)
+        bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false)
+        bundle.putString(ConstantBase.FILE_AUTHORITIES, ConstantBase.AUTHORITIES_FOR_PROVIDER)
+        //
+        val mIntent = Intent(context, Camera_Activity::class.java)
+        mIntent.putExtras(bundle)
+        //
+        context.startActivity(mIntent)
+    }
+
+    fun forceHighlight(){
+        applyHighlight()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        initialize()
+    }
+
+//
+//    override fun onSaveInstanceState(): Parcelable? {
+//        val parcelable = super.onSaveInstanceState()
+//        parcelable?.let { it ->
+//            val ss = SavedState(it)
+//            ss._isHighlighted = isHighlighted
+//            return ss
+//        }
+//        //
+//        return parcelable
+//    }
+//
+//    override fun onRestoreInstanceState(state: Parcelable?) {
+//        super.onRestoreInstanceState(state)
+//        state?.let {
+//            if(state is SavedState){
+//                isHighlighted = state._isHighlighted
+//            }
+//        }
+//    }
+//
+//    internal class SavedState : View.BaseSavedState {
+//        var _isHighlighted = false
+//
+//        constructor(superState: Parcelable) : super(superState)
+//
+//        constructor(source: Parcel) : super(source) {
+//            _isHighlighted = source.readInt() != 0
+//        }
+//
+//        override fun writeToParcel(out: Parcel?, flags: Int) {
+//            super.writeToParcel(out, flags)
+//            out?.writeInt(if(_isHighlighted) 1 else 0)
+//        }
+//
+//        companion object CREATOR : Parcelable.Creator<SavedState> {
+//            override fun createFromParcel(parcel: Parcel): SavedState {
+//                return SavedState(parcel)
+//            }
+//
+//            override fun newArray(size: Int): Array<SavedState?> {
+//                return arrayOfNulls(size)
+//            }
+//        }
+//    }
 }

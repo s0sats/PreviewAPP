@@ -15,6 +15,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -42,6 +43,8 @@ import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +52,10 @@ import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
 import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
 public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentOriginFormListener {
+
+    public static final String NC_ITEM_IDX = "NC_ITEM_IDX";
+    public static final String NC_NESTED_SCROLL_ITEM_SCROLL_Y = "NC_NESTED_SCROLL_ITEM_SCROLL_Y";
+
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
     private boolean hasFABActive=false;
@@ -75,11 +82,29 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         //
         iniSetup();
         //
-        initVars();
+        initVars(savedInstanceState);
         //
         iniUIFooter();
         //
         initActions();
+        //
+        tryScrollToNcPosition();
+    }
+
+    private void tryScrollToNcPosition() {
+        if(ncItemPositionIdx > -1){
+            try{
+                Act079ViewNcField viewNcField = (Act079ViewNcField) binding.act079LlNcViews.getChildAt(ncItemPositionIdx);
+                viewNcField.setHighlighted(true);
+            }catch (Exception e){
+                e.printStackTrace();
+                ToolBox_Inf.registerException(getClass().getName(),e);
+            }
+        }
+        //
+//        if(ncNestedScrollYPosition > -1 ){
+//            binding.act079NsvMain.scrollTo(0,ncNestedScrollYPosition);
+//        }
     }
 
     private void iniSetup() {
@@ -140,9 +165,9 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
 
     }
 
-    private void initVars() {
+    private void initVars(Bundle savedInstanceState) {
         mPresenter = new Act079_Main_Presenter(context, this, hmAux_Trans);
-        recoverIntentsInfo();
+        recoverIntentsInfo(savedInstanceState);
         //
         if(mTkPrefix <= 0 || mTkCode <= 0){
             ToolBox.alertMSG(
@@ -266,7 +291,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         ft.commit();
     }
 
-    private void recoverIntentsInfo() {
+    private void recoverIntentsInfo(Bundle savedInstanceState) {
         requestingBundle = getIntent().getExtras();
         //
         if (requestingBundle != null) {
@@ -279,6 +304,11 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             mTkCode = -1;
             is_from_edit_header = false;
             is_from_edit_workgroup = false;
+        }
+        //Ja inica como -1, então se null, não ha necessidade resetar
+        if(savedInstanceState != null){
+            ncItemPositionIdx = savedInstanceState.getInt(NC_ITEM_IDX,-1);
+            ncNestedScrollYPosition = savedInstanceState.getInt(NC_NESTED_SCROLL_ITEM_SCROLL_Y,-1);
         }
     }
 
@@ -513,5 +543,12 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     @Override
     public String getPdfLabel() {
         return hmAux_Trans.get("download_form_pdf_lbl");
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(NC_ITEM_IDX, ncItemPositionIdx);
+        outState.putInt(NC_NESTED_SCROLL_ITEM_SCROLL_Y, ncNestedScrollYPosition);
     }
 }
