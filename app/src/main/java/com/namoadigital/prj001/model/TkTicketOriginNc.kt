@@ -140,5 +140,22 @@ class TkTicketOriginNc(
         return "TkTicketOriginNc(customerCode=$customerCode, \nticketPrefix=$ticketPrefix, \nticketCode=$ticketCode, \npage=$page, \ncustomFormDataType='$customFormDataType', \ncustomFormOrder=$customFormOrder, \ndescription='$description', \ndataValue='$dataValue', \ndataValueTxt='$dataValueTxt', \ndataValueLocal=$dataValueLocal, \ndataPhoto1Url=$dataPhoto1Url, \ndataPhoto1UrlLocal=$dataPhoto1UrlLocal, \ndataPhoto2Url=$dataPhoto2Url, \ndataPhoto2UrlLocal=$dataPhoto2UrlLocal, \ndataPhoto3Url=$dataPhoto3Url, \ndataPhoto3UrlLocal=$dataPhoto3UrlLocal, \ndataPhoto4Url=$dataPhoto4Url, \ndataPhoto4UrlLocal=$dataPhoto4UrlLocal, \ndataComment=$dataComment, \npictureLines=$pictureLines, \npictureColumns=$pictureColumns, \npictureColor=$pictureColor, \npictureUrl=$pictureUrl, \npictureUrlLocal=$pictureUrlLocal)"
     }
 
+    companion object{
+        const val TAB = "TAB"
+        const val CHAR = "CHAR"
+        const val CHECKBOX = "CHECKBOX"
+        const val COMBOBOX = "COMBOBOX"
+        const val DATE = "DATE"
+        const val HOUR = "HOUR"
+        const val LABEL = "LABEL"
+        const val NUMBER = "NUMBER"
+        const val PHOTO = "PHOTO"
+        const val PICTURE = "PICTURE"
+        const val RATINGBAR = "RATINGBAR"
+        const val RATINGIMAGE = "RATINGIMAGE"
+    }
+
 }
+
+
 

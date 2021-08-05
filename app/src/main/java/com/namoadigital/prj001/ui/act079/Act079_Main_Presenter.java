@@ -3,18 +3,16 @@ package com.namoadigital.prj001.ui.act079;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.widget.TextView;
-
-import androidx.core.content.ContextCompat;
 
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
-import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
 import com.namoadigital.prj001.model.TkTicketOriginNc;
 import com.namoadigital.prj001.sql.TK_Ticket_Sql_001;
+import com.namoadigital.prj001.ui.act079.view.Act079ViewFactory;
+import com.namoadigital.prj001.ui.act079.view.Act079ViewNcBase;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -68,13 +66,17 @@ public class Act079_Main_Presenter implements Act079_Main_Contract.I_Presenter{
         }
     }
 
-    private ArrayList<TextView> generateNcViews(ArrayList<TkTicketOriginNc> ncList) {
-        ArrayList<TextView> ncViews = new ArrayList<>();
+    private ArrayList<Act079ViewNcBase> generateNcViews(ArrayList<TkTicketOriginNc> ncList) {
+        ArrayList<Act079ViewNcBase> ncViews = new ArrayList<>();
+//        for (TkTicketOriginNc tkTicketOriginNc : ncList) {
+//            TextView auxTv = new TextView(context);
+//            auxTv.setText(tkTicketOriginNc.toString());
+//            auxTv.setBackground(ContextCompat.getDrawable(context, R.drawable.namoa_cell_8_states));
+//            ncViews.add(auxTv);
+//        }
+
         for (TkTicketOriginNc tkTicketOriginNc : ncList) {
-            TextView auxTv = new TextView(context);
-            auxTv.setText(tkTicketOriginNc.toString());
-            auxTv.setBackground(ContextCompat.getDrawable(context, R.drawable.namoa_cell_8_states));
-            ncViews.add(auxTv);
+            ncViews.add(new Act079ViewFactory(context, tkTicketOriginNc).get());
         }
         return ncViews;
     }
