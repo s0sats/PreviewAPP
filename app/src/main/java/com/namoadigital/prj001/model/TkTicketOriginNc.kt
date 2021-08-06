@@ -153,6 +153,11 @@ class TkTicketOriginNc(
         const val PICTURE = "PICTURE"
         const val RATINGBAR = "RATINGBAR"
         const val RATINGIMAGE = "RATINGIMAGE"
+        const val RATINGIMAGE_GREEN = "GREEN"
+        const val RATINGIMAGE_YELLOW = "YELLOW"
+        const val RATINGIMAGE_RED = "RED"
+        const val RATINGIMAGE_NA = "NA"
+
     }
 
 }

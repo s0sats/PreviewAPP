@@ -11,6 +11,6 @@ abstract class Act079ViewNcBase(
     var mSequence : Int = -1
     interface onFieldClickListener{
         fun onFieldClick(itemPositionIdx: Int)
-        fun onGalleryClick(imageNames: String)
+        fun onGalleryClick(itemPositionIdx: Int, imageNames: String)
     }
 }

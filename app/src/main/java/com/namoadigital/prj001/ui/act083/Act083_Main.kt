@@ -157,6 +157,12 @@ class Act083_Main : Base_Activity(), Act083_Main_Contract.I_View {
 
     private fun initVars() {
         supportActionBar?.title = mPresenter.getActTitle()
+        //reseta preferencia do toggle da origem
+        ToolBox_Con.setBooleanPreference(
+            context,
+            ConstantBaseApp.PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE,
+            true
+        )
         //LUCHE - 21/06/2021
         //Desabilita os cliques nas abas, pois só serão habilitado após corroutine retornar.
         toggleTabEnableStattus(false)

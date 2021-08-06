@@ -52,6 +52,9 @@ class Act079ViewNcField(
         }
     }
 
+    /**
+     * Fun que define o conteudo do framelayout baseado nodata type do campo
+     */
     private fun configFrameViewComponent() {
         when(nc.getCustomFormDataType()){
             TkTicketOriginNc.PHOTO -> configDataTypePhoto()
@@ -62,6 +65,9 @@ class Act079ViewNcField(
         }
     }
 
+    /**
+     * Fun datatype de texto
+     */
     private fun configDataTypeOthers() {
         binding.act079ViewNcFieldFrame.addView(
             getAnswerTextView(
@@ -70,6 +76,9 @@ class Act079ViewNcField(
         )
     }
 
+    /**
+     * Fun gera o campo text com o valor da resposta ou label traduzivel rosa e em italico para sem resposta
+     */
     private fun getAnswerTextView(answer: String): TextView {
         val lParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -89,19 +98,33 @@ class Act079ViewNcField(
         }
     }
 
+    /**
+     * Fun datatype ratingImage
+     * Add imageView no frame layout
+     */
     private fun configDataTypeRatingImage() {
         val layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        val imageView = ImageView(context)
-        imageView.layoutParams = layoutParams
-        when(nc.getDataValue()){
-            "GREEN" -> {imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_face_happy))}
-            "YELLOW" -> {imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_face_neutro))}
-            "RED" -> {imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_face_sad))}
-            "NA" -> {imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_na))}
+        val imageView = ImageView(context).apply {
+            this.layoutParams = layoutParams
+            //
+            when(nc.getDataValue()){
+                TkTicketOriginNc.RATINGIMAGE_GREEN -> {setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_face_happy))}
+                TkTicketOriginNc.RATINGIMAGE_YELLOW -> {setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_face_neutro))}
+                TkTicketOriginNc.RATINGIMAGE_RED -> {setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_face_sad))}
+                TkTicketOriginNc.RATINGIMAGE_NA -> {setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_na))}
+            }
+            setPadding(18,0,0,0)
         }
+
         binding.act079ViewNcFieldFrame.addView(imageView)
     }
 
+    /**
+     * Fun datatype Picture
+     * Seta PictureFF se foto baixada
+     * Seta ImageView com ampulheta se foto ainda não baixada
+     * Seta textView com label sem resposta caso não tenha imagem
+     */
     private fun configDataTypePicture() {
         if(!nc.getPictureUrl().isNullOrEmpty()){
             if(!nc.getPictureUrlLocal().isNullOrEmpty()) {
@@ -146,6 +169,9 @@ class Act079ViewNcField(
         }
     }
 
+    /**
+     * Fun que gera json usado no mOption do pictureFF
+     */
     private fun getmOptionJson(): String {
         val json = Act079PictureOptionJson().getJson(
             nc.getPictureLines().toString(),
@@ -154,11 +180,20 @@ class Act079ViewNcField(
             nc.getPictureUrlLocal() ?: ""
         )
         //
-        return json;
+        return json
     }
 
-    private fun convertPictureDataValueToJson() = ToolBox.converterToJson(nc.getDataValue()?.replace("|", "#"))
+    /**
+     * Fun que transforma resposta do PictureFF em mValue
+     */
+    private fun convertPictureDataValueToJson() = ToolBox.converterToJson(nc.getDataValue()?.replace("|", "#")?:"")
 
+    /**
+     * Fun datatype Photo
+     * Seta foto se ja baixada
+     * Seta amplheta se foto nao baixada
+     * Seta texto de sem resposta, se não houver foto
+     */
     private fun configDataTypePhoto() {
         val layoutParams = getLayoutParamWithPercentWindowMetric(0.8,0.3)
         val imageView = getWaitingImgDownloadIv(layoutParams)
@@ -180,12 +215,16 @@ class Act079ViewNcField(
         }
     }
 
+    /**
+     * Fun que aciona interface quando o field é clicado
+     */
     private fun reportPositionAndHighlightItem() {
-        isHighlighted = true
         onFieldClick?.onFieldClick(mSequence)
-        applyHighlight()
     }
 
+    /**
+     * Fun que aplica ou remove o fundo colorido
+     */
     private fun applyHighlight() {
         if(isHighlighted) {
             binding.act079ViewNcFieldClMain.background = ContextCompat.getDrawable(
@@ -197,8 +236,14 @@ class Act079ViewNcField(
         }
     }
 
+    /**
+     * Fun que retorna o nome completo da photo
+     */
     private fun getPhotoFullPath(photoLocal: String) = "${ConstantBaseApp.CACHE_PATH_PHOTO}/$photoLocal"
 
+    /**
+     * Fun que gera imageView com ampulheta
+     */
     private fun getWaitingImgDownloadIv(params: ViewGroup.LayoutParams): ImageView {
         return ImageView(context).apply {
             layoutParams = params
@@ -206,12 +251,18 @@ class Act079ViewNcField(
         }
     }
 
+    /**
+     * Fun que retorna layoutParam com W e H baseado no tamanho da tela e porcentagem
+     */
     private fun getLayoutParamWithPercentWindowMetric(wPercent: Double, hPercent: Double): ViewGroup.LayoutParams {
         val screenMetrics = ToolBox_Inf.getPercentageWidthAndHeight(context, wPercent, hPercent)
         val layoutParams = ViewGroup.LayoutParams(screenMetrics[0], screenMetrics[1])
         return layoutParams
     }
 
+    /**
+     * Fun que trata o icone de foto dos dots e gera nome das foto para galeria
+     */
     private fun configDotsPicIcon() {
         if( nc.getDataPhoto1Url().isNullOrEmpty()
             && nc.getDataPhoto2Url().isNullOrEmpty()
@@ -265,16 +316,22 @@ class Act079ViewNcField(
                 }
 
                 setOnClickListener {
-                    onFieldClick?.onGalleryClick(images)
+                    onFieldClick?.onGalleryClick(mSequence,images)
                 }
             }
         }
     }
 
+    /**
+     * Fun que gera nome das fotos para galeria
+     */
     private fun getGalleryPhotoName(id: String): String {
         return "${ConstantBaseApp.TK_TICKET_NC_PREX_IMG}_${nc.getCustomerCode()}_${nc.getTicketPrefix()}_${nc.getTicketCode()}_${nc.getPage()}_${nc.getCustomFormOrder()}_${id}"
     }
 
+    /**
+     * Fun que concatena foto a lista de fotos
+     */
     private fun getPhotosName(images: String, photo :String): String {
         if (images.isNullOrEmpty()) {
             return photo
@@ -283,6 +340,9 @@ class Act079ViewNcField(
         }
     }
 
+    /**
+     * Fun que configura o comentario
+     */
     private fun configComment() {
         if(nc.getDataComment().isNullOrEmpty()){
             binding.act079ViewNcFieldTvComment.apply{
@@ -296,11 +356,17 @@ class Act079ViewNcField(
         }
     }
 
+    /**
+     * Fun que configura a descricao do Field
+     */
     private fun getFieldDesc(): String {
         return "${nc.getPage()}.${nc.getCustomFormOrder()} - ${nc.getDescription()}"
     }
 
 
+    /**
+     * Fun que chama cameraACt passando a foto como param
+     */
     private fun callCameraAct(photoFullPath: String) {
         val sFile =  File(photoFullPath)
         if (!sFile.exists()) {
@@ -324,6 +390,9 @@ class Act079ViewNcField(
         context.startActivity(mIntent)
     }
 
+    /**
+     * Fun usada pela act para refreshar o layout do highlight
+     */
     fun forceHighlight(){
         applyHighlight()
     }

@@ -1,8 +1,5 @@
 package com.namoadigital.prj001.ui.act079;
 
-import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
-import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -52,6 +49,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
+import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
+
 public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentOriginFormListener {
 
     public static final String NC_ITEM_IDX = "NC_ITEM_IDX";
@@ -59,7 +59,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
 
     private FragmentManager fm;
     private Frg_Pipeline_Header mFrgPipelineHeader;
-    private boolean hasFABActive=false;
+    private boolean hasFABActive = false;
     private Act079_Main_Presenter mPresenter;
     private Bundle requestingBundle;
     private int mTkPrefix;
@@ -89,10 +89,13 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         //
         initActions();
         //
-        tryScrollToNcPosition();
+        highlightFieldIfExists();
     }
 
-    private void tryScrollToNcPosition() {
+    /**
+     * Metodo que faz o highlight no item
+     */
+    private void highlightFieldIfExists() {
         if(ncItemPositionIdx > -1){
             try{
                 Act079ViewNcField viewNcField = (Act079ViewNcField) binding.act079LlNcViews.getChildAt(ncItemPositionIdx);
@@ -102,10 +105,6 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                 ToolBox_Inf.registerException(getClass().getName(),e);
             }
         }
-        //
-//        if(ncNestedScrollYPosition > -1 ){
-//            binding.act079NsvMain.scrollTo(0,ncNestedScrollYPosition);
-//        }
     }
 
     private void iniSetup() {
@@ -430,6 +429,10 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         }
     }
 
+    /**
+     * Metodo que recebi lista de ViewFields, seta dados addicionais e interface e seta no linearLayout
+     * @param ncViews
+     */
     @Override
     public void loadTicketNcs(ArrayList<Act079ViewNcBase> ncViews) {
         binding.act079LlNcViews.removeAllViews();
@@ -444,14 +447,14 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             if(ncView instanceof Act079ViewNcField){
                 ((Act079ViewNcField) ncView).setOnFieldClick(new Act079ViewNcBase.onFieldClickListener() {
                     @Override
-                    public void onGalleryClick(@NonNull String imageNames) {
+                    public void onGalleryClick(int itemPositionIdx, @NotNull String imageNames) {
+                        changeClickedFieldLayout(itemPositionIdx);
                         callGalleryAct(imageNames);
                     }
 
                     @Override
                     public void onFieldClick(int itemPositionIdx) {
-                        ncItemPositionIdx = itemPositionIdx;
-                        ncNestedScrollYPosition = binding.act079NsvMain.getScrollY();
+                        changeClickedFieldLayout(itemPositionIdx);
                     }
                 });
                 ((Act079ViewNcField) ncView).setEmptyAnswerLabel(hmAux_Trans.get("nc_empty_answer_lbl"));
@@ -461,6 +464,34 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         }
     }
 
+    /**
+     * Metodo que pega remove o highlight do ultimo item clicado, atualiza o item clicado e aplica
+     * highlight no novo item
+     * @param itemPositionIdx
+     */
+    private void changeClickedFieldLayout(int itemPositionIdx) {
+        changeHighlightNcFieldState(ncItemPositionIdx,false);
+        ncItemPositionIdx = itemPositionIdx;
+        changeHighlightNcFieldState(ncItemPositionIdx,true);
+    }
+
+    /**
+     * Metodo que define se remove ou seta o highligh no Field e forla o refresh do fund
+     * @param ncItemPositionIdx
+     * @param highlightOn
+     */
+    private void changeHighlightNcFieldState(int ncItemPositionIdx, boolean highlightOn) {
+        if(ncItemPositionIdx > -1) {
+            Act079ViewNcField lastHighlitedView = (Act079ViewNcField) binding.act079LlNcViews.getChildAt(ncItemPositionIdx);
+            lastHighlitedView.setHighlighted(highlightOn);
+            lastHighlitedView.forceHighlight();
+        }
+    }
+
+    /**
+     * Metodo que chama galeria
+     * @param imageNames
+     */
     private void callGalleryAct(@NonNull String imageNames) {
         Intent mIntent = new Intent(context, Gallery_v2_Activity.class);
         mIntent.putExtra(ConstantBase.PID, 0);
@@ -563,6 +594,10 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         return hmAux_Trans.get("download_form_pdf_lbl");
     }
 
+    /**
+     * Metodo que salva o ultimo item clicado e a posição no NestedScrolview
+     * @param outState
+     */
     @Override
     protected void onSaveInstanceState(@NonNull @NotNull Bundle outState) {
         super.onSaveInstanceState(outState);

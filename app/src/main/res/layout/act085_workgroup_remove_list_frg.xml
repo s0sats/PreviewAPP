@@ -16,7 +16,7 @@
            android:layout_height="wrap_content"
            android:layout_marginTop="8dp"
            android:text="Daniel Luche"
-           android:textSize="@dimen/font_size_item_md"
+           android:textSize="@dimen/font_size_title_md"
            android:textStyle="bold"
            app:layout_constraintEnd_toStartOf="@+id/act085_workgroup_remove_list_frg_gd_end"
            app:layout_constraintStart_toStartOf="@+id/act085_workgroup_remove_list_frg_gd_start"
@@ -43,7 +43,9 @@
            app:layout_constraintEnd_toStartOf="@+id/act085_workgroup_remove_list_frg_gd_end"
            app:layout_constraintHorizontal_bias="0.0"
            app:layout_constraintStart_toStartOf="@+id/act085_workgroup_remove_list_frg_gd_start"
-           app:layout_constraintTop_toBottomOf="@+id/act085_workgroup_remove_list_frg_tv_usr_nick" />
+           app:layout_constraintTop_toBottomOf="@+id/act085_workgroup_remove_list_frg_tv_usr_nick"
+           android:visibility="gone"
+           />
 
        <androidx.constraintlayout.widget.Guideline
            android:id="@+id/act085_workgroup_remove_list_frg_gd_start"
