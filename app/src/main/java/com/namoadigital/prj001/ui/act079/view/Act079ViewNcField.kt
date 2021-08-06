@@ -197,7 +197,7 @@ class Act079ViewNcField(
         }
     }
 
-    private fun getPhotoFullPath(photoLocal: String) = "${ConstantBaseApp.CACHE_PATH}/$photoLocal"
+    private fun getPhotoFullPath(photoLocal: String) = "${ConstantBaseApp.CACHE_PATH_PHOTO}/$photoLocal"
 
     private fun getWaitingImgDownloadIv(params: ViewGroup.LayoutParams): ImageView {
         return ImageView(context).apply {
@@ -223,24 +223,56 @@ class Act079ViewNcField(
             binding.act079ViewNcFieldIvPicDots.apply {
                 visibility = View.VISIBLE
                 var images = ""
-                nc.getDataPhoto1UrlLocal()?.let{
-                    images = getPhotosName(images,it)
+
+                images = if(nc.getDataPhoto1UrlLocal() != null){
+                    getPhotosName(images, nc.getDataPhoto1UrlLocal()!!)
+                }else{
+                    if(nc.getDataPhoto1Url() != null) {
+                        getPhotosName(images, getGalleryPhotoName("1"))
+                    }else{
+                        images
+                    }
                 }
-                nc.getDataPhoto2UrlLocal()?.let{
-                    images = getPhotosName(images,it)
+
+                images = if(nc.getDataPhoto2UrlLocal() != null){
+                    getPhotosName(images, nc.getDataPhoto2UrlLocal()!!)
+                }else{
+                    if(nc.getDataPhoto2Url() != null) {
+                        getPhotosName(images, getGalleryPhotoName("2"))
+                    }else{
+                        images
+                    }
                 }
-                nc.getDataPhoto3UrlLocal()?.let{
-                    images = getPhotosName(images,it)
+
+                images = if(nc.getDataPhoto3UrlLocal() != null){
+                    getPhotosName(images, nc.getDataPhoto3UrlLocal()!!)
+                }else{
+                    if(nc.getDataPhoto3Url() != null) {
+                        getPhotosName(images, getGalleryPhotoName("3"))
+                    }else{
+                        images
+                    }
                 }
-                nc.getDataPhoto4UrlLocal()?.let{
-                    images = getPhotosName(images,it)
+
+                images = if(nc.getDataPhoto4UrlLocal() != null){
+                    getPhotosName(images, nc.getDataPhoto4UrlLocal()!!)
+                }else{
+                    if(nc.getDataPhoto4Url() != null) {
+                        getPhotosName(images, getGalleryPhotoName("4"))
+                    }else{
+                        images
+                    }
                 }
-                tag = images
+
                 setOnClickListener {
                     onFieldClick?.onGalleryClick(images)
                 }
             }
         }
+    }
+
+    private fun getGalleryPhotoName(id: String): String {
+        return "${ConstantBaseApp.TK_TICKET_NC_PREX_IMG}_${nc.getCustomerCode()}_${nc.getTicketPrefix()}_${nc.getTicketCode()}_${nc.getPage()}_${nc.getCustomFormOrder()}_${id}"
     }
 
     private fun getPhotosName(images: String, photo :String): String {
@@ -278,7 +310,7 @@ class Act079ViewNcField(
         val bundle = Bundle()
         bundle.putInt(ConstantBase.PID, id)
         bundle.putInt(ConstantBase.PTYPE, 1)
-        bundle.putString(ConstantBase.PPATH, photoFullPath)
+        bundle.putString(ConstantBase.PPATH, sFile.name)
         //
         bundle.putBoolean(ConstantBase.PEDIT, false)
         bundle.putBoolean(ConstantBase.PENABLED, false)
