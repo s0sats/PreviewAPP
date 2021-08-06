@@ -138,6 +138,7 @@ class Act085WorkgroupAddListFrg : BaseFragment() {
                 setmOCR(false)
                 setmNFC(false)
             }
+            act085WorkgroupAddListFrgTvDateVal.setmCanClean(false)
         }
     }
 

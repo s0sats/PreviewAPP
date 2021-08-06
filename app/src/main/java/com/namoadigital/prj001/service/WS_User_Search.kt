@@ -3,7 +3,7 @@ package com.namoadigital.prj001.service
 import android.app.IntentService
 import android.content.Intent
 import com.google.gson.GsonBuilder
-import com.namoa_digital.namoa_library.util.ToolBox.*
+import com.namoa_digital.namoa_library.util.ToolBox.sendBCStatus
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.model.TUser_Search_Env
 import com.namoadigital.prj001.model.TUser_Search_Rec
@@ -18,7 +18,7 @@ class WS_User_Search : IntentService("WS_User_Search") {
     private val hmAux_Trans by lazy {
 
         val transList: MutableList<String> = ArrayList()
-        transList.add("no_data_returned_msg")
+        transList.add("msg_no_data_returned")
         transList.add("generic_sending_data_msg")
         transList.add("generic_receiving_data_msg")
         transList.add("generic_processing_data")
@@ -142,7 +142,7 @@ class WS_User_Search : IntentService("WS_User_Search") {
     private fun handleError() {
         ToolBox_Inf.sendBCStatus(
             applicationContext, "ERROR_1",
-            hmAux_Trans["no_data_returned_msg"], "", "0"
+            hmAux_Trans["msg_no_data_returned"], "", "0"
         )
     }
 }
