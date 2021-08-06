@@ -330,6 +330,9 @@ public class Act070_Main extends Base_Activity_Frag implements Act070_Main_Contr
     }
 
     private void initVars() {
+        //reseta preferencia do toggle da origem
+        ToolBox_Con.setBooleanPreference(context, ConstantBaseApp.PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE, true);
+        //
         bindViews();
         //
         wsResult.clear();

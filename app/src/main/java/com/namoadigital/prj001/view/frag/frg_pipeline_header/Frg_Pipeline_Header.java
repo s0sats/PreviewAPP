@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.model.TK_Ticket;
 import com.namoadigital.prj001.model.TK_Ticket_Form;
+import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
@@ -50,6 +51,7 @@ public class Frg_Pipeline_Header extends Fragment {
     private static final String STEP_MAIN_DESC_PARAM = "STEP_MAIN_DESC_PARAM";
     private static final String STEP_MAIN_STEP_NUM_COLOR_PARAM = "STEP_MAIN_STEP_NUM_COLOR_PARAM";
     private static final String TICKET_OBJ_PARAM = "TICKET_OBJ_PARAM";
+    private static final String IV_TOOGLE_STATE = "IV_TOOGLE_STATE";
     //LUCHE - 14/08/2020 - Agendamento
     private static final String TICKET_SCHEDULE_DATE_PARAM = "TICKET_SCHEDULE_DATE_PARAM";
     private static final String TICKET_SCHEDULE_DESC_PARAM= "TICKET_SCHEDULE_DESC_PARAM";
@@ -130,8 +132,7 @@ public class Frg_Pipeline_Header extends Fragment {
     private TextView tv_form_nc_count;
     private ImageView iv_form_download_pdf;
     private TextView tv_form_download_pdf;
-
-
+    private Boolean isToogleOpen = true;
 
     public Frg_Pipeline_Header() {
         // Required empty public constructor
@@ -272,7 +273,6 @@ public class Frg_Pipeline_Header extends Fragment {
             origin_end_date = getArguments().getString(ORIGIN_END_DATE,"");
             origin_end_user = getArguments().getString(ORIGIN_END_USER,"");
             mTicket = (TK_Ticket) getArguments().getSerializable(TICKET_OBJ_PARAM);
-            //
         }
     }
 
@@ -348,7 +348,6 @@ public class Frg_Pipeline_Header extends Fragment {
     }
 
     public void setFragmentProfile() {
-
          switch (header_profile_param) {
             case PIPELINE:
                 //LUCHE - 15/09/2020 - Comentado pois o btn será no ticket_id
@@ -611,23 +610,16 @@ public class Frg_Pipeline_Header extends Fragment {
     public void setFormInfo() {
         final TK_Ticket_Form form = mOriginFormListener.getTicketForm();
         try {
-            cl_origin_form_info.setVisibility(View.VISIBLE);
+            isToogleOpen = ToolBox_Con.getBooleanPreferencesByKey(requireContext(), ConstantBaseApp.PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE, true);
+            updateToogleLayout();
             iv_toggle_icon.setVisibility(View.VISIBLE);
             //
             iv_toggle_icon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(cl_origin_form_info.getVisibility() == View.VISIBLE){
-                        iv_toggle_icon.setImageDrawable(
-                                ContextCompat.getDrawable(Objects.requireNonNull(getContext()),R.drawable.ic_baseline_keyboard_arrow_down_24_black)
-                        );
-                        cl_origin_form_info.setVisibility(View.GONE);
-                    }else{
-                        iv_toggle_icon.setImageDrawable(
-                                ContextCompat.getDrawable(Objects.requireNonNull(getContext()),R.drawable.ic_baseline_keyboard_arrow_up_24_black)
-                        );
-                        cl_origin_form_info.setVisibility(View.VISIBLE);
-                    }
+                    isToogleOpen = !isToogleOpen;
+                    updateToogleLayout();
+                    updateToogleState(isToogleOpen);
                 }
             });
             //
@@ -665,6 +657,20 @@ public class Frg_Pipeline_Header extends Fragment {
         }
     }
 
+    private void updateToogleLayout() {
+        if(isToogleOpen) {
+            cl_origin_form_info.setVisibility(View.VISIBLE);
+            iv_toggle_icon.setImageDrawable(
+                ContextCompat.getDrawable(Objects.requireNonNull(getContext()),R.drawable.ic_baseline_keyboard_arrow_up_24_black)
+            );
+        }else{
+            iv_toggle_icon.setImageDrawable(
+                ContextCompat.getDrawable(Objects.requireNonNull(getContext()),R.drawable.ic_baseline_keyboard_arrow_down_24_black)
+            );
+            cl_origin_form_info.setVisibility(View.GONE);
+        }
+    }
+
     public interface OnPipelineFragmentInteractionListener {
         void syncPipeline();
     }
@@ -691,6 +697,10 @@ public class Frg_Pipeline_Header extends Fragment {
         setBtnSyncVisibility();
     }
 
+    private void updateToogleState(boolean isToogleOpen){
+        ToolBox_Con.setBooleanPreference(requireContext(), ConstantBaseApp.PREFERENCE_PIPELINE_HEADER_FORM_INFO_TOGGLE, isToogleOpen);
+    }
+
     private void setBtnSyncVisibility() {
         //ll_btn_sync.setVisibility(btn_sync_status_param ? View.VISIBLE : View.GONE);
         defineTicketIdLayout();
@@ -703,6 +713,5 @@ public class Frg_Pipeline_Header extends Fragment {
         }else{
             iv_offline.setVisibility(View.GONE);
         }
-
     }
 }
