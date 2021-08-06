@@ -175,7 +175,34 @@ class Act079ViewNcField(
         ){
             binding.act079ViewNcFieldIvPicDots.visibility = View.GONE
         }else{
-            binding.act079ViewNcFieldIvPicDots.visibility = View.VISIBLE
+            binding.act079ViewNcFieldIvPicDots.apply {
+                visibility = View.VISIBLE
+                var images = ""
+                nc.getDataPhoto1UrlLocal()?.let{
+                    images = getPhotosName(images,it)
+                }
+                nc.getDataPhoto2UrlLocal()?.let{
+                    images = getPhotosName(images,it)
+                }
+                nc.getDataPhoto3UrlLocal()?.let{
+                    images = getPhotosName(images,it)
+                }
+                nc.getDataPhoto4UrlLocal()?.let{
+                    images = getPhotosName(images,it)
+                }
+                tag = images
+                setOnClickListener {
+                    onFieldClick?.onGalleryClick(images)
+                }
+            }
+        }
+    }
+
+    private fun getPhotosName(images: String, photo :String): String {
+        if (images.isNullOrEmpty()) {
+            return photo
+        } else {
+            return "$images#$photo"
         }
     }
 

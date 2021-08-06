@@ -1,5 +1,8 @@
 package com.namoadigital.prj001.ui.act079;
 
+import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
+import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,6 +18,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -23,6 +27,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
+import com.namoa_digital.namoa_library.view.Gallery_v2_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.databinding.Act079MainBinding;
@@ -44,9 +49,6 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
-import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
 public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contract.I_View, Frg_Pipeline_Header.OnPipelineFragmentOriginFormListener {
     private FragmentManager fm;
@@ -413,6 +415,11 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             if(ncView instanceof Act079ViewNcField){
                 ((Act079ViewNcField) ncView).setOnFieldClick(new Act079ViewNcBase.onFieldClickListener() {
                     @Override
+                    public void onGalleryClick(@NonNull String imageNames) {
+                        callGalleryAct(imageNames);
+                    }
+
+                    @Override
                     public void onFieldClick(int itemPositionIdx) {
                         ncItemPositionIdx = itemPositionIdx;
                         ncNestedScrollYPosition = binding.act079NsvMain.getScrollY();
@@ -424,6 +431,18 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
             binding.act079LlNcViews.addView(ncView,layoutParams);
         }
     }
+
+    private void callGalleryAct(@NonNull String imageNames) {
+        Intent mIntent = new Intent(context, Gallery_v2_Activity.class);
+        mIntent.putExtra(ConstantBase.PID, 0);
+        mIntent.putExtra(ConstantBase.PTYPE, 10);
+        mIntent.putExtra(ConstantBase.PPATH, imageNames);
+        mIntent.putExtra(ConstantBase.MPRE, "pp");
+        mIntent.putExtra(ConstantBase.PENABLED, false);
+        mIntent.putExtra(ConstantBase.MAXIMAGES, 4);
+        context.startActivity(mIntent);
+    }
+
 
     private void setFormFields(TK_Ticket_Step originStep) {
         if(originStep.getCtrl() != null && originStep.getCtrl().size() > 0){

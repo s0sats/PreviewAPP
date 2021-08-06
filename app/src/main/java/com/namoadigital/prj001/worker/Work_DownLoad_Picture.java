@@ -61,7 +61,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class Work_DownLoad_Picture extends Worker {
     public static final String WORKER_TAG = "Work_DownLoad_Picture";
@@ -522,23 +521,33 @@ public class Work_DownLoad_Picture extends Worker {
                 break;
             }
             try {
+                String pathPrefix = Constant.CACHE_PATH_PHOTO;
+                //
+                /**
+                 * O PICTURE_FF pois o path das imagens chumbado no CACHE_PATH, enquanto a Galleryv2
+                 * chumbado no CACHE_PATH_PHOTO, por isso a segração de path.
+                 * Foi convecionado que o PHOTO_FF seguirá com o CACHE_PATH_PHOTO
+                 */
+                if("6".equals(item.get(TkTicketOriginNcDownloadSql001.TICKET_ORIGIN_FILE_NAME_ID))) {
+                    pathPrefix = Constant.CACHE_PATH;
+                }
+                //
                 String fileNameLocal = item.get(TkTicketOriginNcDownloadSql001.FILE_NAME_LOCAL).toLowerCase();
-                if (!ToolBox_Inf.verifyDownloadFileInf( fileNameLocal + ".jpg", Constant.CACHE_PATH)) {
+                if (!ToolBox_Inf.verifyDownloadFileInf( fileNameLocal + ".jpg", pathPrefix)) {
 
-                    ToolBox_Inf.deleteDownloadFileInf(fileNameLocal + ".tmp", Constant.CACHE_PATH);
+                    ToolBox_Inf.deleteDownloadFileInf(fileNameLocal + ".tmp", pathPrefix);
                     //
                     ToolBox_Inf.downloadImagePDF(
                             item.get(TkTicketOriginNcDownloadSql001.FILE_NAME_URL),
-                            Constant.CACHE_PATH + "/" + fileNameLocal + ".tmp"
+                            pathPrefix + "/" + fileNameLocal + ".tmp"
                     );
                     //
-                    ToolBox_Inf.renameDownloadFileInf(fileNameLocal, ".jpg", Constant.CACHE_PATH);
+                    ToolBox_Inf.renameDownloadFileInf(fileNameLocal, ".jpg", pathPrefix);
                     //
                     //Atualiza campo com url local
                     updateFileName(item, fileNameLocal);
                 } else {
                     //Atualiza campo com url local
-
                     updateFileName(item, fileNameLocal);
                 }
             } catch (Exception e) {
@@ -547,7 +556,7 @@ public class Work_DownLoad_Picture extends Worker {
         }
     }
 
-    private void updateFileName(HMAux item, String fileNameLocal) {
+    private void updateFileName(HMAux item, String fileNameLocal) throws Exception {
         TkTicketOriginNc originNc = tickeOriginNctDao.getByString(
                 new TkTicketOriginNcSql001(
                         customer_code,
@@ -559,7 +568,7 @@ public class Work_DownLoad_Picture extends Worker {
         );
         //
         if(originNc != null) {
-            switch (Objects.requireNonNull(item.get(TkTicketOriginNcDownloadSql001.TICKET_ORIGIN_FILE_NAME_ID))) {
+            switch (item.get(TkTicketOriginNcDownloadSql001.TICKET_ORIGIN_FILE_NAME_ID)) {
                 case "1":
                     originNc.setDataPhoto1UrlLocal(fileNameLocal + ".jpg");
                     break;
