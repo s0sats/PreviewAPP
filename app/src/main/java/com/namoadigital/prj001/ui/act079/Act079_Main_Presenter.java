@@ -56,6 +56,11 @@ public class Act079_Main_Presenter implements Act079_Main_Contract.I_Presenter{
         return ticket;
     }
 
+    /**
+     * Metodo que verifica se origem é NC e se form, inicia preenchimento dos fields
+     * @param mTkPrefix
+     * @param mTkCode
+     */
     @Override
     public void checkOriginType(int mTkPrefix, int mTkCode) {
         TK_Ticket ticket = getTkTicket(mTkPrefix, mTkCode);
@@ -66,15 +71,13 @@ public class Act079_Main_Presenter implements Act079_Main_Contract.I_Presenter{
         }
     }
 
+    /**
+     * Metodo que tranforma a lista de TkTicketOriginNc e Act079ViewNcBase usando classe factory
+     * @param ncList
+     * @return
+     */
     private ArrayList<Act079ViewNcBase> generateNcViews(ArrayList<TkTicketOriginNc> ncList) {
         ArrayList<Act079ViewNcBase> ncViews = new ArrayList<>();
-//        for (TkTicketOriginNc tkTicketOriginNc : ncList) {
-//            TextView auxTv = new TextView(context);
-//            auxTv.setText(tkTicketOriginNc.toString());
-//            auxTv.setBackground(ContextCompat.getDrawable(context, R.drawable.namoa_cell_8_states));
-//            ncViews.add(auxTv);
-//        }
-
         for (TkTicketOriginNc tkTicketOriginNc : ncList) {
             ncViews.add(new Act079ViewFactory(context, tkTicketOriginNc).get());
         }

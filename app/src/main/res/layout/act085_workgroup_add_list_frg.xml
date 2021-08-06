@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Daniel Luche"
-            android:textSize="@dimen/font_size_item_md"
+            android:textSize="@dimen/font_size_title_md"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/act085_workgroup_add_list_frg_gd_end"
             app:layout_constraintStart_toStartOf="@+id/act085_workgroup_add_list_frg_gd_start"
