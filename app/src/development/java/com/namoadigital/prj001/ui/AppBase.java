@@ -1,19 +1,5 @@
 package com.namoadigital.prj001.ui;
 
-import android.app.Application;
-import android.app.NotificationManager;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-
-import com.namoa_digital.namoa_library.util.ConstantBase;
-import com.namoadigital.prj001.BuildConfig;
-import com.namoadigital.prj001.R;
-import com.namoadigital.prj001.receiver.WBR_Connections_Change;
-import com.namoadigital.prj001.util.Constant;
-import com.namoadigital.prj001.util.ConstantBaseApp;
-import com.namoadigital.prj001.util.ToolBox_Con;
-import com.namoadigital.prj001.util.ToolBox_Inf;
-
 import static com.namoa_digital.namoa_library.util.ConstantBase.PKG_CLEAN;
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH;
 import static com.namoadigital.prj001.util.Constant.CACHE_PATH_PHOTO;
@@ -38,18 +24,32 @@ import static com.namoadigital.prj001.util.ConstantBaseApp.CACHE_CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.CHAT_PREFIX;
+import static com.namoadigital.prj001.util.ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.GENERIC_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.PENDENCY_CHANNEL_ID;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME;
 import static com.namoadigital.prj001.util.ConstantBaseApp.SUPPORT_NAME_FULL;
+import static com.namoadigital.prj001.util.ConstantBaseApp.TICKET_JSON_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_PATH;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SERIAL_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_NAME_FULL;
 import static com.namoadigital.prj001.util.ConstantBaseApp.TOKEN_SO_PREFIX;
 import static com.namoadigital.prj001.util.ConstantBaseApp.UNSENT_IMG_PATH;
-import static com.namoadigital.prj001.util.ConstantBaseApp.TICKET_JSON_PATH;
-import static com.namoadigital.prj001.util.ConstantBaseApp.CUSTOMER_SITE_LICENSE_JSON_PATH;
+
+import android.app.Application;
+import android.app.NotificationManager;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+
+import com.namoa_digital.namoa_library.util.ConstantBase;
+import com.namoadigital.prj001.BuildConfig;
+import com.namoadigital.prj001.R;
+import com.namoadigital.prj001.receiver.WBR_Connections_Change;
+import com.namoadigital.prj001.util.Constant;
+import com.namoadigital.prj001.util.ConstantBaseApp;
+import com.namoadigital.prj001.util.ToolBox_Con;
+import com.namoadigital.prj001.util.ToolBox_Inf;
 
 
 /**
@@ -131,7 +131,7 @@ public class AppBase extends Application {
         DB_FULL_BASE = DB_PATH + "/" + DB_NAME_BASE;
 
         DB_NAME_CUSTOM = "cc.db3";
-        DB_VERSION_CUSTOM = 65;
+        DB_VERSION_CUSTOM = 66;
         DB_FULL_CUSTOM = DB_PATH + "/" + DB_NAME_CUSTOM;
 
         //DB_NAME_CHAT = "namoa_chat.db3";
