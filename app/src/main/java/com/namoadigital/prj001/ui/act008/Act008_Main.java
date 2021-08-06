@@ -1,5 +1,11 @@
 package com.namoadigital.prj001.ui.act008;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT006;
+import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SCHEDULED_PROFILE_CHECK;
+import static com.namoadigital.prj001.util.ToolBox_Inf.getMyActionFilterParam;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -47,6 +53,7 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
+import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Search_Not_Focus;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
@@ -64,12 +71,6 @@ import com.namoadigital.prj001.view.frag.frg_serial_edit.Frg_Serial_Edit;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT006;
-import static com.namoadigital.prj001.util.ConstantBaseApp.ACT_SELECTED_DATE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.SCHEDULED_PROFILE_CHECK;
-import static com.namoadigital.prj001.util.ToolBox_Inf.getMyActionFilterParam;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -1115,9 +1116,10 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             mPresenter.extractSearchResult(result);
             //
             disableProgressDialog();
-        } else {
+        } else if (ws_process.equalsIgnoreCase(WS_Sync.class.getName())) {
             //Atualiza data na tabela de produtos loca
             mPresenter.updateSyncChecklist();
+            mPresenter.checkFlow();
             // mPresenter.proceedToSerialProcess(ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()) , serial_required);
         }
 
