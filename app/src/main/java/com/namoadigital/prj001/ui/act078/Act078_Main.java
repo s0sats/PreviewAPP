@@ -1,5 +1,8 @@
 package com.namoadigital.prj001.ui.act078;
 
+import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
+import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -45,9 +48,6 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.ui.act075.Act075_Main.PRODUCT_VIEW_ID;
-import static com.namoadigital.prj001.ui.act075.Act075_Main.VIEW_PROFILE;
 
 public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contract.I_View {
 
@@ -322,6 +322,13 @@ public class Act078_Main extends Base_Activity_Frag implements Act078_Main_Contr
         });
 
         binding.act078IvOpenPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callCameraAct();
+            }
+        });
+        //
+        binding.act078IvScheduleOpenPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 callCameraAct();
