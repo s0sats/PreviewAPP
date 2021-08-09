@@ -53,7 +53,6 @@ import com.namoadigital.prj001.receiver.WBR_Logout;
 import com.namoadigital.prj001.service.WS_Serial_Save;
 import com.namoadigital.prj001.service.WS_Serial_Search;
 import com.namoadigital.prj001.service.WS_Serial_Tracking_Search;
-import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.service.WS_TK_Ticket_Search_Not_Focus;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act009.Act009_Main;
@@ -1116,10 +1115,9 @@ public class Act008_Main extends Base_Activity implements Act008_Main_View {
             mPresenter.extractSearchResult(result);
             //
             disableProgressDialog();
-        } else if (ws_process.equalsIgnoreCase(WS_Sync.class.getName())) {
+        } else {
             //Atualiza data na tabela de produtos loca
             mPresenter.updateSyncChecklist();
-            mPresenter.checkFlow();
             // mPresenter.proceedToSerialProcess(ToolBox_Inf.removeAllLineBreaks(mket_serial_id.getText().toString().trim()) , serial_required);
         }
 
