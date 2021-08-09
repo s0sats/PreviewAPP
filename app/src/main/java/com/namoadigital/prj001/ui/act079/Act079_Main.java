@@ -24,6 +24,7 @@ import com.namoa_digital.namoa_library.util.ConstantBase;
 import com.namoa_digital.namoa_library.util.HMAux;
 import com.namoa_digital.namoa_library.util.ToolBox;
 import com.namoa_digital.namoa_library.view.Base_Activity_Frag;
+import com.namoa_digital.namoa_library.view.Camera_Activity;
 import com.namoa_digital.namoa_library.view.Gallery_v2_Activity;
 import com.namoadigital.prj001.R;
 import com.namoadigital.prj001.dao.TK_TicketDao;
@@ -46,6 +47,7 @@ import com.namoadigital.prj001.view.frag.frg_pipeline_header.Frg_Pipeline_Header
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -192,7 +194,7 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
     }
 
     private void setLabels() {
-        binding.act079TvOpenPhoneLbl.setText(hmAux_Trans.get("open_photo_lbl"));
+        binding.act079TvOpenPhotoLbl.setText(hmAux_Trans.get("open_photo_lbl"));
         binding.act079TvOpenCommentLbl.setText(hmAux_Trans.get("open_comment_lbl"));
         binding.act079TvOpenUsernameLbl.setText(hmAux_Trans.get("open_username_lbl"));
         binding.act079TvOpenEmailLbl.setText(hmAux_Trans.get("open_email_lbl"));
@@ -503,6 +505,30 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
         context.startActivity(mIntent);
     }
 
+    private void callCameraAct() {
+        File sFile;
+        sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + actionPhotoLocalPath);
+
+        if (!sFile.exists()) {
+            return;
+        }
+        //
+        Bundle bundle = new Bundle();
+        bundle.putInt(ConstantBase.PID, binding.act079IvOpenPhoto.getId());
+        bundle.putInt(ConstantBase.PTYPE, 1);
+        bundle.putString(ConstantBase.PPATH, actionPhotoLocalPath);
+        bundle.putBoolean(ConstantBase.PEDIT, false);
+        bundle.putBoolean(ConstantBase.PENABLED, false);
+        bundle.putBoolean(ConstantBase.P_ALLOW_GALLERY, false);
+        bundle.putBoolean(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false);
+        bundle.putString(ConstantBase.FILE_AUTHORITIES, ConstantBase.AUTHORITIES_FOR_PROVIDER);
+        //
+        Intent mIntent = new Intent(context, Camera_Activity.class);
+        mIntent.putExtras(bundle);
+        //
+        context.startActivity(mIntent);
+    }
+
 
     private void setFormFields(TK_Ticket_Step originStep) {
         if(originStep.getCtrl() != null && originStep.getCtrl().size() > 0){
@@ -553,6 +579,12 @@ public class Act079_Main extends Base_Activity_Frag implements Act079_Main_Contr
                     setImagePlaceholder(binding.act079IvOpenPhoto);
                 } else {
                     binding.act079IvOpenPhoto.setImageBitmap(bitmap);
+                    binding.act079IvOpenPhoto.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            callCameraAct();
+                        }
+                    });
                 }
             } catch (NullPointerException e) {
                 setImagePlaceholder(binding.act079IvOpenPhoto);
