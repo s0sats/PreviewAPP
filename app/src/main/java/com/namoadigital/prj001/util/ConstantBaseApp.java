@@ -111,10 +111,12 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String ACT083 = "act083";
     public static final String ACT084 = "act084";
     public static final String ACT085 = "act085";
+    public static final String ACT086 = "act086";
 
     public static final String title_lbl = "_title";
 
     public static final String ACT_PRODUCT_SELECTION = "act_product_selection";
+    public static final int ACT_PRODUCT_SELECTION_REQUEST_CODE = 20;
     public static final String FRG_SERIAL_SEARCH = "frg_serial_search";
     public static final String FRG_SERIAL_EDIT = "frg_serial_edit";
     public static final String FRG_MOVE_CREATE = "frag_move_create";

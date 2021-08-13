@@ -180,4 +180,10 @@
     <color name="namoa_myactions_blue_bg2">#c4dde4</color>
 
     <color name="gre_text_placeholder">#88000000</color>
+
+    <!--Cores O.S Form-->
+    <color name="namoa_os_form_done_action_blue">#496AE2</color>
+    <color name="namoa_os_form_verified_green">#29D930</color>
+    <color name="namoa_os_form_problem_red">#FE0B0B</color>
+
 </resources>

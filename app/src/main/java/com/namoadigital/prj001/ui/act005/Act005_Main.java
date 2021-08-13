@@ -1,5 +1,17 @@
 package com.namoadigital.prj001.ui.act005;
 
+import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
+import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_TICKET;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
+import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER;
+import static com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome.OnFrgMainHomeIteract;
+
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -88,7 +100,7 @@ import com.namoadigital.prj001.ui.act068.Act068_Main;
 import com.namoadigital.prj001.ui.act069.Act069_Main;
 import com.namoadigital.prj001.ui.act083.Act083_Main;
 import com.namoadigital.prj001.ui.act084.Act084Main;
-import com.namoadigital.prj001.ui.act085.Act085Main;
+import com.namoadigital.prj001.ui.act086.Act086Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
@@ -106,18 +118,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import static com.namoadigital.prj001.ui.act005.Act005_Main_Presenter_Impl.SYNC_FOR_TICKETS_FORM;
-import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_ACTION_TK_TICKET_UPDATE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_SYNC;
-import static com.namoadigital.prj001.util.ConstantBaseApp.FCM_MODULE_TICKET;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_SITE_OPTION;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ALL_TIME_OPTION;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_FOCUS_FILTER;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_ONLY_MY_ACTIONS_OPTION;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_PERIOD_FILTER;
-import static com.namoadigital.prj001.util.ConstantBaseApp.PREFERENCE_HOME_SITES_FILTER;
-import static com.namoadigital.prj001.view.frag.frg_main_home.FrgMainHome.OnFrgMainHomeIteract;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -1637,7 +1637,9 @@ public class Act005_Main extends Base_Activity_Frag implements Act005_Main_View,
     }
 
     private void callAct085() {
-        Intent mIntent = new Intent(context, Act085Main.class);
+        //TODO CORRIGI APOS TESTE
+        //SO PRA TESTES MUDADO PRA 86
+        Intent mIntent = new Intent(context, Act086Main.class);
         mIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mIntent);
         finish();

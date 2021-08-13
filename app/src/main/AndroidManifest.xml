@@ -541,17 +541,26 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.act084.Act084Main"
+        <activity
+            android:name=".ui.act084.Act084Main"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.act085.Act085Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity android:name=".ui.act085.Act085Main"
+        <activity
+            android:name=".ui.act086.Act086Main"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"/>
+
         <activity
             android:name=".view.act.product_selection.Act_Product_Selection"
             android:label="@string/app_name"
@@ -908,7 +917,6 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_Workgroup_Member_List" />
         <receiver android:name=".receiver.WBR_Workgroup_Member_Edit" />
         <receiver android:name=".receiver.WBR_User_Search" />
-
 
         <service android:name=".service.WS_SO_Create_Room" />
         <service android:name=".service.WS_TK_Next_Ticket" />
