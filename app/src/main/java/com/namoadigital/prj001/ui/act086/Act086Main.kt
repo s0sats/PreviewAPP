@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
 import com.namoa_digital.namoa_library.util.ConstantBase
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoa_digital.namoa_library.view.Camera_Activity
@@ -84,8 +85,21 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
             callSpareProductAct()
         }
         //
-        binding.act086IvAddPhoto.setOnClickListener {
-            mPresenter.handleAddPhoto(photoList,photoLimit)
+        binding.act086IvAddPhoto.apply {
+            setOnClickListener {_->
+                mPresenter.handleAddPhoto(photoList,photoLimit)
+                Toast.makeText(context,"test",Toast.LENGTH_LONG).show()
+            }
+        }
+
+        binding.act086BtnOk.setOnClickListener (object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                Toast.makeText(context,"test",Toast.LENGTH_LONG).show()
+            }
+        })
+
+        binding.act086RgAnswers.setOnCheckedChangeListener { _, checkedId ->
+            Toast.makeText(context,"$checkedId",Toast.LENGTH_LONG).show()
         }
     }
 
