@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/include"
@@ -28,104 +28,77 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/act086_cv_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardElevation="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/act086_tv_description"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:padding="8dp"
-                        android:text="Verificar articulações  e cabos do freio de estacionamento"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <RadioGroup
-                        android:id="@+id/act086_tabs"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/act086_tv_description">
-
-                        <RadioButton
-                            android:id="@+id/act086_tab_answer"
-                            android:layout_width="0dp"
-                            android:layout_height="50dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/act074_radio_states"
-                            android:button="@null"
-                            android:checked="true"
-                            android:gravity="center"
-                            android:textAllCaps="true"
-                            android:textColor="@color/my_tickets_radio"
-                            android:textStyle="bold"
-                            android:text="resposta" />
-
-                        <View
-                            android:layout_width="2dp"
-                            android:layout_height="match_parent" />
-
-                        <RadioButton
-                            android:id="@+id/act086_tab_info"
-                            android:layout_width="0dp"
-                            android:layout_height="50dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/act074_radio_states"
-                            android:button="@null"
-                            android:gravity="center"
-                            android:textAllCaps="true"
-                            android:textColor="@color/my_tickets_radio"
-                            android:textStyle="bold"
-                            android:text="informações" />
-
-                    </RadioGroup>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:id="@+id/act086_tv_alert_ttl"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/act086_cl_header"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Alerta Atual"
-                android:textAllCaps="true"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toStartOf="@+id/act086_gd_end"
-                app:layout_constraintStart_toStartOf="@+id/act086_gd_start"
-                app:layout_constraintTop_toBottomOf="@id/act086_cv_header" />
+                app:layout_constraintEnd_toEndOf="@id/act086_gd_end"
+                app:layout_constraintStart_toStartOf="@id/act086_gd_start"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/act086_tv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:minHeight="40dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="Voltar"
+                    app:drawableTint="@color/namoa_dark_blue"
+                    app:drawableTopCompat="@drawable/ic_arrow_back_24dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/act086_tv_description"
+                    android:visibility="gone"
+                    />
+
+                <TextView
+                    android:id="@+id/act086_tv_description"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="40dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="Verificar articulações  e cabos do freio de estacionamento que vai ficar ainda maior pra pode"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/act086_tv_consult"
+                    app:layout_constraintHeight_default="wrap"
+                    app:layout_constraintStart_toEndOf="@+id/act086_tv_back"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/act086_tv_consult"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="40dp"
+                    android:minHeight="40dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="Consultar"
+                    app:drawableTint="@color/namoa_dark_blue"
+                    app:drawableTopCompat="@drawable/ic_baseline_info_24_black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/act086_tv_description" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/act086_tv_subttl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:text="Alerta Manual (5 dias)"
                 android:textColor="@color/namoa_color_danger_red"
-                app:layout_constraintEnd_toStartOf="@+id/act086_gd_end"
-                app:layout_constraintStart_toStartOf="@+id/act086_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act086_tv_alert_ttl" />
+                app:layout_constraintEnd_toStartOf="@id/act086_gd_end"
+                app:layout_constraintStart_toStartOf="@id/act086_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act086_cl_header" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/act086_gd_start"
@@ -141,28 +114,6 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_end="16dp" />
 
-            <View
-                android:id="@+id/act086_v_divider_alert"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/namoa_color_gray_6"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/act086_tv_subttl" />
-
-            <TextView
-                android:id="@+id/act086_tv_answer_ttl"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Resposta"
-                android:textAllCaps="true"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toStartOf="@+id/act086_gd_end"
-                app:layout_constraintStart_toStartOf="@+id/act086_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act086_v_divider_alert" />
-
             <RadioGroup
                 android:id="@+id/act086_rg_answers"
                 android:layout_width="0dp"
@@ -171,201 +122,72 @@
                 android:orientation="vertical"
                 app:layout_constraintEnd_toStartOf="@+id/act086_gd_end"
                 app:layout_constraintStart_toStartOf="@id/act086_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act086_tv_answer_ttl">
+                app:layout_constraintTop_toBottomOf="@+id/act086_tv_subttl">
 
                 <RadioButton
                     android:id="@+id/act086_rdo_answer_done"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:buttonTint="@color/os_form_verify_text_color_states"
+                    android:checked="false"
                     android:drawableStart="@drawable/ic_build_black_24dp"
-                    android:drawableTint="@color/os_form_answer_done_action_color_states"
-                    android:buttonTint="@color/os_form_answer_done_action_color_states"
-                    android:checked="true"
-                    android:paddingStart="8dp"
                     android:drawablePadding="8dp"
+                    android:minHeight="48dp"
+                    android:paddingStart="8dp"
+                    android:text="Ação realizada"
                     android:textColor="@color/os_form_verify_text_color_states"
-                    android:textStyle="bold"
-                    android:text="Ação realizada" />
+                    android:background="@drawable/os_form_verify_background_states"
+                    app:drawableTint="@color/namoa_os_form_done_action_blue" />
 
                 <RadioButton
                     android:id="@+id/act086_rdo_answer_problem"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:drawableStart="@drawable/ic_outline_report_problem_24_black"
-                    android:drawableTint="@color/os_form_answer_problem_color_states"
-                    android:buttonTint="@color/os_form_answer_problem_color_states"
+                    android:buttonTint="@color/os_form_verify_text_color_states"
                     android:checked="false"
-                    android:paddingStart="8dp"
+                    android:drawableStart="@drawable/ic_outline_report_problem_24_black"
                     android:drawablePadding="8dp"
+                    android:minHeight="48dp"
+                    android:paddingStart="8dp"
+                    android:text="Continua com problema"
                     android:textColor="@color/os_form_verify_text_color_states"
-                    android:textStyle="bold"
-                    android:text="Continua com problema" />
+                    android:background="@drawable/os_form_verify_background_states"
+                    app:drawableTint="@color/namoa_os_form_problem_red" />
 
                 <RadioButton
                     android:id="@+id/act086_rdo_answer_verified"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:drawableStart="@drawable/ic_done_black_24dp"
-                    android:drawableTint="@color/os_form_answer_verified_color_states"
-                    android:buttonTint="@color/os_form_answer_verified_color_states"
+                    android:buttonTint="@color/os_form_verify_text_color_states"
                     android:checked="false"
-                    android:paddingStart="8dp"
+                    android:drawableStart="@drawable/ic_done_black_24dp"
                     android:drawablePadding="8dp"
+                    app:drawableTint="@color/namoa_os_form_verified_green"
+                    android:minHeight="48dp"
+                    android:paddingStart="8dp"
+                    android:text="Já estava ok"
                     android:textColor="@color/os_form_verify_text_color_states"
-                    android:textStyle="bold"
-                    android:text="Já estava ok" />
+                    android:background="@drawable/os_form_verify_background_states"
+                    />
 
                 <RadioButton
                     android:id="@+id/act086_rdo_answer_not_verified"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:drawableStart="@drawable/ic_baseline_redo_24_black"
-                    android:drawableTint="@color/os_form_answer_not_verified_color_states"
-                    android:buttonTint="@color/os_form_answer_not_verified_color_states"
+                    android:buttonTint="@color/os_form_verify_text_color_states"
                     android:checked="false"
-                    android:paddingStart="8dp"
+                    android:drawableStart="@drawable/ic_baseline_redo_24_black"
                     android:drawablePadding="8dp"
+                    app:drawableTint="@color/namoa_status_not_executed"
+                    android:minHeight="48dp"
+                    android:paddingStart="8dp"
+                    android:text="Não verificado"
                     android:textColor="@color/os_form_verify_text_color_states"
-                    android:textStyle="bold"
-                    android:text="Não verificado" />
+                    android:background="@drawable/os_form_verify_background_states"                     />
             </RadioGroup>
-
-<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--                android:id="@+id/act086_rg_answers"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="0dp"-->
-<!--                app:layout_constraintWidth_percent="0.8"-->
-<!--                app:layout_constraintHeight_percent="0.25"-->
-<!--                android:orientation="vertical"-->
-<!--                app:layout_constraintEnd_toStartOf="@+id/act086_gd_end"-->
-<!--                app:layout_constraintStart_toStartOf="@id/act086_gd_start"-->
-<!--                app:layout_constraintTop_toBottomOf="@+id/act086_tv_answer_ttl">-->
-<!--                <androidx.constraintlayout.widget.Guideline-->
-<!--                    android:id="@+id/gd_middle"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    app:layout_constraintGuide_percent="0.5"-->
-<!--                    android:orientation="vertical"/>-->
-
-<!--                <androidx.appcompat.widget.AppCompatToggleButton-->
-<!--                    android:id="@+id/verde"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="120dp"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:layout_constraintEnd_toEndOf="@id/gd_middle"-->
-<!--                    android:backgroundTint="@drawable/teste_os_form_blue_2"-->
-<!--                    android:buttonTint="@drawable/teste_os_form_blue"-->
-<!--                    android:layout_margin="5dp"-->
-<!--                    android:text="Ação executada"-->
-<!--                    android:button="null"-->
-<!--                    android:checked="false"-->
-<!--                    android:textColor="@color/os_form_answer_done_action_color_states"-->
-<!--                    android:gravity="bottom|center_horizontal"-->
-<!--                    />-->
-
-<!--                <ImageView-->
-<!--                    android:layout_width="48dp"-->
-<!--                    android:layout_height="48dp"-->
-<!--                    android:src="@drawable/ic_build_black_24dp"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@id/verde"-->
-<!--                    app:layout_constraintEnd_toEndOf="@id/verde"-->
-<!--                    app:layout_constraintStart_toStartOf="@id/verde"-->
-<!--                    app:layout_constraintTop_toTopOf="@id/verde"-->
-<!--                    app:tint="@color/text_black" />-->
-
-<!--                <Button-->
-<!--                    android:id="@+id/vermelho"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="120dp"-->
-<!--                    app:layout_constraintStart_toStartOf="@id/gd_middle"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    android:backgroundTint="@drawable/teste_os_form_reds"-->
-<!--                    android:layout_margin="5dp"-->
-<!--                    android:text="Continua Ruim"-->
-<!--                    android:textColor="@color/os_form_answer_problem_color_states"-->
-<!--                    android:gravity="bottom|center_horizontal"-->
-<!--                    />-->
-
-<!--                <ImageView-->
-<!--                    android:layout_width="48dp"-->
-<!--                    android:layout_height="48dp"-->
-<!--                    app:layout_constraintTop_toTopOf="@id/vermelho"-->
-<!--                    app:layout_constraintStart_toStartOf="@id/vermelho"-->
-<!--                    app:layout_constraintEnd_toEndOf="@id/vermelho"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@id/vermelho"-->
-<!--                    android:src="@drawable/ic_outline_report_problem_24_black"-->
-<!--                    android:tint="@color/os_form_answer_problem_color_states"-->
-<!--                    />-->
-
-<!--                <Button-->
-<!--                    android:id="@+id/azul"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="120dp"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toBottomOf="@id/verde"-->
-<!--                    app:layout_constraintEnd_toEndOf="@id/gd_middle"-->
-<!--                    android:backgroundTint="@drawable/teste_os_form_green"-->
-<!--                    android:layout_margin="5dp"-->
-<!--                    android:text="ja esta ok"-->
-<!--                    android:textColor="@color/os_form_answer_verified_color_states"-->
-<!--                    android:gravity="bottom|center_horizontal"-->
-<!--                    />-->
-
-<!--                <ImageView-->
-<!--                    android:layout_width="48dp"-->
-<!--                    android:layout_height="48dp"-->
-<!--                    app:layout_constraintTop_toTopOf="@id/azul"-->
-<!--                    app:layout_constraintStart_toStartOf="@id/azul"-->
-<!--                    app:layout_constraintEnd_toEndOf="@id/azul"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@id/azul"-->
-<!--                    android:src="@drawable/ic_done_black_24dp"-->
-<!--                    android:tint="@color/os_form_answer_verified_color_states"-->
-<!--                    />-->
-
-
-<!--                <Button-->
-<!--                    android:id="@+id/laranja"-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="120dp"-->
-<!--                    app:layout_constraintStart_toStartOf="@id/gd_middle"-->
-<!--                    app:layout_constraintTop_toBottomOf="@id/vermelho"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    android:backgroundTint="@drawable/teste_os_form_salmon"-->
-<!--                    android:layout_margin="5dp"-->
-<!--                    android:text="Não Verificado"-->
-<!--                    android:textColor="@color/os_form_answer_not_verified_color_states"-->
-<!--                    android:gravity="bottom|center_horizontal"-->
-<!--                    />-->
-
-<!--                <ImageView-->
-<!--                    android:layout_width="48dp"-->
-<!--                    android:layout_height="48dp"-->
-<!--                    app:layout_constraintTop_toTopOf="@id/laranja"-->
-<!--                    app:layout_constraintStart_toStartOf="@id/laranja"-->
-<!--                    app:layout_constraintEnd_toEndOf="@id/laranja"-->
-<!--                    app:layout_constraintBottom_toBottomOf="@id/laranja"-->
-<!--                    android:src="@drawable/ic_baseline_redo_24_black"-->
-<!--                    android:tint="@color/os_form_answer_not_verified_color_states"-->
-<!--                    />-->
-
-
-
-<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
-
-            <View
-                android:id="@+id/act086_v_divider_answer"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/namoa_color_gray_6"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/act086_rg_answers" />
 
             <TextView
                 android:id="@+id/act086_tv_other_data_ttl"
@@ -374,10 +196,9 @@
                 android:layout_marginTop="16dp"
                 android:text="Dados complementares"
                 android:textAllCaps="true"
-                android:textSize="16sp"
                 app:layout_constraintEnd_toStartOf="@+id/act086_gd_end"
                 app:layout_constraintStart_toStartOf="@+id/act086_gd_start"
-                app:layout_constraintTop_toBottomOf="@+id/act086_v_divider_answer" />
+                app:layout_constraintTop_toBottomOf="@+id/act086_rg_answers" />
 
             <ImageView
                 android:id="@+id/act086_iv_comment"
@@ -386,66 +207,87 @@
                 app:layout_constraintBottom_toBottomOf="@+id/act086_mket_comment"
                 app:layout_constraintStart_toStartOf="@+id/act086_gd_start"
                 app:layout_constraintTop_toTopOf="@+id/act086_mket_comment"
-                app:srcCompat="@drawable/ic_baseline_notes_24" />
+                app:srcCompat="@drawable/ic_baseline_notes_24"
+                app:tint="@color/namoa_dark_blue"
+                />
 
             <com.namoa_digital.namoa_library.ctls.MKEditTextNM
                 android:id="@+id/act086_mket_comment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="4dp"
                 app:layout_constraintEnd_toEndOf="@id/act086_gd_end"
                 app:layout_constraintStart_toEndOf="@id/act086_iv_comment"
                 app:layout_constraintTop_toBottomOf="@id/act086_tv_other_data_ttl"
                 app:mBARCODE="false"
-                tools:hint="Inserir comentario" />
+                tools:hint="Inserir comentario"
+
+                />
 
             <ImageView
                 android:id="@+id/act086_iv_spare"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@+id/act086_tv_spare_ttl"
+                app:layout_constraintBottom_toBottomOf="@+id/act086_tv_product_ttl"
                 app:layout_constraintStart_toStartOf="@+id/act086_gd_start"
-                app:layout_constraintTop_toTopOf="@+id/act086_tv_spare_ttl"
+                app:layout_constraintTop_toTopOf="@+id/act086_tv_product_ttl"
                 app:srcCompat="@drawable/ic_archive_material_black_24dp"
-                app:tint="@color/namoa_pipeline_header_icon" />
+                app:tint="@color/namoa_dark_blue" />
 
             <TextView
-                android:id="@+id/act086_tv_spare_ttl"
+                android:id="@+id/act086_tv_product_ttl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="10dp"
-                android:hint="Insumos aplicados: 0"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="Insumos aplicados: 0"
+                app:layout_constraintEnd_toStartOf="@+id/act086_iv_add_product"
                 app:layout_constraintStart_toEndOf="@+id/act086_iv_spare"
                 app:layout_constraintTop_toBottomOf="@+id/act086_mket_comment" />
 
             <ImageView
-                android:id="@+id/act086_iv_add_spare"
+                android:id="@+id/act086_iv_add_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@+id/act086_tv_spare_ttl"
+                app:layout_constraintBottom_toBottomOf="@+id/act086_tv_product_ttl"
                 app:layout_constraintEnd_toStartOf="@+id/act086_gd_end"
-                app:layout_constraintTop_toTopOf="@+id/act086_tv_spare_ttl"
+                app:layout_constraintTop_toTopOf="@+id/act086_tv_product_ttl"
                 app:layout_constraintVertical_bias="0.0"
-                app:srcCompat="@drawable/ic_add_black_24px" />
+                app:srcCompat="@drawable/ic_add_black_24px"
+                app:tint="@color/namoa_dark_blue"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/act086_rv_products"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="@id/act086_gd_end"
+                app:layout_constraintStart_toStartOf="@id/act086_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act086_tv_product_ttl"
+                tools:itemCount="2"
+                tools:listitem="@layout/act086_product_item"/>
 
             <TextView
                 android:id="@+id/act086_tv_photo_ttl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="8dp"
-                android:hint="Photo"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="Photo"
                 app:layout_constraintEnd_toStartOf="@+id/act086_iv_add_photo"
                 app:layout_constraintStart_toEndOf="@+id/act086_iv_photo"
-                app:layout_constraintTop_toBottomOf="@+id/act086_tv_spare_ttl" />
+                app:layout_constraintTop_toBottomOf="@+id/act086_rv_products" />
 
             <ImageView
                 android:id="@+id/act086_iv_photo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:tint="@color/namoa_pipeline_header_icon"
+                app:tint="@color/namoa_dark_blue"
                 app:layout_constraintBottom_toBottomOf="@+id/act086_tv_photo_ttl"
                 app:layout_constraintStart_toStartOf="@+id/act086_gd_start"
                 app:layout_constraintTop_toTopOf="@+id/act086_tv_photo_ttl"
@@ -455,11 +297,12 @@
                 android:id="@+id/act086_iv_add_photo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:clickable="true"
                 app:layout_constraintBottom_toBottomOf="@+id/act086_tv_photo_ttl"
                 app:layout_constraintEnd_toStartOf="@+id/act086_gd_end"
                 app:layout_constraintTop_toTopOf="@+id/act086_tv_photo_ttl"
                 app:srcCompat="@drawable/ic_add_black_24px"
-                android:clickable="true"
+                app:tint="@color/namoa_dark_blue"
                 />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -479,53 +322,49 @@
                 android:id="@+id/act086_cl_delete_infos"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="@id/act086_gd_end"
                 app:layout_constraintStart_toStartOf="@id/act086_gd_start"
-                app:layout_constraintTop_toBottomOf="@id/act086_rv_photos"
-                android:padding="8dp"
-                >
+                app:layout_constraintTop_toBottomOf="@id/act086_rv_photos">
 
                 <ImageView
                     android:id="@+id/act086_iv_delete_infos"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/ic_trash"
-                    android:tint="@color/namoa_color_danger_red"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/namoa_color_danger_red"
                     app:layout_constraintStart_toStartOf="parent"
-                    />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center_vertical"
+                    android:text="Descartar resposta e anexos"
+                    android:textColor="@color/namoa_color_danger_red"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/act086_iv_delete_infos"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:text="Descartar resposta e anexos"
-                    android:gravity="center_vertical"
-                    android:layout_marginStart="8dp"
-                    android:textColor="@color/namoa_color_danger_red"
-                    />
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <Button
                 android:id="@+id/act086_btn_ok"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="@id/act086_gd_start"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/act086_cl_delete_infos"
-                app:layout_constraintWidth_percent="0.5"
-                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/namoa_cell_12_states"
-                android:textColor="@color/padrao_WHITE"
                 android:text="Ok"
-                />
+                android:textColor="@color/padrao_WHITE"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/act086_gd_start"
+                app:layout_constraintTop_toBottomOf="@id/act086_cl_delete_infos"
+                app:layout_constraintWidth_percent="0.5" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,6 +2,8 @@ package com.namoadigital.prj001.util;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 
+import org.jetbrains.annotations.Nullable;
+
 
 /**
  * Created by neomatrix on 05/04/17.
@@ -518,6 +520,7 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MAIN_RESULT_UPDATE_REQUIRED = "UPDATE_REQUIRED";
     public static final String MAIN_RESULT_UPDATE_REQUIRED_WARNING = "UPDATE_REQUIRED_WARNING";
     public static final String CONST_NONCONFORMITY_INSTR_SEARCH = "\",\"AP\":1,\"";
+    public static final String FULL_TIMESTAMP_TZ_FORMAT = "yyyy-MM-dd HH:mm:ss Z";
 
     //Parametros de Permissões - EV_USER_CUSTOMER_PARAMETERS
     public static final String PARAM_SCHEDULE_CHECKLIST = "SCHEDULE_CHECKLIST";

@@ -4,12 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import android.widget.Toast
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.namoa_digital.namoa_library.util.ConstantBase
+import com.namoa_digital.namoa_library.util.ToolBox
 import com.namoa_digital.namoa_library.view.Base_Activity
 import com.namoa_digital.namoa_library.view.Camera_Activity
+import com.namoadigital.prj001.adapter.Act086PhotoAdapter
+import com.namoadigital.prj001.adapter.Act086ProductItemAdapter
 import com.namoadigital.prj001.databinding.Act086MainBinding
 import com.namoadigital.prj001.databinding.Act086MainContentBinding
+import com.namoadigital.prj001.model.Act086ProductItem
 import com.namoadigital.prj001.ui.act005.Act005_Main
 import com.namoadigital.prj001.ui.act075.Act075_Main
 import com.namoadigital.prj001.util.Constant
@@ -19,9 +24,10 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 
 class Act086Main : Base_Activity(), Act086MainContract.I_View{
-    private val binding: Act086MainContentBinding by lazy{
-        Act086MainBinding.inflate(layoutInflater).act086MainContent
-    }
+//    private val binding: Act086MainContentBinding by lazy{
+//        Act086MainBinding.inflate(layoutInflater).act086MainContent
+//    }
+    private lateinit var binding: Act086MainContentBinding
     private var bundle: Bundle = Bundle()
     private val mPresenter: Act086MainContract.I_Presenter by lazy{
         Act086MainPresenter(
@@ -36,16 +42,35 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
     private val photoList = mutableListOf<String>()
     private val photoLimit = 4
     private lateinit var prefixPhoto: String
+    private val photoAdapter by lazy{
+        Act086PhotoAdapter(::onPhotoItemClick)
+    }
+
+    private val productInputList = mutableListOf<Act086ProductItem>()
+    private val productInputAdapter: Act086ProductItemAdapter by lazy{
+        Act086ProductItemAdapter(
+            ::onProductItemClick,
+            ::onDeleteIconClick
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val mainBinding = Act086MainBinding.inflate(layoutInflater)
+        binding = mainBinding.act086MainContent
         setContentView(mainBinding.root)
         setSupportActionBar(mainBinding.toolbar)
         //
         recoverIntentsInfo()
         iniSetup()
         iniTrans()
+        /**
+         *
+         *
+         * APAGAR APOS TESTAR
+         * @todo
+         */
+        mPresenter.deleteOldPhoto(prefixPhoto)
         initVars()
         initActions()
         iniUIFooter()
@@ -74,6 +99,35 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
 
     private fun initVars() {
         setLabels()
+        initRecyclers()
+        applyEnableStateToMoreInfoViews()
+    }
+
+    private fun applyEnableStateToMoreInfoViews() {
+        with(binding){
+            val enableState = act086RgAnswers.checkedRadioButtonId != -1
+            act086MketComment.isEnabled = enableState
+            act086IvAddProduct.isEnabled = enableState
+            act086IvAddPhoto.isEnabled = enableState
+            act086ClDeleteInfos.isEnabled = enableState
+            act086ClDeleteInfos.isClickable = enableState
+            act086BtnOk.isEnabled = enableState
+        }
+    }
+
+    private fun initRecyclers() {
+        photoAdapter.sourceList = photoList
+        //
+        binding.act086RvPhotos.apply{
+            adapter = photoAdapter
+            layoutManager = GridLayoutManager(context,2)
+        }
+        //
+        productInputAdapter.sourceList = productInputList
+        binding.act086RvProducts.apply {
+            adapter = productInputAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
     }
 
     private fun setLabels() {
@@ -81,29 +135,26 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
     }
 
     private fun initActions() {
-        binding.act086IvAddSpare.setOnClickListener {
-            callSpareProductAct()
+        binding.act086IvAddProduct.setOnClickListener {
+            mPresenter.prepareCallProductAct(productInputList)
         }
         //
         binding.act086IvAddPhoto.apply {
             setOnClickListener {_->
-                mPresenter.handleAddPhoto(photoList,photoLimit)
-                Toast.makeText(context,"test",Toast.LENGTH_LONG).show()
+                mPresenter.handleAddPhoto(prefixPhoto,photoList,photoLimit)
             }
         }
 
-        binding.act086BtnOk.setOnClickListener (object : View.OnClickListener{
-            override fun onClick(v: View?) {
-                Toast.makeText(context,"test",Toast.LENGTH_LONG).show()
-            }
-        })
+        binding.act086BtnOk.setOnClickListener{
+            ToolBox.toastMSG(context,"Em Dev")
+        }
 
         binding.act086RgAnswers.setOnCheckedChangeListener { _, checkedId ->
-            Toast.makeText(context,"$checkedId",Toast.LENGTH_LONG).show()
+            applyEnableStateToMoreInfoViews()
         }
     }
 
-    private fun callSpareProductAct() {
+    override fun callProductAct(productSelected: List<Int>) {
         val mIntent = Intent(context, Act_Product_Selection::class.java)
         val bundle = Bundle()
         //
@@ -114,14 +165,13 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
         startActivityForResult(mIntent, ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE)
     }
 
-    override fun callCameraAct(photoIdx: Int, newPhoto: Boolean) {
-        val currentPhoto = "$prefixPhoto$photoIdx"
+    override fun callCameraAct(photoName: String, newPhoto: Boolean) {
         startActivity(
             Intent().apply {
                 setClass(context,Camera_Activity::class.java)
                 putExtra(ConstantBase.PID, View.generateViewId())
                 putExtra(ConstantBase.PTYPE, 1)
-                putExtra(ConstantBase.PPATH, currentPhoto)
+                putExtra(ConstantBase.PPATH, photoName)
                 putExtra(ConstantBase.PEDIT, newPhoto)
                 putExtra(ConstantBase.PENABLED, newPhoto)
                 putExtra(ConstantBase.P_ALLOW_GALLERY, false)//pode galeria
@@ -130,7 +180,21 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
             }
         )
         //
-        photoList.add(currentPhoto)
+        if(photoList.indexOf(photoName) == -1) {
+            photoList.add(photoName)
+        }
+    }
+
+    fun onPhotoItemClick(photoName: String,position: Int){
+        callCameraAct(photoName,true)
+    }
+
+    fun onProductItemClick(productItem: Act086ProductItem){
+
+    }
+
+    fun onDeleteIconClick(position: Int){
+
     }
 
     override fun onResume() {
@@ -138,8 +202,18 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
         mPresenter.reviewPhotoExists(photoList)
     }
 
+    override fun updatePhotoListIntoAdapter() {
+        photoAdapter.notifyDataSetChanged()
+    }
+
     override fun showAlert(ttl: String?, msg: String?) {
-        TODO("Not yet implemented")
+        ToolBox.alertMSG(
+            context,
+            ttl,
+            msg,
+            null,
+            0
+        )
     }
 
     private fun iniUIFooter() {

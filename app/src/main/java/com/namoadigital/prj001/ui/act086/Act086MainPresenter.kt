@@ -3,6 +3,8 @@ package com.namoadigital.prj001.ui.act086
 import android.content.Context
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.model.Act086ProductItem
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -48,9 +50,13 @@ class Act086MainPresenter(
         )
     }
 
-    override fun handleAddPhoto(photoList: MutableList<String>, photoLimit: Int) {
-        if(photoList.size <= photoLimit){
-            mView.callCameraAct(photoIdx = photoList.size + 1, newPhoto = true)
+    override fun handleAddPhoto(
+        prefixPhoto: String,
+        photoList: MutableList<String>,
+        photoLimit: Int
+    ) {
+        if(photoList.size < photoLimit){
+            mView.callCameraAct(photoName = getPhotoName(prefixPhoto), newPhoto = true)
         }else{
             mView.showAlert(
                 ttl = hmAuxTrans["alert_photo_limit_reached_ttl"],
@@ -59,11 +65,30 @@ class Act086MainPresenter(
         }
     }
 
+    private fun getPhotoName(prefixPhoto: String): String {
+        return "$prefixPhoto${ToolBox.dateToMilliseconds(
+            ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
+        )}"
+    }
+
     override fun reviewPhotoExists(photoList: MutableList<String>) {
         val filter = photoList.filter { photo ->
             File(ConstantBaseApp.CACHE_PATH_PHOTO, photo).exists()
         }
         photoList.clear()
         photoList.addAll(filter)
+        mView.updatePhotoListIntoAdapter()
+    }
+
+    override fun prepareCallProductAct(productInputList: MutableList<Act086ProductItem>) {
+        val listOfProduct = productInputList.map {
+            it.productCode
+        }
+        //
+        mView.callProductAct(listOfProduct)
+    }
+
+    override fun deleteOldPhoto(prefixPhoto: String){
+        ToolBox_Inf.deleteFileListExceptionSafe(ConstantBaseApp.CACHE_PATH_PHOTO,prefixPhoto)
     }
 }
