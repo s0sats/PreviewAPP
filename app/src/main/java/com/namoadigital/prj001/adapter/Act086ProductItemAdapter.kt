@@ -8,7 +8,7 @@ import com.namoadigital.prj001.model.Act086ProductItem
 import com.namoadigital.prj001.model.VH_models.Act086ProductItemVH
 
 class Act086ProductItemAdapter(
-    private val onProductItemClick: (productItem: Act086ProductItem) -> Unit,
+    private val onProductItemClick: (position: Int, productItem: Act086ProductItem) -> Unit,
     private val onDeleteIconClick: (position: Int) -> Unit
 ) : RecyclerView.Adapter<Act086ProductItemVH>() {
 

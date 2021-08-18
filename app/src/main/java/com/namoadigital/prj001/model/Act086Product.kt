@@ -1,11 +1,13 @@
 package com.namoadigital.prj001.model
 
+import java.io.Serializable
+
 class Act086ProductItem(
     productCode: Int,
     productId: String,
     productDesc: String,
     productUnit: String
-){
+):Serializable{
     var productCode: Int = -1
     private set
     var productId: String = ""
@@ -14,7 +16,7 @@ class Act086ProductItem(
         private set
     var productUnit: String = ""
         private set
-    var productQty: Int = -1
+    var productQty: Int = 0
 
     init {
         this.productCode = productCode

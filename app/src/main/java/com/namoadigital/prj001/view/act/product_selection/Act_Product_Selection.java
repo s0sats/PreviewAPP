@@ -2,8 +2,6 @@ package com.namoadigital.prj001.view.act.product_selection;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,6 +9,9 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 
 import com.namoa_digital.namoa_library.ctls.MKEditTextNM;
 import com.namoa_digital.namoa_library.util.HMAux;
@@ -23,8 +24,6 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.model.MD_All_Product;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.TK_Ticket_Product;
-import com.namoadigital.prj001.ui.act075.Act075_Main;
 import com.namoadigital.prj001.util.Constant;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
@@ -37,6 +36,8 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
 
     public static final String INDEX_GROUP_CODE = "index_group_code";
     public static final String INDEX_RECURSIVE_CODE = "index_recursive_code";
+    public static final String IS_ADD_PRODUCT_LIST = "IS_ADD_PRODUCT_LIST";
+    public static final String PRODUCT_LIST = "PRODUCT_LIST";
 
     private Act_Product_Selection_Contract.I_Presenter mPresenter;
     private MKEditTextNM mket_product_search;
@@ -47,9 +48,9 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     private HMAux currentIndex = new HMAux();
     private Bundle bundle;
     private boolean mkUpdate = true;
-    private ArrayList<TK_Ticket_Product> tk_ticket_products = new ArrayList<>();
     private boolean returnOnFound;
     private boolean isProductAddProcess;
+    private ArrayList<Integer> receivedProducts = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -150,8 +151,8 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
         if (bundle != null) {
             returnOnFound = Boolean.parseBoolean(bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_FOUND_JUMP));
             mket_product_search.setText(bundle.getString(Constant.ACT_PRODUCT_SELECTION_PRODUCT_SEARCH));
-            isProductAddProcess = bundle.getBoolean(Act075_Main.IS_ADD_PRODUCT_LIST, false);
-            tk_ticket_products = (ArrayList<TK_Ticket_Product>) bundle.getSerializable(Act075_Main.PRODUCT_LIST);
+            isProductAddProcess = bundle.getBoolean(IS_ADD_PRODUCT_LIST, false);
+            receivedProducts = (ArrayList<Integer>) bundle.getSerializable(PRODUCT_LIST);
         }else{
             isProductAddProcess = false;
         }
@@ -162,8 +163,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
             mPresenter.setAdapterDataForProductInsert(
                     Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
                     Long.parseLong(currentIndex.get(INDEX_RECURSIVE_CODE)),
-                    tk_ticket_products,
-                    search
+                search
             );
         }else {
             mPresenter.setAdapterData(
@@ -260,8 +260,7 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
                     mPresenter.setAdapterDataForProductInsert(
                             Long.parseLong(currentIndex.get(INDEX_GROUP_CODE)),
                             Long.parseLong(currentIndex.get(INDEX_RECURSIVE_CODE)),
-                            tk_ticket_products,
-                            ""
+                        ""
                     );
                 }else {
                     mPresenter.onBtnHomeClicked();
@@ -293,11 +292,10 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
                 } else {
                     if (isProductAddProcess) {
                         boolean hasError = false;
-                        if (!tk_ticket_products.isEmpty() && item.hasConsistentValue("code")) {
+                        if (!receivedProducts.isEmpty() && item.hasConsistentValue("code")) {
                             int code = Integer.valueOf(item.get("code"));
-                            for (TK_Ticket_Product product : tk_ticket_products) {
-
-                                if (product.getProduct_code() == code) {
+                            for (Integer productCode : receivedProducts) {
+                                if (productCode == code) {
                                     hasError = true;
                                     break;
                                 }
@@ -322,7 +320,6 @@ public class Act_Product_Selection extends Base_Activity_NFC implements Act_Prod
     }
 
     private void setProductForResult(HMAux item) {
-
         //
         if (isProductAddProcess) {
             MD_All_Product pAux = mPresenter.getProductFromAll(String.valueOf(

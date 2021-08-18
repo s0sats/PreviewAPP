@@ -8,7 +8,7 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 
 class Act086ProductItemVH(
     private val binding: Act086ProductItemBinding,
-    private val onProductItemClick: (productItem: Act086ProductItem) -> Unit,
+    private val onProductItemClick: (position: Int, productItem: Act086ProductItem) -> Unit,
     private val onDeleteIconClick: (position: Int) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -19,7 +19,7 @@ class Act086ProductItemVH(
         }
         //
         binding.act086ProductItemClProductInfo.setOnClickListener {
-            onProductItemClick(productItem)
+            onProductItemClick(adapterPosition,productItem)
         }
         //Bind das infos
         with(binding){

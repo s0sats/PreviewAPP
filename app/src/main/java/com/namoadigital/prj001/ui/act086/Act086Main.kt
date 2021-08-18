@@ -1,5 +1,6 @@
 package com.namoadigital.prj001.ui.act086
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -16,7 +17,6 @@ import com.namoadigital.prj001.databinding.Act086MainBinding
 import com.namoadigital.prj001.databinding.Act086MainContentBinding
 import com.namoadigital.prj001.model.Act086ProductItem
 import com.namoadigital.prj001.ui.act005.Act005_Main
-import com.namoadigital.prj001.ui.act075.Act075_Main
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -24,9 +24,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 
 class Act086Main : Base_Activity(), Act086MainContract.I_View{
-//    private val binding: Act086MainContentBinding by lazy{
-//        Act086MainBinding.inflate(layoutInflater).act086MainContent
-//    }
     private lateinit var binding: Act086MainContentBinding
     private var bundle: Bundle = Bundle()
     private val mPresenter: Act086MainContract.I_Presenter by lazy{
@@ -154,15 +151,63 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
         }
     }
 
-    override fun callProductAct(productSelected: List<Int>) {
+    override fun callProductAct(listOfProduct: ArrayList<Int>) {
         val mIntent = Intent(context, Act_Product_Selection::class.java)
         val bundle = Bundle()
         //
-        bundle.putBoolean(Act075_Main.IS_ADD_PRODUCT_LIST, true)
-        //bundle.putSerializable(Act075_Main.PRODUCT_LIST, tk_ticket_products)
+        bundle.putBoolean(Act_Product_Selection.IS_ADD_PRODUCT_LIST, true)
+        bundle.putSerializable(Act_Product_Selection.PRODUCT_LIST, listOfProduct)
         mIntent.putExtras(bundle)
         //
         startActivityForResult(mIntent, ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        //
+        if(requestCode == ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE
+            && resultCode == RESULT_OK
+        ){
+            mPresenter.processProductSelecionResult(data)
+        }
+    }
+
+    override fun addProductToListAndShowDialog(productItem: Act086ProductItem) {
+        productInputList.add(productItem)
+        callProductEditDialog(productInputList.lastIndex, productItem, true)
+    }
+
+    private fun callProductEditDialog(
+        productIndex: Int,
+        productItem: Act086ProductItem,
+        isAddProcess: Boolean = false
+    ) {
+        Act086ProductEditDialog.getInstance(
+            hmAux_Trans,
+            productIndex,
+            productItem,
+            isAddProcess,
+        ).apply {
+            onApplyClick = ::onApplyProductClick
+            onCancelClick = ::onCancelProductClick
+        }.show(supportFragmentManager,"teste")
+    }
+
+    fun onApplyProductClick(productIndex: Int, productItem: Act086ProductItem, isAddProcess: Boolean ){
+        if(productIndex > -1){
+            productInputList[productIndex] = productItem
+            productInputAdapter.notifyItemChanged(productIndex)
+            binding.act086TvProductTtl.text = "${hmAux_Trans["product_ttl"]}: ${productInputList.size}"
+        }
+    }
+
+    fun onCancelProductClick(productIndex: Int, isAddProcess: Boolean){
+        if(productIndex > -1){
+            if(isAddProcess && productInputList.indices.contains(productIndex) ){
+                productInputList.removeAt(productIndex)
+                productInputAdapter.notifyItemRemoved(productIndex)
+            }
+        }
     }
 
     override fun callCameraAct(photoName: String, newPhoto: Boolean) {
@@ -189,12 +234,23 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
         callCameraAct(photoName,true)
     }
 
-    fun onProductItemClick(productItem: Act086ProductItem){
-
+    fun onProductItemClick(position: Int, productItem: Act086ProductItem){
+        callProductEditDialog(
+            position,
+            productItem
+        )
     }
 
     fun onDeleteIconClick(position: Int){
-
+        showAlert(
+            hmAux_Trans["alert_remove_product_ttl"],
+            hmAux_Trans["alert_remove_product_confirm"],
+            (DialogInterface.OnClickListener { dialog, which ->
+                productInputList.removeAt(position)
+                productInputAdapter.notifyItemRemoved(position)
+            }),
+            1
+        )
     }
 
     override fun onResume() {
@@ -206,14 +262,24 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
         photoAdapter.notifyDataSetChanged()
     }
 
-    override fun showAlert(ttl: String?, msg: String?) {
-        ToolBox.alertMSG(
-            context,
-            ttl,
-            msg,
-            null,
-            0
-        )
+    override fun showAlert(ttl: String?, msg: String?, positeClickListener: DialogInterface.OnClickListener?,negativeBtn: Int) {
+        if(negativeBtn == 0) {
+            ToolBox.alertMSG(
+                context,
+                ttl,
+                msg,
+                positeClickListener,
+                negativeBtn
+            )
+        }else{
+            ToolBox.alertMSG_YES_NO(
+                context,
+                ttl,
+                msg,
+                positeClickListener,
+                negativeBtn
+            )
+        }
     }
 
     private fun iniUIFooter() {

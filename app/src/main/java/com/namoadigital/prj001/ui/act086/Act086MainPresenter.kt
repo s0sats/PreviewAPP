@@ -1,9 +1,11 @@
 package com.namoadigital.prj001.ui.act086
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoadigital.prj001.dao.MD_All_ProductDao
 import com.namoadigital.prj001.model.Act086ProductItem
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
@@ -27,18 +29,9 @@ class Act086MainPresenter(
     private fun loadTranslation() : HMAux {
         val transList: MutableList<String> = mutableListOf(
             "act086_title",
-            "dialog_user_search_ttl",
-            "dialog_user_search_start",
-            "workgroup_edit_ttl",
-            "workgroup_edit_start",
-            "workgroup_member_list_ttl",
-            "workgroup_member_list_start",
-            "alert_workgroup_list_not_found_tll",
-            "alert_workgroup_list_not_found_msg",
-            "alert_leave_without_save_ttl",
-            "alert_leave_without_save_confirm",
-            "alert_leave_remove_workgroup_ttl",
-            "alert_leave_remove_workgroup_confirm"
+            "product_ttl",
+            "btn_apply",
+            "alert_choose_an_answer_msg"
         )
         //
         return ToolBox_Inf.setLanguage(
@@ -83,9 +76,22 @@ class Act086MainPresenter(
     override fun prepareCallProductAct(productInputList: MutableList<Act086ProductItem>) {
         val listOfProduct = productInputList.map {
             it.productCode
-        }
+        } as ArrayList<Int>
         //
         mView.callProductAct(listOfProduct)
+    }
+
+    override fun processProductSelecionResult(data: Intent?) {
+        data?.extras?.let{
+            val act086ProductItem = Act086ProductItem(
+                it.getInt(MD_All_ProductDao.PRODUCT_CODE),
+                it.getString(MD_All_ProductDao.PRODUCT_ID, ""),
+                it.getString(MD_All_ProductDao.PRODUCT_DESC, ""),
+                it.getString(MD_All_ProductDao.UN, "")
+            )
+            //
+            mView.addProductToListAndShowDialog(act086ProductItem)
+        }
     }
 
     override fun deleteOldPhoto(prefixPhoto: String){

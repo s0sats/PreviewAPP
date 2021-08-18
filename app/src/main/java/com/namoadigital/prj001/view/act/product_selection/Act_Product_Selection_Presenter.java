@@ -9,7 +9,6 @@ import com.namoadigital.prj001.dao.MD_ProductDao;
 import com.namoadigital.prj001.dao.MD_Product_GroupDao;
 import com.namoadigital.prj001.model.MD_All_Product;
 import com.namoadigital.prj001.model.MD_Product;
-import com.namoadigital.prj001.model.TK_Ticket_Product;
 import com.namoadigital.prj001.sql.MD_All_Product_Sql_001;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.sql.Sql_Act007_001;
@@ -112,7 +111,7 @@ public class Act_Product_Selection_Presenter implements Act_Product_Selection_Co
     }
 
     @Override
-    public void setAdapterDataForProductInsert(long group_code, Long recursive_code, ArrayList<TK_Ticket_Product> tk_ticket_products, String filter) {
+    public void setAdapterDataForProductInsert(long group_code, Long recursive_code, String filter) {
         //
         MD_All_ProductDao allProductDao = new MD_All_ProductDao(context);
         MD_All_Product_GroupDao allProductGroupDao  = new MD_All_Product_GroupDao(context);
