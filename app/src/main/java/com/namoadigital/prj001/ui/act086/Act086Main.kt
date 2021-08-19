@@ -5,25 +5,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.namoa_digital.namoa_library.util.ConstantBase
+import androidx.fragment.app.Fragment
 import com.namoa_digital.namoa_library.util.ToolBox
-import com.namoa_digital.namoa_library.view.Base_Activity
-import com.namoa_digital.namoa_library.view.Camera_Activity
-import com.namoadigital.prj001.adapter.Act086PhotoAdapter
-import com.namoadigital.prj001.adapter.Act086ProductItemAdapter
+import com.namoa_digital.namoa_library.view.Base_Activity_Frag
 import com.namoadigital.prj001.databinding.Act086MainBinding
 import com.namoadigital.prj001.databinding.Act086MainContentBinding
-import com.namoadigital.prj001.model.Act086ProductItem
+import com.namoadigital.prj001.extensions.setFrag
 import com.namoadigital.prj001.ui.act005.Act005_Main
+import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
-import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 
-class Act086Main : Base_Activity(), Act086MainContract.I_View{
+class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     private lateinit var binding: Act086MainContentBinding
     private var bundle: Bundle = Bundle()
     private val mPresenter: Act086MainContract.I_Presenter by lazy{
@@ -33,23 +28,27 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
             bundle,
             mModule_Code,
             mResource_Code
-
         )
     }
-    private val photoList = mutableListOf<String>()
-    private val photoLimit = 4
     private lateinit var prefixPhoto: String
-    private val photoAdapter by lazy{
-        Act086PhotoAdapter(::onPhotoItemClick)
-    }
-
-    private val productInputList = mutableListOf<Act086ProductItem>()
-    private val productInputAdapter: Act086ProductItemAdapter by lazy{
-        Act086ProductItemAdapter(
-            ::onProductItemClick,
-            ::onDeleteIconClick
+    private val verificationFrg: Act086VerificationFrg by lazy{
+        Act086VerificationFrg.newInstance(
+            hmAux_Trans,
+            prefixPhoto
         )
     }
+//    private val photoList = mutableListOf<String>()
+//    private val photoAdapter by lazy{
+//        Act086PhotoAdapter(::onPhotoItemClick)
+//    }
+//
+//    private val productInputList = mutableListOf<Act086ProductItem>()
+//    private val productInputAdapter: Act086ProductItemAdapter by lazy{
+//        Act086ProductItemAdapter(
+//            ::onProductItemClick,
+//            ::onDeleteIconClick
+//        )
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +66,7 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
          * APAGAR APOS TESTAR
          * @todo
          */
-        mPresenter.deleteOldPhoto(prefixPhoto)
+       // mPresenter.deleteOldPhoto(prefixPhoto)
         initVars()
         initActions()
         iniUIFooter()
@@ -96,35 +95,15 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
 
     private fun initVars() {
         setLabels()
-        initRecyclers()
-        applyEnableStateToMoreInfoViews()
+        initVerificationFrg()
     }
 
-    private fun applyEnableStateToMoreInfoViews() {
-        with(binding){
-            val enableState = act086RgAnswers.checkedRadioButtonId != -1
-            act086MketComment.isEnabled = enableState
-            act086IvAddProduct.isEnabled = enableState
-            act086IvAddPhoto.isEnabled = enableState
-            act086ClDeleteInfos.isEnabled = enableState
-            act086ClDeleteInfos.isClickable = enableState
-            act086BtnOk.isEnabled = enableState
-        }
-    }
-
-    private fun initRecyclers() {
-        photoAdapter.sourceList = photoList
-        //
-        binding.act086RvPhotos.apply{
-            adapter = photoAdapter
-            layoutManager = GridLayoutManager(context,2)
-        }
-        //
-        productInputAdapter.sourceList = productInputList
-        binding.act086RvProducts.apply {
-            adapter = productInputAdapter
-            layoutManager = LinearLayoutManager(context)
-        }
+    private fun initVerificationFrg() {
+        setFrag(
+            verificationFrg,
+            VERIFICATION_FRG_TAG,
+            binding.act086FrgPlaceholder.id
+        )
     }
 
     private fun setLabels() {
@@ -132,134 +111,35 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
     }
 
     private fun initActions() {
-        binding.act086IvAddProduct.setOnClickListener {
-            mPresenter.prepareCallProductAct(productInputList)
+        binding.act086TvConsult.setOnClickListener {
+            toggleHeaderNavegationIcons(it.id)
         }
         //
-        binding.act086IvAddPhoto.apply {
-            setOnClickListener {_->
-                mPresenter.handleAddPhoto(prefixPhoto,photoList,photoLimit)
-            }
+        binding.act086TvBack.setOnClickListener {
+            toggleHeaderNavegationIcons(it.id)
+            //initVerificationFrg()
         }
 
-        binding.act086BtnOk.setOnClickListener{
-            ToolBox.toastMSG(context,"Em Dev")
-        }
-
-        binding.act086RgAnswers.setOnCheckedChangeListener { _, checkedId ->
-            applyEnableStateToMoreInfoViews()
-        }
     }
 
-    override fun callProductAct(listOfProduct: ArrayList<Int>) {
-        val mIntent = Intent(context, Act_Product_Selection::class.java)
-        val bundle = Bundle()
-        //
-        bundle.putBoolean(Act_Product_Selection.IS_ADD_PRODUCT_LIST, true)
-        bundle.putSerializable(Act_Product_Selection.PRODUCT_LIST, listOfProduct)
-        mIntent.putExtras(bundle)
-        //
-        startActivityForResult(mIntent, ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE)
+    private fun toggleHeaderNavegationIcons(viewId: Int) {
+        binding.act086TvBack.visibility = if(binding.act086TvBack.id == viewId) View.GONE else View.VISIBLE
+        binding.act086TvConsult.visibility = if(binding.act086TvConsult.id == viewId) View.GONE else View.VISIBLE
     }
 
+    /**
+     * Fun necesaria e somente com a chamada do super, pois o super chamara o mesmo metodo no frag.
+     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        //
-        if(requestCode == ConstantBaseApp.ACT_PRODUCT_SELECTION_REQUEST_CODE
-            && resultCode == RESULT_OK
-        ){
-            mPresenter.processProductSelecionResult(data)
-        }
     }
-
-    override fun addProductToListAndShowDialog(productItem: Act086ProductItem) {
-        productInputList.add(productItem)
-        callProductEditDialog(productInputList.lastIndex, productItem, true)
-    }
-
-    private fun callProductEditDialog(
-        productIndex: Int,
-        productItem: Act086ProductItem,
-        isAddProcess: Boolean = false
-    ) {
-        Act086ProductEditDialog.getInstance(
-            hmAux_Trans,
-            productIndex,
-            productItem,
-            isAddProcess,
-        ).apply {
-            onApplyClick = ::onApplyProductClick
-            onCancelClick = ::onCancelProductClick
-        }.show(supportFragmentManager,"teste")
-    }
-
-    fun onApplyProductClick(productIndex: Int, productItem: Act086ProductItem, isAddProcess: Boolean ){
-        if(productIndex > -1){
-            productInputList[productIndex] = productItem
-            productInputAdapter.notifyItemChanged(productIndex)
-            binding.act086TvProductTtl.text = "${hmAux_Trans["product_ttl"]}: ${productInputList.size}"
-        }
-    }
-
-    fun onCancelProductClick(productIndex: Int, isAddProcess: Boolean){
-        if(productIndex > -1){
-            if(isAddProcess && productInputList.indices.contains(productIndex) ){
-                productInputList.removeAt(productIndex)
-                productInputAdapter.notifyItemRemoved(productIndex)
+    override fun onAttachFragment(fragment: Fragment) {
+        super.onAttachFragment(fragment)
+        when (fragment) {
+            is Act086VerificationFrg ->{
+                fragment.showAlert = ::showAlert
             }
         }
-    }
-
-    override fun callCameraAct(photoName: String, newPhoto: Boolean) {
-        startActivity(
-            Intent().apply {
-                setClass(context,Camera_Activity::class.java)
-                putExtra(ConstantBase.PID, View.generateViewId())
-                putExtra(ConstantBase.PTYPE, 1)
-                putExtra(ConstantBase.PPATH, photoName)
-                putExtra(ConstantBase.PEDIT, newPhoto)
-                putExtra(ConstantBase.PENABLED, newPhoto)
-                putExtra(ConstantBase.P_ALLOW_GALLERY, false)//pode galeria
-                putExtra(ConstantBase.P_ALLOW_HIGH_RESOLUTION, false)//pode highResolution
-                putExtra(ConstantBase.FILE_AUTHORITIES, ConstantBase.AUTHORITIES_FOR_PROVIDER)
-            }
-        )
-        //
-        if(photoList.indexOf(photoName) == -1) {
-            photoList.add(photoName)
-        }
-    }
-
-    fun onPhotoItemClick(photoName: String,position: Int){
-        callCameraAct(photoName,true)
-    }
-
-    fun onProductItemClick(position: Int, productItem: Act086ProductItem){
-        callProductEditDialog(
-            position,
-            productItem
-        )
-    }
-
-    fun onDeleteIconClick(position: Int){
-        showAlert(
-            hmAux_Trans["alert_remove_product_ttl"],
-            hmAux_Trans["alert_remove_product_confirm"],
-            (DialogInterface.OnClickListener { dialog, which ->
-                productInputList.removeAt(position)
-                productInputAdapter.notifyItemRemoved(position)
-            }),
-            1
-        )
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mPresenter.reviewPhotoExists(photoList)
-    }
-
-    override fun updatePhotoListIntoAdapter() {
-        photoAdapter.notifyDataSetChanged()
     }
 
     override fun showAlert(ttl: String?, msg: String?, positeClickListener: DialogInterface.OnClickListener?,negativeBtn: Int) {
@@ -317,5 +197,9 @@ class Act086Main : Base_Activity(), Act086MainContract.I_View{
         )
         //
         finish()
+    }
+
+    companion object{
+        const val VERIFICATION_FRG_TAG = "VERIFICATION_FRG_TAG"
     }
 }

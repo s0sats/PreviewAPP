@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.act086.frg_verification.Act086VerificationFrg"
+    >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+
+        <RadioGroup
+            android:id="@+id/act086_verification_frg_rg_answers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RadioButton
+                android:id="@+id/act086_verification_frg_rdo_answer_done"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/os_form_verify_text_color_states"
+                android:checked="false"
+                android:drawableStart="@drawable/ic_build_black_24dp"
+                android:drawablePadding="8dp"
+                android:minHeight="48dp"
+                android:paddingStart="8dp"
+                android:text="Ação realizada"
+                android:textColor="@color/os_form_verify_text_color_states"
+                android:background="@drawable/os_form_verify_background_states"
+                app:drawableTint="@color/namoa_os_form_done_action_blue" />
+
+            <RadioButton
+                android:id="@+id/act086_verification_frg_rdo_answer_problem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:buttonTint="@color/os_form_verify_text_color_states"
+                android:checked="false"
+                android:drawableStart="@drawable/ic_outline_report_problem_24_black"
+                android:drawablePadding="8dp"
+                android:minHeight="48dp"
+                android:paddingStart="8dp"
+                android:text="Continua com problema"
+                android:textColor="@color/os_form_verify_text_color_states"
+                android:background="@drawable/os_form_verify_background_states"
+                app:drawableTint="@color/namoa_os_form_problem_red" />
+
+            <RadioButton
+                android:id="@+id/act086_verification_frg_rdo_answer_verified"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:buttonTint="@color/os_form_verify_text_color_states"
+                android:checked="false"
+                android:drawableStart="@drawable/ic_done_black_24dp"
+                android:drawablePadding="8dp"
+                app:drawableTint="@color/namoa_os_form_verified_green"
+                android:minHeight="48dp"
+                android:paddingStart="8dp"
+                android:text="Já estava ok"
+                android:textColor="@color/os_form_verify_text_color_states"
+                android:background="@drawable/os_form_verify_background_states"
+                />
+
+            <RadioButton
+                android:id="@+id/act086_verification_frg_rdo_answer_not_verified"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:buttonTint="@color/os_form_verify_text_color_states"
+                android:checked="false"
+                android:drawableStart="@drawable/ic_baseline_redo_24_black"
+                android:drawablePadding="8dp"
+                app:drawableTint="@color/namoa_status_not_executed"
+                android:minHeight="48dp"
+                android:paddingStart="8dp"
+                android:text="Não verificado"
+                android:textColor="@color/os_form_verify_text_color_states"
+                android:background="@drawable/os_form_verify_background_states"                     />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/act086_verification_frg_tv_other_data_ttl"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Dados complementares"
+            android:textAllCaps="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_rg_answers" />
+
+        <ImageView
+            android:id="@+id/act086_verification_frg_iv_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/act086_verification_frg_mket_comment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/act086_verification_frg_mket_comment"
+            app:srcCompat="@drawable/ic_baseline_notes_24"
+            app:tint="@color/namoa_dark_blue"
+            />
+
+        <com.namoa_digital.namoa_library.ctls.MKEditTextNM
+            android:id="@+id/act086_verification_frg_mket_comment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/act086_verification_frg_iv_comment"
+            app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_tv_other_data_ttl"
+            app:mBARCODE="false"
+            tools:hint="Inserir comentario"
+
+            />
+
+        <ImageView
+            android:id="@+id/act086_verification_frg_iv_spare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/act086_verification_frg_tv_product_ttl"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/act086_verification_frg_tv_product_ttl"
+            app:srcCompat="@drawable/ic_archive_material_black_24dp"
+            app:tint="@color/namoa_dark_blue" />
+
+        <TextView
+            android:id="@+id/act086_verification_frg_tv_product_ttl"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Insumos aplicados: 0"
+            app:layout_constraintEnd_toStartOf="@+id/act086_verification_frg_iv_add_product"
+            app:layout_constraintStart_toEndOf="@+id/act086_verification_frg_iv_spare"
+            app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_mket_comment" />
+
+        <ImageView
+            android:id="@+id/act086_verification_frg_iv_add_product"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/act086_verification_frg_tv_product_ttl"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/act086_verification_frg_tv_product_ttl"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/ic_add_black_24px"
+            app:tint="@color/namoa_dark_blue"
+            android:background="@drawable/namoa_icon_bg_states"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/act086_verification_frg_rv_products"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_tv_product_ttl"
+            tools:itemCount="2"
+            tools:listitem="@layout/act086_product_item"/>
+
+        <TextView
+            android:id="@+id/act086_verification_frg_tv_photo_ttl"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Photo"
+            app:layout_constraintEnd_toStartOf="@+id/act086_verification_frg_iv_add_photo"
+            app:layout_constraintStart_toEndOf="@+id/act086_verification_frg_iv_photo"
+            app:layout_constraintTop_toBottomOf="@+id/act086_verification_frg_rv_products" />
+
+        <ImageView
+            android:id="@+id/act086_verification_frg_iv_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:tint="@color/namoa_dark_blue"
+            app:layout_constraintBottom_toBottomOf="@+id/act086_verification_frg_tv_photo_ttl"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/act086_verification_frg_tv_photo_ttl"
+            app:srcCompat="@drawable/ic_baseline_photo_camera_24" />
+
+        <ImageView
+            android:id="@+id/act086_verification_frg_iv_add_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="@+id/act086_verification_frg_tv_photo_ttl"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/act086_verification_frg_tv_photo_ttl"
+            app:srcCompat="@drawable/ic_add_black_24px"
+            app:tint="@color/namoa_dark_blue"
+            android:background="@drawable/namoa_icon_bg_states"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/act086_verification_frg_rv_photos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_tv_photo_ttl"
+            app:spanCount="2"
+            tools:itemCount="4"
+            tools:listitem="@layout/act086_photo_item" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/act086_verification_frg_cl_delete_infos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_rv_photos">
+
+            <ImageView
+                android:id="@+id/act086_verification_frg_iv_delete_infos"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_trash"
+                app:tint="@color/namoa_color_danger_red"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:gravity="center_vertical"
+                android:text="Descartar resposta e anexos"
+                android:textColor="@color/namoa_color_danger_red"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/act086_verification_frg_iv_delete_infos"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/act086_verification_frg_btn_ok"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/namoa_cell_12_states"
+            android:text="Ok"
+            android:textColor="@color/padrao_WHITE"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/act086_verification_frg_cl_delete_infos"
+            app:layout_constraintWidth_percent="0.5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

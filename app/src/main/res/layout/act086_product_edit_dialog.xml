@@ -32,10 +32,11 @@
                 android:layout_marginTop="8dp"
                 android:text="18758 - Oleo Super Freio"
                 android:textStyle="bold"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.501"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/act086_product_edit_dialog_tv_title" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/act086_product_edit_dialog_et_qty"
@@ -46,7 +47,9 @@
                 android:text="2,1"
                 app:layout_constraintEnd_toEndOf="@+id/act086_product_edit_dialog_tv_product_desc"
                 app:layout_constraintStart_toStartOf="@+id/act086_product_edit_dialog_tv_product_desc"
-                app:layout_constraintTop_toBottomOf="@+id/act086_product_edit_dialog_tv_product_desc" />
+                app:layout_constraintTop_toBottomOf="@+id/act086_product_edit_dialog_tv_product_desc"
+                android:imeOptions="actionDone"
+                />
 
             <TextView
                 android:id="@+id/act086_product_edit_dialog_tv_unit"
@@ -60,17 +63,6 @@
                 app:layout_constraintStart_toEndOf="@+id/act086_product_edit_dialog_et_qty"
                 app:layout_constraintTop_toTopOf="@+id/act086_product_edit_dialog_et_qty" />
 
-            <TextView
-                android:id="@+id/act086_product_edit_dialog_tv_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Aplicação de Insumo"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <Button
                 android:id="@+id/act086_product_edit_dialog_btn_cancel"
