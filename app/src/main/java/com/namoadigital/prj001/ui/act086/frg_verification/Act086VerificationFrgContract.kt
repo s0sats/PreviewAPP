@@ -10,7 +10,7 @@ interface Act086VerificationFrgContract {
         fun updatePhotoListIntoAdapter()
         fun callProductAct(listOfProduct: ArrayList<Int>)
         fun addProductToListAndShowDialog(productItem: Act086ProductItem)
-        fun showAlert(
+        fun showAlertFrg(
             ttl: String?,
             msg: String?,
             positeClickListener: DialogInterface.OnClickListener? = null,

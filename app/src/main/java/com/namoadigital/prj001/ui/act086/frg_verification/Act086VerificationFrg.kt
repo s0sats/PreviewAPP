@@ -57,10 +57,11 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         )
     }
 
-    var showAlert: (ttl: String?,
+    lateinit var showAlert: (ttl: String?,
                     msg: String?,
                     positeClickListener: DialogInterface.OnClickListener?,
-                    negativeBtn: Int) -> Unit = {_,_,_,_ -> }
+                    negativeBtn: Int) -> Unit
+            //= {_,_,_,_ -> }
 
 
 
@@ -156,7 +157,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     }
 
     fun onDeleteIconClick(position: Int){
-        showAlert(
+        showAlertFrg(
             hmAux_Trans["alert_remove_product_ttl"],
             hmAux_Trans["alert_remove_product_confirm"],
             (DialogInterface.OnClickListener { dialog, which ->
@@ -167,13 +168,15 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         )
     }
 
-    override fun showAlert(
+    override fun showAlertFrg(
         ttl: String?,
         msg: String?,
         positeClickListener: DialogInterface.OnClickListener?,
         negativeBtn: Int
     ) {
-        showAlert
+        showAlert(
+            ttl, msg, positeClickListener, negativeBtn
+        )
     }
 
     private fun callProductEditDialog(

@@ -133,6 +133,7 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
     }
+
     override fun onAttachFragment(fragment: Fragment) {
         super.onAttachFragment(fragment)
         when (fragment) {

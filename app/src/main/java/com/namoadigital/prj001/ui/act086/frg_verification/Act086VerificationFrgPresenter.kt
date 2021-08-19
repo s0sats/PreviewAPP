@@ -24,7 +24,7 @@ class Act086VerificationFrgPresenter(
         if(photoList.size < photoLimit){
             mView.callCameraAct(photoName = getPhotoName(prefixPhoto), newPhoto = true)
         }else{
-            mView.showAlert(
+            mView.showAlertFrg(
                 ttl = hmAuxTrans["alert_photo_limit_reached_ttl"],
                 msg = hmAuxTrans["alert_photo_limit_reached_msg"]
             )
