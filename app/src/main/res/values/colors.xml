@@ -180,4 +180,9 @@
     <color name="namoa_myactions_blue_bg2">#c4dde4</color>
 
     <color name="gre_text_placeholder">#88000000</color>
+    <!--Cores my action cards-->
+
+    <!--Cores OS form -->
+    <color name="namoa_form_os_verify_later">#FFB3B3</color>
+    <!--Cores OS form -->
 </resources>

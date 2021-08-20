@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/v_cell_color_tag"
+            android:layout_width="12dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/act011_inspection_tag_bg"
+            android:backgroundTint="@color/emoticons_red"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/namoa_color_gray_5">
+
+            <TextView
+                android:id="@+id/tv_inspection_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:textColor="@color/text_black"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="TextView" />
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/act011_inspection_cornered_bg"
+                android:backgroundTint="@color/emoticons_red"
+                android:textAlignment="viewStart"
+                android:textColor="@color/padrao_WHITE"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/tv_inspection_description"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/tv_inspection_description"
+                app:layout_constraintTop_toBottomOf="@+id/tv_inspection_description"
+                app:layout_constraintWidth_max="wrap"
+                tools:text="TextView" />
+
+            <TextView
+                android:id="@+id/tv_day_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="11sp"
+                app:layout_constraintEnd_toEndOf="@+id/tv_status"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/tv_status"
+                app:layout_constraintTop_toBottomOf="@+id/tv_status"
+                tools:text="TextView" />
+
+            <TextView
+                android:id="@+id/tv_inspection_verification_action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp"
+                android:drawableLeft="@drawable/ic_baseline_play_arrow_24dp"
+                android:drawableTint="#074C61"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/tv_inspect_answered"
+                app:layout_constraintStart_toStartOf="@+id/tv_inspection_description"
+                app:layout_constraintTop_toBottomOf="@+id/tv_day_count"
+                tools:text="TextView" />
+
+            <TextView
+                android:id="@+id/tv_auto_skip_inspection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_baseline_redo_24"
+                android:textColor="@color/namoa_form_os_verify_later"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_inspection_verification_action"
+                app:layout_constraintEnd_toEndOf="@+id/tv_inspection_description"
+                app:layout_constraintTop_toTopOf="@+id/tv_inspection_verification_action"
+                tools:text="Não Verificar" />
+
+            <TextView
+                android:id="@+id/tv_inspect_answered"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/ll_answer_info"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/tv_inspection_verification_action"
+                tools:text="Já estava ok" />
+
+            <LinearLayout
+                android:id="@+id/ll_answer_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_auto_skip_inspection">
+
+                <ImageView
+                    android:id="@+id/iv_commentary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_baseline_notes_24"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center"/>
+
+                <ImageView
+                    android:id="@+id/iv_photo"
+                    android:src="@drawable/ic_baseline_photo_camera_24"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginRight="4dp"
+                    app:tint="#074C61" />
+
+                <TextView
+                    android:id="@+id/tv_photo_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginRight="8dp"
+                    tools:text="1"/>
+
+                <ImageView
+                    android:id="@+id/iv_product_applied"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_baseline_inventory_2_black_24"
+                    app:tint="#074C61"
+                    android:layout_marginRight="4dp"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/tv_product_applied_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    tools:text="10"/>
+
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
