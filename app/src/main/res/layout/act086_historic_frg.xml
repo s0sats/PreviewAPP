@@ -23,10 +23,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
+                style="@style/TextViewGray9Padding"
                 android:text="Instrucao"
-                android:textColor="@color/namoa_color_gray_9"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -56,10 +54,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
+                style="@style/TextViewGray9Padding"
                 android:text="Proxima Verificacao"
-                android:textColor="@color/namoa_color_gray_9"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -132,8 +128,9 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/act086_historic_frg_cl_last_adjust"
             android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -142,13 +139,11 @@
 
             <TextView
                 android:id="@+id/act086_historic_frg_tv_last_adjust_ttl"
+                style="@style/TextViewGray9Padding"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
                 android:text="Ultimo ajuste realizado"
-                android:textColor="@color/namoa_color_gray_9"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -164,36 +159,38 @@
                 app:tint="@color/namoa_os_form_done_action_blue" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/act086_historic_frg_cl_last_adjust_data"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_tv_last_adjust_ttl"
-                app:layout_constraintStart_toEndOf="@id/act086_historic_frg_iv_last_adjust"
+                android:layout_marginStart="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                >
+                app:layout_constraintStart_toEndOf="@id/act086_historic_frg_iv_last_adjust"
+                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_tv_last_adjust_ttl">
+
+
                 <TextView
                     android:id="@+id/act086_historic_frg_tv_adjust_lbl"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
                     android:text="Ajuste realizado"
                     android:textSize="@dimen/font_size_font_16"
-                    android:layout_marginEnd="4dp"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/act086_historic_frg_tv_adjust_date"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/act086_historic_frg_tv_adjust_date" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/act086_historic_frg_tv_adjust_date"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintWidth_default="wrap"
                     android:gravity="end|top"
                     android:text="10/08/2021 14:25"
                     android:textSize="@dimen/font_size_font_16"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toEndOf="@id/act086_historic_frg_tv_adjust_lbl"
-                    />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="wrap" />
 
                 <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/act086_historic_frg_br_h_adjust"
@@ -203,8 +200,116 @@
                     app:constraint_referenced_ids="act086_historic_frg_tv_adjust_lbl,act086_historic_frg_tv_adjust_date"
                     tools:layout_editor_absoluteY="66dp" />
 
+                <TextView
+                    android:id="@+id/act086_historic_frg_tv_last_measure_lbl"
+                    style="@style/TextViewGray9Padding"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Ultima Medição"
+                    app:layout_constraintEnd_toStartOf="@+id/act086_historic_frg_tv_last_measure_val"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act086_historic_frg_br_h_adjust" />
+
+                <TextView
+                    android:id="@+id/act086_historic_frg_tv_last_measure_val"
+                    style="@style/TextViewGray9Padding"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="1094h"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/act086_historic_frg_tv_last_measure_lbl"
+                    app:layout_constraintTop_toTopOf="@id/act086_historic_frg_tv_last_measure_lbl"
+                    app:layout_constraintWidth_default="wrap" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/act086_historic_frg_br_h_measure"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="act086_historic_frg_tv_last_measure_lbl,act086_historic_frg_tv_last_measure_val"
+                    tools:layout_editor_absoluteY="66dp" />
+
+
+                <TextView
+                    android:id="@+id/act086_historic_frg_tv_material_bl"
+                    style="@style/TextViewGray9Padding"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Foi aplicado insumo?"
+                    app:layout_constraintEnd_toStartOf="@+id/act086_historic_frg_tv_material_val"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act086_historic_frg_br_h_measure" />
+
+                <TextView
+                    android:id="@+id/act086_historic_frg_tv_material_val"
+                    style="@style/TextViewGray9Padding"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="Sim"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/act086_historic_frg_tv_material_bl"
+                    app:layout_constraintTop_toBottomOf="@id/act086_historic_frg_br_h_measure"
+                    app:layout_constraintWidth_default="wrap" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/act086_historic_frg_br_h_material"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="act086_historic_frg_tv_material_bl,act086_historic_frg_tv_material_val"
+                    tools:layout_editor_absoluteY="66dp" />
+
+                <TextView
+                    android:id="@+id/act086_historic_frg_tv_comment"
+                    style="@style/TextViewGray9Padding"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Ajuste feito nos campos"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/act086_historic_frg_br_h_material"
+                    tools:layout_editor_absoluteY="95dp" />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/act086_historic_frg_cl_alert_historic"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_cl_last_adjust">
+
+            <TextView
+                android:id="@+id/act086_historic_frg_tv_alert_historic_ttl"
+                style="@style/TextViewGray9Padding"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Alertas em Aberto"
+                android:textAllCaps="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/act086_historic_frg_rv_alert_historic"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/act086_historic_frg_tv_alert_historic_ttl"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="4"
+                tools:listitem="@layout/act086_historic_frg_alert_item"
+
+                />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

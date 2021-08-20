@@ -19,11 +19,13 @@ import com.namoadigital.prj001.adapter.Act086PhotoAdapter
 import com.namoadigital.prj001.adapter.Act086ProductItemAdapter
 import com.namoadigital.prj001.databinding.Act086VerificationFrgBinding
 import com.namoadigital.prj001.model.Act086ProductItem
+import com.namoadigital.prj001.ui.act086.Act086Main
 import com.namoadigital.prj001.ui.act086.Act086ProductEditDialog
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.view.act.product_selection.Act_Product_Selection
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * A simple [Fragment] subclass.
@@ -32,7 +34,7 @@ import java.util.*
  */
 class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_View {
 
-    private val PARAM_PREFIX_PHOTO = "PARAM_PREFIX_PHOTO"
+    private val PARAM_PHOTO_LIST = "PARAM_PHOTO_LIST"
     private val binding : Act086VerificationFrgBinding by lazy{
         Act086VerificationFrgBinding.inflate(layoutInflater)
     }
@@ -56,6 +58,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             ::onDeleteIconClick
         )
     }
+    private var isNewVerification: Boolean = false
 
     lateinit var showAlert: (ttl: String?,
                     msg: String?,
@@ -63,13 +66,23 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     negativeBtn: Int) -> Unit
             //= {_,_,_,_ -> }
 
-
+    lateinit var addHeightToActScroll: (materialBottom: Int, heightToAdd: Int) -> Unit
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             hmAux_Trans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
-            prefixPhoto = it.getString(PARAM_PREFIX_PHOTO,"")
+            prefixPhoto = it.getString(Act086Main.PARAM_PREFIX_PHOTO,"")
+            isNewVerification = it.getBoolean(Act086Main.PARAM_NEW_VERIFICATION,false)
+//            try {
+//                val paramPhotoList = it.getSerializable(PARAM_PHOTO_LIST) as MutableList<String>
+//                //photoList.clear()
+//                photoList.addAll(
+//                    paramPhotoList as MutableList<String>
+//                )
+//            }catch (e: Exception){
+//                ToolBox_Inf.registerException(javaClass.name,e)
+//            }
         }
     }
 
@@ -83,15 +96,32 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //
-        mPresenter.deleteOldPhoto(prefixPhoto)
+        //mPresenter.deleteOldPhoto(prefixPhoto)
         initVars()
         initActions()
     }
 
     private fun initVars() {
         setLabels()
+        applyNewVerificationConfig()
         initRecyclers()
         applyEnableStateToMoreInfoViews()
+    }
+
+    private fun applyNewVerificationConfig() {
+        if(isNewVerification){
+            with(binding){
+                act086VerificationFrgRdoAnswerVerified.apply {
+                    visibility = View.GONE
+                    isEnabled = false
+                }
+                //
+                act086VerificationFrgRdoAnswerNotVerified.apply {
+                    visibility = View.GONE
+                    isEnabled = false
+                }
+            }
+        }
     }
 
     private fun setLabels() {
@@ -200,6 +230,24 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
             productInputList[productIndex] = productItem
             productInputAdapter.notifyItemChanged(productIndex)
             binding.act086VerificationFrgTvProductTtl.text = "${hmAux_Trans["product_ttl"]}: ${productInputList.size}"
+            val linearLayoutManager =
+                binding.act086VerificationFrgRvProducts.layoutManager as LinearLayoutManager
+            //
+//            val findLastCompletelyVisibleItemPosition =
+//                linearLayoutManager.findLastCompletelyVisibleItemPosition()
+//            val shown = binding.act086VerificationFrgIvAddPhoto.isShown
+//            //
+//            if(!shown || findLastCompletelyVisibleItemPosition < productIndex ){
+//                linearLayoutManager.getChildAt(productIndex)?.let {
+//                    val tt = binding.act086VerificationFrgRvProducts.bottom + it.height
+//                    addHeightToActScroll(tt)
+//                }
+//
+//            }
+            linearLayoutManager.getChildAt(productIndex)?.let {
+                val tt = binding.act086VerificationFrgRvProducts.bottom + it.height
+                addHeightToActScroll(tt,it.height)
+            }
         }
     }
 
@@ -268,6 +316,11 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
         callProductEditDialog(productInputList.lastIndex, productItem, true)
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        //mPresenter.deleteOldPhoto(prefixPhoto)
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -279,11 +332,12 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(hmAux_Trans: HMAux, prefixPhoto: String) =
+        fun newInstance(hmAux_Trans: HMAux, prefixPhoto: String, isNewVerification: Boolean) =
             Act086VerificationFrg().apply {
                 arguments = Bundle().apply {
                     putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY, hmAux_Trans)
-                    putString(PARAM_PREFIX_PHOTO, prefixPhoto)
+                    putString(Act086Main.PARAM_PREFIX_PHOTO, prefixPhoto)
+                    putBoolean(Act086Main.PARAM_NEW_VERIFICATION, isNewVerification)
                 }
             }
     }

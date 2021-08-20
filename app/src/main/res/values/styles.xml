@@ -66,4 +66,10 @@
         <item name="android:ellipsize">end</item>
     </style>
 
+    <style name="TextViewGray9Padding" parent="Widget.AppCompat.TextView">
+        <item name="android:textColor">@color/namoa_color_gray_9</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
 </resources>

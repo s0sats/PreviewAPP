@@ -3,6 +3,7 @@ package com.namoadigital.prj001.ui.act086
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
@@ -12,6 +13,7 @@ import com.namoadigital.prj001.databinding.Act086MainBinding
 import com.namoadigital.prj001.databinding.Act086MainContentBinding
 import com.namoadigital.prj001.extensions.setFrag
 import com.namoadigital.prj001.ui.act005.Act005_Main
+import com.namoadigital.prj001.ui.act086.frg_historic.Act086HistoricFrg
 import com.namoadigital.prj001.ui.act086.frg_verification.Act086VerificationFrg
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ConstantBaseApp
@@ -34,21 +36,16 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     private val verificationFrg: Act086VerificationFrg by lazy{
         Act086VerificationFrg.newInstance(
             hmAux_Trans,
-            prefixPhoto
+            prefixPhoto,
+            isNewVerification
         )
     }
-//    private val photoList = mutableListOf<String>()
-//    private val photoAdapter by lazy{
-//        Act086PhotoAdapter(::onPhotoItemClick)
-//    }
-//
-//    private val productInputList = mutableListOf<Act086ProductItem>()
-//    private val productInputAdapter: Act086ProductItemAdapter by lazy{
-//        Act086ProductItemAdapter(
-//            ::onProductItemClick,
-//            ::onDeleteIconClick
-//        )
-//    }
+    private val historicFrg: Act086HistoricFrg by lazy{
+        Act086HistoricFrg.newInstance(
+            hmAux_Trans
+        )
+    }
+    private var isNewVerification = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +71,8 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     private fun recoverIntentsInfo() {
         bundle = intent?.extras?:Bundle()
-        prefixPhoto = bundle.getString("PREFIX_PHOTO","confer_photo_")
+        prefixPhoto = bundle.getString(PARAM_PREFIX_PHOTO,"confer_photo_")
+        isNewVerification = bundle.getBoolean(PARAM_NEW_VERIFICATION,false)
     }
 
     private fun iniSetup() {
@@ -95,14 +93,33 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
 
     private fun initVars() {
         setLabels()
+        applyNewVerificationConfig()
         initVerificationFrg()
+    }
+
+    private fun applyNewVerificationConfig() {
+        if(isNewVerification){
+            binding.act086TvConsult.visibility = View.GONE
+        }
     }
 
     private fun initVerificationFrg() {
         setFrag(
-            verificationFrg,
-            VERIFICATION_FRG_TAG,
-            binding.act086FrgPlaceholder.id
+            type = verificationFrg,
+            sTag = VERIFICATION_FRG_TAG,
+            placeHolderId = binding.act086FrgPlaceholder.id,
+            replaceEvenCreated = true,
+            addToBackStack = false
+        )
+    }
+
+    private fun setHistoricFrg(){
+        setFrag(
+            type = historicFrg,
+            sTag = HISTORIC_FRG_TAG,
+            placeHolderId = binding.act086FrgPlaceholder.id,
+            replaceEvenCreated = true,
+            addToBackStack = false
         )
     }
 
@@ -113,11 +130,12 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
     private fun initActions() {
         binding.act086TvConsult.setOnClickListener {
             toggleHeaderNavegationIcons(it.id)
+            setHistoricFrg()
         }
         //
         binding.act086TvBack.setOnClickListener {
             toggleHeaderNavegationIcons(it.id)
-            //initVerificationFrg()
+            initVerificationFrg()
         }
 
     }
@@ -139,7 +157,19 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         when (fragment) {
             is Act086VerificationFrg ->{
                 fragment.showAlert = ::showAlert
+                fragment.addHeightToActScroll = ::addHeightToScroll
             }
+        }
+    }
+
+    private fun addHeightToScroll(materialBottom: Int, heightToAdd: Int){
+        val scrollY = binding.act086NvMain.scrollY
+        val screenMetrics = ToolBox_Inf.getScreenMetrics(context)
+        val i2 = supportActionBar?.let{it.height}?:0
+        val i1 = screenMetrics[1] - (binding.include.height  + i2)
+        if(i1 + scrollY < materialBottom){
+            val i = materialBottom - binding.act086ClHeader.height - scrollY
+            binding.act086NvMain.scrollTo(0,i)
         }
     }
 
@@ -200,7 +230,19 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         finish()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        ToolBox_Inf.deleteFileListExceptionSafe(ConstantBaseApp.CACHE_PATH_PHOTO,prefixPhoto)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        return true
+    }
+
     companion object{
         const val VERIFICATION_FRG_TAG = "VERIFICATION_FRG_TAG"
+        const val HISTORIC_FRG_TAG = "HISTORIC_FRG_TAG"
+        const val PARAM_PREFIX_PHOTO = "PARAM_PREFIX_PHOTO"
+        const val PARAM_NEW_VERIFICATION = "PARAM_NEW_VERIFICATION"
     }
 }

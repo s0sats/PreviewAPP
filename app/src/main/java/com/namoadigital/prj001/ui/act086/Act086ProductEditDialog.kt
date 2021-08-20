@@ -1,10 +1,13 @@
 package com.namoadigital.prj001.ui.act086
 
+import android.content.Context
 import android.content.DialogInterface
+import android.inputmethodservice.InputMethodService
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.databinding.Act086ProductEditDialogBinding
@@ -52,18 +55,18 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
     private fun setLabels() {
         with(binding){
             act086ProductEditDialogBtnCancel.text = hmAuxTrans["sys_alert_btn_cancel"]
-            act086ProductEditDialogBtnApply.text = hmAuxTrans["btn_apply"]
+            act086ProductEditDialogBtnApply.text = hmAuxTrans["sys_alert_btn_ok"]
         }
     }
 
     private fun initVars() {
         with(binding){
-            act086ProductEditDialogTvProductDesc.text = ToolBox_Inf.getFormattedGenericIdDesc(
-                productItem.productId,
-                productItem.productDesc
-            )
+            act086ProductEditDialogTvProductId.text = productItem.productId
+            act086ProductEditDialogTvProductDesc.text = productItem.productDesc
             //
-            act086ProductEditDialogEtQty.setText(productItem.productQty.toString())
+            act086ProductEditDialogEtQty.apply {
+                setText(productItem.productQty.toString())
+            }
             act086ProductEditDialogTvUnit.text = productItem.productUnit
         }
     }
@@ -80,6 +83,16 @@ class Act086ProductEditDialog : BottomSheetDialogFragment() {
                 dismiss()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).toggleSoftInput(
+            InputMethodManager.SHOW_FORCED,
+            InputMethodManager.HIDE_IMPLICIT_ONLY
+        )
+        binding.act086ProductEditDialogEtQty.requestFocus()
     }
 
     override fun onDismiss(dialog: DialogInterface) {

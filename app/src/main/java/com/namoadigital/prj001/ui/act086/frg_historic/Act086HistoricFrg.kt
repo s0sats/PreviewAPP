@@ -5,55 +5,97 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.namoadigital.prj001.R
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.namoa_digital.namoa_library.util.HMAux
+import com.namoa_digital.namoa_library.util.ToolBox
+import com.namoa_digital.namoa_library.view.BaseFragment
+import com.namoadigital.prj001.adapter.Act086HistoricAlertAdapter
+import com.namoadigital.prj001.databinding.Act086HistoricFrgBinding
+import com.namoadigital.prj001.model.Act086HistoricAlert
+import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ToolBox_Inf
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * A simple [Fragment] subclass.
  * Use the [Act086HistoricFrg.newInstance] factory method to
  * create an instance of this fragment.
  */
-class Act086HistoricFrg : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class Act086HistoricFrg : BaseFragment() {
+    private val binding: Act086HistoricFrgBinding by lazy{
+        Act086HistoricFrgBinding.inflate(layoutInflater)
+    }
+    private val alertAdapter: Act086HistoricAlertAdapter by lazy{
+        Act086HistoricAlertAdapter(alertList as ArrayList<Act086HistoricAlert>)
+    }
+    private var alertList = mutableListOf<Act086HistoricAlert>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            hmAux_Trans = HMAux.getHmAuxFromHashMap(it.getSerializable(Constant.MAIN_HMAUX_TRANS_KEY) as HashMap<String?, String?>)
         }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.act086_historic_frg, container, false)
+    ): View {
+        return binding.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initVars()
+        initRecycle()
+    }
+
+
+    private fun initVars() {
+        getFakeAlertList(5)
+    }
+
+    private fun initRecycle() {
+        binding.act086HistoricFrgRvAlertHistoric.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = alertAdapter
+        }
+    }
+
+    private fun getFakeAlertList(qty: Int) {
+        for( i in 0 .. qty){
+            alertList.add(
+                Act086HistoricAlert(
+                    ToolBox_Inf.millisecondsToString(
+                        ToolBox_Inf.dateToMilliseconds(
+                            ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
+                        ),
+                        ToolBox_Inf.nlsDateFormat(context) + " HH:mm"
+                    )
+                   ,
+                    "Medição $i",
+                    "Comentario do item $i"
+                )
+            )
+        }
+    }
+
 
     companion object {
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
+         * @param hmAux_Trans: A traduções
          * @return A new instance of fragment Act086HistoricFrg.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+
+        fun newInstance(hmAux_Trans: HMAux) =
             Act086HistoricFrg().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putSerializable(ConstantBaseApp.MAIN_HMAUX_TRANS_KEY, hmAux_Trans)
                 }
             }
     }

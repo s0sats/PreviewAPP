@@ -38,22 +38,6 @@
                 app:drawableTint="@color/namoa_os_form_done_action_blue" />
 
             <RadioButton
-                android:id="@+id/act086_verification_frg_rdo_answer_problem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:buttonTint="@color/os_form_verify_text_color_states"
-                android:checked="false"
-                android:drawableStart="@drawable/ic_outline_report_problem_24_black"
-                android:drawablePadding="8dp"
-                android:minHeight="48dp"
-                android:paddingStart="8dp"
-                android:text="Continua com problema"
-                android:textColor="@color/os_form_verify_text_color_states"
-                android:background="@drawable/os_form_verify_background_states"
-                app:drawableTint="@color/namoa_os_form_problem_red" />
-
-            <RadioButton
                 android:id="@+id/act086_verification_frg_rdo_answer_verified"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -69,6 +53,22 @@
                 android:textColor="@color/os_form_verify_text_color_states"
                 android:background="@drawable/os_form_verify_background_states"
                 />
+
+            <RadioButton
+                android:id="@+id/act086_verification_frg_rdo_answer_problem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:buttonTint="@color/os_form_verify_text_color_states"
+                android:checked="false"
+                android:drawableStart="@drawable/ic_outline_report_problem_24_black"
+                android:drawablePadding="8dp"
+                android:minHeight="48dp"
+                android:paddingStart="8dp"
+                android:text="Continua com problema"
+                android:textColor="@color/os_form_verify_text_color_states"
+                android:background="@drawable/os_form_verify_background_states"
+                app:drawableTint="@color/namoa_os_form_problem_red" />
 
             <RadioButton
                 android:id="@+id/act086_verification_frg_rdo_answer_not_verified"
