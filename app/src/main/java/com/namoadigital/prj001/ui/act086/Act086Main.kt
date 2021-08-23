@@ -157,23 +157,26 @@ class Act086Main : Base_Activity_Frag(), Act086MainContract.I_View{
         when (fragment) {
             is Act086VerificationFrg ->{
                 fragment.showAlert = ::showAlert
-                fragment.addHeightToActScroll = ::addHeightToScroll
+                fragment.checkScrollNeeds = ::checkScrollNeeds
             }
         }
     }
 
-    private fun addHeightToScroll(materialBottom: Int, heightToAdd: Int){
-        val scrollY = binding.act086NvMain.scrollY
-        val screenMetrics = ToolBox_Inf.getScreenMetrics(context)
-        val i2 = supportActionBar?.let{it.height}?:0
-        val i1 = screenMetrics[1] - (binding.include.height  + i2)
-        if(i1 + scrollY < materialBottom){
-            val i = materialBottom - binding.act086ClHeader.height - scrollY
-            binding.act086NvMain.scrollTo(0,i)
-        }
+    private fun checkScrollNeeds(viewBottomPosition: Int, heightToAdd: Int){
+        mPresenter.checkViewPositionIsVisible(
+            viewBottomPosition,
+            heightToAdd,
+            scrollTop = binding.act086NvMain.scrollY,
+            actionBarHeight = supportActionBar?.let{it.height}?:0,
+            footerHeight = binding.include.height
+        )
     }
 
-    override fun showAlert(ttl: String?, msg: String?, positeClickListener: DialogInterface.OnClickListener?,negativeBtn: Int) {
+    override fun updateScrollPosition(newScrollTop: Int) {
+        binding.act086NvMain.scrollTo(0,newScrollTop)
+    }
+
+    override fun showAlert(ttl: String?, msg: String?, positeClickListener: DialogInterface.OnClickListener?, negativeBtn: Int) {
         if(negativeBtn == 0) {
             ToolBox.alertMSG(
                 context,

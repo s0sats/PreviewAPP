@@ -66,7 +66,7 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
                     negativeBtn: Int) -> Unit
             //= {_,_,_,_ -> }
 
-    lateinit var addHeightToActScroll: (materialBottom: Int, heightToAdd: Int) -> Unit
+    lateinit var checkScrollNeeds: (materialBottom: Int, heightToAdd: Int) -> Unit
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -227,27 +227,35 @@ class Act086VerificationFrg : BaseFragment(), Act086VerificationFrgContract.I_Vi
 
     fun onApplyProductClick(productIndex: Int, productItem: Act086ProductItem, isAddProcess: Boolean ){
         if(productIndex > -1){
+            //Atualiza item na lista
             productInputList[productIndex] = productItem
+            //Informa adapter qual posição atualizar
             productInputAdapter.notifyItemChanged(productIndex)
+            //Atualiza titulo com qtd
             binding.act086VerificationFrgTvProductTtl.text = "${hmAux_Trans["product_ttl"]}: ${productInputList.size}"
-            val linearLayoutManager =
-                binding.act086VerificationFrgRvProducts.layoutManager as LinearLayoutManager
             //
-//            val findLastCompletelyVisibleItemPosition =
-//                linearLayoutManager.findLastCompletelyVisibleItemPosition()
-//            val shown = binding.act086VerificationFrgIvAddPhoto.isShown
-//            //
-//            if(!shown || findLastCompletelyVisibleItemPosition < productIndex ){
-//                linearLayoutManager.getChildAt(productIndex)?.let {
-//                    val tt = binding.act086VerificationFrgRvProducts.bottom + it.height
-//                    addHeightToActScroll(tt)
-//                }
-//
-//            }
-            linearLayoutManager.getChildAt(productIndex)?.let {
-                val tt = binding.act086VerificationFrgRvProducts.bottom + it.height
-                addHeightToActScroll(tt,it.height)
-            }
+            handleViewScrollNeeds(productIndex)
+        }
+    }
+
+    private fun handleViewScrollNeeds(productIndex: Int) {
+        val linearLayoutManager =
+            binding.act086VerificationFrgRvProducts.layoutManager as LinearLayoutManager
+        //Tenta resgatar o item recem atualizado
+        linearLayoutManager.getChildAt(productIndex)?.let {
+            //Tenta o calcular o tamanho do ajusta a altura da view.
+            //Pega o maior entre a soma dos paddingTop e Bottom ou a conversão de 40px pra dp.
+            //40dp foi o numero magico baseado em testes. A maior soma de paddings foi 36dp e não era suficiente.
+            val adjustHeight = maxOf(
+                (it.paddingTop + it.paddingBottom),
+                ToolBox.convertPixelsToDpIndeed(requireContext(), 40f).toInt()
+            )
+            //Soma altura do card  + ajutes calculado
+            val finalHeight = it.height + adjustHeight
+            //Pega bottom do recycle e tb adiciona o ajuste(Necessario pq nem tudo é tao preciso kkk)
+            val calculatedMaterialRecycleBottom = binding.act086VerificationFrgRvProducts.bottom + finalHeight
+            //Chama metodo da act que tem controle do NestedScroll para verifica se precisa fazer o scroll
+            checkScrollNeeds(calculatedMaterialRecycleBottom, finalHeight)
         }
     }
 

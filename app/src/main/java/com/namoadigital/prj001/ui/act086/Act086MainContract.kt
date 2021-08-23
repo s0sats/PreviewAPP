@@ -12,9 +12,18 @@ interface Act086MainContract {
             positeClickListener: DialogInterface.OnClickListener? = null,
             negativeBtn: Int = 0
         )
+
+        fun updateScrollPosition(newScrollTop: Int)
     }
 
     interface I_Presenter{
         fun getTranslation() : HMAux
+        fun checkViewPositionIsVisible(
+            viewBottomPosition: Int,
+            heightToAdd: Int,
+            scrollTop: Int,
+            actionBarHeight: Int,
+            footerHeight: Int
+        )
     }
 }
