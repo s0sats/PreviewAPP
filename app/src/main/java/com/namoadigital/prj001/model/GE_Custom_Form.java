@@ -18,6 +18,10 @@ public class GE_Custom_Form {
     private int all_operation;
     private int all_product;
     private int tag_operational_code;
+    private int is_so;
+    private int so_edit_start_end;
+    private Integer so_order_type_default;
+    private int so_allow_change_order_type;
     private int block_spontaneous;
 
     public long getCustomer_code() {
@@ -114,6 +118,38 @@ public class GE_Custom_Form {
 
     public void setTag_operational_code(int tag_operational_code) {
         this.tag_operational_code = tag_operational_code;
+    }
+
+    public int getIs_so() {
+        return is_so;
+    }
+
+    public void setIs_so(int is_so) {
+        this.is_so = is_so;
+    }
+
+    public int getSo_edit_start_end() {
+        return so_edit_start_end;
+    }
+
+    public void setSo_edit_start_end(int so_edit_start_end) {
+        this.so_edit_start_end = so_edit_start_end;
+    }
+
+    public Integer getSo_order_type_default() {
+        return so_order_type_default;
+    }
+
+    public void setSo_order_type_default(Integer so_order_type_default) {
+        this.so_order_type_default = so_order_type_default;
+    }
+
+    public int getSo_allow_change_order_type() {
+        return so_allow_change_order_type;
+    }
+
+    public void setSo_allow_change_order_type(int so_allow_change_order_type) {
+        this.so_allow_change_order_type = so_allow_change_order_type;
     }
 
     public int getBlock_spontaneous() {
