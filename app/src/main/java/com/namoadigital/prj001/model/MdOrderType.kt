@@ -1,10 +1,9 @@
 package com.namoadigital.prj001.model
 
 class MdOrderType(
-    var customer_code: Int,
-    var order_type_code: Int,
-    var order_type_id: String,
-    var order_type_desc: String,
-    var display_option: String
-) {
-}
+    val customer_code: Long,
+    val order_type_code: Int,
+    val order_type_id: String,
+    val order_type_desc: String,
+    val display_option: String
+)
