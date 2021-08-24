@@ -102,6 +102,11 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String PROFILE = "profile";
     public static final String LOG_DATE = "log_date";
     public static final String REASON_CODE = "reason_code";
+    public static final String HAS_ITEM_CHECK = "has_item_check";
+    public static final String SCN_ITEM_CHECK = "scn_item_check";
+    public static final String MEASURE_TP_CODE = "measure_tp_code";
+    public static final String LAST_MEASURE_VALUE = "last_measure_value";
+    public static final String LAST_MEASURE_DATE = "last_measure_date";
 
 
     public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SERIAL_TMP,
@@ -1079,6 +1084,27 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             }else{
                 md_product_serial.setReason_code(cursor.getInt(cursor.getColumnIndex(REASON_CODE)));
             }
+            md_product_serial.setHas_item_check(cursor.getInt(cursor.getColumnIndex(HAS_ITEM_CHECK)));
+            if(cursor.isNull(cursor.getColumnIndex(SCN_ITEM_CHECK))){
+                md_product_serial.setScn_item_check(null);
+            }else{
+                md_product_serial.setScn_item_check(cursor.getInt(cursor.getColumnIndex(SCN_ITEM_CHECK)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(MEASURE_TP_CODE))){
+                md_product_serial.setMeasure_tp_code(null);
+            }else{
+                md_product_serial.setMeasure_tp_code(cursor.getInt(cursor.getColumnIndex(MEASURE_TP_CODE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(LAST_MEASURE_VALUE))){
+                md_product_serial.setLast_measure_value(null);
+            }else{
+                md_product_serial.setLast_measure_value(cursor.getDouble(cursor.getColumnIndex(LAST_MEASURE_VALUE)));
+            }
+            if(cursor.isNull(cursor.getColumnIndex(LAST_MEASURE_DATE))){
+                md_product_serial.setLast_measure_date(null);
+            }else{
+                md_product_serial.setLast_measure_date(cursor.getString(cursor.getColumnIndex(LAST_MEASURE_DATE)));
+            }
             //
             return md_product_serial;
         }
@@ -1185,6 +1211,13 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
                 contentValues.put(LOG_DATE, md_product_serial.getLog_date());
             }
             contentValues.put(REASON_CODE, md_product_serial.getReason_code());
+            if(md_product_serial.getHas_item_check() > -1){
+                contentValues.put(HAS_ITEM_CHECK, md_product_serial.getHas_item_check());
+            }
+            contentValues.put(SCN_ITEM_CHECK, md_product_serial.getScn_item_check());
+            contentValues.put(MEASURE_TP_CODE, md_product_serial.getMeasure_tp_code());
+            contentValues.put(LAST_MEASURE_VALUE, md_product_serial.getLast_measure_value());
+            contentValues.put(LAST_MEASURE_DATE, md_product_serial.getLast_measure_date());
 
             return contentValues;
         }

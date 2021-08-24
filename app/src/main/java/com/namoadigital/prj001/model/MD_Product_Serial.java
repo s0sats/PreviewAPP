@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.model;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.Expose;
 
 import java.io.Serializable;
@@ -102,6 +104,14 @@ public class MD_Product_Serial implements Serializable {
     private String log_date;
     @Expose
     private Integer reason_code;
+    //LUCHE - 24/08/2021 - O.S FORM O.o
+    private int has_item_check;
+    private Integer scn_item_check;
+    private Integer measure_tp_code;
+    private Double last_measure_value;
+    @Nullable
+    private String last_measure_date;
+    private ArrayList<MD_Product_Serial_Tp_Device> device_tp;
 
     /*
     * Add contrutor com inicialização de -1 no serial temp para diferenciar dos seriais criados
@@ -627,6 +637,47 @@ public class MD_Product_Serial implements Serializable {
 
     public void setReason_code(Integer reason_code) {
         this.reason_code = reason_code;
+    }
+
+    public int getHas_item_check() {
+        return has_item_check;
+    }
+
+    public void setHas_item_check(int has_item_check) {
+        this.has_item_check = has_item_check;
+    }
+
+    public Integer getScn_item_check() {
+        return scn_item_check;
+    }
+
+    public void setScn_item_check(Integer scn_item_check) {
+        this.scn_item_check = scn_item_check;
+    }
+
+    public Integer getMeasure_tp_code() {
+        return measure_tp_code;
+    }
+
+    public void setMeasure_tp_code(Integer measure_tp_code) {
+        this.measure_tp_code = measure_tp_code;
+    }
+
+    public Double getLast_measure_value() {
+        return last_measure_value;
+    }
+
+    public void setLast_measure_value(Double last_measure_value) {
+        this.last_measure_value = last_measure_value;
+    }
+
+    @Nullable
+    public String getLast_measure_date() {
+        return last_measure_date;
+    }
+
+    public void setLast_measure_date(@Nullable String last_measure_date) {
+        this.last_measure_date = last_measure_date;
     }
 
     /**
