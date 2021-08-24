@@ -53,6 +53,8 @@ import com.namoadigital.prj001.dao.MD_SiteDao;
 import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.MD_UserDao;
+import com.namoadigital.prj001.dao.MdDeviceTpDao;
+import com.namoadigital.prj001.dao.MdOrderTypeDao;
 import com.namoadigital.prj001.dao.MdTagDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
@@ -102,6 +104,8 @@ import com.namoadigital.prj001.model.MD_Site;
 import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.MD_Site_Zone_Local;
 import com.namoadigital.prj001.model.MD_User;
+import com.namoadigital.prj001.model.MdDeviceTp;
+import com.namoadigital.prj001.model.MdOrderType;
 import com.namoadigital.prj001.model.MdTag;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.Sync_Checklist;
@@ -147,6 +151,8 @@ import com.namoadigital.prj001.sql.MD_Site_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_User_Sql_Truncate;
+import com.namoadigital.prj001.sql.MdDeviceTpSqlTruncate;
+import com.namoadigital.prj001.sql.MdOrderTypeSqlTruncate;
 import com.namoadigital.prj001.sql.MdTagSqlTruncate;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_Truncate;
 import com.namoadigital.prj001.sql.Sql_WS_Sync_Datapackage_So_001;
@@ -576,6 +582,8 @@ public class WS_Sync extends IntentService {
             IO_Move_ReasonDao io_move_reasonDao = new IO_Move_ReasonDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MD_PartnerDao partnerDao = new MD_PartnerDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             TkTicketCacheDao tkTicketCacheDao = new TkTicketCacheDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MdDeviceTpDao deviceTpDao = new MdDeviceTpDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MdOrderTypeDao orderTypeDao = new MdOrderTypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
@@ -603,6 +611,8 @@ public class WS_Sync extends IntentService {
             io_move_reasonDao.remove(new IO_Move_Reason_Sql_Truncate().toSqlQuery());
             partnerDao.remove(new MD_Partner_Sql_Truncate().toSqlQuery());
             tkTicketCacheDao.remove(new TkTicketCacheSqlTruncate().toSqlQuery());
+            deviceTpDao.remove(new MdDeviceTpSqlTruncate().toSqlQuery());
+            orderTypeDao.remove(new MdOrderTypeSqlTruncate().toSqlQuery());
             //
             // Processamento Operation
             //
@@ -1443,6 +1453,44 @@ public class WS_Sync extends IntentService {
             }
             //Libera pro GB
             files_ticket_cache = null;
+
+            /**
+             * Processamento MD_DEVICE_TP
+             */
+            File[] files_device_tp = ToolBox_Inf.getListOfFiles_v2("md_device_tp-");
+
+            for (File _file : files_device_tp) {
+                ArrayList<MdDeviceTp> deviceTps = gson.fromJson(
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(_file)
+                    ),
+                    new TypeToken<ArrayList<MdDeviceTp>>() {
+                    }.getType()
+                );
+                //
+                deviceTpDao.addUpdate(deviceTps, false);
+            }
+            //Libera pro GB
+            files_device_tp = null;
+
+            /**
+             * Processamento MD_ORDER_TYPE
+             */
+            File[] files_order_type = ToolBox_Inf.getListOfFiles_v2("md_order_type-");
+
+            for (File _file : files_order_type) {
+                ArrayList<MdOrderType> orderTypes = gson.fromJson(
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(_file)
+                    ),
+                    new TypeToken<ArrayList<MdOrderType>>() {
+                    }.getType()
+                );
+                //
+                orderTypeDao.addUpdate(orderTypes, false);
+            }
+            //Libera pro GB
+            files_order_type = null;
         }
 
         //endregion
