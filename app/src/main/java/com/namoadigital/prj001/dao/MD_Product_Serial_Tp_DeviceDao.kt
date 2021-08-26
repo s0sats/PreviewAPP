@@ -8,42 +8,45 @@ import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
-import com.namoadigital.prj001.model.MdDeviceTp
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-class MdDeviceTpDao(
+class MD_Product_Serial_Tp_DeviceDao(
     context: Context,
     mDB_NAME: String,
     mDB_VERSION: Int
 ) : BaseDao(
     context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI ),
-    DaoWithReturn<MdDeviceTp> {
+    DaoWithReturn<MD_Product_Serial_Tp_Device> {
 
     companion object{
-        const val TABLE = "md_device_tp"
-        const val CUSTOMER_CODE ="customer_code"
+        const val TABLE = "md_product_serial_tp_device"
+        const val CUSTOMER_CODE = "customer_code"
+        const val PRODUCT_CODE = "product_code"
+        const val SERIAL_CODE = "serial_code"
         const val DEVICE_TP_CODE = "device_tp_code"
-        const val DEVICE_TP_ID = "device_tp_id"
-        const val DEVICE_TP_DESC = "device_tp_desc"
+        const val TRACKING_NUMBER = "tracking_number"
     }
 
-    private val toMdDeviceTpMapper: Mapper<Cursor,MdDeviceTp>
-    private val toContentValuesMapper: Mapper<MdDeviceTp,ContentValues>
+    private val toMD_Product_Serial_Tp_DeviceMapper: Mapper<Cursor,MD_Product_Serial_Tp_Device>
+    private val toContentValuesMapper: Mapper<MD_Product_Serial_Tp_Device,ContentValues>
 
     init {
-        this.toMdDeviceTpMapper = CursorToMdDeviceTpMapper()
-        this.toContentValuesMapper = MdDeviceTpToContentValuesMapper()
+        this.toMD_Product_Serial_Tp_DeviceMapper = CursorToMD_Product_Serial_Tp_DeviceMapper()
+        this.toContentValuesMapper = MD_Product_Serial_Tp_DeviceToContentValuesMapper()
     }
 
     @Throws(java.lang.Exception::class)
-    private fun getWherePkClause(mdDeviceTp: MdDeviceTp?): StringBuilder{
-        mdDeviceTp?.let{
+    private fun getWherePkClause(MD_Product_Serial_Tp_Device: MD_Product_Serial_Tp_Device?): StringBuilder{
+        MD_Product_Serial_Tp_Device?.let{
             return java.lang.StringBuilder()
                 .append("""
-                        ${CUSTOMER_CODE} = '${mdDeviceTp.customer_code}'  
-                        AND ${DEVICE_TP_CODE} = '${mdDeviceTp.device_tp_code}'                           
+                        ${CUSTOMER_CODE} = '${MD_Product_Serial_Tp_Device.customer_code}'  
+                        AND ${PRODUCT_CODE} = '${MD_Product_Serial_Tp_Device.product_code}'                           
+                        AND ${SERIAL_CODE} = '${MD_Product_Serial_Tp_Device.serial_code}'                           
+                        AND ${DEVICE_TP_CODE} = '${MD_Product_Serial_Tp_Device.device_tp_code}'                           
                         """.trimIndent()
                 )
         }
@@ -51,7 +54,7 @@ class MdDeviceTpDao(
         
     }
 
-    override fun addUpdate(mdDeviceTp: MdDeviceTp?): DaoObjReturn {
+    override fun addUpdate(mdProductSerialTpDevice: MD_Product_Serial_Tp_Device?): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
@@ -62,13 +65,13 @@ class MdDeviceTpDao(
             daoObjReturn.table = TABLE
             curAction = DaoObjReturn.UPDATE
             //Where para update
-            val sbWhere: StringBuilder = getWherePkClause(mdDeviceTp)
+            val sbWhere: StringBuilder = getWherePkClause(mdProductSerialTpDevice)
             //Tenta update e armazena retorno
-            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(mdDeviceTp), sbWhere.toString(), null).toLong()
+            addUpdateRet = db.update(TABLE, toContentValuesMapper.map(mdProductSerialTpDevice), sbWhere.toString(), null).toLong()
             //Se nenhuma linha afetada, tenta insert
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
-                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdDeviceTp))
+                db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdProductSerialTpDevice))
             }
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -98,7 +101,7 @@ class MdDeviceTpDao(
         return daoObjReturn
     }
 
-    override fun addUpdate(mdDeviceTps: MutableList<MdDeviceTp>?, status: Boolean): DaoObjReturn {
+    override fun addUpdate(mdProductSerialTpDevices: MutableList<MD_Product_Serial_Tp_Device>?, status: Boolean): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
@@ -115,14 +118,14 @@ class MdDeviceTpDao(
                 db.delete(TABLE, null, null)
             }
 
-            mdDeviceTps?.forEach { mdDeviceTp ->
-                val sbWhere: StringBuilder = getWherePkClause(mdDeviceTp)
+            mdProductSerialTpDevices?.forEach { mdProductSerialTpDevice ->
+                val sbWhere: StringBuilder = getWherePkClause(mdProductSerialTpDevice)
                 //Tenta update e armazena retorno
-                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(mdDeviceTp), sbWhere.toString(), null).toLong()
+                addUpdateRet = db.update(TABLE, toContentValuesMapper.map(mdProductSerialTpDevice), sbWhere.toString(), null).toLong()
                 //Se nenhuma linha afetada, tenta insert
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
-                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdDeviceTp))
+                    db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdProductSerialTpDevice))
                 }
             }
             //
@@ -181,13 +184,13 @@ class MdDeviceTpDao(
         closeDB()
     }
 
-    override fun getByString(sQuery: String?): MdDeviceTp? {
-        var mdDeviceTp: MdDeviceTp? = null
+    override fun getByString(sQuery: String?): MD_Product_Serial_Tp_Device? {
+        var mdProductSerialTpDevice: MD_Product_Serial_Tp_Device? = null
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                mdDeviceTp = toMdDeviceTpMapper.map(cursor)
+                mdProductSerialTpDevice = toMD_Product_Serial_Tp_DeviceMapper.map(cursor)
             }
             //
             cursor.close()
@@ -196,16 +199,16 @@ class MdDeviceTpDao(
         } finally {
         }
         closeDB()
-        return mdDeviceTp
+        return mdProductSerialTpDevice
     }
 
     override fun getByStringHM(sQuery: String?): HMAux? {
-        var mdDeviceTp: HMAux? = null
+        var mdProductSerialTpDevice: HMAux? = null
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                mdDeviceTp = CursorToHMAuxMapper.mapN(cursor)
+                mdProductSerialTpDevice = CursorToHMAuxMapper.mapN(cursor)
             }
             cursor.close()
         } catch (e: java.lang.Exception) {
@@ -213,17 +216,17 @@ class MdDeviceTpDao(
         } finally {
         }
         closeDB()
-        return  mdDeviceTp
+        return  mdProductSerialTpDevice
     }
 
-    override fun query(sQuery: String?): MutableList<MdDeviceTp> {
-        val mdDeviceTps = mutableListOf<MdDeviceTp>()
+    override fun query(sQuery: String?): MutableList<MD_Product_Serial_Tp_Device> {
+        val mdProductSerialTpDevices = mutableListOf<MD_Product_Serial_Tp_Device>()
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                val uAux = toMdDeviceTpMapper.map(cursor)
-                mdDeviceTps.add(uAux)
+                val uAux = toMD_Product_Serial_Tp_DeviceMapper.map(cursor)
+                mdProductSerialTpDevices.add(uAux)
             }
             cursor.close()
         } catch (e: java.lang.Exception) {
@@ -231,16 +234,16 @@ class MdDeviceTpDao(
         } finally {
         }
         closeDB()
-        return mdDeviceTps
+        return mdProductSerialTpDevices
     }
 
     override fun query_HM(sQuery: String?): MutableList<HMAux> {
-        val mdDeviceTps = mutableListOf<HMAux>()
+        val mdProductSerialTpDevices = mutableListOf<HMAux>()
         openDB()
         try {
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
-                mdDeviceTps.add(CursorToHMAuxMapper.mapN(cursor))
+                mdProductSerialTpDevices.add(CursorToHMAuxMapper.mapN(cursor))
             }
             cursor.close()
         } catch (e: java.lang.Exception) {
@@ -248,18 +251,19 @@ class MdDeviceTpDao(
         } finally {
         }
         closeDB()
-        return mdDeviceTps
+        return mdProductSerialTpDevices
     }
 
-    private class CursorToMdDeviceTpMapper : Mapper<Cursor, MdDeviceTp> {
-        override fun map(cursor: Cursor?): MdDeviceTp? {
+    private class CursorToMD_Product_Serial_Tp_DeviceMapper : Mapper<Cursor, MD_Product_Serial_Tp_Device> {
+        override fun map(cursor: Cursor?): MD_Product_Serial_Tp_Device? {
             cursor?.let {
                 with(cursor){
-                    return MdDeviceTp(
+                    return MD_Product_Serial_Tp_Device(
                         customer_code = getLong(getColumnIndex(CUSTOMER_CODE)),
+                        product_code = getLong(getColumnIndex(PRODUCT_CODE)),
+                        serial_code = getLong(getColumnIndex(SERIAL_CODE)),
                         device_tp_code = getInt(getColumnIndex(DEVICE_TP_CODE)),
-                        device_tp_id = getString(getColumnIndex(DEVICE_TP_ID)),
-                        device_tp_desc = getString(getColumnIndex(DEVICE_TP_DESC)),
+                        tracking_number = getString(getColumnIndex(TRACKING_NUMBER))
                     )
                 }
             }
@@ -267,24 +271,25 @@ class MdDeviceTpDao(
         }
     }
 
-    private class MdDeviceTpToContentValuesMapper : Mapper<MdDeviceTp, ContentValues> {
-        override fun map(mdDeviceTp: MdDeviceTp?): ContentValues {
+    private class MD_Product_Serial_Tp_DeviceToContentValuesMapper : Mapper<MD_Product_Serial_Tp_Device, ContentValues> {
+        override fun map(mdProductSerialTpDevice: MD_Product_Serial_Tp_Device?): ContentValues {
             val contentValues = ContentValues()
             //
-            mdDeviceTp?.let {
+            mdProductSerialTpDevice?.let {
                 with(contentValues){
-                    if(mdDeviceTp.customer_code > -1){
-                        put(CUSTOMER_CODE,mdDeviceTp.customer_code)
+                    if(mdProductSerialTpDevice.customer_code > -1){
+                        put(CUSTOMER_CODE,mdProductSerialTpDevice.customer_code)
                     }
-                    if(mdDeviceTp.device_tp_code > -1){
-                        put(DEVICE_TP_CODE,mdDeviceTp.device_tp_code)
+                    if(mdProductSerialTpDevice.product_code > -1){
+                        put(PRODUCT_CODE,mdProductSerialTpDevice.product_code)
                     }
-                    if(mdDeviceTp.device_tp_id != null){
-                        put(DEVICE_TP_ID,mdDeviceTp.device_tp_id)
+                    if(mdProductSerialTpDevice.serial_code > -1){
+                        put(SERIAL_CODE,mdProductSerialTpDevice.serial_code)
                     }
-                    if(mdDeviceTp.device_tp_desc != null){
-                        put(DEVICE_TP_DESC,mdDeviceTp.device_tp_desc)
+                    if(mdProductSerialTpDevice.device_tp_code > -1){
+                        put(DEVICE_TP_CODE,mdProductSerialTpDevice.device_tp_code)
                     }
+                    put(TRACKING_NUMBER,mdProductSerialTpDevice.tracking_number)
                 }
             }
             //

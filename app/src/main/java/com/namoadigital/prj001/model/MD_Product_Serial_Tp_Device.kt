@@ -2,7 +2,6 @@ package com.namoadigital.prj001.model
 
 class MD_Product_Serial_Tp_Device(
     val device_tp_code: Int,
-    val measure_tp_code: Int? = null,
     val tracking_number: String? = null
 ){
     var customer_code: Long = -1
@@ -19,9 +18,8 @@ class MD_Product_Serial_Tp_Device(
         product_code: Long,
         serial_code: Long,
         device_tp_code: Int,
-        measure_tp_code: Int? = null,
         tracking_number: String? = null
-    ) : this(device_tp_code, measure_tp_code, tracking_number){
+    ) : this(device_tp_code, tracking_number){
         this.customer_code = customer_code
         this.product_code = product_code
         this.serial_code = serial_code
