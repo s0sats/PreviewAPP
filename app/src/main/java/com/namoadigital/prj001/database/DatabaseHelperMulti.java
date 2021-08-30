@@ -134,6 +134,9 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
             script.append("CREATE TABLE IF NOT EXISTS [md_device_tp] ([customer_code] int not null, [device_tp_code] int not null,[device_tp_id] text not null collate nocase,[device_tp_desc] text not null collate nocase,  constraint [pk_md_device_tp] primary key(customer_code,device_tp_code));");
             script.append("CREATE TABLE IF NOT EXISTS [md_item_check] ([customer_code] int not null, [item_check_code] int not null,[item_check_id] text not null collate nocase,[item_check_desc] text not null collate nocase,  constraint [pk_md_item_check] primary key(customer_code,item_check_code));");
             script.append("CREATE TABLE IF NOT EXISTS [md_order_type] ([customer_code] int not null, [order_type_code] int not null,[order_type_id] text not null collate nocase,[order_type_desc] text not null collate nocase,[display_option] text not null collate nocase,  constraint [pk_md_order_type] primary key(customer_code,order_type_code));");
+            script.append("CREATE TABLE IF NOT EXISTS [md_product_serial_tp_device] ([customer_code] int not null,[product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [order_seq] int not null, [tracking_number] text collate nocase, constraint [pk_md_product_serial_tp_device] primary key(customer_code,product_code,serial_code,device_tp_code));");
+            script.append("CREATE TABLE IF NOT EXISTS [md_product_serial_tp_device_item]( [customer_code] int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null,[item_check_code] int not null, [item_check_seq] int not null, [apply_material] text not null collate nocase, [verification_instruction] text collate nocase, [require_justify_problem] int not null default 0, [critical_item] int not null default 0, [order_seq] int not null, [structure] int not null, [manual_desc] text collate nocase, [next_cycle_measure] real, [next_cycle_measure_date] text collate nocase, [next_cycle_limit_date] text collate nocase, [item_check_status] text not null collate nocase, constraint [pk_md_product_serial_tp_device_item] primary key(customer_code,product_code,serial_code,device_tp_code,item_check_code,item_check_seq));");
+            script.append("CREATE TABLE IF NOT EXISTS [md_product_serial_tp_device_item_hist]( [customer_code] int not null, [product_code] int not null, [serial_code] int not null, [device_tp_code] int not null, [item_check_code] int not null, [item_check_seq] int not null, [seq] int not null, [exec_type] text not null collate nocase, [exec_measure] real not null, [exec_date] text not null collate nocase, [exec_comment] text collate nocase, [exec_material] int not null, constraint [pk_md_product_serial_tp_device_item_hist] primary key(customer_code,product_code,serial_code,device_tp_code,item_check_code,item_check_seq,seq));");
             //
             script_dados.append(" insert into ev_modules (module_code, module_name) values ('APP_PRJ001', 'APP PRJ 01');");
             script_dados.append(" insert into ev_modules (module_code, module_name) values ('CUST_FORM', 'Custom FormF');");
@@ -250,6 +253,14 @@ public class DatabaseHelperMulti extends DatabaseBaseHelper {
         //
         script.append("drop table if exists md_tag;");
         script.append("drop table if exists tk_ticket_cache;");
+        //Projeto OS no N-Form.
+        script.append("drop table if exists [me_measure_tp]");
+        script.append("drop table if exists [md_device_tp]");
+        script.append("drop table if exists [md_item_check]");
+        script.append("drop table if exists [md_order_type]");
+        script.append("drop table if exists [md_product_serial_tp_device]");
+        script.append("drop table if exists [md_product_serial_tp_device_item]");
+        script.append("drop table if exists [md_product_serial_tp_device_item_hist]");
         //
         String[] scripts = script.toString().split(";");
         //

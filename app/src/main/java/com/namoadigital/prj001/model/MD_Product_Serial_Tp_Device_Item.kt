@@ -23,7 +23,14 @@ class MD_Product_Serial_Tp_Device_Item(
         private set
     var device_tp_code: Int = -1
         private set
-    var hist: MutableList<MD_Product_Serial_Tp_Device_Item_Hist> = mutableListOf()
+    var hist = mutableListOf<MD_Product_Serial_Tp_Device_Item_Hist>()
+
+    /**
+     * QUANDO OBJ GERADO VIA GSON NÃO PASSA NO INIT E LISTA NASCE NULL
+     */
+    init {
+        hist = mutableListOf<MD_Product_Serial_Tp_Device_Item_Hist>()
+    }
 
     constructor(
         customer_code: Long,

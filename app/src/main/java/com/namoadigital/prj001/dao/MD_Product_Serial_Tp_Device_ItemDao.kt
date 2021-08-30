@@ -3,12 +3,15 @@ package com.namoadigital.prj001.dao
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item_Hist
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_Device_ItemDao_Sql_001
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -19,8 +22,9 @@ class MD_Product_Serial_Tp_Device_ItemDao(
     mDB_VERSION: Int
 ) : BaseDao(
     context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI),
-    DaoWithReturn<MD_Product_Serial_Tp_Device_Item> {
-
+    DaoWithReturn<MD_Product_Serial_Tp_Device_Item>,
+    DaoWithReturnSharedDbInstance<MD_Product_Serial_Tp_Device_Item>
+{
     companion object{
         const val TABLE = "md_product_serial_tp_device_item"
         const val CUSTOMER_CODE = "customer_code"
@@ -69,11 +73,22 @@ class MD_Product_Serial_Tp_Device_ItemDao(
     }
 
     override fun addUpdate(mdProductSerialTpDeviceItem: MD_Product_Serial_Tp_Device_Item?): DaoObjReturn {
+        return addUpdate(mdProductSerialTpDeviceItem,null)
+    }
+
+    override fun addUpdate(
+        mdProductSerialTpDeviceItem: MD_Product_Serial_Tp_Device_Item?,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        openDB()
+        if(dbInstance == null) {
+            openDB()
+        }else{
+            this.db = dbInstance
+        }
 
         try {
             daoObjReturn.table = TABLE
@@ -86,6 +101,36 @@ class MD_Product_Serial_Tp_Device_ItemDao(
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdProductSerialTpDeviceItem))
+            }
+            //Tenta inserir steps
+            //LUCHE - 21/07/2020
+            //Ctrl será dependendo do step e não do ticket.
+            //Tenta inserir action
+//                TK_Ticket_CtrlDao ticketCtrlDao = new TK_Ticket_CtrlDao(
+//                    context,
+//                    ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+//                    Constant.DB_VERSION_CUSTOM
+//                );
+//                //Chama insertUpdate do Ctrl,passando db como param aguardando retorno.
+//                daoObjReturn = ticketCtrlDao.addUpdate(tk_ticket.getCtrl(), false, db);
+//                //Se erro durante insert, dispara exception abortando o processamento.
+//                if (daoObjReturn.hasError()) {
+//                    throw new Exception(daoObjReturn.getRawMessage());
+//                }
+            //Tenta inserir historico
+            mdProductSerialTpDeviceItem?.let {
+                /**
+                 * Como hist é um valor setado dentro do init ou via delegate, quando é carregado direto do json
+                 * o valor setado e null. Isso acontece pois é feito via reflections no Gson e que não tem
+                 * suporte a essa features do Kotlin
+                 */
+                if(it.hist != null && it.hist.isNotEmpty() ){
+                    daoObjReturn = tryAddUpdateHist(it.hist, db)
+                    //Se erro durante insert, dispara exception abortando o processamento.
+                    if (daoObjReturn.hasError()) {
+                        throw java.lang.Exception(daoObjReturn.rawMessage)
+                    }
+                }
             }
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -110,24 +155,41 @@ class MD_Product_Serial_Tp_Device_ItemDao(
             daoObjReturn.actionReturn = addUpdateRet
         }
         //
-        closeDB()
+        if (dbInstance == null) {
+            closeDB()
+        }
         //
         return daoObjReturn
     }
 
     override fun addUpdate(mdProductSerialTpDeviceItems: MutableList<MD_Product_Serial_Tp_Device_Item>?, status: Boolean): DaoObjReturn {
+        return addUpdate(mdProductSerialTpDeviceItems, status,null)
+    }
+
+    override fun addUpdate(
+        mdProductSerialTpDeviceItems: MutableList<MD_Product_Serial_Tp_Device_Item>?,
+        status: Boolean,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        openDB()
-
+        if (dbInstance == null) {
+            openDB()
+        } else {
+            db = dbInstance
+        }
+        
         try {
             daoObjReturn.table = TABLE
             curAction = DaoObjReturn.UPDATE
 
-            db.beginTransaction()
-
+            //Se db não foi passado, inicializa transaction
+            if (dbInstance == null) {
+                db.beginTransaction()
+            }
+            
             if (status) {
                 db.delete(TABLE, null, null)
             }
@@ -141,9 +203,26 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                     curAction = DaoObjReturn.INSERT
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdProductSerialTpDeviceItem))
                 }
+                //Tenta inserir historico
+                mdProductSerialTpDeviceItem.let {
+                    /**
+                     * Como hist é um valor setado dentro do init ou via delegate, quando é carregado direto do json
+                     * o valor setado e null. Isso acontece pois é feito via reflections no Gson e que não tem
+                     * suporte a essa features do Kotlin
+                     */
+                    if(it.hist != null && it.hist.isNotEmpty()){
+                        daoObjReturn = tryAddUpdateHist(it.hist, db)
+                        //Se erro durante insert, dispara exception abortando o processamento.
+                        if (daoObjReturn.hasError()) {
+                            throw java.lang.Exception(daoObjReturn.rawMessage)
+                        }
+                    }
+                }
             }
             //
-            db.setTransactionSuccessful()
+            if(dbInstance == null) {
+                db.setTransactionSuccessful()
+            }
 
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -166,16 +245,20 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         } finally {
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
-            db.endTransaction()
+            if (dbInstance == null) {
+                db.endTransaction()
+            }
             daoObjReturn.action = curAction
             daoObjReturn.actionReturn = addUpdateRet
         }
-
-        closeDB()
+        //
+        if (dbInstance == null) {
+            closeDB()
+        }
         //
         return daoObjReturn
     }
-
+    
     override fun addUpdate(sQuery: String?) {
         openDB()
         try {
@@ -185,6 +268,54 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         } finally {
         }
         closeDB()
+    }
+
+    override fun remove(
+        mdProductSerialTpDeviceItem: MD_Product_Serial_Tp_Device_Item?,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
+        var daoObjReturn = DaoObjReturn()
+        var sqlRet: Long = 0
+        val curAction = DaoObjReturn.DELETE
+        //
+        if (dbInstance == null) {
+            openDB()
+        } else {
+            db = dbInstance
+        }
+        try {
+            daoObjReturn.table = TABLE
+            //Where para update
+            val sbWhere: StringBuilder = getWherePkClause(mdProductSerialTpDeviceItem)
+            //Tenta update e armazena retorno
+            sqlRet = db.delete(TABLE,sbWhere.toString(), null).toLong()
+        } catch (e: SQLiteException) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                javaClass.name,
+                Exception(
+                    """
+                ${e.message}
+                ${daoObjReturn.errorMsg}
+                """.trimIndent()
+                )
+            )
+        } catch (e: Exception) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true)
+            ToolBox_Inf.registerException(javaClass.name, e)
+        } finally {
+            daoObjReturn.action = curAction
+            daoObjReturn.actionReturn = sqlRet
+        }
+        //
+        if (dbInstance == null) {
+            closeDB()
+        }
+        return daoObjReturn
     }
 
     override fun remove(sQuery: String?) {
@@ -205,6 +336,9 @@ class MD_Product_Serial_Tp_Device_ItemDao(
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
                 mdProductSerialTpDeviceItem = toMD_Product_Serial_Tp_Device_ItemMapper.map(cursor)
+                mdProductSerialTpDeviceItem?.let {
+                    getItemHist(it)
+                }
             }
             //
             cursor.close()
@@ -240,6 +374,9 @@ class MD_Product_Serial_Tp_Device_ItemDao(
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
                 val uAux = toMD_Product_Serial_Tp_Device_ItemMapper.map(cursor)
+                uAux?.let {
+                    getItemHist(it)
+                }
                 mdProductSerialTpDeviceItems.add(uAux)
             }
             cursor.close()
@@ -266,6 +403,42 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         }
         closeDB()
         return mdProductSerialTpDeviceItems
+    }
+
+    /**
+     * Fun que tenta o insert do historico.
+     */
+    private fun tryAddUpdateHist(hist: MutableList<MD_Product_Serial_Tp_Device_Item_Hist>, db: SQLiteDatabase?): DaoObjReturn {
+        return getItemHistDao().addUpdate(hist,false,db)
+    }
+
+    /**
+     * Fun que seleciona o historico relacionados ao item
+     */
+    private fun getItemHist(mdProductSerialTpDeviceItem: MD_Product_Serial_Tp_Device_Item) {
+        val histDao = getItemHistDao()
+        //
+        mdProductSerialTpDeviceItem.hist = histDao.query(
+            MD_Product_Serial_Tp_Device_ItemDao_Sql_001(
+                mdProductSerialTpDeviceItem.customer_code,
+                mdProductSerialTpDeviceItem.product_code,
+                mdProductSerialTpDeviceItem.serial_code,
+                mdProductSerialTpDeviceItem.device_tp_code,
+                mdProductSerialTpDeviceItem.item_check_code,
+                mdProductSerialTpDeviceItem.item_check_seq
+            ).toSqlQuery()
+        )
+    }
+
+    /**
+     * Fun que retorna o dao do historico.
+     */
+    private fun getItemHistDao(): MD_Product_Serial_Tp_Device_Item_HistDao {
+        return MD_Product_Serial_Tp_Device_Item_HistDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
     }
 
     private class CursorToMD_Product_Serial_Tp_Device_ItemMapper : Mapper<Cursor, MD_Product_Serial_Tp_Device_Item> {

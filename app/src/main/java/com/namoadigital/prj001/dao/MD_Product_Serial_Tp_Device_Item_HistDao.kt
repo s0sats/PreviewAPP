@@ -3,6 +3,7 @@ package com.namoadigital.prj001.dao
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
@@ -19,7 +20,8 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
     mDB_VERSION: Int
 ) : BaseDao(
     context, mDB_NAME, mDB_VERSION, Constant.DB_MODE_MULTI),
-    DaoWithReturn<MD_Product_Serial_Tp_Device_Item_Hist> {
+    DaoWithReturn<MD_Product_Serial_Tp_Device_Item_Hist>,
+    DaoWithReturnSharedDbInstance<MD_Product_Serial_Tp_Device_Item_Hist>{
 
     companion object{
         const val TABLE = "md_product_serial_tp_device_item_hist"
@@ -65,12 +67,19 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
     }
 
     override fun addUpdate(mdProductSerialTpDeviceItemHist: MD_Product_Serial_Tp_Device_Item_Hist?): DaoObjReturn {
+        return addUpdate(mdProductSerialTpDeviceItemHist, null)
+    }
+
+    override fun addUpdate(mdProductSerialTpDeviceItemHist: MD_Product_Serial_Tp_Device_Item_Hist?, dbInstance: SQLiteDatabase?): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        openDB()
-
+        if(dbInstance == null) {
+            openDB()
+        }else{
+            this.db = dbInstance
+        }
         try {
             daoObjReturn.table = TABLE
             curAction = DaoObjReturn.UPDATE
@@ -106,23 +115,42 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
             daoObjReturn.actionReturn = addUpdateRet
         }
         //
-        closeDB()
+        if (dbInstance == null) {
+            closeDB()
+        }
         //
         return daoObjReturn
     }
 
+
     override fun addUpdate(mdProductSerialTpDeviceItemHists: MutableList<MD_Product_Serial_Tp_Device_Item_Hist>?, status: Boolean): DaoObjReturn {
+        return addUpdate(mdProductSerialTpDeviceItemHists,status,null)
+    }
+
+    override fun addUpdate(
+        mdProductSerialTpDeviceItemHists: MutableList<MD_Product_Serial_Tp_Device_Item_Hist>?,
+        status: Boolean,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
         var daoObjReturn = DaoObjReturn()
         var addUpdateRet: Long = 0
         var curAction = DaoObjReturn.INSERT_OR_UPDATE
         //
-        openDB()
+        //
+        if (dbInstance == null) {
+            openDB()
+        } else {
+            db = dbInstance
+        }
 
         try {
             daoObjReturn.table = TABLE
             curAction = DaoObjReturn.UPDATE
 
-            db.beginTransaction()
+            //Se db não foi passado, inicializa transaction
+            if (dbInstance == null) {
+                db.beginTransaction()
+            }
 
             if (status) {
                 db.delete(TABLE, null, null)
@@ -139,8 +167,9 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
                 }
             }
             //
-            db.setTransactionSuccessful()
-
+            if(dbInstance == null) {
+                db.setTransactionSuccessful()
+            }
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
             //e contendo msg de erro tratada.
@@ -162,12 +191,16 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
         } finally {
             //Atualiza ação realizada no metodo e informação de qtd de registros alterado (update)
             //ou rowId do ultimo insert.
-            db.endTransaction()
+            if (dbInstance == null) {
+                db.endTransaction()
+            }
             daoObjReturn.action = curAction
             daoObjReturn.actionReturn = addUpdateRet
         }
-
-        closeDB()
+        //
+        if (dbInstance == null) {
+            closeDB()
+        }
         //
         return daoObjReturn
     }
@@ -192,6 +225,54 @@ class MD_Product_Serial_Tp_Device_Item_HistDao(
         } finally {
         }
         closeDB()
+    }
+
+    override fun remove(
+        mdProductSerialTpDeviceItemHist: MD_Product_Serial_Tp_Device_Item_Hist?,
+        dbInstance: SQLiteDatabase?
+    ): DaoObjReturn {
+        var daoObjReturn = DaoObjReturn()
+        var sqlRet: Long = 0
+        val curAction = DaoObjReturn.DELETE
+        //
+        if (dbInstance == null) {
+            openDB()
+        } else {
+            db = dbInstance
+        }
+        try {
+            daoObjReturn.table = TABLE
+            //Where para update
+            val sbWhere: StringBuilder = getWherePkClause(mdProductSerialTpDeviceItemHist)
+            //Tenta update e armazena retorno
+            sqlRet = db.delete(TABLE,sbWhere.toString(), null).toLong()
+        } catch (e: SQLiteException) {
+            //Chama metodo que baseado na exception gera obj de retorno setado como erro
+            //e contendo msg de erro tratada.
+            daoObjReturn = ToolBox_Con.getSQLiteErrorCodeDescription(e.message)
+            //Gera arquivo de exception usando dados da exception e do obj de retorno
+            ToolBox_Inf.registerException(
+                javaClass.name,
+                Exception(
+                    """
+                ${e.message}
+                ${daoObjReturn.errorMsg}
+                """.trimIndent()
+                )
+            )
+        } catch (e: Exception) {
+            //Seta obj de retorno com flag de erro e gera arquivo de exception
+            daoObjReturn.setError(true)
+            ToolBox_Inf.registerException(javaClass.name, e)
+        } finally {
+            daoObjReturn.action = curAction
+            daoObjReturn.actionReturn = sqlRet
+        }
+        //
+        if (dbInstance == null) {
+            closeDB()
+        }
+        return daoObjReturn
     }
 
     override fun getByString(sQuery: String?): MD_Product_Serial_Tp_Device_Item_Hist? {

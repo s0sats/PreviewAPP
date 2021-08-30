@@ -3,12 +3,15 @@ package com.namoadigital.prj001.dao
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import com.namoa_digital.namoa_library.util.HMAux
 import com.namoadigital.prj001.database.CursorToHMAuxMapper
 import com.namoadigital.prj001.database.Mapper
 import com.namoadigital.prj001.model.DaoObjReturn
 import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device
+import com.namoadigital.prj001.model.MD_Product_Serial_Tp_Device_Item
+import com.namoadigital.prj001.sql.MD_Product_Serial_Tp_DeviceDao_Sql_001
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Con
 import com.namoadigital.prj001.util.ToolBox_Inf
@@ -27,6 +30,7 @@ class MD_Product_Serial_Tp_DeviceDao(
         const val PRODUCT_CODE = "product_code"
         const val SERIAL_CODE = "serial_code"
         const val DEVICE_TP_CODE = "device_tp_code"
+        const val ORDER_SEQ = "order_seq"
         const val TRACKING_NUMBER = "tracking_number"
     }
 
@@ -72,6 +76,21 @@ class MD_Product_Serial_Tp_DeviceDao(
             if (addUpdateRet == 0L) {
                 curAction = DaoObjReturn.INSERT
                 db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdProductSerialTpDevice))
+            }
+            //Tenta inserir dos items
+            mdProductSerialTpDevice?.let {
+                /**
+                 * Como items é um valor setado dentro do init ou via delegate, quando é carregado direto do json
+                 * o valor setado e null. Isso acontece pois é feito via reflections no Gson e que não tem
+                 * suporte a essa features do Kotlin
+                 */
+                if(it.items != null && it.items.isNotEmpty()) {
+                    daoObjReturn = tryAddUpdateItems(it.items, db)
+                    //Se erro durante insert, dispara exception abortando o processamento.
+                    if (daoObjReturn.hasError()) {
+                        throw java.lang.Exception(daoObjReturn.rawMessage)
+                    }
+                }
             }
         } catch (e: SQLiteException) {
             //Chama metodo que baseado na exception gera obj de retorno setado como erro
@@ -126,6 +145,21 @@ class MD_Product_Serial_Tp_DeviceDao(
                 if (addUpdateRet == 0L) {
                     curAction = DaoObjReturn.INSERT
                     db.insertOrThrow(TABLE, null, toContentValuesMapper.map(mdProductSerialTpDevice))
+                }
+                //Tenta inserir dos items
+                mdProductSerialTpDevice.let {
+                    /**
+                     * Como items é um valor setado dentro do init ou via delegate, quando é carregado direto do json
+                     * o valor setado e null. Isso acontece pois é feito via reflections no Gson e que não tem
+                     * suporte a essa features do Kotlin
+                     */
+                    if(mdProductSerialTpDevice.items != null &&  mdProductSerialTpDevice.items.isNotEmpty()) {
+                        daoObjReturn = tryAddUpdateItems(it.items, db)
+                        //Se erro durante insert, dispara exception abortando o processamento.
+                        if (daoObjReturn.hasError()) {
+                            throw java.lang.Exception(daoObjReturn.rawMessage)
+                        }
+                    }
                 }
             }
             //
@@ -191,6 +225,9 @@ class MD_Product_Serial_Tp_DeviceDao(
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
                 mdProductSerialTpDevice = toMD_Product_Serial_Tp_DeviceMapper.map(cursor)
+                mdProductSerialTpDevice?.let {
+                    getDeviceItems(it)
+                }
             }
             //
             cursor.close()
@@ -226,6 +263,9 @@ class MD_Product_Serial_Tp_DeviceDao(
             val cursor = db.rawQuery(sQuery, null)
             while (cursor.moveToNext()) {
                 val uAux = toMD_Product_Serial_Tp_DeviceMapper.map(cursor)
+                uAux?.let {
+                    getDeviceItems(it)
+                }
                 mdProductSerialTpDevices.add(uAux)
             }
             cursor.close()
@@ -254,6 +294,41 @@ class MD_Product_Serial_Tp_DeviceDao(
         return mdProductSerialTpDevices
     }
 
+
+    /**
+     * Fun que tenta o insert dos items.
+     */
+    private fun tryAddUpdateItems(deviceItems: MutableList<MD_Product_Serial_Tp_Device_Item>, db: SQLiteDatabase?): DaoObjReturn {
+        return getDeviceItemDao().addUpdate(deviceItems,false,db)
+    }
+
+    /**
+     * Fun que seleciona os item relacionados ao device
+     */
+    private fun getDeviceItems(mdProductSerialTpDevice: MD_Product_Serial_Tp_Device) {
+        val itemDao = getDeviceItemDao()
+        //
+        mdProductSerialTpDevice.items = itemDao.query(
+            MD_Product_Serial_Tp_DeviceDao_Sql_001(
+                mdProductSerialTpDevice.customer_code,
+                mdProductSerialTpDevice.product_code,
+                mdProductSerialTpDevice.serial_code,
+                mdProductSerialTpDevice.device_tp_code
+            ).toSqlQuery()
+        )
+    }
+
+    /**
+     * Fun que retorna dao de item do device
+     */
+    private fun getDeviceItemDao(): MD_Product_Serial_Tp_Device_ItemDao {
+        return MD_Product_Serial_Tp_Device_ItemDao(
+            context,
+            ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
+            Constant.DB_VERSION_CUSTOM
+        )
+    }
+
     private class CursorToMD_Product_Serial_Tp_DeviceMapper : Mapper<Cursor, MD_Product_Serial_Tp_Device> {
         override fun map(cursor: Cursor?): MD_Product_Serial_Tp_Device? {
             cursor?.let {
@@ -263,6 +338,7 @@ class MD_Product_Serial_Tp_DeviceDao(
                         product_code = getLong(getColumnIndex(PRODUCT_CODE)),
                         serial_code = getLong(getColumnIndex(SERIAL_CODE)),
                         device_tp_code = getInt(getColumnIndex(DEVICE_TP_CODE)),
+                        order_seq = getInt(getColumnIndex(ORDER_SEQ)),
                         tracking_number = getString(getColumnIndex(TRACKING_NUMBER))
                     )
                 }
@@ -288,6 +364,9 @@ class MD_Product_Serial_Tp_DeviceDao(
                     }
                     if(mdProductSerialTpDevice.device_tp_code > -1){
                         put(DEVICE_TP_CODE,mdProductSerialTpDevice.device_tp_code)
+                    }
+                    if(mdProductSerialTpDevice.order_seq > -1){
+                        put(ORDER_SEQ,mdProductSerialTpDevice.order_seq)
                     }
                     put(TRACKING_NUMBER,mdProductSerialTpDevice.tracking_number)
                 }
