@@ -251,7 +251,7 @@ class MdDeviceTpDao(
         return mdDeviceTps
     }
 
-    class CursorToMdDeviceTpMapper : Mapper<Cursor, MdDeviceTp> {
+    private class CursorToMdDeviceTpMapper : Mapper<Cursor, MdDeviceTp> {
         override fun map(cursor: Cursor?): MdDeviceTp? {
             cursor?.let {
                 with(cursor){
@@ -267,7 +267,7 @@ class MdDeviceTpDao(
         }
     }
 
-    class MdDeviceTpToContentValuesMapper : Mapper<MdDeviceTp, ContentValues> {
+    private class MdDeviceTpToContentValuesMapper : Mapper<MdDeviceTp, ContentValues> {
         override fun map(mdDeviceTp: MdDeviceTp?): ContentValues {
             val contentValues = ContentValues()
             //

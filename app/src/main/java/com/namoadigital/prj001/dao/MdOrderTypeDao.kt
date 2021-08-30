@@ -251,7 +251,7 @@ class MdOrderTypeDao(
         return mdOrderTypes
     }
 
-    class CursorToMdOrderTypeMapper : Mapper<Cursor, MdOrderType> {
+    private class CursorToMdOrderTypeMapper : Mapper<Cursor, MdOrderType> {
         override fun map(cursor: Cursor?): MdOrderType? {
             cursor?.let {
                 with(cursor){
@@ -268,7 +268,7 @@ class MdOrderTypeDao(
         }
     }
 
-    class MdOrderTypeToContentValuesMapper : Mapper<MdOrderType, ContentValues> {
+    private class MdOrderTypeToContentValuesMapper : Mapper<MdOrderType, ContentValues> {
         override fun map(mdOrderType: MdOrderType?): ContentValues {
             val contentValues = ContentValues()
             //
