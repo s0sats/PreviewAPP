@@ -23,7 +23,7 @@ class MeMeasureTpDao(
 
 
     companion object{
-        const val TABLE = "me_measure_tp_dao"
+        const val TABLE = "me_measure_tp"
         const val CUSTOMER_CODE = "customer_code"
         const val MEASURE_TP_CODE = "measure_tp_code"
         const val MEASURE_TP_ID = "measure_tp_id"
@@ -33,6 +33,8 @@ class MeMeasureTpDao(
         const val RESTRICTION_MIN = "restriction_min"
         const val RESTRICTION_MAX = "restriction_max"
         const val RESTRICTION_DECIMAL = "restriction_decimal"
+        const val VALUE_CYCLE_SIZE = "value_cycle_size"
+        const val CYCLE_TOLERANCE = "cycle_tolerance"
 
     }
 
@@ -274,6 +276,8 @@ class MeMeasureTpDao(
                     put(RESTRICTION_MIN, meMeasureTp.restrictionMin)
                     put(RESTRICTION_MAX, meMeasureTp.restrictionMax)
                     put(RESTRICTION_DECIMAL, meMeasureTp.restrictionDecimal)
+                    put(VALUE_CYCLE_SIZE, meMeasureTp.valueCycleSize)
+                    put(CYCLE_TOLERANCE, meMeasureTp.cycleTolerance)
                 }
             }
             return contentValues
@@ -295,6 +299,8 @@ class MeMeasureTpDao(
                         getInt(getColumnIndex(RESTRICTION_MIN)),
                         getInt(getColumnIndex(RESTRICTION_MAX)),
                         getInt(getColumnIndex(RESTRICTION_DECIMAL)),
+                        getInt(getColumnIndex(VALUE_CYCLE_SIZE)),
+                        getInt(getColumnIndex(CYCLE_TOLERANCE))
                     )
                 }
             }

@@ -43,8 +43,8 @@ class MdOrderTypeDao(
         mdOrderType?.let{
             return java.lang.StringBuilder()
                 .append("""
-                        ${CUSTOMER_CODE} = '${mdOrderType.customer_code}'  
-                        AND ${ORDER_TYPE_CODE} = '${mdOrderType.order_type_code}'                           
+                        ${CUSTOMER_CODE} = '${mdOrderType.customerCode}'  
+                        AND ${ORDER_TYPE_CODE} = '${mdOrderType.orderTypeCode}'                           
                         """.trimIndent()
                 )
         }
@@ -256,11 +256,11 @@ class MdOrderTypeDao(
             cursor?.let {
                 with(cursor){
                     return MdOrderType(
-                        customer_code = getLong(getColumnIndex(CUSTOMER_CODE)),
-                        order_type_code = getInt(getColumnIndex(ORDER_TYPE_CODE)),
-                        order_type_id = getString(getColumnIndex(ORDER_TYPE_ID)),
-                        order_type_desc = getString(getColumnIndex(ORDER_TYPE_DESC)),
-                        display_option = getString(getColumnIndex(DISPLAY_OPTION))
+                        customerCode = getLong(getColumnIndex(CUSTOMER_CODE)),
+                        orderTypeCode = getInt(getColumnIndex(ORDER_TYPE_CODE)),
+                        orderTypeId = getString(getColumnIndex(ORDER_TYPE_ID)),
+                        orderTypeDesc = getString(getColumnIndex(ORDER_TYPE_DESC)),
+                        displayOption = getString(getColumnIndex(DISPLAY_OPTION))
                     )
                 }
             }
@@ -274,20 +274,20 @@ class MdOrderTypeDao(
             //
             mdOrderType?.let {
                 with(contentValues){
-                    if(mdOrderType.customer_code > -1){
-                        put(CUSTOMER_CODE,mdOrderType.customer_code)
+                    if(mdOrderType.customerCode > -1){
+                        put(CUSTOMER_CODE,mdOrderType.customerCode)
                     }
-                    if(mdOrderType.order_type_code > -1){
-                        put(ORDER_TYPE_CODE,mdOrderType.order_type_code)
+                    if(mdOrderType.orderTypeCode > -1){
+                        put(ORDER_TYPE_CODE,mdOrderType.orderTypeCode)
                     }
-                    if(mdOrderType.order_type_id != null){
-                        put(ORDER_TYPE_ID,mdOrderType.order_type_id)
+                    if(mdOrderType.orderTypeId != null){
+                        put(ORDER_TYPE_ID,mdOrderType.orderTypeId)
                     }
-                    if(mdOrderType.order_type_desc != null){
-                        put(ORDER_TYPE_DESC,mdOrderType.order_type_desc)
+                    if(mdOrderType.orderTypeDesc != null){
+                        put(ORDER_TYPE_DESC,mdOrderType.orderTypeDesc)
                     }
-                    if(mdOrderType.display_option != null){
-                        put(DISPLAY_OPTION,mdOrderType.display_option)
+                    if(mdOrderType.displayOption != null){
+                        put(DISPLAY_OPTION,mdOrderType.displayOption)
                     }
                 }
             }

@@ -54,8 +54,10 @@ import com.namoadigital.prj001.dao.MD_Site_ZoneDao;
 import com.namoadigital.prj001.dao.MD_Site_Zone_LocalDao;
 import com.namoadigital.prj001.dao.MD_UserDao;
 import com.namoadigital.prj001.dao.MdDeviceTpDao;
+import com.namoadigital.prj001.dao.MdItemCheckDao;
 import com.namoadigital.prj001.dao.MdOrderTypeDao;
 import com.namoadigital.prj001.dao.MdTagDao;
+import com.namoadigital.prj001.dao.MeMeasureTpDao;
 import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.SO_Pack_ExpressDao;
 import com.namoadigital.prj001.dao.Sync_ChecklistDao;
@@ -105,8 +107,10 @@ import com.namoadigital.prj001.model.MD_Site_Zone;
 import com.namoadigital.prj001.model.MD_Site_Zone_Local;
 import com.namoadigital.prj001.model.MD_User;
 import com.namoadigital.prj001.model.MdDeviceTp;
+import com.namoadigital.prj001.model.MdItemCheck;
 import com.namoadigital.prj001.model.MdOrderType;
 import com.namoadigital.prj001.model.MdTag;
+import com.namoadigital.prj001.model.MeMeasureTp;
 import com.namoadigital.prj001.model.SO_Pack_Express;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TSearch_Ap_Env;
@@ -152,8 +156,10 @@ import com.namoadigital.prj001.sql.MD_Site_Zone_Local_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_Site_Zone_Sql_Truncate;
 import com.namoadigital.prj001.sql.MD_User_Sql_Truncate;
 import com.namoadigital.prj001.sql.MdDeviceTpSqlTruncate;
+import com.namoadigital.prj001.sql.MdItemCheckSqlTruncate;
 import com.namoadigital.prj001.sql.MdOrderTypeSqlTruncate;
 import com.namoadigital.prj001.sql.MdTagSqlTruncate;
+import com.namoadigital.prj001.sql.MeMeasureTpSqlTruncate;
 import com.namoadigital.prj001.sql.SO_Pack_Express_Sql_Truncate;
 import com.namoadigital.prj001.sql.Sql_WS_Sync_Datapackage_So_001;
 import com.namoadigital.prj001.sql.Sql_WS_Sync_Datapackage_Ticket_001;
@@ -584,6 +590,8 @@ public class WS_Sync extends IntentService {
             TkTicketCacheDao tkTicketCacheDao = new TkTicketCacheDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MdDeviceTpDao deviceTpDao = new MdDeviceTpDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             MdOrderTypeDao orderTypeDao = new MdOrderTypeDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MdItemCheckDao mdItemCheckDao = new MdItemCheckDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
+            MeMeasureTpDao meMeasureTpDao = new MeMeasureTpDao(getApplicationContext(), ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(getApplicationContext())), Constant.DB_VERSION_CUSTOM);
             //
             //Apaga dados das tabelas
             operationDao.remove(new MD_Operation_Sql_Truncate().toSqlQuery());
@@ -613,6 +621,8 @@ public class WS_Sync extends IntentService {
             tkTicketCacheDao.remove(new TkTicketCacheSqlTruncate().toSqlQuery());
             deviceTpDao.remove(new MdDeviceTpSqlTruncate().toSqlQuery());
             orderTypeDao.remove(new MdOrderTypeSqlTruncate().toSqlQuery());
+            mdItemCheckDao.remove(new MdItemCheckSqlTruncate().toSqlQuery());
+            meMeasureTpDao.remove(new MeMeasureTpSqlTruncate().toSqlQuery());
             //
             // Processamento Operation
             //
@@ -1491,6 +1501,43 @@ public class WS_Sync extends IntentService {
             }
             //Libera pro GB
             files_order_type = null;
+            /**
+             * Processamento MD_ITEM_CHECK
+             */
+            File[] files_item_check = ToolBox_Inf.getListOfFiles_v2("md_item_check-");
+
+            for (File _file : files_item_check) {
+                ArrayList<MdItemCheck> mdItemCheck = gson.fromJson(
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(_file)
+                    ),
+                    new TypeToken<ArrayList<MdItemCheck>>() {
+                    }.getType()
+                );
+                //
+                mdItemCheckDao.addUpdate(mdItemCheck, false);
+            }
+            //Libera pro GB
+            files_item_check = null;
+            /**
+             * Processamento ME_MEASURE_TP
+             */
+            File[] files_measure_tp = ToolBox_Inf.getListOfFiles_v2("me_measure_tp-");
+
+            for (File _file : files_measure_tp) {
+                ArrayList<MeMeasureTp> meMeasureTp = gson.fromJson(
+                    ToolBox.jsonFromOracle(
+                        ToolBox_Inf.getContents(_file)
+                    ),
+                    new TypeToken<ArrayList<MeMeasureTp>>() {
+                    }.getType()
+                );
+                //
+                meMeasureTpDao.addUpdate(meMeasureTp, false);
+            }
+            //Libera pro GB
+            files_measure_tp = null;
+
         }
 
         //endregion

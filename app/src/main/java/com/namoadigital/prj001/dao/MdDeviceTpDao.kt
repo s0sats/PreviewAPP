@@ -42,8 +42,8 @@ class MdDeviceTpDao(
         mdDeviceTp?.let{
             return java.lang.StringBuilder()
                 .append("""
-                        ${CUSTOMER_CODE} = '${mdDeviceTp.customer_code}'  
-                        AND ${DEVICE_TP_CODE} = '${mdDeviceTp.device_tp_code}'                           
+                        ${CUSTOMER_CODE} = '${mdDeviceTp.customerCode}'  
+                        AND ${DEVICE_TP_CODE} = '${mdDeviceTp.deviceTpCode}'                           
                         """.trimIndent()
                 )
         }
@@ -256,10 +256,10 @@ class MdDeviceTpDao(
             cursor?.let {
                 with(cursor){
                     return MdDeviceTp(
-                        customer_code = getLong(getColumnIndex(CUSTOMER_CODE)),
-                        device_tp_code = getInt(getColumnIndex(DEVICE_TP_CODE)),
-                        device_tp_id = getString(getColumnIndex(DEVICE_TP_ID)),
-                        device_tp_desc = getString(getColumnIndex(DEVICE_TP_DESC)),
+                        customerCode = getLong(getColumnIndex(CUSTOMER_CODE)),
+                        deviceTpCode = getInt(getColumnIndex(DEVICE_TP_CODE)),
+                        deviceTpId = getString(getColumnIndex(DEVICE_TP_ID)),
+                        deviceTpDesc = getString(getColumnIndex(DEVICE_TP_DESC)),
                     )
                 }
             }
@@ -273,17 +273,17 @@ class MdDeviceTpDao(
             //
             mdDeviceTp?.let {
                 with(contentValues){
-                    if(mdDeviceTp.customer_code > -1){
-                        put(CUSTOMER_CODE,mdDeviceTp.customer_code)
+                    if(mdDeviceTp.customerCode > -1){
+                        put(CUSTOMER_CODE,mdDeviceTp.customerCode)
                     }
-                    if(mdDeviceTp.device_tp_code > -1){
-                        put(DEVICE_TP_CODE,mdDeviceTp.device_tp_code)
+                    if(mdDeviceTp.deviceTpCode > -1){
+                        put(DEVICE_TP_CODE,mdDeviceTp.deviceTpCode)
                     }
-                    if(mdDeviceTp.device_tp_id != null){
-                        put(DEVICE_TP_ID,mdDeviceTp.device_tp_id)
+                    if(mdDeviceTp.deviceTpId != null){
+                        put(DEVICE_TP_ID,mdDeviceTp.deviceTpId)
                     }
-                    if(mdDeviceTp.device_tp_desc != null){
-                        put(DEVICE_TP_DESC,mdDeviceTp.device_tp_desc)
+                    if(mdDeviceTp.deviceTpDesc != null){
+                        put(DEVICE_TP_DESC,mdDeviceTp.deviceTpDesc)
                     }
                 }
             }
