@@ -107,6 +107,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
     public static final String MEASURE_TP_CODE = "measure_tp_code";
     public static final String LAST_MEASURE_VALUE = "last_measure_value";
     public static final String LAST_MEASURE_DATE = "last_measure_date";
+    public static final String LAST_CYCLE_VALUE = "last_cycle_value";
 
 
     public static String[] columns = {CUSTOMER_CODE, PRODUCT_CODE, PRODUCT_ID, PRODUCT_DESC, SERIAL_CODE, SERIAL_TMP,
@@ -117,7 +118,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             COLOR_DESC, SEGMENT_ID, SEGMENT_DESC, CATEGORY_PRICE_ID, CATEGORY_PRICE_DESC, CLASS_CODE, CLASS_ID, CLASS_TYPE,
             CLASS_COLOR, CLASS_AVAILABLE, INBOUND_PREFIX, INBOUND_CODE, INBOUND_ID, INBOUND_CONF_DATE, MOVE_PREFIX, MOVE_CODE, MOVE_GROUP_CODE,
             OUTBOUND_PREFIX, OUTBOUND_CODE, OUTBOUND_ID, PRODUCT_IO_CONTROL, LOCAL_CONTROL, SITE_IO_CONTROL, INBOUND_AUTO_CREATE, SITE_RESTRICTION,
-            EDIT_MODE, PROFILE, LOG_DATE, REASON_CODE
+            EDIT_MODE, PROFILE, LOG_DATE, REASON_CODE,LAST_CYCLE_VALUE
     };
 
     public MD_Product_SerialDao(Context context, String DB_NAME, int DB_VERSION) {
@@ -1105,6 +1106,12 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             }else{
                 md_product_serial.setLast_measure_date(cursor.getString(cursor.getColumnIndex(LAST_MEASURE_DATE)));
             }
+            if(cursor.isNull(cursor.getColumnIndex(LAST_CYCLE_VALUE))){
+                md_product_serial.setLast_cycle_value(null);
+            }else{
+                md_product_serial.setLast_cycle_value(cursor.getInt(cursor.getColumnIndex(LAST_CYCLE_VALUE)));
+            }
+
             //
             return md_product_serial;
         }
@@ -1216,6 +1223,7 @@ public class MD_Product_SerialDao extends BaseDao implements Dao<MD_Product_Seri
             }
             contentValues.put(SCN_ITEM_CHECK, md_product_serial.getScn_item_check());
             contentValues.put(MEASURE_TP_CODE, md_product_serial.getMeasure_tp_code());
+            contentValues.put(LAST_CYCLE_VALUE, md_product_serial.getLast_cycle_value());
             contentValues.put(LAST_MEASURE_VALUE, md_product_serial.getLast_measure_value());
             contentValues.put(LAST_MEASURE_DATE, md_product_serial.getLast_measure_date());
 

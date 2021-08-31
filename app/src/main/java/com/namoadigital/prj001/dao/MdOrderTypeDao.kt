@@ -27,6 +27,7 @@ class MdOrderTypeDao(
         const val ORDER_TYPE_CODE = "order_type_code"
         const val ORDER_TYPE_ID = "order_type_id"
         const val ORDER_TYPE_DESC = "order_type_desc"
+        const val PROCESS_TYPE = "process_type"
         const val DISPLAY_OPTION = "display_option"
     }
 
@@ -260,6 +261,7 @@ class MdOrderTypeDao(
                         orderTypeCode = getInt(getColumnIndex(ORDER_TYPE_CODE)),
                         orderTypeId = getString(getColumnIndex(ORDER_TYPE_ID)),
                         orderTypeDesc = getString(getColumnIndex(ORDER_TYPE_DESC)),
+                        processType = getString(getColumnIndex(PROCESS_TYPE)),
                         displayOption = getString(getColumnIndex(DISPLAY_OPTION))
                     )
                 }
@@ -285,6 +287,9 @@ class MdOrderTypeDao(
                     }
                     if(mdOrderType.orderTypeDesc != null){
                         put(ORDER_TYPE_DESC,mdOrderType.orderTypeDesc)
+                    }
+                     if(mdOrderType.orderTypeDesc != null){
+                        put(PROCESS_TYPE,mdOrderType.processType)
                     }
                     if(mdOrderType.displayOption != null){
                         put(DISPLAY_OPTION,mdOrderType.displayOption)
