@@ -91,7 +91,7 @@
                 android:textSize="16sp"
                 android:drawablePadding="8dp"
                 android:drawableLeft="@drawable/ic_baseline_redo_24"
-                android:textColor="@color/namoa_form_os_verify_later"
+                android:textColor="@color/namoa_os_form_verify_later"
                 android:textStyle="bold"
                 android:textAllCaps="true"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_inspection_verification_action"
