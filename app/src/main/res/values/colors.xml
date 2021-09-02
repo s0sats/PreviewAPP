@@ -185,5 +185,6 @@
     <color name="namoa_os_form_done_action_blue">#496AE2</color>
     <color name="namoa_os_form_verified_green">#29D930</color>
     <color name="namoa_os_form_problem_red">#FE0B0B</color>
-
+    <color name="namoa_form_os_verify_later">#FFB3B3</color>
+    <!--Cores OS form -->
 </resources>
