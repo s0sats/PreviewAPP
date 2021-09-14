@@ -10,10 +10,10 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.Act011FrgFfBinding
 import com.namoadigital.prj001.util.Constant
+import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.*
 
-class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(
-) {
+class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
     lateinit var customFF: ArrayList<CustomFF>
     private var _mFrgListener: Act011FrgFFInteraction? = null
     private val mFrgListener get() = _mFrgListener!!
@@ -31,6 +31,13 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(
             scheduleComments: String?
         ) = Act011FrgFF()
             .apply{
+                this.hmAuxTrans = hmAuxTrans
+                this.formStatus = formStatus
+                this.tabIndex = tabIndex
+                this.tabLastIndex = tabLastIndex
+                this.scheduleDesc = scheduleDesc
+                this.scheduleComments = scheduleComments
+                //
                 arguments = Bundle().apply {
                     putSerializable(Constant.MAIN_HMAUX_TRANS_KEY, hmAuxTrans)
                     putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus)
@@ -84,16 +91,40 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(
     private fun loadControls() {
         if(!customFF.isNullOrEmpty()){
             var count = 0
-            val filter = customFF.filter {
+             customFF.filter {
                 it.getmPage() == tabIndex
-            }
-            filter.forEach { ff ->
+            }.forEach { ff ->
                 if(ff.getmInclude() == 1){
                     count++
                     ff.setmLabel("$count. ${ff.getmLabel()}")
-                    binding.llControls.addView(ff)
                 }
+                //
+                binding.llControls.addView(ff)
             }
+        }
+    }
+
+    override fun getTabErrorCount(): Int {
+        var errorCount = 0
+        if(!customFF.isNullOrEmpty()){
+            customFF.filter {
+                it.getmPage() == tabIndex
+            }.forEach { ff ->
+                if(!ff.isValid || !ff.isValidDots){
+                    errorCount++
+                }
+                ff.setValidationBackGroundDots()
+            }
+        }
+        return errorCount
+    }
+
+
+    override fun scrollToSelectedView(customFF: CustomFF) {
+        try{
+            binding.svMain.smoothScrollTo(0,customFF.y.toInt())
+        }catch (e: Exception){
+            ToolBox_Inf.registerException(javaClass.name, e)
         }
     }
 

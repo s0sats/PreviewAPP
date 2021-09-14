@@ -19,7 +19,7 @@ import com.namoadigital.prj001.databinding.CvProductSerialWithIconBinding
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
-abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(){
+abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFrgValidation{
     protected val PARAM_LAST_INDEX = "LAST_INDEX"
 
     protected lateinit var binding: VBinding
@@ -49,10 +49,16 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(){
      * Retorna  bind do include de navegacao
      */
     protected abstract fun getNavegationInclude(): Act011FrgIncludeNavegationBinding
+
     /**
      * Retorna  bind do include de historico
      */
     protected abstract fun getHistoricInclude(): Act011FrgIncludeHistoricBinding
+
+    /**
+     * Retorna qtd de erro na tab
+     */
+    abstract override fun getTabErrorCount(): Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -152,6 +158,7 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(){
             tvProductSerialId.text = hmAuxTrans["lbl_no_serial_placeholder"]
             tvProductSerialInfos.text = ""
             tvProductSerialInfos.visibility = View.GONE
+            ivEditableSerial.visibility = View.GONE
             //Define exibição do id e marca cor modelo.
             if(!serialInfo.serial_id.isNullOrEmpty()){
                 tvProductSerialId.text = serialInfo.serial_id

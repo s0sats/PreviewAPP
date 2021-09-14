@@ -105,6 +105,7 @@ import com.namoadigital.prj001.sql.GE_File_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
+import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrg;
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionHistoric;
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgFF;
@@ -159,8 +160,7 @@ public class Act011_Main extends Base_Activity
 
     private Act011_FF_Options act011_ff_options;
 
-    private List<HMAux> tabsAndFields;
-    private ArrayList<Fragment> screens;
+    private ArrayList<Act011BaseFrg> screens;
     private transient ArrayList<CustomFF> customFFs;
     private ArrayList<GE_File> geFiles;
 
@@ -829,9 +829,9 @@ public class Act011_Main extends Base_Activity
                 //Inicia processo de scroll, buscando o fragment atual e depois chamando o metodo que
                 //faz o scroll
                 int currentItem = pager.getCurrentItem();
-                Fragment fragment = screens.get(currentItem);
-                if (fragment instanceof Act011_FF) {
-                    ((Act011_FF) fragment).scrollToSelectedView(customFF);
+                Act011BaseFrg fragment = screens.get(currentItem);
+                if (fragment instanceof Act011FrgFF) {
+                    ((Act011FrgFF) fragment).scrollToSelectedView(customFF);
                 }
             }
         };
@@ -1420,6 +1420,7 @@ public class Act011_Main extends Base_Activity
                     case "char":
                         customFFs.add(cfg_Char(cf));
                         break;
+                    case "tab":
                     case "label":
                         customFFs.add(cfg_Label(cf));
                         break;
@@ -2057,31 +2058,50 @@ public class Act011_Main extends Base_Activity
         return result;
     }
 
-
+    /**
+     * LUCHE - 14/09/2021
+     * Iniciado a nova implementação de codigo.
+     * Quando sPage = -1 , faz loop na lista de screen chamando a validação em cada uma.
+     * Se sPage > 0 , "ajusta" indice da lista e chama o metodo de validação daquela aba especifica
+     * Se sPage 0, não faz nada
+     * @param sPage
+     * @return
+     */
     private int returnValidCheck(String sPage) {
 
         int numberOfErrors = 0;
         int ipage = Integer.parseInt(sPage);
-        //
-        for (int i = 0; i < customFFs.size(); i++) {
-            //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
-            //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
-            if (ipage == -1) {
-                if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
-                    numberOfErrors += 1;
+        try {
+            if(ipage == -1) {
+                for (Act011BaseFrg act011BaseFrg : screens) {
+                    numberOfErrors += ((Act011FrgFF) act011BaseFrg).getTabErrorCount();
                 }
-//                if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
-                    customFFs.get(i).setValidationBackGroundDots();
-//                }
-            } else {
-                if (customFFs.get(i).getmPage() == ipage) {
+            }else if(ipage > 0) {
+                ipage = ipage - 1;
+                numberOfErrors = screens.get(ipage).getTabErrorCount();
+            }
+        }catch (Exception e) {
+            //
+            for (int i = 0; i < customFFs.size(); i++) {
+                //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
+                //mas a vida eh uma caixinha de surpresas e teve que ser removido t0d0 acesso aos nform deletados
+                if (ipage == -1) {
                     if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
                         numberOfErrors += 1;
                     }
-//                    if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
+    //                if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
                         customFFs.get(i).setValidationBackGroundDots();
-//                    }
+    //                }
                 } else {
+                    if (customFFs.get(i).getmPage() == ipage) {
+                        if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
+                            numberOfErrors += 1;
+                        }
+    //                    if(formData.getCustom_form_status() != null && !formData.getCustom_form_status().equals(ConstantBase.SYS_STATUS_DELETED)) {
+                            customFFs.get(i).setValidationBackGroundDots();
+    //                    }
+                    } else {
+                    }
                 }
             }
         }
@@ -2231,9 +2251,10 @@ public class Act011_Main extends Base_Activity
 
     private class ScreenAdapter extends FragmentPagerAdapter {
 
-        private ArrayList<Fragment> data;
+        //private ArrayList<Fragment> data;
+        private ArrayList<Act011BaseFrg> data;
 
-        public ScreenAdapter(FragmentManager fm, ArrayList<Fragment> dados) {
+        public ScreenAdapter(FragmentManager fm, ArrayList<Act011BaseFrg> dados) {
             super(fm);
             this.data = dados;
         }
