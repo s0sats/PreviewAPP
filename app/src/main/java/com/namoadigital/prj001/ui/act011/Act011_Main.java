@@ -934,15 +934,23 @@ public class Act011_Main extends Base_Activity
             returnValidCheck(String.valueOf(-1));
         }
 
-        for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
-            df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
-            df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
-        }
+        loadCustomFFValueIntoFormData();
 
         mPresenter.saveData(formData, fieldsValidation);
 
         bNew = false;
         mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    /**
+     * Metodo que faz o loop nos fields do form data e seta os valor do customFF no field.
+     */
+    private void loadCustomFFValueIntoFormData() {
+        for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
+//            df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
+//            df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
+              setCustomFFValueIntoFormDataField(df);
+        }
     }
 
     private void tabSelectedAction(int idtab) {
@@ -1059,10 +1067,7 @@ public class Act011_Main extends Base_Activity
     }
 
     private void startCheckIN() {
-        for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
-            df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
-            df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
-        }
+        loadCustomFFValueIntoFormData();
 
         sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
 
@@ -2065,6 +2070,22 @@ public class Act011_Main extends Base_Activity
         }
         //
         return result;
+    }
+
+    /**
+     * Metodo que pega os valores do customFF e seta do form_data_fields
+     * Faz o loop nos customFF buscano a view da sequencia do form_data_fields e quando encontra,
+     * copia os valores de getmValue e getmValue_Extra para form_data_fields.value e valuewsExtra
+     * @param df
+     */
+    private void setCustomFFValueIntoFormDataField(GE_Custom_Form_Data_Field df) {
+        for (int i = 0; i < customFFs.size(); i++) {
+            if (customFFs.get(i).getmSequence() == df.getCustom_form_seq()) {
+                df.setValue(customFFs.get(i).getmValue());
+                df.setValue_extra(customFFs.get(i).getmValue_Extra());
+                break;
+            }
+        }
     }
 
     /**
