@@ -1416,53 +1416,62 @@ public class Act011_Main extends Base_Activity
                     formData.getDataFields().add(form_data_field);
                 }
 
+                /*
+                 * LUCHE - 14/09/2021
+                 * Movido os sets do loop que existia posterior a esse para dentro do loop.
+                 * Criado var customField que será recebida dentro do switch
+                 * Caso passe em algum case, terá os set feito após o switch.
+                 * Se for null, não faz nada.
+                 */
+
+                CustomFF customField = null;
                 switch (cf.get("custom_form_data_type").toLowerCase()) {
                     case "char":
-                        customFFs.add(cfg_Char(cf));
+                        customField = cfg_Char(cf);
                         break;
                     case "tab":
                     case "label":
-                        customFFs.add(cfg_Label(cf));
+                        customField = cfg_Label(cf);
                         break;
                     case "combobox":
-                        customFFs.add(cfg_ComboBox(cf));
+                        customField = cfg_ComboBox(cf);
                         break;
                     case "number":
-                        customFFs.add(cfg_Number(cf));
+                        customField = cfg_Number(cf);
                         break;
                     case "date":
-                        customFFs.add(cfg_Date(cf));
+                        customField = cfg_Date(cf);
                         break;
                     case "hour":
-                        customFFs.add(cfg_Hour(cf));
+                        customField = cfg_Hour(cf);
                         break;
                     case "checkbox":
-                        customFFs.add(cfg_CheckBox(cf));
+                        customField = cfg_CheckBox(cf);
                         break;
                     case "ratingimage":
-                        customFFs.add(cfg_RatingImage(cf));
+                        customField = cfg_RatingImage(cf);
                         break;
                     case "ratingbar":
-                        customFFs.add(cfg_RatingBar(cf));
+                        customField = cfg_RatingBar(cf);
                         break;
                     case "picture":
-                        customFFs.add(cfg_Picture(cf));
+                        customField = cfg_Picture(cf);
                         break;
                     case "photo":
-                        customFFs.add(cfg_Photo(cf));
+                        customField = cfg_Photo(cf);
                         break;
                     default:
                         break;
                 }
-
-            }
-
-            for (CustomFF customFF : customFFs) {
-                controls_dyn.add(customFF);
-                //Implments PhotoInterface
-                customFF.setOnPhotoClickListener(onPhotoClick);
-                //Implments da interface que faz o scroll ao rodar o dismiss do dialog dos dots
-                customFF.setOnDotsDialogDismiss(onBackFocusEvent);
+                //Se != de null, seta o listener e insere nas listas customFFs e controls_dyn
+                if(customField != null) {
+                    //Implments da interface que faz o scroll ao rodar o dismiss do dialog dos dots
+                    customField.setOnDotsDialogDismiss(onBackFocusEvent);
+                    //Add na lista de customFF
+                    customFFs.add(customField);
+                    //Add nos controles dinamicos
+                    controls_dyn.add(customField);
+                }
             }
             //Tenta resgatar dados do agendamento caso exista.
             MD_Schedule_Exec mdScheduleExec = null;
