@@ -1,5 +1,7 @@
 package com.namoadigital.prj001.ui.act011;
 
+import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,6 +10,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -30,6 +33,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
@@ -101,6 +105,10 @@ import com.namoadigital.prj001.sql.GE_File_Sql_003;
 import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
+import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionHistoric;
+import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation;
+import com.namoadigital.prj001.ui.act011.frags.Act011FrgFF;
+import com.namoadigital.prj001.ui.act011.frags.Act011FrgFFInteraction;
 import com.namoadigital.prj001.ui.act022.Act022_Main;
 import com.namoadigital.prj001.ui.act027.Act027_Main;
 import com.namoadigital.prj001.ui.act070.Act070_Main;
@@ -122,13 +130,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.namoa_digital.namoa_library.util.ConstantBase.CACHE_PATH_PHOTO;
-
 /**
  * Created by neomatrix on 23/01/17.
  */
 
-public class Act011_Main extends Base_Activity implements Act011_Main_View{
+public class Act011_Main extends Base_Activity
+    implements
+    Act011_Main_View,
+    Act011BaseFrgInteractionNavegation,
+    Act011BaseFrgInteractionHistoric,
+    Act011FrgFFInteraction
+{
 
     public static final int SHOW_MSG_TYPE_FORM_LOCAL_INSERT_ERROR = 4;
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_UPDATE_ERROR = 5;
@@ -510,6 +522,67 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
      * @return
      */
     public ArrayList<CustomFF> getFf(){
+        return customFFs;
+    }
+
+    //endregion
+
+    //region Interfaces
+
+    @Override
+    public void openDrawer() {
+        mDrawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    @Override
+    public void check() {
+        checkAction(false);
+    }
+
+    @Override
+    public void previosTab() {
+        if ((index - 1) >= 1) {
+            tabSelectedAction(index - 1);
+        }
+    }
+
+    @Override
+    public void nextTab() {
+        if ((index + 1) <= pager.getAdapter().getCount()) {
+            tabSelectedAction(index + 1);
+        }
+    }
+
+    @Override
+    public void checkWithNew() {
+        finalizeNewFlow = true;
+        //
+        checkAction(false);
+    }
+
+    @Override
+    public Bitmap getProductIconBmp(){
+        return mPresenter.getProductIconBitmap(formLocal.getCustom_product_icon_name());
+    }
+
+    @Override
+    public boolean allowFinalizeWithNew() {
+        return allowFinalizeWithNewBtn();
+    }
+
+    @Override
+    public void goToHistoric() {
+        callAct084();
+    }
+
+    @Override
+    public void goToHome() {
+        callAct005(context);
+    }
+
+    @NonNull
+    @Override
+    public ArrayList<CustomFF> getCustomFF() {
         return customFFs;
     }
 
@@ -1390,68 +1463,87 @@ public class Act011_Main extends Base_Activity implements Act011_Main_View{
                 //Implments da interface que faz o scroll ao rodar o dismiss do dialog dos dots
                 customFF.setOnDotsDialogDismiss(onBackFocusEvent);
             }
-
+            //Tenta resgatar dados do agendamento caso exista.
+            MD_Schedule_Exec mdScheduleExec = null;
+            if(formLocal.getSchedule_prefix() != null
+                && formLocal.getSchedule_code() != null
+                && formLocal.getSchedule_exec() != null)
+            {
+                mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
+            }
+            //
             for (int i = 1; i <= pages; i++) {
-                Act011_FF custom_form_ff = new Act011_FF();
-                //
-                 if (i == 1) {
-                    custom_form_ff.setComments(formLocal.getSchedule_comments() != null ? formLocal.getSchedule_comments() : "");
-                    // BARRIONUEVO 05-03-2020 - ADICAO DE SCHEDULE DESC NO FORM
-                     if(formLocal.getSchedule_prefix() != null
-                     && formLocal.getSchedule_code() != null
-                     && formLocal.getSchedule_exec() != null) {
-                         MD_Schedule_Exec mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
-                         if (mdScheduleExec != null) {
-                             custom_form_ff.setSchedule_desc(mdScheduleExec.getSchedule_desc());
-                         }
-                     }else{
-                         custom_form_ff.setComments("");
-                         custom_form_ff.setSchedule_desc("");
-                     }
-                } else {
-                    custom_form_ff.setComments("");
-                    custom_form_ff.setSchedule_desc("");
-                }
-                //
-                custom_form_ff.setCustomFFs(customFFs, i);
-                custom_form_ff.setHmAux_Trans(hmAux_Trans);
-//                custom_form_ff.setOnDrawerCheckListener(new Act011_FF.ICustom_Form_FF_ll() {
-//                    @Override
-//                    public void openDrawer() {
-//                        mDrawerLayout.openDrawer(GravityCompat.START);
-//                    }
-//
-//                    @Override
-//                    public void check() {
-//                        checkAction();
-//                    }
-//
-//                    @Override
-//                    public void previosTab() {
-//                        if ((index - 1) >= 1) {
-//                            tabSelectedAction(index - 1);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void nextTab() {
-//                        if ((index + 1) <= pager.getAdapter().getCount()) {
-//                            tabSelectedAction(index + 1);
-//                        }
-//
-//                    }
-//
-//                    @Override
-//                    public void checkWithNew() {
-//                        finalizeNewFlow = true;
-//                        //
-//                        checkAction();
-//                    }
-//                });
-                custom_form_ff.setOnDrawerCheckListener(getFFInterface());
-                //
-                custom_form_ff.setFormStatus(formData.getCustom_form_status());
-                //
+                //region oldStuff
+//                Act011_FF custom_form_ff = new Act011_FF();
+//                //
+//                 if (i == 1) {
+//                    custom_form_ff.setComments(formLocal.getSchedule_comments() != null ? formLocal.getSchedule_comments() : "");
+//                    // BARRIONUEVO 05-03-2020 - ADICAO DE SCHEDULE DESC NO FORM
+//                     if(formLocal.getSchedule_prefix() != null
+//                     && formLocal.getSchedule_code() != null
+//                     && formLocal.getSchedule_exec() != null) {
+//                         MD_Schedule_Exec mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
+//                         if (mdScheduleExec != null) {
+//                             custom_form_ff.setSchedule_desc(mdScheduleExec.getSchedule_desc());
+//                         }
+//                     }else{
+//                         custom_form_ff.setComments("");
+//                         custom_form_ff.setSchedule_desc("");
+//                     }
+//                } else {
+//                    custom_form_ff.setComments("");
+//                    custom_form_ff.setSchedule_desc("");
+//                }
+//                //
+//                custom_form_ff.setCustomFFs(customFFs, i);
+//                custom_form_ff.setHmAux_Trans(hmAux_Trans);
+////                custom_form_ff.setOnDrawerCheckListener(new Act011_FF.ICustom_Form_FF_ll() {
+////                    @Override
+////                    public void openDrawer() {
+////                        mDrawerLayout.openDrawer(GravityCompat.START);
+////                    }
+////
+////                    @Override
+////                    public void check() {
+////                        checkAction();
+////                    }
+////
+////                    @Override
+////                    public void previosTab() {
+////                        if ((index - 1) >= 1) {
+////                            tabSelectedAction(index - 1);
+////                        }
+////                    }
+////
+////                    @Override
+////                    public void nextTab() {
+////                        if ((index + 1) <= pager.getAdapter().getCount()) {
+////                            tabSelectedAction(index + 1);
+////                        }
+////
+////                    }
+////
+////                    @Override
+////                    public void checkWithNew() {
+////                        finalizeNewFlow = true;
+////                        //
+////                        checkAction();
+////                    }
+////                });
+//                custom_form_ff.setOnDrawerCheckListener(getFFInterface());
+//                //
+//                custom_form_ff.setFormStatus(formData.getCustom_form_status());
+                //enregion
+                //TODO MOVER PARA FORA DO LOOP, POIS A INFO NÃO MUDA
+                Act011FrgFF custom_form_ff = Act011FrgFF.Companion.newInstance(
+                    hmAux_Trans,
+                    i,
+                    pages,
+                    formData.getCustom_form_status(),
+                    mdScheduleExec != null ? mdScheduleExec.getSchedule_desc() : null,
+                    mdScheduleExec != null ? mdScheduleExec.getComments() : null
+                );
+                custom_form_ff.setCustomFF(customFFs);
                 screens.add(custom_form_ff);
             }
 

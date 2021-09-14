@@ -1,6 +1,8 @@
 package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -73,6 +75,7 @@ import com.namoadigital.prj001.util.ConstantBaseApp;
 import com.namoadigital.prj001.util.ToolBox_Con;
 import com.namoadigital.prj001.util.ToolBox_Inf;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -1816,5 +1819,27 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
                 mView.callAct006(context,false);
             }
         }
+    }
+
+    /**
+     * LUCHE - 13/09/2021
+     * Metodo que recebe o nome do icone do produto e retorna o Bitmap caso exista.
+     * Caso contrario, retorna null
+     * @param product_icon_name
+     * @return
+     */
+    @Override
+    public Bitmap getProductIconBitmap(String product_icon_name) {
+        Bitmap myBitmap = null;
+        if (product_icon_name != null && !product_icon_name.isEmpty()) {
+            if (ToolBox_Inf.verifyDownloadFileInf(product_icon_name, Constant.CACHE_PATH)) {
+                File imgFile = new File(Constant.CACHE_PATH + "/" + product_icon_name);
+                if (imgFile.exists()) {
+                    myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                }
+            }
+        }
+        //
+        return myBitmap;
     }
 }

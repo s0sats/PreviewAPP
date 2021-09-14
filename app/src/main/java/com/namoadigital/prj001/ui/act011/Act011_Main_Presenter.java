@@ -1,6 +1,7 @@
 package com.namoadigital.prj001.ui.act011;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
@@ -60,4 +61,7 @@ public interface Act011_Main_Presenter {
     void checkAppExecutionDecrementUpdateNeeds(Integer mSo_prefix, Integer mSo_code, GE_Custom_Form_Data formData);
 
     void checkOriginDoneFlow(Bundle act083Bundle);
+
+    Bitmap getProductIconBitmap(String custom_product_icon_name);
+
 }

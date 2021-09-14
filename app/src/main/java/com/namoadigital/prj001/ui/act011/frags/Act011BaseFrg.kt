@@ -1,0 +1,360 @@
+package com.namoadigital.prj001.ui.act011.frags
+
+import android.content.Context
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.viewbinding.ViewBinding
+import com.namoa_digital.namoa_library.util.HMAux
+import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
+import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
+import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
+import com.namoadigital.prj001.databinding.Act011FrgIncludeHeaderBinding
+import com.namoadigital.prj001.databinding.Act011FrgIncludeHistoricBinding
+import com.namoadigital.prj001.databinding.Act011FrgIncludeNavegationBinding
+import com.namoadigital.prj001.databinding.CvProductSerialWithIconBinding
+import com.namoadigital.prj001.util.ConstantBaseApp
+import com.namoadigital.prj001.util.ToolBox_Inf
+
+abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(){
+    protected val PARAM_LAST_INDEX = "LAST_INDEX"
+
+    protected lateinit var binding: VBinding
+    private var _mNavListener : Act011BaseFrgInteractionNavegation? = null
+    protected val mNavListener get() = _mNavListener!!
+    private var _mHistocicListener : Act011BaseFrgInteractionHistoric? = null
+    protected val mHistocicListener get()  = _mHistocicListener!!
+//
+    protected lateinit var hmAuxTrans: HMAux
+    protected var tabIndex: Int = 0
+    protected var tabLastIndex: Int = 0
+    protected lateinit var formStatus: String
+    protected var scheduleDesc: String? = null
+    protected var scheduleComments: String? = null
+
+    /**
+     * Retona binding
+     */
+    protected abstract fun getViewBinding(): VBinding
+
+    /**
+     * Retorna bind do include do cabacelho
+     */
+    protected abstract fun getHeaderInclude(): Act011FrgIncludeHeaderBinding
+
+    /**
+     * Retorna  bind do include de navegacao
+     */
+    protected abstract fun getNavegationInclude(): Act011FrgIncludeNavegationBinding
+    /**
+     * Retorna  bind do include de historico
+     */
+    protected abstract fun getHistoricInclude(): Act011FrgIncludeHistoricBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initBinding()
+    }
+
+    /**
+     * Resgata o binding do objeto filho
+     */
+    private fun initBinding() {
+        binding = getViewBinding()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+
+        /**
+         * LUCHE - 17/01/2019 - RotateBugFixed
+         *
+         * Recupera dados de pagina, status e comentario do bundle quando o fragmento for ser
+         * reconstruido.
+         *
+         */
+        with(savedInstanceState) {
+            if (this != null &&
+                containsKey(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS) &&
+                containsKey(GE_Custom_Form_Field_LocalDao.PAGE) &&
+                containsKey(PARAM_LAST_INDEX) &&
+                containsKey(GE_Custom_Form_Field_LocalDao.COMMENT) &&
+                containsKey(MD_Schedule_ExecDao.SCHEDULE_DESC)
+            ) {
+
+                formStatus = getString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS, "")
+                tabIndex = getInt(GE_Custom_Form_Field_LocalDao.PAGE)
+                tabLastIndex = getInt(PARAM_LAST_INDEX)
+                scheduleComments = getString(GE_Custom_Form_Field_LocalDao.COMMENT, null)
+                scheduleDesc = getString(MD_Schedule_ExecDao.SCHEDULE_DESC, null)
+            }
+        }
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        iniIncludeHeaderUI()
+        iniBindingActions()
+        iniIncludeNavegationUI()
+        iniIncludeHistoricUI()
+    }
+
+    /**
+     * Inicia a configuração do include de cabeçalho
+     */
+    private fun iniIncludeHeaderUI() {
+        val headerInclude = getHeaderInclude()
+        handleSerialCardInfos(headerInclude)
+        handleScheduleInfos(headerInclude)
+    }
+
+    /**
+     * Verifica se é a primeira tab para exibir o card de produto e serial devem aparecer
+     */
+    private fun handleSerialCardInfos(headerInclude: Act011FrgIncludeHeaderBinding) {
+        if (tabIndex == 1) {
+            headerInclude.incSerial.cvProductSerialCard.visibility = View.VISIBLE
+            setSerialInfo(headerInclude.incSerial)
+        } else {
+            headerInclude.incSerial.cvProductSerialCard.visibility = View.GONE
+        }
+    }
+
+    /**
+     * Configura as views com as infos de agendamento.
+     */
+    private fun handleScheduleInfos(headerInclude: Act011FrgIncludeHeaderBinding) {
+        with(headerInclude){
+            tvComments.apply {
+                text = scheduleComments?:""
+                visibility = if(scheduleComments.isNullOrEmpty()) View.GONE else View.VISIBLE
+            }
+            tvScheduleDesc.apply {
+                text = scheduleDesc?:""
+                visibility = if(scheduleDesc.isNullOrEmpty()) View.GONE else View.VISIBLE
+            }
+        }
+    }
+
+    /**
+     * Configura a view com os dados produtos
+     */
+    private fun setSerialInfo(incSerial: CvProductSerialWithIconBinding) {
+        val serialInfo = mNavListener.getSerialInfo()
+        with(incSerial){
+            tvProductSerialId.text = hmAuxTrans["lbl_no_serial_placeholder"]
+            tvProductSerialInfos.text = ""
+            tvProductSerialInfos.visibility = View.GONE
+            //Define exibição do id e marca cor modelo.
+            if(!serialInfo.serial_id.isNullOrEmpty()){
+                tvProductSerialId.text = serialInfo.serial_id
+                //
+                tvProductSerialInfos.apply {
+                    val serialBrandModelColor =
+                        ToolBox_Inf.formatSerialBrandModelColor(serialInfo)
+                    //
+                    text = serialBrandModelColor ?: ""
+                    visibility = if(serialBrandModelColor.isNullOrEmpty()) View.GONE else View.VISIBLE
+
+                }
+            }
+            //REsgata o bitmap do icone
+            val productIconBmp = mNavListener.getProductIconBmp()
+            //Se difernete de nulo, coloca icone
+            //Se for null, e tiver dados do serial, centraliza os dados do serial. Se serial tb vazio esconde tudo.
+            if(productIconBmp != null){
+              ivProductSerialId.setImageBitmap(productIconBmp)
+            }else{
+                ivProductSerialId.visibility = View.GONE
+                if(serialInfo.serial_id.isNullOrEmpty()){
+                    tvProductSerialId.visibility = View.GONE
+                    cvProductSerialCard.visibility = View.GONE
+                }
+                tvProductSerialId.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
+                tvProductSerialInfos.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
+            }
+        }
+    }
+
+
+    /**
+     * Chama funs que irão configurar as ações no botões de navegação e historico
+     */
+    private fun iniBindingActions() {
+        setNavegationListeners(getNavegationInclude())
+        setHistoricListeners(getHistoricInclude())
+//
+//        when(binding){
+//            is Act011FrgFfBinding -> {
+//                (binding as Act011FrgFfBinding).apply {
+//                    setNavegationListeners(this.incNavegation)
+//                    setHistoricListeners(this.incHistoric)
+//                }
+//            }
+//        }
+    }
+
+    /**
+     * Seta as a chamada das interfaces nos clicks dos botões de navegacao e finalizacao
+     */
+    private fun setNavegationListeners(incNavegation: Act011FrgIncludeNavegationBinding) {
+        with(incNavegation){
+            llPre.setOnClickListener {
+                mNavListener.previosTab()
+            }
+            llDrawer.setOnClickListener {
+                mNavListener.openDrawer()
+            }
+            llNex.setOnClickListener {
+                mNavListener.nextTab()
+            }
+            //
+            llCheck.setOnClickListener {
+                mNavListener.check()
+            }
+            tvCheckNew.setOnClickListener {
+                mNavListener.checkWithNew()
+            }
+        }
+    }
+
+    /**
+     * Seta as a chamada das interfaces nos clicks dos botões de historico
+     */
+    private fun setHistoricListeners(incHistoric: Act011FrgIncludeHistoricBinding) {
+        with(incHistoric){
+            goToHistory.setOnClickListener {
+                mHistocicListener.goToHistoric()
+            }
+            goToHome.setOnClickListener {
+                mHistocicListener.goToHome()
+            }
+        }
+    }
+
+    /**
+     * Inicia a configurcao das views de navegação
+     */
+    private fun iniIncludeNavegationUI() {
+        val navegationBinding = getNavegationInclude()
+        handleNavegationUI(navegationBinding)
+        handleCheckUI(navegationBinding)
+    }
+
+    /**
+     * Configura a visibilidade das views de navegacao
+     * Previous: Exibida somente se nao for a primeira tab
+     * Footer: Exibido somente na ultima tab
+     * Next: Exibido somente se não for a ultima tab
+     */
+    private fun handleNavegationUI(navegationBinding: Act011FrgIncludeNavegationBinding) {
+        with(navegationBinding) {
+            tvDrawer.text = hmAuxTrans["btn_open_drawer"]
+            //
+            llPre.apply {
+                visibility = if (tabIndex > 1) View.VISIBLE else View.GONE
+            }
+            //
+            llFooter.apply {
+                visibility = if (tabIndex == tabLastIndex) View.VISIBLE else View.GONE
+            }
+            //
+            llNex.apply {
+                visibility = if (tabIndex != tabLastIndex) View.VISIBLE else View.GONE
+            }
+        }
+    }
+
+    /**
+     * Define a visibilidade dos botoes de finalziada baseada no status
+     */
+    private fun handleCheckUI(navegationBinding: Act011FrgIncludeNavegationBinding) {
+        val readOnlyStatus = readOnlyStatus()
+        with(navegationBinding) {
+            tvCheck.text = hmAuxTrans["btn_check"]
+            tvCheckNew.text = hmAuxTrans["btn_check_new"]
+            //
+            if(readOnlyStatus){
+                llCheck.visibility = View.GONE
+                tvCheckNew.visibility = View.GONE
+            }else{
+                llCheck.visibility = View.VISIBLE
+                tvCheckNew.visibility = if(mNavListener.allowFinalizeWithNew()) View.VISIBLE else View.GONE
+            }
+        }
+    }
+
+    /**
+     * Define se status causa readonly
+     */
+    private fun readOnlyStatus() = (formStatus.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, true)
+            || formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE, true))
+
+    /**
+     * Define visibilidade das views de historico
+     */
+    private fun iniIncludeHistoricUI() {
+        val historicInclude = getHistoricInclude()
+        with(historicInclude){
+            goToHistory.apply {
+                visibility = if(formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE, true)) View.VISIBLE else View.GONE
+                text =  hmAuxTrans["btn_history"]
+
+            }
+            goToHome.apply {
+                visibility = if (formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE,true)) View.VISIBLE else View.GONE
+                text =  hmAuxTrans["btn_home"]
+            }
+        }
+    }
+
+    //region Set interface
+    /**
+     * Seta as interfaces baseado no contexto da act host
+     */
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(context is Act011BaseFrgInteractionNavegation ){
+            _mNavListener = context as Act011BaseFrgInteractionNavegation
+        } else {
+            throw RuntimeException("${context.toString()} must implement Act011FooterListener")
+        }
+        //
+        if(context is Act011BaseFrgInteractionHistoric ){
+            _mHistocicListener = context as Act011BaseFrgInteractionHistoric
+        } else {
+            throw RuntimeException("${context.toString()} must implement Act011BaseFrgInteractionHistoric")
+        }
+    }
+
+    /**
+     * Remove as interface
+     */
+    override fun onDetach() {
+        super.onDetach()
+        _mNavListener = null
+        _mHistocicListener = null
+    }
+    //endregion
+
+    /**
+     * Salva as infos no bundle
+     */
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.apply {
+            putString(GE_Custom_Form_DataDao.CUSTOM_FORM_STATUS,formStatus)
+            putInt(GE_Custom_Form_Field_LocalDao.PAGE,tabIndex)
+            putInt(PARAM_LAST_INDEX,tabLastIndex)
+            putString(MD_Schedule_ExecDao.SCHEDULE_DESC,scheduleDesc)
+            putString(GE_Custom_Form_Field_LocalDao.COMMENT,scheduleComments)
+        }
+    }
+}
