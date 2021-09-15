@@ -2,8 +2,6 @@ package com.namoadigital.prj001.util;
 
 import com.namoa_digital.namoa_library.util.ConstantBase;
 
-import org.jetbrains.annotations.Nullable;
-
 
 /**
  * Created by neomatrix on 05/04/17.
@@ -926,4 +924,10 @@ public class ConstantBaseApp extends ConstantBase {
     public static final String MY_ACTIONS_ORIGIN_FLOW_CALENDAR = "ORIGIN_CALENDAR";
 
 
+    /*
+     * Const FORM_OS
+     */
+    public static final String FORM_TAB_OK = "FORM_TAB_OK";
+    public static final String FORM_TAB_ERROR = "FORM_TAB_ERROR";
+    public static final String FORM_TAB_PENDING = "FORM_TAB_PENDING";
 }

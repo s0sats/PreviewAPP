@@ -82,6 +82,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.model.Act011FfOptionsViewObject;
 import com.namoadigital.prj001.model.Act011FormTab;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
@@ -159,7 +160,7 @@ public class Act011_Main extends Base_Activity
 
     private FragmentManager fm;
 
-    private Act011_FF_Options act011_ff_options;
+    private Act011FfOption act011FfOption;
 
     private ArrayList<Act011BaseFrg> screens;
     private transient ArrayList<CustomFF> customFFs;
@@ -616,7 +617,7 @@ public class Act011_Main extends Base_Activity
                 if (index_old == -1 || index_old == 0) {
                     resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
-                    act011_ff_options.tabsS(resTabs);
+//                    act011FfOption.updateTabList(resTabs);
                 } else {
                     resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
@@ -632,7 +633,7 @@ public class Act011_Main extends Base_Activity
                         hmPages.put(key, value);
                     }
 
-                    act011_ff_options.tabsS(hmPages);
+//                    act011FfOption.tabsS(hmPages);
                 }
                 //
                 //resTabs = returnValidCheckTabs(String.valueOf(index_old));
@@ -647,141 +648,8 @@ public class Act011_Main extends Base_Activity
 
         mDrawerToggle.syncState();
 
-        act011_ff_options = (Act011_FF_Options)
+        act011FfOption = (Act011FfOption)
                 fm.findFragmentById(R.id.act011_ff_options);
-
-        act011_ff_options.setOnTabSelectedListener(new Act011_FF_Options.ICustom_Form_FF_Options() {
-            @Override
-            public void tabSelected(int idtab, String link) {
-                tabSelectedAction(idtab);
-                //
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-            }
-        });
-
-        act011_ff_options.setOnSaveCheckListener(new Act011_FF_Options.ICustom_Form_FF_Options_ll() {
-
-            @Override
-            public void info() {
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-
-                showCustomDialog();
-            }
-
-            @Override
-            public void delete() {
-                DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        showConfirmDeleteDialog();
-                    }
-                };
-                //
-                ToolBox.alertMSG(
-                        Act011_Main.this,
-                        hmAux_Trans.get("dialog_delete_title"),
-                        hmAux_Trans.get("dialog_delete_msg"),
-                        listener,
-                        1
-                );
-
-
-
-            }
-
-            @Override
-            public void save() {
-                /*mDrawerLayout.closeDrawer(GravityCompat.START);
-
-                formData.setLocation_type("");
-                formData.setLocation_lat("");
-                formData.setLocation_lng("");
-
-                returnValidCheck(String.valueOf(-1));
-
-                for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
-                    df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
-                    df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
-                }
-
-                mPresenter.saveData(formData, true);
-
-                bNew = false;
-
-                mDrawerLayout.closeDrawer(GravityCompat.START);*/
-                //Implments PhotoInterface
-                saveV2(true);
-            }
-
-            @Override
-            public void check() {
-                checkAction(true);
-            }
-
-            @Override
-            public void autograph() {
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-
-                showCustomDialogSignature();
-            }
-
-            @Override
-            public void auto() {
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-
-                HMAux hmP = new HMAux();
-
-                int quantidade = 0;
-
-                for (CustomFF customFF : customFFs) {
-                    if (customFF.activateAutoReplay() != 0) {
-                        quantidade += 1;
-
-                        hmP.put(String.valueOf(customFF.getmPage()), String.valueOf(customFF.getmPage()));
-                    }
-                }
-                //
-                Set keysAuto = hmP.keySet();
-
-                for (Iterator iAuto = keysAuto.iterator(); iAuto.hasNext(); ) {
-
-                    String keyAutoHM = (String) iAuto.next();
-
-                    returnValidCheck(keyAutoHM);
-
-                    resTabs = returnValidCheckTabs(keyAutoHM);
-                    //
-                    Set keys = resTabs.keySet();
-
-                    for (Iterator i = keys.iterator(); i.hasNext(); ) {
-                        String key = (String) i.next();
-                        String value = (String) resTabs.get(key);
-
-                        hmPages.put(key, value);
-                    }
-                }
-                //
-                act011_ff_options.tabsS(hmPages);
-
-
-                Toast.makeText(
-                        context,
-                        hmAux_Trans.get("qty_automatic_answer_msg") + ": " + String.valueOf(quantidade),
-                        Toast.LENGTH_SHORT
-                ).show();
-            }
-
-            @Override
-            public void nserv() {
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-
-                if (formData != null && formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
-                    exitAlertNServ();
-                } else {
-                    nservCall();
-                }
-            }
-        });
 
         mPresenter = new Act011_Main_Presenter_Impl(
                 context,
@@ -962,7 +830,7 @@ public class Act011_Main extends Base_Activity
 
         resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
-        act011_ff_options.tabsS(resTabs);
+//        act011FfOption.tabsS(resTabs);
 
         returnValidCheck(String.valueOf(index_old));
 
@@ -977,7 +845,7 @@ public class Act011_Main extends Base_Activity
          */
         resTabs = returnValidCheckTabs("-1");
         returnValidCheck("-1");
-        act011_ff_options.tabsS(resTabs);
+//        act011FfOption.tabsS(resTabs);
         //Fim
 
         formData.setLocation_type("");
@@ -1582,7 +1450,7 @@ public class Act011_Main extends Base_Activity
                 @Override
                 public void onPageSelected(int position) {
                     saveV2(false);
-                    act011_ff_options.setFOpc(position + 1);
+//                    act011FfOption.setFOpc(position + 1);
                     //
                     index_old = index;
                     index = position + 1;
@@ -1606,7 +1474,7 @@ public class Act011_Main extends Base_Activity
                             hmPages.put(key, value);
                         }
                         //
-                        act011_ff_options.tabsS(hmPages);
+//                        act011FfOption.tabsS(hmPages);
                     }
 
 
@@ -1634,22 +1502,133 @@ public class Act011_Main extends Base_Activity
 
             resTabs = returnValidCheckTabs(String.valueOf(index_old));
 
-            act011_ff_options.loadCF_Fields(cf_fields, resTabs, pdfs, mSignature, form_desc);
-            act011_ff_options.enableScheduled(ToolBox_Inf.isScheduleForm(formLocal));
+            /*
+                TODO for em screens para pegar a quantidade de campos e montar
+             */
 
-            if (mSo_Prefix == null || mSo_Code == null) {
-                if((formData.getTicket_prefix() != null && formData.getTicket_prefix() > 0)
-                && (formData.getTicket_code() != null && formData.getTicket_code() > 0 )){
-                    act011_ff_options.enableTab(formData.getCustom_form_status(), 0, 1);
-                }else {
-                    act011_ff_options.enableTab(formData.getCustom_form_status(), 0, 0);
-                }
-            } else {
-                act011_ff_options.enableTab(formData.getCustom_form_status(), 1, 0);
-            }
 
-            //act011_ff_options.enableTab(formData.getCustom_form_status());
-            act011_ff_options.translaTab(hmAux_Trans);
+
+
+            act011FfOption.setFragmentsArgs(
+                    new Act011FfOptionsViewObject(
+                            form_desc,
+                            new ArrayList<>(),
+                            1,
+                            formData.getCustom_form_status(),
+                            mSignature,
+                            true,
+                            (formData.getTicket_prefix() != null && formData.getTicket_prefix() > 0)
+                                    && (formData.getTicket_code() != null && formData.getTicket_code() > 0 ),
+                            mSo_Prefix != null && mSo_Code != null
+                    ),
+                    hmAux_Trans,
+                    new Act011FfOption.ICustom_Form_FF_Options_ll() {
+                        @Override
+                        public void info() {
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+
+                            showCustomDialog();
+                        }
+
+                        @Override
+                        public void delete() {
+                            DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    showConfirmDeleteDialog();
+                                }
+                            };
+                            //
+                            ToolBox.alertMSG(
+                                    Act011_Main.this,
+                                    hmAux_Trans.get("dialog_delete_title"),
+                                    hmAux_Trans.get("dialog_delete_msg"),
+                                    listener,
+                                    1
+                            );
+                        }
+
+                        @Override
+                        public void save() {
+                            saveV2(true);
+                        }
+
+                        @Override
+                        public void check() {
+                            checkAction(true);
+                        }
+
+                        @Override
+                        public void autograph() {
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+
+                            showCustomDialogSignature();
+                        }
+
+                        @Override
+                        public void auto() {
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+
+                            HMAux hmP = new HMAux();
+
+                            int quantidade = 0;
+
+                            for (CustomFF customFF : customFFs) {
+                                if (customFF.activateAutoReplay() != 0) {
+                                    quantidade += 1;
+
+                                    hmP.put(String.valueOf(customFF.getmPage()), String.valueOf(customFF.getmPage()));
+                                }
+                            }
+                            //
+                            Set keysAuto = hmP.keySet();
+
+                            for (Iterator iAuto = keysAuto.iterator(); iAuto.hasNext(); ) {
+
+                                String keyAutoHM = (String) iAuto.next();
+
+                                returnValidCheck(keyAutoHM);
+
+                                resTabs = returnValidCheckTabs(keyAutoHM);
+                                //
+                                Set keys = resTabs.keySet();
+
+                                for (Iterator i = keys.iterator(); i.hasNext(); ) {
+                                    String key = (String) i.next();
+                                    String value = (String) resTabs.get(key);
+
+                                    hmPages.put(key, value);
+                                }
+                            }
+                            //
+//                            act011FfOption.tabsS(hmPages);
+
+
+                            Toast.makeText(
+                                    context,
+                                    hmAux_Trans.get("qty_automatic_answer_msg") + ": " + String.valueOf(quantidade),
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        }
+
+                        @Override
+                        public void nserv() {
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+
+                            if (formData != null && formData.getCustom_form_status().equals(Constant.SYS_STATUS_IN_PROCESSING)) {
+                                exitAlertNServ();
+                            } else {
+                                nservCall();
+                            }
+                        }
+
+                        @Override
+                        public void onTabSelected(int page) {
+                            tabSelectedAction(page);
+                            //
+                            mDrawerLayout.closeDrawer(GravityCompat.START);
+                        }
+                    });
 
             returnValidCheck(String.valueOf(index_old));
             if(bNew){

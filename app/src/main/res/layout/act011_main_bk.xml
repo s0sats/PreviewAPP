@@ -26,7 +26,6 @@
 
             <fragment
                 android:id="@+id/act011_ff_options"
-                android:name="com.namoadigital.prj001.ui.act011.Act011_FF_Options"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:layout="@layout/act011_ff_options" />

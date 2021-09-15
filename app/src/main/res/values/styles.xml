@@ -28,6 +28,10 @@
         <item name="android:translationZ">0dp</item>
     </style>
 
+    <style name="MyFormOSDrawerImageButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:backgroundTint">@color/padrao_TRANSPARENT</item>
+    </style>
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="MyAlertDialogTheme" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
