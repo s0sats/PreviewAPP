@@ -36,6 +36,12 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
     protected lateinit var formStatus: String
     protected var scheduleDesc: String? = null
     protected var scheduleComments: String? = null
+    protected val mTabItemCount: Int by lazy {
+        getTabCount()
+    }
+    protected val mTabName: String by lazy {
+        getTabName()
+    }
 
     /**
      * Retona binding

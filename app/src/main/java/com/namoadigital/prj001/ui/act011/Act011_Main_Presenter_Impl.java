@@ -31,6 +31,8 @@ import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_FormDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.model.Act011FormTab;
+import com.namoadigital.prj001.model.Act011FormTabStatus;
 import com.namoadigital.prj001.model.DaoObjReturn;
 import com.namoadigital.prj001.model.GE_Custom_Form;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
@@ -1841,5 +1843,15 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
         //
         return myBitmap;
+    }
+
+    @Override
+    public boolean hasAnyInvalidField(ArrayList<Act011FormTab> tabs) {
+        for (Act011FormTab tab : tabs) {
+            if(tab.getStatus() == Act011FormTabStatus.ERROR){
+                return true;
+            }
+        }
+        return false;
     }
 }

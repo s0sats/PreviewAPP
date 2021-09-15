@@ -12,7 +12,7 @@ import com.namoadigital.prj001.ui.act011.Act011FfOption
 
 class Act011FfOptionsAdapter(
     val tabs: List<Act011FormTab>,
-    val tabSelected:Int,
+    var tabSelected:Int,
     val mListener: Act011FfOption.ICustom_Form_FF_Options_ll
 ) : RecyclerView.Adapter<Act011FfOptionsAdapter.MyFormTabVH>() {
 

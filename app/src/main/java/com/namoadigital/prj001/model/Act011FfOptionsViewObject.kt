@@ -4,7 +4,7 @@ import java.io.Serializable
 
 class Act011FfOptionsViewObject(
     val formDesc: String,
-    var tabs: List<Act011FormTab>,
+    var tabs: MutableList<Act011FormTab>,
     var tabSelected: Int,
     val formStatus: String,
     val signature: String,

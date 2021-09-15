@@ -170,15 +170,11 @@ public class Act011_Main extends Base_Activity
 
     private String sDate;
 
-    private HMAux resTabs;
-
     private Toolbar toolbar;
 
     private String dtCustomer_Format;
 
     private Bundle bundle;
-
-    private HMAux hmPages = new HMAux();
 
     private String product_code;
     private String product_desc;
@@ -611,33 +607,15 @@ public class Act011_Main extends Base_Activity
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-
                 hideSoftKeyboard(Act011_Main.this);
-
-                if (index_old == -1 || index_old == 0) {
-                    resTabs = returnValidCheckTabs(String.valueOf(index_old));
-
-//                    act011FfOption.updateTabList(resTabs);
-                } else {
-                    resTabs = returnValidCheckTabs(String.valueOf(index_old));
-
-                    // Hugo
-                    Set keys = resTabs.keySet();
-
-                    hmPages.clear();
-
-                    for (Iterator i = keys.iterator(); i.hasNext(); ) {
-                        String key = (String) i.next();
-                        String value = (String) resTabs.get(key);
-
-                        hmPages.put(key, value);
-                    }
-
-//                    act011FfOption.tabsS(hmPages);
-                }
+                ArrayList<Act011FormTab> tabs = new ArrayList<>();
                 //
-                //resTabs = returnValidCheckTabs(String.valueOf(index_old));
-                //act011_ff_options.tabsS(resTabs);
+                if (index_old == -1 || index_old == 0) {
+                    tabs = returnValidateTabObj(index_old);
+                } else {
+                    tabs = returnValidateTabObj(index_old);
+                }
+                updateTabStatusIntoDrawer(tabs);
             }
         };
 
@@ -728,6 +706,19 @@ public class Act011_Main extends Base_Activity
                 mStep_code
         );
     }
+
+    /**
+     * Metodo que chama atualização de lista ou item da tab no drawer
+     * @param tabs
+     */
+    private void updateTabStatusIntoDrawer(ArrayList<Act011FormTab> tabs) {
+        if(tabs.size() == 1){
+            act011FfOption.updateTabList(tabs.get(0),index);
+        }else{
+            act011FfOption.updateTabList(tabs,index);
+        }
+    }
+
     //TODO averiguar pq mudou de onResume para onStart
     @Override
     protected void onStart() {
@@ -816,81 +807,71 @@ public class Act011_Main extends Base_Activity
      */
     private void loadCustomFFValueIntoFormData() {
         for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
-//            df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
-//            df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
               setCustomFFValueIntoFormDataField(df);
         }
     }
-
+    //TODO ANALISAR SE POSSIVEL APENAS CHAMAR O setCurrentItem
     private void tabSelectedAction(int idtab) {
         ignoreUpdate = true;
 
         index_old = index;
         index = idtab;
-
-        resTabs = returnValidCheckTabs(String.valueOf(index_old));
-
-//        act011FfOption.tabsS(resTabs);
-
-        returnValidCheck(String.valueOf(index_old));
-
+        //
+        updateTabStatusIntoDrawer(
+            returnValidateTabObj(index_old)
+        );
+        //
         pager.setCurrentItem(idtab - 1);
     }
 
     private void checkAction(boolean showFinalizeOpt) {
         mDrawerLayout.closeDrawer(GravityCompat.START);
-
-        /**
-         * Atualizar tabs caso o usuário tente fazer um check().
-         */
-        resTabs = returnValidCheckTabs("-1");
-        returnValidCheck("-1");
-//        act011FfOption.tabsS(resTabs);
-        //Fim
-
+        //
+        ArrayList<Act011FormTab> tabs = returnValidateTabObj(-1);
+        //
+        updateTabStatusIntoDrawer(
+            tabs
+        );
+        //
         formData.setLocation_type("");
         formData.setLocation_lat("");
         formData.setLocation_lng("");
-
+        //
         if(canSave) {
             saveV2(false);
         }
-
-        int sum = returnValidCheck(String.valueOf(-1));
-
-        if (sum == 0) {
-            if(showFinalizeOpt && allowFinalizeWithNewBtn()){
-                showFinalizeDialogOpt();
-            }else {
-                // Mudar Aqui
-                ToolBox.alertMSG(
-                        Act011_Main.this,
-                        hmAux_Trans.get("alert_question_finalize_title"), //"Finalizar Formalário"
-                        hmAux_Trans.get("alert_question_finalize_msg"), //"Deseja Finalizar o Formulário?"
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                startCheckIN();
-//                                checkGpsFlow();
-                            }
-                        },
-                        1
-                );
-            }
-
-        } else {
+        //
+        if (mPresenter.hasAnyInvalidField(tabs)) {
             //Luche - 28/02/2019
             //Reseta var de fluxo finaliza + novo
             finalizeNewFlow = false;
             //
             ToolBox.alertMSG(
-                    Act011_Main.this,
-                    hmAux_Trans.get("alert_error_on_finalize_title"),
-                    hmAux_Trans.get("alert_error_on_finalize_msg"),
-                    null,
-                    0
+                Act011_Main.this,
+                hmAux_Trans.get("alert_error_on_finalize_title"),
+                hmAux_Trans.get("alert_error_on_finalize_msg"),
+                null,
+                0
             );
-
+        } else {
+            if(showFinalizeOpt && allowFinalizeWithNewBtn()){
+                showFinalizeDialogOpt();
+            }else {
+                // Mudar Aqui
+                ToolBox.alertMSG(
+                    Act011_Main.this,
+                    hmAux_Trans.get("alert_question_finalize_title"), //"Finalizar Formalário"
+                    hmAux_Trans.get("alert_question_finalize_msg"), //"Deseja Finalizar o Formulário?"
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            startCheckIN();
+//                                checkGpsFlow();
+                        }
+                    },
+                    1
+                );
+            }
         }
     }
 
@@ -1464,38 +1445,10 @@ public class Act011_Main extends Base_Activity
                     if (ignoreUpdate) {
                         ignoreUpdate = false;
                     } else {
-                        //
-                        returnValidCheck(String.valueOf(index_old));
-                        //
-                        resTabs = returnValidCheckTabs(String.valueOf(index_old));
-                        //
-                        Set keys = resTabs.keySet();
-
-                        for (Iterator i = keys.iterator(); i.hasNext(); ) {
-                            String key = (String) i.next();
-                            String value = (String) resTabs.get(key);
-
-                            hmPages.put(key, value);
-                        }
-                        //
-//                        act011FfOption.tabsS(hmPages);
+                        updateTabStatusIntoDrawer(
+                            returnValidateTabObj(index_old)
+                        );
                     }
-
-
-                    /**
-                     * LUCHE - 17/01/2019 - RotateBugFixed
-                     * Inicialmente, adicionado try/catch no comando abaixo para evitar o crash ao
-                     * reconstruir frag após rotação da tela, porem , trecho de codigo foi comentado
-                     * e o resultado manteve se igual a quando não estava comentado sendo assim,
-                     * foi comentado e poderá ser apagado no futuro.
-                     */
-//                    try {
-//                        InputMethodManager imm = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
-//                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-//                    }catch (Exception e){
-//                        e.printStackTrace();
-//                    }
-
                 }
 
                 @Override
@@ -1503,16 +1456,7 @@ public class Act011_Main extends Base_Activity
 
                 }
             });
-
-            resTabs = returnValidCheckTabs(String.valueOf(index_old));
-
-            /*
-                TODO for em screens para pegar a quantidade de campos e montar
-             */
-
-
-
-
+            //Seta dados no drawer
             act011FfOption.setFragmentsArgs(
                     new Act011FfOptionsViewObject(
                             form_desc,
@@ -1572,7 +1516,7 @@ public class Act011_Main extends Base_Activity
                         @Override
                         public void auto() {
                             mDrawerLayout.closeDrawer(GravityCompat.START);
-
+                            //TODO REVE ALGORITMO, PARA ATUALIZAR NO DRAWER
                             HMAux hmP = new HMAux();
 
                             int quantidade = 0;
@@ -1584,30 +1528,18 @@ public class Act011_Main extends Base_Activity
                                     hmP.put(String.valueOf(customFF.getmPage()), String.valueOf(customFF.getmPage()));
                                 }
                             }
-                            //
+
                             Set keysAuto = hmP.keySet();
 
                             for (Iterator iAuto = keysAuto.iterator(); iAuto.hasNext(); ) {
-
-                                String keyAutoHM = (String) iAuto.next();
-
-                                returnValidCheck(keyAutoHM);
-
-                                resTabs = returnValidCheckTabs(keyAutoHM);
+                                int keyAutoHM = (int) iAuto.next();
                                 //
-                                Set keys = resTabs.keySet();
+                                updateTabStatusIntoDrawer(
+                                    returnValidateTabObj(keyAutoHM)
+                                );
 
-                                for (Iterator i = keys.iterator(); i.hasNext(); ) {
-                                    String key = (String) i.next();
-                                    String value = (String) resTabs.get(key);
-
-                                    hmPages.put(key, value);
-                                }
                             }
                             //
-//                            act011FfOption.tabsS(hmPages);
-
-
                             Toast.makeText(
                                     context,
                                     hmAux_Trans.get("qty_automatic_answer_msg") + ": " + String.valueOf(quantidade),
@@ -2151,6 +2083,29 @@ public class Act011_Main extends Base_Activity
         }
 
         return numberOfErrors;
+    }
+
+    /**
+     * Metodo que faz validação de 1 o todas as tabs e retorna lista de
+     * Act011FormTab atualizado
+     *
+     * @param page -1  se deve validar todos ou >0 se especifico
+     * @return
+     */
+    private ArrayList<Act011FormTab> returnValidateTabObj(int page){
+        ArrayList<Act011FormTab> tabs = new ArrayList<>();
+        if(page == -1){
+            for (Act011BaseFrg baseFrg : screens) {
+                if(baseFrg instanceof Act011FrgFF) {
+                    tabs.add(baseFrg.getTabObj(false));
+                }
+            }
+        }else if(page > 0){
+            //Ajuste para pega o indice correto da tab no array de frags.
+            page--;
+            tabs.add(screens.get(page).getTabObj(false));
+        }
+        return tabs;
     }
 
     private HMAux returnValidCheckTabs(String sPage) {

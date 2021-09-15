@@ -21,26 +21,6 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
     lateinit var customFF: ArrayList<CustomFF>
     private var _mFrgListener: Act011FrgFFInteraction? = null
     private val mFrgListener get() = _mFrgListener!!
-    private val mTabItemCount: Int by lazy {
-        if(!customFF.isNullOrEmpty()){
-            customFF.filter {
-                it.getmPage() == tabIndex && it.getmInclude() == 1
-            }.size
-        }else{
-            0
-        }
-    }
-    private val mTabName: String by lazy{
-        if(!customFF.isNullOrEmpty()){
-            customFF.find {
-                it.getmPage() == tabIndex && it.getmType().equals("tab",true)
-            }?.let {
-              it.getmLabel()
-            }?: NO_LABEL_FOUND
-        }else{
-            NO_LABEL_FOUND
-        }
-    }
 
     /**
      * Fun static para construcao do obj
@@ -145,7 +125,9 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
 
     override fun getTabCount() :Int{
         return if(!customFF.isNullOrEmpty()){
-            mTabItemCount
+            customFF.filter {
+                it.getmPage() == tabIndex && it.getmInclude() == 1
+            }.size
         }else{
             0
         }
@@ -161,7 +143,11 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
 
     override fun getTabName(): String {
         return if(!customFF.isNullOrEmpty()){
-            mTabName
+            customFF.find {
+                it.getmPage() == tabIndex && it.getmType().equals("tab",true)
+            }?.let {
+                it.getmLabel()
+            }?: NO_LABEL_FOUND
         }else{
             NO_LABEL_FOUND
         }
@@ -170,9 +156,9 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
     override fun getTabObj(skipFieldValidation: Boolean): Act011FormTab {
         return Act011FormTab(
             page = tabIndex,
-            name = getTabName(),
+            name = mTabName,
             tracking = null,
-            getTabCount(),
+            mTabItemCount,
             problemReportedCount = null,
             forecastCount = null,
             criticalForecastCount = null,

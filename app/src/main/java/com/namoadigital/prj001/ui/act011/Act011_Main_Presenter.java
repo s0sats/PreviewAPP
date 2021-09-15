@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import com.namoadigital.prj001.model.Act011FormTab;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
 import com.namoadigital.prj001.model.GE_File;
@@ -64,4 +65,5 @@ public interface Act011_Main_Presenter {
 
     Bitmap getProductIconBitmap(String custom_product_icon_name);
 
+    boolean hasAnyInvalidField(ArrayList<Act011FormTab> tabs);
 }
