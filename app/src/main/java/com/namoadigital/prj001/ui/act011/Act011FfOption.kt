@@ -192,11 +192,20 @@ class Act011FfOption : Fragment() {
     }
 
     fun updateTabList(tabs: List<Act011FormTab>, tabSelected: Int) {
-        mObjectView.tabs = tabs
+        mObjectView.tabs.clear()
+        mObjectView.tabs.addAll(tabs)
         mObjectView.tabSelected = tabSelected
+        mAdapter.tabSelected = tabSelected
         mAdapter.notifyDataSetChanged()
     }
 
+    fun updateTabList(tab: Act011FormTab, tabSelected: Int) {
+        val indexOld = tab.page - 1
+        mObjectView.tabs.set(indexOld, tab)
+        mObjectView.tabSelected = tabSelected
+        mAdapter.tabSelected = tabSelected
+        mAdapter.notifyItemRangeChanged(indexOld, tabSelected)
+    }
 
     companion object {
         /**
