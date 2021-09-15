@@ -11,5 +11,10 @@ class Act011FormTab (
     val forecastCount: Int?,
     val criticalForecastCount: Int?,
     val nonForecastCount: Int?,
-    val status: String
+    val status: Act011FormTabStatus
 ): Serializable
+
+
+enum class Act011FormTabStatus{
+    OK , PENDING, ERROR
+}

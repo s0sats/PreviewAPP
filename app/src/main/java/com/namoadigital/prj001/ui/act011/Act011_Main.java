@@ -82,6 +82,7 @@ import com.namoadigital.prj001.dao.SM_SODao;
 import com.namoadigital.prj001.dao.TK_TicketDao;
 import com.namoadigital.prj001.dao.TK_Ticket_CtrlDao;
 import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
+import com.namoadigital.prj001.model.Act011FormTab;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data;
 import com.namoadigital.prj001.model.GE_Custom_Form_Data_Field;
 import com.namoadigital.prj001.model.GE_Custom_Form_Local;
@@ -1486,7 +1487,8 @@ public class Act011_Main extends Base_Activity
             {
                 mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
             }
-            //
+            //TODO APENAS TESTE PRO OBJ DO LUKINHA
+            ArrayList<Act011FormTab> tabs = new ArrayList<>();
             for (int i = 1; i <= pages; i++) {
                 //region oldStuff
 //                Act011_FF custom_form_ff = new Act011_FF();
@@ -1559,6 +1561,7 @@ public class Act011_Main extends Base_Activity
                     mdScheduleExec != null ? mdScheduleExec.getComments() : null
                 );
                 custom_form_ff.setCustomFF(customFFs);
+                tabs.add(custom_form_ff.getTabObj(bNew));
                 screens.add(custom_form_ff);
             }
 

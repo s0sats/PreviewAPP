@@ -9,23 +9,38 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.Act011FrgFfBinding
+import com.namoadigital.prj001.model.Act011FormTab
+import com.namoadigital.prj001.model.Act011FormTabStatus
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.*
-
 class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
+
+    private val NO_LABEL_FOUND = "No label"
+
+    lateinit var customFF: ArrayList<CustomFF>
+    private var _mFrgListener: Act011FrgFFInteraction? = null
+    private val mFrgListener get() = _mFrgListener!!
     private val mTabItemCount: Int by lazy {
         if(!customFF.isNullOrEmpty()){
             customFF.filter {
-                it.getmPage() == tabIndex
+                it.getmPage() == tabIndex && it.getmInclude() == 1
             }.size
         }else{
             0
         }
     }
-    lateinit var customFF: ArrayList<CustomFF>
-    private var _mFrgListener: Act011FrgFFInteraction? = null
-    private val mFrgListener get() = _mFrgListener!!
+    private val mTabName: String by lazy{
+        if(!customFF.isNullOrEmpty()){
+            customFF.find {
+                it.getmPage() == tabIndex && it.getmType().equals("tab",true)
+            }?.let {
+              it.getmLabel()
+            }?: NO_LABEL_FOUND
+        }else{
+            NO_LABEL_FOUND
+        }
+    }
 
     /**
      * Fun static para construcao do obj
@@ -128,10 +143,43 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
         return errorCount
     }
 
-    override fun getTabCount(): Int {
-        return mTabItemCount
+    override fun getTabCount() :Int{
+        return if(!customFF.isNullOrEmpty()){
+            mTabItemCount
+        }else{
+            0
+        }
     }
 
+    override fun getTabStatus(): Act011FormTabStatus {
+        return if(getTabErrorCount() == 0){
+            Act011FormTabStatus.OK
+        }else{
+            Act011FormTabStatus.ERROR
+        }
+    }
+
+    override fun getTabName(): String {
+        return if(!customFF.isNullOrEmpty()){
+            mTabName
+        }else{
+            NO_LABEL_FOUND
+        }
+    }
+
+    override fun getTabObj(skipFieldValidation: Boolean): Act011FormTab {
+        return Act011FormTab(
+            page = tabIndex,
+            name = getTabName(),
+            tracking = null,
+            getTabCount(),
+            problemReportedCount = null,
+            forecastCount = null,
+            criticalForecastCount = null,
+            nonForecastCount = null,
+            status = if(skipFieldValidation) Act011FormTabStatus.PENDING else getTabStatus()
+        )
+    }
 
     override fun scrollToSelectedView(customFF: CustomFF) {
         try{
@@ -146,3 +194,4 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
         _mFrgListener = null
     }
 }
+

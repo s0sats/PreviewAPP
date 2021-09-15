@@ -16,6 +16,8 @@ import com.namoadigital.prj001.databinding.Act011FrgIncludeHeaderBinding
 import com.namoadigital.prj001.databinding.Act011FrgIncludeHistoricBinding
 import com.namoadigital.prj001.databinding.Act011FrgIncludeNavegationBinding
 import com.namoadigital.prj001.databinding.CvProductSerialWithIconBinding
+import com.namoadigital.prj001.model.Act011FormTab
+import com.namoadigital.prj001.model.Act011FormTabStatus
 import com.namoadigital.prj001.util.ConstantBaseApp
 import com.namoadigital.prj001.util.ToolBox_Inf
 
@@ -60,7 +62,16 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      */
     abstract override fun getTabErrorCount(): Int
 
+    /**
+     * Retorna a qtd de itens na tab
+     */
     abstract override fun getTabCount(): Int
+
+    abstract override fun getTabObj(skipFieldValidation: Boolean): Act011FormTab
+
+    abstract override fun getTabStatus(): Act011FormTabStatus
+
+    abstract override fun getTabName(): String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
