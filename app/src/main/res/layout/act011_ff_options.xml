@@ -37,7 +37,8 @@
         android:id="@+id/tv_form_auto_answer"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginStart="5dp"
+        android:paddingStart="5dp"
+        android:visibility="gone"
         android:layout_marginBottom="64dp"
         android:clickable="true"
         android:drawableLeft="@drawable/ic_resposta_padrao_states"
@@ -45,6 +46,7 @@
         android:focusable="false"
         android:gravity="center_vertical"
         android:padding="5dp"
+        android:background="@drawable/namoa_cell_5_states"
         android:text="Automatic Answers Farhzeug"
         android:textColor="@color/namoa_cell_5_font_color"
         android:textSize="16sp"
@@ -56,6 +58,15 @@
         app:layout_constraintTop_toBottomOf="@+id/rv_form_tabs"
         tools:visibility="visible" />
 
+    <View
+        android:id="@+id/act011_ff_options_view_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/namoa_color_black"
+        app:layout_constraintTop_toBottomOf="@+id/tv_form_auto_answer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="visible" />
 
     <ImageButton
         android:id="@+id/ib_delete"
