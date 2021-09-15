@@ -43,11 +43,16 @@ class Act011FfOptionsAdapter(
                         Act011FormTabStatus.OK ->{
                             setBackgroundColor(context.getResources().getColor(R.color.namoa_color_light_green4))
                         }
-
+                        //
                         Act011FormTabStatus.ERROR ->{
                             setBackgroundColor(
-                                context.getResources().getColor(R.color.namoa_color_orange_light2)
+                                context.getResources().getColor(R.color.namoa_os_form_tab_pending)
                             )
+                        }
+                        //
+                        else -> {
+                            background = null
+                            setBackgroundColor(0x00000000)
                         }
                     }
                     if(item.page == tabSelected){
@@ -58,7 +63,7 @@ class Act011FfOptionsAdapter(
                 }
 
                 tvFormTabName.text = item.name
-                tvFormTabOrder.text = item.page.toString()
+                tvFormTabOrder.text = "${item.page.toString()}."
                 tvFormTabFieldsCount.text = item.fieldCount.toString()
                 tvFormTabTracking.visibility = View.INVISIBLE
                 item.tracking?.let {

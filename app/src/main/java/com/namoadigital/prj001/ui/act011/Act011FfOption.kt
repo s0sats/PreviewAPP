@@ -54,50 +54,39 @@ class Act011FfOption : Fragment() {
                 }
             }
         }
-
     }
 
     private fun setAction() {
-
-
 
         binding.ibDelete.apply {
             this.setOnClickListener {
                 mListener.delete()
             }
         }
-
         //
-
         binding.ibSave.apply {
             this.setOnClickListener {
                 mListener.save()
             }
         }
-
         //
         binding.ibFinalize.apply {
             this.setOnClickListener {
                 mListener.check()
             }
         }
-
         //
-
         binding.ibSignature.apply {
             this.setOnClickListener {
                 mListener.autograph()
             }
         }
-
         //
-
         binding.ibInfo.apply {
             this.setOnClickListener {
                 mListener.info()
             }
         }
-
         //
         binding.ibNserv.apply {
             this.setOnClickListener {
@@ -110,7 +99,6 @@ class Act011FfOption : Fragment() {
                 mListener.auto()
             }
         }
-
     }
 
     private fun setupViews() {
@@ -157,12 +145,14 @@ class Act011FfOption : Fragment() {
                         ibFinalize.setVisibility(View.VISIBLE)
                         ibDelete.setVisibility(View.VISIBLE)
                         if (automatic) {
+                            tvFormAutoAnswer.text = hmAux_Trans.get("drawer_automatic_lbl")
                             tvFormAutoAnswer.setVisibility(View.VISIBLE)
+                            vDivider.setVisibility(View.GONE)
                         } else {
                             tvFormAutoAnswer.setVisibility(View.GONE)
+                            vDivider.setVisibility(View.VISIBLE)
                         }
                     }
-
                 }
             }
         }

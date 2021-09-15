@@ -188,5 +188,8 @@
     <color name="namoa_os_form_critical_forecast_yellow">#E2D23C</color>
     <color name="namoa_os_form_problem_red">#FE0B0B</color>
     <color name="namoa_os_form_verify_later">#FFB3B3</color>
+
+    <color name="namoa_os_form_tab_pending">#FFEBCD</color>
+
     <!--Cores OS form -->
 </resources>
