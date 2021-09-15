@@ -1,269 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFFFF"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/act011_ff_options_ll_h"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="5dp">
+    <TextView
+        android:id="@+id/tv_form_desc"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:focusable="false"
+        android:text="Header"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/rv_form_tabs"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/act011_ff_options_ll_ih"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:focusable="false"
-            android:paddingLeft="16dp"
-            android:text="Header"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/act011_ff_options_lv_tabs"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_form_tabs"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        app:layout_constraintBottom_toTopOf="@+id/tv_form_auto_answer"
+        app:layout_constraintTop_toBottomOf="@+id/tv_form_desc"
+        android:layout_marginBottom="8dp"
+        tools:listitem="@layout/act011_ff_options_cell" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#4D000000"
-        android:visibility="gone" />
-
-    <LinearLayout
-        android:id="@+id/act011_ff_options_ll_auto"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tv_form_auto_answer"
+        android:layout_width="0dp"
         android:layout_height="50dp"
-        android:background="@drawable/namoa_cell_5_states"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="64dp"
+        android:clickable="true"
+        android:drawableLeft="@drawable/ic_resposta_padrao_states"
+        android:drawablePadding="16dp"
+        android:focusable="false"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
         android:padding="5dp"
-        android:visibility="gone">
+        android:text="Automatic Answers Farhzeug"
+        android:textColor="@color/namoa_cell_5_font_color"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rv_form_tabs"
+        tools:visibility="visible" />
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:layout_weight="1"
-            android:src="@drawable/ic_resposta_padrao_states" />
 
-        <TextView
-            android:id="@+id/act011_ff_options_ll_autot"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="5"
-            android:focusable="false"
-            android:paddingLeft="16dp"
-            android:text="Automatic"
-            android:textColor="@color/namoa_cell_5_font_color"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <View
-        android:id="@+id/act011_ff_options_view_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#4D000000"
-        android:visibility="visible" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ImageButton
+        android:id="@+id/ib_delete"
+        style="@style/MyFormOSDrawerImageButton"
+        android:layout_width="50dp"
         android:layout_height="50dp"
-        android:orientation="horizontal">
+        android:layout_marginBottom="4dp"
+        android:focusable="false"
+        android:paddingHorizontal="13dp"
+        android:src="@drawable/ic_apagar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/ib_save"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/act011_ff_options_ll_e"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/namoa_icon_bg_states"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="5dp">
+    <ImageButton
+        android:id="@+id/ib_save"
+        style="@style/MyFormOSDrawerImageButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="4dp"
+        android:focusable="false"
+        android:paddingHorizontal="13dp"
+        android:src="@drawable/ic_salvar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ib_finalize"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/ib_delete" />
 
-            <ImageView
-                android:id="@+id/act011_ff_options_ll_iv_e"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:src="@drawable/ic_apagar" />
+    <ImageButton
+        android:id="@+id/ib_finalize"
+        style="@style/MyFormOSDrawerImageButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="4dp"
+        android:focusable="false"
+        android:paddingHorizontal="13dp"
+        android:src="@drawable/ic_finalizar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ib_signature"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/ib_save" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/act011_ff_options_ll_s"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/namoa_icon_bg_states"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="5dp">
-
-            <ImageView
-                android:id="@+id/act011_ff_options_ll_iv_s"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:src="@drawable/ic_salvar" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/act011_ff_options_ll_f"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/namoa_icon_bg_states"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="5dp">
-
-            <ImageView
-                android:id="@+id/act011_ff_options_ll_iv_f"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:src="@drawable/ic_finalizar" />
-
-        </LinearLayout>
+    <ImageButton
+        android:id="@+id/ib_signature"
+        style="@style/MyFormOSDrawerImageButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="4dp"
+        android:focusable="false"
+        android:paddingHorizontal="13dp"
+        android:src="@drawable/ic_assinatura2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ib_info"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/ib_finalize" />
 
 
-        <LinearLayout
-            android:id="@+id/act011_ff_options_ll_a"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/namoa_icon_bg_states"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="5dp">
-
-            <ImageView
-                android:id="@+id/act011_ff_options_ll_iv_a"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:src="@drawable/ic_assinatura2" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/act011_ff_options_ll_ii"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/namoa_icon_bg_states"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="5dp">
-
-            <ImageView
-                android:id="@+id/act011_ff_options_ll_iv_ii"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:src="@drawable/ic_info" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/act011_ff_options_ll_nserv"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/namoa_icon_bg_states"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="5dp">
-
-            <ImageView
-                android:id="@+id/act011_ff_options_ll_iv_nserv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:src="@drawable/ic_n_service2_24x24" />
-
-        </LinearLayout>
+    <ImageButton
+        android:id="@+id/ib_info"
+        style="@style/MyFormOSDrawerImageButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="4dp"
+        android:focusable="false"
+        android:paddingHorizontal="13dp"
+        android:src="@drawable/ic_info"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ib_nserv"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/ib_signature" />
 
 
-    </LinearLayout>
+    <ImageButton
+        android:id="@+id/ib_nserv"
+        style="@style/MyFormOSDrawerImageButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="4dp"
+        android:focusable="false"
+        android:paddingHorizontal="13dp"
+        android:src="@drawable/ic_n_service2_24x24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/ib_info" />
 
-    <!--    <LinearLayout
-            android:id="@+id/act011_ff_options_ll_e"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="5dp">
-
-            <TextView
-                android:id="@+id/act011_ff_options_ll_et"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:focusable="false"
-                android:paddingLeft="16dp"
-                android:text="Excluir"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/act011_ff_options_ll_s"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="5dp">
-
-            <TextView
-                android:id="@+id/act011_ff_options_ll_st"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:focusable="false"
-                android:paddingLeft="16dp"
-                android:text="Salvar"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/act011_ff_options_ll_f"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="5dp">
-
-            <TextView
-                android:id="@+id/act011_ff_options_ll_ft"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:focusable="false"
-                android:paddingLeft="16dp"
-                android:text="Finalizar"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>-->
-
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
