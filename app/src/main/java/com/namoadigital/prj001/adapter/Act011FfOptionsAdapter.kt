@@ -7,9 +7,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.namoadigital.prj001.R
 import com.namoadigital.prj001.databinding.Act011FfOptionsCellBinding
 import com.namoadigital.prj001.model.Act011FormTab
+import com.namoadigital.prj001.model.Act011FormTabStatus
 import com.namoadigital.prj001.ui.act011.Act011FfOption
-import com.namoadigital.prj001.util.ConstantBaseApp.FORM_TAB_ERROR
-import com.namoadigital.prj001.util.ConstantBaseApp.FORM_TAB_OK
 
 class Act011FfOptionsAdapter(
     val tabs: List<Act011FormTab>,
@@ -41,11 +40,11 @@ class Act011FfOptionsAdapter(
                     }
                     when(item.status)
                     {
-                        FORM_TAB_OK ->{
+                        Act011FormTabStatus.OK ->{
                             setBackgroundColor(context.getResources().getColor(R.color.namoa_color_light_green4))
                         }
 
-                        FORM_TAB_ERROR ->{
+                        Act011FormTabStatus.ERROR ->{
                             setBackgroundColor(
                                 context.getResources().getColor(R.color.namoa_color_orange_light2)
                             )

@@ -1267,7 +1267,7 @@ public class Act011_Main extends Base_Activity
         includeField = formData.getDataFields().size() == 0 ? true : false;
 
         int pages = 0;
-
+        boolean automatic=false;
         canSave = mPresenter.isInProcessing(formLocal);
 
         if (cf_fields != null && cf_fields.size() > 0) {
@@ -1288,6 +1288,10 @@ public class Act011_Main extends Base_Activity
                     form_data_field.setCustom_form_seq(Integer.parseInt(cf.get("custom_form_seq")));
                     //
                     formData.getDataFields().add(form_data_field);
+                }
+
+                if(cf.hasConsistentValue("automatic")){
+                    automatic = !cf.get("automatic").isEmpty();
                 }
 
                 /*
@@ -1512,11 +1516,11 @@ public class Act011_Main extends Base_Activity
             act011FfOption.setFragmentsArgs(
                     new Act011FfOptionsViewObject(
                             form_desc,
-                            new ArrayList<>(),
+                            tabs,
                             1,
                             formData.getCustom_form_status(),
                             mSignature,
-                            true,
+                            automatic,
                             (formData.getTicket_prefix() != null && formData.getTicket_prefix() > 0)
                                     && (formData.getTicket_code() != null && formData.getTicket_code() > 0 ),
                             mSo_Prefix != null && mSo_Code != null

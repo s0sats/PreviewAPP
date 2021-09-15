@@ -49,7 +49,9 @@ class Act011FfOption : Fragment() {
                 layoutManager = LinearLayoutManager(context)
                 addItemDecoration(
                     DividerItemDecoration(getContext(), LinearLayoutManager(context).getOrientation()))
-                adapter?.let { mAdapter }
+                if(adapter == null){
+                    adapter = mAdapter
+                }
             }
         }
 
