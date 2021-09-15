@@ -60,6 +60,8 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      */
     abstract override fun getTabErrorCount(): Int
 
+    abstract override fun getTabCount(): Int
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()

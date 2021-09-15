@@ -14,6 +14,15 @@ import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.*
 
 class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
+    private val mTabItemCount: Int by lazy {
+        if(!customFF.isNullOrEmpty()){
+            customFF.filter {
+                it.getmPage() == tabIndex
+            }.size
+        }else{
+            0
+        }
+    }
     lateinit var customFF: ArrayList<CustomFF>
     private var _mFrgListener: Act011FrgFFInteraction? = null
     private val mFrgListener get() = _mFrgListener!!
@@ -117,6 +126,10 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
             }
         }
         return errorCount
+    }
+
+    override fun getTabCount(): Int {
+        return mTabItemCount
     }
 
 
