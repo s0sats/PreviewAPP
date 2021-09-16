@@ -128,10 +128,8 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by neomatrix on 23/01/17.
@@ -150,6 +148,12 @@ public class Act011_Main extends Base_Activity
     public static final int SHOW_MSG_TYPE_SCHEDULE_EXEC_CANCEL_ERROR = 6;
     public static final int SHOW_MSG_TYPE_TICKET_STEP_OR_CTRL_ERROR = 7;
     public static final int SHOW_MSG_TYPE_TICKET_FORM_FINALIZED = 8;
+    public static final String PNG_EXTENSION = ".png";
+    public static final String JPG_EXTENSION = ".jpg";
+    public static final String PAGE = "page";
+    public static final String CONTENT = "CONTENT";
+    public static final String DECIMAL = "DECIMAL";
+    public static final String BLOB_ICON = "blob_icon";
 
     private Act011_Main_Presenter mPresenter;
 
@@ -283,7 +287,7 @@ public class Act011_Main extends Base_Activity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        String dataRecorded = "\nonDestroy ACT011: " + ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+//        String dataRecorded = "\nonDestroy ACT011: " + ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT);
 //        recordProcess(dataRecorded);
         if (!ToolBox_Con.getBooleanPreferencesByKey(getApplicationContext(), Constant.HAS_PENDING_LOCATION, false)) {
             ToolBox_Inf.stop_Location_Tracker(context);
@@ -921,7 +925,7 @@ public class Act011_Main extends Base_Activity
     private void startCheckIN() {
         loadCustomFFValueIntoFormData();
 
-        sDate = ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z");
+        sDate = ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT);
 
         GE_FileDao geFileDao = new GE_FileDao(
                 context,
@@ -932,8 +936,6 @@ public class Act011_Main extends Base_Activity
                 new GE_File_Sql_003().toSqlQuery()
         );
 
-        int index = Integer.parseInt(aux.get("next_code"));
-
         geFiles.clear();
 
         for (int i = 0; i < customFFs.size(); i++) {
@@ -943,65 +945,65 @@ public class Act011_Main extends Base_Activity
             String sFile_e_3 = customFFs.get(i).getmDots_photo3();
             String sFile_e_4 = customFFs.get(i).getmDots_photo4();
 
-            if (sFile_v.endsWith(".png") || sFile_v.endsWith(".jpg")) {
+            if (sFile_v.endsWith(PNG_EXTENSION) || sFile_v.endsWith(JPG_EXTENSION)) {
                 File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_v);
                 if (sFile.exists()) {
                     GE_File geFile = new GE_File();
-                    geFile.setFile_code(sFile_v.replace(".png", "").replace(".jpg", ""));
+                    geFile.setFile_code(sFile_v.replace(PNG_EXTENSION, "").replace(JPG_EXTENSION, ""));
                     geFile.setFile_path(sFile_v);
-                    geFile.setFile_status("OPENED");
+                    geFile.setFile_status(GE_File.OPENED);
                     geFile.setFile_date(sDate);
 
                     geFiles.add(geFile);
                 }
             }
             //
-            if (sFile_e_1.endsWith(".png") || sFile_e_1.endsWith(".jpg")) {
+            if (sFile_e_1.endsWith(PNG_EXTENSION) || sFile_e_1.endsWith(JPG_EXTENSION)) {
                 File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e_1);
                 if (sFile.exists()) {
                     GE_File geFile = new GE_File();
-                    geFile.setFile_code(sFile_e_1.replace(".png", "").replace(".jpg", ""));
+                    geFile.setFile_code(sFile_e_1.replace(PNG_EXTENSION, "").replace(JPG_EXTENSION, ""));
                     geFile.setFile_path(sFile_e_1);
-                    geFile.setFile_status("OPENED");
+                    geFile.setFile_status(GE_File.OPENED);
                     geFile.setFile_date(sDate);
 
                     geFiles.add(geFile);
                 }
             }
             //
-            if (sFile_e_2.endsWith(".png") || sFile_e_2.endsWith(".jpg")) {
+            if (sFile_e_2.endsWith(PNG_EXTENSION) || sFile_e_2.endsWith(JPG_EXTENSION)) {
                 File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e_2);
                 if (sFile.exists()) {
                     GE_File geFile = new GE_File();
-                    geFile.setFile_code(sFile_e_2.replace(".png", "").replace(".jpg", ""));
+                    geFile.setFile_code(sFile_e_2.replace(PNG_EXTENSION, "").replace(JPG_EXTENSION, ""));
                     geFile.setFile_path(sFile_e_2);
-                    geFile.setFile_status("OPENED");
+                    geFile.setFile_status(GE_File.OPENED);
                     geFile.setFile_date(sDate);
 
                     geFiles.add(geFile);
                 }
             }
             //
-            if (sFile_e_3.endsWith(".png") || sFile_e_3.endsWith(".jpg")) {
+            if (sFile_e_3.endsWith(PNG_EXTENSION) || sFile_e_3.endsWith(JPG_EXTENSION)) {
                 File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e_3);
                 if (sFile.exists()) {
                     GE_File geFile = new GE_File();
-                    geFile.setFile_code(sFile_e_3.replace(".png", "").replace(".jpg", ""));
+                    geFile.setFile_code(sFile_e_3.replace(PNG_EXTENSION, "").replace(JPG_EXTENSION, ""));
                     geFile.setFile_path(sFile_e_3);
-                    geFile.setFile_status("OPENED");
+                    geFile.setFile_status(GE_File.OPENED);
                     geFile.setFile_date(sDate);
 
                     geFiles.add(geFile);
                 }
             }
             //
-            if (sFile_e_4.endsWith(".png") || sFile_e_4.endsWith(".jpg")) {
+            if (sFile_e_4.endsWith(PNG_EXTENSION) || sFile_e_4.endsWith(JPG_EXTENSION)) {
                 File sFile = new File(ConstantBase.CACHE_PATH_PHOTO + "/" + sFile_e_4);
                 if (sFile.exists()) {
                     GE_File geFile = new GE_File();
-                    geFile.setFile_code(sFile_e_4.replace(".png", "").replace(".jpg", ""));
+                    geFile.setFile_code(sFile_e_4.replace(PNG_EXTENSION, "").replace(JPG_EXTENSION, ""));
                     geFile.setFile_path(sFile_e_4);
-                    geFile.setFile_status("OPENED");
+                    geFile.setFile_status(GE_File.OPENED);
                     geFile.setFile_date(sDate);
 
                     geFiles.add(geFile);
@@ -1054,7 +1056,7 @@ public class Act011_Main extends Base_Activity
                 String.valueOf(formData.getCustom_form_version()),
                 String.valueOf(formData.getCustom_form_data()),
                     ConstantBase.SYS_STATUS_DELETED,
-                    ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
+                    ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
             ).toSqlQuery()
         );
         //
@@ -1066,7 +1068,7 @@ public class Act011_Main extends Base_Activity
                         String.valueOf(formData.getCustom_form_version()),
                         String.valueOf(formData.getCustom_form_data()),
                         ConstantBase.SYS_STATUS_DELETED,
-                        ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z")
+                        ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT)
                 ).toSqlQuery()
         );
         //
@@ -1254,27 +1256,30 @@ public class Act011_Main extends Base_Activity
         canSave = mPresenter.isInProcessing(formLocal);
 
         if (cf_fields != null && cf_fields.size() > 0) {
-            pages = Integer.parseInt(cf_fields.get(cf_fields.size() - 1).get("page"));
+            pages = Integer.parseInt(cf_fields.get(cf_fields.size() - 1).get(PAGE));
             //
             customFFs = new ArrayList<>();
             screens = new ArrayList<>();
             //
             for (HMAux cf : cf_fields) {
 
-                if (includeField && !cf.get("custom_form_data_type").equalsIgnoreCase("label") && !cf.get("custom_form_data_type").equalsIgnoreCase("tab")) {
+                if (includeField
+                    && !cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE).equalsIgnoreCase(CustomFF.LABEL)
+                    && !cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE).equalsIgnoreCase(CustomFF.TAB)
+                ) {
                     GE_Custom_Form_Data_Field form_data_field = new GE_Custom_Form_Data_Field();
                     form_data_field.setCustomer_code(formData.getCustomer_code());
                     form_data_field.setCustom_form_type(formData.getCustom_form_type());
                     form_data_field.setCustom_form_code(formData.getCustom_form_code());
                     form_data_field.setCustom_form_version(formData.getCustom_form_version());
                     form_data_field.setCustom_form_data(formData.getCustom_form_data());
-                    form_data_field.setCustom_form_seq(Integer.parseInt(cf.get("custom_form_seq")));
+                    form_data_field.setCustom_form_seq(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
                     //
                     formData.getDataFields().add(form_data_field);
                 }
 
-                if(cf.hasConsistentValue("automatic")){
-                    automatic = !cf.get("automatic").isEmpty();
+                if(cf.hasConsistentValue(GE_Custom_Form_Field_LocalDao.AUTOMATIC)){
+                    automatic = !cf.get(GE_Custom_Form_Field_LocalDao.AUTOMATIC).isEmpty();
                 }
 
                 /*
@@ -1286,39 +1291,39 @@ public class Act011_Main extends Base_Activity
                  */
 
                 CustomFF customField = null;
-                switch (cf.get("custom_form_data_type").toLowerCase()) {
-                    case "char":
+                switch (cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE)) {
+                    case CustomFF.CHAR:
                         customField = cfg_Char(cf);
                         break;
-                    case "tab":
-                    case "label":
+                    case CustomFF.TAB:
+                    case CustomFF.LABEL:
                         customField = cfg_Label(cf);
                         break;
-                    case "combobox":
+                    case CustomFF.COMBOBOX:
                         customField = cfg_ComboBox(cf);
                         break;
-                    case "number":
+                    case CustomFF.NUMBER:
                         customField = cfg_Number(cf);
                         break;
-                    case "date":
+                    case CustomFF.DATE:
                         customField = cfg_Date(cf);
                         break;
-                    case "hour":
+                    case CustomFF.HOUR:
                         customField = cfg_Hour(cf);
                         break;
-                    case "checkbox":
+                    case CustomFF.CHECKBOX:
                         customField = cfg_CheckBox(cf);
                         break;
-                    case "ratingimage":
+                    case CustomFF.RATINGIMAGE:
                         customField = cfg_RatingImage(cf);
                         break;
-                    case "ratingbar":
+                    case CustomFF.RATINGBAR:
                         customField = cfg_RatingBar(cf);
                         break;
-                    case "picture":
+                    case CustomFF.PICTURE:
                         customField = cfg_Picture(cf);
                         break;
-                    case "photo":
+                    case CustomFF.PHOTO:
                         customField = cfg_Photo(cf);
                         break;
                     default:
@@ -1345,68 +1350,6 @@ public class Act011_Main extends Base_Activity
             //TODO APENAS TESTE PRO OBJ DO LUKINHA
             ArrayList<Act011FormTab> tabs = new ArrayList<>();
             for (int i = 1; i <= pages; i++) {
-                //region oldStuff
-//                Act011_FF custom_form_ff = new Act011_FF();
-//                //
-//                 if (i == 1) {
-//                    custom_form_ff.setComments(formLocal.getSchedule_comments() != null ? formLocal.getSchedule_comments() : "");
-//                    // BARRIONUEVO 05-03-2020 - ADICAO DE SCHEDULE DESC NO FORM
-//                     if(formLocal.getSchedule_prefix() != null
-//                     && formLocal.getSchedule_code() != null
-//                     && formLocal.getSchedule_exec() != null) {
-//                         MD_Schedule_Exec mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
-//                         if (mdScheduleExec != null) {
-//                             custom_form_ff.setSchedule_desc(mdScheduleExec.getSchedule_desc());
-//                         }
-//                     }else{
-//                         custom_form_ff.setComments("");
-//                         custom_form_ff.setSchedule_desc("");
-//                     }
-//                } else {
-//                    custom_form_ff.setComments("");
-//                    custom_form_ff.setSchedule_desc("");
-//                }
-//                //
-//                custom_form_ff.setCustomFFs(customFFs, i);
-//                custom_form_ff.setHmAux_Trans(hmAux_Trans);
-////                custom_form_ff.setOnDrawerCheckListener(new Act011_FF.ICustom_Form_FF_ll() {
-////                    @Override
-////                    public void openDrawer() {
-////                        mDrawerLayout.openDrawer(GravityCompat.START);
-////                    }
-////
-////                    @Override
-////                    public void check() {
-////                        checkAction();
-////                    }
-////
-////                    @Override
-////                    public void previosTab() {
-////                        if ((index - 1) >= 1) {
-////                            tabSelectedAction(index - 1);
-////                        }
-////                    }
-////
-////                    @Override
-////                    public void nextTab() {
-////                        if ((index + 1) <= pager.getAdapter().getCount()) {
-////                            tabSelectedAction(index + 1);
-////                        }
-////
-////                    }
-////
-////                    @Override
-////                    public void checkWithNew() {
-////                        finalizeNewFlow = true;
-////                        //
-////                        checkAction();
-////                    }
-////                });
-//                custom_form_ff.setOnDrawerCheckListener(getFFInterface());
-//                //
-//                custom_form_ff.setFormStatus(formData.getCustom_form_status());
-                //enregion
-                //TODO MOVER PARA FORA DO LOOP, POIS A INFO NÃO MUDA
                 Act011FrgFF custom_form_ff = Act011FrgFF.Companion.newInstance(
                     hmAux_Trans,
                     i,
@@ -1619,11 +1562,11 @@ public class Act011_Main extends Base_Activity
         LabelFF labelFF = new LabelFF(Act011_Main.this);
 
         labelFF.setId(View.generateViewId());
-        labelFF.setmLabel(cf.get("custom_form_field_desc"));
-        labelFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
-        labelFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
-        labelFF.setmPage(Integer.parseInt(cf.get("page")));
-        labelFF.setmType(cf.get("custom_form_data_type"));
+        labelFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
+        labelFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
+        labelFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+        labelFF.setmPage(Integer.parseInt(cf.get(PAGE)));
+        labelFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
 
         return labelFF;
     }
@@ -1643,15 +1586,15 @@ public class Act011_Main extends Base_Activity
     private CustomFF cfg_Char(HMAux cf) {
         MKEditTextNMFF mkEditTextNMFF = new MKEditTextNMFF(Act011_Main.this);
 
-        mkEditTextNMFF.setmDots_txt_app(cf.get("comment"));
+        mkEditTextNMFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         mkEditTextNMFF.setId(View.generateViewId());
-        mkEditTextNMFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
-        mkEditTextNMFF.setmLabel(cf.get("custom_form_field_desc"));
-        mkEditTextNMFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
-        mkEditTextNMFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
-        mkEditTextNMFF.setmPage(Integer.parseInt(cf.get("page")));
-        mkEditTextNMFF.setmType(cf.get("custom_form_data_type"));
+        mkEditTextNMFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        mkEditTextNMFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
+        mkEditTextNMFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
+        mkEditTextNMFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+        mkEditTextNMFF.setmPage(Integer.parseInt(cf.get(PAGE)));
+        mkEditTextNMFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
 
 //        Remover a configuraçao automatica do campo customizado de edicao mesmo que o equipamento suporte NFC.
 //        if (hasNFCSupport) {
@@ -1660,37 +1603,37 @@ public class Act011_Main extends Base_Activity
 //            mkEditTextNMFF.setmNFC(false);
 //        }
 
-        if (cf.get("custom_form_data_type").equalsIgnoreCase("DATE")) {
+        if (cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE).equalsIgnoreCase(CustomFF.DATE)) {
             mkEditTextNMFF.setmBARCODE(false);
             mkEditTextNMFF.setmNFC(false);
             mkEditTextNMFF.setmOCR(false);
             //mkEditTextNMFF.setmMask("{\"MASK\":[{\"TYPE\":\"DATE\",\"VALUE\":\"$$/$$/$$$$\"}]}");
-        } else if (cf.get("custom_form_data_type").equalsIgnoreCase("HOUR")) {
+        } else if (cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE).equalsIgnoreCase(CustomFF.HOUR)) {
             mkEditTextNMFF.setmBARCODE(false);
             mkEditTextNMFF.setmNFC(false);
             mkEditTextNMFF.setmOCR(false);
             //mkEditTextNMFF.setmMask("{\"MASK\":[{\"TYPE\":\"HOUR\",\"VALUE\":\"$$:$$\"}]}");
         } else {
-            mkEditTextNMFF.setmMask(cf.get("custom_form_data_mask"));
+            mkEditTextNMFF.setmMask(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_MASK));
             //mkEditTextNMFF.setmMask("{\"MASK\":[{\"TYPE\":\"CPF\",\"VALUE\":\"$$$.$$$.$$$-$$\"}]}");
         }
 
-        mkEditTextNMFF.setmOption(cf.get("custom_form_data_content"));
-        mkEditTextNMFF.setmMaxSize(Integer.parseInt(cf.get("custom_form_data_size")));
+        mkEditTextNMFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
+        mkEditTextNMFF.setmMaxSize(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_SIZE)));
 
-        if (mkEditTextNMFF.getmMaxSize() == 0 && cf.get("custom_form_data_type").equalsIgnoreCase("NUMBER")) {
+        if (mkEditTextNMFF.getmMaxSize() == 0 && cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE).equalsIgnoreCase(CustomFF.NUMBER)) {
 
             String[] opcs = null;
 
             try {
-                JSONObject jsonObject = new JSONObject(cf.get("custom_form_data_content"));
-                JSONArray jsonArray = jsonObject.getJSONArray("CONTENT");
+                JSONObject jsonObject = new JSONObject(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
+                JSONArray jsonArray = jsonObject.getJSONArray(CONTENT);
                 //
                 opcs = new String[jsonArray.length()];
                 //
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jo = jsonArray.getJSONObject(i);
-                    opcs[i] = jo.getString("DECIMAL");
+                    opcs[i] = jo.getString(DECIMAL);
                 }
                 //
                 mkEditTextNMFF.setmDecimal(Integer.parseInt(opcs[0]));
@@ -1699,10 +1642,10 @@ public class Act011_Main extends Base_Activity
             }
         }
 
-        mkEditTextNMFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
+        mkEditTextNMFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
         mkEditTextNMFF.setmPre(prefix);
 
-        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
+        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
 
         mkEditTextNMFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         mkEditTextNMFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
@@ -1723,23 +1666,23 @@ public class Act011_Main extends Base_Activity
     private CustomFF cfg_ComboBox(HMAux cf) {
         ComboBoxFF comboBoxFF = new ComboBoxFF(Act011_Main.this);
 
-        comboBoxFF.setmDots_txt_app(cf.get("comment"));
+        comboBoxFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         comboBoxFF.setId(View.generateViewId());
-        comboBoxFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
-        comboBoxFF.setmLabel(cf.get("custom_form_field_desc"));
-        comboBoxFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
-        comboBoxFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
-        comboBoxFF.setmPage(Integer.parseInt(cf.get("page")));
-        comboBoxFF.setmType(cf.get("custom_form_data_type"));
+        comboBoxFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        comboBoxFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
+        comboBoxFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
+        comboBoxFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+        comboBoxFF.setmPage(Integer.parseInt(cf.get(PAGE)));
+        comboBoxFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
 
-        comboBoxFF.setmOption(cf.get("custom_form_data_content"));
+        comboBoxFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
 
-        comboBoxFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
+        comboBoxFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
         comboBoxFF.setmPre(prefix);
 
 
-        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
+        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
 
         comboBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         comboBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
@@ -1772,24 +1715,24 @@ public class Act011_Main extends Base_Activity
     private CustomFF cfg_CheckBox(HMAux cf) {
         CheckBoxFF checkBoxFF = new CheckBoxFF(Act011_Main.this);
 
-        checkBoxFF.setmDots_txt_app(cf.get("comment"));
+        checkBoxFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         checkBoxFF.setId(View.generateViewId());
-        checkBoxFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
-        checkBoxFF.setmLabel(cf.get("custom_form_field_desc"));
-        checkBoxFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
-        checkBoxFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
-        checkBoxFF.setmPage(Integer.parseInt(cf.get("page")));
-        checkBoxFF.setmType(cf.get("custom_form_data_type"));
+        checkBoxFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        checkBoxFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
+        checkBoxFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
+        checkBoxFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+        checkBoxFF.setmPage(Integer.parseInt(cf.get(PAGE)));
+        checkBoxFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
 
-        checkBoxFF.setmOption(cf.get("custom_form_data_content"));
+        checkBoxFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
 
-        checkBoxFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
+        checkBoxFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
         checkBoxFF.setmPre(prefix);
 
-        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
+        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
 
-        checkBoxFF.setmAutomatic(cf.get("automatic"));
+        checkBoxFF.setmAutomatic(cf.get(GE_Custom_Form_Field_LocalDao.AUTOMATIC));
 
         checkBoxFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         checkBoxFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
@@ -1810,24 +1753,24 @@ public class Act011_Main extends Base_Activity
     private CustomFF cfg_RatingImage(HMAux cf) {
         RatingImageFF ratingImageFF = new RatingImageFF(Act011_Main.this);
 
-        ratingImageFF.setmDots_txt_app(cf.get("comment"));
+        ratingImageFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         ratingImageFF.setId(View.generateViewId());
-        ratingImageFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
-        ratingImageFF.setmLabel(cf.get("custom_form_field_desc"));
-        ratingImageFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
-        ratingImageFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
-        ratingImageFF.setmPage(Integer.parseInt(cf.get("page")));
-        ratingImageFF.setmType(cf.get("custom_form_data_type"));
+        ratingImageFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        ratingImageFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
+        ratingImageFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
+        ratingImageFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+        ratingImageFF.setmPage(Integer.parseInt(cf.get(PAGE)));
+        ratingImageFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
 
-        ratingImageFF.setmOption(cf.get("custom_form_data_content"));
+        ratingImageFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
 
-        ratingImageFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
+        ratingImageFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
         ratingImageFF.setmPre(prefix);
 
-        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
+        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
 
-        ratingImageFF.setmAutomatic(cf.get("automatic"));
+        ratingImageFF.setmAutomatic(cf.get(GE_Custom_Form_Field_LocalDao.AUTOMATIC));
 
         ratingImageFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingImageFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
@@ -1848,22 +1791,22 @@ public class Act011_Main extends Base_Activity
     private CustomFF cfg_RatingBar(HMAux cf) {
         RatingBarFF ratingBarFF = new RatingBarFF(Act011_Main.this);
 
-        ratingBarFF.setmDots_txt_app(cf.get("comment"));
+        ratingBarFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         ratingBarFF.setId(View.generateViewId());
-        ratingBarFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
-        ratingBarFF.setmLabel(cf.get("custom_form_field_desc"));
-        ratingBarFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
-        ratingBarFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
-        ratingBarFF.setmPage(Integer.parseInt(cf.get("page")));
-        ratingBarFF.setmType(cf.get("custom_form_data_type"));
+        ratingBarFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        ratingBarFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
+        ratingBarFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
+        ratingBarFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+        ratingBarFF.setmPage(Integer.parseInt(cf.get(PAGE)));
+        ratingBarFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
 
-        ratingBarFF.setmOption(cf.get("custom_form_data_content"));
+        ratingBarFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
 
-        ratingBarFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
+        ratingBarFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
         ratingBarFF.setmPre(prefix);
 
-        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
+        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
 
         ratingBarFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         ratingBarFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
@@ -1884,23 +1827,23 @@ public class Act011_Main extends Base_Activity
     private CustomFF cfg_Picture(HMAux cf) {
         PictureFF pictureFF = new PictureFF(Act011_Main.this);
 
-        pictureFF.setmDots_txt_app(cf.get("comment"));
+        pictureFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         pictureFF.setId(View.generateViewId());
-        pictureFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
-        pictureFF.setmLabel(cf.get("custom_form_field_desc"));
-        pictureFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
-        pictureFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
-        pictureFF.setmPage(Integer.parseInt(cf.get("page")));
-        pictureFF.setmType(cf.get("custom_form_data_type"));
+        pictureFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        pictureFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
+        pictureFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
+        pictureFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+        pictureFF.setmPage(Integer.parseInt(cf.get(PAGE)));
+        pictureFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
 
-        pictureFF.setmOption(cf.get("custom_form_data_content"));
-        pictureFF.setmFName(cf.get("custom_form_local_link"));
+        pictureFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
+        pictureFF.setmFName(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_LOCAL_LINK));
 
-        pictureFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
+        pictureFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
         pictureFF.setmPre(prefix);
 
-        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
+        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
 
         pictureFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         pictureFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
@@ -1921,28 +1864,28 @@ public class Act011_Main extends Base_Activity
     private CustomFF cfg_Photo(HMAux cf) {
         PhotoFF photoFF = new PhotoFF(Act011_Main.this);
 
-        photoFF.setmDots_txt_app(cf.get("comment"));
+        photoFF.setmDots_txt_app(cf.get(GE_Custom_Form_Field_LocalDao.COMMENT));
 
         photoFF.setId(View.generateViewId());
-        photoFF.setmRequire_photo_on_nc(cf.get("require_photo_on_nc").equals("1") ? true : false);
-        photoFF.setmLabel(cf.get("custom_form_field_desc"));
-        photoFF.setmOrder(Integer.parseInt(cf.get("custom_form_order")));
-        photoFF.setmSequence(Integer.parseInt(cf.get("custom_form_seq")));
-        photoFF.setmPage(Integer.parseInt(cf.get("page")));
-        photoFF.setmType(cf.get("custom_form_data_type"));
+        photoFF.setmRequire_photo_on_nc(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRE_PHOTO_ON_NC).equals("1") ? true : false);
+        photoFF.setmLabel(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_FIELD_DESC));
+        photoFF.setmOrder(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_ORDER)));
+        photoFF.setmSequence(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
+        photoFF.setmPage(Integer.parseInt(cf.get(PAGE)));
+        photoFF.setmType(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_TYPE));
 
-        photoFF.setmOption(cf.get("custom_form_data_content"));
+        photoFF.setmOption(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_DATA_CONTENT));
 
-        photoFF.setmRequired(cf.get("required").equalsIgnoreCase("1") ? true : false);
+        photoFF.setmRequired(cf.get(GE_Custom_Form_Field_LocalDao.REQUIRED).equalsIgnoreCase("1") ? true : false);
         photoFF.setmPre(prefix);
 
-        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get("custom_form_seq")));
+        HMAux itemDB = retornDBValue(Integer.parseInt(cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ)));
 
         if (itemDB.hasConsistentValue(HMAux.TEXTO_01)
         && itemDB.get(HMAux.TEXTO_01).length() > 0) {
             photoFF.setmValue(itemDB.get(HMAux.TEXTO_01));
         }else{
-            photoFF.setmValue("p_" + prefix + cf.get("custom_form_seq") + ".jpg");
+            photoFF.setmValue("p_" + prefix + cf.get(GE_Custom_Form_Field_LocalDao.CUSTOM_FORM_SEQ) + JPG_EXTENSION);
         }
         photoFF.setmValue_Extra(itemDB.get(HMAux.TEXTO_02));
         //Projeto delecao logica de formulario visava a consulta do nform deletado via menu Historico
@@ -2110,117 +2053,107 @@ public class Act011_Main extends Base_Activity
         return tabs;
     }
 
-    private HMAux returnValidCheckTabs(String sPage) {
-
-        ArrayList<HMAux> itens = new ArrayList<>();
-
-        HMAux item = new HMAux();
-
-        HMAux ipages = new HMAux();
-        int ipage = Integer.parseInt(sPage);
-        //
-        for (int i = 0; i < customFFs.size(); i++) {
-            HMAux aux = new HMAux();
-
-            if (ipage == -1) {
-
-                if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
-                    aux.put("page", String.valueOf(customFFs.get(i).getmPage()));
-                    aux.put("value", "ERROR");
-                } else {
-                    aux.put("page", String.valueOf(customFFs.get(i).getmPage()));
-                    aux.put("value", "OK");
-                }
-
-                ipages.put(String.valueOf(customFFs.get(i).getmPage()), "");
-
-                itens.add(aux);
-
-
-            } else {
-                if (ipage == customFFs.get(i).getmPage()) {
-                    if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
-                        aux.put("page", String.valueOf(customFFs.get(i).getmPage()));
-                        aux.put("value", "ERROR");
-                    } else {
-                        aux.put("page", String.valueOf(customFFs.get(i).getmPage()));
-                        aux.put("value", "OK");
-                    }
-
-                    ipages.put(String.valueOf(customFFs.get(i).getmPage()), "");
-
-                    itens.add(aux);
-                }
-            }
-
-        }
-
-        Set keys = ipages.keySet();
-
-        for (Iterator i = keys.iterator(); i.hasNext(); ) {
-            String key = (String) i.next();
-            String value = (String) ipages.get(key);
-
-            item.put(key, pageStatus(key, itens));
-
-        }
-
-        return item;
-    }
-
-    private String pageStatus(String page, ArrayList<HMAux> itens) {
-        int total = 0;
-        int ok = 0;
-        int error = 0;
-        int pending = 0;
-
-        for (HMAux aux : itens) {
-
-            if (aux.get("page").equals(page)) {
-                switch (aux.get("value").toUpperCase()) {
-                    case "PENDING":
-                        pending++;
-                        break;
-                    case "ERROR":
-                        error++;
-                        break;
-                    case "OK":
-                        ok++;
-                        break;
-                    default:
-                        break;
-                }
-
-                total++;
-            }
-        }
-
-        if (error != 0) {
-            return "ERROR";
-        }
-
-        if (total == pending) {
-            return "PENDING";
-        }
-
-        if (total == ok) {
-            return "OK";
-        }
-
-        return "EXEC";
-    }
-
-    private void prepareFormSave() {
+    //TODO APAGAR APPOS TESTES FINAL
+//    private HMAux returnValidCheckTabs(String sPage) {
 //
-//        for (GE_Custom_Form_Data_Field df : formData.getDataFields()) {
-//            df.setValue(returnFieldValue(df.getCustom_form_seq(), 0));
-//            df.setValue_extra(returnFieldValue(df.getCustom_form_seq(), 1));
+//        ArrayList<HMAux> itens = new ArrayList<>();
+//
+//        HMAux item = new HMAux();
+//
+//        HMAux ipages = new HMAux();
+//        int ipage = Integer.parseInt(sPage);
+//        //
+//        for (int i = 0; i < customFFs.size(); i++) {
+//            HMAux aux = new HMAux();
+//
+//            if (ipage == -1) {
+//
+//                if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
+//                    aux.put(PAGE, String.valueOf(customFFs.get(i).getmPage()));
+//                    aux.put("value", "ERROR");
+//                } else {
+//                    aux.put(PAGE, String.valueOf(customFFs.get(i).getmPage()));
+//                    aux.put("value", ConstantBaseApp.MAIN_RESULT_OK);
+//                }
+//
+//                ipages.put(String.valueOf(customFFs.get(i).getmPage()), "");
+//
+//                itens.add(aux);
+//
+//
+//            } else {
+//                if (ipage == customFFs.get(i).getmPage()) {
+//                    if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
+//                        aux.put(PAGE, String.valueOf(customFFs.get(i).getmPage()));
+//                        aux.put("value", "ERROR");
+//                    } else {
+//                        aux.put(PAGE, String.valueOf(customFFs.get(i).getmPage()));
+//                        aux.put("value", ConstantBaseApp.MAIN_RESULT_OK);
+//                    }
+//
+//                    ipages.put(String.valueOf(customFFs.get(i).getmPage()), "");
+//
+//                    itens.add(aux);
+//                }
+//            }
+//
 //        }
 //
-//        int quantidade = returnValidCheck();
+//        Set keys = ipages.keySet();
 //
-//        String sF = formData.getToken();
-    }
+//        for (Iterator i = keys.iterator(); i.hasNext(); ) {
+//            String key = (String) i.next();
+//            String value = (String) ipages.get(key);
+//
+//            item.put(key, pageStatus(key, itens));
+//
+//        }
+//
+//        return item;
+//    }
+//
+//    private String pageStatus(String page, ArrayList<HMAux> itens) {
+//        int total = 0;
+//        int ok = 0;
+//        int error = 0;
+//        int pending = 0;
+//
+//        for (HMAux aux : itens) {
+//
+//            if (aux.get(PAGE).equals(page)) {
+//                switch (aux.get("value").toUpperCase()) {
+//                    case "PENDING":
+//                        pending++;
+//                        break;
+//                    case "ERROR":
+//                        error++;
+//                        break;
+//                    case ConstantBaseApp.MAIN_RESULT_OK:
+//                        ok++;
+//                        break;
+//                    default:
+//                        break;
+//                }
+//
+//                total++;
+//            }
+//        }
+//
+//        if (error != 0) {
+//            return "ERROR";
+//        }
+//
+//        if (total == pending) {
+//            return "PENDING";
+//        }
+//
+//        if (total == ok) {
+//            return ConstantBaseApp.MAIN_RESULT_OK;
+//        }
+//
+//        return "EXEC";
+//    }
+
 
     private class ScreenAdapter extends FragmentPagerAdapter {
 
@@ -2744,9 +2677,9 @@ public class Act011_Main extends Base_Activity
                 formData.setSignature_name(sName);
                 //
                 GE_File geFile = new GE_File();
-                geFile.setFile_code(mSignature.replace(".png", ""));
+                geFile.setFile_code(mSignature.replace(PNG_EXTENSION, ""));
                 geFile.setFile_path(mSignature);
-                geFile.setFile_status("OPENED");
+                geFile.setFile_status(GE_File.OPENED);
                 geFile.setFile_date(sDate);
                 //
                 geFiles.add(geFile);
@@ -2807,9 +2740,9 @@ public class Act011_Main extends Base_Activity
         String sResults = mValue;
         canSave = mPresenter.isInProcessing(formLocal);
         //Se resultado
-        if (sResults.trim().length() != 0 && sResults.equalsIgnoreCase("OK")) {
-            require_serial_done_ok = "OK";
-            formData.setDate_end(ToolBox.sDTFormat_Agora("yyyy-MM-dd HH:mm:ss Z"));
+        if (sResults.trim().length() != 0 && sResults.equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_OK)) {
+            require_serial_done_ok = ConstantBaseApp.MAIN_RESULT_OK;
+            formData.setDate_end(ToolBox.sDTFormat_Agora(ConstantBaseApp.FULL_TIMESTAMP_TZ_FORMAT));
             mPresenter.checkData(formData, geFiles, require_serial_done, require_serial_done_ok, formLocal.getRequire_location());
             //
             bNew = false;
@@ -3062,8 +2995,8 @@ public class Act011_Main extends Base_Activity
 //            for (int i = 0; i < repeat; i++) {
 //                HMAux aux = new HMAux();
 //                aux.put("blob_icon", String.valueOf(R.drawable.ic_picture_as_pdf_black_disabled_24px));
-//                aux.put("blob_name", "");
-//                aux.put("blob_url_local", "");
+//                aux.put(GE_Custom_Form_Blob_LocalDao.BLOB_NAME, "");
+//                aux.put(GE_Custom_Form_Blob_LocalDao.BLOB_URL_LOCAL, "");
 //                //
 //                pdfs_local.add(aux);
 //            }
@@ -3071,7 +3004,7 @@ public class Act011_Main extends Base_Activity
 
 
         if(pdfs_local.size()>0) {
-            String[] from = {"blob_icon", "blob_name"};
+            String[] from = {BLOB_ICON, GE_Custom_Form_Blob_LocalDao.BLOB_NAME};
             int[] to = {R.id.act011_dialog_form_info_cell_iv_logo, R.id.act011_dialog_form_info_cell_tv_name};
             lv_pdfs.setAdapter(
                     new SimpleAdapter(
@@ -3091,9 +3024,9 @@ public class Act011_Main extends Base_Activity
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     HMAux aux = (HMAux) parent.getItemAtPosition(position);
 
-                    if (aux.get("blob_name").trim().length() != 0) {
+                    if (aux.get(GE_Custom_Form_Blob_LocalDao.BLOB_NAME).trim().length() != 0) {
 
-                        File file = new File(Constant.CACHE_PATH + "/" + aux.get("blob_url_local"));
+                        File file = new File(Constant.CACHE_PATH + "/" + aux.get(GE_Custom_Form_Blob_LocalDao.BLOB_URL_LOCAL));
 
                         try {
 
@@ -3108,7 +3041,7 @@ public class Act011_Main extends Base_Activity
                         }
                         //LUCHE - 03/10/2020
                         //Modificado metodo de abertura do PDF para que seja compativel com Android 10
-                        Intent intent = ToolBox_Inf.getOpenPdfIntent(context,Constant.CACHE_PDF + "/" + aux.get("blob_url_local"));
+                        Intent intent = ToolBox_Inf.getOpenPdfIntent(context,Constant.CACHE_PDF + "/" + aux.get(GE_Custom_Form_Blob_LocalDao.BLOB_URL_LOCAL));
                         /*
                             23/08/2019 - BARRIONUEVO
                             Trata devices sem suporte a pdf
@@ -3431,7 +3364,7 @@ public class Act011_Main extends Base_Activity
                     mHmAux.put("status", status);
                     mHmAux.put("final_status", productInfo + " - " + pk[1] + " / " + status);
                     //
-                    if (!mHmAux.get("status").equalsIgnoreCase("OK")) {
+                    if (!mHmAux.get("status").equalsIgnoreCase(ConstantBaseApp.MAIN_RESULT_OK)) {
                         wsResults.add(mHmAux);
                     }
                 }
