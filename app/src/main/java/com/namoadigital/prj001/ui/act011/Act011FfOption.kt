@@ -194,7 +194,7 @@ class Act011FfOption : Fragment() {
         mObjectView.tabs.set(indexOld, tab)
         mObjectView.tabSelected = tabSelected
         mAdapter.tabSelected = tabSelected
-        mAdapter.notifyItemRangeChanged(indexOld, tabSelected)
+        mAdapter.notifyDataSetChanged()
     }
 
     companion object {

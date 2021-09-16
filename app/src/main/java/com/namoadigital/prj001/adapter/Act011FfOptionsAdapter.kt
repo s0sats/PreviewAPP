@@ -57,7 +57,7 @@ class Act011FfOptionsAdapter(
                     }
                     if(item.page == tabSelected){
                         setBackgroundColor(
-                            context.getResources().getColor(R.color.namoa_color_light_blue3)
+                            context.getResources().getColor(R.color.namoa_myactions_blue_bg)
                         )
                     }
                 }
