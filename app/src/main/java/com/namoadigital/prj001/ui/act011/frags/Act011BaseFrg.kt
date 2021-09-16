@@ -73,11 +73,25 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      */
     abstract override fun getTabCount(): Int
 
+    /**
+     * Retorna a objTab baseado nos dados do frg
+     */
     abstract override fun getTabObj(skipFieldValidation: Boolean): Act011FormTab
 
+    /**
+     * Retorna a status da tab
+     */
     abstract override fun getTabStatus(): Act011FormTabStatus
 
+    /**
+     * Retorna nome da tab
+     */
     abstract override fun getTabName(): String
+
+    /**
+     * Roda respostas automaticas e retorna qtd aplicada.
+     */
+    abstract override fun applyAutoAnswer(): Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
