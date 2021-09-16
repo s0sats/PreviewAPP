@@ -612,7 +612,6 @@ public class Act011_Main extends Base_Activity
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 hideSoftKeyboard(Act011_Main.this);
-                ArrayList<Act011FormTab> tabs = new ArrayList<>();
                 //Valida tabs e informa resultado ao drawer
                 updateTabStatusIntoDrawer(
                     returnValidateTabObj(index_old)
@@ -2256,21 +2255,7 @@ public class Act011_Main extends Base_Activity
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (ToolBox_Con.isOnline(context)) {
-                                    enableProgressDialog(
-                                            hmAux_Trans.get("alert_send_finish_ttl"),
-                                            hmAux_Trans.get("alert_send_finish_msg"),
-                                            hmAux_Trans.get("sys_alert_btn_cancel"),
-                                            hmAux_Trans.get("sys_alert_btn_ok")
-                                    );
-
-                                    executeSerialSave();
-                                    //executeSaveProcess();
-
-                                } else {
-                                    flowControl();
-                                }
-
+                                defineFinalizeFlow();
                             }
                         },
                         0,
@@ -2358,6 +2343,22 @@ public class Act011_Main extends Base_Activity
     }
 
     @Override
+    public void defineFinalizeFlow() {
+        if (ToolBox_Con.isOnline(context)) {
+            enableProgressDialog(
+                    hmAux_Trans.get("alert_send_finish_ttl"),
+                    hmAux_Trans.get("alert_send_finish_msg"),
+                    hmAux_Trans.get("sys_alert_btn_cancel"),
+                    hmAux_Trans.get("sys_alert_btn_ok")
+            );
+
+            executeSerialSave();
+        } else {
+            flowControl();
+        }
+    }
+
+    @Override
     public void showFormCancelledMsg(final GE_Custom_Form_Local customFormLocal, final MD_Schedule_Exec scheduleExec) {
         android.app.AlertDialog.Builder dialogScheduleWarning = new android.app.AlertDialog.Builder(context);
         dialogScheduleWarning.setTitle(hmAux_Trans.get("alert_schedule_cancelled_by_server_ttl"));
@@ -2396,7 +2397,8 @@ public class Act011_Main extends Base_Activity
      * <P></P>
      * Modificado o if else que existia por if return e adicionado tratativa para o caso da act070(ticket)
      */
-    private void flowControl() {
+
+    public void flowControl() {
         //ToolBox_Inf.showNoConnectionDialog(Act011_Main.this);
         /*
             30-08-2019 Barrionuevo

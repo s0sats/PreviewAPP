@@ -54,4 +54,8 @@ public interface Act011_Main_View {
     void callAct084();
 
     void nservCall();
+
+    void flowControl();
+
+    void defineFinalizeFlow();
 }

@@ -1301,16 +1301,24 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         //LUCHE - 08/09/2020
         //Se form for do tipo ticket e fluxo do ticket, seta msgType que finaliza SEM CHAMAR O WS, pois
         //o Ws será chamado encadeadamento na Act070
-        int msgType =
-                isaTicketFlowForm()
-                ? Act011_Main.SHOW_MSG_TYPE_TICKET_FORM_FINALIZED
-                : 2
-            ;
-        mView.showMsg(
-                hmAux_Trans.get("alert_finalize_title"),//"Finalizando Registro",
-                hmAux_Trans.get("alert_finalize_msg"),//"Registro Finalizado!!!",
-            msgType
-        );
+//        int msgType =
+//                isaTicketFlowForm()
+//                ? Act011_Main.SHOW_MSG_TYPE_TICKET_FORM_FINALIZED
+//                : 2
+//            ;
+//        mView.showMsg(
+//                hmAux_Trans.get("alert_finalize_title"),//"Finalizando Registro",
+//                hmAux_Trans.get("alert_finalize_msg"),//"Registro Finalizado!!!",
+//            msgType
+//        );
+        //LUCHE - 16/09/2021
+        //Foi solicitado remover a msg de OK e que a ação fosse disparada diretamente então o if que
+        //define o fluxo será feito aqui
+        if(isaTicketFlowForm()){
+            mView.flowControl();
+        }else{
+            mView.defineFinalizeFlow();
+        }
     }
 
     private boolean isFromTicketActs() {
