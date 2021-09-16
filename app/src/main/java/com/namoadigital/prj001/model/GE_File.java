@@ -6,6 +6,9 @@ package com.namoadigital.prj001.model;
 
 public class GE_File {
 
+    public static final String OPENED = "OPENED";
+    public static final String SENT = "SENT";
+
     private String file_code;
     private String file_path;
     private String file_path_new;
