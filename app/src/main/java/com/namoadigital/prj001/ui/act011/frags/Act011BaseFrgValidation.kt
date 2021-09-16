@@ -9,4 +9,5 @@ interface Act011BaseFrgValidation {
     fun getTabObj(skipFieldValidation: Boolean = false): Act011FormTab
     fun getTabStatus() : Act011FormTabStatus
     fun getTabName() : String
+    fun applyAutoAnswer(): Int
 }

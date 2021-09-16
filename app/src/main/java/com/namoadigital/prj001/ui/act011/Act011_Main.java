@@ -609,13 +609,10 @@ public class Act011_Main extends Base_Activity
                 super.onDrawerOpened(drawerView);
                 hideSoftKeyboard(Act011_Main.this);
                 ArrayList<Act011FormTab> tabs = new ArrayList<>();
-                //
-                if (index_old == -1 || index_old == 0) {
-                    tabs = returnValidateTabObj(index_old);
-                } else {
-                    tabs = returnValidateTabObj(index_old);
-                }
-                updateTabStatusIntoDrawer(tabs);
+                //Valida tabs e informa resultado ao drawer
+                updateTabStatusIntoDrawer(
+                    returnValidateTabObj(index_old)
+                );
             }
         };
 
@@ -709,14 +706,27 @@ public class Act011_Main extends Base_Activity
 
     /**
      * Metodo que chama atualização de lista ou item da tab no drawer
+     * Atualizado metodo com verificação de lsita vazia , pois na criação de form, como o oldIndex
+     * é 0, não roda nenhum validação e retornava lista vazia, zerando lista de tabs
+     * no drawer
      * @param tabs
      */
     private void updateTabStatusIntoDrawer(ArrayList<Act011FormTab> tabs) {
-        if(tabs.size() == 1){
-            act011FfOption.updateTabList(tabs.get(0),index);
-        }else{
-            act011FfOption.updateTabList(tabs,index);
+        if(tabs != null && tabs.size() > 0) {
+            if (tabs.size() == 1) {
+                act011FfOption.updateTabList(tabs.get(0), index);
+            } else {
+                act011FfOption.updateTabList(tabs, index);
+            }
         }
+    }
+
+    /**
+     * Metodo que chama atualização de item da lista
+     * @param tab
+     */
+    private void updateTabStatusIntoDrawer(Act011FormTab tab) {
+        act011FfOption.updateTabList(tab,index);
     }
 
     //TODO averiguar pq mudou de onResume para onStart
@@ -1504,29 +1514,33 @@ public class Act011_Main extends Base_Activity
                         @Override
                         public void auto() {
                             mDrawerLayout.closeDrawer(GravityCompat.START);
-                            //TODO REVE ALGORITMO, PARA ATUALIZAR NO DRAWER
-                            HMAux hmP = new HMAux();
+                                int quantidade = 0;
+//                            List<Integer> tabAffected = new ArrayList<>();
+//                            for (CustomFF customFF : customFFs) {
+//                                if (customFF.activateAutoReplay() != 0) {
+//                                    quantidade += 1;
+//                                    if(!tabAffected.contains(customFF.getmPage())) {
+//                                        tabAffected.add(customFF.getmPage());
+//                                    }
+//                                }
+//                            }
+//                            //
+//                            for (Integer tabPage : tabAffected) {
+//                                updateTabStatusIntoDrawer(
+//                                    returnValidateTabObj(tabPage)
+//                                );
+//                            }
+                            //MODO 2
+                            int qtd = 0;
 
-                            int quantidade = 0;
-
-                            for (CustomFF customFF : customFFs) {
-                                if (customFF.activateAutoReplay() != 0) {
-                                    quantidade += 1;
-
-                                    hmP.put(String.valueOf(customFF.getmPage()), String.valueOf(customFF.getmPage()));
+                            for (Act011BaseFrg baseFrg : screens) {
+                                int itensAuto = baseFrg.applyAutoAnswer();
+                                if(itensAuto > 0){
+                                    updateTabStatusIntoDrawer(baseFrg.getTabObj(false));
+                                    qtd +=itensAuto;
                                 }
                             }
-
-                            Set keysAuto = hmP.keySet();
-
-                            for (Iterator iAuto = keysAuto.iterator(); iAuto.hasNext(); ) {
-                                int keyAutoHM = (int) iAuto.next();
-                                //
-                                updateTabStatusIntoDrawer(
-                                    returnValidateTabObj(keyAutoHM)
-                                );
-
-                            }
+                            quantidade = qtd;
                             //
                             Toast.makeText(
                                     context,

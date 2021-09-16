@@ -167,6 +167,21 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
         )
     }
 
+    override fun applyAutoAnswer(): Int {
+        var count = 0
+        if(!customFF.isNullOrEmpty()) {
+            customFF.filter {
+                it.getmPage() == tabIndex
+            }.forEach { ff ->
+                if (ff.activateAutoReplay() != 0) {
+                    count++
+                }
+            }
+        }
+        //
+        return count
+    }
+
     override fun scrollToSelectedView(customFF: CustomFF) {
         try{
             binding.svMain.smoothScrollTo(0,customFF.y.toInt())
