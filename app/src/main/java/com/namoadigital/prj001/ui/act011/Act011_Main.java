@@ -812,14 +812,6 @@ public class Act011_Main extends Base_Activity
     }
     //TODO ANALISAR SE POSSIVEL APENAS CHAMAR O setCurrentItem
     private void tabSelectedAction(int idtab) {
-        ignoreUpdate = true;
-
-        index_old = index;
-        index = idtab;
-        //
-        updateTabStatusIntoDrawer(
-            returnValidateTabObj(index_old)
-        );
         //
         pager.setCurrentItem(idtab - 1);
     }
@@ -1442,13 +1434,9 @@ public class Act011_Main extends Base_Activity
                     //
                     setTitleLanguage("          (" + String.valueOf(index) + "/" + String.valueOf(pager.getAdapter().getCount()) + ")");
                     //
-                    if (ignoreUpdate) {
-                        ignoreUpdate = false;
-                    } else {
-                        updateTabStatusIntoDrawer(
+                    updateTabStatusIntoDrawer(
                             returnValidateTabObj(index_old)
                         );
-                    }
                 }
 
                 @Override
