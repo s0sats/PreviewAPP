@@ -1,0 +1,37 @@
+package com.namoadigital.prj001.model
+
+class GeOsDeviceItem(
+    val customer_code :Long,
+    val custom_form_type :Int,
+    val custom_form_code :Int,
+    val custom_form_version :Int,
+    val custom_form_data :Int,
+    val product_code :Int,
+    val serial_code :Int,
+    val device_tp_code :Int,
+    val item_check_code :Int,
+    val item_check_seq :Int,
+    val item_check_id :String,
+    val item_check_desc :String,
+    val apply_material :String,
+    val verification_instruction :String?,
+    val require_justify_problem :Int,
+    val critical_item :Int,
+    val order_seq :Int,
+    val structure :Int,
+    val manual_desc :String?,
+    val next_cycle_measure :Float?,
+    val next_cycle_measure_date :String?,
+    val next_cycle_limit_date :String?,
+    val item_check_status :String,
+    val exec_type :String?,
+    val exec_date :String?,
+    val exec_comment :String?,
+    val exec_photo1 :String?,
+    val exec_photo2 :String?,
+    val exec_photo3 :String?,
+    val exec_photo4 :String?,
+    val status_answer :String?
+
+) {
+}
