@@ -171,13 +171,18 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      */
     private fun handleScheduleInfos(headerInclude: Act011FrgIncludeHeaderBinding) {
         with(headerInclude){
-            tvComments.apply {
-                text = scheduleComments?:""
-                visibility = if(scheduleComments.isNullOrEmpty()) View.GONE else View.VISIBLE
-            }
-            tvScheduleDesc.apply {
-                text = scheduleDesc?:""
-                visibility = if(scheduleDesc.isNullOrEmpty()) View.GONE else View.VISIBLE
+            if(tabIndex == 1) {
+                tvComments.apply {
+                    text = scheduleComments ?: ""
+                    visibility = if (scheduleComments.isNullOrEmpty()) View.GONE else View.VISIBLE
+                }
+                tvScheduleDesc.apply {
+                    text = scheduleDesc ?: ""
+                    visibility = if (scheduleDesc.isNullOrEmpty()) View.GONE else View.VISIBLE
+                }
+            }else{
+                tvComments.visibility = View.GONE
+                tvScheduleDesc.visibility = View.GONE
             }
         }
     }

@@ -1358,10 +1358,13 @@ public class Act011_Main extends Base_Activity
                     mdScheduleExec != null ? mdScheduleExec.getComments() : null
                 );
                 custom_form_ff.setCustomFF(customFFs);
-                tabs.add(custom_form_ff.getTabObj(bNew));
+                //Substituido o param de bNew para includeField, pois ele identifica  aprimeira abertura.
+                //Ajuste necessario pois no caso do agendamento, o bNew era false na primera abertura,
+                //os campos estavam sendo validados e marcados como erro
+                tabs.add(custom_form_ff.getTabObj(includeField));
                 screens.add(custom_form_ff);
             }
-
+            //
             pager.setOffscreenPageLimit(screens.size());
             pager.setAdapter(
                     new ScreenAdapter(
