@@ -86,6 +86,7 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
     public static final String TAG_OPERATIONAL_CODE = "tag_operational_code";
     public static final String TAG_OPERATIONAL_ID = "tag_operational_id";
     public static final String TAG_OPERATIONAL_DESC = "tag_operational_desc";
+    public static final String SERIAL_DEFINED_BY_SERVER = "serial_defined_by_server";
 
     //NÃO SÃO CAMPOS DA TABELA, mas são usados em queries
     public static final String SCHEDULE_DATE_START_FORMAT = "schedule_date_start_format";
@@ -494,6 +495,13 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                     scheduleExec.setSync_process(1);
                     //Caso seja um novo agendamento, seta as informações no obj para ser inserido no banco.
                     scheduleExec.setStatus(ConstantBaseApp.SYS_STATUS_SCHEDULE);
+                    //LUCHE - 17/09/2021 - Com a alteração para deleção de form agendado, foi criado
+                    //atributo serial_defined_by_server que identifica se o serial foi definido via servidor
+                    //pois, caso não tenha sido, ao apagar o form, o serial deve ser apagado desta tabela.
+                    scheduleExec.setSerial_defined_by_server(
+                        wasSerialDefinedByServer(scheduleExec)
+                    );
+                    //
                     if (scheduleExec.getSchedule_type() != null) {
                         String scheduleType = scheduleExec.getSchedule_type();
                         //
@@ -580,6 +588,18 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
         closeDB();
         //
         return daoObjReturn;
+    }
+
+    /**
+     * LUCHE - 17/08/2021
+     * Metodo usado na conciliação do agendamento de novos agendamentos,para definir se originalmente,
+     * o agendamento veio com serial definido.
+     * Essa flag é usada quando o usr deleta o agendamento e o registro tem de ser resetado no banco.
+     * @param scheduleExec
+     * @return
+     */
+    private int wasSerialDefinedByServer(MD_Schedule_Exec scheduleExec) {
+        return scheduleExec.getSerial_code() != null && scheduleExec.getSerial_code() > 0 ? 1 : 0;
     }
 
     /**
@@ -1209,6 +1229,8 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
                 md_schedule_exec.setHas_Nc(cursor.getInt(cursor.getColumnIndex(HAS_NC)));
             }
             //
+            md_schedule_exec.setSerial_defined_by_server(cursor.getInt(cursor.getColumnIndex(SERIAL_DEFINED_BY_SERVER)));
+            //
             return md_schedule_exec;
         }
     }
@@ -1321,6 +1343,10 @@ public class MD_Schedule_ExecDao extends BaseDao implements DaoWithReturn<MD_Sch
             contentValues.put(FCM_USER_NICK,md_schedule_exec.getFcm_user_nick());
             contentValues.put(SCHEDULE_ERRO_MSG,md_schedule_exec.getSchedule_erro_msg());
             contentValues.put(CLOSE_DATE,md_schedule_exec.getClose_date());
+            //
+            if(md_schedule_exec.getSerial_defined_by_server() > -1){
+                contentValues.put(SERIAL_DEFINED_BY_SERVER,md_schedule_exec.getSerial_defined_by_server());
+            }
             //
             return contentValues;
         }
