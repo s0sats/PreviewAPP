@@ -1862,4 +1862,38 @@ public class Act011_Main_Presenter_Impl implements Act011_Main_Presenter {
         }
         return false;
     }
+
+    /**
+     * LUCHE - 17/09/2021
+     * Metodo que reseta registro do agendamento na deleção do form.
+     * @param formLocal
+     */
+    @Override
+    public void resetScheduleExecIfNeeds(GE_Custom_Form_Local formLocal) {
+        if(ToolBox_Inf.isScheduleForm(formLocal)){
+            MD_Schedule_Exec scheduleExec = getMdScheduleExec(
+                formLocal.getSchedule_prefix(),
+                formLocal.getSchedule_code(),
+                formLocal.getSchedule_exec()
+            );
+            //
+            if(MD_Schedule_Exec.isValidScheduleExec(scheduleExec)){
+                scheduleExec.setStatus(ConstantBaseApp.SYS_STATUS_SCHEDULE);
+                scheduleExec.setFcm_new_status(null);
+                scheduleExec.setFcm_user_nick(null);
+                scheduleExec.setClose_date(null);
+                //
+                if(scheduleExec.getSerial_defined_by_server() == 0){
+                    scheduleExec.setSerial_code(null);
+                    scheduleExec.setSerial_id(null);
+                }
+                //
+                DaoObjReturn daoObjReturn = scheduleExecDao.addUpdate(scheduleExec);
+                //Não tem o que fazer nesse ponto...
+                if(daoObjReturn.hasError()){
+                    ToolBox_Inf.registerException(getClass().getName(),new Exception(daoObjReturn.getErrorMsg()));
+                }
+            }
+        }
+    }
 }

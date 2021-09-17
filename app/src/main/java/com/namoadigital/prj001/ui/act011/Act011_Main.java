@@ -1024,26 +1024,12 @@ public class Act011_Main extends Base_Activity
                         Constant.DB_VERSION_CUSTOM
                 );
 
-//        GE_Custom_Form_Field_LocalDao formFieldLocalDao =
-//                new GE_Custom_Form_Field_LocalDao(
-//                        context,
-//                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                        Constant.DB_VERSION_CUSTOM
-//                );
-
         GE_Custom_Form_DataDao formDataDao =
                 new GE_Custom_Form_DataDao(
                         context,
                         ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
                         Constant.DB_VERSION_CUSTOM
                 );
-        //
-//        GE_Custom_Form_Data_FieldDao formDataFieldDao =
-//                new GE_Custom_Form_Data_FieldDao(
-//                        context,
-//                        ToolBox_Con.customDBPath(ToolBox_Con.getPreference_Customer_Code(context)),
-//                        Constant.DB_VERSION_CUSTOM
-//                );
         //BARRIONUEVO 08/08/2019
         //Query modificada para alterar status de form em vez de excluir fisicamente.
         //
@@ -1072,6 +1058,8 @@ public class Act011_Main extends Base_Activity
         );
         //
         mPresenter.resetTicketCtrlFormDataIfNeeds(formLocal);
+        //
+        mPresenter.resetScheduleExecIfNeeds(formLocal);
         //
         mPresenter.checkAppExecutionDecrementUpdateNeeds(mSo_Prefix,mSo_Code, formData);
         //
