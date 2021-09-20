@@ -147,7 +147,7 @@ class Act011FfOption : Fragment() {
                         if (automatic) {
                             tvFormAutoAnswer.text = hmAux_Trans.get("drawer_automatic_lbl")
                             tvFormAutoAnswer.setVisibility(View.VISIBLE)
-                            vDivider.setVisibility(View.GONE)
+                            vDivider.setVisibility(View.INVISIBLE)
                         } else {
                             tvFormAutoAnswer.setVisibility(View.GONE)
                             vDivider.setVisibility(View.VISIBLE)
