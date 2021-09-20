@@ -23,15 +23,16 @@ class GeOsDeviceItem(
     val next_cycle_measure :Float?,
     val next_cycle_measure_date :String?,
     val next_cycle_limit_date :String?,
-    val item_check_status :String,
-    val exec_type :String?,
-    val exec_date :String?,
-    val exec_comment :String?,
-    val exec_photo1 :String?,
-    val exec_photo2 :String?,
-    val exec_photo3 :String?,
-    val exec_photo4 :String?,
-    val status_answer :String?
-
+    var item_check_status :String,
+    var target_date :String,
+    var exec_type :String?,
+    var exec_date :String?,
+    var exec_comment :String?,
+    var exec_photo1 :String?,
+    var exec_photo2 :String?,
+    var exec_photo3 :String?,
+    var exec_photo4 :String?,
+    var status_answer :String?,
+    val materialList: MutableList<GeOsDeviceMaterial>  = mutableListOf()
 ) {
 }

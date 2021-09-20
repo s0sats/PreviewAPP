@@ -13,7 +13,8 @@ class MD_Product_Serial_Tp_Device_Item(
     val next_cycle_measure: Double?,
     val next_cycle_measure_date: String?,
     val next_cycle_limit_date: String?,
-    val item_check_status: String
+    val item_check_status: String,
+    val target_date : String
 ) {
     var customer_code: Long = -1
         private set
@@ -49,7 +50,8 @@ class MD_Product_Serial_Tp_Device_Item(
         next_cycle_measure: Double?,
         next_cycle_measure_date: String?,
         next_cycle_limit_date: String?,
-        item_check_status: String
+        item_check_status: String,
+        target_date : String
     ) : this(
         item_check_code,
         item_check_seq,
@@ -63,7 +65,8 @@ class MD_Product_Serial_Tp_Device_Item(
         next_cycle_measure,
         next_cycle_measure_date,
         next_cycle_limit_date,
-        item_check_status
+        item_check_status,
+        target_date
     ) {
         this.customer_code = customer_code
         this.product_code = product_code

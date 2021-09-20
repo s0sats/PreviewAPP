@@ -8,10 +8,10 @@ class GeOsDevice(
     val custom_form_data: Int,
     val product_code: Int,
     val serial_code: Int,
-    var device_tp_code: Int,
-    var device_tp_id: String,
-    var device_tp_desc: String,
-    var order_seq: Int,
-    var tracking_number: String?
+    val device_tp_code: Int,
+    val device_tp_id: String,
+    val device_tp_desc: String,
+    val order_seq: Int,
+    val tracking_number: String?
 ) {
 }

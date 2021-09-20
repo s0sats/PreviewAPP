@@ -44,6 +44,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
         const val NEXT_CYCLE_MEASURE_DATE = "next_cycle_measure_date"
         const val NEXT_CYCLE_LIMIT_DATE = "next_cycle_limit_date"
         const val ITEM_CHECK_STATUS = "item_check_status"
+        const val TARGET_DATE = "target_date"
     }
 
     private val toMD_Product_Serial_Tp_Device_ItemMapper: Mapper<Cursor,MD_Product_Serial_Tp_Device_Item>
@@ -462,7 +463,8 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                         next_cycle_measure = getDouble(getColumnIndex(NEXT_CYCLE_MEASURE)),
                         next_cycle_measure_date = getString(getColumnIndex(NEXT_CYCLE_MEASURE_DATE)),
                         next_cycle_limit_date = getString(getColumnIndex(NEXT_CYCLE_LIMIT_DATE)),
-                        item_check_status = getString(getColumnIndex(ITEM_CHECK_STATUS))
+                        item_check_status = getString(getColumnIndex(ITEM_CHECK_STATUS)),
+                        target_date = getString(getColumnIndex(TARGET_DATE))
                     )
                 }
             }
