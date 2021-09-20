@@ -33,8 +33,13 @@ import java.util.List;
 
 /**
  * Created by neomatrix on 06/02/17.
+ *
+ * LUCHE - 20/09/2021
+ * A partir da implementação do "form O.S", essa classe não será mais utiluzada pois foi criado um
+ * fragmento pai e um novo ActFrgFF , em Kotlin e implementando apenas o que é de responsabilidade
+ * do frag.
  */
-
+@Deprecated
 public class Act011_FF extends Fragment {
 
     private transient Context context;

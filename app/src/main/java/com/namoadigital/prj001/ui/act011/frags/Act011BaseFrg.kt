@@ -13,7 +13,6 @@ import com.namoadigital.prj001.dao.GE_Custom_Form_DataDao
 import com.namoadigital.prj001.dao.GE_Custom_Form_Field_LocalDao
 import com.namoadigital.prj001.dao.MD_Schedule_ExecDao
 import com.namoadigital.prj001.databinding.Act011FrgIncludeHeaderBinding
-import com.namoadigital.prj001.databinding.Act011FrgIncludeHistoricBinding
 import com.namoadigital.prj001.databinding.Act011FrgIncludeNavegationBinding
 import com.namoadigital.prj001.databinding.CvProductSerialWithIconBinding
 import com.namoadigital.prj001.model.Act011FormTab
@@ -27,8 +26,6 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
     protected lateinit var binding: VBinding
     private var _mNavListener : Act011BaseFrgInteractionNavegation? = null
     protected val mNavListener get() = _mNavListener!!
-    private var _mHistocicListener : Act011BaseFrgInteractionHistoric? = null
-    protected val mHistocicListener get()  = _mHistocicListener!!
 //
     protected lateinit var hmAuxTrans: HMAux
     protected var tabIndex: Int = 0
@@ -57,11 +54,6 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      * Retorna  bind do include de navegacao
      */
     protected abstract fun getNavegationInclude(): Act011FrgIncludeNavegationBinding
-
-    /**
-     * Retorna  bind do include de historico
-     */
-    protected abstract fun getHistoricInclude(): Act011FrgIncludeHistoricBinding
 
     /**
      * Retorna qtd de erro na tab
@@ -142,7 +134,6 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
         iniIncludeHeaderUI()
         iniBindingActions()
         iniIncludeNavegationUI()
-        iniIncludeHistoricUI()
     }
 
     /**
@@ -234,16 +225,6 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      */
     private fun iniBindingActions() {
         setNavegationListeners(getNavegationInclude())
-        setHistoricListeners(getHistoricInclude())
-//
-//        when(binding){
-//            is Act011FrgFfBinding -> {
-//                (binding as Act011FrgFfBinding).apply {
-//                    setNavegationListeners(this.incNavegation)
-//                    setHistoricListeners(this.incHistoric)
-//                }
-//            }
-//        }
     }
 
     /**
@@ -251,35 +232,18 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      */
     private fun setNavegationListeners(incNavegation: Act011FrgIncludeNavegationBinding) {
         with(incNavegation){
-            llPre.setOnClickListener {
+            clPrev.setOnClickListener {
                 mNavListener.previosTab()
             }
-            llDrawer.setOnClickListener {
+            clDrawer.setOnClickListener {
                 mNavListener.openDrawer()
             }
-            llNex.setOnClickListener {
+            clNext.setOnClickListener {
                 mNavListener.nextTab()
             }
             //
-            llCheck.setOnClickListener {
+            clCheck.setOnClickListener {
                 mNavListener.check()
-            }
-            tvCheckNew.setOnClickListener {
-                mNavListener.checkWithNew()
-            }
-        }
-    }
-
-    /**
-     * Seta as a chamada das interfaces nos clicks dos botões de historico
-     */
-    private fun setHistoricListeners(incHistoric: Act011FrgIncludeHistoricBinding) {
-        with(incHistoric){
-            goToHistory.setOnClickListener {
-                mHistocicListener.goToHistoric()
-            }
-            goToHome.setOnClickListener {
-                mHistocicListener.goToHome()
             }
         }
     }
@@ -295,24 +259,33 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
 
     /**
      * Configura a visibilidade das views de navegacao
-     * Previous: Exibida somente se nao for a primeira tab
-     * Footer: Exibido somente na ultima tab
-     * Next: Exibido somente se não for a ultima tab
+     * Previous: Habilitado somente se nao for a primeira tab
+     * Next: Habilitado somente se não for a ultima tab
      */
     private fun handleNavegationUI(navegationBinding: Act011FrgIncludeNavegationBinding) {
         with(navegationBinding) {
             tvDrawer.text = hmAuxTrans["btn_open_drawer"]
             //
-            llPre.apply {
-                visibility = if (tabIndex > 1) View.VISIBLE else View.GONE
+            val prevEnabled = (tabIndex > 1)
+            clPrev.apply {
+                isEnabled = prevEnabled
+            }
+            clPrevBtn.apply {
+                isEnabled = prevEnabled
+            }
+            ivPrevIcon.apply {
+                isEnabled = prevEnabled
             }
             //
-            llFooter.apply {
-                visibility = if (tabIndex == tabLastIndex) View.VISIBLE else View.GONE
+            val nextEnabled = (tabIndex != tabLastIndex)
+            clNext.apply {
+                isEnabled = nextEnabled
             }
-            //
-            llNex.apply {
-                visibility = if (tabIndex != tabLastIndex) View.VISIBLE else View.GONE
+            clNextBtn.apply {
+                isEnabled = nextEnabled
+            }
+            ivNextIcon.apply {
+                isEnabled = nextEnabled
             }
         }
     }
@@ -324,14 +297,16 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
         val readOnlyStatus = readOnlyStatus()
         with(navegationBinding) {
             tvCheck.text = hmAuxTrans["btn_check"]
-            tvCheckNew.text = hmAuxTrans["btn_check_new"]
             //
             if(readOnlyStatus){
-                llCheck.visibility = View.GONE
-                tvCheckNew.visibility = View.GONE
+                clCheck.visibility = View.GONE
             }else{
-                llCheck.visibility = View.VISIBLE
-                tvCheckNew.visibility = if(mNavListener.allowFinalizeWithNew()) View.VISIBLE else View.GONE
+                //Se for um status editavel e for a ultima tab
+                clCheck.apply {
+                    visibility = if (tabIndex == tabLastIndex) View.VISIBLE else View.GONE
+                    isEnabled = (tabIndex == tabLastIndex)
+                    //
+                }
             }
         }
     }
@@ -341,24 +316,6 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
      */
     private fun readOnlyStatus() = (formStatus.equals(ConstantBaseApp.SYS_STATUS_WAITING_SYNC, true)
             || formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE, true))
-
-    /**
-     * Define visibilidade das views de historico
-     */
-    private fun iniIncludeHistoricUI() {
-        val historicInclude = getHistoricInclude()
-        with(historicInclude){
-            goToHistory.apply {
-                visibility = if(formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE, true)) View.VISIBLE else View.GONE
-                text =  hmAuxTrans["btn_history"]
-
-            }
-            goToHome.apply {
-                visibility = if (formStatus.equals(ConstantBaseApp.SYS_STATUS_DONE,true)) View.VISIBLE else View.GONE
-                text =  hmAuxTrans["btn_home"]
-            }
-        }
-    }
 
     //region Set interface
     /**
@@ -371,12 +328,6 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
         } else {
             throw RuntimeException("${context.toString()} must implement Act011FooterListener")
         }
-        //
-        if(context is Act011BaseFrgInteractionHistoric ){
-            _mHistocicListener = context as Act011BaseFrgInteractionHistoric
-        } else {
-            throw RuntimeException("${context.toString()} must implement Act011BaseFrgInteractionHistoric")
-        }
     }
 
     /**
@@ -385,7 +336,6 @@ abstract class Act011BaseFrg <VBinding : ViewBinding> : Fragment(), Act011BaseFr
     override fun onDetach() {
         super.onDetach()
         _mNavListener = null
-        _mHistocicListener = null
     }
     //endregion
 

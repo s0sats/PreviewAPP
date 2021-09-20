@@ -108,7 +108,6 @@ import com.namoadigital.prj001.sql.MD_Product_Sql_001;
 import com.namoadigital.prj001.ui.act005.Act005_Main;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrg;
-import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionHistoric;
 import com.namoadigital.prj001.ui.act011.frags.Act011BaseFrgInteractionNavegation;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgFF;
 import com.namoadigital.prj001.ui.act011.frags.Act011FrgFFInteraction;
@@ -139,7 +138,6 @@ public class Act011_Main extends Base_Activity
     implements
     Act011_Main_View,
     Act011BaseFrgInteractionNavegation,
-    Act011BaseFrgInteractionHistoric,
     Act011FrgFFInteraction
 {
 
@@ -226,8 +224,6 @@ public class Act011_Main extends Base_Activity
 
     private String wsSoProcess = "";
     private ArrayList<HMAux> wsResults = new ArrayList<>();
-    //Implments PhotoInterface
-    private CustomFF.ICustomFFPhoto onPhotoClick;
     private boolean finalizeNewFlow = false;
     private boolean canSave;
     private String filter_search;
@@ -471,11 +467,11 @@ public class Act011_Main extends Base_Activity
 
      */
     //region RotateBugFixed
-
     /**
      * Retorna a tradução contida na act.
      * @return
      */
+    @Deprecated
     public HMAux getHmAuxTrans(){
         return hmAux_Trans;
     }
@@ -484,6 +480,7 @@ public class Act011_Main extends Base_Activity
      * Retorna a implementação das interfaces,delegate, do fragmento Act011_FF
      * @return
      */
+    @Deprecated
     public Act011_FF.ICustom_Form_FF_ll getFFInterface(){
         return  new Act011_FF.ICustom_Form_FF_ll() {
                     @Override
@@ -523,13 +520,14 @@ public class Act011_Main extends Base_Activity
      * Retorna a lista de componente do formulário.
      * @return
      */
+    @Deprecated
     public ArrayList<CustomFF> getFf(){
         return customFFs;
     }
 
     //endregion
 
-    //region Interfaces
+    //region Interfaces Novas
 
     @Override
     public void openDrawer() {
@@ -538,7 +536,7 @@ public class Act011_Main extends Base_Activity
 
     @Override
     public void check() {
-        checkAction(false);
+        checkAction(true);
     }
 
     @Override
@@ -556,30 +554,8 @@ public class Act011_Main extends Base_Activity
     }
 
     @Override
-    public void checkWithNew() {
-        finalizeNewFlow = true;
-        //
-        checkAction(false);
-    }
-
-    @Override
     public Bitmap getProductIconBmp(){
         return mPresenter.getProductIconBitmap(formLocal.getCustom_product_icon_name());
-    }
-
-    @Override
-    public boolean allowFinalizeWithNew() {
-        return allowFinalizeWithNewBtn();
-    }
-
-    @Override
-    public void goToHistoric() {
-        callAct084();
-    }
-
-    @Override
-    public void goToHome() {
-        callAct005(context);
     }
 
     @NonNull
@@ -652,13 +628,6 @@ public class Act011_Main extends Base_Activity
 
         recoverGetIntents();
         //
-        onPhotoClick = new CustomFF.ICustomFFPhoto() {
-            @Override
-            public void OnPhotoClick(String s) {
-//                saveV2(false);
-            }
-        };
-
         /**
          * LUCHE - 29/04/2021
          * Implmentado interface aciona após o dismiss do dialog.
@@ -807,7 +776,7 @@ public class Act011_Main extends Base_Activity
             returnValidCheck(String.valueOf(-1));
         }
 
-        loadCustomFFValueIntoFormData();
+        loadCustomFFValueIntoFormData();    
 
         mPresenter.saveData(formData, fieldsValidation);
 
@@ -823,7 +792,7 @@ public class Act011_Main extends Base_Activity
               setCustomFFValueIntoFormDataField(df);
         }
     }
-    //TODO ANALISAR SE POSSIVEL APENAS CHAMAR O setCurrentItem
+
     private void tabSelectedAction(int idtab) {
         //
         pager.setCurrentItem(idtab - 1);
@@ -1058,7 +1027,7 @@ public class Act011_Main extends Base_Activity
         );
         //
         mPresenter.resetTicketCtrlFormDataIfNeeds(formLocal);
-        //
+        //LUCHE - 17/09/2021 - Deleção de agendamento
         mPresenter.resetScheduleExecIfNeeds(formLocal);
         //
         mPresenter.checkAppExecutionDecrementUpdateNeeds(mSo_Prefix,mSo_Code, formData);
@@ -1160,7 +1129,6 @@ public class Act011_Main extends Base_Activity
      * LUCHE - 30/01/2020
      * <p>
      * Implmentado metodo para salvar o form_data no bundle
-     *
      * @param outState
      */
     @Override
@@ -1334,8 +1302,9 @@ public class Act011_Main extends Base_Activity
             {
                 mdScheduleExec = mPresenter.getMdScheduleExec(formLocal.getSchedule_prefix(), formLocal.getSchedule_code(), formLocal.getSchedule_exec());
             }
-            //TODO APENAS TESTE PRO OBJ DO LUKINHA
+           //
             ArrayList<Act011FormTab> tabs = new ArrayList<>();
+            //Loop de criação das tabs do form utilizando o novo fragment.
             for (int i = 1; i <= pages; i++) {
                 Act011FrgFF custom_form_ff = Act011FrgFF.Companion.newInstance(
                     hmAux_Trans,
@@ -1447,33 +1416,17 @@ public class Act011_Main extends Base_Activity
                         @Override
                         public void auto() {
                             mDrawerLayout.closeDrawer(GravityCompat.START);
-                                int quantidade = 0;
-//                            List<Integer> tabAffected = new ArrayList<>();
-//                            for (CustomFF customFF : customFFs) {
-//                                if (customFF.activateAutoReplay() != 0) {
-//                                    quantidade += 1;
-//                                    if(!tabAffected.contains(customFF.getmPage())) {
-//                                        tabAffected.add(customFF.getmPage());
-//                                    }
-//                                }
-//                            }
-//                            //
-//                            for (Integer tabPage : tabAffected) {
-//                                updateTabStatusIntoDrawer(
-//                                    returnValidateTabObj(tabPage)
-//                                );
-//                            }
-                            //MODO 2
-                            int qtd = 0;
-
+                            int quantidade = 0;
+                            //
                             for (Act011BaseFrg baseFrg : screens) {
-                                int itensAuto = baseFrg.applyAutoAnswer();
-                                if(itensAuto > 0){
-                                    updateTabStatusIntoDrawer(baseFrg.getTabObj(false));
-                                    qtd +=itensAuto;
+                                if(baseFrg instanceof Act011FrgFF) {
+                                    int itensAuto = baseFrg.applyAutoAnswer();
+                                    if (itensAuto > 0) {
+                                        updateTabStatusIntoDrawer(baseFrg.getTabObj(false));
+                                        quantidade += itensAuto;
+                                    }
                                 }
                             }
-                            quantidade = qtd;
                             //
                             Toast.makeText(
                                     context,
@@ -1907,24 +1860,6 @@ public class Act011_Main extends Base_Activity
         return hmAux;
     }
 
-    private String returnFieldValue(int seq, int type) {
-        String result = "";
-        //
-        for (int i = 0; i < customFFs.size(); i++) {
-            if (customFFs.get(i).getmSequence() == seq) {
-                if (type == 0) {
-                    result = customFFs.get(i).getmValue();
-                } else {
-                    result = customFFs.get(i).getmValue_Extra();
-                }
-                //
-                break;
-            }
-        }
-        //
-        return result;
-    }
-
     /**
      * Metodo que pega os valores do customFF e seta do form_data_fields
      * Faz o loop nos customFF buscano a view da sequencia do form_data_fields e quando encontra,
@@ -1951,7 +1886,6 @@ public class Act011_Main extends Base_Activity
      * @return
      */
     private int returnValidCheck(String sPage) {
-
         int numberOfErrors = 0;
         int ipage = Integer.parseInt(sPage);
         try {
@@ -1985,34 +1919,6 @@ public class Act011_Main extends Base_Activity
     //                    }
                     } else {
                     }
-                }
-            }
-        }
-
-        return numberOfErrors;
-    }
-
-    private int returnValidCheck2(String sPage) {
-
-        int numberOfErrors = 0;
-        int ipage = Integer.parseInt(sPage);
-        //
-        for (int i = 0; i < customFFs.size(); i++) {
-
-            if (ipage == -1) {
-                if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
-                    numberOfErrors += 1;
-                }
-
-                customFFs.get(i).setValidationBackGroundDots();
-            } else {
-                if (customFFs.get(i).getmPage() == ipage) {
-                    if (!customFFs.get(i).isValid() || !customFFs.get(i).isValidDots()) {
-                        numberOfErrors += 1;
-                    }
-
-                    customFFs.get(i).setValidationBackGroundDots();
-                } else {
                 }
             }
         }

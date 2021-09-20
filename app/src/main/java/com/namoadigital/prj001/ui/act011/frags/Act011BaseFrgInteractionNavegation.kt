@@ -13,11 +13,7 @@ interface Act011BaseFrgInteractionNavegation {
 
     fun nextTab()
 
-    fun checkWithNew()
-
     fun getSerialInfo() : MD_Product_Serial
 
     fun getProductIconBmp() : Bitmap?
-
-    fun allowFinalizeWithNew() : Boolean
 }
