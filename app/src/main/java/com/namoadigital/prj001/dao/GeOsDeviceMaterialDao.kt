@@ -330,17 +330,17 @@ class GeOsDeviceMaterialDao(
                     }
                     //
                     put(CUSTOM_FORM_CODE,it.custom_form_data)
-                    put(CUSTOM_FORM_VERSION, CUSTOM_FORM_VERSION)
-                    put(CUSTOM_FORM_DATA, CUSTOM_FORM_DATA)
-                    put(PRODUCT_CODE, PRODUCT_CODE)
-                    put(SERIAL_CODE, SERIAL_CODE)
-                    put(DEVICE_TP_CODE, DEVICE_TP_CODE)
-                    put(ITEM_CHECK_CODE, ITEM_CHECK_CODE)
-                    put(ITEM_CHECK_SEQ, ITEM_CHECK_SEQ)
-                    put(MATERIAL_CODE, MATERIAL_CODE)
-                    put(MATERIAL_ID, MATERIAL_ID)
-                    put(MATERIAL_DESC, MATERIAL_DESC)
-                    put(MATERIAL_QTY, MATERIAL_QTY)
+                    put(CUSTOM_FORM_VERSION, it.custom_form_version)
+                    put(CUSTOM_FORM_DATA, it.custom_form_data)
+                    put(PRODUCT_CODE, it.product_code)
+                    put(SERIAL_CODE, it.serial_code)
+                    put(DEVICE_TP_CODE, it.device_tp_code)
+                    put(ITEM_CHECK_CODE, it.item_check_code)
+                    put(ITEM_CHECK_SEQ, it.item_check_seq)
+                    put(MATERIAL_CODE, it.material_code)
+                    put(MATERIAL_ID, it.material_id)
+                    put(MATERIAL_DESC, it.material_desc)
+                    put(MATERIAL_QTY, it.material_qty)
                     //
                 }
             }
