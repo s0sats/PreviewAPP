@@ -406,6 +406,8 @@ class GeOsDeviceItemDao(
                     //
                     put(ITEM_CHECK_STATUS, it.item_check_status)
                     //
+                    put(TARGET_DATE, it.target_date)
+                    //
                     put(EXEC_TYPE, it.exec_type)
                     //
                     put(EXEC_DATE, it.exec_date)

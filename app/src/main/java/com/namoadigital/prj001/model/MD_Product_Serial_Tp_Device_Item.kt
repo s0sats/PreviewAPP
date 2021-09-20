@@ -14,7 +14,7 @@ class MD_Product_Serial_Tp_Device_Item(
     val next_cycle_measure_date: String?,
     val next_cycle_limit_date: String?,
     val item_check_status: String,
-    val target_date : String
+    val target_date : String?
 ) {
     var customer_code: Long = -1
         private set

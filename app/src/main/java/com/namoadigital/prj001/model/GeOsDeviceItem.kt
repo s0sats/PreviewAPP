@@ -24,7 +24,7 @@ class GeOsDeviceItem(
     val next_cycle_measure_date :String?,
     val next_cycle_limit_date :String?,
     var item_check_status :String,
-    var target_date :String,
+    var target_date :String?,
     var exec_type :String?,
     var exec_date :String?,
     var exec_comment :String?,

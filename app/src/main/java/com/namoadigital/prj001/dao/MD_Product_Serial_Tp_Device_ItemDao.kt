@@ -523,6 +523,7 @@ class MD_Product_Serial_Tp_Device_ItemDao(
                     if(mdProductSerialTpDeviceItem.item_check_status != null){
                         put(ITEM_CHECK_STATUS,mdProductSerialTpDeviceItem.item_check_status)
                     }
+                    put(TARGET_DATE,mdProductSerialTpDeviceItem.target_date)
                 }
             }
             //
