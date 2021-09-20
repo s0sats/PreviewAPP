@@ -7,18 +7,19 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-
     <TextView
         android:id="@+id/tv_form_tab_order"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="20dp"
         android:text="1."
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1"
+        />
 
     <TextView
         android:id="@+id/tv_form_tab_name"
@@ -32,7 +33,7 @@
         app:layout_constraintEnd_toStartOf="@+id/tv_non_forecast_count_val"
         app:layout_constraintStart_toEndOf="@+id/tv_form_tab_order"
         app:layout_constraintTop_toTopOf="@+id/tv_form_tab_order"
-        tools:text="Temperaturas" />
+        tools:text="Temperaturas"/>
 
     <TextView
         android:id="@+id/tv_form_tab_fields_count"
@@ -42,7 +43,9 @@
         android:text="0"
         app:layout_constraintBottom_toBottomOf="@+id/tv_form_tab_order"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_form_tab_order" />
+        app:layout_constraintTop_toTopOf="@+id/tv_form_tab_order"
+        app:layout_constraintVertical_bias="0"
+        />
 
     <TextView
         android:id="@+id/tv_form_tab_tracking"

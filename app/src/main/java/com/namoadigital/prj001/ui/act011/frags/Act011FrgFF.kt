@@ -14,6 +14,7 @@ import com.namoadigital.prj001.model.Act011FormTabStatus
 import com.namoadigital.prj001.util.Constant
 import com.namoadigital.prj001.util.ToolBox_Inf
 import java.util.*
+
 class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
 
     private val NO_LABEL_FOUND = "No label"
@@ -87,7 +88,6 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
     override fun getViewBinding() = Act011FrgFfBinding.inflate(layoutInflater)
     override fun getHeaderInclude() = binding.incHeader
     override fun getNavegationInclude() = binding.incNavegation
-    override fun getHistoricInclude() = binding.incHistoric
 
     /**
      * Seta os componentes dessa tab no fragmento, adicionando "indice" da pergunta no label.
@@ -144,7 +144,7 @@ class Act011FrgFF : Act011BaseFrg<Act011FrgFfBinding>(),Act011FrgFFScroll {
     override fun getTabName(): String {
         return if(!customFF.isNullOrEmpty()){
             customFF.find {
-                it.getmPage() == tabIndex && it.getmType().equals("tab",true)
+                it.getmPage() == tabIndex && it.getmType().equals(CustomFF.TAB,true)
             }?.let {
                 it.getmLabel()
             }?: NO_LABEL_FOUND

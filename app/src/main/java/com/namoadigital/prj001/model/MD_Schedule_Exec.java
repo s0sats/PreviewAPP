@@ -82,6 +82,8 @@ public class MD_Schedule_Exec {
     private String tag_operational_desc;
     @Nullable
     private Integer has_Nc;
+    //LUCHE - 17/09/2021 - Flag que indica se originalmente o agendamento tinha um serial
+    private int serial_defined_by_server;
 
     /**
      * LUCHE - 14/02/2020
@@ -515,6 +517,14 @@ public class MD_Schedule_Exec {
 
     public void setHas_Nc(Integer has_Nc) {
         this.has_Nc = has_Nc;
+    }
+
+    public int getSerial_defined_by_server() {
+        return serial_defined_by_server;
+    }
+
+    public void setSerial_defined_by_server(int serial_defined_by_server) {
+        this.serial_defined_by_server = serial_defined_by_server;
     }
 
     public MyActions toMyActionsObj(Context context, @Nullable String lastScheduleSelected) {

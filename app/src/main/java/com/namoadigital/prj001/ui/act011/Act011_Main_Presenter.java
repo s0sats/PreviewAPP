@@ -66,4 +66,6 @@ public interface Act011_Main_Presenter {
     Bitmap getProductIconBitmap(String custom_product_icon_name);
 
     boolean hasAnyInvalidField(ArrayList<Act011FormTab> tabs);
+
+    void resetScheduleExecIfNeeds(GE_Custom_Form_Local formLocal);
 }
