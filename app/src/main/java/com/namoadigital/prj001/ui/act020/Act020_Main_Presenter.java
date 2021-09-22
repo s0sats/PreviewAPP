@@ -36,4 +36,8 @@ public interface Act020_Main_Presenter {
     void prepareAct008();
 
     String getFormattedTicketInfo(Bundle act081Bundle);
+
+    void callWsSerialStructure(MD_Product_Serial productSerial);
+
+    void processWSProductSerialStructureReturn(String ws_retorno);
 }

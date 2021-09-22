@@ -27,7 +27,9 @@ import com.namoadigital.prj001.model.MyActionFilterParam;
 import com.namoadigital.prj001.model.Sync_Checklist;
 import com.namoadigital.prj001.model.TProduct_Serial;
 import com.namoadigital.prj001.model.TSerial_Search_Rec;
+import com.namoadigital.prj001.receiver.WBR_Product_Serial_Structure;
 import com.namoadigital.prj001.receiver.WBR_Sync;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.sql.Sql_Act020_001;
@@ -481,6 +483,42 @@ public class Act020_Main_Presenter_Impl implements Act020_Main_Presenter {
         }
         return  act081Bundle.getString(TK_TicketDao.TICKET_ID, "")
             +" - "+ act081Bundle.getString(TK_Ticket_StepDao.STEP_DESC, "");
+    }
+
+    @Override
+    public void callWsSerialStructure(MD_Product_Serial productSerial) {
+        if (ToolBox_Con.isOnline(context)) {
+            //
+            mView.setWs_process(WS_Product_Serial_Structure.class.getName());
+            //
+            mView.showPD(
+                    hmAux_Trans.get("progress_serial_structure_ttl"),
+                    hmAux_Trans.get("progress_serial_structure_msg")
+            );
+            //
+            Intent mIntent = new Intent(context, WBR_Product_Serial_Structure.class);
+            Bundle bundle = new Bundle();
+            bundle.putLong(MD_Product_SerialDao.CUSTOMER_CODE, productSerial.getCustomer_code());
+            bundle.putLong(MD_Product_SerialDao.PRODUCT_CODE, productSerial.getProduct_code());
+            bundle.putLong(MD_Product_SerialDao.SERIAL_CODE, productSerial.getSerial_code());
+            bundle.putInt(MD_Product_SerialDao.SCN_ITEM_CHECK, productSerial.getScn_item_check());
+            //
+            mIntent.putExtras(bundle);
+            //
+            context.sendBroadcast(mIntent);
+        } else {
+            defineFlow(productSerial, false);
+        }
+    }
+
+    @Override
+    public void processWSProductSerialStructureReturn(String ws_retorno) {
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        MD_Product_Serial serial = gson.fromJson(
+                ws_retorno,
+                MD_Product_Serial.class);
+        //
+        defineFlow(serial, false);
     }
 
 

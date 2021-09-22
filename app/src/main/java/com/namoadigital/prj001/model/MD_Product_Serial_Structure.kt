@@ -2,7 +2,7 @@ package com.namoadigital.prj001.model
 
 class MD_Product_Serial_Structure(
     val customer_code: Long,
-    val product_code: Int,
+    val product_code: Long,
     val serial_code: Int,
     val has_item_check: Int,
     val scn_item_check: Int?,

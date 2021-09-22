@@ -1,5 +1,8 @@
 package com.namoadigital.prj001.ui.act020;
 
+import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
+import static com.namoadigital.prj001.util.ConstantBaseApp.SCHEDULED_PROFILE_CHECK;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -35,6 +38,7 @@ import com.namoadigital.prj001.dao.TK_Ticket_StepDao;
 import com.namoadigital.prj001.model.MD_Product;
 import com.namoadigital.prj001.model.MD_Product_Serial;
 import com.namoadigital.prj001.model.MyActionFilterParam;
+import com.namoadigital.prj001.service.WS_Product_Serial_Structure;
 import com.namoadigital.prj001.service.WS_Sync;
 import com.namoadigital.prj001.sql.MD_Product_Sql_003;
 import com.namoadigital.prj001.ui.act006.Act006_Main;
@@ -52,9 +56,6 @@ import com.namoadigital.prj001.util.ToolBox_Inf;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.namoadigital.prj001.util.ConstantBaseApp.FROM_OFFLINE_SOURCE;
-import static com.namoadigital.prj001.util.ConstantBaseApp.SCHEDULED_PROFILE_CHECK;
 
 /**
  * Created by d.luche on 17/05/2017.
@@ -198,6 +199,9 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
         //
         transList.add("alert_serial_site_out_of_license_tll");
         transList.add("alert_serial_site_out_of_license_msg");
+        //
+        transList.add("progress_serial_structure_ttl");
+        transList.add("progress_serial_structure_msg");
 
         hmAux_Trans = ToolBox_Inf.setLanguage(
                 context,
@@ -507,8 +511,11 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MD_Product_Serial productSerial = (MD_Product_Serial) parent.getItemAtPosition(position);
-
-                mPresenter.defineFlow(productSerial,false);
+                if(productSerial.getHas_item_check() == 1){
+                    mPresenter.callWsSerialStructure(productSerial);
+                }else {
+                    mPresenter.defineFlow(productSerial, false);
+                }
             }
         });
         //
@@ -859,6 +866,8 @@ public class Act020_Main extends Base_Activity_NFC_Geral implements Act020_Main_
                 mPresenter.prepareAct008();
                 resetCtrlVars();
             }
+        } else if (ws_process.equals(WS_Product_Serial_Structure.class.getName())) {
+            mPresenter.processWSProductSerialStructureReturn(ws_retorno);
         } else {
             //
             progressDialog.dismiss();

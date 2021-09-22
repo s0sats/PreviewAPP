@@ -917,6 +917,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <receiver android:name=".receiver.WBR_Workgroup_Member_List" />
         <receiver android:name=".receiver.WBR_Workgroup_Member_Edit" />
         <receiver android:name=".receiver.WBR_User_Search" />
+        <receiver android:name=".receiver.WBR_Product_Serial_Structure" />
 
         <service android:name=".service.WS_SO_Create_Room" />
         <service android:name=".service.WS_TK_Next_Ticket" />
@@ -929,6 +930,7 @@ Tentativa paleativa para evitar crash ao voltar da act a camera.
         <service android:name=".service.WS_Workgroup_Member_List" />
         <service android:name=".service.WS_Workgroup_Member_Edit" />
         <service android:name=".service.WS_User_Search" />
+        <service android:name=".service.WS_Product_Serial_Structure" />
     </application>
 
 </manifest>
