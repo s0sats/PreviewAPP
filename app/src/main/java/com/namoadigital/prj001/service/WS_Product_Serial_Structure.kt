@@ -26,6 +26,7 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
         transList.add("generic_receiving_data_msg")
         transList.add("generic_processing_data")
         transList.add("generic_process_finalized_msg")
+        transList.add("msg_error_on_serial_structure")
 
         mResource_Code = ToolBox_Inf.getResourceCode(
             applicationContext,
@@ -164,6 +165,8 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
         //
         if (rec.structure != null) {
             processSerialStructureReturn(rec.structure!!)
+        }else{
+            ToolBox.sendBCStatus(applicationContext, "ERROR_1", hmAux_Trans["msg_no_data_returned"], "", "0")
         }
     }
 
@@ -178,7 +181,7 @@ class WS_Product_Serial_Structure : IntentService("WS_Product_Serial_Structure")
                 val result = gson.toJson(serialUpdateInfo)
                 ToolBox.sendBCStatus(applicationContext, "CLOSE_ACT", hmAux_Trans["generic_process_finalized_msg"], result, "0")
             }else{
-                ToolBox.sendBCStatus(applicationContext, "ERROR_1", hmAux_Trans["msg_error_on_insert_ticket"], "", "0")
+                ToolBox.sendBCStatus(applicationContext, "ERROR_1", hmAux_Trans["msg_error_on_serial_structure"], "", "0")
             }
         }
 
